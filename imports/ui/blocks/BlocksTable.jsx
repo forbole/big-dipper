@@ -51,10 +51,9 @@ class BlocksTable extends Component {
 
     render(){
         return <div>
-            <Table id="table">
+            <Table id="block-table">
                 <HeaderRecord />
-                {/* <Button onClick={this.addLimit.bind(this)}>Load more</Button> */}
-                <tbody onScroll={this.addLimit} id="myblocks" ref={c => this._container = c}>
+                <tbody onScroll={this.addLimit} id="blocks" ref={c => this._container = c}>
                     <Blocks limit={this.state.limit} />
                 </tbody>
                 

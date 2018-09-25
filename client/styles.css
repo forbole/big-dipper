@@ -25,3 +25,8 @@
 div#main{
     padding-top: 80px;
 }
+
+td.innerblock2{
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

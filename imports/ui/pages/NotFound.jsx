@@ -7,7 +7,10 @@ export default class NotFound extends Component{
     }
 
     render() {
-        return <h1>Not Found</h1>
+        return <Container className="not-found">
+            <h1>Your page cannot be found.</h1>
+            <i className="material-icons">block</i>
+        </Container>
     }
 
 }
