@@ -9,6 +9,17 @@ RPC = Meteor.settings.remote.rpc;
 LCD = Meteor.settings.remote.lcd;
 timer = 0;
 
+updateChainStatus = () => {
+    Meteor.call('chain.updateStatus', (error, result) => {
+        if (error){
+            console.log(error);
+        }
+        else{
+            console.log(result);
+        }
+    })
+}
+
 updateBlock = () => {
     Meteor.call('blocks.blocksUpdate', (error, result) => {
         if (error){
@@ -22,12 +33,7 @@ updateBlock = () => {
 
 Meteor.startup(function(){
     timer = Meteor.setInterval(function(){
+        updateChainStatus();
         updateBlock();
     }, Meteor.settings.params.interval);
-    // Meteor.call('getGenesisValidators', (err, results) => {
-    //     this.updateBlock();
-    // });
-    // // while(true){
-        
-    // //}
 });
