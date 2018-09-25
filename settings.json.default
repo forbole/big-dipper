@@ -1,0 +1,6 @@
+{
+    "remote":{
+        "rpc":"https://gaia-seeds.interblock.io/",
+        "lcd":"https://gaia-seeds.interblock.io:1317/"
+    }
+}
