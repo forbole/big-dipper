@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 
 import { Blockscon } from '/imports/api/blocks/blocks.js';
-// import { Chain } from '/imports/api/chain/chain.js';
+import { Chain } from '/imports/api/chain/chain.js';
 import { ValidatorSets } from '/imports/api/validator-sets/validator-sets.js';
 
 Meteor.methods({
@@ -69,6 +69,24 @@ Meteor.methods({
                         response = HTTP.get(url);
                         let validators = JSON.parse(response.content);
                         ValidatorSets.insert(validators.result);
+                        let chainStatus = Chain.findOne({chainId:block.block_meta.header.chain_id});
+                        // console.log(chainStatus);
+                        let lastSyncedTime = chainStatus.lastSyncedTime;
+                        let timeDiff;
+                        let blockTime = 5000;
+                        if (lastSyncedTime){
+                            let dateLatest = new Date(blockData.time);
+                            let dateLast = new Date(lastSyncedTime);
+
+                            console.log(blockData.time);
+                            console.log(lastSyncedTime);
+                            timeDiff = Math.abs(dateLatest.getTime() - dateLast.getTime());
+                            console.log(timeDiff);
+                            blockTime = (chainStatus.blockTime * (blockData.height - 1) + timeDiff) / blockData.height;
+                        }
+
+                        Chain.update({chainId:block.block_meta.header.chain_id}, {$set:{lastSyncedTime:blockData.time, blockTime:blockTime}});
+
                     }                    
                 }
                 catch (e){
