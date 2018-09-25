@@ -93,3 +93,15 @@ table#block-table th.time{
     width: 30%;
 }
 
+.status .value{
+    display: block;
+    font-family: "averta-thin", sans-serif;
+    -webkit-transition: all 2s ease-out;
+    -moz-transition: all 2s ease-out;
+    -o-transition: all 2s ease-out;
+    transition: all 2s ease-out;
+}
+
+.status .card{
+    margin: 0.5em 0;
+}

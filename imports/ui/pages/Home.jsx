@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Container, Row, Col } from 'reactstrap';
+import { Badge } from 'reactstrap';
+import ChainStatus from '../components/ChainStatusContainer.js';
 
 export default class Home extends Component{
     constructor(props){
@@ -7,7 +8,10 @@ export default class Home extends Component{
     }
 
     render() {
-        return <h1>The Big Dipper</h1>
+        return <div>
+            <h1>Summary <Badge color="primary">{Meteor.settings.public.chainId}</Badge></h1>
+            <ChainStatus />
+        </div>
     }
 
 }
