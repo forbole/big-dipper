@@ -41,51 +41,48 @@ Meteor.methods({
                 let url = RPC+'/block?height=' + height;
                 console.log(url);
                 let response = HTTP.get(url);
-                let block = JSON.parse(response.content);
-                block = block.result;
-                // console.log(block);
-                // store height, hash, numtransaction and time in db
-                let blockData = {};
-                blockData.height = height;
-                blockData.hash = block.block_meta.block_id.hash;
-                blockData.transNum = block.block_meta.header.num_txs;
-                blockData.time = block.block.header.time;
-                blockData.lastBlockHash = block.block.header.last_block_id.hash;
-                blockData.validators = [];
-                let precommits = block.block.last_commit.precommits;
-                if (precommits != null){
-                    console.log(precommits.length);
-                    for (let i=0; i<precommits.length; i++){
-                        if (precommits[i] != null){
-                            blockData.validators.push(precommits[i].validator_address);
-                        }
-                        // console.log(i);
-                        // console.log(precommits[i].validator_address);
-                    }    
+                if (response.statusCode == 200){
+                    let block = JSON.parse(response.content);
+                    block = block.result;
+                    // store height, hash, numtransaction and time in db
+                    let blockData = {};
+                    blockData.height = height;
+                    blockData.hash = block.block_meta.block_id.hash;
+                    blockData.transNum = block.block_meta.header.num_txs;
+                    blockData.time = block.block.header.time;
+                    blockData.lastBlockHash = block.block.header.last_block_id.hash;
+                    blockData.validators = [];
+                    let precommits = block.block.last_commit.precommits;
+                    if (precommits != null){
+                        console.log(precommits.length);
+                        for (let i=0; i<precommits.length; i++){
+                            if (precommits[i] != null){
+                                blockData.validators.push(precommits[i].validator_address);
+                            }
+                        }    
+                    }
+                    Blockscon.insert(blockData);
+    
+                    url = RPC+'/validators?height='+height;
+                    response = HTTP.get(url);
+                    let validators = JSON.parse(response.content);
+                    ValidatorSets.insert(validators.result);
                 }
-                // console.log(precommits[10]);
-                console.log(blockData);
-                Blockscon.insert(blockData);
-
-                url = RPC+'/validators?height='+height;
-                response = HTTP.get(url);
-                let validators = JSON.parse(response.content);
-                ValidatorSets.insert(validators.result);
             }
             SYNCING = false;
         }
         
         return until;
     },
-    // 'addLimit': function(limit) {
-    //     console.log(limit+10)
-    //     return (limit+10);
-    // },
-    // 'hasMore': function(limit) {
-    //     if (limit > Meteor.call('getCurrentHeight')) {
-    //         return (false);
-    //     } else {
-    //         return (true);
-    //     }
-    // }
+    'addLimit': function(limit) {
+        // console.log(limit+10)
+        return (limit+10);
+    },
+    'hasMore': function(limit) {
+        if (limit > Meteor.call('getCurrentHeight')) {
+            return (false);
+        } else {
+            return (true);
+        }
+    }
 });

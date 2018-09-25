@@ -36,7 +36,7 @@ class BlocksTable extends Component {
                 this.setState({
                     limit: result,
                 })
-                console.log(result);
+                // console.log(result);
             })
             // show loader
             var ele = document.getElementById("loading");
