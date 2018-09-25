@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { Blockscon } from '../connections.js';
+import { Blockscon } from '../blocks.js';
 
 Meteor.publish('blocks.height', function () {
     return Blockscon.find();

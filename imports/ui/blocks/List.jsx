@@ -4,7 +4,7 @@ import { Meteor } from 'meteor/meteor';
 import Block from './block.js';
 // import { Button } from 'reactstrap';
 
-import { Blockscon } from '/imports/api/blocks/connections.js';
+import { Blockscon } from '/imports/api/blocks/blocks.js';
 import { withTracker } from 'meteor/react-meteor-data';
 // import { Server } from 'https';
 
