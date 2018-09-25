@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Meteor } from 'meteor/meteor';
-import { Table } from 'reactstrap';
+import { Table, Badge } from 'reactstrap';
 import HeaderRecord from '/imports/ui/components/HeaderRecord.jsx';
 import Blocks from '/imports/ui/blocks/List.jsx'
 
@@ -51,6 +51,7 @@ class BlocksTable extends Component {
 
     render(){
         return <div>
+            <h1>Blocks <Badge color="primary">{Meteor.settings.public.chainId}</Badge></h1>
             <Table id="block-table">
                 <HeaderRecord />
                 <tbody onScroll={this.addLimit} id="blocks" ref={c => this._container = c}>
