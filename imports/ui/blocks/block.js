@@ -17,7 +17,7 @@ export default class Block extends Component {
                 <th className="innerblock1">{this.props.block.height}</th>
                 <td className="innerblock2">{this.props.block.hash}</td>
                 <td xs="3" className="innerblock">{this.props.block.transNum}</td>
-                <td xs="3" className="innerblock">{moment(this.props.block.time).fromNow()}</td>
+                <td xs="3" className="innerblock">{moment(this.props.block.time).format("D MMM YYYY, h:mm:ssa Z")}</td>
             </tr>
         );
     }

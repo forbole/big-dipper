@@ -8,10 +8,10 @@ class HeaderRecord extends Component {
         return(
             <thead>
                 <tr>
-                    <th className="innerblock1">Block Height</th>
-                    <th className="innerblock2">Hash</th>
-                    <th xs="3" className="innerblock">Number of Txs</th>
-                    <th xs="3" className="innerblock">Block Time</th>
+                    <th className="height">Height</th>
+                    <th className="hash">Hash</th>
+                    <th className="no-of-txs">No. of Txs</th>
+                    <th className="time">Time</th>
                 </tr>
             </thead>
         );
