@@ -1,21 +1,21 @@
-// import React, { Component } from 'react';
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
-// import { check } from 'meteor/check';
 
 import { Blockscon } from '/imports/api/blocks/blocks.js';
 import { ValidatorSets } from '/imports/api/validator-sets/validator-sets.js';
-
-RPC = Meteor.settings.remote.rpc;
-LCD = Meteor.settings.remote.lcd;
 
 Meteor.methods({
     'blocks.getLatestHeight': function() {
         this.unblock();
         let url = RPC+'/status';
-        let response = HTTP.get(url);
-        let status = JSON.parse(response.content);
-        return (status.result.sync_info.latest_block_height);
+        try{
+            let response = HTTP.get(url);
+            let status = JSON.parse(response.content);
+            return (status.result.sync_info.latest_block_height);    
+        }
+        catch (e){
+            return 0;
+        }
     },
     'blocks.getCurrentHeight': function() {
         this.unblock();
