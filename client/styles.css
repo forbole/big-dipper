@@ -21,6 +21,19 @@
     font-weight: normal;
     font-style: normal;
 }
+.not-found{
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    width: 100%;
+}
+
+.not-found i{
+    font-size: 6em;
+    margin-top:0.5em;
+}
 
 div#loading {
     visibility: hidden;
@@ -42,8 +55,15 @@ div#loading {
     100% { transform: rotate(360deg); }
 }
 
+#footer{
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    line-height: 1;
+}
+
 div#main{
-    padding-top: 80px;
+    padding-top: 5rem;
+    padding-bottom: 2.6rem;
 }
 
 table#block-table{
@@ -72,3 +92,4 @@ table#block-table th.no-of-txs{
 table#block-table th.time{
     width: 30%;
 }
+
