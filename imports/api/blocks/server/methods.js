@@ -73,15 +73,15 @@ Meteor.methods({
                         // console.log(chainStatus);
                         let lastSyncedTime = chainStatus.lastSyncedTime;
                         let timeDiff;
-                        let blockTime = 5000;
+                        let blockTime = Meteor.settings.params.defaultBlockTime;
                         if (lastSyncedTime){
                             let dateLatest = new Date(blockData.time);
                             let dateLast = new Date(lastSyncedTime);
 
-                            console.log(blockData.time);
-                            console.log(lastSyncedTime);
+                            // console.log(blockData.time);
+                            // console.log(lastSyncedTime);
                             timeDiff = Math.abs(dateLatest.getTime() - dateLast.getTime());
-                            console.log(timeDiff);
+                            // console.log(timeDiff);
                             blockTime = (chainStatus.blockTime * (blockData.height - 1) + timeDiff) / blockData.height;
                         }
 
