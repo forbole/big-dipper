@@ -66,12 +66,12 @@ div#main{
     padding-bottom: 4.8rem;
 }
 
-table#block-table{
+table#block-table, table.random-validators{
     table-layout: fixed;
     width: 100%;
     white-space: nowrap;    
 }
-table#block-table td{
+table#block-table td, table.random-validators td{
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -91,6 +91,18 @@ table#block-table th.no-of-txs{
 
 table#block-table th.time{
     width: 30%;
+}
+
+table.random-validators th.moniker{
+    width: 30%;
+}
+
+table.random-validators th.voting-power{
+    width: 20%
+}
+
+table.random-validators th.uptime{
+    width: 50%;
 }
 
 .status .value{

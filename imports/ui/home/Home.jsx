@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Badge } from 'reactstrap';
+import { Badge, Row, Col } from 'reactstrap';
 import ChainStatus from './ChainStatusContainer.js';
 import Consensus from './ConsensusContainer.js';
+import TopValidators from './TopValidatorsContainer.js';
 
 export default class Home extends Component{
     constructor(props){
@@ -13,6 +14,14 @@ export default class Home extends Component{
             <h1>{Meteor.settings.public.chainName} <Badge color="primary">{Meteor.settings.public.chainId}</Badge></h1>
             <Consensus />
             <ChainStatus />
+            <Row>
+                <Col md={6}>
+                    <TopValidators />
+                </Col>
+                <Col md={6}>
+
+                </Col>
+            </Row>
         </div>
     }
 
