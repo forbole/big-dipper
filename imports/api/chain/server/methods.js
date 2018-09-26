@@ -4,6 +4,27 @@ import { Chain } from '../chain.js';
 import { Validators } from '../../validators/validators.js';
 
 Meteor.methods({
+    'chain.getConsensusState': function(){
+        this.unblock();
+        let url = RPC+'/consensus_state';
+        try{
+            let response = HTTP.get(url);
+            let consensus = JSON.parse(response.content);
+            consensus = consensus.result;
+            let roundState = consensus.round_state['height/round/step'].split('/');
+            let height = roundState[0];
+            let round = roundState[1];
+            let votedPower = parseFloat(consensus.round_state.height_vote_set[round].prevotes_bit_array.split(" ")[3])*100;
+
+            Chain.update({chainId:Meteor.settings.public.chainId}, {$set:{votingHeight:height, votedPower:votedPower}});
+            // console.log(votingPower);
+
+            // console.log(consensus.round_state['height/round/step']);
+        }
+        catch(e){
+            console.log(e);
+        }
+    },
     'chain.updateStatus': function(){
         this.unblock();
         let url = RPC+'/status';

@@ -9,6 +9,7 @@ RPC = Meteor.settings.remote.rpc;
 LCD = Meteor.settings.remote.lcd;
 timerBlocks = 0;
 timerChain = 0;
+timerConsensus = 0;
 
 updateChainStatus = () => {
     Meteor.call('chain.updateStatus', (error, result) => {
@@ -32,9 +33,20 @@ updateBlock = () => {
     })
 }
 
+getConsensusState = () => {
+    Meteor.call('chain.getConsensusState', (error, result) => {
+        if (error){
+            console.log("get consensus: "+error)
+        }
+    })
+}
+
 Meteor.startup(function(){
     Meteor.call('chain.updateStatus', function(error, result){
         if (result){
+            timerConsensus = Meteor.setInterval(function(){
+                getConsensusState();
+            }, 1000);
             timerBlocks = Meteor.setInterval(function(){
                 updateBlock();
             }, Meteor.settings.params.interval);

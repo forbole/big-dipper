@@ -102,11 +102,11 @@ table#block-table th.time{
     transition: all 2s ease-out;
 }
 
-.status .card{
-    margin: 0.5em 0;
+#home .card{
+    margin: 0.75em 0;
 }
 
-table.validator-list .progress{
-    height: inherit;
-    font-size: inherit;
+.progress{
+    height: inherit !important;
+    font-size: inherit !important;
 }
