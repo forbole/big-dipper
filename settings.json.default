@@ -1,9 +1,19 @@
 {
+    "public":{
+        "chainName": "Cosmos Testnet",
+        "chainId": "gaia-8001"
+    },
     "remote":{
-        "rpc":"https://gaia-seeds.interblock.io/",
-        "lcd":"https://gaia-seeds.interblock.io:1317/"
+        "rpc":"https://gaia-seeds.interblock.io",
+        "lcd":"https://gaia-seeds.interblock.io:1317"
+    },
+    "bin":{
+        "gaiacli": "/path/to/gaiacli",
+        "gaiadebug": "/path/to/gaiadebug"
     },
     "params":{
-        "interval": 10000
+        "defaultBlockTime": 5000,
+        "interval": 10000,
+        "slashingThreshold": 10000
     }
 }

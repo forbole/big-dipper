@@ -94,7 +94,7 @@ Meteor.methods({
                                 // Validators.insert(validators.result.validators[v]);
                                 let validator = validators.result.validators[v];
 
-                                let command = Meteor.settings.params.gaiadebug+" pubkey "+validator.pub_key.value;
+                                let command = Meteor.settings.bin.gaiadebug+" pubkey "+validator.pub_key.value;
                                 Meteor.call('runCode', command, function(error, result){
                                     validator.address = result.match(/\s[0-9A-F]{40}$/igm);
                                     validator.address = validator.address[0].trim();
