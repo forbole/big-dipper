@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Table } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import moment from 'moment';
 
 const ValidatorRow = (props) => {
     let moniker = (props.validator.description.moniker)?props.validator.description.moniker:props.validator.address;
-    return <tr><th scope="row">{props.index+1}</th><td><Link to="#">{moniker}</Link></td><td>{props.validator.voting_power}</td><td></td><td></td></tr>
+    return <tr><th scope="row">{props.index+1}</th><td><Link to="#">{moniker}</Link></td><td>{props.validator.voting_power}</td><td>{props.validator.uptime}%</td><td>{moment(props.validator.lastSeen).format("D MMM YYYY, h:mm:ssa Z")}</td></tr>
 }
 
 export default class List extends Component{

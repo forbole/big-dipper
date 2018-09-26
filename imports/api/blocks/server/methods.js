@@ -85,12 +85,30 @@ Meteor.methods({
                                 exists: false,
                                 voting_power: existingValidators[i].voting_power
                             }
+                            let uptime = 0;
                             for (j in precommits){
                                 if (precommits[j] != null){
                                     if (existingValidators[i].address == precommits[j].validator_address){
                                         record.exists = true;
+                                        precommits.splice(j,1);
+                                        if (existingValidators[i].uptime){
+                                            uptime = existingValidators[i].uptime;
+                                            if (uptime < 100){
+                                                uptime++;
+                                                
+                                            }
+                                        }
+                                        Validators.update({address:existingValidators[i].address}, {$set:{uptime:uptime, lastSeen:blockData.time}});
                                         break;
-                                    }    
+                                    }
+                                    else{
+                                        if (existingValidators[i].uptime){
+                                            if (uptime > 0){
+                                                uptime--;
+                                            }
+                                        }
+                                        Validators.update({address:existingValidators[i].address}, {$set:{uptime:uptime}});
+                                    }
                                 }
                             }
 
