@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 import { Chain } from '../chain.js';
+import { Validators } from '../../validators/validators.js';
 
 Meteor.methods({
     'chain.updateStatus': function(){
@@ -36,11 +37,31 @@ Meteor.methods({
                 // console.log();
                 let vp = Math.round(parseFloat(eval(validatorSet[v].tokens)));
                 totalVP += parseInt(vp);
+                // try{
+                //     if ((validatorSet[v].description.identity.length > 0) && (validatorSet[v].description.identity != "[do-not-modify]")){
+                //         url = "https://keybase.io/_/api/1.0/user/lookup.json?key_suffix="+validatorSet[v].description.identity+"&fields=pictures";
+                //         response = HTTP.get(url);
+                //         let picture = JSON.parse(response.content);
+                //         // console.log(picture);
+                //         console.log("picture:"+v);
+                //         if (picture.status.code == 0){
+                //             if ((picture.them.length > 0) && (picture.them[0].pictures))
+                //                 validatorSet[v].picture = picture.them[0].pictures.primary.url
+                //         }
+                //     }
+                // }
+                // catch (e){
+                //     console.log(e);
+                // }
+                Validators.update({pub_key:validatorSet[v].pub_key}, {$set:validatorSet[v]}, {upsert:true});
             }
 
             chain.totalVotingPower = totalVP;
 
             Chain.update({chainId:chain.chainId}, {$set:chain}, {upsert: true});
+
+            // validators = Validators.find({}).fetch();
+            // console.log(validators);
             return chain.latestBlockHeight;
         }
         catch (e){

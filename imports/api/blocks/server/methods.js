@@ -85,6 +85,7 @@ Meteor.methods({
                         Chain.update({chainId:block.block_meta.header.chain_id}, {$set:{lastSyncedTime:blockData.time, blockTime:blockTime}});
 
                         if (height == 1){
+                            Validators.remove({});
                             url = LCD+'/stake/validators';
                             response = HTTP.get(url);
                             let validatorSet = JSON.parse(response.content);
@@ -101,8 +102,8 @@ Meteor.methods({
                                     validator.hex = validator.hex[0].trim();
                                     validator.cosmosaccpub = result.match(/cosmosaccpub.*$/igm);
                                     validator.cosmosaccpub = validator.cosmosaccpub[0].trim();
-                                    validator.cosmosvalpub = result.match(/cosmosvalpub.*$/igm);
-                                    validator.cosmosvalpub = validator.cosmosvalpub[0].trim();
+                                    validator.pub_key = result.match(/cosmosvalpub.*$/igm);
+                                    validator.pub_key = validator.pub_key[0].trim();
 
                                     for (val in validatorSet){
                                         if (validatorSet[val].pub_key == validator.cosmosvalpub){
