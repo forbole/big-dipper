@@ -74,7 +74,7 @@ Meteor.methods({
 
                         
                         
-                        Blockscon.insert(blockData);
+                        Blockscon.update({height:height},blockData,{upsert:true});
                         
                         // store valdiators exist records
                         let existingValidators = Validators.find({address:{$exists:true}}).fetch();
@@ -94,7 +94,7 @@ Meteor.methods({
                                 }
                             }
 
-                            ValidatorRecords.insert(record);
+                            ValidatorRecords.update({height:height,address:record.address},record,{upsert:true});
                         }
 
                         analyticsData.height = height;
@@ -166,7 +166,7 @@ Meteor.methods({
                         }
                     
                         // record for analytics
-                        Analytics.insert(analyticsData);
+                        Analytics.update({height:height},analyticsData,{upsert:true});
                     }                    
                 }
                 catch (e){
