@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Badge,
   Collapse,
   Navbar,
   NavbarToggler,
@@ -33,7 +34,7 @@ export default class Header extends React.Component {
   render() {
     return (
         <Navbar color="primary" dark expand="md" fixed="top">
-          <NavbarBrand tag={Link} to="/">The Big Dipper</NavbarBrand>
+          <NavbarBrand tag={Link} to="/">The Big Dipper <Badge color="secondary">beta</Badge></NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>
