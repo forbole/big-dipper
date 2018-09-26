@@ -7,10 +7,6 @@ export default class Block extends Component {
         super(props);
     }
 
-    showInfo = () => {
-        console.log("clicked me!!" + this.props.block.height);
-    }
-
     render() {
         return (
             <tr className="blockrow" onClick={this.showInfo}>

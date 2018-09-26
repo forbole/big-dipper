@@ -9,7 +9,7 @@ export default class Home extends Component{
 
     render() {
         return <div>
-            <h1>Cosmos <Badge color="primary">{Meteor.settings.public.chainId}</Badge></h1>
+            <h1>{Meteor.settings.public.chainName} <Badge color="primary">{Meteor.settings.public.chainId}</Badge></h1>
             <ChainStatus />
         </div>
     }

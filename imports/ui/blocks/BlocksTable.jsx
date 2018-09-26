@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Meteor } from 'meteor/meteor';
-import { Table, Badge } from 'reactstrap';
+import { Table, Badge, Button } from 'reactstrap';
 import HeaderRecord from '/imports/ui/components/HeaderRecord.jsx';
-import Blocks from '/imports/ui/blocks/List.jsx'
+import Blocks from '/imports/ui/blocks/ListContainer.js'
 
 class BlocksTable extends Component {
     constructor(props){
@@ -10,56 +10,28 @@ class BlocksTable extends Component {
         this.state = {
             limit: 30,
         };
+
+        this.updateLimit.bind(this);
     }
 
-    componentDidMount() {
-        window.addEventListener('scroll', this.addLimit);
+    // TODO: update list
+    updateLimit = () => {
+        this.setState({
+            limit: this.state.limit+10
+        })
     }
-
-    componentWillUnmount() {
-        window.removeEventListener('scroll', this.addLimit);
-    }
-
-    addLimit = () => {
-        // Fetch variables
-        var scrollTop = $(document).scrollTop();
-        var windowHeight = $(window).height();
-        var bodyHeight = $(document).height() - windowHeight;
-        var scrollPercentage = (scrollTop / bodyHeight);
-
-        // if the scroll is more than 90% from the top, load more content.
-        if(scrollPercentage > 0.9) {
-            // Load content
-        
-            // show more rows
-            Meteor.call('addLimit', this.state.limit, (error, result) => {
-                this.setState({
-                    limit: result,
-                })
-                // console.log(result);
-            })
-            // show loader
-            var ele = document.getElementById("loading");
-            // console.log()
-            ele.style.visibility = "visible";
-            console.log("loading hereeee")
-            Meteor.setTimeout(() => {
-                ele.style.visibility = "hidden";
-            }, 2000);
-        }
-    }
+ 
 
     render(){
         return <div>
             <h1>Blocks <Badge color="primary">{Meteor.settings.public.chainId}</Badge></h1>
             <Table id="block-table">
                 <HeaderRecord />
-                <tbody onScroll={this.addLimit} id="blocks" ref={c => this._container = c}>
-                    <Blocks limit={this.state.limit} />
-                </tbody>
+                <tbody id="blocks"><Blocks limit={this.state.limit} /></tbody>
                 
             </Table>
-            <div id="loading" className="loader"></div>
+            {/* <Button color="primary" onClick={this.updateLimit}>Load more</Button>{' '} */}
+            {/* <div id="loading" className="loader"></div> */}
         </div>
     }
 }
