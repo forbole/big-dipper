@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Row, Col } from 'reactstrap';
+import { Badge, Container, Row, Col } from 'reactstrap';
 
 export default class ValidatorRevoked extends Component{
     constructor(props){
@@ -7,7 +7,7 @@ export default class ValidatorRevoked extends Component{
     }
 
     render() {
-        return <h1>ValidatorRevoked</h1>
+        return <h1>ValidatorRevoked <Badge color="primary">{Meteor.settings.public.chainId}</Badge></h1>
     }
 
 }

@@ -25,7 +25,7 @@ class BlocksTable extends Component {
     render(){
         return <div>
             <h1>Lastest blocks <Badge color="primary">{Meteor.settings.public.chainId}</Badge></h1>
-            <Table id="block-table">
+            <Table id="block-table" striped>
                 <HeaderRecord />
                 <tbody id="blocks"><Blocks limit={this.state.limit} /></tbody>
                 

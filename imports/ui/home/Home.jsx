@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Badge } from 'reactstrap';
-import ChainStatus from '../components/ChainStatusContainer.js';
+import ChainStatus from './ChainStatusContainer.js';
 
 export default class Home extends Component{
     constructor(props){

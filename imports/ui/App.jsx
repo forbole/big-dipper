@@ -6,11 +6,11 @@ import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom'
 import { Container } from 'reactstrap';
 import Header from '/imports/ui/components/Header.jsx';
 import Footer from '/imports/ui/components/Footer.jsx';
-import Home from '/imports/ui/pages/Home.jsx';
+import Home from '/imports/ui/home/Home.jsx';
 // import Blocks from '/imports/ui/pages/Blocks.jsx';
-import Validators from '/imports/ui/pages/Validators.jsx';
-import ValidatorCandidates from '/imports/ui/pages/ValidatorCandidates.jsx';
-import ValidatorRevoked from '/imports/ui/pages/ValidatorRevoked.jsx';
+import Validators from '/imports/ui/validators/Validators.jsx';
+// import ValidatorCandidates from '/imports/ui/validators/ValidatorCandidates.jsx';
+import ValidatorRevoked from '/imports/ui/validators/ValidatorRevoked.jsx';
 import NotFound from '/imports/ui/pages/NotFound.jsx';
 
 import BlocksTable from '/imports/ui/blocks/BlocksTable.jsx';
@@ -32,7 +32,7 @@ class App extends Component {
                             <Route exact path="/" component={Home} />
                             <Route path="/blocks" component={BlocksTable} />
                             <Route exact path="/validators" component={Validators} />
-                            <Route path="/validators/candidates" component={ValidatorCandidates} />
+                            {/* <Route path="/validators/candidates" component={ValidatorCandidates} /> */}
                             <Route path="/validators/revoked" component={ValidatorRevoked} />
                             <Route component={NotFound} />
                         </Switch>
