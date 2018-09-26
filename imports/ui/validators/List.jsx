@@ -39,7 +39,7 @@ export default class List extends Component{
                             <th></th>
                             <th>Moniker</th>
                             <th>Voting Power</th>
-                            <th>Uptime (last {Meteor.settings.public.slashingWindow} blocks}</th>
+                            <th>Uptime (last 100 blocks}</th>
                             <th>Last Seen</th>
                         </tr>
                     </thead>
