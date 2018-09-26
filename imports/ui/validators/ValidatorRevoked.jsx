@@ -7,7 +7,7 @@ export default class ValidatorRevoked extends Component{
     }
 
     render() {
-        return <h1>ValidatorRevoked <Badge color="primary">{Meteor.settings.public.chainId}</Badge></h1>
+        return <h1>Revoked Validator <Badge color="primary">{Meteor.settings.public.chainId}</Badge></h1>
     }
 
 }
