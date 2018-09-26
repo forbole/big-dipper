@@ -53,7 +53,7 @@ Meteor.methods({
                 // catch (e){
                 //     console.log(e);
                 // }
-                Validators.update({pub_key:validatorSet[v].pub_key}, {$set:validatorSet[v]}, {upsert:true});
+                Validators.update({pub_key:validatorSet[v].pub_key}, {$set:validatorSet[v]});
             }
 
             chain.totalVotingPower = totalVP;
