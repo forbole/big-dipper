@@ -17,11 +17,13 @@ export default class List extends Component{
 
     componentDidUpdate(prevState){
         if (this.props.validators != prevState.validators){
-            this.setState({
-                validators: this.props.validators.map((validator, i) => {
-                    return <ValidatorRow key={i} index={i} validator={validator} />
-                })
-            })
+            if (this.props.validators.length > 0){
+                this.setState({
+                    validators: this.props.validators.map((validator, i) => {
+                        return <ValidatorRow key={i} index={i} validator={validator} />
+                    })
+                })    
+            }
         }
     }
 
