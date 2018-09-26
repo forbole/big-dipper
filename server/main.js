@@ -13,10 +13,10 @@ timerChain = 0;
 updateChainStatus = () => {
     Meteor.call('chain.updateStatus', (error, result) => {
         if (error){
-            console.log(error);
+            console.log("updateStatus: "+error);
         }
         else{
-            console.log(result);
+            console.log("updateStatus: "+result);
         }
     })
 }
@@ -24,10 +24,10 @@ updateChainStatus = () => {
 updateBlock = () => {
     Meteor.call('blocks.blocksUpdate', (error, result) => {
         if (error){
-            console.log(error);
+            console.log("updateBlocks: "+error);
         }
         else{
-            console.log(result);
+            console.log("updateBlocks: "+result);
         }
     })
 }

@@ -105,3 +105,8 @@ table#block-table th.time{
 .status .card{
     margin: 0.5em 0;
 }
+
+table.validator-list .progress{
+    height: inherit;
+    font-size: inherit;
+}

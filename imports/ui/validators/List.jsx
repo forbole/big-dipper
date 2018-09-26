@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { Table } from 'reactstrap';
+import { Table, Progress } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 
 const ValidatorRow = (props) => {
     let moniker = (props.validator.description.moniker)?props.validator.description.moniker:props.validator.address;
-    return <tr><th scope="row">{props.index+1}</th><td><Link to="#">{moniker}</Link></td><td>{props.validator.voting_power}</td><td>{props.validator.uptime}%</td><td>{moment(props.validator.lastSeen).format("D MMM YYYY, h:mm:ssa Z")}</td></tr>
+    return <tr><th scope="row" className="d-none d-sm-block">{props.index+1}</th><td><Link to="#">{moniker}</Link></td><td>{props.validator.voting_power}</td><td><Progress animated value={props.validator.uptime}>{props.validator.uptime}%</Progress></td><td>{(props.validator.lastSeen)?moment(props.validator.lastSeen).format("D MMM YYYY, h:mm:ssa Z"):''}</td></tr>
 }
 
 export default class List extends Component{
@@ -34,10 +34,10 @@ export default class List extends Component{
         }
         else{
             return (
-                <Table striped className="validator-lsit">
+                <Table striped className="validator-list">
                     <thead>
                         <tr>
-                            <th></th>
+                            <th className="d-none d-sm-block">&nbsp;</th>
                             <th>Moniker</th>
                             <th>Voting Power</th>
                             <th>Uptime (last 100 blocks}</th>

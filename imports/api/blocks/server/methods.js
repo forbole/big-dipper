@@ -22,7 +22,11 @@ Meteor.methods({
     },
     'blocks.getCurrentHeight': function() {
         this.unblock();
-        return (Blockscon.find().count());
+        let currHeight = Blockscon.find({},{sort:{height:-1},limit:1}).fetch();
+        // console.log("currentHeight:"+currHeight);
+        if (currHeight && currHeight.length == 1)
+            return currHeight[0].height; 
+        else return Meteor.settings.params.startHeight;
     },
     'blocks.blocksUpdate': function() {
         if (SYNCING)
@@ -33,7 +37,7 @@ Meteor.methods({
         // console.log(until);
         // get the current height in db
         let curr = Meteor.call('blocks.getCurrentHeight');
-        // console.log(curr);
+        console.log(curr);
         // Blockscon.insert({height: 123, hash: "1234", transNum: 1234, time: "1234"});
         // loop if there's update in db
         if (until > curr) {
@@ -78,6 +82,7 @@ Meteor.methods({
                         
                         // store valdiators exist records
                         let existingValidators = Validators.find({address:{$exists:true}}).fetch();
+                        
                         for (i in existingValidators){
                             let record = {
                                 height: height,
@@ -91,18 +96,19 @@ Meteor.methods({
                                     if (existingValidators[i].address == precommits[j].validator_address){
                                         record.exists = true;
                                         precommits.splice(j,1);
-                                        if (existingValidators[i].uptime){
+                                        if (typeof existingValidators[i].uptime !== 'undefined'){
                                             uptime = existingValidators[i].uptime;
                                             if (uptime < 100){
                                                 uptime++;
                                                 
                                             }
                                         }
+                                        
                                         Validators.update({address:existingValidators[i].address}, {$set:{uptime:uptime, lastSeen:blockData.time}});
                                         break;
                                     }
                                     else{
-                                        if (existingValidators[i].uptime){
+                                        if (typeof existingValidators[i].uptime !== 'undefined'){
                                             if (uptime > 0){
                                                 uptime--;
                                             }
@@ -113,6 +119,7 @@ Meteor.methods({
                             }
 
                             ValidatorRecords.update({height:height,address:record.address},record,{upsert:true});
+                            
                         }
 
                         analyticsData.height = height;
