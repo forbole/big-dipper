@@ -32,8 +32,13 @@ updateBlock = () => {
 }
 
 Meteor.startup(function(){
-    timer = Meteor.setInterval(function(){
-        updateChainStatus();
-        updateBlock();
-    }, Meteor.settings.params.interval);
+    Meteor.call('chain.updateStatus', function(error, result){
+        if (result){
+            timer = Meteor.setInterval(function(){
+                updateChainStatus();
+                updateBlock();
+            }, Meteor.settings.params.interval);
+        }
+    })
+    
 });

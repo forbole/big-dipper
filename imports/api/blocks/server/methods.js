@@ -4,6 +4,7 @@ import { HTTP } from 'meteor/http';
 import { Blockscon } from '/imports/api/blocks/blocks.js';
 import { Chain } from '/imports/api/chain/chain.js';
 import { ValidatorSets } from '/imports/api/validator-sets/validator-sets.js';
+import { Validators } from '/imports/api/validators/validators.js';
 
 Meteor.methods({
     'blocks.getLatestHeight': function() {
@@ -82,6 +83,40 @@ Meteor.methods({
                         }
 
                         Chain.update({chainId:block.block_meta.header.chain_id}, {$set:{lastSyncedTime:blockData.time, blockTime:blockTime}});
+
+                        if (height == 1){
+                            url = LCD+'/stake/validators';
+                            response = HTTP.get(url);
+                            let validatorSet = JSON.parse(response.content);
+                        
+                            for (v in validators.result.validators){
+                                // Validators.insert(validators.result.validators[v]);
+                                let validator = validators.result.validators[v];
+
+                                let command = Meteor.settings.params.gaiadebug+" pubkey "+validator.pub_key.value;
+                                Meteor.call('runCode', command, function(error, result){
+                                    validator.address = result.match(/\s[0-9A-F]{40}$/igm);
+                                    validator.address = validator.address[0].trim();
+                                    validator.hex = result.match(/\s[0-9A-F]{64}$/igm);
+                                    validator.hex = validator.hex[0].trim();
+                                    validator.cosmosaccpub = result.match(/cosmosaccpub.*$/igm);
+                                    validator.cosmosaccpub = validator.cosmosaccpub[0].trim();
+                                    validator.cosmosvalpub = result.match(/cosmosvalpub.*$/igm);
+                                    validator.cosmosvalpub = validator.cosmosvalpub[0].trim();
+
+                                    for (val in validatorSet){
+                                        if (validatorSet[val].pub_key == validator.cosmosvalpub){
+                                            validator.owner = validatorSet[val].owner;
+                                            validatorSet.splice(val, 1);
+                                            break;
+                                        }
+                                    }
+
+                                    // console.log(validator);
+                                    Validators.insert(validator);
+                                });
+                            }
+                        }
 
                     }                    
                 }
