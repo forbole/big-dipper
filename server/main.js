@@ -7,7 +7,8 @@ import '/imports/startup/both';
 SYNCING = false;
 RPC = Meteor.settings.remote.rpc;
 LCD = Meteor.settings.remote.lcd;
-timer = 0;
+timerBlocks = 0;
+timerChain = 0;
 
 updateChainStatus = () => {
     Meteor.call('chain.updateStatus', (error, result) => {
@@ -34,9 +35,12 @@ updateBlock = () => {
 Meteor.startup(function(){
     Meteor.call('chain.updateStatus', function(error, result){
         if (result){
-            timer = Meteor.setInterval(function(){
-                updateChainStatus();
+            timerBlocks = Meteor.setInterval(function(){
                 updateBlock();
+            }, Meteor.settings.params.interval);
+
+            timerChain = Meteor.setInterval(function(){
+                updateChainStatus();
             }, Meteor.settings.params.interval);
         }
     })
