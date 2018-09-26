@@ -82,7 +82,8 @@ Meteor.methods({
                             let record = {
                                 height: height,
                                 address: existingValidators[i].address,
-                                exists: false
+                                exists: false,
+                                voting_power: existingValidators[i].voting_power
                             }
                             for (j in precommits){
                                 if (precommits[j] != null){
