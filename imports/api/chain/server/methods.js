@@ -45,14 +45,17 @@ Meteor.methods({
                 //         // console.log(picture);
                 //         console.log("picture:"+v);
                 //         if (picture.status.code == 0){
-                //             if ((picture.them.length > 0) && (picture.them[0].pictures))
-                //                 validatorSet[v].picture = picture.them[0].pictures.primary.url
+                //             if (picture.them != null){
+                //                 if ((picture.them.length > 0) && (picture.them[0].pictures))
+                //                     validatorSet[v].picture = picture.them[0].pictures.primary.url
+                //             }
                 //         }
                 //     }
                 // }
                 // catch (e){
                 //     console.log(e);
                 // }
+                // console.log(validatorSet[v].revoked);
                 Validators.update({pub_key:validatorSet[v].pub_key}, {$set:validatorSet[v]});
             }
 

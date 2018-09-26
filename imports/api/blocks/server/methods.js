@@ -5,6 +5,7 @@ import { Blockscon } from '/imports/api/blocks/blocks.js';
 import { Chain } from '/imports/api/chain/chain.js';
 import { ValidatorSets } from '/imports/api/validator-sets/validator-sets.js';
 import { Validators } from '/imports/api/validators/validators.js';
+import { ValidatorRecords, Analytics} from '/imports/api/records/records.js';
 
 Meteor.methods({
     'blocks.getLatestHeight': function() {
@@ -41,6 +42,8 @@ Meteor.methods({
                 // add timeout here? and outside this loop (for catched up and keep fetching)?
                 this.unblock();
                 let url = RPC+'/block?height=' + height;
+                let analyticsData = {};
+
                 console.log(url);
                 try{
                     let response = HTTP.get(url);
@@ -57,15 +60,45 @@ Meteor.methods({
                         blockData.validators = [];
                         let precommits = block.block.last_commit.precommits;
                         if (precommits != null){
-                            console.log(precommits.length);
+                            // console.log(precommits.length);
                             for (let i=0; i<precommits.length; i++){
                                 if (precommits[i] != null){
                                     blockData.validators.push(precommits[i].validator_address);
                                 }
-                            }    
+                            }
+
+                            analyticsData.precommits = precommits.length;
+                            // record for analytics
+                            // PrecommitRecords.insert({height:height, precommits:precommits.length});
                         }
+
+                        
+                        
                         Blockscon.insert(blockData);
+                        
+                        // store valdiators exist records
+                        let existingValidators = Validators.find({address:{$exists:true}}).fetch();
+                        for (i in existingValidators){
+                            let record = {
+                                height: height,
+                                address: existingValidators[i].address,
+                                exists: false
+                            }
+                            for (j in precommits){
+                                if (precommits[j] != null){
+                                    if (existingValidators[i].address == precommits[j].validator_address){
+                                        record.exists = true;
+                                        break;
+                                    }    
+                                }
+                            }
+
+                            ValidatorRecords.insert(record);
+                        }
+
+                        analyticsData.height = height;
         
+                        // update chain status
                         url = RPC+'/validators?height='+height;
                         response = HTTP.get(url);
                         let validators = JSON.parse(response.content);
@@ -84,20 +117,30 @@ Meteor.methods({
 
                         Chain.update({chainId:block.block_meta.header.chain_id}, {$set:{lastSyncedTime:blockData.time, blockTime:blockTime}});
 
+                        analyticsData.averageBlockTime = blockTime;
+                        analyticsData.timeDiff = timeDiff;
+
+                        analyticsData.time = blockData.time;
+
+                        // initialize validator data at first block
                         if (height == 1){
                             Validators.remove({});
-                            url = LCD+'/stake/validators';
-                            response = HTTP.get(url);
-                            let validatorSet = JSON.parse(response.content);
-                        
-                            for (v in validators.result.validators){
-                                // Validators.insert(validators.result.validators[v]);
-                                let validator = validators.result.validators[v];
+                        }
+                        url = LCD+'/stake/validators';
+                        response = HTTP.get(url);
+                        let validatorSet = JSON.parse(response.content);
+                    
+                        analyticsData.voting_power = 0;
+                        for (v in validators.result.validators){
+                            // Validators.insert(validators.result.validators[v]);
+                            let validator = validators.result.validators[v];
 
+                            let valExist = Validators.findOne({address:validator.address});
+                            if (!valExist){
                                 let command = Meteor.settings.bin.gaiadebug+" pubkey "+validator.pub_key.value;
                                 Meteor.call('runCode', command, function(error, result){
-                                    validator.address = result.match(/\s[0-9A-F]{40}$/igm);
-                                    validator.address = validator.address[0].trim();
+                                    // validator.address = result.match(/\s[0-9A-F]{40}$/igm);
+                                    // validator.address = validator.address[0].trim();
                                     validator.hex = result.match(/\s[0-9A-F]{64}$/igm);
                                     validator.hex = validator.hex[0].trim();
                                     validator.cosmosaccpub = result.match(/cosmosaccpub.*$/igm);
@@ -114,11 +157,15 @@ Meteor.methods({
                                     }
 
                                     // console.log(validator);
-                                    Validators.insert(validator);
+                                    Validators.update({pub_key: validator.pub_key}, {$set:validator}, {upsert:true});
                                 });
                             }
-                        }
 
+                            analyticsData.voting_power += parseInt(validator.voting_power);
+                        }
+                    
+                        // record for analytics
+                        Analytics.insert(analyticsData);
                     }                    
                 }
                 catch (e){
