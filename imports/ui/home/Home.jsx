@@ -3,6 +3,7 @@ import { Badge, Row, Col } from 'reactstrap';
 import ChainStatus from './ChainStatusContainer.js';
 import Consensus from './ConsensusContainer.js';
 import TopValidators from './TopValidatorsContainer.js';
+import Chart from './ChartContainer.js';
 
 export default class Home extends Component{
     constructor(props){
@@ -19,7 +20,7 @@ export default class Home extends Component{
                     <TopValidators />
                 </Col>
                 <Col md={6}>
-
+                    <Chart />
                 </Col>
             </Row>
         </div>

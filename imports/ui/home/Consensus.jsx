@@ -12,7 +12,7 @@ export default class Consensus extends Component{
             return <div>Loading</div>
         }
         else{
-            return <Card className="status border-danger">
+            return <Card className="status">
                 <div className="card-header">Consensus State</div>
                 <CardBody>
                 <Row>
