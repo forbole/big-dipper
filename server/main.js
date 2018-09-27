@@ -53,7 +53,7 @@ Meteor.startup(function(){
 
             timerChain = Meteor.setInterval(function(){
                 updateChainStatus();
-            }, Meteor.settings.params.interval);
+            }, 1500);
         }
     })
     
