@@ -33,7 +33,9 @@ export default class Chart extends Component{
                     data: [65, 59, 80, 81, 56, 55, 40]
                   }
                 ]
-              }
+              },
+              optionsTime: {},
+              optionsVP: {}
         }
     }
 
@@ -46,6 +48,7 @@ export default class Chart extends Component{
             let votingPower = [];
             let validators = [];
             for (let i in this.props.history){
+                dates.push(moment.utc(this.props.history[i].time).toString());
                 heights.push(this.props.history[i].height);
                 blockTime.push((this.props.history[i].averageBlockTime/1000).toFixed(2));
                 timeDiff.push((this.props.history[i].timeDiff/1000).toFixed(2));
@@ -54,39 +57,127 @@ export default class Chart extends Component{
             }
             this.setState({
                 vpData:{
-                    labels:heights,
+                    labels:dates,
                     datasets: [
                         {
                             label: 'Voting Power',
                             fill: false,
+                            yAxisID: 'VotingPower',
+                            pointRadius: 1,
+                            borderColor: 'rgba(255,152,0,0.5)',
+                            backgroundColor: 'rgba(255,193,101,0.5)',
                             data: votingPower
                         },
                         {
                             label: 'No. of Validators',
                             fill: false,
-                            data: validators
+                            yAxisID: 'Validators',
+                            pointRadius: 1,
+                            borderColor: 'rgba(189,28,8,0.5)',
+                            backgroundColor: 'rgba(255,103,109,0.5)',
+                            data: validators,
                         }
                     ]
                 },
                 timeData:{
-                    labels:heights,
+                    labels:dates,
                     datasets: [
                         {
                             label: 'Average Block Time',
                             fill: false,
-                            data: blockTime
+                            yAxisID: 'Time',
+                            pointRadius: 1,
+                            borderColor: 'rgba(156,39,176,0.5)',
+                            backgroundColor: 'rgba(229,112,249,0.5)',
+                            data: blockTime,
+                            tooltips: {
+                                callbacks: {
+                                    label: function(tooltipItem, data) {
+                                        var label = data.datasets[tooltipItem.datasetIndex].label || '';
+                    
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        label += tooltipItem.yLabel+'s';
+                                        return label;
+                                    }
+                                }
+                            }
                         },
                         {
                             label: 'Block Interveral',
                             fill: false,
-                            data: timeDiff
+                            yAxisID: 'Time',
+                            pointRadius: 1,
+                            borderColor: 'rgba(189,28,8,0.5)',
+                            backgroundColor: 'rgba(255,103,109,0.5)',
+                            data: timeDiff,
+                            tooltips: {
+                                callbacks: {
+                                    label: function(tooltipItem, data) {
+                                        var label = data.datasets[tooltipItem.datasetIndex].label || '';
+                    
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        label += tooltipItem.yLabel+'s';
+                                        return label;
+                                    }
+                                }
+                            }
                         },
                         {
                             label: 'No. of Validators',
                             fill: false,
+                            yAxisID: 'Validators',
+                            pointRadius: 1,
+                            borderColor: 'rgba(255,152,0,0.5)',
+                            backgroundColor: 'rgba(255,193,101,0.5)',
                             data: validators
                         }
                     ]
+                },
+                optionsVP: {
+                  scales: {
+                    xAxes: [
+                        {
+                          display: false,
+                        }
+                      ],
+                    yAxes: [{
+                      id: 'VotingPower',
+                      type: 'linear',
+                      position: 'left',
+                    }, {
+                      id: 'Validators',
+                      type: 'linear',
+                      position: 'right',
+                    }]
+                  }
+                },
+                optionsTime: {
+                  scales: {
+                    xAxes: [
+                        {
+                          display: false,
+                        }
+                      ],
+                    yAxes: [{
+                      id: 'Validators',
+                      type: 'linear',
+                      position: 'right',
+                    }, {
+                        id: 'Time',
+                        type: 'linear',
+                        position: 'left',
+                        ticks: {
+                            // Include a dollar sign in the ticks
+                            callback: function(value, index, values) {
+                                return value+'s';
+                            }
+                        }
+                    }]
+                  }
                 }
             })
         }
@@ -100,15 +191,15 @@ export default class Chart extends Component{
             return (
                 <div>
                 <Card>
-                    <div className="card-header">Voting Power</div>
+                    <div className="card-header">Block Time History</div>
                     <CardBody>
-                    <Line data={this.state.vpData} />
+                    <Line data={this.state.timeData} options={this.state.optionsTime}/>
                     </CardBody>
                 </Card>
                 <Card>
-                    <div className="card-header">Block Time</div>
+                    <div className="card-header">Voting Power History</div>
                     <CardBody>
-                    <Line data={this.state.timeData} />
+                    <Line data={this.state.vpData}  options={this.state.optionsVP}/>
                     </CardBody>
                 </Card>
                 </div>
