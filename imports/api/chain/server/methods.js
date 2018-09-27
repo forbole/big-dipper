@@ -14,7 +14,7 @@ Meteor.methods({
             let roundState = consensus.round_state['height/round/step'].split('/');
             let height = roundState[0];
             let round = roundState[1];
-            let votedPower = parseFloat(consensus.round_state.height_vote_set[round].prevotes_bit_array.split(" ")[3])*100;
+            let votedPower = Math.round(parseFloat(consensus.round_state.height_vote_set[round].prevotes_bit_array.split(" ")[3])*100);
 
             Chain.update({chainId:Meteor.settings.public.chainId}, {$set:{votingHeight:height, votedPower:votedPower}});
             // console.log(votingPower);
