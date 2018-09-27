@@ -18,7 +18,7 @@ export default class ChainStatus extends React.Component {
                     <Col md="3">
                         <Card body>
                             <CardTitle>Latest Block Height</CardTitle>
-                            <CardText><span className="display-4 value text-primary">{this.props.status.latestBlockHeight}</span>{moment(this.props.status.latestBlockTime).format("D MMM YYYY hh:mm:ssa Z")}</CardText>   
+                            <CardText><span className="display-4 value text-primary">{this.props.status.latestBlockHeight}</span>{moment.utc(this.props.status.latestBlockTime).format("D MMM YYYY hh:mm:ssa z")}</CardText>   
                         </Card>
                     </Col>
                     <Col md="3">

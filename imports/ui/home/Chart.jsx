@@ -48,7 +48,7 @@ export default class Chart extends Component{
             let votingPower = [];
             let validators = [];
             for (let i in this.props.history){
-                dates.push(moment.utc(this.props.history[i].time).toString());
+                dates.push(moment.utc(this.props.history[i].time).format("D MMM YYYY, h:mm:ssa z"));
                 heights.push(this.props.history[i].height);
                 blockTime.push((this.props.history[i].averageBlockTime/1000).toFixed(2));
                 timeDiff.push((this.props.history[i].timeDiff/1000).toFixed(2));

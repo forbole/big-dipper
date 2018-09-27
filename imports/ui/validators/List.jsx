@@ -5,7 +5,7 @@ import moment from 'moment';
 
 const ValidatorRow = (props) => {
     let moniker = (props.validator.description.moniker)?props.validator.description.moniker:props.validator.address;
-    return <tr><th scope="row" className="d-none d-sm-block">{props.index+1}</th><td><Link to="#">{moniker}</Link></td><td>{props.validator.voting_power}</td><td><Progress animated value={props.validator.uptime}>{props.validator.uptime}%</Progress></td><td>{(props.validator.lastSeen)?moment(props.validator.lastSeen).format("D MMM YYYY, h:mm:ssa Z"):''}</td></tr>
+    return <tr><th scope="row" className="d-none d-sm-block">{props.index+1}</th><td><Link to="#">{moniker}</Link></td><td>{props.validator.voting_power}</td><td><Progress animated value={props.validator.uptime}>{props.validator.uptime}%</Progress></td><td>{(props.validator.lastSeen)?moment.utc(props.validator.lastSeen).format("D MMM YYYY, h:mm:ssa z"):''}</td></tr>
 }
 
 export default class List extends Component{
