@@ -46,14 +46,14 @@ Meteor.startup(function(){
         if (result){
             timerConsensus = Meteor.setInterval(function(){
                 getConsensusState();
-            }, 1000);
+            }, Meteor.settings.params.conensusInterval);
             timerBlocks = Meteor.setInterval(function(){
                 updateBlock();
-            }, Meteor.settings.params.interval);
+            }, Meteor.settings.params.blockInterval);
 
             timerChain = Meteor.setInterval(function(){
                 updateChainStatus();
-            }, 1500);
+            }, Meteor.settings.params.statusInterval);
         }
     })
     
