@@ -3,7 +3,7 @@ import { HTTP } from 'meteor/http';
 
 import { Blockscon } from '/imports/api/blocks/blocks.js';
 import { Chain } from '/imports/api/chain/chain.js';
-import { ValidatorSets } from '/imports/api/validator-sets/validator-sets.js';
+// import { ValidatorSets } from '/imports/api/validator-sets/validator-sets.js';
 import { Validators } from '/imports/api/validators/validators.js';
 import { ValidatorRecords, Analytics} from '/imports/api/records/records.js';
 
@@ -52,6 +52,10 @@ Meteor.methods({
 
                 console.log(url);
                 try{
+                    const bulkValidators = Validators.rawCollection().initializeUnorderedBulkOp();
+                    const bulkValidatorRecords = ValidatorRecords.rawCollection().initializeUnorderedBulkOp();
+                    // const bulkAnalytics = Analytics.rawCollection().initializeUnorderedBulkOp();
+
                     let response = HTTP.get(url);
                     if (response.statusCode == 200){
                         let block = JSON.parse(response.content);
@@ -106,28 +110,25 @@ Meteor.methods({
                                 }
                             }
 
-                            var startTime = new Date();
-
                             if (record.exists){
                                 if (uptime < 100){
                                     uptime++;                                           
                                 }
-                                Validators.update({address:existingValidators[i].address}, {$set:{uptime:uptime, lastSeen:blockData.time}});
+                                bulkValidators.find({address:existingValidators[i].address}).updateOne({$set:{uptime:uptime, lastSeen:blockData.time}});
+                                //Validators.update({address:existingValidators[i].address}, {$set:{uptime:uptime, lastSeen:blockData.time}});
                             }
                             else{
                                 if (uptime > 0){
                                     uptime--;
                                 }
-                                Validators.update({address:existingValidators[i].address}, {$set:{uptime:uptime}});
+                                bulkValidators.find({address:existingValidators[i].address}).updateOne({$set:{uptime:uptime}});
+                                // Validators.update({address:existingValidators[i].address}, {$set:{uptime:uptime}});
                             }
 
-                            ValidatorRecords.update({height:height,address:record.address},record,{upsert:true});
-
-                            var endTime = new Date();
-                            console.log("This block precommit time used: "+((endTime - startTime)/1000)+"seconds.");
-                            
+                            bulkValidatorRecords.find({height:height,address:record.address}).upsert().updateOne(record);
+                            // ValidatorRecords.update({height:height,address:record.address},record);                            
                         }
-                        
+
                         analyticsData.height = height;
         
                         // update chain status
@@ -135,7 +136,7 @@ Meteor.methods({
                         response = HTTP.get(url);
                         // console.log(url);
                         let validators = JSON.parse(response.content);
-                        ValidatorSets.insert(validators.result);
+                        // ValidatorSets.insert(validators.result);
                         let chainStatus = Chain.findOne({chainId:block.block_meta.header.chain_id});
                         // console.log(chainStatus);
                         let lastSyncedTime = chainStatus.lastSyncedTime;
@@ -192,12 +193,14 @@ Meteor.methods({
                                     }
 
                                     // console.log(validator);
-                                    Validators.update({pub_key: validator.pub_key}, {$set:validator}, {upsert:true});
+                                    bulkValidators.find({pub_key: validator.pub_key}).upsert().updateOne({$set:validator});
+                                    // Validators.update({pub_key: validator.pub_key}, {$set:validator}, {upsert:true});
                                 });
                             }
                             else{
                                 // we can check if the voting power has changed here.
-                                Validators.update({address: validator.address}, {$set:validator});
+                                bulkValidators.find({address: validator.address}).updateOne({$set:validator});
+                                // Validators.update({address: validator.address}, {$set:validator});
                             }
 
                             analyticsData.voting_power += validator.voting_power;
@@ -205,6 +208,10 @@ Meteor.methods({
                     
                         // record for analytics
                         Analytics.update({height:height},analyticsData,{upsert:true});
+
+                        bulkValidators.execute();
+                        bulkValidatorRecords.execute();
+                        // bulkAnalytics.execute();
                     }                    
                 }
                 catch (e){
