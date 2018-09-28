@@ -46,7 +46,7 @@ Meteor.startup(function(){
         if (result){
             timerConsensus = Meteor.setInterval(function(){
                 getConsensusState();
-            }, Meteor.settings.params.conensusInterval);
+            }, Meteor.settings.params.consensusInterval);
             timerBlocks = Meteor.setInterval(function(){
                 updateBlock();
             }, Meteor.settings.params.blockInterval);

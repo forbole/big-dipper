@@ -91,31 +91,44 @@ Meteor.methods({
                                 voting_power: existingValidators[i].voting_power
                             }
                             let uptime = 0;
+                            if (typeof existingValidators[i].uptime !== 'undefined'){
+                                uptime = existingValidators[i].uptime;
+                            }
+
+                            // let precommitsExists = false;
                             for (j in precommits){
                                 if (precommits[j] != null){
                                     if (existingValidators[i].address == precommits[j].validator_address){
                                         record.exists = true;
                                         precommits.splice(j,1);
-                                        if (typeof existingValidators[i].uptime !== 'undefined'){
-                                            uptime = existingValidators[i].uptime;
-                                            if (uptime < 100){
-                                                uptime++;
-                                                
-                                            }
+
+                                        if (uptime < 100){
+                                            uptime++;
+                                            
                                         }
-                                        
-                                        Validators.update({address:existingValidators[i].address}, {$set:{uptime:uptime, lastSeen:blockData.time}});
+
+                                        // precommitsExists = true;
+                                        // Validators.update({address:existingValidators[i].address}, {$set:{uptime:uptime, lastSeen:blockData.time}});
                                         break;
                                     }
-                                    else{
-                                        if (typeof existingValidators[i].uptime !== 'undefined'){
-                                            if (uptime > 0){
-                                                uptime--;
-                                            }
-                                        }
-                                        Validators.update({address:existingValidators[i].address}, {$set:{uptime:uptime}});
-                                    }
+
+                                    // if not break the loop, the validator is not in the precommits array
+                                    // if (typeof existingValidators[i].uptime !== 'undefined'){
+                                    //     uptime = existingValidators[i].uptime;
+                                    //     if (uptime > 0){
+                                            
+                                    //     }
+                                    // }
+                                    
                                 }
+                            }
+
+                            if (record.exists){
+                                Validators.update({address:existingValidators[i].address}, {$set:{uptime:uptime, lastSeen:blockData.time}});
+                            }
+                            else{
+                                uptime--;
+                                Validators.update({address:existingValidators[i].address}, {$set:{uptime:uptime}});
                             }
 
                             ValidatorRecords.update({height:height,address:record.address},record,{upsert:true});
@@ -127,6 +140,7 @@ Meteor.methods({
                         // update chain status
                         url = RPC+'/validators?height='+height;
                         response = HTTP.get(url);
+                        console.log(url);
                         let validators = JSON.parse(response.content);
                         ValidatorSets.insert(validators.result);
                         let chainStatus = Chain.findOne({chainId:block.block_meta.header.chain_id});
@@ -154,6 +168,7 @@ Meteor.methods({
                         }
                         url = LCD+'/stake/validators';
                         response = HTTP.get(url);
+                        console.log(url);
                         let validatorSet = JSON.parse(response.content);
                     
                         analyticsData.voting_power = 0;
