@@ -140,7 +140,7 @@ Meteor.methods({
                         // update chain status
                         url = RPC+'/validators?height='+height;
                         response = HTTP.get(url);
-                        console.log(url);
+                        // console.log(url);
                         let validators = JSON.parse(response.content);
                         ValidatorSets.insert(validators.result);
                         let chainStatus = Chain.findOne({chainId:block.block_meta.header.chain_id});
@@ -168,7 +168,7 @@ Meteor.methods({
                         }
                         url = LCD+'/stake/validators';
                         response = HTTP.get(url);
-                        console.log(url);
+                        // console.log(url);
                         let validatorSet = JSON.parse(response.content);
                     
                         analyticsData.voting_power = 0;
