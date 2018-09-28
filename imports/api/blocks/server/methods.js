@@ -31,6 +31,7 @@ Meteor.methods({
     'blocks.blocksUpdate': function() {
         if (SYNCING)
             return "Syncing...";
+        else console.log("start to sync");
         // Meteor.clearInterval(Meteor.timerHandle);
         // get the latest height
         let until = Meteor.call('blocks.getLatestHeight');
@@ -43,6 +44,7 @@ Meteor.methods({
         if (until > curr) {
             SYNCING = true;
             for (let height = curr+1 ; height <= until ; height++) {
+                let startBlockTime = new Date();
                 // add timeout here? and outside this loop (for catched up and keep fetching)?
                 this.unblock();
                 let url = RPC+'/block?height=' + height;
@@ -74,14 +76,13 @@ Meteor.methods({
                             analyticsData.precommits = precommits.length;
                             // record for analytics
                             // PrecommitRecords.insert({height:height, precommits:precommits.length});
-                        }
-
-                        
+                        }                      
                         
                         Blockscon.update({height:height},blockData,{upsert:true});
                         
                         // store valdiators exist records
                         let existingValidators = Validators.find({address:{$exists:true}}).fetch();
+                        
                         
                         for (i in existingValidators){
                             let record = {
@@ -94,47 +95,39 @@ Meteor.methods({
                             if (typeof existingValidators[i].uptime !== 'undefined'){
                                 uptime = existingValidators[i].uptime;
                             }
-
                             // let precommitsExists = false;
                             for (j in precommits){
                                 if (precommits[j] != null){
                                     if (existingValidators[i].address == precommits[j].validator_address){
                                         record.exists = true;
-                                        precommits.splice(j,1);
-
-                                        if (uptime < 100){
-                                            uptime++;
-                                            
-                                        }
-
-                                        // precommitsExists = true;
-                                        // Validators.update({address:existingValidators[i].address}, {$set:{uptime:uptime, lastSeen:blockData.time}});
+                                        precommits.splice(j,1);                                        
                                         break;
                                     }
-
-                                    // if not break the loop, the validator is not in the precommits array
-                                    // if (typeof existingValidators[i].uptime !== 'undefined'){
-                                    //     uptime = existingValidators[i].uptime;
-                                    //     if (uptime > 0){
-                                            
-                                    //     }
-                                    // }
-                                    
                                 }
                             }
 
+                            var startTime = new Date();
+
                             if (record.exists){
+                                if (uptime < 100){
+                                    uptime++;                                           
+                                }
                                 Validators.update({address:existingValidators[i].address}, {$set:{uptime:uptime, lastSeen:blockData.time}});
                             }
                             else{
-                                uptime--;
+                                if (uptime > 0){
+                                    uptime--;
+                                }
                                 Validators.update({address:existingValidators[i].address}, {$set:{uptime:uptime}});
                             }
 
                             ValidatorRecords.update({height:height,address:record.address},record,{upsert:true});
+
+                            var endTime = new Date();
+                            console.log("This block precommit time used: "+((endTime - startTime)/1000)+"seconds.");
                             
                         }
-
+                        
                         analyticsData.height = height;
         
                         // update chain status
@@ -175,6 +168,7 @@ Meteor.methods({
                         for (v in validators.result.validators){
                             // Validators.insert(validators.result.validators[v]);
                             let validator = validators.result.validators[v];
+                            validator.voting_power = parseInt(validator.voting_power);
 
                             let valExist = Validators.findOne({address:validator.address});
                             if (!valExist){
@@ -201,8 +195,12 @@ Meteor.methods({
                                     Validators.update({pub_key: validator.pub_key}, {$set:validator}, {upsert:true});
                                 });
                             }
+                            else{
+                                // we can check if the voting power has changed here.
+                                Validators.update({address: validator.address}, {$set:validator});
+                            }
 
-                            analyticsData.voting_power += parseInt(validator.voting_power);
+                            analyticsData.voting_power += validator.voting_power;
                         }
                     
                         // record for analytics
@@ -214,6 +212,8 @@ Meteor.methods({
                     SYNCING = false;
                     return "Stopped";
                 }
+                let endBlockTime = new Date();
+                console.log("This block used: "+((endBlockTime-startBlockTime)/1000)+"seconds.");
             }
             SYNCING = false;
         }

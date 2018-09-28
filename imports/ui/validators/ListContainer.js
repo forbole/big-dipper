@@ -6,7 +6,7 @@ import List from './List.jsx';
 export default ValidatorListContainer = withTracker((props) => {
     const validatorsHandle = Meteor.subscribe('validators.all');
     const loading = !validatorsHandle.ready();
-    const validators = Validators.find({revoked:props.revoked}).fetch();
+    const validators = Validators.find({revoked:props.revoked},{sort:{voting_power:-1}}).fetch();
     const validatorsExist = !loading && !!validators;
     // console.log(props.state.limit);
     return {
