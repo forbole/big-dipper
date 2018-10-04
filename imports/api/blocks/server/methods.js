@@ -56,6 +56,7 @@ Meteor.methods({
                     const bulkValidatorRecords = ValidatorRecords.rawCollection().initializeUnorderedBulkOp();
                     // const bulkAnalytics = Analytics.rawCollection().initializeUnorderedBulkOp();
 
+                    let startGetHeightTime = new Date();
                     let response = HTTP.get(url);
                     if (response.statusCode == 200){
                         let block = JSON.parse(response.content);
@@ -81,8 +82,10 @@ Meteor.methods({
                             // record for analytics
                             // PrecommitRecords.insert({height:height, precommits:precommits.length});
                         }                      
-                        
+                        let startBlockInsertTime = new Date();
                         Blockscon.insert(blockData);
+                        let endBlockInsertTime = new Date();
+                        console.log("Block insert time: "+((endBlockInsertTime-startBlockInsertTime)/1000)+"seconds.");
                         
                         // store valdiators exist records
                         let existingValidators = Validators.find({address:{$exists:true}}).fetch();
@@ -131,6 +134,11 @@ Meteor.methods({
 
                         analyticsData.height = height;
         
+                        let endGetHeightTime = new Date();
+                        console.log("Get height time: "+((endGetHeightTime-startGetHeightTime)/1000)+"seconds.");
+
+
+                        let startGetValidatorsTime = new Date();
                         // update chain status
                         url = RPC+'/validators?height='+height;
                         response = HTTP.get(url);
@@ -149,6 +157,9 @@ Meteor.methods({
                             blockTime = (chainStatus.blockTime * (blockData.height - 1) + timeDiff) / blockData.height;
                         }
 
+                        let endGetValidatorsTime = new Date();
+                        console.log("Get height validators time: "+((endGetValidatorsTime-startGetValidatorsTime)/1000)+"seconds.");
+
                         Chain.update({chainId:block.block_meta.header.chain_id}, {$set:{lastSyncedTime:blockData.time, blockTime:blockTime}});
 
                         analyticsData.averageBlockTime = blockTime;
@@ -160,6 +171,8 @@ Meteor.methods({
                         if (height == 1){
                             Validators.remove({});
                         }
+
+                        let startFindValidatorsNameTime = new Date();
                         url = LCD+'/stake/validators';
                         response = HTTP.get(url);
                         // console.log(url);
@@ -205,9 +218,15 @@ Meteor.methods({
 
                             analyticsData.voting_power += validator.voting_power;
                         }
+
+                        let endFindValidatorsNameTime = new Date();
+                        console.log("Get validators name time: "+((endFindValidatorsNameTime-startFindValidatorsNameTime)/1000)+"seconds.");
                     
                         // record for analytics
+                        let startAnayticsInsertTime = new Date();
                         Analytics.insert(analyticsData);
+                        let endAnalyticsInsertTime = new Date();
+                        console.log("Analytics insert time: "+((endAnalyticsInsertTime-startAnayticsInsertTime)/1000)+"seconds.");
 
                         let startVUpTime = new Date();
                         bulkValidators.execute();
@@ -218,7 +237,7 @@ Meteor.methods({
                         bulkValidatorRecords.execute();
                         let endVRTime = new Date();
                         console.log("Validator records update time: "+((endVRTime-startVRTime)/1000)+"seconds.");
-                        
+
                         // bulkAnalytics.execute();
                     }                    
                 }
