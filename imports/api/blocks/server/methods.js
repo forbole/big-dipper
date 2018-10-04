@@ -100,7 +100,7 @@ Meteor.methods({
                             }
                             let uptime = 0;
                             if (typeof existingValidators[i].uptime !== 'undefined'){
-                                uptime = existingValidators[i].uptime--;
+                                uptime = existingValidators[i].uptime-1;
                             }
                             // let precommitsExists = false;
                             for (j in precommits){
