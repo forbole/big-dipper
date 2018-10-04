@@ -100,7 +100,7 @@ Meteor.methods({
                             }
                             let uptime = 0;
                             if (typeof existingValidators[i].uptime !== 'undefined'){
-                                uptime = existingValidators[i].uptime;
+                                uptime = existingValidators[i].uptime--;
                             }
                             // let precommitsExists = false;
                             for (j in precommits){
@@ -114,16 +114,16 @@ Meteor.methods({
                             }
 
                             if (record.exists){
-                                if (uptime < 100){
+                                if (uptime < Meteor.settings.public.uptimeWindow){
                                     uptime++;                                           
                                 }
                                 bulkValidators.find({address:existingValidators[i].address}).updateOne({$set:{uptime:uptime, lastSeen:blockData.time}});
                                 //Validators.update({address:existingValidators[i].address}, {$set:{uptime:uptime, lastSeen:blockData.time}});
                             }
                             else{
-                                if (uptime > 0){
-                                    uptime--;
-                                }
+                                // if (uptime > 0){
+                                //     uptime--;
+                                // }
                                 bulkValidators.find({address:existingValidators[i].address}).updateOne({$set:{uptime:uptime}});
                                 // Validators.update({address:existingValidators[i].address}, {$set:{uptime:uptime}});
                             }

@@ -2,7 +2,8 @@
     "public":{
         "chainName": "Cosmos Testnet",
         "chainId": "gaia-8001",
-        "slashingWindow": 10000
+        "slashingWindow": 10000,
+        "uptimeWindow": 750
     },
     "remote":{
         "rpc":"https://gaia-seeds.interblock.io",
@@ -18,6 +19,6 @@
         "blockInterval": 15000,
         "consensusInterval": 1000,
         "statusInterval":7500,
-        "uptimeWindow": 750
+        "signingInfoInterval": 1800000
     }
 }
