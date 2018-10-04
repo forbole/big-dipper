@@ -13,7 +13,11 @@
         "gaiadebug": "/path/to/gaiadebug"
     },
     "params":{
+        "startHeight": 400000,
         "defaultBlockTime": 5000,
-        "interval": 10000
+        "blockInterval": 15000,
+        "consensusInterval": 1000,
+        "statusInterval":7500,
+        "uptimeWindow": 750
     }
 }
