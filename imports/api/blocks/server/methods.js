@@ -124,6 +124,9 @@ Meteor.methods({
                                 // if (uptime > 0){
                                 //     uptime--;
                                 // }
+                                if (uptime < 0){
+                                    uptime = 0;
+                                }
                                 bulkValidators.find({address:existingValidators[i].address}).updateOne({$set:{uptime:uptime}});
                                 // Validators.update({address:existingValidators[i].address}, {$set:{uptime:uptime}});
                             }
