@@ -41,7 +41,7 @@ export default class List extends Component{
                             <th className="d-none d-sm-block counter">&nbsp;</th>
                             <th className="moniker"><i className="material-icons">perm_contact_calendar</i> <span className="d-none d-sm-inline">Moniker</span></th>
                             <th className="voting-power"><i className="material-icons">power</i> <span className="d-none d-sm-inline">Voting Power</span></th>
-                            <th className="uptime"><i className="material-icons">thumb_up</i> <span className="d-none d-sm-inline">Uptime (last {Meteor.settings.public.uptimeWindow} blocks)</span></th>
+                            <th className="uptime"><i className="material-icons">flash_on</i> <span className="d-none d-sm-inline">Uptime (last {Meteor.settings.public.uptimeWindow} blocks)</span></th>
                             <th className="last-seen"><i className="material-icons">access_time</i> <span className="d-none d-sm-inline">Last Seen</span></th>
                         </tr>
                     </thead>

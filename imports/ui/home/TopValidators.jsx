@@ -18,8 +18,8 @@ export default class TopValidators extends Component{
             validators.splice(10, validators.length-10);
             // console.log(validators);
             self.setState({
-                validators: validators.map((validator) => {
-                    return <tr><td>{validator.description.moniker}</td><td><Progress animated value={validator.uptimePercent()}>{validator.uptimePercent()}%</Progress></td><td>{validator.voting_power}</td></tr>
+                validators: validators.map((validator, i ) => {
+                    return <tr key={i}><td>{validator.description.moniker}</td><td><Progress animated value={validator.uptimePercent()}>{validator.uptimePercent()}%</Progress></td><td>{validator.voting_power}</td></tr>
                 })
             })
         },5000);
@@ -51,7 +51,7 @@ export default class TopValidators extends Component{
                 <div className="card-header">Random Validators</div>
                 <CardBody>
                     <Table striped className="random-validators">
-                        <tr><th className="moniker">Moniker</th><th className="uptime">Uptime</th><th className="voting-power">Voting Power</th></tr>
+                        <tr><th className="moniker"><i className="material-icons">perm_contact_calendar</i> <span className="d-none d-sm-inline">Moniker</span></th><th className="uptime"><i className="material-icons">thumb_up</i> <span className="d-none d-sm-inline">Uptime</span></th><th className="voting-power"><i className="material-icons">flash_on</i> <span className="d-none d-sm-inline">Voting Power</span></th></tr>
                         {this.state.validators}
                     </Table>
                 </CardBody>
