@@ -82,7 +82,7 @@ Meteor.methods({
                             // PrecommitRecords.insert({height:height, precommits:precommits.length});
                         }                      
                         
-                        Blockscon.update({height:height},blockData,{upsert:true});
+                        Blockscon.insert(blockData);
                         
                         // store valdiators exist records
                         let existingValidators = Validators.find({address:{$exists:true}}).fetch();
@@ -125,7 +125,7 @@ Meteor.methods({
                                 // Validators.update({address:existingValidators[i].address}, {$set:{uptime:uptime}});
                             }
 
-                            bulkValidatorRecords.find({height:height,address:record.address}).upsert().updateOne(record);
+                            bulkValidatorRecords.insert(record);
                             // ValidatorRecords.update({height:height,address:record.address},record);                            
                         }
 
@@ -207,10 +207,18 @@ Meteor.methods({
                         }
                     
                         // record for analytics
-                        Analytics.update({height:height},analyticsData,{upsert:true});
+                        Analytics.insert(analyticsData);
 
+                        let startVUpTime = new Date();
                         bulkValidators.execute();
+                        let endVUpTime = new Date();
+                        console.log("Validator update time: "+((endVUpTime-startVUpTime)/1000)+"seconds.");
+
+                        let startVRTime = new Date();
                         bulkValidatorRecords.execute();
+                        let endVRTime = new Date();
+                        console.log("Validator records update time: "+((endVRTime-startVRTime)/1000)+"seconds.");
+                        
                         // bulkAnalytics.execute();
                     }                    
                 }
