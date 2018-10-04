@@ -2,6 +2,7 @@
     "public":{
         "chainName": "Cosmos Testnet",
         "chainId": "gaia-8001",
+        "gtm": "GTM-54321A",
         "slashingWindow": 10000,
         "uptimeWindow": 750
     },

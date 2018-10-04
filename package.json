@@ -13,9 +13,11 @@
     "meteor-node-stubs": "^0.4.1",
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.21",
+    "prop-types": "^15.6.2",
     "react": "^16.5.2",
     "react-chartjs-2": "^2.7.4",
     "react-dom": "^16.5.2",
+    "react-google-tag-manager": "^2.2.1",
     "react-router-dom": "^4.3.1",
     "react-sidebar": "^3.0.2",
     "reactstrap": "^6.4.0"

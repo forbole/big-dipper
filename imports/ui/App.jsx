@@ -1,6 +1,7 @@
 
 import React, { Component } from 'react'; 
-import { Meteor } from 'meteor/meteor';
+import GoogleTagManager from '/imports/ui/components/GoogleTagManager.jsx';
+// import { Meteor } from 'meteor/meteor';
 import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom'
 // import { render } from 'react-dom';
 import { Container } from 'reactstrap';
@@ -26,6 +27,7 @@ class App extends Component {
         return(
             <Router>
                 <div>
+                    {(Meteor.settings.public.gtm)?<GoogleTagManager gtmId={Meteor.settings.public.gtm} />:''}
                     <Header />
                     <Container fluid id="main">
                         <Switch>
