@@ -38,18 +38,22 @@ export default class Chart extends Component{
                         {
                             label: 'Voting Power',
                             fill: false,
+                            lineTension: 0,
                             yAxisID: 'VotingPower',
                             pointRadius: 1,
                             borderColor: 'rgba(255,152,0,0.5)',
+                            borderJoinStyle: 'round',
                             backgroundColor: 'rgba(255,193,101,0.5)',
                             data: votingPower
                         },
                         {
                             label: 'No. of Validators',
                             fill: false,
+                            lineTension: 0,
                             yAxisID: 'Validators',
                             pointRadius: 1,
                             borderColor: 'rgba(189,28,8,0.5)',
+                            borderJoinStyle: 'round',
                             backgroundColor: 'rgba(255,103,109,0.5)',
                             data: validators,
                         }
@@ -61,9 +65,11 @@ export default class Chart extends Component{
                         {
                             label: 'Average Block Time',
                             fill: false,
+                            lineTension: 0,
                             yAxisID: 'Time',
                             pointRadius: 1,
                             borderColor: 'rgba(156,39,176,0.5)',
+                            borderJoinStyle: 'round',
                             backgroundColor: 'rgba(229,112,249,0.5)',
                             data: blockTime,
                             tooltips: {
@@ -83,9 +89,11 @@ export default class Chart extends Component{
                         {
                             label: 'Block Interveral',
                             fill: false,
+                            lineTension: 0,
                             yAxisID: 'Time',
                             pointRadius: 1,
                             borderColor: 'rgba(189,28,8,0.5)',
+                            borderJoinStyle: 'round',
                             backgroundColor: 'rgba(255,103,109,0.5)',
                             data: timeDiff,
                             tooltips: {
@@ -105,9 +113,11 @@ export default class Chart extends Component{
                         {
                             label: 'No. of Validators',
                             fill: false,
+                            lineTension: 0,
                             yAxisID: 'Validators',
                             pointRadius: 1,
                             borderColor: 'rgba(255,152,0,0.5)',
+                            borderJoinStyle: 'round',
                             backgroundColor: 'rgba(255,193,101,0.5)',
                             data: validators
                         }
@@ -124,10 +134,16 @@ export default class Chart extends Component{
                       id: 'VotingPower',
                       type: 'linear',
                       position: 'left',
+                      ticks: {
+                        stepSize: 1
+                      }
                     }, {
                       id: 'Validators',
                       type: 'linear',
                       position: 'right',
+                      ticks: {
+                        stepSize: 1
+                      }
                     }]
                   }
                 },
@@ -142,6 +158,9 @@ export default class Chart extends Component{
                       id: 'Validators',
                       type: 'linear',
                       position: 'right',
+                      ticks: {
+                        stepSize: 1
+                      }
                     }, {
                         id: 'Time',
                         type: 'linear',

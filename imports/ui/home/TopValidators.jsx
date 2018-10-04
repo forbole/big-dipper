@@ -51,8 +51,10 @@ export default class TopValidators extends Component{
                 <div className="card-header">Random Validators</div>
                 <CardBody>
                     <Table striped className="random-validators">
-                        <tr><th className="moniker"><i className="material-icons">perm_contact_calendar</i> <span className="d-none d-sm-inline">Moniker</span></th><th className="uptime"><i className="material-icons">thumb_up</i> <span className="d-none d-sm-inline">Uptime</span></th><th className="voting-power"><i className="material-icons">flash_on</i> <span className="d-none d-sm-inline">Voting Power</span></th></tr>
-                        {this.state.validators}
+                        <thead>
+                            <tr><th className="moniker"><i className="material-icons">perm_contact_calendar</i> <span className="d-none d-sm-inline">Moniker</span></th><th className="uptime"><i className="material-icons">thumb_up</i> <span className="d-none d-sm-inline">Uptime</span></th><th className="voting-power"><i className="material-icons">flash_on</i> <span className="d-none d-sm-inline">Voting Power</span></th></tr>
+                        </thead>
+                        <tbody>{this.state.validators}</tbody>
                     </Table>
                 </CardBody>
             </Card>;
