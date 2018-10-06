@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
+import { Promise } from "meteor/promise";
 
 import { Blockscon } from '/imports/api/blocks/blocks.js';
 import { Chain } from '/imports/api/chain/chain.js';
@@ -8,6 +9,28 @@ import { Validators } from '/imports/api/validators/validators.js';
 import { ValidatorRecords, Analytics} from '/imports/api/records/records.js';
 
 Meteor.methods({
+    'blocks.findUpTime'(address){
+        let collection = ValidatorRecords.rawCollection();
+        // let aggregateQuery = Meteor.wrapAsync(collection.aggregate, collection);
+        var pipeline = [
+            {$match:{"address":address}}, 
+            {$sort:{"height":-1}},
+            {$limit:(Meteor.settings.public.uptimeWindow-1)},
+            {$unwind: "$_id"},
+            {$group:{
+                "_id": "$address",
+                "uptime": {
+                    "$sum":{
+                        $cond: [{$eq: ['$exists', true]}, 1, 0]
+                    }
+                }
+            }
+        }];
+        // let result = aggregateQuery(pipeline, { cursor: {} });
+        
+        return Promise.await(collection.aggregate(pipeline).toArray());
+        // return .aggregate()
+    },
     'blocks.getLatestHeight': function() {
         this.unblock();
         let url = RPC+'/status';
@@ -113,10 +136,23 @@ Meteor.methods({
                                 }
                             }
 
+
+                            // calculate the uptime based on the records stored in previous blocks
+
+                            let startAggTime = new Date();
+                            let numBlocks = Meteor.call('blocks.findUpTime', existingValidators[i].address);
+                            let endAggTime = new Date();
+                            console.log("Get aggregated uptime: "+((endAggTime-startAggTime)/1000)+"seconds.");
+                            if ((numBlocks[0] != null) && (numBlocks[0].uptime != null)){
+                                uptime = numBlocks[0].uptime;
+                            }
+                            // console.log("validator exists records");
+                            // console.log(numBlocks);
                             if (record.exists){
                                 if (uptime < Meteor.settings.public.uptimeWindow){
                                     uptime++;                                           
                                 }
+                                uptime = (uptime / Meteor.settings.public.uptimeWindow)*100;
                                 bulkValidators.find({address:existingValidators[i].address}).updateOne({$set:{uptime:uptime, lastSeen:blockData.time}});
                                 //Validators.update({address:existingValidators[i].address}, {$set:{uptime:uptime, lastSeen:blockData.time}});
                             }
@@ -124,9 +160,10 @@ Meteor.methods({
                                 // if (uptime > 0){
                                 //     uptime--;
                                 // }
-                                if (uptime < 0){
-                                    uptime = 0;
-                                }
+                                // if (uptime < 0){
+                                //     uptime = 0;
+                                // }
+                                uptime = (uptime / Meteor.settings.public.uptimeWindow)*100;
                                 bulkValidators.find({address:existingValidators[i].address}).updateOne({$set:{uptime:uptime}});
                                 // Validators.update({address:existingValidators[i].address}, {$set:{uptime:uptime}});
                             }
