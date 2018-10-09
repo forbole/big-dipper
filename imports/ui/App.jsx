@@ -15,6 +15,8 @@ import ValidatorRevoked from '/imports/ui/validators/ValidatorRevoked.jsx';
 import NotFound from '/imports/ui/pages/NotFound.jsx';
 
 import BlocksTable from '/imports/ui/blocks/BlocksTable.jsx';
+
+import { ToastContainer, toast } from 'react-toastify';
 // import './App.js'
 
 
@@ -30,6 +32,7 @@ class App extends Component {
                     {(Meteor.settings.public.gtm)?<GoogleTagManager gtmId={Meteor.settings.public.gtm} />:''}
                     <Header />
                     <Container fluid id="main">
+                        <ToastContainer />
                         <Switch>
                             <Route exact path="/" component={Home} />
                             <Route path="/blocks" component={BlocksTable} />

@@ -8,7 +8,8 @@
     },
     "remote":{
         "rpc":"https://gaia-seeds.interblock.io",
-        "lcd":"https://gaia-seeds.interblock.io:1317"
+        "lcd":"https://gaia-seeds.interblock.io:1317",
+        "ws":"wss://gaia-seeds.interblock.io/websocket"
     },
     "bin":{
         "gaiacli": "/path/to/gaiacli",
