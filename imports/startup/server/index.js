@@ -2,3 +2,4 @@
 
 import './command.js';
 import './register-api.js';
+import './websocket.js';

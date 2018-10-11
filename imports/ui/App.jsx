@@ -16,7 +16,7 @@ import NotFound from '/imports/ui/pages/NotFound.jsx';
 
 import BlocksTable from '/imports/ui/blocks/BlocksTable.jsx';
 
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 // import './App.js'
 
 
