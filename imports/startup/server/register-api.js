@@ -10,3 +10,6 @@ import '../../api/blocks/server/publications.js';
 import '../../api/validators/server/publications.js';
 
 import '../../api/records/server/publications.js';
+
+import '../../api/proposals/server/methods.js';
+import '../../api/proposals/server/publications.js';

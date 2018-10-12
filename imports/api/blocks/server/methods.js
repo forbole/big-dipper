@@ -139,10 +139,10 @@ Meteor.methods({
 
                             // calculate the uptime based on the records stored in previous blocks
 
-                            let startAggTime = new Date();
+                            // let startAggTime = new Date();
                             let numBlocks = Meteor.call('blocks.findUpTime', existingValidators[i].address);
-                            let endAggTime = new Date();
-                            console.log("Get aggregated uptime: "+((endAggTime-startAggTime)/1000)+"seconds.");
+                            // let endAggTime = new Date();
+                            // console.log("Get aggregated uptime: "+((endAggTime-startAggTime)/1000)+"seconds.");
                             if ((numBlocks[0] != null) && (numBlocks[0].uptime != null)){
                                 uptime = numBlocks[0].uptime;
                             }

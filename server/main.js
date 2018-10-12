@@ -10,6 +10,7 @@ LCD = Meteor.settings.remote.lcd;
 timerBlocks = 0;
 timerChain = 0;
 timerConsensus = 0;
+timerProposal = 0;
 
 updateChainStatus = () => {
     Meteor.call('chain.updateStatus', (error, result) => {
@@ -41,6 +42,17 @@ getConsensusState = () => {
     })
 }
 
+getProposals = () => {
+    Meteor.call('proposals.getProposals', (error, result) => {
+        if (error){
+            console.log("get porposal: "+ error);
+        }
+        if (result){
+            console.log("get proposal: "+result);
+        }
+    });
+}
+
 Meteor.startup(function(){
     Meteor.call('chain.updateStatus', function(error, result){
         if (result){
@@ -50,11 +62,12 @@ Meteor.startup(function(){
             timerBlocks = Meteor.setInterval(function(){
                 updateBlock();
             }, Meteor.settings.params.blockInterval);
-
             timerChain = Meteor.setInterval(function(){
                 updateChainStatus();
             }, Meteor.settings.params.statusInterval);
+            timerProposal = Meteor.setInterval(function(){
+                getProposals();
+            }, Meteor.settings.params.proposalInterval);
         }
     })
-    
 });
