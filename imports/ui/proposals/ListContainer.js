@@ -6,7 +6,7 @@ import List from './List.jsx';
 export default ProposalListContainer = withTracker((props) => {
     const proposalsHandle = Meteor.subscribe('proposals.list');
     const loading = !proposalsHandle.ready();
-    const proposals = Proposals.find({}).fetch();
+    const proposals = Proposals.find({}, {sort:{proposalId:-1}}).fetch();
     const proposalsExist = !loading && !!proposals;
     // console.log(props.state.limit);
     return {
