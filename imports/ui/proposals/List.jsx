@@ -20,7 +20,7 @@ const IconStatus = (status) => {
 const ProposalRow = (props) => {
     return <tr>
     <th className="d-none d-sm-table-cell counter">{props.proposal.proposalId}</th>
-    <td className="title"><Link to="#">{props.proposal.value.title}</Link></td>
+    <td className="title"><Link to={"/proposals/"+props.proposal.proposalId}>{props.proposal.value.title}</Link></td>
     <td className="status">{IconStatus(props.proposal.value.proposal_status)}<span className="d-none d-sm-inline"> {props.proposal.value.proposal_status}</span></td>
     <td className="submit-block">{props.proposal.value.submit_block}</td>
     <td className="voting-start">{(props.proposal.value.voting_start_block > 0)?props.proposal.value.voting_start_block:'Not started'}</td>

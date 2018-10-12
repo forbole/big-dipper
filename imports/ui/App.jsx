@@ -38,7 +38,7 @@ class App extends Component {
                             <Route exact path="/" component={Home} />
                             <Route path="/blocks" component={BlocksTable} />
                             <Route exact path="/validators" component={Validators} />
-                            <Route exact path="/proposals" component={Proposals} />
+                            <Route path="/proposals" component={Proposals} />
                             {/* <Route path="/validators/candidates" component={ValidatorCandidates} /> */}
                             <Route path="/validators/revoked" component={ValidatorRevoked} />
                             <Route component={NotFound} />
