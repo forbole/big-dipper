@@ -6,7 +6,7 @@
     "test": "meteor test --once --driver-package meteortesting:mocha"
   },
   "dependencies": {
-    "@babel/runtime": "7.0.0-beta.55",
+    "@babel/runtime": "^7.1.2",
     "chart.js": "^2.7.2",
     "fibers": "^3.0.0",
     "jquery": "^3.3.1",

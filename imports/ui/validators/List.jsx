@@ -6,7 +6,7 @@ import { Meteor } from 'meteor/meteor';
 
 const ValidatorRow = (props) => {
     let moniker = (props.validator.description.moniker)?props.validator.description.moniker:props.validator.address;
-    return <tr><th scope="row" className="d-none d-sm-block counter">{props.index+1}</th><td><Link to="#">{moniker}</Link></td><td>{props.validator.voting_power}</td><td className="uptime"><Progress animated value={props.validator.uptime}>{props.validator.uptime?props.validator.uptime.toFixed(2):0}%</Progress></td><td>{(props.validator.lastSeen)?moment.utc(props.validator.lastSeen).format("D MMM YYYY, h:mm:ssa z"):''}</td></tr>
+    return <tr><th scope="row" className="d-none d-sm-table-cell counter">{props.index+1}</th><td><Link to="#">{moniker}</Link></td><td>{props.validator.voting_power}</td><td className="uptime"><Progress animated value={props.validator.uptime}>{props.validator.uptime?props.validator.uptime.toFixed(2):0}%</Progress></td><td>{(props.validator.lastSeen)?moment.utc(props.validator.lastSeen).format("D MMM YYYY, h:mm:ssa z"):''}</td></tr>
 }
 
 export default class List extends Component{
@@ -38,7 +38,7 @@ export default class List extends Component{
                 <Table striped className="validator-list">
                     <thead>
                         <tr>
-                            <th className="d-none d-sm-block counter">&nbsp;</th>
+                            <th className="d-none d-sm-table-cell counter">&nbsp;</th>
                             <th className="moniker"><i className="material-icons">perm_contact_calendar</i> <span className="d-none d-sm-inline">Moniker</span></th>
                             <th className="voting-power"><i className="material-icons">power</i> <span className="d-none d-sm-inline">Voting Power</span></th>
                             <th className="uptime"><i className="material-icons">flash_on</i> <span className="d-none d-sm-inline">Uptime (last {Meteor.settings.public.uptimeWindow} blocks)</span></th>

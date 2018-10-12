@@ -12,9 +12,10 @@ import Home from '/imports/ui/home/Home.jsx';
 import Validators from '/imports/ui/validators/Validators.jsx';
 // import ValidatorCandidates from '/imports/ui/validators/ValidatorCandidates.jsx';
 import ValidatorRevoked from '/imports/ui/validators/ValidatorRevoked.jsx';
-import NotFound from '/imports/ui/pages/NotFound.jsx';
-
 import BlocksTable from '/imports/ui/blocks/BlocksTable.jsx';
+import Proposals from '/imports/ui/proposals/Proposals.jsx';
+
+import NotFound from '/imports/ui/pages/NotFound.jsx';
 
 import { ToastContainer } from 'react-toastify';
 // import './App.js'
@@ -37,6 +38,7 @@ class App extends Component {
                             <Route exact path="/" component={Home} />
                             <Route path="/blocks" component={BlocksTable} />
                             <Route exact path="/validators" component={Validators} />
+                            <Route exact path="/proposals" component={Proposals} />
                             {/* <Route path="/validators/candidates" component={ValidatorCandidates} /> */}
                             <Route path="/validators/revoked" component={ValidatorRevoked} />
                             <Route component={NotFound} />
