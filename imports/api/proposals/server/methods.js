@@ -12,6 +12,7 @@ Meteor.methods({
 
         // console.log(proposals);
 
+        let proposalIds = [];
         if (proposals.length > 0){
             // Proposals.upsert()
             const bulkProposals = Proposals.rawCollection().initializeUnorderedBulkOp();
@@ -19,9 +20,12 @@ Meteor.methods({
                 let proposal = proposals[i];
                 proposal.proposalId = parseInt(proposal.value.proposal_id);
                 bulkProposals.find({proposalId: proposal.proposalId}).upsert().updateOne({$set:proposal});
-                // console.log(proposal);
+                proposalIds.push(proposal.proposalId);
             }
+            bulkProposals.find({proposalId:{$nin:proposalIds}}).update({$set:{"value.proposal_status":"Removed"}});
             bulkProposals.execute();
         }
+
+
     }
 })

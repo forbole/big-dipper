@@ -8,6 +8,8 @@ const IconStatus = (status) => {
             return <i className="fas fa-check-circle text-success"></i>;
         case 'Rejected':
             return <i className="fas fa-times-circle text-danger"></i>;
+        case 'Removed':
+            return <i className="fas fa-trash-alt text-dark"></i>
         case 'DepositPeriod':
             return <i className="fas fa-battery-half text-warning"></i>;
         case 'VotingPeriod':
