@@ -68,14 +68,16 @@ div#main{
 
 table#block-table, 
 table.random-validators, 
-table.validator-list{
+table.validator-list,
+table.proposal-list {
     table-layout: fixed;
     width: 100%;
     white-space: nowrap;    
 }
 table#block-table td, 
 table.random-validators td,
-table.validator-list td{
+table.validator-list td,
+table.proposal-list td{
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -133,6 +135,10 @@ table.validator-list th.last-seen{
     width: 25%;
 }
 
+table.proposal-list th.status{
+    width: 15%;
+}
+
 th i.material-icons{
     vertical-align: middle;
 }
@@ -153,4 +159,22 @@ th i.material-icons{
     height: inherit !important;
     font-size: inherit !important;
     border: 1px solid #ddd !important;
+}
+
+.proposal{
+    padding: 1em;
+    margin-bottom: 1em;
+}
+
+.proposal .label, 
+.proposal .value {
+    padding: 0.3em;
+}
+
+.proposal .label{
+    font-weight: bold;
+}
+
+.proposal .tally-result i.fas{
+    min-width: 1.5em;
 }

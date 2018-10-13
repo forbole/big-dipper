@@ -1,30 +1,16 @@
 import React, { Component } from 'react';
 import { Table } from 'reactstrap';
 import { Link } from 'react-router-dom';
-
-const IconStatus = (status) => {
-    switch (status){
-        case 'Passed':
-            return <i className="fas fa-check-circle text-success"></i>;
-        case 'Rejected':
-            return <i className="fas fa-times-circle text-danger"></i>;
-        case 'Removed':
-            return <i className="fas fa-trash-alt text-dark"></i>
-        case 'DepositPeriod':
-            return <i className="fas fa-battery-half text-warning"></i>;
-        case 'VotingPeriod':
-            return <i className="fas fa-hand-paper text-info"></i>;
-    }
-}
+import { DenomSymbol, ProposalStatusIcon } from '../components/Icons.jsx';
 
 const ProposalRow = (props) => {
     return <tr>
     <th className="d-none d-sm-table-cell counter">{props.proposal.proposalId}</th>
     <td className="title"><Link to={"/proposals/"+props.proposal.proposalId}>{props.proposal.value.title}</Link></td>
-    <td className="status">{IconStatus(props.proposal.value.proposal_status)}<span className="d-none d-sm-inline"> {props.proposal.value.proposal_status}</span></td>
+    <td className="status"><ProposalStatusIcon status={props.proposal.value.proposal_status}/><span className="d-none d-sm-inline"> {props.proposal.value.proposal_status}</span></td>
     <td className="submit-block">{props.proposal.value.submit_block}</td>
     <td className="voting-start">{(props.proposal.value.voting_start_block > 0)?props.proposal.value.voting_start_block:'Not started'}</td>
-    <td className="deposit">{props.proposal.value.total_deposit[0].amount+" "+denomSymbol(props.proposal.value.total_deposit[0].denom)}</td>
+    <td className="deposit">{props.proposal.value.total_deposit[0].amount} <DenomSymbol denom={props.proposal.value.total_deposit[0].denom} /></td>
 </tr>
 }
 
