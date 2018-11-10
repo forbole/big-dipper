@@ -2,7 +2,7 @@
 Forbole Block Explorer for Cosmos
 
 ## Demo
-[Explore Cosmos Testnet (gaia-8001) with The Big Dipper](https://bigdipper.forbole.com)
+[Explore Cosmos Testnet (gaia-9001) with The Big Dipper](https://bigdipper.forbole.com)
 
 ## How to run The Big Dipper
 
