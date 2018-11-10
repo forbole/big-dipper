@@ -9,7 +9,7 @@ export default TopValidatorsContainer = withTracker(() => {
     const validatorsHandle = Meteor.subscribe('validators.all');
     const loading = (!validatorsHandle.ready() && !chainHandle.ready());
     const status = Chain.findOne({chainId:Meteor.settings.public.chainId});
-    const validators = Validators.find().fetch();
+    const validators = Validators.find({jailed:false}).fetch();
     const validatorsExist = !loading && !!validators && !!status;
     // console.log(props.state.limit);
     return {
