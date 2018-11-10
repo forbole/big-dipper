@@ -92,6 +92,7 @@ Meteor.methods({
                         blockData.transNum = block.block_meta.header.num_txs;
                         blockData.time = block.block.header.time;
                         blockData.lastBlockHash = block.block.header.last_block_id.hash;
+                        blockData.proposerAddress = block.block.header.proposer_address;
                         blockData.validators = [];
                         let precommits = block.block.last_commit.precommits;
                         if (precommits != null){
@@ -243,33 +244,48 @@ Meteor.methods({
                                     validator.consensus_pubkey = result.match(/cosmosvalconspub.*$/igm);
                                     validator.consensus_pubkey = validator.consensus_pubkey[0].trim();
 
-                                    for (val in validatorSet){
-                                        if (validatorSet[val].consensus_pubkey == validator.consensus_pubkey){
-                                            validator.jailed = validatorSet[val].jailed;
-                                            validator.status = validatorSet[val].status;
-                                            validator.tokens = validatorSet[val].tokens;
-                                            validator.delegator_shares = validatorSet[val].delegator_shares;
-                                            validator.description = validatorSet[val].description;
-                                            validator.bond_height = validatorSet[val].bond_height;
-                                            validator.bond_intra_tx_counter = validatorSet[val].bond_intra_tx_counter;
-                                            validator.unbonding_height = validatorSet[val].unbonding_height;
-                                            validator.unbonding_time = validatorSet[val].unbonding_time;
-                                            validator.commission = validatorSet[val].commission;
-                                            validatorSet.splice(val, 1);
-                                            break;
-                                        }
-                                    }
+                                    // for (val in validatorSet){
+                                    //     if (validatorSet[val].consensus_pubkey == validator.consensus_pubkey){
+                                    //         validator.jailed = validatorSet[val].jailed;
+                                    //         validator.status = validatorSet[val].status;
+                                    //         validator.tokens = validatorSet[val].tokens;
+                                    //         validator.delegator_shares = validatorSet[val].delegator_shares;
+                                    //         validator.description = validatorSet[val].description;
+                                    //         validator.bond_height = validatorSet[val].bond_height;
+                                    //         validator.bond_intra_tx_counter = validatorSet[val].bond_intra_tx_counter;
+                                    //         validator.unbonding_height = validatorSet[val].unbonding_height;
+                                    //         validator.unbonding_time = validatorSet[val].unbonding_time;
+                                    //         validator.commission = validatorSet[val].commission;
+                                    //         validatorSet.splice(val, 1);
+                                    //         break;
+                                    //     }
+                                    // }
 
                                     // console.log(validator);
-                                    bulkValidators.find({consensus_pubkey: validator.consensus_pubkey}).upsert().updateOne({$set:validator});
+                                    // bulkValidators.find({consensus_pubkey: validator.consensus_pubkey}).upsert().updateOne({$set:validator});
                                     // Validators.update({pub_key: validator.pub_key}, {$set:validator}, {upsert:true});
                                 });
                             }
-                            else{
-                                // we can check if the voting power has changed here.
-                                bulkValidators.find({address: validator.address}).updateOne({$set:validator});
-                                // Validators.update({address: validator.address}, {$set:validator});
+
+                            for (val in validatorSet){
+                                if (validatorSet[val].consensus_pubkey == validator.consensus_pubkey){
+                                    validator.jailed = validatorSet[val].jailed;
+                                    validator.status = validatorSet[val].status;
+                                    validator.tokens = validatorSet[val].tokens;
+                                    validator.delegator_shares = validatorSet[val].delegator_shares;
+                                    validator.description = validatorSet[val].description;
+                                    validator.bond_height = validatorSet[val].bond_height;
+                                    validator.bond_intra_tx_counter = validatorSet[val].bond_intra_tx_counter;
+                                    validator.unbonding_height = validatorSet[val].unbonding_height;
+                                    validator.unbonding_time = validatorSet[val].unbonding_time;
+                                    validator.commission = validatorSet[val].commission;
+                                    validatorSet.splice(val, 1);
+                                    break;
+                                }
                             }
+
+                            // we can check if the voting power has changed here.
+                            bulkValidators.find({address: validator.address}).upsert().updateOne({$set:validator});
 
                             analyticsData.voting_power += validator.voting_power;
                         }

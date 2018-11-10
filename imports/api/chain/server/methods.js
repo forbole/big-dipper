@@ -89,6 +89,7 @@ Meteor.methods({
             return chain.latestBlockHeight;
         }
         catch (e){
+            console.log(e);
             return "Error getting chain status.";
         }
     },
