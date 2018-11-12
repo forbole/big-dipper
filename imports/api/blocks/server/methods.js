@@ -324,6 +324,7 @@ Meteor.methods({
                 console.log("This block used: "+((endBlockTime-startBlockTime)/1000)+"seconds.");
             }
             SYNCING = false;
+            Chain.update({chainId:Meteor.settings.public.chainId}, {$set:{lastBlocksSyncedTime:new Date()}});
         }
         
         return until;
