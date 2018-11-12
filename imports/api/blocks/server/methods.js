@@ -228,8 +228,8 @@ Meteor.methods({
                             let validator = validators.result.validators[v];
                             validator.voting_power = parseInt(validator.voting_power);
 
-                            let valExist = Validators.findOne({address:validator.address});
-                            if (!valExist){
+                            // let valExist = Validators.findOne({address:validator.address});
+                            // if (!valExist){
                                 let command = Meteor.settings.bin.gaiadebug+" pubkey "+validator.pub_key.value;
                                 // console.log(command);
                                 Meteor.call('runCode', command, function(error, result){
@@ -244,6 +244,28 @@ Meteor.methods({
                                     validator.consensus_pubkey = result.match(/cosmosvalconspub.*$/igm);
                                     validator.consensus_pubkey = validator.consensus_pubkey[0].trim();
 
+                                    for (val in validatorSet){
+                                        console.log(validatorSet[val]);
+                                        // console.log(validator);
+                                        if (validatorSet[val].consensus_pubkey == validator.consensus_pubkey){
+                                            validator.jailed = validatorSet[val].jailed;
+                                            validator.status = validatorSet[val].status;
+                                            validator.tokens = validatorSet[val].tokens;
+                                            validator.delegator_shares = validatorSet[val].delegator_shares;
+                                            validator.description = validatorSet[val].description;
+                                            validator.bond_height = validatorSet[val].bond_height;
+                                            validator.bond_intra_tx_counter = validatorSet[val].bond_intra_tx_counter;
+                                            validator.unbonding_height = validatorSet[val].unbonding_height;
+                                            validator.unbonding_time = validatorSet[val].unbonding_time;
+                                            validator.commission = validatorSet[val].commission;
+                                            validatorSet.splice(val, 1);
+                                            break;
+                                        }
+                                    }
+        
+                                    // we can check if the voting power has changed here.
+                                    bulkValidators.find({address: validator.address}).upsert().updateOne({$set:validator});
+        
                                     // for (val in validatorSet){
                                     //     if (validatorSet[val].consensus_pubkey == validator.consensus_pubkey){
                                     //         validator.jailed = validatorSet[val].jailed;
@@ -265,27 +287,8 @@ Meteor.methods({
                                     // bulkValidators.find({consensus_pubkey: validator.consensus_pubkey}).upsert().updateOne({$set:validator});
                                     // Validators.update({pub_key: validator.pub_key}, {$set:validator}, {upsert:true});
                                 });
-                            }
+                            // }
 
-                            for (val in validatorSet){
-                                if (validatorSet[val].consensus_pubkey == validator.consensus_pubkey){
-                                    validator.jailed = validatorSet[val].jailed;
-                                    validator.status = validatorSet[val].status;
-                                    validator.tokens = validatorSet[val].tokens;
-                                    validator.delegator_shares = validatorSet[val].delegator_shares;
-                                    validator.description = validatorSet[val].description;
-                                    validator.bond_height = validatorSet[val].bond_height;
-                                    validator.bond_intra_tx_counter = validatorSet[val].bond_intra_tx_counter;
-                                    validator.unbonding_height = validatorSet[val].unbonding_height;
-                                    validator.unbonding_time = validatorSet[val].unbonding_time;
-                                    validator.commission = validatorSet[val].commission;
-                                    validatorSet.splice(val, 1);
-                                    break;
-                                }
-                            }
-
-                            // we can check if the voting power has changed here.
-                            bulkValidators.find({address: validator.address}).upsert().updateOne({$set:validator});
 
                             analyticsData.voting_power += validator.voting_power;
                         }
