@@ -37,7 +37,7 @@ export default class Consensus extends Component{
             return (
             <div>
                 {(this.state.chainStopped)?<Card body inverse color="danger">
-                        <span>The chain appears to be stopped for <em>{moment(this.props.consensus.lastSyncedTime).fromNow(true)}</em>! Feed me with new blocks!</span>             
+                        <span>The chain appears to be stopped for <em>{moment(this.props.consensus.lastSyncedTime).fromNow(true)}</em>! Feed me with new blocks 😭!</span>             
                 </Card>:''}
                 <Card className="status">
                     <div className="card-header">Consensus State</div>

@@ -54,8 +54,8 @@ getProposals = () => {
 }
 
 Meteor.startup(function(){
-    Meteor.call('chain.updateStatus', function(error, result){
-        if (result){
+    // Meteor.call('chain.updateStatus', function(error, result){
+        // if (result){
             timerConsensus = Meteor.setInterval(function(){
                 getConsensusState();
             }, Meteor.settings.params.consensusInterval);
@@ -68,6 +68,6 @@ Meteor.startup(function(){
             timerProposal = Meteor.setInterval(function(){
                 getProposals();
             }, Meteor.settings.params.proposalInterval);
-        }
-    })
+        // }
+    // })
 });
