@@ -14,6 +14,8 @@ import Validators from '/imports/ui/validators/Validators.jsx';
 import ValidatorRevoked from '/imports/ui/validators/ValidatorRevoked.jsx';
 import BlocksTable from '/imports/ui/blocks/BlocksTable.jsx';
 import Proposals from '/imports/ui/proposals/Proposals.jsx';
+import ValidatorDetails from '/imports/ui/validators/ValidatorDetails.jsx';
+
 
 import NotFound from '/imports/ui/pages/NotFound.jsx';
 
@@ -41,6 +43,7 @@ class App extends Component {
                             <Route path="/proposals" component={Proposals} />
                             {/* <Route path="/validators/candidates" component={ValidatorCandidates} /> */}
                             <Route path="/validators/revoked" component={ValidatorRevoked} />
+                            <Route path="/validator/:address" component={ValidatorDetails} />
                             <Route component={NotFound} />
                         </Switch>
                     </Container>

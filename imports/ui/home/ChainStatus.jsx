@@ -2,6 +2,7 @@ import React from 'react';
 import { Row, Col, Card, CardImg, CardText, CardBody,
     CardTitle, CardSubtitle, Button } from 'reactstrap';
 import moment from 'moment';
+import numeral from 'numeral';
 
 export default class ChainStatus extends React.Component {
     constructor(props) {
@@ -18,7 +19,7 @@ export default class ChainStatus extends React.Component {
                     <Col md="3">
                         <Card body>
                             <CardTitle>Latest Block Height</CardTitle>
-                            <CardText><span className="display-4 value text-primary">{this.props.status.latestBlockHeight}</span>{moment.utc(this.props.status.latestBlockTime).format("D MMM YYYY hh:mm:ssa z")}</CardText>   
+                            <CardText><span className="display-4 value text-primary">{numeral(this.props.status.latestBlockHeight).format(0,0)}</span>{moment.utc(this.props.status.latestBlockTime).format("D MMM YYYY hh:mm:ssa z")}</CardText>   
                         </Card>
                     </Col>
                     <Col md="3">
@@ -36,7 +37,7 @@ export default class ChainStatus extends React.Component {
                     <Col md="3">
                         <Card body>
                             <CardTitle>Online Voting Power</CardTitle>
-                            <CardText><span className="display-4 value text-primary">{this.props.status.activeVotingPower}</span>from {this.props.status.totalVotingPower} tokens delegated</CardText>   
+                            <CardText><span className="display-4 value text-primary">{numeral(this.props.status.activeVotingPower).format('0,0.00a')}</span>from {numeral(this.props.status.totalVotingPower).format('0,0.00a')} tokens delegated</CardText>   
                         </Card>
                     </Col>
                 </Row>

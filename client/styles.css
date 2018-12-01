@@ -21,6 +21,11 @@
     font-weight: normal;
     font-style: normal;
 }
+
+body {
+    font-size: inherit !important;
+}
+
 .not-found{
     position: absolute;
     text-align: center;

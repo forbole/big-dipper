@@ -191,12 +191,12 @@ export default class Chart extends Component{
                     <Line data={this.state.timeData} options={this.state.optionsTime}/>
                     </CardBody>
                 </Card>
-                <Card>
+                {/* <Card>
                     <div className="card-header">Voting Power History</div>
                     <CardBody>
                     <Line data={this.state.vpData}  options={this.state.optionsVP}/>
                     </CardBody>
-                </Card>
+                </Card> */}
                 </div>
             );    
         }
