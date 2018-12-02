@@ -138,36 +138,28 @@ Meteor.methods({
                                 }
                             }
 
-
                             // calculate the uptime based on the records stored in previous blocks
+                            // only do this every 15 blocks ~
 
-                            let startAggTime = new Date();
-                            let numBlocks = Meteor.call('blocks.findUpTime', existingValidators[i].address);
-                            let endAggTime = new Date();
-                            console.log("Get aggregated uptime for "+existingValidators[i].address+": "+((endAggTime-startAggTime)/1000)+"seconds.");
-                            if ((numBlocks[0] != null) && (numBlocks[0].uptime != null)){
-                                uptime = numBlocks[0].uptime;
-                            }
-                            // console.log("validator exists records");
-                            // console.log(numBlocks);
-                            if (record.exists){
-                                if (uptime < Meteor.settings.public.uptimeWindow){
-                                    uptime++;                                           
+                            if ((height % 12) == 0){
+                                let startAggTime = new Date();
+                                let numBlocks = Meteor.call('blocks.findUpTime', existingValidators[i].address);
+                                let endAggTime = new Date();
+                                console.log("Get aggregated uptime for "+existingValidators[i].address+": "+((endAggTime-startAggTime)/1000)+"seconds.");
+                                if ((numBlocks[0] != null) && (numBlocks[0].uptime != null)){
+                                    uptime = numBlocks[0].uptime;
                                 }
-                                uptime = (uptime / Meteor.settings.public.uptimeWindow)*100;
-                                bulkValidators.find({address:existingValidators[i].address}).updateOne({$set:{uptime:uptime, lastSeen:blockData.time}});
-                                //Validators.update({address:existingValidators[i].address}, {$set:{uptime:uptime, lastSeen:blockData.time}});
-                            }
-                            else{
-                                // if (uptime > 0){
-                                //     uptime--;
-                                // }
-                                // if (uptime < 0){
-                                //     uptime = 0;
-                                // }
-                                uptime = (uptime / Meteor.settings.public.uptimeWindow)*100;
-                                bulkValidators.find({address:existingValidators[i].address}).updateOne({$set:{uptime:uptime}});
-                                // Validators.update({address:existingValidators[i].address}, {$set:{uptime:uptime}});
+                                if (record.exists){
+                                    if (uptime < Meteor.settings.public.uptimeWindow){
+                                        uptime++;                                           
+                                    }
+                                    uptime = (uptime / Meteor.settings.public.uptimeWindow)*100;
+                                    bulkValidators.find({address:existingValidators[i].address}).updateOne({$set:{uptime:uptime, lastSeen:blockData.time}});
+                                }
+                                else{
+                                    uptime = (uptime / Meteor.settings.public.uptimeWindow)*100;
+                                    bulkValidators.find({address:existingValidators[i].address}).updateOne({$set:{uptime:uptime}});
+                                }
                             }
 
                             bulkValidatorRecords.insert(record);
@@ -245,7 +237,7 @@ Meteor.methods({
                                     validator.consensus_pubkey = validator.consensus_pubkey[0].trim();
 
                                     for (val in validatorSet){
-                                        console.log(validatorSet[val]);
+                                        // console.log(validatorSet[val]);
                                         // console.log(validator);
                                         if (validatorSet[val].consensus_pubkey == validator.consensus_pubkey){
                                             validator.jailed = validatorSet[val].jailed;
