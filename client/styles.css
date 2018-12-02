@@ -22,6 +22,8 @@
     font-style: normal;
 }
 
+@import url('https://fonts.googleapis.com/css?family=Inconsolata');
+
 body {
     font-size: inherit !important;
 }
@@ -87,6 +89,14 @@ table.proposal-list td{
     overflow: hidden;
     text-overflow: ellipsis;
 }
+table th.voting-power,
+table td.voting-power{
+    text-align:right;
+}
+
+table td.voting-power{
+    font-family: 'Inconsolata', monospace;
+}
 
 table#block-table th.height{
     width: 15%;
@@ -125,11 +135,11 @@ table.validator-list th{
 } */
 
 table.validator-list th.moniker{
-    width: 30%;
+    width: 20%;
 }
 
 table.validator-list th.voting-power{
-    width: 15%
+    width: 25%
 }
 
 table.validator-list th.uptime{

@@ -19,7 +19,7 @@ export default class TopValidators extends Component{
             // console.log(validators);
             self.setState({
                 validators: validators.map((validator, i ) => {
-                    return <tr key={i}><td>{validator.description.moniker}</td><td><Progress animated value={validator.uptime}>{validator.uptime?validator.uptime.toFixed(2):0}%</Progress></td><td>{validator.voting_power}</td></tr>
+                    return <tr key={i}><td>{validator.description.moniker}</td><td><Progress animated value={validator.uptime}>{validator.uptime?validator.uptime.toFixed(2):0}%</Progress></td><td className="voting-power">{validator.voting_power}</td></tr>
                 })
             })
         },5000);
