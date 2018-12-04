@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import moment from 'moment';
 import { Table, Row, Col } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { DenomSymbol, ProposalStatusIcon, VoteIcon } from '../components/Icons';
@@ -17,7 +18,7 @@ export default class Proposal extends Component{
             console.log(this.props.proposal.value);
             this.setState({
                 proposal: this.props.proposal.value,
-                deposit: <div>{this.props.proposal.value.total_deposit[0].amount} <DenomSymbol denom={this.props.proposal.value.total_deposit[0].denom} /></div>
+                deposit: <div>{this.props.proposal.value.total_deposit?this.props.proposal.value.total_deposit[0].amount:''} <DenomSymbol denom={this.props.proposal.value.total_deposit?this.props.proposal.value.total_deposit[0].denom:'STAKE'} /></div>
             })
         }
     }
@@ -59,16 +60,20 @@ export default class Proposal extends Component{
                         </Col>
                     </Row>
                     <Row className="mb-2 border-top border-secondary">
-                        <Col md={3} className="label">Submit Block</Col>
-                        <Col md={9} className="value">{this.state.proposal.submit_block}</Col>
+                        <Col md={3} className="label">Submit Time</Col>
+                        <Col md={9} className="value">{moment.utc(this.state.proposal.submit_time).format("D MMM YYYY, h:mm:ssa z")}</Col>
                     </Row>
                     <Row className="mb-2 border-top border-secondary">
                         <Col md={3} className="label">Deposit</Col>
                         <Col md={9} className="value">{this.state.deposit}</Col>
                     </Row>
                     <Row className="mb-2 border-top border-secondary">
-                        <Col md={3} className="label">Start Voting Block</Col>
-                        <Col md={9} className="value">{this.state.proposal.voting_start_block}</Col>
+                        <Col md={3} className="label">Start Voting Time</Col>
+                        <Col md={9} className="value">{moment.utc(this.state.proposal.voting_start_time).format("D MMM YYYY, h:mm:ssa z")}</Col>
+                    </Row>
+                    <Row className="mb-2 border-top border-secondary">
+                        <Col md={3} className="label">End Voting Time</Col>
+                        <Col md={9} className="value">{moment.utc(this.state.proposal.voting_end_time).format("D MMM YYYY, h:mm:ssa z")}</Col>
                     </Row>
                 </div>
                 <Link to="/proposals" className="btn btn-primary"><i className="fas fa-caret-left"></i> Back to list</Link>
