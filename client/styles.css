@@ -71,6 +71,10 @@ div#main{
     padding-bottom: 4.8rem;
 }
 
+img.moniker-avatar-list{
+    height: 24px;
+    margin-right: 5px;
+}
 table#block-table, 
 table.random-validators, 
 table.validator-list,
