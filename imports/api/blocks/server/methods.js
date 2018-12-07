@@ -176,12 +176,12 @@ Meteor.methods({
                         // update chain status
                         url = RPC+'/validators?height='+height;
                         response = HTTP.get(url);
-                        // console.log(url);
+                        console.log(url);
                         let validators = JSON.parse(response.content);
                         // ValidatorSets.insert(validators.result);
                         let chainStatus = Chain.findOne({chainId:block.block_meta.header.chain_id});
                         // console.log(chainStatus);
-                        let lastSyncedTime = chainStatus.lastSyncedTime;
+                        let lastSyncedTime = chainStatus?chainStatus.lastSyncedTime:0;
                         let timeDiff;
                         let blockTime = Meteor.settings.params.defaultBlockTime;
                         if (lastSyncedTime){
@@ -215,76 +215,78 @@ Meteor.methods({
                         // console.log(validatorSet);
 
                         analyticsData.voting_power = 0;
-                        for (v in validators.result.validators){
-                            // Validators.insert(validators.result.validators[v]);
-                            let validator = validators.result.validators[v];
-                            validator.voting_power = parseInt(validator.voting_power);
+                        // console.log(validators);
+                        if (validators.result){
+                            for (v in validators.result.validators){
+                                // Validators.insert(validators.result.validators[v]);
+                                let validator = validators.result.validators[v];
+                                validator.voting_power = parseInt(validator.voting_power);
 
-                            // let valExist = Validators.findOne({address:validator.address});
-                            // if (!valExist){
-                                let command = Meteor.settings.bin.gaiadebug+" pubkey "+validator.pub_key.value;
-                                // console.log(command);
-                                Meteor.call('runCode', command, function(error, result){
-                                    // validator.address = result.match(/\s[0-9A-F]{40}$/igm);
-                                    // validator.address = validator.address[0].trim();
-                                    validator.hex = result.match(/\s[0-9A-F]{64}$/igm);
-                                    validator.hex = validator.hex[0].trim();
-                                    validator.cosmosaccpub = result.match(/cosmospub.*$/igm);
-                                    validator.cosmosaccpub = validator.cosmosaccpub[0].trim();
-                                    validator.operator_address = result.match(/cosmosvaloperpub.*$/igm);
-                                    validator.operator_address = validator.operator_address[0].trim();
-                                    validator.consensus_pubkey = result.match(/cosmosvalconspub.*$/igm);
-                                    validator.consensus_pubkey = validator.consensus_pubkey[0].trim();
+                                // let valExist = Validators.findOne({address:validator.address});
+                                // if (!valExist){
+                                    let command = Meteor.settings.bin.gaiadebug+" pubkey "+validator.pub_key.value;
+                                    // console.log(command);
+                                    Meteor.call('runCode', command, function(error, result){
+                                        // validator.address = result.match(/\s[0-9A-F]{40}$/igm);
+                                        // validator.address = validator.address[0].trim();
+                                        validator.hex = result.match(/\s[0-9A-F]{64}$/igm);
+                                        validator.hex = validator.hex[0].trim();
+                                        validator.cosmosaccpub = result.match(/cosmospub.*$/igm);
+                                        validator.cosmosaccpub = validator.cosmosaccpub[0].trim();
+                                        validator.operator_address = result.match(/cosmosvaloperpub.*$/igm);
+                                        validator.operator_address = validator.operator_address[0].trim();
+                                        validator.consensus_pubkey = result.match(/cosmosvalconspub.*$/igm);
+                                        validator.consensus_pubkey = validator.consensus_pubkey[0].trim();
 
-                                    for (val in validatorSet){
-                                        // console.log(validatorSet[val]);
-                                        // console.log(validator);
-                                        if (validatorSet[val].consensus_pubkey == validator.consensus_pubkey){
-                                            validator.jailed = validatorSet[val].jailed;
-                                            validator.status = validatorSet[val].status;
-                                            validator.tokens = validatorSet[val].tokens;
-                                            validator.delegator_shares = validatorSet[val].delegator_shares;
-                                            validator.description = validatorSet[val].description;
-                                            validator.bond_height = validatorSet[val].bond_height;
-                                            validator.bond_intra_tx_counter = validatorSet[val].bond_intra_tx_counter;
-                                            validator.unbonding_height = validatorSet[val].unbonding_height;
-                                            validator.unbonding_time = validatorSet[val].unbonding_time;
-                                            validator.commission = validatorSet[val].commission;
-                                            validatorSet.splice(val, 1);
-                                            break;
+                                        for (val in validatorSet){
+                                            // console.log(validatorSet[val]);
+                                            // console.log(validator);
+                                            if (validatorSet[val].consensus_pubkey == validator.consensus_pubkey){
+                                                validator.jailed = validatorSet[val].jailed;
+                                                validator.status = validatorSet[val].status;
+                                                validator.tokens = validatorSet[val].tokens;
+                                                validator.delegator_shares = validatorSet[val].delegator_shares;
+                                                validator.description = validatorSet[val].description;
+                                                validator.bond_height = validatorSet[val].bond_height;
+                                                validator.bond_intra_tx_counter = validatorSet[val].bond_intra_tx_counter;
+                                                validator.unbonding_height = validatorSet[val].unbonding_height;
+                                                validator.unbonding_time = validatorSet[val].unbonding_time;
+                                                validator.commission = validatorSet[val].commission;
+                                                validatorSet.splice(val, 1);
+                                                break;
+                                            }
                                         }
-                                    }
-        
-                                    // we can check if the voting power has changed here.
-                                    bulkValidators.find({address: validator.address}).upsert().updateOne({$set:validator});
-        
-                                    // for (val in validatorSet){
-                                    //     if (validatorSet[val].consensus_pubkey == validator.consensus_pubkey){
-                                    //         validator.jailed = validatorSet[val].jailed;
-                                    //         validator.status = validatorSet[val].status;
-                                    //         validator.tokens = validatorSet[val].tokens;
-                                    //         validator.delegator_shares = validatorSet[val].delegator_shares;
-                                    //         validator.description = validatorSet[val].description;
-                                    //         validator.bond_height = validatorSet[val].bond_height;
-                                    //         validator.bond_intra_tx_counter = validatorSet[val].bond_intra_tx_counter;
-                                    //         validator.unbonding_height = validatorSet[val].unbonding_height;
-                                    //         validator.unbonding_time = validatorSet[val].unbonding_time;
-                                    //         validator.commission = validatorSet[val].commission;
-                                    //         validatorSet.splice(val, 1);
-                                    //         break;
-                                    //     }
-                                    // }
+            
+                                        // we can check if the voting power has changed here.
+                                        bulkValidators.find({address: validator.address}).upsert().updateOne({$set:validator});
+            
+                                        // for (val in validatorSet){
+                                        //     if (validatorSet[val].consensus_pubkey == validator.consensus_pubkey){
+                                        //         validator.jailed = validatorSet[val].jailed;
+                                        //         validator.status = validatorSet[val].status;
+                                        //         validator.tokens = validatorSet[val].tokens;
+                                        //         validator.delegator_shares = validatorSet[val].delegator_shares;
+                                        //         validator.description = validatorSet[val].description;
+                                        //         validator.bond_height = validatorSet[val].bond_height;
+                                        //         validator.bond_intra_tx_counter = validatorSet[val].bond_intra_tx_counter;
+                                        //         validator.unbonding_height = validatorSet[val].unbonding_height;
+                                        //         validator.unbonding_time = validatorSet[val].unbonding_time;
+                                        //         validator.commission = validatorSet[val].commission;
+                                        //         validatorSet.splice(val, 1);
+                                        //         break;
+                                        //     }
+                                        // }
 
-                                    // console.log(validator);
-                                    // bulkValidators.find({consensus_pubkey: validator.consensus_pubkey}).upsert().updateOne({$set:validator});
-                                    // Validators.update({pub_key: validator.pub_key}, {$set:validator}, {upsert:true});
-                                });
-                            // }
+                                        // console.log(validator);
+                                        // bulkValidators.find({consensus_pubkey: validator.consensus_pubkey}).upsert().updateOne({$set:validator});
+                                        // Validators.update({pub_key: validator.pub_key}, {$set:validator}, {upsert:true});
+                                    });
+                                // }
 
 
-                            analyticsData.voting_power += validator.voting_power;
+                                analyticsData.voting_power += validator.voting_power;
+                            }
                         }
-
                         let endFindValidatorsNameTime = new Date();
                         console.log("Get validators name time: "+((endFindValidatorsNameTime-startFindValidatorsNameTime)/1000)+"seconds.");
                     
