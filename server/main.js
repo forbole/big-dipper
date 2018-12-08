@@ -54,20 +54,19 @@ getProposals = () => {
 }
 
 Meteor.startup(function(){
-    // Meteor.call('chain.updateStatus', function(error, result){
-        // if (result){
-            timerConsensus = Meteor.setInterval(function(){
-                getConsensusState();
-            }, Meteor.settings.params.consensusInterval);
-            timerBlocks = Meteor.setInterval(function(){
-                updateBlock();
-            }, Meteor.settings.params.blockInterval);
-            timerChain = Meteor.setInterval(function(){
-                updateChainStatus();
-            }, Meteor.settings.params.statusInterval);
-            timerProposal = Meteor.setInterval(function(){
-                getProposals();
-            }, Meteor.settings.params.proposalInterval);
-        // }
-    // })
+    if (Meteor.isDevelopment){
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+    }
+    timerConsensus = Meteor.setInterval(function(){
+        getConsensusState();
+    }, Meteor.settings.params.consensusInterval);
+    timerBlocks = Meteor.setInterval(function(){
+        updateBlock();
+    }, Meteor.settings.params.blockInterval);
+    timerChain = Meteor.setInterval(function(){
+        updateChainStatus();
+    }, Meteor.settings.params.statusInterval);
+    timerProposal = Meteor.setInterval(function(){
+        getProposals();
+    }, Meteor.settings.params.proposalInterval);
 });
