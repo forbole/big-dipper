@@ -195,3 +195,17 @@ th i.material-icons{
 .proposal .tally-result i.fas{
     min-width: 1.5em;
 }
+
+.validator-details .moniker{
+    font-size: 180%;
+    margin: 0.25em 0;
+}
+
+.validator-details .validator-avatar{
+    max-width: 150px;
+    margin: 0 auto;
+}
+
+.validator-details .card{
+    margin-bottom: 1em;
+}
