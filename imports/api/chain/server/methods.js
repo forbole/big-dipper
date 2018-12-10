@@ -77,7 +77,7 @@ Meteor.methods({
                 //     console.log(e);
                 // }
                 // console.log(validatorSet[v].revoked);
-                Validators.update({pub_key:validatorSet[v].pub_key}, {$set:validatorSet[v]});
+                // Validators.update({operator_address:validatorSet[v].operator_address}, {$set:validatorSet[v]});
             }
 
             chain.totalVotingPower = totalVP;
