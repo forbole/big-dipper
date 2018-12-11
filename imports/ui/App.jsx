@@ -42,7 +42,7 @@ class App extends Component {
                             <Route exact path="/validators" component={Validators} />
                             <Route path="/proposals" component={Proposals} />
                             {/* <Route path="/validators/candidates" component={ValidatorCandidates} /> */}
-                            <Route path="/validators/revoked" component={ValidatorRevoked} />
+                            <Route path="/validators/jailed" component={ValidatorRevoked} />
                             <Route path="/validator/:address" component={ValidatorDetails} />
                             <Route component={NotFound} />
                         </Switch>

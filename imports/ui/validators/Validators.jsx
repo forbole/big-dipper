@@ -13,7 +13,7 @@ export default class Validators extends Component{
         <p className="lead">Here is a list of active validators.</p>
             <Row>
                 <Col md={12}>
-                    <List revoked={false}/>
+                    <List jailed={false}/>
                 </Col>
             </Row>
         </div>

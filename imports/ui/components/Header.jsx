@@ -47,8 +47,8 @@ export default class Header extends React.Component {
                     Active Validators
                   </DropdownItem>
                   <DropdownItem divider />
-                  <DropdownItem tag={Link} to="/validators/revoked">
-                    Revoked Validators
+                  <DropdownItem tag={Link} to="/validators/jailed">
+                    Jailed Validators
                   </DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>
