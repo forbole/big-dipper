@@ -8,7 +8,13 @@ import Avatar from '../components/Avatar.jsx';
 
 const ValidatorRow = (props) => {
     let moniker = (props.validator.description.moniker)?props.validator.description.moniker:props.validator.address;
-    return <tr><th scope="row" className="d-none d-md-table-cell counter">{props.index+1}</th><td><Link to={"/validator/"+props.validator.address}><Avatar moniker={moniker} identity={props.validator.description.identity} list={true}/>{moniker} {props.validator.description.identity? <i className="fas fa-check-circle text-success" title={props.validator.description.identity}></i>:''}</Link></td><td className="voting-power">{numeral(props.validator.voting_power).format('0,0')}</td><td className="uptime"><Progress animated value={props.validator.uptime}>{props.validator.uptime?props.validator.uptime.toFixed(2):0}%</Progress></td><td>{(props.validator.lastSeen)?moment.utc(props.validator.lastSeen).format("D MMM YYYY, h:mm:ssa z"):''}</td></tr>
+    return <tr>
+        <th scope="row" className="d-none d-md-table-cell counter">{props.index+1}</th>
+        <td><Link to={"/validator/"+props.validator.address}><Avatar moniker={moniker} identity={props.validator.description.identity} list={true}/>{moniker} {props.validator.description.identity? <i className="fas fa-check-circle text-success" title={props.validator.description.identity}></i>:''}</Link></td>
+        <td className="voting-power">{numeral(props.validator.voting_power).format('0,0')} ({numeral(props.validator.voting_power/props.totalPower*100).format('0.00')}%)</td>
+        <td className="uptime"><Progress animated value={props.validator.uptime}>{props.validator.uptime?props.validator.uptime.toFixed(2):0}%</Progress></td>
+        <td>{(props.validator.lastSeen)?moment.utc(props.validator.lastSeen).format("D MMM YYYY, h:mm:ssa z"):''}</td>
+    </tr>
 }
 
 export default class List extends Component{
@@ -24,7 +30,7 @@ export default class List extends Component{
             if (this.props.validators.length > 0){
                 this.setState({
                     validators: this.props.validators.map((validator, i) => {
-                        return <ValidatorRow key={i} index={i} validator={validator} />
+                        return <ValidatorRow key={i} index={i} validator={validator} totalPower={this.props.chainStatus.totalVotingPower}/>
                     })
                 })    
             }
