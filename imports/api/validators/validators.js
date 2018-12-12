@@ -1,11 +1,15 @@
 import { Mongo } from 'meteor/mongo';
 import { ValidatorRecords } from '../records/records.js';
+import { VotingPowerHistory } from '../voting-power/history.js';
 
 export const Validators = new Mongo.Collection('validators');
 
 Validators.helpers({
     firstSeen(){
         return ValidatorRecords.findOne({address:this.address});
+    },
+    history(){
+        return VotingPowerHistory.find({address:this.address}, {sort:{height:-1}}).fetch();
     }
 })
 // Validators.helpers({

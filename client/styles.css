@@ -96,7 +96,7 @@ table td.voting-power{
     text-align:right;
 }
 
-table td.voting-power{
+.voting-power{
     font-family: 'Inconsolata', monospace;
 }
 
@@ -208,4 +208,41 @@ th i.material-icons{
 
 .validator-details .card{
     margin-bottom: 1em;
+}
+
+.blocks-list{
+    margin-top: 0.2em;
+}
+
+.blocks-list .block{
+    width: 1.5em;
+    height: 1.5em;
+    display: inline-block;
+    margin-right: 0.2em;
+    /* margin-bottom: 1px; */
+    border: 0.1em solid #bd081c;
+    -webkit-box-shadow: 1px 1px 3px 0px rgba(163,163,163,1);
+    -moz-box-shadow: 1px 1px 3px 0px rgba(163,163,163,1);
+    box-shadow: 1px 1px 3px 0px rgba(163,163,163,1);
+    border-radius: 3px;
+}
+
+.blocks-list .block .full{
+    background-color: #bd081c;
+}
+
+.blocks-list .block .full,
+.blocks-list .block .empty{
+    height: 100%;
+    width: 100%;
+}
+
+.power-history .voting-power {
+    font-size: 160%;
+    position: relative;
+    top: -4px;
+}
+
+.label {
+    font-weight: bold;
 }

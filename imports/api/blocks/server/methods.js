@@ -7,6 +7,7 @@ import { Chain } from '/imports/api/chain/chain.js';
 // import { ValidatorSets } from '/imports/api/validator-sets/validator-sets.js';
 import { Validators } from '/imports/api/validators/validators.js';
 import { ValidatorRecords, Analytics} from '/imports/api/records/records.js';
+import { VotingPowerHistory } from '/imports/api/voting-power/history.js';
 
 Meteor.methods({
     'blocks.findUpTime'(address){
@@ -78,6 +79,7 @@ Meteor.methods({
                 try{
                     const bulkValidators = Validators.rawCollection().initializeUnorderedBulkOp();
                     const bulkValidatorRecords = ValidatorRecords.rawCollection().initializeUnorderedBulkOp();
+                    const bulkVPHistory = VotingPowerHistory.rawCollection().initializeUnorderedBulkOp();
 
                     let startGetHeightTime = new Date();
                     let response = HTTP.get(url);
@@ -257,19 +259,21 @@ Meteor.methods({
                                             }
                                         }
                                         
-                                        // let valExist = Validators.findOne({address:tempVal.address});
-                                        // if (valExist){
-                                        //     bulkValidators.find({address: tempVal.address}).update({$set:tempVal});
-                                        // }
-                                        // else{
-                                            bulkValidators.insert(tempVal);
-                                        // }
-                                        // we can check if the voting power has changed here.
+                                        bulkValidators.insert(tempVal);
+                                        bulkVPHistory.insert({
+                                            address: tempVal.address,
+                                            prev_voting_power: 0,
+                                            voting_power: tempVal.voting_power,
+                                            type: 'add',
+                                            height: blockData.height,
+                                            block_time: blockData.time
+                                        });
                                         
                                     });
                                 }
                                 else{
                                     let tempVal = validator;
+                                    let prevVotingPower = valExist.voting_power;
                                     for (val in validatorSet){
                                         if (validatorSet[val].consensus_pubkey == tempVal.consensus_pubkey){
                                             // console.log("Address: "+validator.address);
@@ -290,6 +294,21 @@ Meteor.methods({
                                         }
                                     }
                                     bulkValidators.find({address: tempVal.address}).update({$set:tempVal});
+                                    if (prevVotingPower != tempVal.voting_power){
+                                        let changeType = (prevVotingPower > tempVal.voting_power)?'down':'up';
+                                        let changeData = {
+                                            address: tempVal.address,
+                                            prev_voting_power: prevVotingPower,
+                                            voting_power: tempVal.voting_power,
+                                            type: changeType,
+                                            height: blockData.height,
+                                            block_time: blockData.time
+                                        };
+                                        // console.log('voting power changed.');
+                                        // console.log(changeData);
+                                        bulkVPHistory.insert(changeData);
+                                    }
+                                    
                                 }
                                 
 
@@ -330,6 +349,14 @@ Meteor.methods({
                         
                         let endVRTime = new Date();
                         console.log("Validator records update time: "+((endVRTime-startVRTime)/1000)+"seconds.");
+
+                        if (bulkVPHistory.length > 0){
+                            bulkVPHistory.execute((err, result) => {
+                                if (err){
+                                    console.log(err);
+                                }
+                            });
+                        }
                     }                    
                 }
                 catch (e){
