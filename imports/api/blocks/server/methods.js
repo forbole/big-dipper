@@ -219,8 +219,8 @@ Meteor.methods({
                                 let validator = validators.result.validators[v];
                                 validator.voting_power = parseInt(validator.voting_power);
 
-                                // let valExist = Validators.findOne({address:validator.address});
-                                // if (!valExist){
+                                let valExist = Validators.findOne({"pub_key.value":validator.pub_key.value});
+                                if (!valExist){
                                     // console.log("validator not in db");
                                     let command = Meteor.settings.bin.gaiadebug+" pubkey "+validator.pub_key.value;
                                     // console.log(command);
@@ -257,17 +257,40 @@ Meteor.methods({
                                             }
                                         }
                                         
-                                        let valExist = Validators.findOne({address:tempVal.address});
-                                        if (valExist){
-                                            bulkValidators.find({address: tempVal.address}).update({$set:tempVal});
-                                        }
-                                        else{
+                                        // let valExist = Validators.findOne({address:tempVal.address});
+                                        // if (valExist){
+                                        //     bulkValidators.find({address: tempVal.address}).update({$set:tempVal});
+                                        // }
+                                        // else{
                                             bulkValidators.insert(tempVal);
-                                        }
+                                        // }
                                         // we can check if the voting power has changed here.
                                         
                                     });
-                                // }
+                                }
+                                else{
+                                    let tempVal = validator;
+                                    for (val in validatorSet){
+                                        if (validatorSet[val].consensus_pubkey == tempVal.consensus_pubkey){
+                                            // console.log("Address: "+validator.address);
+                                            // console.log(validatorSet[val].description);
+                                            tempVal.operator_address = validatorSet[val].operator_address;
+                                            tempVal.jailed = validatorSet[val].jailed;
+                                            tempVal.status = validatorSet[val].status;
+                                            tempVal.tokens = validatorSet[val].tokens;
+                                            tempVal.delegator_shares = validatorSet[val].delegator_shares;
+                                            tempVal.description = validatorSet[val].description;
+                                            tempVal.bond_height = validatorSet[val].bond_height;
+                                            tempVal.bond_intra_tx_counter = validatorSet[val].bond_intra_tx_counter;
+                                            tempVal.unbonding_height = validatorSet[val].unbonding_height;
+                                            tempVal.unbonding_time = validatorSet[val].unbonding_time;
+                                            tempVal.commission = validatorSet[val].commission;
+                                            validatorSet.splice(val, 1);
+                                            break;
+                                        }
+                                    }
+                                    bulkValidators.find({address: tempVal.address}).update({$set:tempVal});
+                                }
                                 
 
                                 // console.log(validator);
