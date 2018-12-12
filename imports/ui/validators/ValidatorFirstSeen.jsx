@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Badge, Row, Col } from 'reactstrap';
-import FirstSeen from './FirstSeen.js';
+import FirstSeenListContainer from './FirstSeen.js';
 
 export default class ValidatorFirstSeen extends Component{
     constructor(props){
@@ -13,7 +13,7 @@ export default class ValidatorFirstSeen extends Component{
             <p className="lead">First seen time of validators.</p>
             <Row>
                 <Col md={12}>
-                    <FirstSeen />
+                    <FirstSeenListContainer />
                     {/* <List jailed={true}/> */}
                 </Col>
             </Row>

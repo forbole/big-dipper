@@ -4,9 +4,9 @@ import { Validators } from '/imports/api/validators/validators.js';
 import FirstSeenList from './FirstSeenList.jsx';
 
 export default FirstSeenListContainer = withTracker((props) => {
-    const validatorsHandle = Meteor.subscribe('validators.all');
+    const validatorsHandle = Meteor.subscribe('validators.firstSeen');
     const loading = !validatorsHandle.ready();
-    const validators = Validators.find({},{sort:{firstseen:-1}}).fetch();
+    const validators = Validators.find({}).fetch();
     const validatorsExist = !loading && !!validators;
     // console.log(props.state.limit);
     return {
