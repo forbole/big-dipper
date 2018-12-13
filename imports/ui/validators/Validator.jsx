@@ -6,6 +6,7 @@ import Avatar from '../components/Avatar.jsx';
 import PowerHistory from '../components/PowerHistory.jsx';
 import moment from 'moment';
 import { Badge, Container, Row, Col, Card, CardImg, CardText, CardBody, CardTitle, CardSubtitle } from 'reactstrap';
+import KeybaseCheck from '../components/KeybaseCheck.jsx';
 
 
 
@@ -14,7 +15,6 @@ export default class Validator extends Component{
         super(props);
         this.state = {
             identity: "",
-            keybaseURL: "",
             records: "",
             history: ""
         }
@@ -27,13 +27,13 @@ export default class Validator extends Component{
                 // console.log(prevState.validator.description);
                 if (this.state.identity != this.props.validator.description.identity){
                     this.setState({identity:this.props.validator.description.identity});
-                    fetch("https://keybase.io/_/api/1.0/user/lookup.json?key_suffix="+this.props.validator.description.identity+"&fields=basics")
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.them.length > 0){
-                            this.setState({keybaseURL:"https://keybase.io/"+data.them[0].basics.username});
-                        }
-                    });
+                    // fetch("https://keybase.io/_/api/1.0/user/lookup.json?key_suffix="+this.props.validator.description.identity+"&fields=basics")
+                    // .then(response => response.json())
+                    // .then(data => {
+                    //     if (data.them.length > 0){
+                    //         this.setState({keybaseURL:"https://keybase.io/"+data.them[0].basics.username});
+                    //     }
+                    // });
                 }
             }
 
@@ -68,7 +68,7 @@ export default class Validator extends Component{
                         <Card body className="text-center">
                             <div className="validator-avatar"><Avatar moniker={this.props.validator.description.moniker} identity={this.props.validator.description.identity} list={false}/></div>
                             <div className="moniker text-primary">{this.props.validator.description.website?<a href={this.props.validator.description.website} target="_blank">{this.props.validator.description.moniker} <i className="fas fa-link"></i></a>:this.props.validator.description.moniker}</div>
-                            <div className="identity">{(this.props.validator.description.identity != "")?<span><i className="fas fa-key"></i> <a href={this.state.keybaseURL} target="_blank">{this.props.validator.description.identity}</a></span>:'No identity provided.'}</div>
+                            <div className="identity"><KeybaseCheck identity={this.props.validator.description.identity} showKey /></div>
                             <div className="details">{this.props.validator.description.details}</div>
                             <div className="website"></div>
                         </Card>

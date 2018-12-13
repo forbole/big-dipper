@@ -4,17 +4,12 @@ export default class Avatar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-        avatar: ""
+        avatar: "https://ui-avatars.com/api/?rounded=true&size=128&name="+this.props.moniker
     }
   }
 
   componentDidMount(){
-      if (this.props.identity == ""){
-        this.setState({
-            avatar: "https://ui-avatars.com/api/?rounded=true&size=128&name="+this.props.moniker
-        })
-      }
-      else{
+      if (this.props.identity != ""){
         fetch("https://keybase.io/_/api/1.0/user/lookup.json?key_suffix="+this.props.identity+"&fields=pictures")
         .then(response => response.json())
         .then(data => {
