@@ -8,8 +8,9 @@ import moment from 'moment';
 import { Badge, Container, Row, Col, Card, CardImg, CardText, CardBody, CardTitle, CardSubtitle } from 'reactstrap';
 import KeybaseCheck from '../components/KeybaseCheck.jsx';
 
-
-
+const JailStatus = (props) =>{
+    return <Badge color={props.jailed?'danger':'success'}>{props.jailed?'Jailed':'Active'}</Badge>
+}
 export default class Validator extends Component{
     constructor(props){
         super(props);
@@ -93,6 +94,7 @@ export default class Validator extends Component{
                             <div className="card-header">Validator Info</div>
                             <CardBody>
                                 <Row>
+                                    <Col xs={12}><h3><JailStatus jailed={this.props.validator.jailed} /></h3></Col>
                                     <Col md={4} className="label">Address in Hex</Col>
                                     <Col md={8} className="value">{this.props.validator.address}</Col>
                                     <Col md={4} className="label">Operator Address</Col>
