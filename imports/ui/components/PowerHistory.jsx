@@ -23,7 +23,7 @@ export default class PowerHistory extends React.Component {
     return (
         <Card body className={this.props.type}>
             <Row>
-                <Col xs={2} className={(this.props.type == 'down'?'text-danger':'text-success')}><i className={changeClass}></i></Col>
+                <Col xs={2} className={(this.props.type == 'down')?'text-danger':(this.props.type == 'up'?'text-success':'text-warning')}><i className={changeClass}></i></Col>
                 <Col xs={10} sm={6} ><span className="voting-power">{numeral(this.props.prevVotingPower).format('0,0')}</span> <i className="material-icons text-info">arrow_forward</i> <span className="voting-power">{numeral(this.props.votingPower).format('0,0')}</span></Col>
                 <Col xs={{size:10, offset:2}} sm={{offset:0, size:4}}>{momemt(this.props.time).format("D MMM YYYY, h:mm:ssa z")}</Col>
             </Row>
