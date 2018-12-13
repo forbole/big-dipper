@@ -222,6 +222,8 @@ Meteor.methods({
                                 validator.voting_power = parseInt(validator.voting_power);
 
                                 let valExist = Validators.findOne({"pub_key.value":validator.pub_key.value});
+                                // console.log("//// valExist? ////");
+                                // console.log(valExist);
                                 if (!valExist){
                                     // console.log("validator not in db");
                                     let command = Meteor.settings.bin.gaiadebug+" pubkey "+validator.pub_key.value;
@@ -274,11 +276,15 @@ Meteor.methods({
                                 else{
                                     let tempVal = validator;
                                     let prevVotingPower = valExist.voting_power;
+                                    // console.log("//// this validator");
+                                    // console.log(tempVal);
                                     for (val in validatorSet){
-                                        if (validatorSet[val].consensus_pubkey == tempVal.consensus_pubkey){
-                                            // console.log("Address: "+validator.address);
-                                            // console.log(validatorSet[val].description);
-                                            tempVal.operator_address = validatorSet[val].operator_address;
+                                        // console.log("//// each validator in the set");
+                                        // console.log(validatorSet[val]);
+                                        if (validatorSet[val].consensus_pubkey == valExist.consensus_pubkey){
+                                            // console.log(valExist.consensus_pubkey);
+                                            // console.log(validatorSet[val].consensus_pubkey);
+                                                // tempVal.operator_address = validatorSet[val].operator_address;
                                             tempVal.jailed = validatorSet[val].jailed;
                                             tempVal.status = validatorSet[val].status;
                                             tempVal.tokens = validatorSet[val].tokens;
@@ -293,7 +299,7 @@ Meteor.methods({
                                             break;
                                         }
                                     }
-                                    bulkValidators.find({address: tempVal.address}).update({$set:tempVal});
+                                    bulkValidators.find({consensus_pubkey: valExist.consensus_pubkey}).update({$set:tempVal});
                                     if (prevVotingPower != tempVal.voting_power){
                                         let changeType = (prevVotingPower > tempVal.voting_power)?'down':'up';
                                         let changeData = {
