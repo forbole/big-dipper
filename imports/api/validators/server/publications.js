@@ -33,7 +33,7 @@ publishComposite('validator.details', function(address){
                 find(val){
                     return VotingPowerHistory.find(
                         {address:val.address},
-                        {sort:{height:-1}}
+                        {sort:{height:-1}, limit:50}
                     )
                 }
             }

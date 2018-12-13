@@ -37,12 +37,14 @@ export default class Validator extends Component{
                 }
             }
 
-            if (this.props.validator.history().length > 0){
-                this.setState({
-                    history: this.props.validator.history().map((history, i) => {
-                        return <PowerHistory key={i} type={history.type} prevVotingPower={history.prev_voting_power} votingPower={history.voting_power} time={history.block_time} />
+            if (this.props.validatorExist){
+                if (this.props.validator.history().length > 0){
+                    this.setState({
+                        history: this.props.validator.history().map((history, i) => {
+                            return <PowerHistory key={i} type={history.type} prevVotingPower={history.prev_voting_power} votingPower={history.voting_power} time={history.block_time} />
+                        })
                     })
-                })
+                }    
             }
         }
 
@@ -64,6 +66,9 @@ export default class Validator extends Component{
         else{
             if (this.props.validatorExist){
                 return <Row className="validator-details">
+                    <Col xs={12}>
+                        <Link to="/validators" className="btn btn-link"><i className="fas fa-caret-left"></i> Back to List</Link>
+                    </Col>
                     <Col md={4}>
                         <Card body className="text-center">
                             <div className="validator-avatar"><Avatar moniker={this.props.validator.description.moniker} identity={this.props.validator.description.identity} list={false}/></div>
@@ -103,10 +108,9 @@ export default class Validator extends Component{
                         </Card>
                         <Card>
                             <div className="card-header">Voting Power</div>
-                            <CardBody>
+                            <CardBody className="voting-power-card">
                                 <Row>
-                                    <Col md={4} className="label">Voting Power</Col>
-                                    <Col md={8} className="value">{numeral(this.props.validator.voting_power).format('0,0')}</Col>
+                                    <Col xs={12}><h1 className="display-4 voting-power"><Badge color="primary" >{numeral(this.props.validator.voting_power).format('0,0')}</Badge></h1><span>(~{numeral(this.props.validator.voting_power/this.props.chainStatus.totalVotingPower*100).format('0.00')}%)</span></Col>
                                     <Col md={4} className="label">Bond Height</Col>
                                     <Col md={8} className="value">{numeral(this.props.validator.bond_height).format('0,0')}</Col>
                                     <Col md={4} className="label">Proposer Priority</Col>
@@ -119,11 +123,12 @@ export default class Validator extends Component{
                             </CardBody>
                         </Card>
                         <Card>
-                            <div className="card-header">Change History</div>
+                            <div className="card-header">Change History (Recent {this.state.history.length} records)</div>
                         </Card>
                         <div className="power-history">
                             {this.state.history}
                         </div>
+                        <Link to="/validators" className="btn btn-link"><i className="fas fa-caret-left"></i> Back to List</Link>
                     </Col>
                 </Row>
             }

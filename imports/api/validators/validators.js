@@ -9,7 +9,7 @@ Validators.helpers({
         return ValidatorRecords.findOne({address:this.address});
     },
     history(){
-        return VotingPowerHistory.find({address:this.address}, {sort:{height:-1}}).fetch();
+        return VotingPowerHistory.find({address:this.address}, {sort:{height:-1}, limit:50}).fetch();
     }
 })
 // Validators.helpers({
