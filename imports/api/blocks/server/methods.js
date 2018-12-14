@@ -222,6 +222,7 @@ Meteor.methods({
                                 // Validators.insert(validators.result.validators[v]);
                                 let validator = validators.result.validators[v];
                                 validator.voting_power = parseInt(validator.voting_power);
+                                validator.proposer_priority = parseInt(validator.proposer_priority);
 
                                 let valExist = Validators.findOne({"pub_key.value":validator.pub_key.value});
                                 // console.log("//// valExist? ////");
@@ -288,7 +289,7 @@ Meteor.methods({
                                         if (validatorSet[val].consensus_pubkey == valExist.consensus_pubkey){
                                             // console.log(valExist.consensus_pubkey);
                                             // console.log(validatorSet[val].consensus_pubkey);
-                                                // tempVal.operator_address = validatorSet[val].operator_address;
+                                            // tempVal.operator_address = validatorSet[val].operator_address;
                                             tempVal.jailed = validatorSet[val].jailed;
                                             tempVal.status = validatorSet[val].status;
                                             tempVal.tokens = validatorSet[val].tokens;
@@ -300,7 +301,7 @@ Meteor.methods({
                                             tempVal.unbonding_time = validatorSet[val].unbonding_time;
                                             tempVal.commission = validatorSet[val].commission;
                                             bulkValidators.find({consensus_pubkey: valExist.consensus_pubkey}).update({$set:tempVal});
-                                            // validatorSet.splice(val, 1);
+                                            validatorSet.splice(val, 1);
                                             // break;
                                         }
                                         else{

@@ -15,7 +15,6 @@ export default ValidatorListContainer = withTracker((props) => {
         }
     }
     let options = {};
-    console.log(props);
     switch(props.priority){
         case 0:
             options = {
@@ -23,7 +22,7 @@ export default ValidatorListContainer = withTracker((props) => {
                     "description.moniker": props.monikerDir,
                     uptime: props.uptimeDir,
                     voting_power: props.votingPowerDir,
-                    lastSeen: props.lastSeenDir
+                    proposer_priority: props.proposerDir
                 }
             }
             break;
@@ -33,7 +32,7 @@ export default ValidatorListContainer = withTracker((props) => {
                     voting_power: props.votingPowerDir,
                     "description.moniker": props.monikerDir,
                     uptime: props.uptimeDir,
-                    lastSeen: props.lastSeenDir
+                    proposer_priority: props.proposerDir
                 }
             }
             break;
@@ -43,14 +42,14 @@ export default ValidatorListContainer = withTracker((props) => {
                     uptime: props.uptimeDir,
                     "description.moniker": props.monikerDir,
                     voting_power: props.votingPowerDir,
-                    lastSeen: props.lastSeenDir
+                    proposer_priority: props.proposerDir
                 }
             }
             break;
         case 3:
             options = {
                 sort:{
-                    lastSeen: props.lastSeenDir,
+                    proposer_priority: props.proposerDir,
                     voting_power: props.votingPowerDir,
                     "description.moniker": props.monikerDir,
                     uptime: props.uptimeDir

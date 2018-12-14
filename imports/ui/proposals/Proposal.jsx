@@ -3,6 +3,7 @@ import moment from 'moment';
 import { Table, Row, Col } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { DenomSymbol, ProposalStatusIcon, VoteIcon } from '../components/Icons';
+import numeral from 'numeral';
 
 export default class Proposal extends Component{
     constructor(props){
@@ -18,7 +19,7 @@ export default class Proposal extends Component{
             console.log(this.props.proposal.value);
             this.setState({
                 proposal: this.props.proposal.value,
-                deposit: <div>{this.props.proposal.value.total_deposit?this.props.proposal.value.total_deposit[0].amount:''} <DenomSymbol denom={this.props.proposal.value.total_deposit?this.props.proposal.value.total_deposit[0].denom:'STAKE'} /></div>
+                deposit: <div>{this.props.proposal.value.total_deposit?numeral(this.props.proposal.value.total_deposit[0].amount).format(0,0):''} <DenomSymbol denom={this.props.proposal.value.total_deposit?this.props.proposal.value.total_deposit[0].denom:'STAKE'} /></div>
             })
         }
     }

@@ -11,7 +11,7 @@ export default class Validators extends Component{
             monikerDir: 1,
             votingPowerDir: -1,
             uptimeDir: -1,
-            lastSeenDir: -1,
+            proposerDir: -1,
             priority: 2
         }
     }
@@ -35,8 +35,8 @@ export default class Validators extends Component{
                 this.setState({priority:2});
                 break;
             case 3:
-                if (this.state.lastSeenDir==1){this.setState({lastSeenDir:-1});}
-                else{this.setState({lastSeenDir:1});}
+                if (this.state.proposerDir==1){this.setState({proposerDir:-1});}
+                else{this.setState({proposerDir:1});}
                 this.setState({priority:3});
                 break;
         }
@@ -79,7 +79,7 @@ export default class Validators extends Component{
                             <th className="voting-power" onClick={(e) => this.toggleDir(1,e)}><i className="material-icons">power</i> <span className="d-none d-sm-inline">Voting Power</span> {(this.state.votingPowerDir==1)?<i className="material-icons">arrow_drop_up</i>:<i className="material-icons">arrow_drop_down</i>}</th>
                             <th className="status"><i className="material-icons">toggle_on</i> <span className="d-none d-sm-inline">Status</span></th>
                             <th className="uptime" onClick={(e) => this.toggleDir(2,e)}><i className="material-icons">flash_on</i> <span className="d-none d-sm-inline">Uptime ({Meteor.settings.public.uptimeWindow} <i className="fas fa-cube"></i>)</span> {(this.state.uptimeDir==1)?<i className="material-icons">arrow_drop_up</i>:<i className="material-icons">arrow_drop_down</i>}</th>
-                            <th className="last-seen" onClick={(e) => this.toggleDir(3,e)}><i className="material-icons">access_time</i> <span className="d-none d-sm-inline">Last Seen</span> {(this.state.lastSeenDir==1)?<i className="material-icons">arrow_drop_up</i>:<i className="material-icons">arrow_drop_down</i>}</th>
+                            <th className="proposer-priority text-right" onClick={(e) => this.toggleDir(3,e)}><i className="material-icons">swap_vertical_circle</i> <span className="d-none d-sm-inline">Proposer Priority</span> {(this.state.proposerDir==1)?<i className="material-icons">arrow_drop_up</i>:<i className="material-icons">arrow_drop_down</i>}</th>
                         </tr>
                     </thead>
                     {(this.props.jailed != undefined)?<List 
@@ -87,13 +87,13 @@ export default class Validators extends Component{
                             monikerDir={this.state.monikerDir} 
                             votingPowerDir={this.state.votingPowerDir} 
                             uptimeDir={this.state.uptimeDir}
-                            lastSeenDir={this.state.lastSeenDir} 
+                            proposerDir={this.state.proposerDir} 
                             priority={this.state.priority}
                         />:<List 
                             monikerDir={this.state.monikerDir} 
                             votingPowerDir={this.state.votingPowerDir}
                             uptimeDir={this.state.uptimeDir}
-                            lastSeenDir={this.state.lastSeenDir}
+                            proposerDir={this.state.proposerDir}
                             priority={this.state.priority}
                         />}
                 </Table>
