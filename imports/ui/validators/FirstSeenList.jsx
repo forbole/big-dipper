@@ -47,7 +47,7 @@ export default class FirstSeenList extends Component{
                         <tr>
                             <th className="d-none d-md-table-cell counter">&nbsp;</th>
                             <th className="moniker"><i className="material-icons">perm_contact_calendar</i> <span className="d-none d-sm-inline">Moniker</span></th>
-                            <th className="address"><i class="material-icons">my_location</i> <span className="d-none d-sm-inline">Address</span></th>
+                            <th className="address"><i className="material-icons">my_location</i> <span className="d-none d-sm-inline">Address</span></th>
                             <th className="first-seen"><i className="material-icons">access_time</i> <span className="d-none d-sm-inline">First Seen</span></th>
                         </tr>
                     </thead>

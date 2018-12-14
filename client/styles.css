@@ -96,7 +96,7 @@ table td.voting-power{
     text-align:right;
 }
 
-.voting-power{
+.voting-power:not(table th.voting-power){
     font-family: 'Inconsolata', monospace;
 }
 
