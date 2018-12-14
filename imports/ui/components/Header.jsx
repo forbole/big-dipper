@@ -38,7 +38,7 @@ export default class Header extends React.Component {
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>
-              <UncontrolledDropdown nav inNavbar>
+              {/* <UncontrolledDropdown nav inNavbar>
                 <DropdownToggle nav caret>
                   Validators
                 </DropdownToggle>
@@ -51,7 +51,10 @@ export default class Header extends React.Component {
                     Jailed Validators
                   </DropdownItem>
                 </DropdownMenu>
-              </UncontrolledDropdown>
+              </UncontrolledDropdown> */}
+              <NavItem>
+                <NavLink tag={Link} to="/validators">Validators</NavLink>
+              </NavItem>
               <NavItem>
                 <NavLink tag={Link} to="/blocks">Blocks</NavLink>
               </NavItem>
