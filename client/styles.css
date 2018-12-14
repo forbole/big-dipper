@@ -96,8 +96,8 @@ table td.voting-power{
     text-align:right;
 }
 
-.voting-power:not(table th.voting-power){
-    font-family: 'Inconsolata', monospace;
+.voting-power:not(th){
+    font-family: 'Inconsolata', monospace !important;
 }
 
 table#block-table th.height{
@@ -137,11 +137,15 @@ table.validator-list th{
 } */
 
 table.validator-list th.moniker{
-    width: 20%;
+    width: 15%;
 }
 
 table.validator-list th.voting-power{
-    width: 25%
+    width: 20%
+}
+
+table.validator-list th.status{
+    width: 10%;
 }
 
 table.validator-list th.uptime{
