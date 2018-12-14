@@ -40,11 +40,12 @@ class App extends Component {
                         <Switch>
                             <Route exact path="/" component={Home} />
                             <Route path="/blocks" component={BlocksTable} />
-                            <Route exact path="/validators" render={(props) => <Validators {...props} jailed={false} />} />
-                            <Route path="/proposals" component={Proposals} />
+                            <Route exact path="/validators" component={Validators} />
+                            <Route path="/validators/active" render={(props) => <Validators {...props} jailed={false} />} />
                             <Route path="/validators/jailed" render={(props) => <Validators {...props} jailed={true} />} />
                             <Route path="/validators/firstseen" component={ValidatorFirstSeen} />
                             <Route path="/validator/:address" component={ValidatorDetails} />
+                            <Route path="/proposals" component={Proposals} />
                             <Route component={NotFound} />
                         </Switch>
                     </Container>
