@@ -7,7 +7,39 @@ import List from './ListContainer.js';
 export default class Validators extends Component{
     constructor(props){
         super(props);
-        
+        this.state = {
+            monikerDir: 1,
+            votingPowerDir: -1,
+            uptimeDir: -1,
+            lastSeenDir: -1,
+            priority: 2
+        }
+    }
+
+    toggleDir(field, e){
+        e.preventDefault();
+        switch(field){
+            case 0:
+                if (this.state.monikerDir==1){this.setState({monikerDir:-1});}
+                else{this.setState({monikerDir:1});}
+                this.setState({priority:0});
+                break;
+            case 1:
+                if (this.state.votingPowerDir==1){this.setState({votingPowerDir:-1});}
+                else{this.setState({votingPowerDir:1});}
+                this.setState({priority:1});
+                break;
+            case 2:
+                if (this.state.uptimeDir==1){this.setState({uptimeDir:-1});}
+                else{this.setState({uptimeDir:1});}
+                this.setState({priority:2});
+                break;
+            case 3:
+                if (this.state.lastSeenDir==1){this.setState({lastSeenDir:-1});}
+                else{this.setState({lastSeenDir:1});}
+                this.setState({priority:3});
+                break;
+        }
     }
 
     render() {
@@ -43,14 +75,27 @@ export default class Validators extends Component{
                     <thead>
                         <tr>
                             <th className="d-none d-md-table-cell counter">&nbsp;</th>
-                            <th className="moniker"><i className="material-icons">perm_contact_calendar</i> <span className="d-none d-sm-inline">Moniker</span></th>
-                            <th className="voting-power"><i className="material-icons">power</i> <span className="d-none d-sm-inline">Voting Power</span></th>
-                            <th className="status"><i class="material-icons">toggle_on</i> <span className="d-none d-sm-inline">Status</span></th>
-                            <th className="uptime"><i className="material-icons">flash_on</i> <span className="d-none d-sm-inline">Uptime (last {Meteor.settings.public.uptimeWindow} <i class="fas fa-cube"></i>)</span></th>
-                            <th className="last-seen"><i className="material-icons">access_time</i> <span className="d-none d-sm-inline">Last Seen</span></th>
+                            <th className="moniker" onClick={(e) => this.toggleDir(0,e)}><i className="material-icons">perm_contact_calendar</i> <span className="d-none d-sm-inline">Moniker</span> {(this.state.monikerDir==1)?<i className="material-icons">arrow_drop_up</i>:<i className="material-icons">arrow_drop_down</i>}</th>
+                            <th className="voting-power" onClick={(e) => this.toggleDir(1,e)}><i className="material-icons">power</i> <span className="d-none d-sm-inline">Voting Power</span> {(this.state.votingPowerDir==1)?<i className="material-icons">arrow_drop_up</i>:<i className="material-icons">arrow_drop_down</i>}</th>
+                            <th className="status"><i className="material-icons">toggle_on</i> <span className="d-none d-sm-inline">Status</span></th>
+                            <th className="uptime" onClick={(e) => this.toggleDir(2,e)}><i className="material-icons">flash_on</i> <span className="d-none d-sm-inline">Uptime ({Meteor.settings.public.uptimeWindow} <i className="fas fa-cube"></i>)</span> {(this.state.uptimeDir==1)?<i className="material-icons">arrow_drop_up</i>:<i className="material-icons">arrow_drop_down</i>}</th>
+                            <th className="last-seen" onClick={(e) => this.toggleDir(3,e)}><i className="material-icons">access_time</i> <span className="d-none d-sm-inline">Last Seen</span> {(this.state.lastSeenDir==1)?<i className="material-icons">arrow_drop_up</i>:<i className="material-icons">arrow_drop_down</i>}</th>
                         </tr>
                     </thead>
-                    {(this.props.jailed != undefined)?<List jailed={this.props.jailed} />:<List />}
+                    {(this.props.jailed != undefined)?<List 
+                            jailed={this.props.jailed} 
+                            monikerDir={this.state.monikerDir} 
+                            votingPowerDir={this.state.votingPowerDir} 
+                            uptimeDir={this.state.uptimeDir}
+                            lastSeenDir={this.state.lastSeenDir} 
+                            priority={this.state.priority}
+                        />:<List 
+                            monikerDir={this.state.monikerDir} 
+                            votingPowerDir={this.state.votingPowerDir}
+                            uptimeDir={this.state.uptimeDir}
+                            lastSeenDir={this.state.lastSeenDir}
+                            priority={this.state.priority}
+                        />}
                 </Table>
             </Col>
         </Row>

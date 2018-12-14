@@ -132,6 +132,10 @@ table.validator-list th{
     border-bottom: none !important;
 }
 
+table.validator-list th:not(.status){
+    cursor:pointer;
+}
+
 /* table.validator-list th.counter{
     width: 5%;
 } */
