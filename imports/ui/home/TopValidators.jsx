@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { Table, Row, Col, Card, CardImg, CardText, CardBody,
     CardTitle, CardSubtitle, Button, Progress } from 'reactstrap';
 import numeral from 'numeral';
+import Avatar from '../components/Avatar.jsx';
+import KeybaseCheck from '../components/KeybaseCheck.jsx';
 
 export default class TopValidators extends Component{
     constructor(props){
@@ -21,7 +23,11 @@ export default class TopValidators extends Component{
             // console.log(validators);
             self.setState({
                 validators: validators.map((validator, i ) => {
-                    return <tr key={i}><td><Link to={"/validator/"+validator.address}>{validator.description.moniker}</Link></td><td><Progress animated value={validator.uptime}>{validator.uptime?validator.uptime.toFixed(2):0}%</Progress></td><td className="voting-power">{numeral(validator.voting_power).format('0,0')}</td></tr>
+                    return <tr key={i}>
+                        <td><Link to={"/validator/"+validator.address}><Avatar moniker={validator.description.moniker} identity={validator.description.identity} address={validator.address} list={true} />{validator.description.moniker}</Link> {validator.description.identity?<KeybaseCheck identity={validator.description.identity} />:''}</td>
+                        <td><Progress animated value={validator.uptime}>{validator.uptime?validator.uptime.toFixed(2):0}%</Progress></td>
+                        <td className="voting-power">{numeral(validator.voting_power).format('0,0')}</td>
+                    </tr>
                 })
             })
         },5000);

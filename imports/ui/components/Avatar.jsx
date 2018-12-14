@@ -3,7 +3,7 @@ export default class Avatar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-        avatar: "https://ui-avatars.com/api/?rounded=true&size=128&name="+this.props.moniker+"&color=fff&background="+this.getColourHex(this.props.address)
+        avatar: "https://ui-avatars.com/api/?rounded=true&size=128&name="+this.props.moniker+"&color=fff&background=aaa"
     }
   }
 
@@ -36,7 +36,7 @@ export default class Avatar extends React.Component {
             // console.log(this.props.moniker);
             // console.log(this.getColourHex(this.props.moniker));
             this.setState({
-                avatar: "https://ui-avatars.com/api/?rounded=true&size=128&name="+this.props.moniker+"&color=fff&background="+this.getColourHex(this.props.address)
+                avatar: "https://ui-avatars.com/api/?rounded=true&size=128&name="+this.props.moniker+"&color=fff&background=aaa"
             });
         }
       }
