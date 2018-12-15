@@ -9,7 +9,12 @@ export default class Block extends Component {
 
     render() {
         return (
-            <tr className="blockrow" onClick={this.showInfo}><th className="innerblock1">{this.props.block.height}</th><td className="innerblock2">{this.props.block.hash}</td><td xs="3" className="innerblock">{this.props.block.transNum}</td><td xs="3" className="innerblock">{moment.utc(this.props.block.time).format("D MMM YYYY, h:mm:ssa z")}</td></tr>
+            <tr className="blockrow">
+                <td className="innerblock1">{this.props.block.height}</td>
+                <td className="innerblock2">{this.props.block.hash}</td>
+                <td xs="3" className="innerblock">{this.props.block.transNum}</td>
+                <td xs="3" className="innerblock">{moment.utc(this.props.block.time).format("D MMM YYYY, h:mm:ssa")}</td>
+            </tr>
         );
     }
 }

@@ -8,10 +8,10 @@ class HeaderRecord extends Component {
         return(
             <thead>
                 <tr>
-                    <th className="height">Height</th>
-                    <th className="hash">Hash</th>
-                    <th className="no-of-txs">No. of Txs</th>
-                    <th className="time">Time</th>
+                    <th className="height"><i className="fas fa-database"></i> Height</th>
+                    <th className="hash"><i className="fas fa-hashtag"></i> Hash</th>
+                    <th className="no-of-txs"><i className="fas fa-sync"></i> No. of Txs</th>
+                    <th className="time"><i className="far fa-clock"></i> Time (UTC)</th>
                 </tr>
             </thead>
         );
