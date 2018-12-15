@@ -8,6 +8,14 @@ import { Validators } from '/imports/api/validators/validators.js';
 import { ValidatorRecords, Analytics} from '/imports/api/records/records.js';
 import { VotingPowerHistory } from '/imports/api/voting-power/history.js';
 
+getValidatorVotingPower = (validators, address) => {
+    for (v in validators){
+        if (validators[v].address == address){
+            return parseInt(validators[v].voting_power);
+        }
+    }
+}
+
 Meteor.methods({
     'blocks.findUpTime'(address){
         let collection = ValidatorRecords.rawCollection();
@@ -109,56 +117,6 @@ Meteor.methods({
                         
                         blockData.precommitsCount = blockData.validators.length;
 
-                        // store valdiators exist records
-                        let existingValidators = Validators.find({address:{$exists:true}}).fetch();
-                        
-                        // record precommits and calculate uptime
-                        for (i in existingValidators){
-                            let record = {
-                                height: height,
-                                address: existingValidators[i].address,
-                                exists: false,
-                                voting_power: existingValidators[i].voting_power
-                            }
-
-                            for (j in precommits){
-                                if (precommits[j] != null){
-                                    if (existingValidators[i].address == precommits[j].validator_address){
-                                        record.exists = true;
-                                        precommits.splice(j,1);                                        
-                                        break;
-                                    }
-                                }
-                            }
-
-                            // calculate the uptime based on the records stored in previous blocks
-                            // only do this every 12 blocks ~
-
-                            if ((height % 12) == 0){
-                                // let startAggTime = new Date();
-                                let numBlocks = Meteor.call('blocks.findUpTime', existingValidators[i].address);
-                                // let endAggTime = new Date();
-                                // console.log("Get aggregated uptime for "+existingValidators[i].address+": "+((endAggTime-startAggTime)/1000)+"seconds.");
-                                if ((numBlocks[0] != null) && (numBlocks[0].uptime != null)){
-                                    uptime = numBlocks[0].uptime;
-                                }
-                                if (record.exists){
-                                    if (uptime < Meteor.settings.public.uptimeWindow){
-                                        uptime++;                                           
-                                    }
-                                    uptime = (uptime / Meteor.settings.public.uptimeWindow)*100;
-                                    bulkValidators.find({address:existingValidators[i].address}).updateOne({$set:{uptime:uptime, lastSeen:blockData.time}});
-                                }
-                                else{
-                                    uptime = (uptime / Meteor.settings.public.uptimeWindow)*100;
-                                    bulkValidators.find({address:existingValidators[i].address}).updateOne({$set:{uptime:uptime}});
-                                }
-                            }
-
-                            bulkValidatorRecords.insert(record);
-                            // ValidatorRecords.update({height:height,address:record.address},record);                            
-                        }
-
                         analyticsData.height = height;
         
                         let endGetHeightTime = new Date();
@@ -179,7 +137,57 @@ Meteor.methods({
                         Blockscon.insert(blockData);
                         let endBlockInsertTime = new Date();
                         console.log("Block insert time: "+((endBlockInsertTime-startBlockInsertTime)/1000)+"seconds.");
+
+                        // store valdiators exist records
+                        let existingValidators = Validators.find({address:{$exists:true}}).fetch();
                         
+                        // record precommits and calculate uptime
+                        for (i in existingValidators){
+                            let record = {
+                                height: height,
+                                address: existingValidators[i].address,
+                                exists: false,
+                                voting_power: getValidatorVotingPower(validators.result.validators, existingValidators[i].address)
+                            }
+
+                            for (j in precommits){
+                                if (precommits[j] != null){
+                                    if (existingValidators[i].address == precommits[j].validator_address){
+                                        record.exists = true;
+                                        precommits.splice(j,1);                                        
+                                        break;
+                                    }
+                                }
+                            }
+
+                            // calculate the uptime based on the records stored in previous blocks
+                            // only do this every 12 blocks ~
+
+                            if ((height % 12) == 0){
+                                // let startAggTime = new Date();
+                                let numBlocks = Meteor.call('blocks.findUpTime', existingValidators[i].address);
+                                let uptime = 0;
+                                // let endAggTime = new Date();
+                                // console.log("Get aggregated uptime for "+existingValidators[i].address+": "+((endAggTime-startAggTime)/1000)+"seconds.");
+                                if ((numBlocks[0] != null) && (numBlocks[0].uptime != null)){
+                                    uptime = numBlocks[0].uptime;
+                                }
+                                if (record.exists){
+                                    if (uptime < Meteor.settings.public.uptimeWindow){
+                                        uptime++;                                           
+                                    }
+                                    uptime = (uptime / Meteor.settings.public.uptimeWindow)*100;
+                                    bulkValidators.find({address:existingValidators[i].address}).updateOne({$set:{uptime:uptime, lastSeen:blockData.time}});
+                                }
+                                else{
+                                    uptime = (uptime / Meteor.settings.public.uptimeWindow)*100;
+                                    bulkValidators.find({address:existingValidators[i].address}).updateOne({$set:{uptime:uptime}});
+                                }
+                            }
+
+                            bulkValidatorRecords.insert(record);
+                            // ValidatorRecords.update({height:height,address:record.address},record);                            
+                        }                        
 
                         let chainStatus = Chain.findOne({chainId:block.block_meta.header.chain_id});
                         let lastSyncedTime = chainStatus?chainStatus.lastSyncedTime:0;
@@ -262,7 +270,6 @@ Meteor.methods({
                         }
 
 
-                        // console.log(validators);
                         // validators are all the validators in the current height
                         if (validators.result){
                             for (v in validators.result.validators){
@@ -272,8 +279,6 @@ Meteor.methods({
                                 validator.proposer_priority = parseInt(validator.proposer_priority);
 
                                 let valExist = Validators.findOne({"pub_key.value":validator.pub_key.value});
-                                // console.log("//// valExist? ////");
-                                // console.log(valExist);
                                 if (!valExist){
                                     // console.log("validator not in db");
                                     let command = Meteor.settings.bin.gaiadebug+" pubkey "+validator.pub_key.value;
@@ -293,8 +298,6 @@ Meteor.methods({
 
                                         for (val in validatorSet){
                                             if (validatorSet[val].consensus_pubkey == tempVal.consensus_pubkey){
-                                                // console.log("Address: "+validator.address);
-                                                // console.log(validatorSet[val].description);
                                                 tempVal.operator_address = validatorSet[val].operator_address;
                                                 tempVal.jailed = validatorSet[val].jailed;
                                                 tempVal.status = validatorSet[val].status;
@@ -327,16 +330,19 @@ Meteor.methods({
                                 }
                                 else{
                                     let tempVal = validator;
-                                    let prevVotingPower = valExist.voting_power;
-                                    // console.log("//// this validator");
-                                    // console.log(tempVal);
+                                    
+                                    let prevVotingPower = ValidatorRecords.findOne({address:validator.address, height:height-1});
+
+                                    if (prevVotingPower){
+                                        prevVotingPower = prevVotingPower.voting_power;
+                                    }
+                                    else{
+                                        prevVotingPower = valExist.voting_power;
+                                    }
+                                   
                                     for (val in validatorSet){
-                                        // console.log("//// each validator in the set");
-                                        // console.log(validatorSet[val]);
                                         if (validatorSet[val].consensus_pubkey == valExist.consensus_pubkey){
-                                            // console.log(valExist.consensus_pubkey);
-                                            // console.log(validatorSet[val].consensus_pubkey);
-                                            // tempVal.operator_address = validatorSet[val].operator_address;
+                                            
                                             tempVal.jailed = validatorSet[val].jailed;
                                             tempVal.status = validatorSet[val].status;
                                             tempVal.tokens = validatorSet[val].tokens;
@@ -347,17 +353,14 @@ Meteor.methods({
                                             tempVal.unbonding_height = validatorSet[val].unbonding_height;
                                             tempVal.unbonding_time = validatorSet[val].unbonding_time;
                                             tempVal.commission = validatorSet[val].commission;
-                                            bulkValidators.find({consensus_pubkey: valExist.consensus_pubkey}).update({$set:tempVal});
+                                            bulkValidators.find({consensus_pubkey: valExist.consensus_pubkey}).updateOne({$set:tempVal});
                                             validatorSet.splice(val, 1);
                                             // break;
                                         }
                                         else{
-                                            bulkValidators.find({consensus_pubkey: validatorSet[val].consensus_pubkey}).update({$set:validatorSet[val]});
+                                            bulkValidators.find({consensus_pubkey: validatorSet[val].consensus_pubkey}).updateOne({$set:validatorSet[val]});
                                         }
                                     }
-                                    // if (valExist.consensus_pubkey == "cosmosvalconspub1zcjduepqgv79s6nxjf2dcl3pm9dltvyuvtpu3c8xhlxsl278svxljupkcjeqjcuxa8"){
-                                    //     console.log(tmepVal);
-                                    // }
                                     
                                     if (prevVotingPower != tempVal.voting_power){
                                         let changeType = (prevVotingPower > tempVal.voting_power)?'down':'up';
@@ -382,22 +385,6 @@ Meteor.methods({
                                 analyticsData.voting_power += validator.voting_power;
                             }
                         }
-
-                        // exit();
-                        // let removedVals = prevValSet.validators.filter(( el ) => validators.includes( el ) )
-
-                        // Update info from remaining validator set
-
-
-
-                        // console.log("Validators not updated: "+validatorSet.length);
-                        // url = LCD+'/validatorsets/'+height;
-                        // response = HTTP.get(url);
-                        // console.log(url);
-                        
-                        // // validatorSet is the validator set at current height
-                        // validatorSet = JSON.parse(response.content);
-                        
 
 
                         let endFindValidatorsNameTime = new Date();

@@ -59,16 +59,20 @@ export default class Validator extends Component{
         }
         else{
             if (this.props.validatorExist){
+                let moniker = (this.props.validator.description&&this.props.validator.description.moniker)?this.props.validator.description.moniker:this.props.validator.address;
+                let identity = (this.props.validator.description&&this.props.validator.description.identity)?this.props.validator.description.identity:"";
+                let website = (this.props.validator.description&&this.props.validator.description.website)?this.props.validator.description.website:undefined;
+                let details = (this.props.validator.description&&this.props.validator.description.details)?this.props.validator.description.details:"";
                 return <Row className="validator-details">
                     <Col xs={12}>
                         <Link to="/validators" className="btn btn-link"><i className="fas fa-caret-left"></i> Back to List</Link>
                     </Col>
                     <Col md={4}>
                         <Card body className="text-center">
-                            <div className="validator-avatar"><Avatar moniker={this.props.validator.description.moniker} identity={this.props.validator.description.identity} address={this.props.validator.address} list={false}/></div>
-                            <div className="moniker text-primary">{this.props.validator.description.website?<a href={this.props.validator.description.website} target="_blank">{this.props.validator.description.moniker} <i className="fas fa-link"></i></a>:this.props.validator.description.moniker}</div>
-                            <div className="identity"><KeybaseCheck identity={this.props.validator.description.identity} showKey /></div>
-                            <div className="details">{this.props.validator.description.details}</div>
+                            <div className="validator-avatar"><Avatar moniker={moniker} identity={identity} address={this.props.validator.address} list={false}/></div>
+                            <div className="moniker text-primary">{website?<a href={this.props.validator.description.website} target="_blank">{moniker} <i className="fas fa-link"></i></a>:moniker}</div>
+                            <div className="identity"><KeybaseCheck identity={identity} showKey /></div>
+                            <div className="details">{details}</div>
                             <div className="website"></div>
                         </Card>
                         <Card>
@@ -93,11 +97,11 @@ export default class Validator extends Component{
                                     <Col md={4} className="label">Operator Address</Col>
                                     <Col md={8} className="value">{this.props.validator.operator_address}</Col>
                                     <Col md={4} className="label">Commission Rate</Col>
-                                    <Col md={8} className="value">{numeral(this.props.validator.commission.rate*100).format('0.00')+"%"}</Col>
+                                    <Col md={8} className="value">{this.props.validator.commission?numeral(this.props.validator.commission.rate*100).format('0.00')+"%":''}</Col>
                                     <Col md={4} className="label">Max Rate</Col>
-                                    <Col md={8} className="value">{numeral(this.props.validator.commission.max_rate*100).format('0.00')+"%"}</Col>
+                                    <Col md={8} className="value">{this.props.validator.commission?numeral(this.props.validator.commission.max_rate*100).format('0.00')+"%":''}</Col>
                                     <Col md={4} className="label">Max Change Rate</Col>
-                                    <Col md={8} className="value">{numeral(this.props.validator.commission.max_change_rate*100).format('0.00')+"%"}</Col>
+                                    <Col md={8} className="value">{this.props.validator.commission?numeral(this.props.validator.commission.max_change_rate*100).format('0.00')+"%":''}</Col>
                                 </Row>
                             </CardBody>
                         </Card>

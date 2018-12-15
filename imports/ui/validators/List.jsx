@@ -8,10 +8,11 @@ import Avatar from '../components/Avatar.jsx';
 import KeybaseCheck from '../components/KeybaseCheck.jsx';
 
 const ValidatorRow = (props) => {
-    let moniker = (props.validator.description.moniker)?props.validator.description.moniker:props.validator.address;
+    let moniker = (props.validator.description&&props.validator.description.moniker)?props.validator.description.moniker:props.validator.address;
+    let identity = (props.validator.description&&props.validator.description.identity)?props.validator.description.identity:'';
     return <tr>
         <th scope="row" className="d-none d-md-table-cell counter">{props.index+1}</th>
-        <td><Link to={"/validator/"+props.validator.address}><Avatar moniker={moniker} identity={props.validator.description.identity} address={props.validator.address} list={true} />{moniker}</Link> {props.validator.description.identity? <KeybaseCheck identity={props.validator.description.identity} />:''}</td>
+        <td><Link to={"/validator/"+props.validator.address}><Avatar moniker={moniker} identity={identity} address={props.validator.address} list={true} />{moniker}</Link> {identity? <KeybaseCheck identity={identity} />:''}</td>
         <td className="voting-power">{numeral(props.validator.voting_power).format('0,0')} ({numeral(props.validator.voting_power/props.totalPower*100).format('0.00')}%)</td>
         <td className="status">{props.validator.jailed?<Badge color="danger"><span className="d-none d-sm-inline">Jailed</span></Badge>:<Badge color="success"><span className="d-none d-sm-inline">Active</span></Badge>}</td>
         <td className="uptime"><Progress animated value={props.validator.uptime}>{props.validator.uptime?props.validator.uptime.toFixed(2):0}%</Progress></td>
