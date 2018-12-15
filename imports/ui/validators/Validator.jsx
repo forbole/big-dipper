@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import numeral from 'numeral';
+import moment from 'moment';
 import Block from '../components/Block.jsx';
 import Avatar from '../components/Avatar.jsx';
 import PowerHistory from '../components/PowerHistory.jsx';
-import moment from 'moment';
 import { Badge, Container, Row, Col, Card, CardImg, CardText, CardBody, CardTitle, CardSubtitle } from 'reactstrap';
 import KeybaseCheck from '../components/KeybaseCheck.jsx';
 
@@ -28,13 +28,6 @@ export default class Validator extends Component{
                 // console.log(prevState.validator.description);
                 if (this.state.identity != this.props.validator.description.identity){
                     this.setState({identity:this.props.validator.description.identity});
-                    // fetch("https://keybase.io/_/api/1.0/user/lookup.json?key_suffix="+this.props.validator.description.identity+"&fields=basics")
-                    // .then(response => response.json())
-                    // .then(data => {
-                    //     if (data.them.length > 0){
-                    //         this.setState({keybaseURL:"https://keybase.io/"+data.them[0].basics.username});
-                    //     }
-                    // });
                 }
             }
 
@@ -121,6 +114,12 @@ export default class Validator extends Component{
                                     <Col md={8} className="value">{numeral(this.props.validator.delegator_shares).format('0,0.00')}</Col>
                                     <Col md={4} className="label">Tokens</Col>
                                     <Col md={8} className="value">{numeral(this.props.validator.tokens).format('0,0.00')}</Col>
+                                    {(this.props.validator.jailed)?<Col xs={12} >
+                                        <Row><Col md={4} className="label">Unbonding Height</Col>
+                                        <Col md={8} className="value">{numeral(this.props.validator.unbonding_height).format('0,0')}</Col>
+                                        <Col md={4} className="label">Unbonding Time</Col>
+                                        <Col md={8} className="value">{moment.utc(this.props.validator.unbonding_time).format("D MMM YYYY, h:mm:ssa z")}</Col>
+                                        </Row></Col>:''}
                                 </Row>
                             </CardBody>
                         </Card>
