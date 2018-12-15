@@ -1,10 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 import { Promise } from "meteor/promise";
-
 import { Blockscon } from '/imports/api/blocks/blocks.js';
 import { Chain } from '/imports/api/chain/chain.js';
-// import { ValidatorSets } from '/imports/api/validator-sets/validator-sets.js';
+import { ValidatorSets } from '/imports/api/validator-sets/validator-sets.js';
 import { Validators } from '/imports/api/validators/validators.js';
 import { ValidatorRecords, Analytics} from '/imports/api/records/records.js';
 import { VotingPowerHistory } from '/imports/api/voting-power/history.js';
@@ -64,7 +63,6 @@ Meteor.methods({
         // get the current height in db
         let curr = Meteor.call('blocks.getCurrentHeight');
         console.log(curr);
-        // Blockscon.insert({height: 123, hash: "1234", transNum: 1234, time: "1234"});
         // loop if there's update in db
         if (until > curr) {
             SYNCING = true;
@@ -116,7 +114,7 @@ Meteor.methods({
                         // store valdiators exist records
                         let existingValidators = Validators.find({address:{$exists:true}}).fetch();
                         
-                        
+                        // record precommits and calculate uptime
                         for (i in existingValidators){
                             let record = {
                                 height: height,
@@ -124,11 +122,7 @@ Meteor.methods({
                                 exists: false,
                                 voting_power: existingValidators[i].voting_power
                             }
-                            // let uptime = 0;
-                            // if (typeof existingValidators[i].uptime !== 'undefined'){
-                            //     uptime = existingValidators[i].uptime-1;
-                            // }
-                            // let precommitsExists = false;
+
                             for (j in precommits){
                                 if (precommits[j] != null){
                                     if (existingValidators[i].address == precommits[j].validator_address){
@@ -179,7 +173,8 @@ Meteor.methods({
                         response = HTTP.get(url);
                         console.log(url);
                         let validators = JSON.parse(response.content);
-                        // ValidatorSets.insert(validators.result);
+                        validators.result.block_height = parseInt(validators.result.block_height);
+                        ValidatorSets.insert(validators.result);
                         let chainStatus = Chain.findOne({chainId:block.block_meta.header.chain_id});
                         let lastSyncedTime = chainStatus?chainStatus.lastSyncedTime:0;
                         let timeDiff;
@@ -213,8 +208,54 @@ Meteor.methods({
                         console.log(url);
                         let validatorSet = JSON.parse(response.content);
                     
-
                         analyticsData.voting_power = 0;
+
+                        // see if validators have been removed
+
+                        // console.log(height);
+
+                        let prevValSet;
+                        // console.log(height);
+                        if (height > 1){
+                            prevValSet = ValidatorSets.findOne({block_height:height-1});
+                        }
+
+                        let removedVals = [];
+
+                        // console.log(prevValSet.validators[0]);
+                        if (prevValSet){
+                            let prevValAddrs = prevValSet.validators.map((v, i) =>{
+                                // console.log(address);
+                                return v.address;
+                            });
+
+                            let curValAddrs = validators.result.validators.map((v,i) => {
+                                return v.address;
+                            });
+
+                            if (prevValAddrs.length > 0){
+                                removedVals = prevValAddrs.filter( ( el ) => !curValAddrs.includes( el ) );
+                            }
+                        }
+                        
+                        console.log("=== number of revmoved validator: "+removedVals.length);
+
+                        if (removedVals.length > 0){
+                            for (v in removedVals){
+                                let changeType = 'remove';
+                                let changeData = {
+                                    address: removedVals[v].address,
+                                    prev_voting_power: removedVals[v].voting_power,
+                                    voting_power: 0,
+                                    type: changeType,
+                                    height: height,
+                                    block_time: blockData.time
+                                };
+                                bulkVPHistory.insert(changeData);
+                            }
+                        }
+
+
                         // console.log(validators);
                         // validators are all the validators in the current height
                         if (validators.result){
@@ -336,7 +377,9 @@ Meteor.methods({
                             }
                         }
 
-                       
+                        // exit();
+                        // let removedVals = prevValSet.validators.filter(( el ) => validators.includes( el ) )
+
                         // Update info from remaining validator set
 
 
