@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Meteor } from 'meteor/meteor';
 import { Table, Badge, Button } from 'reactstrap';
-import HeaderRecord from '/imports/ui/components/HeaderRecord.jsx';
+import HeaderRecord from './HeaderRecord.jsx';
 import Blocks from '/imports/ui/blocks/ListContainer.js'
 
 class BlocksTable extends Component {

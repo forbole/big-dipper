@@ -1,13 +1,13 @@
 import { Mongo } from 'meteor/mongo';
-// import { Meteor } from 'meteor/meteor';
+import { Validators } from '../validators/validators.js';
 
 export const Blockscon = new Mongo.Collection('blocks');
 
-// Blocks.helpers({
-//     block(){
-//         return Meteor.blocks.find({});
-//     }
-// });
+Blockscon.helpers({
+    proposer(){
+        return Validators.findOne({address:this.proposerAddress});
+    }
+});
 
 // Blockscon.helpers({
 //     sorted(limit) {
