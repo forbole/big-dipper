@@ -105,12 +105,10 @@ Meteor.methods({
                             analyticsData.precommits = precommits.length;
                             // record for analytics
                             // PrecommitRecords.insert({height:height, precommits:precommits.length});
-                        }                      
-                        let startBlockInsertTime = new Date();
-                        Blockscon.insert(blockData);
-                        let endBlockInsertTime = new Date();
-                        console.log("Block insert time: "+((endBlockInsertTime-startBlockInsertTime)/1000)+"seconds.");
+                        }      
                         
+                        blockData.precommitsCount = blockData.validators.length;
+
                         // store valdiators exist records
                         let existingValidators = Validators.find({address:{$exists:true}}).fetch();
                         
@@ -175,6 +173,14 @@ Meteor.methods({
                         let validators = JSON.parse(response.content);
                         validators.result.block_height = parseInt(validators.result.block_height);
                         ValidatorSets.insert(validators.result);
+
+                        blockData.validatorsCount = validators.result.validators.length;
+                        let startBlockInsertTime = new Date();
+                        Blockscon.insert(blockData);
+                        let endBlockInsertTime = new Date();
+                        console.log("Block insert time: "+((endBlockInsertTime-startBlockInsertTime)/1000)+"seconds.");
+                        
+
                         let chainStatus = Chain.findOne({chainId:block.block_meta.header.chain_id});
                         let lastSyncedTime = chainStatus?chainStatus.lastSyncedTime:0;
                         let timeDiff;
