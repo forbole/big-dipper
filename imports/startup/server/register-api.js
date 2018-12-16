@@ -19,3 +19,5 @@ import '../../api/voting-power/server/publications.js';
 
 import '../../api/transactions/server/methods.js';
 import '../../api/transactions/server/publications.js';
+
+import '../../api/status/server/publications.js';

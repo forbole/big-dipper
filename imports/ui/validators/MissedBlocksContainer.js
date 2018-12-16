@@ -1,26 +1,29 @@
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Validators } from '/imports/api/validators/validators.js';
-import { Chain } from '/imports/api/chain/chain.js';
+import { Status } from '/imports/api/status/status.js';
 import { MissedBlocksStats } from '../../api/records/records.js';
 import MissedBlocks from './MissedBlocks.jsx';
 
 export default MissedBlocksContainer = withTracker((props) => {
-    const chainHandle = Meteor.subscribe('chain.status');
+    const statusHandle = Meteor.subscribe('status.status');
     const validatorsHandle = Meteor.subscribe('validator.details', props.match.params.address);
     const missedBlockHandle = Meteor.subscribe('missedblocks.validator', props.match.params.address);
-    const loading = !validatorsHandle.ready() && !chainHandle.ready() && !missedBlockHandle.ready();
+    const loading = !validatorsHandle.ready() && !statusHandle.ready() && !missedBlockHandle.ready();
     const validator = Validators.findOne({address:props.match.params.address});
-    const chainStatus = Chain.findOne({chainId:Meteor.settings.public.chainId});
+    const status = Status.findOne({chainId:Meteor.settings.public.chainId});
     const missedBlocks = MissedBlocksStats.find({voter:props.match.params.address}).fetch();
-    const validatorExist = !loading && !!validator && !!chainStatus;
+    const validatorExist = !loading && !!validator;
+    const statusExist = !loading && !!status;
     const missedBlocksExist = !loading && !!missedBlocks;
     // console.log(props.state.limit);
     return {
         loading,
         validatorExist,
+        statusExist,
+        missedBlocksExist,
         validator: validatorExist ? validator : {},
-        chainStatus: validatorExist ? chainStatus : {},
+        status: statusExist ? status : {},
         missedBlocks: missedBlocksExist ? missedBlocks : {}
     };
 })(MissedBlocks);

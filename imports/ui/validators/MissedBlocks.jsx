@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Table, Badge, Row, Col } from 'reactstrap';
+import moment from 'moment';
 
 export default class MissedBlocks extends Component{
     constructor(props){
@@ -47,8 +48,7 @@ export default class MissedBlocks extends Component{
                         </thead>
                         <tbody>{this.state.missedBlocksList}</tbody>
                     </Table>
-                            
-                    
+                    {this.props.statusExist?<div><em>Last sync time: {moment.utc(this.props.status.lastMissedBlockTime).format("D MMM YYYY, h:mm:ssa")}</em></div>:''}
                 </div>
             }
             else return <div>Validator doesn't exist.</div>
