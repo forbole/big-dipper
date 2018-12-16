@@ -76,7 +76,7 @@ export default class Validator extends Component{
                             <div className="website"></div>
                         </Card>
                         <Card>
-                            <div className="card-header">Uptime</div>
+                            <div className="card-header">Uptime <Link className="float-right" to={"/validator/"+this.props.validator.address+"/missed"}>Missed blocks</Link></div>
                             <CardBody>
                                 <Row>
                                     <Col xs={8} className="label">Last {Meteor.settings.public.uptimeWindow} blocks</Col>

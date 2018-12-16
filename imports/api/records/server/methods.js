@@ -32,24 +32,18 @@ Meteor.methods({
             for (b in missedRecords){
                 let block = Blockscon.findOne({height:missedRecords[b].height});
                 let existingRecord = MissedBlocksStats.findOne({voter:validators[i].address, proposer:block.proposerAddress});
-                // let data = {
-                //     voter: validators[i].address,
-                //     proposer: block.proposerAddress,
-                //     count: 0
-                // }
 
                 if (typeof counts[block.proposerAddress] === 'undefined'){
-                    counts[block.proposerAddress] = 1;
+                    if (existingRecord){
+                        counts[block.proposerAddress] = existingRecord.count+1;
+                    }
+                    else{
+                        counts[block.proposerAddress] = 1;
+                    }
                 }
                 else{
                     counts[block.proposerAddress]++;
                 }
-
-                // if (existingRecord){
-                //     data.count = existingRecord.count+1;
-                // }
-
-                // 
             }
 
             for (address in counts){
