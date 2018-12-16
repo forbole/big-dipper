@@ -161,9 +161,9 @@ Meteor.methods({
                             }
 
                             // calculate the uptime based on the records stored in previous blocks
-                            // only do this every 12 blocks ~
+                            // only do this every 15 blocks ~
 
-                            if ((height % 12) == 0){
+                            if ((height % 15) == 0){
                                 // let startAggTime = new Date();
                                 let numBlocks = Meteor.call('blocks.findUpTime', existingValidators[i].address);
                                 let uptime = 0;
@@ -342,7 +342,6 @@ Meteor.methods({
                                    
                                     for (val in validatorSet){
                                         if (validatorSet[val].consensus_pubkey == valExist.consensus_pubkey){
-                                            
                                             tempVal.jailed = validatorSet[val].jailed;
                                             tempVal.status = validatorSet[val].status;
                                             tempVal.tokens = validatorSet[val].tokens;

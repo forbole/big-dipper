@@ -22,6 +22,7 @@
         "consensusInterval": 1000,
         "statusInterval":7500,
         "signingInfoInterval": 1800000,
-        "proposalInterval": 5000
+        "proposalInterval": 5000,
+        "missedBlocksInterval": 60000
     }
 }

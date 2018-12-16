@@ -11,6 +11,7 @@ timerBlocks = 0;
 timerChain = 0;
 timerConsensus = 0;
 timerProposal = 0;
+timerMissedBlock = 0;
 
 updateChainStatus = () => {
     Meteor.call('chain.updateStatus', (error, result) => {
@@ -53,10 +54,22 @@ getProposals = () => {
     });
 }
 
+updateMissedBlockStats = () => {
+    Meteor.call('ValidatorRecords.calculateMissedBlocks', (error, result) =>{
+        if (error){
+            console.log("missblocks error: "+ error)
+        }
+        if (result){
+            console.log("missed blocks ok:" + result);
+        }
+    });
+}
+
 Meteor.startup(function(){
     if (Meteor.isDevelopment){
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
     }
+    
     timerConsensus = Meteor.setInterval(function(){
         getConsensusState();
     }, Meteor.settings.params.consensusInterval);
@@ -69,4 +82,8 @@ Meteor.startup(function(){
     timerProposal = Meteor.setInterval(function(){
         getProposals();
     }, Meteor.settings.params.proposalInterval);
+    timerMissedBlock = Meteor.setInterval(function(){
+        updateMissedBlockStats();
+    }, Meteor.settings.params.missedBlocksInterval);
+
 });
