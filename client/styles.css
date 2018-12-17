@@ -259,3 +259,7 @@ th i.material-icons{
     display: inline-block;
     margin-right: 0.3em;
 }
+
+.missed-table{
+    margin-top: 0.5em;
+}

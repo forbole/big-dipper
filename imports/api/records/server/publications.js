@@ -14,17 +14,28 @@ Meteor.publish('analytics.history', function(){
     return Analytics.find({},{sort:{height:-1},limit:50});
 });
 
-publishComposite('missedblocks.validator', function(address){
+publishComposite('missedblocks.validator', function(address, type){
+    let conditions = {};
+    if (type == 'voter'){
+        conditions = {
+            voter: address
+        }
+    }
+    else{
+        conditions = {
+            proposer: address
+        }
+    }
     return {
         find(){
-            return MissedBlocksStats.find({voter:address})
+            return MissedBlocksStats.find(conditions)
         },
         children: [
             {
                 find(stats){
                     return Validators.find(
-                        {address:stats.proposer},
-                        {fields:{address:1, description:1}, limit:1}
+                        {},
+                        {fields:{address:1, description:1}}
                     )
                 }
             }
