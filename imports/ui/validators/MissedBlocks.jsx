@@ -20,7 +20,7 @@ export default class MissedBlocks extends Component{
                     missedBlocksList: this.props.missedBlocks.map((block,i) => {
                         return <tr key={i}>
                             <td>{i+1}</td>
-                            <td><Link to={"/validator/"+(this.props.match.path.indexOf("/missed/blocks")>0)?block.proposer:block.voter}>{(this.props.match.path.indexOf("/missed/blocks")>0)?block.proposerMoniker():block.voterMoniker()}</Link></td>
+                            <td><Link to={"/validator/"+((this.props.match.path.indexOf("/missed/blocks")>0)?block.proposer:block.voter)}>{(this.props.match.path.indexOf("/missed/blocks")>0)?block.proposerMoniker():block.voterMoniker()}</Link></td>
                             <td>{block.count}</td>
                         </tr>
                     })

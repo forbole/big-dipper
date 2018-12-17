@@ -160,9 +160,14 @@ table.validator-list th.proposer-priority{
     width: 15%;
 }
 
+table.validator-list th.last-seen{
+    width: 35%;
+}
+
 table.proposal-list th.status{
     width: 15%;
 }
+
 
 th i.material-icons{
     vertical-align: middle;

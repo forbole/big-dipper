@@ -15,8 +15,9 @@ const ValidatorRow = (props) => {
         <td><Link to={"/validator/"+props.validator.address}><Avatar moniker={moniker} identity={identity} address={props.validator.address} list={true} />{moniker}</Link> {identity? <KeybaseCheck identity={identity} />:''}</td>
         <td className="voting-power">{numeral(props.validator.voting_power).format('0,0')} ({numeral(props.validator.voting_power/props.totalPower*100).format('0.00')}%)</td>
         <td className="status">{props.validator.jailed?<Badge color="danger"><span className="d-none d-sm-inline">Jailed</span></Badge>:<Badge color="success"><span className="d-none d-sm-inline">Active</span></Badge>}</td>
-        <td className="uptime"><Progress animated value={props.validator.uptime}>{props.validator.uptime?props.validator.uptime.toFixed(2):0}%</Progress></td>
-        <td className="proposer-priority text-right">{numeral(props.validator.proposer_priority).format('0,0')}</td>
+        {(!props.jailed)?<td className="uptime"><Progress animated value={props.validator.uptime}>{props.validator.uptime?props.validator.uptime.toFixed(2):0}%</Progress></td>:''}
+        {(!props.jailed)?<td className="proposer-priority text-right">{numeral(props.validator.proposer_priority).format('0,0')}</td>:''}
+        {(props.jailed)?<td className="last-seen">{moment.utc(props.validator.lastSeen).format("D MMM YYYY, h:mm:ssa")}</td>:''}
     </tr>
 }
 
@@ -38,7 +39,8 @@ export default class List extends Component{
                             index={i} 
                             validator={validator} 
                             address={validator.address} 
-                            totalPower={this.props.chainStatus.totalVotingPower}    
+                            totalPower={this.props.chainStatus.totalVotingPower}
+                            jailed={this.props.jailed}
                         />
                     })
                 })    
@@ -51,6 +53,7 @@ export default class List extends Component{
             return <div>Loading</div>
         }
         else{
+            // console.log(this.props);
             return (
                 <tbody>{this.state.validators}</tbody>
             )    
