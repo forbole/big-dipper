@@ -48,7 +48,7 @@ export default class MissedBlocks extends Component{
                             </tr>
                         </thead>
                         <tbody>{this.state.missedBlocksList}</tbody>
-                    </Table>:"<div>I don't miss block.</div>"}
+                    </Table>:<div>I don't miss block.</div>}
                     {this.props.statusExist?<div><em>Last sync time: {moment.utc(this.props.status.lastMissedBlockTime).format("D MMM YYYY, h:mm:ssa")}</em></div>:''}
                 </div>
             }
