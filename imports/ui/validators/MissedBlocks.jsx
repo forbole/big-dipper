@@ -38,6 +38,7 @@ export default class MissedBlocks extends Component{
                 return <div>
                     <Link to={"/validator/"+this.props.validator.address} className="btn btn-link"><i className="fas fa-caret-left"></i> Back to Validator</Link>
                     <h2>Missed blocks of {this.props.validator.description.moniker}</h2>
+                    {(this.props.missedBlocks&&this.props.missedBlocks.length>0)?
                     <Table striped>
                         <thead>
                             <tr>
@@ -47,7 +48,7 @@ export default class MissedBlocks extends Component{
                             </tr>
                         </thead>
                         <tbody>{this.state.missedBlocksList}</tbody>
-                    </Table>
+                    </Table>:"<div>I don't miss block.</div>"}
                     {this.props.statusExist?<div><em>Last sync time: {moment.utc(this.props.status.lastMissedBlockTime).format("D MMM YYYY, h:mm:ssa")}</em></div>:''}
                 </div>
             }
