@@ -7,6 +7,7 @@ import { ValidatorSets } from '/imports/api/validator-sets/validator-sets.js';
 import { Validators } from '/imports/api/validators/validators.js';
 import { ValidatorRecords, Analytics} from '/imports/api/records/records.js';
 import { VotingPowerHistory } from '/imports/api/voting-power/history.js';
+import Block from '../../../ui/components/Block';
 
 getValidatorVotingPower = (validators, address) => {
     for (v in validators){
@@ -17,6 +18,20 @@ getValidatorVotingPower = (validators, address) => {
 }
 
 Meteor.methods({
+    'blocks.averageBlockTime'(address){
+        let blocks = Blockscon.find({proposerAddress:address}).fetch();
+        let heights = blocks.map((block, i) => {
+            return block.height;
+        });
+        let blocksStats = Analytics.find({height:{$in:heights}}).fetch();
+        // console.log(blocksStats);
+
+        let totalBlockDiff = 0;
+        for (b in blocksStats){
+            totalBlockDiff += blocksStats[b].timeDiff;
+        }
+        return totalBlockDiff/heights.length;
+    },
     'blocks.findUpTime'(address){
         let collection = ValidatorRecords.rawCollection();
         // let aggregateQuery = Meteor.wrapAsync(collection.aggregate, collection);

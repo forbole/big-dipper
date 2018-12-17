@@ -69,6 +69,7 @@ Meteor.startup(function(){
     if (Meteor.isDevelopment){
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
     }
+    // console.log(Meteor.call('blocks.averageBlockTime','E161D3FC5A61E381D68CE244FBEC27913930B37D'));
     
     timerConsensus = Meteor.setInterval(function(){
         getConsensusState();
