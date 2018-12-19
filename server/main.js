@@ -2,6 +2,7 @@
 
 import '/imports/startup/server';
 import '/imports/startup/both';
+// import moment from 'moment';
 // import '/imports/api/blocks/blocks.js';
 
 SYNCING = false;
@@ -12,6 +13,8 @@ timerChain = 0;
 timerConsensus = 0;
 timerProposal = 0;
 timerMissedBlock = 0;
+timerAggregate = 0;
+
 
 updateChainStatus = () => {
     Meteor.call('chain.updateStatus', (error, result) => {
@@ -65,10 +68,21 @@ updateMissedBlockStats = () => {
     });
 }
 
+aggregateHourly = () =>{
+    // doing something every hour
+}
+
+aggregateDaily = () =>{
+    // doing somthing every day
+}
+
+
+
 Meteor.startup(function(){
     if (Meteor.isDevelopment){
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
     }
+
     // console.log(Meteor.call('blocks.averageBlockTime','E161D3FC5A61E381D68CE244FBEC27913930B37D'));
     
     timerConsensus = Meteor.setInterval(function(){
@@ -87,4 +101,14 @@ Meteor.startup(function(){
         updateMissedBlockStats();
     }, Meteor.settings.params.missedBlocksInterval);
 
+    timerAggregate = Meteor.setInterval(function(){
+        let now = new Date();
+        if ((now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)){
+            aggregateHourly();
+        }
+
+        if ((now.getUTCHours() == 0) && (now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)){
+            aggregateDaily();
+        }
+    }, 1000)
 });
