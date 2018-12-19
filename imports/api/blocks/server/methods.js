@@ -7,7 +7,8 @@ import { ValidatorSets } from '/imports/api/validator-sets/validator-sets.js';
 import { Validators } from '/imports/api/validators/validators.js';
 import { ValidatorRecords, Analytics} from '/imports/api/records/records.js';
 import { VotingPowerHistory } from '/imports/api/voting-power/history.js';
-import Block from '../../../ui/components/Block';
+import { Transactions } from '../../transactions/transactions.js';
+// import Block from '../../../ui/components/Block';
 
 getValidatorVotingPower = (validators, address) => {
     for (v in validators){
