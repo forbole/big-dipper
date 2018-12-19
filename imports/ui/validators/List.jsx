@@ -17,7 +17,7 @@ const ValidatorRow = (props) => {
         <td className="status">{props.validator.jailed?<Badge color="danger"><span className="d-none d-sm-inline">Jailed</span></Badge>:<Badge color="success"><span className="d-none d-sm-inline">Active</span></Badge>}</td>
         {(!props.jailed)?<td className="uptime"><Progress animated value={props.validator.uptime}>{props.validator.uptime?props.validator.uptime.toFixed(2):0}%</Progress></td>:''}
         {(!props.jailed)?<td className="proposer-priority text-right">{numeral(props.validator.proposer_priority).format('0,0')}</td>:''}
-        {(props.jailed)?<td className="last-seen">{moment.utc(props.validator.lastSeen).format("D MMM YYYY, h:mm:ssa")}</td>:''}
+        {(props.jailed)?<td className="last-seen">{props.validator.lastSeen?moment.utc(props.validator.lastSeen).format("D MMM YYYY, h:mm:ssa"):''}</td>:''}
     </tr>
 }
 
