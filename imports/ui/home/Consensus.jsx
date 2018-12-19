@@ -15,9 +15,9 @@ export default class Consensus extends Component{
         if (prevProps.consensus != this.props.consensus){
             // console.log(this.props.consensus);
             // let testDate = new Date(2018, 10, 13);
-            if (this.props.consensus.lastBlocksSyncedTime){
+            if (this.props.consensus.latestBlockTime){
                 // console.log()
-                let lastSync = moment(this.props.consensus.lastBlocksSyncedTime);
+                let lastSync = moment(this.props.consensus.latestBlockTime);
                 let current = moment();
                 let diff = current.diff(lastSync);
                 if (diff > 60){
