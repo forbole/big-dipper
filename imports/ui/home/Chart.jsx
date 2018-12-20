@@ -183,22 +183,27 @@ export default class Chart extends Component{
             return <div>Loading</div>
         }
         else{
-            return (
-                <div>
-                <Card>
-                    <div className="card-header">Block Time History</div>
-                    <CardBody>
-                    <Line data={this.state.timeData} options={this.state.optionsTime}/>
-                    </CardBody>
-                </Card>
-                {/* <Card>
-                    <div className="card-header">Voting Power History</div>
-                    <CardBody>
-                    <Line data={this.state.vpData}  options={this.state.optionsVP}/>
-                    </CardBody>
-                </Card> */}
-                </div>
-            );    
+            if (this.props.historyExist && (this.props.history.length > 0)){
+                return (
+                    <div>
+                    <Card>
+                        <div className="card-header">Block Time History</div>
+                        <CardBody>
+                        <Line data={this.state.timeData} options={this.state.optionsTime}/>
+                        </CardBody>
+                    </Card>
+                    {/* <Card>
+                        <div className="card-header">Voting Power History</div>
+                        <CardBody>
+                        <Line data={this.state.vpData}  options={this.state.optionsVP}/>
+                        </CardBody>
+                    </Card> */}
+                    </div>
+                );   
+            }
+            else{
+                return <div></div>
+            }
         }
     }
 }
