@@ -56,7 +56,7 @@ export default class Consensus extends Component{
             }
             else{
                 return <div><Card body inverse color="danger">
-                    <span>The chain haven't started yet.</span>             
+                    <span>The chain hasn't started yet.</span>             
                 </Card></div>
             }   
         }
