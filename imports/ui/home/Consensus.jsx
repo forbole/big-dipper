@@ -42,9 +42,9 @@ export default class Consensus extends Component{
         }
         else{
             if (this.props.consensusExist){
-                let proposer = this.props.consensus.proposer()
-                let moniker = (proposer.description&&proposer.description.moniker)?proposer.description.moniker:this.props.consensus.proposerAddress;
-                let identity = (proposer.description&&proposer.description.identity)?proposer.description.identity:"";
+                let proposer = this.props.consensus.proposer();
+                let moniker = (proposer&&proposer.description&&proposer.description.moniker)?proposer.description.moniker:this.props.consensus.proposerAddress;
+                let identity = (proposer&&proposer.description&&proposer.description.identity)?proposer.description.identity:"";
                 return (
                     <div>
                         {(this.state.chainStopped)?<Card body inverse color="danger">
