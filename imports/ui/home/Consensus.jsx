@@ -54,7 +54,7 @@ export default class Consensus extends Component{
                             <div className="card-header">Consensus State</div>
                             <CardBody>
                             <Row>
-                                <Col md={9} lg={6}>
+                                <Col md={8} lg={6}>
                                     <Row>
                                         <Col md={2}>
                                             <Row>
@@ -82,7 +82,7 @@ export default class Consensus extends Component{
                                         </Col>
                                     </Row>                            
                                 </Col>
-                                <Col md={3} lg={6}><CardSubtitle>Voting Power</CardSubtitle><Progress animated value={this.props.consensus.votedPower} className="value">{this.props.consensus.votedPower}%</Progress></Col>
+                                <Col md={4} lg={6}><CardSubtitle>Voting Power</CardSubtitle><Progress animated value={this.props.consensus.votedPower} className="value">{this.props.consensus.votedPower}%</Progress></Col>
                             </Row>
                             </CardBody>
                         </Card>
