@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { Row, Col, Card, CardImg, CardText, CardBody,
     CardTitle, CardSubtitle, Button, Progress } from 'reactstrap';
+import Avatar from '../components/Avatar.jsx';
+import KeybaseCheck from '../components/KeybaseCheck.jsx';
 import moment from 'moment';
+import numeral from 'numeral';
 
 export default class Consensus extends Component{
     constructor(props){
@@ -38,17 +42,47 @@ export default class Consensus extends Component{
         }
         else{
             if (this.props.consensusExist){
+                let proposer = this.props.consensus.proposer()
+                let moniker = (proposer.description&&proposer.description.moniker)?proposer.description.moniker:this.props.consensus.proposerAddress;
+                let identity = (proposer.description&&proposer.description.identity)?proposer.description.identity:"";
                 return (
                     <div>
                         {(this.state.chainStopped)?<Card body inverse color="danger">
                                 <span>The chain appears to be stopped for <em>{moment(this.props.consensus.latestBlockTime).fromNow(true)}</em>! Feed me with new blocks 😭!</span>             
                         </Card>:''}
-                        <Card className="status">
+                        <Card className="status consensus-state">
                             <div className="card-header">Consensus State</div>
                             <CardBody>
                             <Row>
-                                <Col md={3}><CardSubtitle>Height</CardSubtitle><span className="value">{this.props.consensus.votingHeight}</span></Col>
-                                <Col md={9}><CardSubtitle>Voting Power</CardSubtitle><Progress animated value={this.props.consensus.votedPower} className="value">{this.props.consensus.votedPower}%</Progress></Col>
+                                <Col md={9} lg={6}>
+                                    <Row>
+                                        <Col md={2}>
+                                            <Row>
+                                                <Col md={12} xs={4}><CardSubtitle>Height</CardSubtitle></Col>
+                                                <Col md={12} xs={8}><span className="value">{numeral(this.props.consensus.votingHeight).format('0,0')}</span></Col>
+                                            </Row>
+                                        </Col>
+                                        <Col md={2}>
+                                            <Row>
+                                                <Col md={12} xs={4}><CardSubtitle>Round</CardSubtitle></Col>
+                                                <Col md={12} xs={8}><span className="value">{this.props.consensus.votingRound}</span></Col>
+                                            </Row>
+                                        </Col>
+                                        <Col md={2}>
+                                            <Row>
+                                                <Col md={12} xs={4}><CardSubtitle>Step</CardSubtitle></Col>
+                                                <Col md={12} xs={8}><span className="value">{this.props.consensus.votingStep}</span></Col>
+                                            </Row>
+                                        </Col>
+                                        <Col md={6}>
+                                            <Row>
+                                                <Col md={12} xs={4}><CardSubtitle>Proposer</CardSubtitle></Col>
+                                                <Col md={12} xs={8}><span className="value"><Link to={"/validators/"+this.props.consensus.proposer} ><Avatar moniker={moniker} identity={identity} address={this.props.consensus.proposerAddress} list={true} />{moniker}</Link></span> <KeybaseCheck identity={identity} /></Col>
+                                            </Row>
+                                        </Col>
+                                    </Row>                            
+                                </Col>
+                                <Col md={3} lg={6}><CardSubtitle>Voting Power</CardSubtitle><Progress animated value={this.props.consensus.votedPower} className="value">{this.props.consensus.votedPower}%</Progress></Col>
                             </Row>
                             </CardBody>
                         </Card>

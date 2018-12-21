@@ -6,20 +6,25 @@ import { Validators } from '../../validators/validators.js';
 Meteor.methods({
     'chain.getConsensusState': function(){
         this.unblock();
-        let url = RPC+'/consensus_state';
+        let url = RPC+'/dump_consensus_state';
         try{
             let response = HTTP.get(url);
             let consensus = JSON.parse(response.content);
             consensus = consensus.result;
-            let roundState = consensus.round_state['height/round/step'].split('/');
-            let height = roundState[0];
-            let round = roundState[1];
-            let votedPower = Math.round(parseFloat(consensus.round_state.height_vote_set[round].prevotes_bit_array.split(" ")[3])*100);
+            let height = consensus.round_state.height;
+            let round = consensus.round_state.round;
+            let step = consensus.round_state.step;
+            let votedPower = Math.round(parseFloat(consensus.round_state.votes[round].prevotes_bit_array.split(" ")[3])*100);
 
-            Chain.update({chainId:Meteor.settings.public.chainId}, {$set:{votingHeight:height, votedPower:votedPower}});
-            // console.log(votingPower);
-
-            // console.log(consensus.round_state['height/round/step']);
+            Chain.update({chainId:Meteor.settings.public.chainId}, {$set:{
+                votingHeight: height, 
+                votingRound: round, 
+                votingStep: step, 
+                votedPower: votedPower,
+                proposerAddress: consensus.round_state.validators.proposer.address,
+                prevotes: consensus.round_state.votes[round].prevotes,
+                precommits: consensus.round_state.votes[round].precommits
+            }});
         }
         catch(e){
             console.log(e);
@@ -55,29 +60,8 @@ Meteor.methods({
 
             let totalVP = 0;
             for (v in validatorSet){
-                // console.log();
                 let vp = Math.round(parseFloat(eval(validatorSet[v].tokens)));
                 totalVP += parseInt(vp);
-                // try{
-                //     if ((validatorSet[v].description.identity.length > 0) && (validatorSet[v].description.identity != "[do-not-modify]")){
-                //         url = "https://keybase.io/_/api/1.0/user/lookup.json?key_suffix="+validatorSet[v].description.identity+"&fields=pictures";
-                //         response = HTTP.get(url);
-                //         let picture = JSON.parse(response.content);
-                //         // console.log(picture);
-                //         console.log("picture:"+v);
-                //         if (picture.status.code == 0){
-                //             if (picture.them != null){
-                //                 if ((picture.them.length > 0) && (picture.them[0].pictures))
-                //                     validatorSet[v].picture = picture.them[0].pictures.primary.url
-                //             }
-                //         }
-                //     }
-                // }
-                // catch (e){
-                //     console.log(e);
-                // }
-                // console.log(validatorSet[v].revoked);
-                // Validators.update({operator_address:validatorSet[v].operator_address}, {$set:validatorSet[v]});
             }
 
             chain.totalVotingPower = totalVP;
