@@ -20,7 +20,7 @@ export default class ChainStatus extends React.Component {
             else{
                 return(
                     <Row className="status text-center">
-                        <Col md="3">
+                        <Col lg={3} md={6}>
                             <Card body>
                                 <CardTitle>Latest Block Height</CardTitle>
                                 <CardText>
@@ -29,7 +29,7 @@ export default class ChainStatus extends React.Component {
                                 </CardText>   
                             </Card>
                         </Col>
-                        <Col md="3">
+                        <Col lg={3} md={6}>
                             <Card body>
                                 <CardTitle>Average Block Time</CardTitle>
                                 <CardText>
@@ -37,13 +37,13 @@ export default class ChainStatus extends React.Component {
                                 </CardText>   
                             </Card>
                         </Col>
-                        <Col md="3">
+                        <Col lg={3} md={6}>
                             <Card body>
                                 <CardTitle>Active Validators</CardTitle>
                                 <CardText><span className="display-4 value text-primary">{this.props.status.validators}</span>out of {this.props.status.totalValidators} validators</CardText>   
                             </Card>
                         </Col>
-                        <Col md="3">
+                        <Col lg={3} md={6}>
                             <Card body>
                                 <CardTitle>Online Voting Power</CardTitle>
                                 <CardText><span className="display-4 value text-primary">{numeral(this.props.status.activeVotingPower).format('0,0.00a')}</span>from {numeral(this.props.status.totalVotingPower).format('0,0.00a')} tokens delegated</CardText>   
