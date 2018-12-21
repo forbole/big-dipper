@@ -84,31 +84,32 @@ Meteor.startup(function(){
     }
 
     // console.log(Meteor.call('blocks.averageBlockTime','E161D3FC5A61E381D68CE244FBEC27913930B37D'));
+    if (Meteor.settings.debug.startTimer){
+        timerConsensus = Meteor.setInterval(function(){
+            getConsensusState();
+        }, Meteor.settings.params.consensusInterval);
+        timerBlocks = Meteor.setInterval(function(){
+            updateBlock();
+        }, Meteor.settings.params.blockInterval);
+        timerChain = Meteor.setInterval(function(){
+            updateChainStatus();
+        }, Meteor.settings.params.statusInterval);
+        timerProposal = Meteor.setInterval(function(){
+            getProposals();
+        }, Meteor.settings.params.proposalInterval);
+        timerMissedBlock = Meteor.setInterval(function(){
+            updateMissedBlockStats();
+        }, Meteor.settings.params.missedBlocksInterval);
     
-    // timerConsensus = Meteor.setInterval(function(){
-    //     getConsensusState();
-    // }, Meteor.settings.params.consensusInterval);
-    // timerBlocks = Meteor.setInterval(function(){
-    //     updateBlock();
-    // }, Meteor.settings.params.blockInterval);
-    // timerChain = Meteor.setInterval(function(){
-    //     updateChainStatus();
-    // }, Meteor.settings.params.statusInterval);
-    // timerProposal = Meteor.setInterval(function(){
-    //     getProposals();
-    // }, Meteor.settings.params.proposalInterval);
-    // timerMissedBlock = Meteor.setInterval(function(){
-    //     updateMissedBlockStats();
-    // }, Meteor.settings.params.missedBlocksInterval);
-
-    // timerAggregate = Meteor.setInterval(function(){
-    //     let now = new Date();
-    //     if ((now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)){
-    //         aggregateHourly();
-    //     }
-
-    //     if ((now.getUTCHours() == 0) && (now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)){
-    //         aggregateDaily();
-    //     }
-    // }, 1000)
+        timerAggregate = Meteor.setInterval(function(){
+            let now = new Date();
+            if ((now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)){
+                aggregateHourly();
+            }
+    
+            if ((now.getUTCHours() == 0) && (now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)){
+                aggregateDaily();
+            }
+        }, 1000)
+    }
 });
