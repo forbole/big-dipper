@@ -2,7 +2,12 @@
 Forbole Block Explorer for Cosmos
 
 ## Demo
-[Explore Cosmos Testnet (genki-3001) with The Big Dipper](https://bigdipper.forbole.com)
+[Explore Cosmos Testnet (game-of-stakes-2) with The Big Dipper](https://bigdipper.forbole.com)
+
+## Projects running with the Big Dipper
+[Sentinel testnet](https://explorer.sentinelgroup.io/)
+
+[JoyStream testnet](http://explorer.joystream.org/)
 
 ## How to run The Big Dipper
 
