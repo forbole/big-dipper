@@ -177,6 +177,18 @@ th i.material-icons{
     transition: all 2s ease-out;
 }
 
+div#countdown {
+    display: inline-block;
+    width: auto;
+    font: inherit;
+    margin-top: 2em;
+}
+
+#countdown.flip-clock-wrapper ul li a div div.inn,
+#countdown .flip-clock-dot{
+    background-color: #bd081c;
+}
+
 .consensus-state.status .card-subtitle{
     margin-top: 0;
     font-size: 1em;
@@ -274,4 +286,12 @@ th i.material-icons{
 
 .missed-table{
     margin-top: 0.5em;
+}
+
+@media screen and (max-width: 767px){
+    .flip-clock-wrapper ul{
+        width: 37px;
+        height: 50%;
+        line-height: 50%;
+    }
 }
