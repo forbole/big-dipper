@@ -8,7 +8,15 @@ import { Validators } from '/imports/api/validators/validators.js';
 import { ValidatorRecords, Analytics} from '/imports/api/records/records.js';
 import { VotingPowerHistory } from '/imports/api/voting-power/history.js';
 import { Transactions } from '../../transactions/transactions.js';
+// import Block from '../../../ui/components/Block';
 
+getValidatorVotingPower = (validators, address) => {
+    for (v in validators){
+        if (validators[v].address == address){
+            return parseInt(validators[v].voting_power);
+        }
+    }
+}
 
 Meteor.methods({
     'blocks.averageBlockTime'(address){
@@ -279,6 +287,7 @@ Meteor.methods({
                                         }
                                         
                                         bulkValidators.insert(validator);
+                                        // console.log("validator first appears: "+bulkValidators.length);
                                         bulkVPHistory.insert({
                                             address: validator.address,
                                             prev_voting_power: 0,
@@ -304,12 +313,14 @@ Meteor.methods({
                                             validator.unbonding_time = validatorSet[val].unbonding_time;
                                             validator.commission = validatorSet[val].commission;
                                             bulkValidators.find({consensus_pubkey: valExist.consensus_pubkey}).updateOne({$set:validator});
+                                            // console.log("validator exisits: "+bulkValidators.length);
                                             validatorSet.splice(val, 1);
                                             // break;
                                         }
-                                        else{
-                                            bulkValidators.find({consensus_pubkey: validatorSet[val].consensus_pubkey}).updateOne({$set:validatorSet[val]});
-                                        }
+                                        // else{
+                                        //     bulkValidators.find({consensus_pubkey: validatorSet[val].consensus_pubkey}).updateOne({$set:validatorSet[val]});
+                                        //     console.log("validator miss vote: "+bulkValidators.length);
+                                        // }
                                     }
                                     
                                 }
@@ -334,6 +345,7 @@ Meteor.methods({
 
                         let startVUpTime = new Date();
                         if (bulkValidators.length > 0){
+                            // console.log(bulkValidators.length);
                             bulkValidators.execute((err, result) => {
                                 if (err){
                                     console.log(err);
