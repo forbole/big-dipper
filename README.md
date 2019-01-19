@@ -7,6 +7,8 @@ Forbole Block Explorer for Cosmos
 ## Projects running with the Big Dipper
 [JoyStream testnet](http://explorer.joystream.org/)
 
+[Sentinel testnet](https://explorer.sentinel.co/)
+
 ## How to run The Big Dipper
 
 1. Copy `settings.json.default` to `settings.json`.
