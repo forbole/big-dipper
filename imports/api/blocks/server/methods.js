@@ -8,15 +8,7 @@ import { Validators } from '/imports/api/validators/validators.js';
 import { ValidatorRecords, Analytics} from '/imports/api/records/records.js';
 import { VotingPowerHistory } from '/imports/api/voting-power/history.js';
 import { Transactions } from '../../transactions/transactions.js';
-// import Block from '../../../ui/components/Block';
 
-getValidatorVotingPower = (validators, address) => {
-    for (v in validators){
-        if (validators[v].address == address){
-            return parseInt(validators[v].voting_power);
-        }
-    }
-}
 
 Meteor.methods({
     'blocks.averageBlockTime'(address){
@@ -240,52 +232,6 @@ Meteor.methods({
                     
                         analyticsData.voting_power = 0;
 
-                        // see if validators have been removed
-
-                        // console.log(height);
-
-                        let prevValSet;
-                        // console.log(height);
-                        if (height > 1){
-                            prevValSet = ValidatorSets.findOne({block_height:height-1});
-                        }
-
-                        let removedVals = [];
-
-                        // console.log(prevValSet.validators[0]);
-                        if (prevValSet){
-                            let prevValAddrs = prevValSet.validators.map((v, i) =>{
-                                // console.log(address);
-                                return v.address;
-                            });
-
-                            let curValAddrs = validators.result.validators.map((v,i) => {
-                                return v.address;
-                            });
-
-                            if (prevValAddrs.length > 0){
-                                removedVals = prevValAddrs.filter( ( el ) => !curValAddrs.includes( el ) );
-                            }
-                        }
-                        
-                        console.log("=== number of revmoved validator: "+removedVals.length);
-
-                        if (removedVals.length > 0){
-                            for (v in removedVals){
-                                let changeType = 'remove';
-                                let changeData = {
-                                    address: removedVals[v].address,
-                                    prev_voting_power: removedVals[v].voting_power,
-                                    voting_power: 0,
-                                    type: changeType,
-                                    height: height,
-                                    block_time: blockData.time
-                                };
-                                bulkVPHistory.insert(changeData);
-                            }
-                        }
-
-
                         // validators are all the validators in the current height
                         if (validators.result){
                             for (v in validators.result.validators){
@@ -296,47 +242,47 @@ Meteor.methods({
 
                                 let valExist = Validators.findOne({"pub_key.value":validator.pub_key.value});
                                 if (!valExist){
-                                    // console.log("validator not in db");
+                                    console.log("validator not in db");
                                     let command = Meteor.settings.bin.gaiadebug+" pubkey "+validator.pub_key.value;
                                     // console.log(command);
-                                    let tempVal = validator;
+                                    // let tempVal = validator;
                                     Meteor.call('runCode', command, function(error, result){
-                                        tempVal.address = result.match(/\s[0-9A-F]{40}$/igm);
-                                        tempVal.address = validator.address[0].trim();
-                                        tempVal.hex = result.match(/\s[0-9A-F]{64}$/igm);
-                                        tempVal.hex = validator.hex[0].trim();
-                                        tempVal.cosmosaccpub = result.match(/cosmospub.*$/igm);
-                                        tempVal.cosmosaccpub = validator.cosmosaccpub[0].trim();
-                                        tempVal.operator_pubkey = result.match(/cosmosvaloperpub.*$/igm);
-                                        tempVal.operator_pubkey = validator.operator_pubkey[0].trim();
-                                        tempVal.consensus_pubkey = result.match(/cosmosvalconspub.*$/igm);
-                                        tempVal.consensus_pubkey = validator.consensus_pubkey[0].trim();
+                                        validator.address = result.match(/\s[0-9A-F]{40}$/igm);
+                                        validator.address = validator.address[0].trim();
+                                        validator.hex = result.match(/\s[0-9A-F]{64}$/igm);
+                                        validator.hex = validator.hex[0].trim();
+                                        validator.cosmosaccpub = result.match(/cosmospub.*$/igm);
+                                        validator.cosmosaccpub = validator.cosmosaccpub[0].trim();
+                                        validator.operator_pubkey = result.match(/cosmosvaloperpub.*$/igm);
+                                        validator.operator_pubkey = validator.operator_pubkey[0].trim();
+                                        validator.consensus_pubkey = result.match(/cosmosvalconspub.*$/igm);
+                                        validator.consensus_pubkey = validator.consensus_pubkey[0].trim();
 
                                         for (val in validatorSet){
                                             if (validatorSet[val].consensus_pubkey == tempVal.consensus_pubkey){
-                                                tempVal.operator_address = validatorSet[val].operator_address;
-                                                tempVal.jailed = validatorSet[val].jailed;
-                                                tempVal.status = validatorSet[val].status;
-                                                tempVal.tokens = validatorSet[val].tokens;
-                                                tempVal.delegator_shares = validatorSet[val].delegator_shares;
-                                                tempVal.description = validatorSet[val].description;
-                                                tempVal.bond_height = validatorSet[val].bond_height;
-                                                tempVal.bond_intra_tx_counter = validatorSet[val].bond_intra_tx_counter;
-                                                tempVal.unbonding_height = validatorSet[val].unbonding_height;
-                                                tempVal.unbonding_time = validatorSet[val].unbonding_time;
-                                                tempVal.commission = validatorSet[val].commission;
-                                                tempVal.removed = false,
-                                                tempVal.removedAt = 0
+                                                validator.operator_address = validatorSet[val].operator_address;
+                                                validator.jailed = validatorSet[val].jailed;
+                                                validator.status = validatorSet[val].status;
+                                                validator.tokens = validatorSet[val].tokens;
+                                                validator.delegator_shares = validatorSet[val].delegator_shares;
+                                                validator.description = validatorSet[val].description;
+                                                validator.bond_height = validatorSet[val].bond_height;
+                                                validator.bond_intra_tx_counter = validatorSet[val].bond_intra_tx_counter;
+                                                validator.unbonding_height = validatorSet[val].unbonding_height;
+                                                validator.unbonding_time = validatorSet[val].unbonding_time;
+                                                validator.commission = validatorSet[val].commission;
+                                                validator.removed = false,
+                                                validator.removedAt = 0
                                                 validatorSet.splice(val, 1);
                                                 break;
                                             }
                                         }
                                         
-                                        bulkValidators.insert(tempVal);
+                                        bulkValidators.insert(validator);
                                         bulkVPHistory.insert({
-                                            address: tempVal.address,
+                                            address: validator.address,
                                             prev_voting_power: 0,
-                                            voting_power: tempVal.voting_power,
+                                            voting_power: validator.voting_power,
                                             type: 'add',
                                             height: blockData.height,
                                             block_time: blockData.time
@@ -345,51 +291,25 @@ Meteor.methods({
                                     });
                                 }
                                 else{
-                                    let tempVal = validator;
-                                    
-                                    let prevVotingPower = ValidatorRecords.findOne({address:validator.address, height:height-1});
-
-                                    if (prevVotingPower){
-                                        prevVotingPower = prevVotingPower.voting_power;
-                                    }
-                                    else{
-                                        prevVotingPower = valExist.voting_power;
-                                    }
-                                   
                                     for (val in validatorSet){
                                         if (validatorSet[val].consensus_pubkey == valExist.consensus_pubkey){
-                                            tempVal.jailed = validatorSet[val].jailed;
-                                            tempVal.status = validatorSet[val].status;
-                                            tempVal.tokens = validatorSet[val].tokens;
-                                            tempVal.delegator_shares = validatorSet[val].delegator_shares;
-                                            tempVal.description = validatorSet[val].description;
-                                            tempVal.bond_height = validatorSet[val].bond_height;
-                                            tempVal.bond_intra_tx_counter = validatorSet[val].bond_intra_tx_counter;
-                                            tempVal.unbonding_height = validatorSet[val].unbonding_height;
-                                            tempVal.unbonding_time = validatorSet[val].unbonding_time;
-                                            tempVal.commission = validatorSet[val].commission;
-                                            bulkValidators.find({consensus_pubkey: valExist.consensus_pubkey}).updateOne({$set:tempVal});
+                                            validator.jailed = validatorSet[val].jailed;
+                                            validator.status = validatorSet[val].status;
+                                            validator.tokens = validatorSet[val].tokens;
+                                            validator.delegator_shares = validatorSet[val].delegator_shares;
+                                            validator.description = validatorSet[val].description;
+                                            validator.bond_height = validatorSet[val].bond_height;
+                                            validator.bond_intra_tx_counter = validatorSet[val].bond_intra_tx_counter;
+                                            validator.unbonding_height = validatorSet[val].unbonding_height;
+                                            validator.unbonding_time = validatorSet[val].unbonding_time;
+                                            validator.commission = validatorSet[val].commission;
+                                            bulkValidators.find({consensus_pubkey: valExist.consensus_pubkey}).updateOne({$set:validator});
                                             validatorSet.splice(val, 1);
                                             // break;
                                         }
                                         else{
                                             bulkValidators.find({consensus_pubkey: validatorSet[val].consensus_pubkey}).updateOne({$set:validatorSet[val]});
                                         }
-                                    }
-                                    
-                                    if (prevVotingPower != tempVal.voting_power){
-                                        let changeType = (prevVotingPower > tempVal.voting_power)?'down':'up';
-                                        let changeData = {
-                                            address: tempVal.address,
-                                            prev_voting_power: prevVotingPower,
-                                            voting_power: tempVal.voting_power,
-                                            type: changeType,
-                                            height: blockData.height,
-                                            block_time: blockData.time
-                                        };
-                                        // console.log('voting power changed.');
-                                        // console.log(changeData);
-                                        bulkVPHistory.insert(changeData);
                                     }
                                     
                                 }

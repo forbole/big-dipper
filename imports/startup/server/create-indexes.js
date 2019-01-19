@@ -8,6 +8,7 @@ import { Validators } from '../../api/validators/validators.js';
 import { VotingPowerHistory } from '../../api/voting-power/history.js';
 
 Blockscon.rawCollection().createIndex({height: -1},{unique:true});
+Blockscon.rawCollection().createIndex({proposerAddress:1});
 
 Proposals.rawCollection().createIndex({proposalId: 1}, {unique:true});
 
@@ -27,7 +28,9 @@ Transactions.rawCollection().createIndex({type:1});
 
 ValidatorSets.rawCollection().createIndex({height:-1});
 
-Validators.rawCollection().createIndex({address:1});
+Validators.rawCollection().createIndex({address:1},{unique:true});
+Validators.rawCollection().createIndex({consensus_pubkey:1},{unique:true});
+Validators.rawCollection().createIndex({"pub_key.value":1},{unique:true});
 
 VotingPowerHistory.rawCollection().createIndex({address:1,height:-1});
 VotingPowerHistory.rawCollection().createIndex({type:1});
