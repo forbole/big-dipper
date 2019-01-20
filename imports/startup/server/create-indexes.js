@@ -26,7 +26,7 @@ Transactions.rawCollection().createIndex({hash:1},{unique:true});
 Transactions.rawCollection().createIndex({height:-1});
 Transactions.rawCollection().createIndex({action:1});
 
-ValidatorSets.rawCollection().createIndex({height:-1});
+ValidatorSets.rawCollection().createIndex({block_height:-1});
 
 Validators.rawCollection().createIndex({address:1},{unique:true});
 Validators.rawCollection().createIndex({consensus_pubkey:1},{unique:true});
