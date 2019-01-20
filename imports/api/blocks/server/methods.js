@@ -8,6 +8,8 @@ import { Validators } from '/imports/api/validators/validators.js';
 import { ValidatorRecords, Analytics} from '/imports/api/records/records.js';
 import { VotingPowerHistory } from '/imports/api/voting-power/history.js';
 import { Transactions } from '../../transactions/transactions.js';
+import { sha256 } from 'js-sha256';
+
 // import Block from '../../../ui/components/Block';
 
 getValidatorVotingPower = (validators, address) => {
@@ -17,6 +19,22 @@ getValidatorVotingPower = (validators, address) => {
         }
     }
 }
+
+getRemovedValidators = (prevValidators, validators) => {
+    // let removeValidators = [];
+    for (p in prevValidators){
+        for (v in validators){
+            if (prevValidators[p].address == validators[v].address){
+                prevValidators.splice(p,1);
+            }
+        }
+    }
+
+    return prevValidators;
+}
+
+// var filtered = [1, 2, 3, 4, 5].filter(notContainedIn([1, 2, 3, 5]));
+// console.log(filtered); // [4]
 
 Meteor.methods({
     'blocks.averageBlockTime'(address){
@@ -90,6 +108,13 @@ Meteor.methods({
         // loop if there's update in db
         if (until > curr) {
             SYNCING = true;
+
+            // get latest validator candidate information
+            url = LCD+'/stake/validators';
+            response = HTTP.get(url);
+            console.log(url);
+            let validatorSet = JSON.parse(response.content);
+
             for (let height = curr+1 ; height <= until ; height++) {
                 let startBlockTime = new Date();
                 // add timeout here? and outside this loop (for catched up and keep fetching)?
@@ -102,6 +127,7 @@ Meteor.methods({
                     const bulkValidators = Validators.rawCollection().initializeUnorderedBulkOp();
                     const bulkValidatorRecords = ValidatorRecords.rawCollection().initializeUnorderedBulkOp();
                     const bulkVPHistory = VotingPowerHistory.rawCollection().initializeUnorderedBulkOp();
+                    const bulkTransations = Transactions.rawCollection().initializeUnorderedBulkOp();
 
                     let startGetHeightTime = new Date();
                     let response = HTTP.get(url);
@@ -131,6 +157,17 @@ Meteor.methods({
                             // PrecommitRecords.insert({height:height, precommits:precommits.length});
                         }      
                         
+                        // console.log(block.block.data.txs);
+                        if (block.block.data.txs && block.block.data.txs.length > 0){
+                            for (t in block.block.data.txs){                               
+                                Meteor.call('Transactions.index', sha256(Buffer.from(block.block.data.txs[t], 'base64')), (err, result) => {
+                                    if (err){
+                                        console.log(err);
+                                    }
+                                });
+                            }
+                        }
+
                         blockData.precommitsCount = blockData.validators.length;
 
                         analyticsData.height = height;
@@ -231,16 +268,11 @@ Meteor.methods({
                             Validators.remove({});
                         }
 
-                        // get latest validator candidate information
-                        let startFindValidatorsNameTime = new Date();
-                        url = LCD+'/stake/validators';
-                        response = HTTP.get(url);
-                        console.log(url);
-                        let validatorSet = JSON.parse(response.content);
-                    
                         analyticsData.voting_power = 0;
 
                         // validators are all the validators in the current height
+                        console.log("validatorSet.length: "+validatorSet.length);
+                        let startFindValidatorsNameTime = new Date();
                         if (validators.result){
                             for (v in validators.result.validators){
                                 // Validators.insert(validators.result.validators[v]);
@@ -267,7 +299,7 @@ Meteor.methods({
                                         validator.consensus_pubkey = validator.consensus_pubkey[0].trim();
 
                                         for (val in validatorSet){
-                                            if (validatorSet[val].consensus_pubkey == tempVal.consensus_pubkey){
+                                            if (validatorSet[val].consensus_pubkey == validator.consensus_pubkey){
                                                 validator.operator_address = validatorSet[val].operator_address;
                                                 validator.jailed = validatorSet[val].jailed;
                                                 validator.status = validatorSet[val].status;
@@ -281,7 +313,7 @@ Meteor.methods({
                                                 validator.commission = validatorSet[val].commission;
                                                 validator.removed = false,
                                                 validator.removedAt = 0
-                                                validatorSet.splice(val, 1);
+                                                // validatorSet.splice(val, 1);
                                                 break;
                                             }
                                         }
@@ -312,23 +344,53 @@ Meteor.methods({
                                             validator.unbonding_height = validatorSet[val].unbonding_height;
                                             validator.unbonding_time = validatorSet[val].unbonding_time;
                                             validator.commission = validatorSet[val].commission;
+                                            
                                             bulkValidators.find({consensus_pubkey: valExist.consensus_pubkey}).updateOne({$set:validator});
                                             // console.log("validator exisits: "+bulkValidators.length);
                                             validatorSet.splice(val, 1);
-                                            // break;
+                                            break;
                                         }
-                                        // else{
-                                        //     bulkValidators.find({consensus_pubkey: validatorSet[val].consensus_pubkey}).updateOne({$set:validatorSet[val]});
-                                        //     console.log("validator miss vote: "+bulkValidators.length);
-                                        // }
                                     }
+                                    let prevVotingPower = VotingPowerHistory.findOne({address:validator.address}, {height:-1, limit:1});
                                     
+                                    
+                                    if (prevVotingPower.voting_power != validator.voting_power){
+                                        let changeType = (prevVotingPower > validator.voting_power)?'down':'up';
+                                        let changeData = {
+                                            address: validator.address,
+                                            prev_voting_power: prevVotingPower.voting_power,
+                                            voting_power: validator.voting_power,
+                                            type: changeType,
+                                            height: blockData.height,
+                                            block_time: blockData.time
+                                        };
+                                        // console.log('voting power changed.');
+                                        // console.log(changeData);
+                                        bulkVPHistory.insert(changeData);
+                                    }
                                 }
                                 
 
                                 // console.log(validator);
 
                                 analyticsData.voting_power += validator.voting_power;
+                            }
+
+                            // if there is validator removed
+
+                            let prevValidators = ValidatorSets.findOne({block_height:height-1});
+                            
+                            let removedValidators = getRemovedValidators(prevValidators.validators, validators.result.validators);
+
+                            for (r in removedValidators){
+                                bulkVPHistory.insert({
+                                    address: removedValidators[r].address,
+                                    prev_voting_power: removedValidators[r].voting_power,
+                                    voting_power: 0,
+                                    type: 'remove',
+                                    height: blockData.height,
+                                    block_time: blockData.time
+                                });
                             }
                         }
 
@@ -377,6 +439,13 @@ Meteor.methods({
                             });
                         }
 
+                        if (bulkTransations.length > 0){
+                            bulkTransations.execute((err, result) => {
+                                if (err){
+                                    console.log(err);
+                                }
+                            });
+                        }
                         
                     }                    
                 }
