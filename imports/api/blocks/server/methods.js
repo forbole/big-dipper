@@ -320,8 +320,8 @@ Meteor.methods({
                                                 validator.unbonding_height = validatorSet[val].unbonding_height;
                                                 validator.unbonding_time = validatorSet[val].unbonding_time;
                                                 validator.commission = validatorSet[val].commission;
-                                                validator.removed = false,
-                                                validator.removedAt = 0
+                                                // validator.removed = false,
+                                                // validator.removedAt = 0
                                                 // validatorSet.splice(val, 1);
                                                 break;
                                             }
@@ -356,7 +356,7 @@ Meteor.methods({
                                             
                                             bulkValidators.find({consensus_pubkey: valExist.consensus_pubkey}).updateOne({$set:validator});
                                             // console.log("validator exisits: "+bulkValidators.length);
-                                            validatorSet.splice(val, 1);
+                                            // validatorSet.splice(val, 1);
                                             break;
                                         }
                                     }
