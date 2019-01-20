@@ -8,6 +8,7 @@ import { Validators } from '/imports/api/validators/validators.js';
 import { ValidatorRecords, Analytics} from '/imports/api/records/records.js';
 import { VotingPowerHistory } from '/imports/api/voting-power/history.js';
 import { Transactions } from '../../transactions/transactions.js';
+import { Evidences } from '../../evidences/evidences.js';
 import { sha256 } from 'js-sha256';
 
 // import Block from '../../../ui/components/Block';
@@ -157,7 +158,7 @@ Meteor.methods({
                             // PrecommitRecords.insert({height:height, precommits:precommits.length});
                         }      
                         
-                        // console.log(block.block.data.txs);
+                        // save txs in database
                         if (block.block.data.txs && block.block.data.txs.length > 0){
                             for (t in block.block.data.txs){                               
                                 Meteor.call('Transactions.index', sha256(Buffer.from(block.block.data.txs[t], 'base64')), (err, result) => {
@@ -166,6 +167,14 @@ Meteor.methods({
                                     }
                                 });
                             }
+                        }
+
+                        // save double sign evidences
+                        if (block.block.evidence.evidence){
+                            Evidences.insert({
+                                height: height,
+                                evidence: block.block.evidence.evidence
+                            });
                         }
 
                         blockData.precommitsCount = blockData.validators.length;
@@ -380,18 +389,21 @@ Meteor.methods({
 
                             let prevValidators = ValidatorSets.findOne({block_height:height-1});
                             
-                            let removedValidators = getRemovedValidators(prevValidators.validators, validators.result.validators);
+                            if (prevValidators){
+                                let removedValidators = getRemovedValidators(prevValidators.validators, validators.result.validators);
 
-                            for (r in removedValidators){
-                                bulkVPHistory.insert({
-                                    address: removedValidators[r].address,
-                                    prev_voting_power: removedValidators[r].voting_power,
-                                    voting_power: 0,
-                                    type: 'remove',
-                                    height: blockData.height,
-                                    block_time: blockData.time
-                                });
+                                for (r in removedValidators){
+                                    bulkVPHistory.insert({
+                                        address: removedValidators[r].address,
+                                        prev_voting_power: removedValidators[r].voting_power,
+                                        voting_power: 0,
+                                        type: 'remove',
+                                        height: blockData.height,
+                                        block_time: blockData.time
+                                    });
+                                }
                             }
+                            
                         }
 
 

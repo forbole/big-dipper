@@ -6,9 +6,12 @@ import { Transactions } from '../../api/transactions/transactions.js';
 import { ValidatorSets } from '../../api/validator-sets/validator-sets.js';
 import { Validators } from '../../api/validators/validators.js';
 import { VotingPowerHistory } from '../../api/voting-power/history.js';
+import { Evidences } from '../../api/evidences/evidences.js';
 
 Blockscon.rawCollection().createIndex({height: -1},{unique:true});
 Blockscon.rawCollection().createIndex({proposerAddress:1});
+
+Evidences.rawCollection().createIndex({height: -1});
 
 Proposals.rawCollection().createIndex({proposalId: 1}, {unique:true});
 
