@@ -24,7 +24,7 @@ MissedBlocksStats.rawCollection().createIndex({proposer:1, voter:1},{unique:true
 
 Transactions.rawCollection().createIndex({hash:1},{unique:true});
 Transactions.rawCollection().createIndex({height:-1});
-Transactions.rawCollection().createIndex({type:1});
+Transactions.rawCollection().createIndex({action:1});
 
 ValidatorSets.rawCollection().createIndex({height:-1});
 
