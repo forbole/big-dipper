@@ -17,9 +17,9 @@ export default class PowerHistory extends React.Component {
             console.log(err);
         }
         if (result){
-            console.log(result);
+            // console.log(result);
             this.setState({
-                tx: result.map((msg, i) => <CardFooter key={i}>
+                tx: result.map((msg, i) => <CardFooter key={i} className="text-secondary">
                     {msg.tx.value.msg.map((m, j) => {
                         if (m.type == "cosmos-sdk/MsgDelegate"){
                             return <Row key={j}>
@@ -31,10 +31,10 @@ export default class PowerHistory extends React.Component {
                     <Row>
                         <Col xs={6} sm={12}>Fee: {msg.tx.value.fee.amount.map((amount,i)=>{
                             if (i > 0){
-                                return <span> ,{amount.amount} {amount.denom}</span>
+                                return <span key={i}> ,{amount.amount} {amount.denom}</span>
                             }
                             else{
-                                return <span>{amount.amount} {amount.denom}</span>
+                                return <span key={i}>{amount.amount} {amount.denom}</span>
                             }
                         })}</Col>
                     </Row>
