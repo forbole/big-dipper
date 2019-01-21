@@ -2,7 +2,7 @@
 Forbole Block Explorer for Cosmos
 
 ## Demo
-[Explore Cosmos Testnet (game-of-stakes-2) with The Big Dipper](https://bigdipper.forbole.com)
+[Explore Cosmos Testnet (game_of_stakes_3) with The Big Dipper](https://bigdipper.forbole.com)
 
 ## Projects running with the Big Dipper
 [JoyStream testnet](http://explorer.joystream.org/)
