@@ -231,6 +231,11 @@ th i.material-icons{
     margin-bottom: 1em;
 }
 
+.vp-diff{
+    display:inline-block;
+    transform: translateY(-5px);
+}
+
 .blocks-list{
     margin-top: 0.2em;
 }
@@ -261,6 +266,10 @@ th i.material-icons{
     font-size: 160%;
     position: relative;
     top: -4px;
+}
+
+.power-history .card .card-footer{
+    font-size: 85%;
 }
 
 .label {

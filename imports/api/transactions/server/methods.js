@@ -21,10 +21,6 @@ Meteor.methods({
                 }
                 tag.key = key;
                 tag.value = value;
-    
-                if (key == 'action'){
-                    tx.action = value;
-                }
             });    
         }
 
@@ -33,5 +29,12 @@ Meteor.methods({
             return txId;
         }
         else return false;
+    },
+    'Transactions.findDelegation': function(address, height){
+        return Transactions.find({
+            "result.tags.value": {$in: [address, "delegate"]}, 
+            "result.code": {$exists: false}, 
+            height:height.toString()}
+            ).fetch();
     }
 });
