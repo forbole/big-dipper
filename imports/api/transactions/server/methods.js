@@ -10,7 +10,9 @@ Meteor.methods({
         let response = HTTP.get(url);
         let tx = JSON.parse(response.content);
 
-        if (tx.result.tags.length > 0){
+        console.log(hash);
+
+        if (tx.result.tags && tx.result.tags.length > 0){
             tx.result.tags.map((tag, i) => {
                 let key = Buffer.from(tag.key, 'base64').toString();
                 let value = "";
