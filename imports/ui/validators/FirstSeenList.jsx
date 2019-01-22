@@ -4,13 +4,13 @@ import { Link } from 'react-router-dom';
 import moment from 'moment';
 import numeral from 'numeral';
 import Avatar from '../components/Avatar.jsx';
-import KeybaseCheck from '../components/KeybaseCheck.jsx';
 
 const ValidatorRow = (props) => {
-    let moniker = (props.validator.description.moniker)?props.validator.description.moniker:props.validator.address;
+    let moniker = (props.validator.description && props.validator.description.moniker)?props.validator.description.moniker:props.validator.address;
+    let identity = (props.validator.description && props.validator.description.identity)?props.validator.description.identity:'';
     return <tr>
         <th scope="row" className="d-none d-md-table-cell counter">{props.index+1}</th>
-        <td><Link to={"/validator/"+props.validator.address}><Avatar moniker={moniker} identity={props.validator.description.identity} address={props.validator.address} list={true} /> {moniker}</Link> {props.validator.description.identity?<KeybaseCheck identity={props.validator.description.identity} />:''}</td>
+        <td><Link to={"/validator/"+props.validator.address}><Avatar moniker={moniker} identity={identity} address={props.validator.address} list={true} /> {moniker}</Link></td>
         <td>{props.validator.address}</td>
         <td>{(props.validator.firstSeen().height)?numeral(props.validator.firstSeen().height).format('0,0'):''}</td>
     </tr>
