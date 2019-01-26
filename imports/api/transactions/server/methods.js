@@ -32,12 +32,17 @@ Meteor.methods({
     },
     'Transactions.findDelegation': function(address, height){
         return Transactions.find({
-            $and: [
+            $or: [{$and: [
                 {"result.tags.key": "action"}, 
                 {"result.tags.value": "delegate"}, 
                 {"result.tags.key": "destination-validator"}, 
                 {"result.tags.value": address}
-            ], 
+            ]}, {$and:[
+                {"result.tags.key": "action"}, 
+                {"result.tags.value": "unjail"}, 
+                {"result.tags.key": "validator"}, 
+                {"result.tags.value": address}
+            ]}], 
             "result.code": {$exists: false}, 
             height:height.toString()}
             ).fetch();

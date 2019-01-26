@@ -100,16 +100,16 @@ export default class Validator extends Component{
                             <CardBody>
                                 <Row>
                                     <Col xs={12}><h3><JailStatus jailed={this.props.validator.jailed} /></h3></Col>
-                                    <Col md={4} className="label">Address in Hex</Col>
-                                    <Col md={8} className="value address" data-validator-address={this.props.validator.address}>{this.props.validator.address}</Col>
-                                    <Col md={4} className="label">Operator Address</Col>
-                                    <Col md={8} className="value address" data-operator-address={this.props.validator.operator_address}>{this.props.validator.operator_address}</Col>
-                                    <Col md={4} className="label">Commission Rate</Col>
-                                    <Col md={8} className="value">{this.props.validator.commission?numeral(this.props.validator.commission.rate*100).format('0.00')+"%":''}</Col>
-                                    <Col md={4} className="label">Max Rate</Col>
-                                    <Col md={8} className="value">{this.props.validator.commission?numeral(this.props.validator.commission.max_rate*100).format('0.00')+"%":''}</Col>
-                                    <Col md={4} className="label">Max Change Rate</Col>
-                                    <Col md={8} className="value">{this.props.validator.commission?numeral(this.props.validator.commission.max_change_rate*100).format('0.00')+"%":''}</Col>
+                                    <Col sm={4} className="label">Address in Hex</Col>
+                                    <Col sm={8} className="value address" data-validator-address={this.props.validator.address}>{this.props.validator.address}</Col>
+                                    <Col sm={4} className="label">Operator Address</Col>
+                                    <Col sm={8} className="value address" data-operator-address={this.props.validator.operator_address}>{this.props.validator.operator_address}</Col>
+                                    <Col sm={4} className="label">Commission Rate</Col>
+                                    <Col sm={8} className="value">{this.props.validator.commission?numeral(this.props.validator.commission.rate*100).format('0.00')+"%":''}</Col>
+                                    <Col sm={4} className="label">Max Rate</Col>
+                                    <Col sm={8} className="value">{this.props.validator.commission?numeral(this.props.validator.commission.max_rate*100).format('0.00')+"%":''}</Col>
+                                    <Col sm={4} className="label">Max Change Rate</Col>
+                                    <Col sm={8} className="value">{this.props.validator.commission?numeral(this.props.validator.commission.max_change_rate*100).format('0.00')+"%":''}</Col>
                                 </Row>
                             </CardBody>
                         </Card>
@@ -118,14 +118,14 @@ export default class Validator extends Component{
                             <CardBody className="voting-power-card">
                                 <Row>
                                     <Col xs={12}><h1 className="display-4 voting-power"><Badge color="primary" >{numeral(this.props.validator.voting_power).format('0,0')}</Badge></h1><span>(~{numeral(this.props.validator.voting_power/this.props.chainStatus.totalVotingPower*100).format('0.00')}%)</span></Col>
-                                    <Col md={4} className="label">Bond Height</Col>
-                                    <Col md={8} className="value">{numeral(this.props.validator.bond_height).format('0,0')}</Col>
-                                    <Col md={4} className="label">Proposer Priority</Col>
-                                    <Col md={8} className="value">{numeral(this.props.validator.proposer_priority).format('0,0')}</Col>
-                                    <Col md={4} className="label">Delegator Shares</Col>
-                                    <Col md={8} className="value">{numeral(this.props.validator.delegator_shares).format('0,0.00')}</Col>
-                                    <Col md={4} className="label">Tokens</Col>
-                                    <Col md={8} className="value">{numeral(this.props.validator.tokens).format('0,0.00')}</Col>
+                                    <Col sm={4} className="label">Bond Height</Col>
+                                    <Col sm={8} className="value">{numeral(this.props.validator.bond_height).format('0,0')}</Col>
+                                    <Col sm={4} className="label">Proposer Priority</Col>
+                                    <Col sm={8} className="value">{numeral(this.props.validator.proposer_priority).format('0,0')}</Col>
+                                    <Col sm={4} className="label">Delegator Shares</Col>
+                                    <Col sm={8} className="value">{numeral(this.props.validator.delegator_shares).format('0,0.00')}</Col>
+                                    <Col sm={4} className="label">Tokens</Col>
+                                    <Col sm={8} className="value">{numeral(this.props.validator.tokens).format('0,0.00')}</Col>
                                     {(this.props.validator.jailed)?<Col xs={12} >
                                         <Row><Col md={4} className="label">Unbonding Height</Col>
                                         <Col md={8} className="value">{numeral(this.props.validator.unbonding_height).format('0,0')}</Col>

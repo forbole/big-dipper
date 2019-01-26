@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardFooter, CardBody, Col, Row } from 'reactstrap';
+import { Card, CardFooter, CardBody, Col, Row, Badge } from 'reactstrap';
 import momemt from 'moment';
 import numeral from 'numeral';
 // import { VelocityComponent } from 'velocity-react';
@@ -17,30 +17,32 @@ export default class PowerHistory extends React.Component {
             console.log(err);
         }
         if (result){
-            // console.log(result);
+            console.log(result);
             this.setState({
-                tx: result.map((msg, i) => <CardFooter key={i} className="text-secondary">
+                tx: result.map((msg, i) => <CardFooter key={i} className="text-secondary"><Row>
+                    <Col xs={12} sm={8}>
                     {(msg.tx.value.msg && msg.tx.value.msg.length > 0)?msg.tx.value.msg.map((m, j) => {
-                        {/* console.log(m); */}
+                        console.log(m);
                         if (m.type == "cosmos-sdk/MsgDelegate"){
                             return <Row key={j}>
-                                <Col xs={12} sm={8}>
+                                <Col xs={12}>
                                     <Row>
-                                        <Col xs={4} sm={3}>Delegator</Col>
-                                        <Col xs={8} sm={9} className="address" data-delegator-address={m.value.delegator_addr}>{m.value.delegator_addr}</Col>
+                                        <Col xs={4}>Delegator</Col>
+                                        <Col xs={8} className="address" data-delegator-address={m.value.delegator_addr}>{m.value.delegator_addr}</Col>
                                     </Row>
                                 </Col>
-                                <Col xs={12} sm={4}>
+                                <Col xs={12}>
                                     <Row>
-                                        <Col xs={4} sm={6}>Delegation</Col>
-                                        <Col xs={8} sm={6}>{numeral(m.value.value.amount).format('0,0')} {m.value.value.denom}</Col>
+                                        <Col xs={4}>Delegation</Col>
+                                        <Col xs={8}>{numeral(m.value.value.amount).format('0,0')} {m.value.value.denom}</Col>
                                     </Row>
                                 </Col>
                             </Row>
                         }
-                    }):''}
+                    }):''}</Col>
+                    <Col xs={12} sm={4}>
                     <Row>
-                        <Col xs={12} sm={{size:4, offset:8}}>
+                        <Col xs={12}>
                             <Row>
                                 <Col xs={4} sm={6}>Fee</Col>
                                 <Col xs={8} sm={6}>{(msg.tx.value.fee.amount&& msg.tx.value.fee.amount.length>0)?msg.tx.value.fee.amount.map((amount,i)=>{
@@ -54,6 +56,8 @@ export default class PowerHistory extends React.Component {
                             </Row> 
                         </Col>
                     </Row>
+                    </Col>
+                </Row>
                 </CardFooter>)
             })
         }
