@@ -231,6 +231,11 @@ th i.material-icons{
     margin-bottom: 1em;
 }
 
+.address{
+    white-space: nowrap;
+    overflow-y: auto;
+}
+
 .vp-diff{
     display:inline-block;
     transform: translateY(-5px);

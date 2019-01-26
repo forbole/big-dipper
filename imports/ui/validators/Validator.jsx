@@ -101,9 +101,9 @@ export default class Validator extends Component{
                                 <Row>
                                     <Col xs={12}><h3><JailStatus jailed={this.props.validator.jailed} /></h3></Col>
                                     <Col md={4} className="label">Address in Hex</Col>
-                                    <Col md={8} className="value">{this.props.validator.address}</Col>
+                                    <Col md={8} className="value address" data-validator-address={this.props.validator.address}>{this.props.validator.address}</Col>
                                     <Col md={4} className="label">Operator Address</Col>
-                                    <Col md={8} className="value">{this.props.validator.operator_address}</Col>
+                                    <Col md={8} className="value address" data-operator-address={this.props.validator.operator_address}>{this.props.validator.operator_address}</Col>
                                     <Col md={4} className="label">Commission Rate</Col>
                                     <Col md={8} className="value">{this.props.validator.commission?numeral(this.props.validator.commission.rate*100).format('0.00')+"%":''}</Col>
                                     <Col md={4} className="label">Max Rate</Col>

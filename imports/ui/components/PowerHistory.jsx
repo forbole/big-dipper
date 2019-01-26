@@ -20,23 +20,39 @@ export default class PowerHistory extends React.Component {
             // console.log(result);
             this.setState({
                 tx: result.map((msg, i) => <CardFooter key={i} className="text-secondary">
-                    {msg.tx.value.msg.map((m, j) => {
+                    {(msg.tx.value.msg && msg.tx.value.msg.length > 0)?msg.tx.value.msg.map((m, j) => {
+                        console.log(m);
                         if (m.type == "cosmos-sdk/MsgDelegate"){
                             return <Row key={j}>
-                                <Col xs={12} sm={8}>Delegator: {m.value.delegator_addr}</Col>
-                                <Col xs={6} sm={4}>Delegation: {m.value.delegation.amount} {m.value.delegation.denom}</Col>
+                                <Col xs={12} sm={8}>
+                                    <Row>
+                                        <Col xs={4} sm={3}>Delegator</Col>
+                                        <Col xs={8} sm={9} className="address" data-delegator-address={m.value.delegator_addr}>{m.value.delegator_addr}</Col>
+                                    </Row>
+                                </Col>
+                                <Col xs={12} sm={4}>
+                                    <Row>
+                                        <Col xs={4} sm={6}>Delegation</Col>
+                                        <Col xs={8} sm={6}>{numeral(m.value.value.amount).format('0,0')} {m.value.value.denom}</Col>
+                                    </Row>
+                                </Col>
                             </Row>
                         }
-                    })}
+                    }):''}
                     <Row>
-                        <Col xs={6} sm={12}>Fee: {msg.tx.value.fee.amount.map((amount,i)=>{
-                            if (i > 0){
-                                return <span key={i}> ,{amount.amount} {amount.denom}</span>
-                            }
-                            else{
-                                return <span key={i}>{amount.amount} {amount.denom}</span>
-                            }
-                        })}</Col>
+                        <Col xs={12} sm={{size:4, offset:8}}>
+                            <Row>
+                                <Col xs={4} sm={6}>Fee</Col>
+                                <Col xs={8} sm={6}>{(msg.tx.value.fee.amount&& msg.tx.value.fee.amount.length>0)?msg.tx.value.fee.amount.map((amount,i)=>{
+                                    if (i > 0){
+                                        return <span key={i}> ,{amount.amount} {amount.denom}</span>
+                                    }
+                                    else{
+                                        return <span key={i}>{amount.amount} {amount.denom}</span>
+                                    }
+                                }):'0'}</Col>
+                            </Row> 
+                        </Col>
                     </Row>
                 </CardFooter>)
             })
