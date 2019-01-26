@@ -21,7 +21,7 @@ export default class PowerHistory extends React.Component {
             this.setState({
                 tx: result.map((msg, i) => <CardFooter key={i} className="text-secondary">
                     {(msg.tx.value.msg && msg.tx.value.msg.length > 0)?msg.tx.value.msg.map((m, j) => {
-                        console.log(m);
+                        {/* console.log(m); */}
                         if (m.type == "cosmos-sdk/MsgDelegate"){
                             return <Row key={j}>
                                 <Col xs={12} sm={8}>
