@@ -22,22 +22,54 @@ export default class PowerHistory extends React.Component {
                 tx: result.map((msg, i) => <CardFooter key={i} className="text-secondary"><Row>
                     <Col xs={12} sm={8}>
                     {(msg.tx.value.msg && msg.tx.value.msg.length > 0)?msg.tx.value.msg.map((m, j) => {
-                        {/* console.log(m); */}
-                        if (m.type == "cosmos-sdk/MsgDelegate"){
-                            return <Row key={j}>
-                                <Col xs={12}>
-                                    <Row>
-                                        <Col xs={4} md={3}>Delegator</Col>
-                                        <Col xs={8} md={9} className="address" data-delegator-address={m.value.delegator_addr}>{m.value.delegator_addr}</Col>
-                                    </Row>
-                                </Col>
-                                <Col xs={12}>
-                                    <Row>
-                                        <Col xs={4} md={3}>Amount</Col>
-                                        <Col xs={8} md={9}>{numeral(m.value.value.amount).format('0,0')} {m.value.value.denom}</Col>
-                                    </Row>
-                                </Col>
-                            </Row>
+                        console.log(m);
+                        switch (m.type){
+                            case "cosmos-sdk/MsgDelegate":
+                                return <Row key={j}>
+                                    <Col xs={12}>
+                                        <Row>
+                                            <Col xs={4} md={3}>Delegator</Col>
+                                            <Col xs={8} md={9} className="address" data-delegator-address={m.value.delegator_addr}>{m.value.delegator_addr}</Col>
+                                        </Row>
+                                    </Col>
+                                    <Col xs={12}>
+                                        <Row>
+                                            <Col xs={4} md={3}>Amount</Col>
+                                            <Col xs={8} md={9}>{numeral(m.value.value.amount).format('0,0')} {m.value.value.denom}</Col>
+                                        </Row>
+                                    </Col>
+                                </Row>
+                            case "cosmos-sdk/MsgCreateValidator":
+                                return <Row key={j}>
+                                    <Col xs={12}>
+                                        <Row>
+                                            <Col xs={3}>Delegator</Col>
+                                            <Col xs={9} className="address" data-delegator-address={m.value.delegator_address}>{m.value.delegator_address}</Col>
+                                        </Row>
+                                    </Col>
+                                    <Col xs={12}>
+                                        <Row>
+                                            <Col xs={3}>Amount</Col>
+                                            <Col xs={9}>{numeral(m.value.value.amount).format('0,0')} {m.value.value.denom}</Col>
+                                        </Row>
+                                    </Col>
+                                </Row>
+                            case "cosmos-sdk/Undelegate":
+                                return <Row key={j}>
+                                    <Col xs={12}>
+                                        <Row>
+                                            <Col xs={3}>Delegator</Col>
+                                            <Col xs={9} className="address" data-delegator-address={m.value.delegator_addr}>{m.value.delegator_addr}</Col>
+                                        </Row>
+                                    </Col>
+                                    <Col xs={12}>
+                                        <Row>
+                                            <Col xs={3}>Shares</Col>
+                                            <Col xs={9}>{numeral(m.value.shares_amount).format('0,0.00')}</Col>
+                                        </Row>
+                                    </Col>
+                                </Row>
+
                         }
                     }):''}</Col>
                     <Col xs={12} sm={4}>
@@ -52,17 +84,19 @@ export default class PowerHistory extends React.Component {
                                         return <Col key={j}><Badge color="warning">Create Validator</Badge></Col>;
                                     case "cosmos-sdk/MsgUnjail":
                                         return <Col key={j}><Badge color="info">Unjail</Badge></Col>;
+                                    case "cosmos-sdk/Undelegate":
+                                        return <Col key={j}><Badge color="danger">Undelegate</Badge></Col>;
                                 }
                             }):''}
                             </Row>
                             <Row>
-                                <Col xs={4} sm={6}>Fee</Col>
-                                <Col xs={8} sm={6}>{(msg.tx.value.fee.amount&& msg.tx.value.fee.amount.length>0)?msg.tx.value.fee.amount.map((amount,i)=>{
+                                <Col xs={3}>Fee</Col>
+                                <Col xs={9}>{(msg.tx.value.fee.amount&& msg.tx.value.fee.amount.length>0)?msg.tx.value.fee.amount.map((amount,i)=>{
                                     if (i > 0){
-                                        return <span key={i}> ,{amount.amount} {amount.denom}</span>
+                                        return <span key={i}> ,{numeral(amount.amount).format('0,0')} {amount.denom}</span>
                                     }
                                     else{
-                                        return <span key={i}>{amount.amount} {amount.denom}</span>
+                                        return <span key={i}>{numeral(amount.amount).format('0,0')} {amount.denom}</span>
                                     }
                                 }):'0'}</Col>
                             </Row>
