@@ -364,7 +364,7 @@ Meteor.methods({
                                     
                                     
                                     if (prevVotingPower.voting_power != validator.voting_power){
-                                        let changeType = (prevVotingPower > validator.voting_power)?'down':'up';
+                                        let changeType = (prevVotingPower.voting_power > validator.voting_power)?'down':'up';
                                         let changeData = {
                                             address: validator.address,
                                             prev_voting_power: prevVotingPower.voting_power,

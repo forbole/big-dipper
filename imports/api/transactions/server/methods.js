@@ -42,6 +42,11 @@ Meteor.methods({
                 {"result.tags.value": "unjail"}, 
                 {"result.tags.key": "validator"}, 
                 {"result.tags.value": address}
+            ]}, {$and:[
+                {"result.tags.key": "action"}, 
+                {"result.tags.value": "create_validator"}, 
+                {"result.tags.key": "destination-validator"}, 
+                {"result.tags.value": address}
             ]}], 
             "result.code": {$exists: false}, 
             height:height.toString()}
