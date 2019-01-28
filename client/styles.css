@@ -55,6 +55,11 @@ div#loading {
     left: 45%;
 }
 
+a.navbar-brand .logo {
+    max-height: 40px;
+    max-width: 40px;
+}
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -288,4 +293,15 @@ th i.material-icons{
 
 .missed-table{
     margin-top: 0.5em;
+}
+
+@media only screen and (max-width: 1023px){
+    .navbar.fixed-top{
+        padding: 0 1rem;
+    }
+
+    div#main {
+        padding-top: 3.5rem;
+        padding-bottom: 4.8rem;
+    }
 }
