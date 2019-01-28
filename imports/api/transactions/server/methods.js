@@ -52,6 +52,11 @@ Meteor.methods({
                 {"result.tags.value": "begin_unbonding"}, 
                 {"result.tags.key": "source-validator"}, 
                 {"result.tags.value": address}
+            ]}, {$and:[
+                {"result.tags.key": "action"}, 
+                {"result.tags.value": "begin_redelegate"}, 
+                {"result.tags.key": "destination-validator"}, 
+                {"result.tags.value": address}
             ]}], 
             "result.code": {$exists: false}, 
             height:height.toString()}

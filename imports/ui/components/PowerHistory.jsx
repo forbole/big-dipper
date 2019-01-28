@@ -24,18 +24,39 @@ export default class PowerHistory extends React.Component {
                     {(msg.tx.value.msg && msg.tx.value.msg.length > 0)?msg.tx.value.msg.map((m, j) => {
                         console.log(m);
                         switch (m.type){
-                            case "cosmos-sdk/MsgDelegate":
+                            case "cosmos-sdk/BeginRedelegate":
                                 return <Row key={j}>
                                     <Col xs={12}>
                                         <Row>
-                                            <Col xs={4} md={3}>Delegator</Col>
-                                            <Col xs={8} md={9} className="address" data-delegator-address={m.value.delegator_addr}>{m.value.delegator_addr}</Col>
+                                            <Col xs={4}>Delegator</Col>
+                                            <Col xs={8} className="address" data-delegator-address={m.value.delegator_addr}>{m.value.delegator_addr}</Col>
                                         </Row>
                                     </Col>
                                     <Col xs={12}>
                                         <Row>
-                                            <Col xs={4} md={3}>Amount</Col>
-                                            <Col xs={8} md={9}>{numeral(m.value.value.amount).format('0,0')} {m.value.value.denom}</Col>
+                                            <Col xs={4}>{(this.props.address == m.value.validator_dst_addr)?'From':'To'}</Col>
+                                            <Col xs={8} className="address" data-validator-address={(this.props.address == m.value.validator_dst_addr)?m.value.validator_src_addr:m.value.validator_dst_addr}>{(this.props.address == m.value.validator_dst_addr)?m.value.validator_src_addr:m.value.validator_dst_addr}</Col>
+                                        </Row>
+                                    </Col>
+                                    <Col xs={12}>
+                                        <Row>
+                                            <Col xs={4}>Shares</Col>
+                                            <Col xs={8}>{numeral(m.value.shares_amount).format('0,0.00')}</Col>
+                                        </Row>
+                                    </Col>
+                                </Row>
+                            case "cosmos-sdk/MsgDelegate":
+                                return <Row key={j}>
+                                    <Col xs={12}>
+                                        <Row>
+                                            <Col xs={4}>Delegator</Col>
+                                            <Col xs={8} className="address" data-delegator-address={m.value.delegator_addr}>{m.value.delegator_addr}</Col>
+                                        </Row>
+                                    </Col>
+                                    <Col xs={12}>
+                                        <Row>
+                                            <Col xs={4}>Amount</Col>
+                                            <Col xs={8}>{numeral(m.value.value.amount).format('0,0')} {m.value.value.denom}</Col>
                                         </Row>
                                     </Col>
                                 </Row>
@@ -43,14 +64,14 @@ export default class PowerHistory extends React.Component {
                                 return <Row key={j}>
                                     <Col xs={12}>
                                         <Row>
-                                            <Col xs={3}>Delegator</Col>
-                                            <Col xs={9} className="address" data-delegator-address={m.value.delegator_address}>{m.value.delegator_address}</Col>
+                                            <Col xs={4}>Delegator</Col>
+                                            <Col xs={8} className="address" data-delegator-address={m.value.delegator_address}>{m.value.delegator_address}</Col>
                                         </Row>
                                     </Col>
                                     <Col xs={12}>
                                         <Row>
-                                            <Col xs={3}>Amount</Col>
-                                            <Col xs={9}>{numeral(m.value.value.amount).format('0,0')} {m.value.value.denom}</Col>
+                                            <Col xs={4}>Amount</Col>
+                                            <Col xs={8}>{numeral(m.value.value.amount).format('0,0')} {m.value.value.denom}</Col>
                                         </Row>
                                     </Col>
                                 </Row>
@@ -58,14 +79,14 @@ export default class PowerHistory extends React.Component {
                                 return <Row key={j}>
                                     <Col xs={12}>
                                         <Row>
-                                            <Col xs={3}>Delegator</Col>
-                                            <Col xs={9} className="address" data-delegator-address={m.value.delegator_addr}>{m.value.delegator_addr}</Col>
+                                            <Col xs={4}>Delegator</Col>
+                                            <Col xs={8} className="address" data-delegator-address={m.value.delegator_addr}>{m.value.delegator_addr}</Col>
                                         </Row>
                                     </Col>
                                     <Col xs={12}>
                                         <Row>
-                                            <Col xs={3}>Shares</Col>
-                                            <Col xs={9}>{numeral(m.value.shares_amount).format('0,0.00')}</Col>
+                                            <Col xs={4}>Shares</Col>
+                                            <Col xs={8}>{numeral(m.value.shares_amount).format('0,0.00')}</Col>
                                         </Row>
                                     </Col>
                                 </Row>
@@ -78,6 +99,8 @@ export default class PowerHistory extends React.Component {
                             <Row>
                             {(msg.tx.value.msg && msg.tx.value.msg.length > 0)?msg.tx.value.msg.map((m,j) => {
                                 switch (m.type){
+                                    case "cosmos-sdk/BeginRedelegate":
+                                        return <Col key={j}><Badge color="success">Redelegate</Badge></Col>;
                                     case "cosmos-sdk/MsgDelegate":
                                         return <Col key={j}><Badge color="success">Delegate</Badge></Col>;
                                     case "cosmos-sdk/MsgCreateValidator":
@@ -90,8 +113,8 @@ export default class PowerHistory extends React.Component {
                             }):''}
                             </Row>
                             <Row>
-                                <Col xs={3}>Fee</Col>
-                                <Col xs={9}>{(msg.tx.value.fee.amount&& msg.tx.value.fee.amount.length>0)?msg.tx.value.fee.amount.map((amount,i)=>{
+                                <Col xs={4} sm={6}>Fee</Col>
+                                <Col xs={8} sm={6}>{(msg.tx.value.fee.amount&& msg.tx.value.fee.amount.length>0)?msg.tx.value.fee.amount.map((amount,i)=>{
                                     if (i > 0){
                                         return <span key={i}> ,{numeral(amount.amount).format('0,0')} {amount.denom}</span>
                                     }
