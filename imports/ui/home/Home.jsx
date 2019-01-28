@@ -12,7 +12,7 @@ export default class Home extends Component{
 
     render() {
         return <div id="home">
-            <h1>{Meteor.settings.public.chainName} <Badge color="primary">{Meteor.settings.public.chainId}</Badge></h1>
+            <h1>{Meteor.settings.public.chainName}</h1>
             <Consensus />
             <ChainStatus />
             <Row>
