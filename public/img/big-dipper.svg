@@ -1,1 +1,39 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048"><defs><style>.cls-1{fill:#bd081c;}.cls-2{fill:none;stroke-width:80px;}.cls-2,.cls-3{stroke:#fff;stroke-miterlimit:10;}.cls-3{fill:#fff;stroke-width:100px;}</style></defs><title>big-dipper</title><g id="Layer_3" data-name="Layer 3"><rect class="cls-1" width="2048" height="2048"/></g><g id="Layer_2" data-name="Layer 2"><g id="big_dipper" data-name="big dipper"><g id="trace"><polygon class="cls-2" points="1045.77 1099.85 1468.76 1216.02 1842.53 854.1 1634.78 314.72 1045.77 1099.85"/><polyline class="cls-2" points="1045.77 1099.85 813.04 1289.12 508.22 1299.19 205.11 1732.61"/></g><g id="dots"><circle class="cls-3" cx="205.1" cy="1732.92" r="59.92"/><circle class="cls-3" cx="508.67" cy="1298.75" r="59.92"/><circle class="cls-3" cx="813.04" cy="1289.06" r="59.92"/><circle class="cls-3" cx="1045.92" cy="1100.67" r="59.92"/><circle class="cls-3" cx="1469.26" cy="1215.65" r="59.92"/><circle class="cls-3" cx="1843.07" cy="853.82" r="59.92"/><circle class="cls-3" cx="1634.85" cy="315.19" r="59.92"/></g></g></g></svg>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 23.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 2048 2048" style="enable-background:new 0 0 2048 2048;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#BD081C;}
+	.st1{fill:none;stroke:#FFFFFF;stroke-width:80;stroke-miterlimit:10;}
+	.st2{fill:#FFFFFF;stroke:#FFFFFF;stroke-width:100;stroke-miterlimit:10;}
+	.st3{fill:#FFFFFF;}
+</style>
+<g id="Layer_3">
+	<rect x="0" y="0" class="st0" width="2048" height="2048"/>
+</g>
+<g id="Layer_2">
+	<g id="big_dipper">
+		<g id="trace">
+			<polygon class="st1" points="1045.77,1099.85 1468.76,1216.02 1842.53,854.1 1634.78,314.72 			"/>
+			<polyline class="st1" points="1045.77,1099.85 813.04,1289.12 508.22,1299.19 205.11,1732.61 			"/>
+		</g>
+		<g id="dots">
+			<circle class="st2" cx="205.1" cy="1732.92" r="59.92"/>
+			<circle class="st2" cx="508.67" cy="1298.75" r="59.92"/>
+			<circle class="st2" cx="813.04" cy="1289.06" r="59.92"/>
+			<circle class="st2" cx="1045.92" cy="1100.67" r="59.92"/>
+			<circle class="st2" cx="1469.26" cy="1215.65" r="59.92"/>
+			<circle class="st2" cx="1843.07" cy="853.82" r="59.92"/>
+			<circle class="st2" cx="1634.85" cy="315.19" r="59.92"/>
+		</g>
+	</g>
+	<g id="stars_1_">
+		<polygon class="st3" points="949,243.18 972.16,290.12 1023.96,297.64 986.48,334.18 995.33,385.76 949,361.41 902.67,385.76 
+			911.52,334.18 874.04,297.64 925.84,290.12 		"/>
+		<polygon class="st3" points="398.41,572.14 476.91,662.14 595.56,648.49 534.22,750.96 583.86,859.58 467.45,832.92 
+			379.49,913.69 368.88,794.74 264.87,736.04 374.72,689.19 		"/>
+		<polygon class="st3" points="1503,1533.4 1502.41,1632.25 1583.51,1688.78 1489.31,1718.76 1460.62,1813.36 1402.99,1733.04 
+			1304.15,1734.98 1362.73,1655.35 1330.35,1561.95 1424.18,1593.06 		"/>
+	</g>
+</g>
+</svg>
