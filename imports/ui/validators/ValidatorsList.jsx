@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Table, Badge, Container, Row, Col,
-    Nav, NavItem, NavLink } from 'reactstrap';
+    Nav, NavItem, NavLink, Card, CardBody } from 'reactstrap';
 import List from './ListContainer.js';
 
 export default class Validators extends Component{
@@ -69,10 +69,21 @@ export default class Validators extends Component{
             </NavItem>
         </Nav>
         <p className="lead">{desc}</p>
-        <Row>
+        <Row className="validator-list">
             <Col md={12}>
-                <Table striped className="validator-list">
-                    <thead>
+                <Card body>
+                    <Row className="header">
+                        <Col className="d-none d-md-block counter" md={1}>&nbsp;</Col>
+                        <Col className="moniker" md={3} onClick={(e) => this.toggleDir(0,e)}><i className="material-icons">perm_contact_calendar</i> <span className="d-inline-block d-md-none d-lg-inline-block">Moniker</span> {(this.state.monikerDir==1)?<i className="material-icons">arrow_drop_up</i>:<i className="material-icons">arrow_drop_down</i>}</Col>
+                        <Col className="voting-power" md={2} onClick={(e) => this.toggleDir(1,e)}><i className="material-icons">power</i> <span className="d-inline-block d-md-none d-lg-inline-block">Voting Power</span> {(this.state.votingPowerDir==1)?<i className="material-icons">arrow_drop_up</i>:<i className="material-icons">arrow_drop_down</i>}</Col>
+                        <Col className="status d-none d-md-block" md={1}><i className="material-icons">toggle_on</i> <span className="d-md-none d-lg-inline-block">Status</span></Col>
+                        {(!this.props.jailed)?<Col className="uptime" md={3} onClick={(e) => this.toggleDir(2,e)}><i className="material-icons">flash_on</i> <span className="d-inline-block d-md-none d-lg-inline-block">Uptime ({Meteor.settings.public.uptimeWindow} <i className="fas fa-cube"></i>)</span> {(this.state.uptimeDir==1)?<i className="material-icons">arrow_drop_up</i>:<i className="material-icons">arrow_drop_down</i>}</Col>:''}
+                        {(!this.props.jailed)?<Col className="proposer-priority text-right d-none d-md-block" onClick={(e) => this.toggleDir(3,e)}><i className="material-icons">swap_vertical_circle</i> <span className="d-md-none d-lg-inline-block">Priority</span> {(this.state.proposerDir==1)?<i className="material-icons">arrow_drop_up</i>:<i className="material-icons">arrow_drop_down</i>}</Col>:''}
+                        {(this.props.jailed)?<Col className="last-seen" md={3}><i className="far fa-clock"></i> <span className="d-md-none d-lg-inline-block">Last Seen (UTC)</span></Col>:''}
+                    </Row>
+                </Card>
+                {/* <Table striped className="validator-list"> */}
+                    {/* <thead>
                         <tr>
                             <th className="d-none d-md-table-cell counter">&nbsp;</th>
                             <th className="moniker" onClick={(e) => this.toggleDir(0,e)}><i className="material-icons">perm_contact_calendar</i> <span className="d-none d-sm-inline">Moniker</span> {(this.state.monikerDir==1)?<i className="material-icons">arrow_drop_up</i>:<i className="material-icons">arrow_drop_down</i>}</th>
@@ -82,7 +93,7 @@ export default class Validators extends Component{
                             {(!this.props.jailed)?<th className="proposer-priority text-right" onClick={(e) => this.toggleDir(3,e)}><i className="material-icons">swap_vertical_circle</i> <span className="d-none d-sm-inline">Priority</span> {(this.state.proposerDir==1)?<i className="material-icons">arrow_drop_up</i>:<i className="material-icons">arrow_drop_down</i>}</th>:''}
                             {(this.props.jailed)?<th className="last-seen"><i className="far fa-clock"></i> <span className="d-none d-sm-inline">Last Seen (UTC)</span></th>:''}
                         </tr>
-                    </thead>
+                    </thead> */}
                     {(this.props.jailed != undefined)?<List 
                             jailed={this.props.jailed} 
                             monikerDir={this.state.monikerDir} 
@@ -97,7 +108,7 @@ export default class Validators extends Component{
                             proposerDir={this.state.proposerDir}
                             priority={this.state.priority}
                         />}
-                </Table>
+                {/* </Table> */}
             </Col>
         </Row>
         </div>

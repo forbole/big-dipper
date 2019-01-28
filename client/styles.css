@@ -80,6 +80,50 @@ img.moniker-avatar-list{
     height: 24px;
     margin-right: 5px;
 }
+
+/* div.validator-list div.header{
+    padding-top: 0.3rem;
+    border-top: 1px solid #dee2e6;
+    border-bottom: 2px solid #dee2e6;
+} */
+div.validator-list div.header div:not(.status){
+    cursor: pointer;
+}
+
+/* div.validator-list div.header div,
+div.validator-list div.validator-info div.data:not(.counter){
+    padding-left: 0;
+    padding-right: 5px;
+} */
+
+/* div.validator-list div.validator-info{
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid #dee2e6;
+} */
+div.validator-list div.validator-info div.data{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+div.validator-list div.validator-info div.data.proposer-priority{
+    padding-right: 15px;
+}
+
+div.validator-list div.header span.d-md-none{
+    transform: translateY(-7px);
+    font-weight: bold;
+}
+
+div.validator-list div.header div.last-seen span.d-md-none{
+    transform: translateY(-1px);;
+}
+
+div.validator-list div.header .voting-power{
+    font-family: inherit !important;
+}
+
 table#block-table, 
 table.random-validators, 
 table.validator-list,
@@ -293,6 +337,56 @@ th i.material-icons{
 
 .missed-table{
     margin-top: 0.5em;
+}
+
+@media only screen and (max-width: 768px){
+    .validator-list .card.card-body{
+        margin-bottom: 0.8rem;
+    }
+}
+
+@media only screen and (min-width: 768px){
+    #validator-list div.validator-list {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    #validator-list div.validator-list .data.proposer-priority,
+    #validator-list div.validator-list .data.voting-power,
+    #validator-list div.validator-list .header .voting-power{
+        text-align: right;
+    }
+
+    #validator-list div.validator-list .card.card-body{
+        padding: 0;
+    }
+
+    #validator-list div.validator-list .card{
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }
+
+    #validator-list div.validator-list div.header{
+        padding-top: 0.3rem;
+        border-top: 1px solid #dee2e6;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    div.validator-list div.header div,
+    div.validator-list div.validator-info div.data:not(.counter){
+        padding-left: 0;
+        padding-right: 5px;
+    }
+    
+    div.validator-list div.validator-info{
+        padding-top: 0.4rem;
+        padding-bottom: 0.4rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    div.validator-list div.card-body:nth-child(2n) div.validator-info{
+        background-color: rgba(0,0,0,0.05);
+    }
 }
 
 @media only screen and (max-width: 1023px){
