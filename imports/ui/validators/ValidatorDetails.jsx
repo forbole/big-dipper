@@ -11,7 +11,7 @@ export default class ValidatorDetails extends Component{
 
     render() {
         return <div>
-        <h1>Validator Details</h1>
+        <h1 className="d-none d-lg-block">Validator Details</h1>
             <Row>
                 <Col md={12}>
                     <Switch>

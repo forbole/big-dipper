@@ -9,7 +9,7 @@ export default class ValidatorFirstSeen extends Component{
 
     render() {
         return <div>
-            <h1>Validators</h1>
+            <h1 className="d-none d-lg-block">Validators</h1>
             <p className="lead">First seen time of validators.</p>
             <Row>
                 <Col md={12}>

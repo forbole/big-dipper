@@ -24,7 +24,7 @@ class BlocksTable extends Component {
 
     render(){
         return <div>
-            <h1>Lastest blocks</h1>
+            <h1 className="d-none d-lg-block">Lastest blocks</h1>
             <Table id="block-table" striped>
                 <HeaderRecord />
                 <tbody id="blocks"><Blocks limit={this.state.limit} /></tbody>
