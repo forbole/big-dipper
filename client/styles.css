@@ -304,4 +304,17 @@ th i.material-icons{
         padding-top: 3.5rem;
         padding-bottom: 4.8rem;
     }
+
+    #validator-list ul.status-switch {
+        position: fixed;
+        background-color: #fff;
+        width: 100%;
+        z-index: 1;
+        padding: 5px 0;
+        margin-top: -5px
+    }
+
+    #validator-list .lead{
+        padding-top: 2.5rem;
+    }
 }

@@ -55,9 +55,9 @@ export default class Validators extends Component{
                 desc = "Here is a list of active validators.";
             }
         }
-        return <div>
+        return <div id="validator-list">
         <h1 className="d-none d-lg-block">{title +" Validators"}</h1>
-        <Nav pills>
+        <Nav pills className="status-switch">
             <NavItem>
                 <NavLink tag={Link} to="/validators" active={this.props.match.path=="/validators"}>All</NavLink>
             </NavItem>
