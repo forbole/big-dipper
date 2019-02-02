@@ -21,7 +21,7 @@ export default class Proposals extends Component{
 
     render() {
         return <div>
-        <h1>Proposals <Badge color="primary">{Meteor.settings.public.chainId}</Badge></h1>
+        <h1 className="d-none d-lg-block">Proposals</h1>
             <Switch>
                 <Route exact path="/proposals" component={ProposalList} />
                 <Route path="/proposals/:id" component={Proposal} />

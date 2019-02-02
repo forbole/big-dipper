@@ -9,7 +9,7 @@ export default class ValidatorRevoked extends Component{
 
     render() {
         return <div>
-            <h1>Jailed Validators <Badge color="primary">{Meteor.settings.public.chainId}</Badge></h1>
+            <h1 className="d-none d-lg-block">Jailed Validators</h1>
             <p className="lead">These validators have been jailed. If you know any of them, please ask them to unjail.</p>
             <Row>
                 <Col md={12}>
