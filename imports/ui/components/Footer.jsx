@@ -5,6 +5,8 @@ import {
   NavItem,
   NavLink } from 'reactstrap';
 
+import { Link } from 'react-router-dom';
+
 export default class Footer extends React.Component {
   constructor(props) {
     super(props);
@@ -12,7 +14,8 @@ export default class Footer extends React.Component {
 
   render() {
     return (
-        <Navbar color="light" light expand="md" fixed="bottom" id="footer">
+      <div>
+        <Navbar color="light" light expand="md" fixed="bottom" id="footer" className="d-none d-md-flex">
             <span className="text-muted"><a href="https://www.forbole.com" target="_blank">Forbole Limited</a> &copy;2018. </span>
             <Nav className="ml-auto" navbar>
               <NavItem>
@@ -20,6 +23,23 @@ export default class Footer extends React.Component {
               </NavItem>
             </Nav>
         </Navbar>
+        <Navbar color="light" light fixed="bottom" className="d-block d-md-none mobile-menu">
+            <Nav>
+              <NavItem>
+                <NavLink tag={Link} to="/"><i className="material-icons">home</i></NavLink>
+              </NavItem>
+              <NavItem>
+                <NavLink tag={Link} to="/validators"><i className="material-icons">perm_contact_calendar</i></NavLink>
+              </NavItem>
+              <NavItem>
+                <NavLink tag={Link} to="/blocks"><i className="fas fa-square"></i></NavLink>
+              </NavItem>
+              <NavItem>
+                <NavLink tag={Link} to="/proposals"><i className="material-icons">insert_drive_file</i></NavLink>
+              </NavItem>
+            </Nav>
+        </Navbar>
+      </div>  
     );
   }
 }

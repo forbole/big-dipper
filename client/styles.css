@@ -361,6 +361,14 @@ div#countdown {
     .validator-list .card.card-body{
         margin-bottom: 0.8rem;
     }
+
+    .mobile-menu li{
+        width: 25%;
+    }
+
+    .mobile-menu li a{
+        text-align: center;
+    }
 }
 
 @media only screen and (min-width: 768px){
