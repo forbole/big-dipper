@@ -3,6 +3,11 @@ import { Link } from 'react-router-dom';
 import { Row, Col, Card, CardImg, CardText, CardBody,
     CardTitle, CardSubtitle, Button, Progress } from 'reactstrap';
 import Avatar from '../components/Avatar.jsx';
+<<<<<<< HEAD
+=======
+import KeybaseCheck from '../components/KeybaseCheck.jsx';
+import CountDown from '../components/CountDown.jsx';
+>>>>>>> count-down
 import moment from 'moment';
 import numeral from 'numeral';
 
@@ -88,9 +93,15 @@ export default class Consensus extends Component{
                     </div>);
             }
             else{
-                return <div><Card body inverse color="danger">
-                    <span>The chain hasn't started yet.</span>             
-                </Card></div>
+                let genesisTime = moment(Meteor.settings.public.genesisTime);
+                let current = moment();
+                let diff = genesisTime.diff(current);
+        
+                return <div className="text-center"><Card body inverse color="danger">
+                    <span>The chain is going to start in</span>             
+                </Card>
+                <CountDown genesisTime={diff/1000}/>
+                </div>
             }   
         }
     }
