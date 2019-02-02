@@ -3,11 +3,7 @@ import { Link } from 'react-router-dom';
 import { Row, Col, Card, CardImg, CardText, CardBody,
     CardTitle, CardSubtitle, Button, Progress } from 'reactstrap';
 import Avatar from '../components/Avatar.jsx';
-<<<<<<< HEAD
-=======
-import KeybaseCheck from '../components/KeybaseCheck.jsx';
 import CountDown from '../components/CountDown.jsx';
->>>>>>> count-down
 import moment from 'moment';
 import numeral from 'numeral';
 

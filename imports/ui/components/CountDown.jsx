@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import $ from 'jquery';
+// import $ from 'jquery';
 // import '/node_modules/flipclock/dist/flipclock.js';
 
 export default class CountDown extends Component {
