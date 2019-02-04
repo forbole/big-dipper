@@ -16,17 +16,28 @@ import ValidatorFirstSeen from '/imports/ui/validators/ValidatorFirstSeen.jsx';
 import BlocksTable from '/imports/ui/blocks/BlocksTable.jsx';
 import Proposals from '/imports/ui/proposals/Proposals.jsx';
 import ValidatorDetails from '/imports/ui/validators/ValidatorDetails.jsx';
+import moment from 'moment';
 
 
 import NotFound from '/imports/ui/pages/NotFound.jsx';
 
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
+
 // import './App.js'
 
 
 class App extends Component {
     constructor(props){
         super(props);
+    }
+
+    componentDidMount(){
+        let lastDay = moment("2019-02-10");
+        let now = moment();
+        if (now.diff(lastDay) < 0 ){
+            toast.error("🐷 Gung Hei Fat Choi! 恭喜發財！");
+        }
     }
 
     render() {
