@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Table, Badge, Row, Col, Nav, NavItem, NavLink } from 'reactstrap';
 import moment from 'moment';
+import { Meteor } from 'meteor/meteor';
 
 export default class MissedBlocks extends Component{
     constructor(props){
@@ -9,22 +10,30 @@ export default class MissedBlocks extends Component{
 
         this.state = {
             missedBlocksList: "",
-
+            totalMissed: 0
         }
     }
 
     componentDidUpdate(prevProps){
         if (this.props.missedBlocks != prevProps.missedBlocks){
             if (this.props.missedBlocks.length > 0){
+                let totalCount = 0;
                 this.setState({
                     missedBlocksList: this.props.missedBlocks.map((block,i) => {
+                        totalCount += block.count;
                         return <tr key={i}>
                             <td>{i+1}</td>
                             <td><Link to={"/validator/"+((this.props.match.path.indexOf("/missed/blocks")>0)?block.proposer:block.voter)}>{(this.props.match.path.indexOf("/missed/blocks")>0)?block.proposerMoniker():block.voterMoniker()}</Link></td>
                             <td>{block.count}</td>
                         </tr>
                     })
-                })
+                }, (err, result) => {
+                    if (!err){
+                        this.setState({totalMissed:totalCount});
+                    }
+                });
+
+
             }
             
         }
@@ -48,6 +57,8 @@ export default class MissedBlocks extends Component{
                         </NavItem>
                     </Nav>
                     {(this.props.missedBlocks&&this.props.missedBlocks.length>0)?
+                    <div className="mt-3">
+                    <p className="lead">Total missed {(this.props.match.path.indexOf("/missed/blocks")>0)?'blocks':'precommits'}: {this.state.totalMissed}</p>
                     <Table striped className="missed-table">
                         <thead>
                             <tr>
@@ -57,7 +68,7 @@ export default class MissedBlocks extends Component{
                             </tr>
                         </thead>
                         <tbody>{this.state.missedBlocksList}</tbody>
-                    </Table>:<div>I don't miss {(this.props.match.path.indexOf("/missed/blocks")>0)?'block':'precommit'}.</div>}
+                    </Table></div>:<div>I don't miss {(this.props.match.path.indexOf("/missed/blocks")>0)?'block':'precommit'}.</div>}
                     {this.props.statusExist?<div><em>Last sync time: {moment.utc(this.props.status.lastMissedBlockTime).format("D MMM YYYY, h:mm:ssa")}</em></div>:''}
                 </div>
             }
