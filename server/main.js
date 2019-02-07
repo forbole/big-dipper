@@ -6,6 +6,7 @@ import '/imports/startup/both';
 // import '/imports/api/blocks/blocks.js';
 
 SYNCING = false;
+COUNTMISSEDBLOCKS = false;
 RPC = Meteor.settings.remote.rpc;
 LCD = Meteor.settings.remote.lcd;
 timerBlocks = 0;

@@ -20,10 +20,10 @@ export default MissedBlocksContainer = withTracker((props) => {
     const status = Status.findOne({chainId:Meteor.settings.public.chainId});
     let missedBlocks;
     if (props.type == 'voter'){
-        missedBlocks = MissedBlocksStats.find({voter:props.match.params.address}).fetch();
+        missedBlocks = MissedBlocksStats.find({voter:props.match.params.address}, {sort:{count:-1}}).fetch();
     }
     else {
-        missedBlocks = MissedBlocksStats.find({proposer:props.match.params.address}).fetch();
+        missedBlocks = MissedBlocksStats.find({proposer:props.match.params.address}, {sort:{count:-1}}).fetch();
     }
     const validatorExist = !loading && !!validator;
     const statusExist = !loading && !!status;
