@@ -107,6 +107,10 @@ div.validator-list div.validator-info div.data{
     text-overflow: ellipsis;
 }
 
+div.validator-list div.validator-info div.data span.moniker{
+    line-height: 1.5;
+}
+
 div.validator-list div.validator-info div.data.proposer-priority{
     padding-right: 15px;
 }
@@ -369,6 +373,22 @@ div#countdown {
     .mobile-menu li a{
         text-align: center;
     }
+        
+    div.validator-list div.validator-info img.moniker-avatar-list{
+        height: 48px;
+        float: left;
+    }
+
+    div.validator-list div.validator-info div.data span.moniker{
+        float: left;
+        margin-left: 3px;
+    }
+
+    div.validator-list div.validator-info div.data.voting-power,
+    div.validator-list div.validator-info div.data.status,
+    div.validator-list div.validator-info div.data.uptime{
+        margin-top: -25px;
+    }
 }
 
 @media only screen and (min-width: 768px){
@@ -403,7 +423,7 @@ div#countdown {
         padding-left: 0;
         padding-right: 5px;
     }
-    
+
     div.validator-list div.validator-info{
         padding-top: 0.4rem;
         padding-bottom: 0.4rem;
