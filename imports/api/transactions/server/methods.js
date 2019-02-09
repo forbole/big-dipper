@@ -12,6 +12,8 @@ Meteor.methods({
 
         console.log(hash);
 
+        tx.height = parseInt(tx.height);
+        
         if (tx.result.tags && tx.result.tags.length > 0){
             tx.result.tags.map((tag, i) => {
                 let key = Buffer.from(tag.key, 'base64').toString();
@@ -59,7 +61,7 @@ Meteor.methods({
                 {"result.tags.value": address}
             ]}], 
             "result.code": {$exists: false}, 
-            height:height.toString()}
+            height:height}
             ).fetch();
     }
 });
