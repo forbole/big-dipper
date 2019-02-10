@@ -3,19 +3,18 @@ import { Link } from 'react-router-dom';
 import { Row, Col, UncontrolledTooltip } from 'reactstrap';
 import { TxIcon } from '../components/Icons.jsx';
 import { MsgType } from '../components/MsgType.jsx';
-import moment from 'moment';
+import TimeAgo from '../components/TimeAgo.jsx';
 import numeral from 'numeral';
 
 const TransactionRow = (props) => {
     console.log(props.tx);
     let tx = props.tx;
-    moment.relativeTimeThreshold('ss', 3);
     return <Row className="tx-info">
         <Col xs={9} lg={7}>{(tx.tx.value.msg && tx.tx.value.msg.length >0)?tx.tx.value.msg.map((msg,i) => {
             return <div><MsgType key={i} type={msg.type}/></div>
         }):''}</Col>
         <Col xs={3} lg={{size:1,order:"last"}} className="text-truncate"><Link to="#">{tx.txhash}</Link></Col>
-        <Col xs={6} md={9} lg={{size:2,order:"last"}}>{tx.block()?moment.utc(tx.block().time).fromNow():''}</Col>
+        <Col xs={6} md={9} lg={{size:2,order:"last"}}>{tx.block()?<TimeAgo time={tx.block().time} />:''}</Col>
         <Col xs={4} md={2} lg={1}><Link to="#">{numeral(tx.height).format(0,0)}</Link></Col>
         <Col xs={2} md={1}>{(!tx.code)?<TxIcon valid />:<TxIcon />}</Col>
         <Col xs={12} lg={2}>{tx.tx.value.fee.amount?tx.tx.value.fee.amount.map((fee,i) => {
