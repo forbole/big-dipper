@@ -12,17 +12,17 @@ export default class PowerHistory extends React.Component {
         diff: <span className={"text-"+((props.votingPower - props.prevVotingPower>0)?"success":"danger")+" vp-diff"}>({numeral(props.votingPower - props.prevVotingPower).format("+0,0")})</span>
     }
 
-    Meteor.call('Transactions.findDelegation', this.props.address, this.props.height-2, (err, result) => {
+    Meteor.call('Transactions.findDelegation', this.props.address, this.props.height, (err, result) => {
         if (err){
             console.log(err);
         }
         if (result){
-            // console.log(result);
+            console.log(result);
             this.setState({
                 tx: result.map((msg, i) => <CardFooter key={i} className="text-secondary"><Row>
                     <Col xs={12} sm={8}>
                     {(msg.tx.value.msg && msg.tx.value.msg.length > 0)?msg.tx.value.msg.map((m, j) => {
-                        {/* console.log(m); */}
+                        console.log(m);
                         switch (m.type){
                             case "cosmos-sdk/BeginRedelegate":
                                 return <Row key={j}>

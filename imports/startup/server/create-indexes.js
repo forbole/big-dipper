@@ -25,11 +25,11 @@ MissedBlocksStats.rawCollection().createIndex({proposer:1, voter:1},{unique:true
 
 // Status.rawCollection.createIndex({})
 
-Transactions.rawCollection().createIndex({hash:1},{unique:true});
+Transactions.rawCollection().createIndex({txhash:1},{unique:true});
 Transactions.rawCollection().createIndex({height:-1});
 // Transactions.rawCollection().createIndex({action:1});
-Transactions.rawCollection().createIndex({"result.tags.key":1});
-Transactions.rawCollection().createIndex({"result.tags.value":1});
+Transactions.rawCollection().createIndex({"tags.key":1});
+Transactions.rawCollection().createIndex({"tags.value":1});
 
 ValidatorSets.rawCollection().createIndex({block_height:-1});
 

@@ -14,17 +14,17 @@ Meteor.methods({
 
         tx.height = parseInt(tx.height);
 
-        if (tx.result.tags && tx.result.tags.length > 0){
-            tx.result.tags.map((tag, i) => {
-                let key = Buffer.from(tag.key, 'base64').toString();
-                let value = "";
-                if (tag.value){
-                    value = Buffer.from(tag.value, 'base64').toString();
-                }
-                tag.key = key;
-                tag.value = value;
-            });    
-        }
+        // if (tx.tags && tx.tags.length > 0){
+        //     tx.tags.map((tag, i) => {
+        //         let key = Buffer.from(tag.key, 'base64').toString();
+        //         let value = "";
+        //         if (tag.value){
+        //             value = Buffer.from(tag.value, 'base64').toString();
+        //         }
+        //         tag.key = key;
+        //         tag.value = value;
+        //     });    
+        // }
 
         let txId = Transactions.insert(tx);
         if (txId){
@@ -33,35 +33,39 @@ Meteor.methods({
         else return false;
     },
     'Transactions.findDelegation': function(address, height){
+        console.log(address);
+        console.log(height);
         return Transactions.find({
             $or: [{$and: [
-                {"result.tags.key": "action"}, 
-                {"result.tags.value": "delegate"}, 
-                {"result.tags.key": "destination-validator"}, 
-                {"result.tags.value": address}
+                {"tags.key": "action"}, 
+                {"tags.value": "delegate"}, 
+                {"tags.key": "destination-validator"}, 
+                {"tags.value": address}
             ]}, {$and:[
-                {"result.tags.key": "action"}, 
-                {"result.tags.value": "unjail"}, 
-                {"result.tags.key": "validator"}, 
-                {"result.tags.value": address}
+                {"tags.key": "action"}, 
+                {"tags.value": "unjail"}, 
+                {"tags.key": "validator"}, 
+                {"tags.value": address}
             ]}, {$and:[
-                {"result.tags.key": "action"}, 
-                {"result.tags.value": "create_validator"}, 
-                {"result.tags.key": "destination-validator"}, 
-                {"result.tags.value": address}
+                {"tags.key": "action"}, 
+                {"tags.value": "create_validator"}, 
+                {"tags.key": "destination-validator"}, 
+                {"tags.value": address}
             ]}, {$and:[
-                {"result.tags.key": "action"}, 
-                {"result.tags.value": "begin_unbonding"}, 
-                {"result.tags.key": "source-validator"}, 
-                {"result.tags.value": address}
+                {"tags.key": "action"}, 
+                {"tags.value": "begin_unbonding"}, 
+                {"tags.key": "source-validator"}, 
+                {"tags.value": address}
             ]}, {$and:[
-                {"result.tags.key": "action"}, 
-                {"result.tags.value": "begin_redelegate"}, 
-                {"result.tags.key": "destination-validator"}, 
-                {"result.tags.value": address}
+                {"tags.key": "action"}, 
+                {"tags.value": "begin_redelegate"}, 
+                {"tags.key": "destination-validator"}, 
+                {"tags.value": address}
             ]}], 
-            "result.code": {$exists: false}, 
-            height:height}
-            ).fetch();
+            "code": {$exists: false}, 
+            height:{$lt:height}},
+            {sort:{height:-1},
+            limit: 1}
+        ).fetch();
     }
 });
