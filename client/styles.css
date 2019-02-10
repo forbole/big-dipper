@@ -40,6 +40,10 @@ body {
     margin-top:0.5em;
 }
 
+i.material-icons + span {
+    transform: translateY(-7px);
+}
+
 div#loading {
     visibility: hidden;
     border: 8px solid #f3f3f3; /* Light grey */
@@ -81,26 +85,10 @@ img.moniker-avatar-list{
     margin-right: 5px;
 }
 
-/* div.validator-list div.header{
-    padding-top: 0.3rem;
-    border-top: 1px solid #dee2e6;
-    border-bottom: 2px solid #dee2e6;
-} */
 div.validator-list div.header div:not(.status){
     cursor: pointer;
 }
 
-/* div.validator-list div.header div,
-div.validator-list div.validator-info div.data:not(.counter){
-    padding-left: 0;
-    padding-right: 5px;
-} */
-
-/* div.validator-list div.validator-info{
-    padding-top: 0.4rem;
-    padding-bottom: 0.4rem;
-    border-bottom: 1px solid #dee2e6;
-} */
 div.validator-list div.validator-info div.data{
     white-space: nowrap;
     overflow: hidden;
@@ -115,8 +103,7 @@ div.validator-list div.validator-info div.data.proposer-priority{
     padding-right: 15px;
 }
 
-div.validator-list div.header span.d-md-none{
-    transform: translateY(-7px);
+div.header span{
     font-weight: bold;
 }
 
@@ -319,6 +306,17 @@ div.transactions-list div.tx-info:nth-child(2n){
 div.transactions-list div.tx-info .badge{
     margin-right: 0.2rem;
 }
+
+div.transactions-list div.tx-info .badge:not(:last-child) {
+    margin-bottom: 0.2rem;
+}
+
+div.transactions-list div.header{
+    padding-top: 0.3rem;
+    border-top: 1px solid #dee2e6;
+    border-bottom: 2px solid #dee2e6;
+}
+
 .blocks-list{
     margin-top: 0.2em;
 }
@@ -449,6 +447,12 @@ div.transactions-list div.tx-info .badge{
 
     div.validator-list div.card-body:nth-child(2n) div.validator-info{
         background-color: rgba(0,0,0,0.05);
+    }
+
+    div.transactions-list div.header,
+    div.transactions-list div.tx-info{ 
+        margin-left:0;
+        margin-right:0;
     }
 }
 
