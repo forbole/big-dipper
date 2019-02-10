@@ -41,3 +41,12 @@ export const VoteIcon = (props) => {
             return <i></i>;
     }
 }
+
+export const TxIcon = (props) => {
+    if (props.valid){
+        return <span className="text-success text-nowrap"><i className="fas fa-check-circle"></i> <span className="d-none d-md-inline">Valid</span></span>;
+    }
+    else{
+        return <span className="text-danger text-nowrap"><i className="fas fa-times-circle"></i> <span className="d-none d-md-inline">Invalid</span></span>;
+    }
+}

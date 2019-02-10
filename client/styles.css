@@ -73,7 +73,7 @@ a.navbar-brand .logo {
 
 div#main{
     padding-top: 6rem;
-    padding-bottom: 4.8rem;
+    padding-bottom: 3.85rem;
 }
 
 img.moniker-avatar-list{
@@ -306,6 +306,19 @@ div#countdown {
     transform: translateY(-5px);
 }
 
+div.transactions-list div.tx-info{
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+div.transactions-list div.tx-info:nth-child(2n){
+    background-color: rgba(0,0,0,0.05);
+}
+
+div.transactions-list div.tx-info .badge{
+    margin-right: 0.2rem;
+}
 .blocks-list{
     margin-top: 0.2em;
 }
@@ -356,6 +369,10 @@ div#countdown {
 }
 
 @media only screen and (max-width: 768px){
+    div#main{
+        padding-bottom: 4.85rem;
+    }
+
     .flip-clock-wrapper ul{
         width: 37px;
         height: 50%;
@@ -367,7 +384,7 @@ div#countdown {
     }
 
     .mobile-menu li{
-        width: 25%;
+        width: 20%;
     }
 
     .mobile-menu li a{
@@ -442,7 +459,7 @@ div#countdown {
 
     div#main {
         padding-top: 3.5rem;
-        padding-bottom: 4.8rem;
+        /* padding-bottom: 4.8rem; */
     }
 
     #validator-list ul.status-switch {

@@ -16,6 +16,7 @@ import ValidatorFirstSeen from '/imports/ui/validators/ValidatorFirstSeen.jsx';
 import BlocksTable from '/imports/ui/blocks/BlocksTable.jsx';
 import Proposals from '/imports/ui/proposals/Proposals.jsx';
 import ValidatorDetails from '/imports/ui/validators/ValidatorDetails.jsx';
+import Transactions from '/imports/ui/transactions/TransactionsList.jsx';
 import moment from 'moment';
 
 
@@ -51,6 +52,7 @@ class App extends Component {
                         <Switch>
                             <Route exact path="/" component={Home} />
                             <Route path="/blocks" component={BlocksTable} />
+                            <Route path="/transactions" component={Transactions} />
                             <Route exact path="/validators" component={Validators} />
                             <Route path="/validators/active" render={(props) => <Validators {...props} jailed={false} />} />
                             <Route path="/validators/jailed" render={(props) => <Validators {...props} jailed={true} />} />
