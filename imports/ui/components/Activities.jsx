@@ -1,6 +1,6 @@
 import React, {Component } from 'react';
 import { MsgType } from './MsgType.jsx';
-import { Link } from 'reactstrap';
+import { Link } from 'react-router-dom';
 import numeral from 'numeral';
 
 export default class Activites extends Component {
@@ -66,9 +66,7 @@ export default class Activites extends Component {
                 return <MsgType type={msg.type} />
     
             default:
-                return <ul>
-                    <li>{JSON.stringify(msg.value)}</li>
-                </ul>
+                return <div>{JSON.stringify(msg.value)}</div>
         }
     }
 }
