@@ -301,7 +301,7 @@ div.transactions-list div.tx-info{
 }
 
 .tx-info.invalid {
-    background-color: rgba(237, 20, 61, 0.2);
+    background-color: rgba(237, 20, 61, 0.2) !important;
 }
 
 div.transactions-list div.tx-info:nth-child(2n){
