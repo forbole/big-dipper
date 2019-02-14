@@ -366,6 +366,7 @@ div.transactions-list div.header{
     font-size: 160%;
     position: relative;
     top: -4px;
+    transform: initial !important;
 }
 
 .power-history .card .card-footer{
