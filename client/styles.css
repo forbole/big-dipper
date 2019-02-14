@@ -300,12 +300,26 @@ div.transactions-list div.tx-info{
     border-bottom: 1px solid #dee2e6;
 }
 
+.tx-info.invalid {
+    background-color: rgba(237, 20, 61, 0.2);
+}
+
 div.transactions-list div.tx-info:nth-child(2n){
     background-color: rgba(0,0,0,0.05);
 }
 
 div.transactions-list div.tx-info .activity{
     overflow-x: auto;
+}
+
+div.transactions-list div.tx-info .activity .card-body{
+    overflow-x: auto;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+div.transactions-list div.tx-info .activity .card-body p{
+    margin-bottom: 0;
 }
 
 div.transactions-list div.tx-info .badge{
