@@ -273,9 +273,9 @@ Meteor.methods({
                         analyticsData.time = blockData.time;
 
                         // initialize validator data at first block
-                        if (height == 1){
-                            Validators.remove({});
-                        }
+                        // if (height == 1){
+                        //     Validators.remove({});
+                        // }
 
                         analyticsData.voting_power = 0;
 
@@ -291,7 +291,7 @@ Meteor.methods({
 
                                 let valExist = Validators.findOne({"pub_key.value":validator.pub_key.value});
                                 if (!valExist){
-                                    console.log("validator not in db");
+                                    console.log("validator pub_key not in db");
                                     let command = Meteor.settings.bin.gaiadebug+" pubkey "+validator.pub_key.value;
                                     // console.log(command);
                                     // let tempVal = validator;
@@ -327,7 +327,8 @@ Meteor.methods({
                                             }
                                         }
                                         
-                                        bulkValidators.insert(validator);
+                                        // bulkValidators.insert(validator);
+                                        bulkValidators.find({consensus_pubkey: validator.consensus_pubkey}).upsert().updateOne({$set:validator});
                                         // console.log("validator first appears: "+bulkValidators.length);
                                         bulkVPHistory.insert({
                                             address: validator.address,
@@ -423,6 +424,9 @@ Meteor.methods({
                             bulkValidators.execute((err, result) => {
                                 if (err){
                                     console.log(err);
+                                }
+                                if (result){
+                                    // console.log(result);
                                 }
                             });
                         }

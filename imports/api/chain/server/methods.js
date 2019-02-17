@@ -82,5 +82,92 @@ Meteor.methods({
     },
     'chain.getLatestStatus': function(){
         Chain.find().sort({created:-1}).limit(1);
+    },
+    'chain.genesis': function(){
+        let chain = Chain.findOne({chainId: Meteor.settings.public.chainId});
+        
+        if (chain && chain.readGenesis){
+            console.log('Genesis file has been processed');
+        }
+        else{
+            console.log('=== Start processing genesis file ===');
+            let response = HTTP.get(Meteor.settings.genesisFile);
+            let genesis = JSON.parse(response.content);
+            let chainParams = {
+                chainId: genesis.chain_id,
+                genesisTime: genesis.genesis_time,
+                consensusParams: genesis.consensus_params,
+                auth: genesis.app_state.auth,
+                bank: genesis.app_state.bank,
+                staking: {
+                    pool: genesis.app_state.staking.pool,
+                    params: genesis.app_state.staking.params
+                },
+                mint: genesis.app_state.mint,
+                distr: {
+                    communityTax: genesis.app_state.distr.community_tax,
+                    baseProposerReward: genesis.app_state.distr.base_proposer_reward,
+                    bonusProposerReward: genesis.app_state.distr.bonus_proposer_reward,
+                    withdrawAddrEnabled: genesis.app_state.distr.withdraw_addr_enabled
+                },
+                gov: {
+                    startingProposalId: genesis.app_state.gov.starting_proposal_id,
+                    depositParams: genesis.app_state.gov.deposit_params,
+                    votingParams: genesis.app_state.gov.voting_params,
+                    tallyParams: genesis.app_state.gov.tally_params
+                },
+                slashing:{
+                    params: genesis.app_state.slashing.params
+                }
+            }
+
+            // console.log(chainParams);
+            // console.log(genesis);
+
+            let result = Chain.upsert({chainId:chainParams.chainId}, {$set:chainParams});
+
+            console.log(result);
+            
+            if (genesis.app_state.gentxs && (genesis.app_state.gentxs.length > 0)){
+                for (i in genesis.app_state.gentxs){
+                    let msg = genesis.app_state.gentxs[i].value.msg;
+                    // console.log(msg.type);
+                    for (m in msg){
+                        if (msg[m].type == "cosmos-sdk/MsgCreateValidator"){
+                            console.log(msg[m].value);
+                            let command = Meteor.settings.bin.gaiadebug+" pubkey "+msg[m].value.pubkey;
+                            let validator = {
+                                consensus_pubkey: msg[m].value.pubkey,
+                                description: msg[m].value.description,
+                                commission: msg[m].value.commission,
+                                min_self_delegation: msg[m].value.min_self_delegation,
+                                operator_address: msg[m].value.validator_address,
+                                delegator_address: msg[m].value.delegator_address
+                            }
+
+                            Validators.upsert({consensus_pubkey:msg[m].value.pubkey},validator);
+                            // Meteor.call('runCode', command, function(error, result){
+                            //     validator.address = result.match(/\s[0-9A-F]{40}$/igm);
+                            //     validator.address = validator.address[0].trim();
+                            //     validator.hex = result.match(/\s[0-9A-F]{64}$/igm);
+                            //     validator.hex = validator.hex[0].trim();
+                            //     validator.cosmosaccpub = result.match(/cosmospub.*$/igm);
+                            //     validator.cosmosaccpub = validator.cosmosaccpub[0].trim();
+                            //     validator.operator_pubkey = result.match(/cosmosvaloperpub.*$/igm);
+                            //     validator.operator_pubkey = validator.operator_pubkey[0].trim();
+                            //     // validator.consensus_pubkey = result.match(/cosmosvalconspub.*$/igm);
+                            //     // validator.consensus_pubkey = validator.consensus_pubkey[0].trim();
+
+                            //     Validators.upsert({consensus_pubkey:msg[m].value.pubkey},validator);
+                            // });
+                        }
+                    }
+                }
+            }
+            console.log('=== Finished processing genesis file ===');
+
+        }
+        
+        return true;
     }
 })
