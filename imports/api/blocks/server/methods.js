@@ -161,7 +161,7 @@ Meteor.methods({
                         // save txs in database
                         if (block.block.data.txs && block.block.data.txs.length > 0){
                             for (t in block.block.data.txs){                               
-                                Meteor.call('Transactions.index', sha256(Buffer.from(block.block.data.txs[t], 'base64')), (err, result) => {
+                                Meteor.call('Transactions.index', sha256(Buffer.from(block.block.data.txs[t], 'base64')), blockData.time, (err, result) => {
                                     if (err){
                                         console.log(err);
                                     }
@@ -363,21 +363,23 @@ Meteor.methods({
                                     }
                                     let prevVotingPower = VotingPowerHistory.findOne({address:validator.address}, {height:-1, limit:1});
                                     
-                                    
-                                    if (prevVotingPower.voting_power != validator.voting_power){
-                                        let changeType = (prevVotingPower.voting_power > validator.voting_power)?'down':'up';
-                                        let changeData = {
-                                            address: validator.address,
-                                            prev_voting_power: prevVotingPower.voting_power,
-                                            voting_power: validator.voting_power,
-                                            type: changeType,
-                                            height: blockData.height,
-                                            block_time: blockData.time
-                                        };
-                                        // console.log('voting power changed.');
-                                        // console.log(changeData);
-                                        bulkVPHistory.insert(changeData);
+                                    if (prevVotingPower){
+                                        if (prevVotingPower.voting_power != validator.voting_power){
+                                            let changeType = (prevVotingPower.voting_power > validator.voting_power)?'down':'up';
+                                            let changeData = {
+                                                address: validator.address,
+                                                prev_voting_power: prevVotingPower.voting_power,
+                                                voting_power: validator.voting_power,
+                                                type: changeType,
+                                                height: blockData.height,
+                                                block_time: blockData.time
+                                            };
+                                            // console.log('voting power changed.');
+                                            // console.log(changeData);
+                                            bulkVPHistory.insert(changeData);
+                                        }
                                     }
+
                                 }
                                 
 

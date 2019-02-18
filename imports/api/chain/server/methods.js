@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 import { Chain } from '../chain.js';
 import { Validators } from '../../validators/validators.js';
+import { VotingPowerHistory } from '../../voting-power/history.js';
 
 Meteor.methods({
     'chain.getConsensusState': function(){
@@ -144,21 +145,32 @@ Meteor.methods({
                                 voting_power: Math.floor(parseInt(msg[m].value.value.amount) / 1000000)
                             }
 
-                            Validators.upsert({consensus_pubkey:msg[m].value.pubkey},validator);
-                            // Meteor.call('runCode', command, function(error, result){
-                            //     validator.address = result.match(/\s[0-9A-F]{40}$/igm);
-                            //     validator.address = validator.address[0].trim();
-                            //     validator.hex = result.match(/\s[0-9A-F]{64}$/igm);
-                            //     validator.hex = validator.hex[0].trim();
-                            //     validator.cosmosaccpub = result.match(/cosmospub.*$/igm);
-                            //     validator.cosmosaccpub = validator.cosmosaccpub[0].trim();
-                            //     validator.operator_pubkey = result.match(/cosmosvaloperpub.*$/igm);
-                            //     validator.operator_pubkey = validator.operator_pubkey[0].trim();
-                            //     // validator.consensus_pubkey = result.match(/cosmosvalconspub.*$/igm);
-                            //     // validator.consensus_pubkey = validator.consensus_pubkey[0].trim();
+                            // Validators.upsert({consensus_pubkey:msg[m].value.pubkey},validator);
+                            Meteor.call('runCode', command, function(error, result){
+                                validator.address = result.match(/\s[0-9A-F]{40}$/igm);
+                                validator.address = validator.address[0].trim();
+                                validator.hex = result.match(/\s[0-9A-F]{64}$/igm);
+                                validator.hex = validator.hex[0].trim();
+                                validator.pub_key = result.match(/{".*"}/igm);
+                                validator.pub_key = JSON.parse(validator.pub_key[0].trim());
+                                let re = new RegExp(Meteor.settings.public.bech32PrefixAccPub+".*$","igm");
+                                validator.cosmosaccpub = result.match(re);
+                                validator.cosmosaccpub = validator.cosmosaccpub[0].trim();
+                                re = new RegExp(Meteor.settings.public.bech32PrefixValPub+".*$","igm");
+                                validator.operator_pubkey = result.match(re);
+                                validator.operator_pubkey = validator.operator_pubkey[0].trim();
+        
+                                Validators.upsert({consensus_pubkey:msg[m].value.pubkey},validator);
 
-                            //     Validators.upsert({consensus_pubkey:msg[m].value.pubkey},validator);
-                            // });
+                                VotingPowerHistory.insert({
+                                    address: validator.address,
+                                    prev_voting_power: 0,
+                                    voting_power: validator.voting_power,
+                                    type: 'add',
+                                    height: 0,
+                                    block_time: genesis.genesis_time
+                                });
+                            })
                         }
                     }
                 }
