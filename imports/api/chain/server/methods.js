@@ -124,9 +124,7 @@ Meteor.methods({
             // console.log(chainParams);
             // console.log(genesis);
 
-            let result = Chain.upsert({chainId:chainParams.chainId}, {$set:chainParams});
 
-            console.log(result);
             
             if (genesis.app_state.gentxs && (genesis.app_state.gentxs.length > 0)){
                 for (i in genesis.app_state.gentxs){
@@ -142,7 +140,8 @@ Meteor.methods({
                                 commission: msg[m].value.commission,
                                 min_self_delegation: msg[m].value.min_self_delegation,
                                 operator_address: msg[m].value.validator_address,
-                                delegator_address: msg[m].value.delegator_address
+                                delegator_address: msg[m].value.delegator_address,
+                                voting_power: Math.floor(parseInt(msg[m].value.value.amount) / 1000000)
                             }
 
                             Validators.upsert({consensus_pubkey:msg[m].value.pubkey},validator);
@@ -164,6 +163,12 @@ Meteor.methods({
                     }
                 }
             }
+
+            chainParams.readGenesis = true;
+            let result = Chain.upsert({chainId:chainParams.chainId}, {$set:chainParams});
+
+            console.log(result);
+
             console.log('=== Finished processing genesis file ===');
 
         }
