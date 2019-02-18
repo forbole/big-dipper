@@ -18,7 +18,7 @@ const TransactionRow = (props) => {
         <Col xs={4} md={2} lg={1}><i className="fas fa-database d-lg-none"></i> <Link to="#">{numeral(tx.height).format(0,0)}</Link></Col>
         <Col xs={2} md={1}>{(!tx.code)?<TxIcon valid />:<TxIcon />}</Col>
         <Col xs={6} md={9} lg={2}><i className="material-icons d-lg-none">monetization_on</i> {tx.tx.value.fee.amount?tx.tx.value.fee.amount.map((fee,i) => {
-            return <span className="text-nowrap">{numeral(fee.amount).format(0,0)} {fee.denom}</span>
+            return <span className="text-nowrap" key={i}>{numeral(fee.amount).format(0,0)} {fee.denom}</span>
         }):<span>No fee</span>}</Col>
     </Row>
 }
