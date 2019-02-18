@@ -4,6 +4,14 @@ import { Chain } from '../chain.js';
 import { Validators } from '../../validators/validators.js';
 import { VotingPowerHistory } from '../../voting-power/history.js';
 
+findVotingPower = (validator, genValidators) => {
+    for (let v in genValidators){
+        if (validator.pub_key.value == genValidators[v].pub_key.value){
+            return parseInt(genValidators[v].power);
+        }
+    }
+}
+
 Meteor.methods({
     'chain.getConsensusState': function(){
         this.unblock();
@@ -126,7 +134,7 @@ Meteor.methods({
             // console.log(genesis);
 
 
-            
+            // read gentx
             if (genesis.app_state.gentxs && (genesis.app_state.gentxs.length > 0)){
                 for (i in genesis.app_state.gentxs){
                     let msg = genesis.app_state.gentxs[i].value.msg;
@@ -174,12 +182,58 @@ Meteor.methods({
                         }
                     }
                 }
+
+                
             }
 
+            // read validators from previous chain
+            if (genesis.app_state.staking.validators && genesis.app_state.staking.validators.length > 0){
+                console.log(genesis.app_state.staking.validators.length);
+                let genValidatorsSet = genesis.app_state.staking.validators;
+                let genValidators = genesis.validators;
+                for (let v in genValidatorsSet){
+                    // console.log(genValidators[v]);
+                    let validator = genValidatorsSet[v];
+                    validator.delegator_address = Meteor.call('getDelegator', genValidatorsSet[v].operator_address);
+                    let command = Meteor.settings.bin.gaiadebug+" pubkey "+validator.consensus_pubkey;
+                    Meteor.call('runCode', command, (err, result) => {
+                        if (err){
+                            console.log(err);
+                        }
+                        if (result){
+                            validator.address = result.match(/\s[0-9A-F]{40}$/igm);
+                            validator.address = validator.address[0].trim();
+                            validator.hex = result.match(/\s[0-9A-F]{64}$/igm);
+                            validator.hex = validator.hex[0].trim();
+                            validator.pub_key = result.match(/{".*"}/igm);
+                            validator.pub_key = JSON.parse(validator.pub_key[0].trim());
+                            let re = new RegExp(Meteor.settings.public.bech32PrefixAccPub+".*$","igm");
+                            validator.cosmosaccpub = result.match(re);
+                            validator.cosmosaccpub = validator.cosmosaccpub[0].trim();
+                            re = new RegExp(Meteor.settings.public.bech32PrefixValPub+".*$","igm");
+                            validator.operator_pubkey = result.match(re);
+                            validator.operator_pubkey = validator.operator_pubkey[0].trim();
+
+                            validator.voting_power = findVotingPower(validator, genValidators);
+                            Validators.upsert({consensus_pubkey:validator.consensus_pubkey},validator);
+                            VotingPowerHistory.insert({
+                                address: validator.address,
+                                prev_voting_power: 0,
+                                voting_power: validator.voting_power,
+                                type: 'add',
+                                height: 0,
+                                block_time: genesis.genesis_time
+                            });
+                        }
+                    });
+                }
+                // Meteor.call('getDelegator', "cosmosvaloper10505nl7yftsme9jk2glhjhta7w0475uvl4k8ju")
+            }
+                
             chainParams.readGenesis = true;
             let result = Chain.upsert({chainId:chainParams.chainId}, {$set:chainParams});
 
-            console.log(result);
+            // console.log(result);
 
             console.log('=== Finished processing genesis file ===');
 

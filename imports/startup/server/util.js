@@ -1,7 +1,15 @@
+import bech32 from 'bech32'
+
 // Load future from fibers
 var Future = Npm.require("fibers/future");
 // Load exec
 var exec = Npm.require("child_process").exec;
+
+function toHexString(byteArray) {
+    return byteArray.map(function(byte) {
+        return ('0' + (byte & 0xFF).toString(16)).slice(-2);
+    }).join('')
+}
 
 Meteor.methods({
     runCode: function (command) {
@@ -18,5 +26,13 @@ Meteor.methods({
         future.return(stdout.toString());
         });
         return future.wait();
+    },
+    getDelegator: function(operatorAddr){
+        let address = bech32.decode(operatorAddr);
+        // let hex = toHexString(bech32.fromWords(address.words)).toUpperCase();
+        // // console.log(address);
+
+        // let words = bech32.toWords(Buffer.from('foobar', 'utf8'))
+        return bech32.encode(Meteor.settings.public.bech32PrefixAccAddr, address.words);
     }
 })
