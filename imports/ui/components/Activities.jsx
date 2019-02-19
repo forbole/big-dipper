@@ -181,6 +181,22 @@ export default class Activites extends Component {
                 break;
 
             case "cosmos-sdk/MsgWithdrawValidatorCommission":
+                Meteor.call('Transactions.findUser', msg.value.validator_addr, (err, result) => {
+                    if (err){
+                        console.log(err);
+                    }
+                    else if (result){
+                        this.setState({
+                            validator: <Link to={"/validator/"+result.address} >{result.description.moniker}</Link>
+                        }) 
+                    }
+                    else {
+                        this.setState({
+                            validator: msg.value.validator_addr
+                        })
+                    }
+                });
+                break;
             case "cosmos-sdk/MsgWithdrawDelegationReward":
                 Meteor.call('Transactions.findUser', msg.value.validator_addr, (err, result) => {
                     if (err){

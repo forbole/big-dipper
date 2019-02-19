@@ -5,7 +5,7 @@ import List from './List.jsx';
 
 export default ValidatorDetailsContainer = withTracker((props) => {
     const transactionsHandle = Meteor.subscribe('transactions.list', props.limit);
-    const loading = !transactionsHandle.ready();
+    const loading = (!transactionsHandle.ready() && props.limit == Meteor.settings.public.initialPageSize);
     const transactions = Transactions.find({}, {sort:{height:-1}}).fetch();
     const transactionsExist = !loading && !!transactions;
     // console.log(props.state.limit);

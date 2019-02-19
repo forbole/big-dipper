@@ -46,18 +46,23 @@ i.material-icons + span {
 }
 
 div#loading {
-    visibility: hidden;
+    display: none;
     border: 8px solid #f3f3f3; /* Light grey */
     border-top: 8px solid #bd081c; /* Forbole Red */
     border-radius: 50%;
     width: 50px;
     height: 50px;
     animation: spin 2s linear infinite;
-    align-self: center;
-    position: fixed;
-    z-index: 9999;
-    top: 35%;
-    left: 45%;
+    margin: 0.5rem auto;
+    /* align-self: center; */
+    /* position: fixed; */
+    /* z-index: 9999; */
+    /* top: 35%;
+    left: 45%; */
+}
+
+div#loading.show{
+    display: block;
 }
 
 a.navbar-brand .logo {
