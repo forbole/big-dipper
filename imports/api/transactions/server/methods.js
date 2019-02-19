@@ -68,8 +68,6 @@ Meteor.methods({
         else return false;
     },
     'Transactions.findDelegation': function(address, height){
-        console.log(address);
-        console.log(height);
         return Transactions.find({
             $or: [{$and: [
                 {"tags.key": "action"}, 
@@ -102,5 +100,23 @@ Meteor.methods({
             {sort:{height:-1},
             limit: 1}
         ).fetch();
+    },
+    'Transactions.findUser': function(address){
+        // address is either delegator address or validator operator address
+        let validator;
+        if (address.includes(Meteor.settings.public.bech32PrefixValAddr)){
+            // validator operator address
+            validator = Validators.findOne({operator_address:address}, {fields:{address:1, description:1, operator_address:1, delegator_address:1}});
+        }
+        else if (address.includes(Meteor.settings.public.bech32PrefixAccAddr)){
+            // delegator address
+            validator = Validators.findOne({delegator_address:address}, {fields:{address:1, description:1, operator_address:1, delegator_address:1}});        
+        }
+
+        if (validator){
+            return validator;
+        }
+        return false;
+
     }
 });
