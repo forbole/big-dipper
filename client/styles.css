@@ -499,3 +499,9 @@ div.transactions-list div.header{
         padding-top: 2.5rem;
     }
 }
+
+@media only screen and (min-width: 1024px){
+    .tx-info .fee i.material-icons + span {
+        transform: inherit;
+    }
+}

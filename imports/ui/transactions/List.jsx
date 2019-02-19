@@ -14,10 +14,10 @@ const TransactionRow = (props) => {
             return <Card body key={i}><Activities msg={msg} invalid={(!!tx.code)}/></Card>
         }):''}</Col>
         <Col xs={{size:6,order:"last"}} md={{size:3, order: "last"}} lg={{size:1,order:"last"}} className="text-truncate"><i className="fas fa-hashtag d-lg-none"></i> <Link to="#">{tx.txhash}</Link></Col>
-        <Col xs={6} md={9} lg={{size:2,order:"last"}}><i className="material-icons">schedule</i> <span>{tx.block()?<TimeAgo time={tx.block().time} />:''}</span></Col>
+        <Col xs={6} md={9} lg={{size:2,order:"last"}} className="text-nowrap"><i className="material-icons">schedule</i> <span>{tx.block()?<TimeAgo time={tx.block().time} />:''}</span></Col>
         <Col xs={4} md={2} lg={1}><i className="fas fa-database d-lg-none"></i> <Link to="#">{numeral(tx.height).format(0,0)}</Link></Col>
         <Col xs={2} md={1}>{(!tx.code)?<TxIcon valid />:<TxIcon />}</Col>
-        <Col xs={6} md={9} lg={2}><i className="material-icons d-lg-none">monetization_on</i> {tx.tx.value.fee.amount?tx.tx.value.fee.amount.map((fee,i) => {
+        <Col xs={6} md={9} lg={2} className="fee"><i className="material-icons d-lg-none">monetization_on</i> {tx.tx.value.fee.amount?tx.tx.value.fee.amount.map((fee,i) => {
             return <span className="text-nowrap" key={i}>{numeral(fee.amount).format(0,0)} {fee.denom}</span>
         }):<span>No fee</span>}</Col>
     </Row>
