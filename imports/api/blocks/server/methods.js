@@ -300,11 +300,14 @@ Meteor.methods({
                                         validator.address = validator.address[0].trim();
                                         validator.hex = result.match(/\s[0-9A-F]{64}$/igm);
                                         validator.hex = validator.hex[0].trim();
-                                        validator.cosmosaccpub = result.match(/cosmospub.*$/igm);
-                                        validator.cosmosaccpub = validator.cosmosaccpub[0].trim();
-                                        validator.operator_pubkey = result.match(/cosmosvaloperpub.*$/igm);
+                                        let re = new RegExp(Meteor.settings.public.bech32PrefixAccPub+".*$","igm");
+                                        validator.account_pubkey = result.match(re);
+                                        validator.account_pubkey = validator.account_pubkey[0].trim();
+                                        re = new RegExp(Meteor.settings.public.bech32PrefixValPub+".*$","igm");
+                                        validator.operator_pubkey = result.match(re);
                                         validator.operator_pubkey = validator.operator_pubkey[0].trim();
-                                        validator.consensus_pubkey = result.match(/cosmosvalconspub.*$/igm);
+                                        re = new RegExp(Meteor.settings.public.bech32PrefixConsPub+".*$","igm");
+                                        validator.consensus_pubkey = result.match(re);
                                         validator.consensus_pubkey = validator.consensus_pubkey[0].trim();
 
                                         for (val in validatorSet){

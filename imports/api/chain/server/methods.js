@@ -147,13 +147,13 @@ Meteor.methods({
                             console.log(msg[m].value);
                             let command = Meteor.settings.bin.gaiadebug+" pubkey "+msg[m].value.pubkey.value;
                             let validator = {
-                                pubkey: msg[m].value.pubkey,
+                                pub_key: msg[m].value.pubkey,
                                 description: msg[m].value.Description,
                                 commission: msg[m].value.Commission,
                                 min_self_delegation: msg[m].value.min_self_delegation,
                                 operator_address: msg[m].value.validator_address,
                                 delegator_address: msg[m].value.delegator_address,
-                                voting_power: Math.floor(parseInt(msg[m].value.delegation.amount) / 100000000000000000)
+                                voting_power: Math.floor(parseInt(msg[m].value.delegation.amount) / 1000000000000000000)
                             }
 
                             // Validators.upsert({consensus_pubkey:msg[m].value.pubkey},validator);
@@ -163,8 +163,8 @@ Meteor.methods({
                                 validator.hex = result.match(/\s[0-9A-F]{64}$/igm);
                                 validator.hex = validator.hex[0].trim();
                                 let re = new RegExp(Meteor.settings.public.bech32PrefixAccPub+".*$","igm");
-                                validator.cosmosaccpub = result.match(re);
-                                validator.cosmosaccpub = validator.cosmosaccpub[0].trim();
+                                validator.account_pubkey = result.match(re);
+                                validator.account_pubkey = validator.account_pubkey[0].trim();
                                 re = new RegExp(Meteor.settings.public.bech32PrefixValPub+".*$","igm");
                                 validator.operator_pubkey = result.match(re);
                                 validator.operator_pubkey = validator.operator_pubkey[0].trim();
@@ -212,8 +212,8 @@ Meteor.methods({
                             validator.pub_key = result.match(/{".*"}/igm);
                             validator.pub_key = JSON.parse(validator.pub_key[0].trim());
                             let re = new RegExp(Meteor.settings.public.bech32PrefixAccPub+".*$","igm");
-                            validator.cosmosaccpub = result.match(re);
-                            validator.cosmosaccpub = validator.cosmosaccpub[0].trim();
+                            validator.account_pubkey = result.match(re);
+                            validator.account_pubkey = validator.account_pubkey[0].trim();
                             re = new RegExp(Meteor.settings.public.bech32PrefixValPub+".*$","igm");
                             validator.operator_pubkey = result.match(re);
                             validator.operator_pubkey = validator.operator_pubkey[0].trim();
