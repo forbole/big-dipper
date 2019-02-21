@@ -111,7 +111,7 @@ Meteor.methods({
             SYNCING = true;
 
             // get latest validator candidate information
-            url = LCD+'/staking/validators';
+            url = LCD+'/stake/validators';
             response = HTTP.get(url);
             console.log(url);
             let validatorSet = JSON.parse(response.content);

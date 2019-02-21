@@ -65,7 +65,7 @@ Meteor.methods({
             let totalVP = 0;
 
             if (parseInt(chain.latestBlockHeight) > 0){
-                url = LCD+'/staking/validators';
+                url = LCD+'/stake/validators';
                 response = HTTP.get(url);
                 let validatorSet = JSON.parse(response.content);
                 chain.totalValidators = validatorSet.length;
