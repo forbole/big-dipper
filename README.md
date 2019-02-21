@@ -1,6 +1,8 @@
 # Big Dipper
 Forbole Block Explorer for Cosmos
 
+This is a branch for Big Dipper running for Irishub.
+
 ## Demo
 [Explore Cosmos Game of Stakes (game_of_stakes_6) with The Big Dipper](https://bigdipper.forbole.com)
 
@@ -18,7 +20,7 @@ Forbole Block Explorer for Cosmos
 ## How to run The Big Dipper
 
 1. Copy `settings.json.default` to `settings.json`.
-2. Update paths to `gaiacli` and `gaiadebug`.
+2. Update paths to `iriscli` and `iristool debug`.
 3. Update the RPC and LCD URLs.
 
 ```
