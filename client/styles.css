@@ -48,7 +48,7 @@ i.material-icons + span {
 div#loading {
     display: none;
     border: 8px solid #f3f3f3; /* Light grey */
-    border-top: 8px solid #bd081c; /* Forbole Red */
+    border-top: 8px solid #158CBA; /* Iris */
     border-radius: 50%;
     width: 50px;
     height: 50px;
@@ -232,7 +232,7 @@ div#countdown {
 
 #countdown.flip-clock-wrapper ul li a div div.inn,
 #countdown .flip-clock-dot{
-    background-color: #bd081c;
+    background-color: #158CBA;
 }
 
 .consensus-state.status .card-subtitle{
@@ -350,7 +350,7 @@ div.transactions-list div.header{
     height: 1.5em;
     display: inline-block;
     margin-right: 0.2em;
-    border: 0.1em solid #bd081c;
+    border: 0.1em solid #158CBA;
     -webkit-box-shadow: 1px 1px 3px 0px rgba(163,163,163,1);
     -moz-box-shadow: 1px 1px 3px 0px rgba(163,163,163,1);
     box-shadow: 1px 1px 3px 0px rgba(163,163,163,1);
@@ -358,7 +358,7 @@ div.transactions-list div.header{
 }
 
 .blocks-list .block .full{
-    background-color: #bd081c;
+    background-color: #158CBA;
 }
 
 .blocks-list .block .full,
