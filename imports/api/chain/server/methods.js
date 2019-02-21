@@ -108,9 +108,9 @@ Meteor.methods({
                 consensusParams: genesis.consensus_params,
                 auth: genesis.app_state.auth,
                 bank: genesis.app_state.bank,
-                staking: {
-                    pool: genesis.app_state.staking.pool,
-                    params: genesis.app_state.staking.params
+                stake: {
+                    pool: genesis.app_state.stake.pool,
+                    params: genesis.app_state.stake.params
                 },
                 mint: genesis.app_state.mint,
                 distr: {
@@ -127,7 +127,10 @@ Meteor.methods({
                 },
                 slashing:{
                     params: genesis.app_state.slashing.params
-                }
+                },
+                upgrade: genesis.app_state.upgrade,
+                service: genesis.app_state.service,
+                guardian: genesis.app_state.guardian
             }
 
             // console.log(chainParams);
@@ -140,17 +143,17 @@ Meteor.methods({
                     let msg = genesis.app_state.gentxs[i].value.msg;
                     // console.log(msg.type);
                     for (m in msg){
-                        if (msg[m].type == "cosmos-sdk/MsgCreateValidator"){
+                        if (msg[m].type == "irishub/stake/MsgCreateValidator"){
                             console.log(msg[m].value);
-                            let command = Meteor.settings.bin.gaiadebug+" pubkey "+msg[m].value.pubkey;
+                            let command = Meteor.settings.bin.gaiadebug+" pubkey "+msg[m].value.pubkey.value;
                             let validator = {
-                                consensus_pubkey: msg[m].value.pubkey,
-                                description: msg[m].value.description,
-                                commission: msg[m].value.commission,
+                                pubkey: msg[m].value.pubkey,
+                                description: msg[m].value.Description,
+                                commission: msg[m].value.Commission,
                                 min_self_delegation: msg[m].value.min_self_delegation,
                                 operator_address: msg[m].value.validator_address,
                                 delegator_address: msg[m].value.delegator_address,
-                                voting_power: Math.floor(parseInt(msg[m].value.value.amount) / 1000000)
+                                voting_power: Math.floor(parseInt(msg[m].value.delegation.amount) / 100000000000000000)
                             }
 
                             // Validators.upsert({consensus_pubkey:msg[m].value.pubkey},validator);
@@ -159,16 +162,17 @@ Meteor.methods({
                                 validator.address = validator.address[0].trim();
                                 validator.hex = result.match(/\s[0-9A-F]{64}$/igm);
                                 validator.hex = validator.hex[0].trim();
-                                validator.pub_key = result.match(/{".*"}/igm);
-                                validator.pub_key = JSON.parse(validator.pub_key[0].trim());
                                 let re = new RegExp(Meteor.settings.public.bech32PrefixAccPub+".*$","igm");
                                 validator.cosmosaccpub = result.match(re);
                                 validator.cosmosaccpub = validator.cosmosaccpub[0].trim();
                                 re = new RegExp(Meteor.settings.public.bech32PrefixValPub+".*$","igm");
                                 validator.operator_pubkey = result.match(re);
                                 validator.operator_pubkey = validator.operator_pubkey[0].trim();
+                                re = new RegExp(Meteor.settings.public.bech32PrefixConsPub+".*$","igm");
+                                validator.consensus_pubkey = result.match(re);
+                                validator.consensus_pubkey = validator.consensus_pubkey[0].trim();
         
-                                Validators.upsert({consensus_pubkey:msg[m].value.pubkey},validator);
+                                Validators.upsert({pubkey:msg[m].value.pubkey},validator);
 
                                 VotingPowerHistory.insert({
                                     address: validator.address,
@@ -187,9 +191,9 @@ Meteor.methods({
             }
 
             // read validators from previous chain
-            if (genesis.app_state.staking.validators && genesis.app_state.staking.validators.length > 0){
-                console.log(genesis.app_state.staking.validators.length);
-                let genValidatorsSet = genesis.app_state.staking.validators;
+            if (genesis.app_state.stake.validators && genesis.app_state.stake.validators.length > 0){
+                console.log(genesis.app_state.stake.validators.length);
+                let genValidatorsSet = genesis.app_state.stake.validators;
                 let genValidators = genesis.validators;
                 for (let v in genValidatorsSet){
                     // console.log(genValidators[v]);

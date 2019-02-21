@@ -35,7 +35,7 @@ ValidatorSets.rawCollection().createIndex({block_height:-1});
 
 Validators.rawCollection().createIndex({address:1},{unique:true, partialFilterExpression: { address: { $exists: true } } });
 Validators.rawCollection().createIndex({consensus_pubkey:1},{unique:true});
-Validators.rawCollection().createIndex({"pub_key.value":1},{unique:true, partialFilterExpression: { "pub_key.value": { $exists: true } }});
+Validators.rawCollection().createIndex({"pubkey.value":1},{unique:true, partialFilterExpression: { "pubkey.value": { $exists: true } }});
 
 VotingPowerHistory.rawCollection().createIndex({address:1,height:-1});
 VotingPowerHistory.rawCollection().createIndex({type:1});
