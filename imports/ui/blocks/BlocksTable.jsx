@@ -3,24 +3,48 @@ import { Meteor } from 'meteor/meteor';
 import { Table, Badge, Button } from 'reactstrap';
 import HeaderRecord from './HeaderRecord.jsx';
 import Blocks from '/imports/ui/blocks/ListContainer.js'
+import { LoadMore } from '../components/LoadMore.jsx';
 
 class BlocksTable extends Component {
     constructor(props){
         super(props);
         this.state = {
-            limit: 30,
+            limit: Meteor.settings.public.initialPageSize,
         };
 
-        this.updateLimit.bind(this);
+        // this.updateLimit.bind(this);
     }
 
-    // TODO: update list
-    updateLimit = () => {
-        this.setState({
-            limit: this.state.limit+10
-        })
+    isBottom(el) {
+        return el.getBoundingClientRect().bottom <= window.innerHeight;
     }
- 
+      
+    componentDidMount() {
+        document.addEventListener('scroll', this.trackScrolling);
+    }
+    
+    componentWillUnmount() {
+        document.removeEventListener('scroll', this.trackScrolling);
+    }
+    
+    trackScrolling = () => {
+        const wrappedElement = document.getElementById('blocks');
+        if (this.isBottom(wrappedElement)) {
+            // console.log('header bottom reached');
+            document.removeEventListener('scroll', this.trackScrolling);
+            this.setState({loadmore:true});
+            this.setState({
+                limit: this.state.limit+10
+            }, (err, result) => {
+                if (!err){
+                    document.addEventListener('scroll', this.trackScrolling);
+                }
+                if (result){
+                    this.setState({loadmore:false});
+                }
+            })
+        }
+    };
 
     render(){
         return <div>
@@ -30,6 +54,7 @@ class BlocksTable extends Component {
                 <tbody id="blocks"><Blocks limit={this.state.limit} /></tbody>
                 
             </Table>
+            <LoadMore show={this.state.loadmore} />
             {/* <Button color="primary" onClick={this.updateLimit}>Load more</Button>{' '} */}
             {/* <div id="loading" className="loader"></div> */}
         </div>
