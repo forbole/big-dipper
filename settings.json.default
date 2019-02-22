@@ -16,7 +16,7 @@
     "genesisFile": "https://raw.githubusercontent.com/cosmos/testnets/master/gaia-12k/genesis.json",
     "remote":{
         "rpc":"https://gaia-seeds.interblock.io",
-        "lcd":"https://gaia-seeds.interblock.io:1317",
+        "lcd":"https://gaia-seeds.interblock.io:1317"
     },
     "debug": {
         "startTimer": true
