@@ -1,22 +1,32 @@
 {
     "public":{
         "chainName": "Cosmos Testnet",
-        "chainId": "gaia-8001",
+        "chainId": "gaia-12001",
         "gtm": "GTM-54321A",
         "slashingWindow": 10000,
-        "uptimeWindow": 750
+        "uptimeWindow": 250,
+        "initialPageSize": 30,
+        "bech32PrefixAccAddr": "cosmos",
+        "bech32PrefixAccPub": "cosmospub",
+        "bech32PrefixValAddr": "cosmosvaloper",
+        "bech32PrefixValPub": "cosmosvaloperpub",
+        "bech32PrefixConsAddr": "cosmosvalcons",
+        "bech32PrefixConsPub": "cosmosvalconspub"
     },
+    "genesisFile": "https://raw.githubusercontent.com/cosmos/testnets/master/gaia-12k/genesis.json",
     "remote":{
         "rpc":"https://gaia-seeds.interblock.io",
         "lcd":"https://gaia-seeds.interblock.io:1317",
-        "ws":"wss://gaia-seeds.interblock.io/websocket"
+    },
+    "debug": {
+        "startTimer": true
     },
     "bin":{
         "gaiacli": "/path/to/gaiacli",
         "gaiadebug": "/path/to/gaiadebug"
     },
     "params":{
-        "startHeight": 400000,
+        "startHeight": 0,
         "defaultBlockTime": 5000,
         "blockInterval": 15000,
         "consensusInterval": 1000,
