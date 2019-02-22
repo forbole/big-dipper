@@ -19,7 +19,7 @@ Meteor.methods({
         if (!tx.code){
             let msg = tx.tx.value.msg;
             for (let m in msg){
-                if (msg[m].type == "cosmos-sdk/MsgCreateValidator"){
+                if (msg[m].type == "irishub/stake/MsgCreateValidator"){
                     console.log(msg[m].value);
                     let command = Meteor.settings.bin.gaiadebug+" pubkey "+msg[m].value.pubkey;
                     let validator = {

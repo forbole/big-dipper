@@ -347,6 +347,7 @@ Meteor.methods({
                                 else{
                                     for (val in validatorSet){
                                         if (validatorSet[val].consensus_pubkey == valExist.operator_pubkey){
+                                            validator.operator_address = validatorSet[val].operator_address;
                                             validator.jailed = validatorSet[val].jailed;
                                             validator.status = validatorSet[val].status;
                                             validator.tokens = validatorSet[val].tokens;

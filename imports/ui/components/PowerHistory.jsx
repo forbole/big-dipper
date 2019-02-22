@@ -99,15 +99,15 @@ export default class PowerHistory extends React.Component {
                             <Row>
                             {(msg.tx.value.msg && msg.tx.value.msg.length > 0)?msg.tx.value.msg.map((m,j) => {
                                 switch (m.type){
-                                    case "cosmos-sdk/BeginRedelegate":
+                                    case "irishub/stake/BeginRedelegate":
                                         return <Col key={j}><Badge color="success">Redelegate</Badge></Col>;
-                                    case "cosmos-sdk/MsgDelegate":
+                                    case "irishub/stake/MsgDelegate":
                                         return <Col key={j}><Badge color="success">Delegate</Badge></Col>;
-                                    case "cosmos-sdk/MsgCreateValidator":
+                                    case "irishub/stake/MsgCreateValidator":
                                         return <Col key={j}><Badge color="warning">Create Validator</Badge></Col>;
-                                    case "cosmos-sdk/MsgUnjail":
+                                    case "irishub/stake/MsgUnjail":
                                         return <Col key={j}><Badge color="info">Unjail</Badge></Col>;
-                                    case "cosmos-sdk/Undelegate":
+                                    case "irishub/stake/BeginUnbonding":
                                         return <Col key={j}><Badge color="danger">Undelegate</Badge></Col>;
                                 }
                             }):''}
