@@ -95,6 +95,9 @@ Meteor.methods({
     'chain.genesis': function(){
         let chain = Chain.findOne({chainId: Meteor.settings.public.chainId});
         
+        if (!Meteor.settings.debug.readGenesis){
+            return true;
+        }
         if (chain && chain.readGenesis){
             console.log('Genesis file has been processed');
         }
