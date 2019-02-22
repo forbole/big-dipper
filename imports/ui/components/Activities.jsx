@@ -18,8 +18,8 @@ export default class Activites extends Component {
     updateState = () => {
         let msg = this.props.msg;
         switch (msg.type){
-            case "cosmos-sdk/Send":
-                Meteor.call('Transactions.findUser', msg.value.from_address, (err, result) => {
+            case "irishub/bank/Send":
+                Meteor.call('Transactions.findUser', msg.value.inputs[0].address, (err, result) => {
                     if (err){
                         console.log(err);
                     }
@@ -30,11 +30,11 @@ export default class Activites extends Component {
                     }
                     else {
                         this.setState({
-                            from: msg.value.from_address
+                            from: msg.value.inputs[0].address
                         })
                     }
                 });
-                Meteor.call('Transactions.findUser', msg.value.to_address, (err, result) => {
+                Meteor.call('Transactions.findUser', msg.value.outputs[0].address, (err, result) => {
                     if (err){
                         console.log(err);
                     }
@@ -45,12 +45,12 @@ export default class Activites extends Component {
                     }
                     else {
                         this.setState({
-                            to: msg.value.to_address
+                            to: msg.value.outputs[0].address
                         })
                     }
                 });
                 break;
-            case "cosmos-sdk/MsgCreateValidator":
+            case "irishub/stake/MsgCreateValidator":
                 Meteor.call('Transactions.findUser', msg.value.delegator_address, (err, result) => {
                     if (err){
                         console.log(err);
@@ -82,7 +82,7 @@ export default class Activites extends Component {
                     }
                 });
                 break;
-            case "cosmos-sdk/MsgEditValidator":
+            case "irishub/stake/MsgEditValidator":
                 Meteor.call('Transactions.findUser', msg.value.address, (err, result) => {
                     if (err){
                         console.log(err);
@@ -99,8 +99,8 @@ export default class Activites extends Component {
                     }
                 });
                 break;
-            case "cosmos-sdk/MsgDelegate":
-            case "cosmos-sdk/Undelegate":
+            case "irishub/stake/MsgDelegate":
+            case "irishub/stake/Undelegate":
                 Meteor.call('Transactions.findUser', msg.value.delegator_addr, (err, result) => {
                     if (err){
                         console.log(err);
@@ -132,7 +132,7 @@ export default class Activites extends Component {
                     }
                 });
                 break;
-            case "cosmos-sdk/BeginRedelegate":    
+            case "irishub/stake/BeginRedelegate":    
                 Meteor.call('Transactions.findUser', msg.value.delegator_addr, (err, result) => {
                     if (err){
                         console.log(err);
@@ -180,7 +180,7 @@ export default class Activites extends Component {
                 });
                 break;
 
-            case "cosmos-sdk/MsgWithdrawValidatorCommission":
+            case "irishub/distr/MsgWithdrawValidatorRewardsAll":
                 Meteor.call('Transactions.findUser', msg.value.validator_addr, (err, result) => {
                     if (err){
                         console.log(err);
@@ -197,7 +197,7 @@ export default class Activites extends Component {
                     }
                 });
                 break;
-            case "cosmos-sdk/MsgWithdrawDelegationReward":
+            case "irishub/distr/MsgWithdrawDelegationReward":
                 Meteor.call('Transactions.findUser', msg.value.validator_addr, (err, result) => {
                     if (err){
                         console.log(err);
@@ -264,57 +264,57 @@ export default class Activites extends Component {
         let msg = this.props.msg;
         switch (msg.type){
             // bank
-            case "cosmos-sdk/Send":
+            case "irishub/bank/Send":
                 let amount = '';
-                for (let a in msg.value.amount){
+                for (let a in msg.value.inputs[0].coins){
                     if (a > 0){
-                        amount += ', '+numeral(msg.value.amount[a].amount).format("0,0")+" "+msg.value.amount[a].denom;
+                        amount += ', '+numeral(msg.value.inputs[0].coins[a].amount).format("0,0a")+" "+msg.value.inputs[0].coins[a].denom;
                     }
                     else{
-                        amount += numeral(msg.value.amount[a].amount).format("0,0")+" "+msg.value.amount[a].denom;
+                        amount += numeral(msg.value.inputs[0].coins[a].amount).format("0,0a")+" "+msg.value.inputs[0].coins[a].denom;
                     }
                 }
                 return <p>{this.state.from} {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-success">{amount}</em> to <span className="address">{this.state.to}</span>.</p>
-            case "cosmos-sdk/MultiSend":
-                return <MsgType type={msg.type} />
+            // case "irishub/bank/MultiSend":
+            //     return <MsgType type={msg.type} />
             
             // staking
-            case "cosmos-sdk/MsgCreateValidator":
+            case "irishub/stake/MsgCreateValidator":
                 return <p>{this.state.delegator} {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> operating at <span className="address">{this.state.validator}</span> with moniker <Link to="#">{msg.value.description.moniker}</Link>.</p>
-            case "cosmos-sdk/MsgEditValidator":
+            case "irishub/stake/MsgEditValidator":
                 return <p>{this.state.validator} {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /></p>
-            case "cosmos-sdk/MsgDelegate":
-                return <p><span className="address">{this.state.delegator}</span> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-warning">{numeral(msg.value.value.amount).format("0,0")} {msg.value.value.denom}</em> to <span className="address">{this.state.validator}</span>.</p>
-            case "cosmos-sdk/Undelegate":
+            case "irishub/stake/MsgDelegate":
+                return <p><span className="address">{this.state.delegator}</span> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-warning">{numeral(msg.value.delegation.amount).format("0,0a")} {msg.value.delegation.denom}</em> to <span className="address">{this.state.validator}</span>.</p>
+            case "irishub/stake/Undelegate":
                 return <p><span className="address">{this.state.delegator}</span> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-warning">{numeral(msg.value.shares_amount).format("0,0")} </em> from <span className="address">{this.state.validator}</span>.</p>
-            case "cosmos-sdk/BeginRedelegate":
+            case "irishub/stake/BeginRedelegate":
                 return <p><span className="address">{this.state.delegator}</span> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-warning">{numeral(msg.value.shares_amount).format("0.0")}</em> from <span className="address">{this.state.sourceValidator}</span> to <span className="address">{this.state.validator}</span>.</p>
             
             // gov
-            case "cosmos-sdk/MsgSubmitProposal":
+            case "irishub/gov/MsgSubmitProposal":
                 return <MsgType type={msg.type} />
-            case "cosmos-sdk/MsgDeposit":
+            case "irishub/gov/MsgDeposit":
                 return <MsgType type={msg.type} />
-            case "cosmos-sdk/MsgVote":
+            case "irishub/gov/MsgVote":
                 return <MsgType type={msg.type} />
             
             // distribution
-            case "cosmos-sdk/MsgWithdrawValidatorCommission":
+            case "irishub/distr/MsgWithdrawValidatorRewardsAll":
                 return <p><span className="address">{this.state.validator}</span> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} />.</p>
-            case "cosmos-sdk/MsgWithdrawDelegationReward":
+            case "irishub/distr/MsgWithdrawDelegationReward":
                 return <p><span className="address">{this.state.delegator}</span> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> from <span className="address">{this.state.validator}</span>.</p>
-            case "cosmos-sdk/MsgModifyWithdrawAddress":
+            case "irishub/distr/MsgModifyWithdrawAddress":
                 return <MsgType type={msg.type} />
     
             // slashing
-            case "cosmos-sdk/MsgUnjail":
+            case "irishub/slashing/MsgUnjail":
                 return <p><span className="address">{msg.value.address}</span> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} />.</p>
             
             // ibc
-            case "cosmos-sdk/IBCTransferMsg":
-                return <MsgType type={msg.type} />
-            case "cosmos-sdk/IBCReceiveMsg":
-                return <MsgType type={msg.type} />
+            // case "cosmos-sdk/IBCTransferMsg":
+            //     return <MsgType type={msg.type} />
+            // case "cosmos-sdk/IBCReceiveMsg":
+            //     return <MsgType type={msg.type} />
     
             default:
                 return <div>{JSON.stringify(msg.value)}</div>
