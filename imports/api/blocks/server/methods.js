@@ -311,7 +311,7 @@ Meteor.methods({
                                         validator.consensus_pubkey = validator.consensus_pubkey[0].trim();
 
                                         for (val in validatorSet){
-                                            if (validatorSet[val].consensus_pubkey == validator.consensus_pubkey){
+                                            if (validatorSet[val].operator_pubkey == validator.consensus_pubkey){
                                                 validator.operator_address = validatorSet[val].operator_address;
                                                 validator.jailed = validatorSet[val].jailed;
                                                 validator.status = validatorSet[val].status;
@@ -346,7 +346,7 @@ Meteor.methods({
                                 }
                                 else{
                                     for (val in validatorSet){
-                                        if (validatorSet[val].consensus_pubkey == valExist.consensus_pubkey){
+                                        if (validatorSet[val].consensus_pubkey == valExist.operator_pubkey){
                                             validator.jailed = validatorSet[val].jailed;
                                             validator.status = validatorSet[val].status;
                                             validator.tokens = validatorSet[val].tokens;

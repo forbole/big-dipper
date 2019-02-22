@@ -450,6 +450,7 @@ div.transactions-list div.header{
     #validator-list div.validator-list .card{
         -webkit-box-shadow: none;
         box-shadow: none;
+        border: none;
     }
 
     #validator-list div.validator-list div.header{
