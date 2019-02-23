@@ -11,8 +11,9 @@ export default class Block extends Component {
 
     render() {
         let proposer = this.props.block.proposer();
-        let moniker = (proposer.description&&proposer.description.moniker)?proposer.description.moniker:proposer.address;
-        let identity = (proposer.description&&proposer.description.identity)?proposer.description.identity:"";
+        // console.log(proposer);
+        let moniker = (proposer&&proposer.description&&proposer.description.moniker)?proposer.description.moniker:this.props.block.proposerAddress;
+        let identity = (proposer&&proposer.description&&proposer.description.identity)?proposer.description.identity:"";
         return (
             <tr className="blockrow">
                 <td className="innerblock1">{numeral(this.props.block.height).format('0,0')}</td>
