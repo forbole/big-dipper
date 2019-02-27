@@ -280,7 +280,7 @@ export default class Activites extends Component {
             
             // staking
             case "irishub/stake/MsgCreateValidator":
-                return <p>{this.state.delegator} {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> operating at <span className="address">{this.state.validator}</span> with moniker <Link to="#">{msg.value.description.moniker}</Link>.</p>
+                return <p>{this.state.delegator} {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> operating at <span className="address">{this.state.validator}</span> with moniker <Link to="#">{msg.value.Description.moniker}</Link>.</p>
             case "irishub/stake/MsgEditValidator":
                 return <p>{this.state.validator} {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /></p>
             case "irishub/stake/MsgDelegate":
