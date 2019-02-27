@@ -17,14 +17,14 @@ export default class PowerHistory extends React.Component {
             console.log(err);
         }
         if (result){
-            console.log(result);
+            // console.log(result);
             this.setState({
                 tx: result.map((msg, i) => <CardFooter key={i} className="text-secondary"><Row>
                     <Col xs={12} sm={8}>
                     {(msg.tx.value.msg && msg.tx.value.msg.length > 0)?msg.tx.value.msg.map((m, j) => {
                         console.log(m);
                         switch (m.type){
-                            case "cosmos-sdk/BeginRedelegate":
+                            case "irishub/stake/BeginRedelegate":
                                 return <Row key={j}>
                                     <Col xs={12}>
                                         <Row>
@@ -45,7 +45,7 @@ export default class PowerHistory extends React.Component {
                                         </Row>
                                     </Col>
                                 </Row>
-                            case "cosmos-sdk/MsgDelegate":
+                            case "irishub/stake/MsgDelegate":
                                 return <Row key={j}>
                                     <Col xs={12}>
                                         <Row>
@@ -56,11 +56,11 @@ export default class PowerHistory extends React.Component {
                                     <Col xs={12}>
                                         <Row>
                                             <Col xs={4}>Amount</Col>
-                                            <Col xs={8}>{numeral(m.value.value.amount).format('0,0')} {m.value.value.denom}</Col>
+                                            <Col xs={8}>{numeral(m.value.delegation.amount).format('0,0a')} {m.value.delegation.denom}</Col>
                                         </Row>
                                     </Col>
                                 </Row>
-                            case "cosmos-sdk/MsgCreateValidator":
+                            case "irishub/stake/MsgCreateValidator":
                                 return <Row key={j}>
                                     <Col xs={12}>
                                         <Row>
@@ -71,11 +71,11 @@ export default class PowerHistory extends React.Component {
                                     <Col xs={12}>
                                         <Row>
                                             <Col xs={4}>Amount</Col>
-                                            <Col xs={8}>{numeral(m.value.value.amount).format('0,0')} {m.value.value.denom}</Col>
+                                            <Col xs={8}>{numeral(m.value.delegation.amount).format('0,0a')} {m.value.delegation.denom}</Col>
                                         </Row>
                                     </Col>
                                 </Row>
-                            case "cosmos-sdk/Undelegate":
+                            case "irishub/stake/Undelegate":
                                 return <Row key={j}>
                                     <Col xs={12}>
                                         <Row>
@@ -116,10 +116,10 @@ export default class PowerHistory extends React.Component {
                                 <Col xs={4} sm={6}>Fee</Col>
                                 <Col xs={8} sm={6}>{(msg.tx.value.fee.amount&& msg.tx.value.fee.amount.length>0)?msg.tx.value.fee.amount.map((amount,i)=>{
                                     if (i > 0){
-                                        return <span key={i}> ,{numeral(amount.amount).format('0,0')} {amount.denom}</span>
+                                        return <span key={i}> ,{numeral(amount.amount).format('0,0a')} {amount.denom}</span>
                                     }
                                     else{
-                                        return <span key={i}>{numeral(amount.amount).format('0,0')} {amount.denom}</span>
+                                        return <span key={i}>{numeral(amount.amount).format('0,0a')} {amount.denom}</span>
                                     }
                                 }):'0'}</Col>
                             </Row>

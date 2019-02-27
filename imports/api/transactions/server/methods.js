@@ -71,30 +71,30 @@ Meteor.methods({
     'Transactions.findDelegation': function(address, height){
         return Transactions.find({
             $or: [{$and: [
-                {"tags.key": "action"}, 
-                {"tags.value": "delegate"}, 
-                {"tags.key": "destination-validator"}, 
-                {"tags.value": address}
+                {"result.Tags.key": "action"}, 
+                {"result.Tags.value": "delegate"}, 
+                {"result.Tags.key": "destination-validator"}, 
+                {"result.Tags.value": address}
             ]}, {$and:[
-                {"tags.key": "action"}, 
-                {"tags.value": "unjail"}, 
-                {"tags.key": "validator"}, 
-                {"tags.value": address}
+                {"result.Tags.key": "action"}, 
+                {"result.Tags.value": "unjail"}, 
+                {"result.Tags.key": "validator"}, 
+                {"result.Tags.value": address}
             ]}, {$and:[
-                {"tags.key": "action"}, 
-                {"tags.value": "create_validator"}, 
-                {"tags.key": "destination-validator"}, 
-                {"tags.value": address}
+                {"result.Tags.key": "action"}, 
+                {"result.Tags.value": "create_validator"}, 
+                {"result.Tags.key": "destination-validator"}, 
+                {"result.Tags.value": address}
             ]}, {$and:[
-                {"tags.key": "action"}, 
-                {"tags.value": "begin_unbonding"}, 
-                {"tags.key": "source-validator"}, 
-                {"tags.value": address}
+                {"result.Tags.key": "action"}, 
+                {"result.Tags.value": "begin_unbonding"}, 
+                {"result.Tags.key": "source-validator"}, 
+                {"result.Tags.value": address}
             ]}, {$and:[
-                {"tags.key": "action"}, 
-                {"tags.value": "begin_redelegate"}, 
-                {"tags.key": "destination-validator"}, 
-                {"tags.value": address}
+                {"result.Tags.key": "action"}, 
+                {"result.Tags.value": "begin_redelegate"}, 
+                {"result.Tags.key": "destination-validator"}, 
+                {"Tresult.ags.value": address}
             ]}], 
             "code": {$exists: false}, 
             height:{$lt:height}},
