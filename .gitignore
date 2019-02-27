@@ -2,5 +2,5 @@
 node_modules/
 .vscode
 settings.json
-settings.cosmos.json
+settings.*.json
 output/
