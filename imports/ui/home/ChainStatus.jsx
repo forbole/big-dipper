@@ -14,10 +14,7 @@ export default class ChainStatus extends React.Component {
             return <div>loading</div>
         }
         else {
-            if (!this.props.statusExist){
-                return <div></div>
-            }
-            else{
+            if (this.props.statusExist && this.props.status.prevotes){
                 return(
                     <Row className="status text-center">
                         <Col lg={3} md={6}>
@@ -51,6 +48,9 @@ export default class ChainStatus extends React.Component {
                         </Col>
                     </Row>
                 )
+            }
+            else{
+                return <div></div>
             }
         }
     }

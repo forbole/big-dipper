@@ -41,7 +41,7 @@ export default class Consensus extends Component{
             return <div>Loading</div>
         }
         else{
-            if (this.props.consensusExist){
+            if (this.props.consensusExist && this.props.consensus.prevotes){
                 let proposer = this.props.consensus.proposer();
                 let moniker = (proposer&&proposer.description&&proposer.description.moniker)?proposer.description.moniker:this.props.consensus.proposerAddress;
                 let identity = (proposer&&proposer.description&&proposer.description.identity)?proposer.description.identity:"";

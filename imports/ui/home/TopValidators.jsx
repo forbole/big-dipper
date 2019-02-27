@@ -56,7 +56,7 @@ export default class TopValidators extends Component{
             return <div>Loading</div>
         }
         else{
-            if (this.props.validatorsExist){
+            if (this.props.validatorsExist && this.props.status.prevotes){
                 return <Card>
                     <div className="card-header">Random Validators</div>
                     <CardBody>
