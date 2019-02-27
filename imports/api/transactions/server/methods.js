@@ -16,49 +16,49 @@ Meteor.methods({
 
         tx.height = parseInt(tx.height);
 
-        if (!tx.code){
-            let msg = tx.tx.value.msg;
-            for (let m in msg){
-                if (msg[m].type == "cosmos-sdk/MsgCreateValidator"){
-                    console.log(msg[m].value);
-                    let command = Meteor.settings.bin.gaiadebug+" pubkey "+msg[m].value.pubkey;
-                    let validator = {
-                        consensus_pubkey: msg[m].value.pubkey,
-                        description: msg[m].value.description,
-                        commission: msg[m].value.commission,
-                        min_self_delegation: msg[m].value.min_self_delegation,
-                        operator_address: msg[m].value.validator_address,
-                        delegator_address: msg[m].value.delegator_address,
-                        voting_power: Math.floor(parseInt(msg[m].value.value.amount) / 1000000)
-                    }
+        // if (!tx.code){
+        //     let msg = tx.tx.value.msg;
+        //     for (let m in msg){
+        //         if (msg[m].type == "cosmos-sdk/MsgCreateValidator"){
+        //             console.log(msg[m].value);
+        //             let command = Meteor.settings.bin.gaiadebug+" pubkey "+msg[m].value.pubkey;
+        //             let validator = {
+        //                 consensus_pubkey: msg[m].value.pubkey,
+        //                 description: msg[m].value.description,
+        //                 commission: msg[m].value.commission,
+        //                 min_self_delegation: msg[m].value.min_self_delegation,
+        //                 operator_address: msg[m].value.validator_address,
+        //                 delegator_address: msg[m].value.delegator_address,
+        //                 voting_power: Math.floor(parseInt(msg[m].value.value.amount) / 1000000)
+        //             }
 
-                    Meteor.call('runCode', command, function(error, result){
-                        validator.address = result.match(/\s[0-9A-F]{40}$/igm);
-                        validator.address = validator.address[0].trim();
-                        validator.hex = result.match(/\s[0-9A-F]{64}$/igm);
-                        validator.hex = validator.hex[0].trim();
-                        validator.pub_key = result.match(/{".*"}/igm);
-                        validator.pub_key = JSON.parse(validator.pub_key[0].trim());
-                        let re = new RegExp(Meteor.settings.public.bech32PrefixAccPub+".*$","igm");
-                        validator.cosmosaccpub = result.match(re);
-                        validator.cosmosaccpub = validator.cosmosaccpub[0].trim();
-                        re = new RegExp(Meteor.settings.public.bech32PrefixValPub+".*$","igm");
-                        validator.operator_pubkey = result.match(re);
-                        validator.operator_pubkey = validator.operator_pubkey[0].trim();
+        //             Meteor.call('runCode', command, function(error, result){
+        //                 validator.address = result.match(/\s[0-9A-F]{40}$/igm);
+        //                 validator.address = validator.address[0].trim();
+        //                 validator.hex = result.match(/\s[0-9A-F]{64}$/igm);
+        //                 validator.hex = validator.hex[0].trim();
+        //                 validator.pub_key = result.match(/{".*"}/igm);
+        //                 validator.pub_key = JSON.parse(validator.pub_key[0].trim());
+        //                 let re = new RegExp(Meteor.settings.public.bech32PrefixAccPub+".*$","igm");
+        //                 validator.cosmosaccpub = result.match(re);
+        //                 validator.cosmosaccpub = validator.cosmosaccpub[0].trim();
+        //                 re = new RegExp(Meteor.settings.public.bech32PrefixValPub+".*$","igm");
+        //                 validator.operator_pubkey = result.match(re);
+        //                 validator.operator_pubkey = validator.operator_pubkey[0].trim();
 
-                        Validators.upsert({consensus_pubkey:msg[m].value.pubkey},validator);
-                        VotingPowerHistory.insert({
-                            address: validator.address,
-                            prev_voting_power: 0,
-                            voting_power: validator.voting_power,
-                            type: 'add',
-                            height: tx.height+2,
-                            block_time: blockTime
-                        });
-                    })
-                }
-            }
-        }
+        //                 Validators.upsert({consensus_pubkey:msg[m].value.pubkey},validator);
+        //                 VotingPowerHistory.insert({
+        //                     address: validator.address,
+        //                     prev_voting_power: 0,
+        //                     voting_power: validator.voting_power,
+        //                     type: 'add',
+        //                     height: tx.height+2,
+        //                     block_time: blockTime
+        //                 });
+        //             })
+        //         }
+        //     }
+        // }
         
 
         let txId = Transactions.insert(tx);
