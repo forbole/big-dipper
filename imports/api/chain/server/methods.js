@@ -236,7 +236,7 @@ Meteor.methods({
             }
                 
             chainParams.readGenesis = true;
-            chainParams.totalVotingPower = totalVotingPower;
+            chainParams.activeVotingPower = totalVotingPower;
             let result = Chain.upsert({chainId:chainParams.chainId}, {$set:chainParams});
 
             // console.log(result);
