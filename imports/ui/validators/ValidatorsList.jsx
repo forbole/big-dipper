@@ -59,9 +59,6 @@ export default class Validators extends Component{
         <h1 className="d-none d-lg-block">{title +" Validators"}</h1>
         <Nav pills className="status-switch">
             <NavItem>
-                <NavLink tag={Link} to="/validators" active={this.props.match.path=="/validators"}>All</NavLink>
-            </NavItem>
-            <NavItem>
                 <NavLink tag={Link} to="/validators/active" active={this.props.match.path=="/validators/active"}>Active</NavLink>
             </NavItem>
             <NavItem>
