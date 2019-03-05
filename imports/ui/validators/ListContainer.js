@@ -14,6 +14,11 @@ export default ValidatorListContainer = withTracker((props) => {
             jailed:props.jailed
         }
     }
+    else{
+        validatorsCond = {
+            jailed: false
+        }
+    }
     let options = {};
     switch(props.priority){
         case 0:
