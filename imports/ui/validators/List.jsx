@@ -46,6 +46,11 @@ export default class List extends Component{
                     })
                 })    
             }
+            else{
+                this.setState({
+                    validators: ""
+                })
+            }
         }
     }
 

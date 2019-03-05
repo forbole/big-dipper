@@ -12,7 +12,7 @@ export default class Validators extends Component{
             votingPowerDir: -1,
             uptimeDir: -1,
             proposerDir: -1,
-            priority: 2
+            priority: 1
         }
     }
 
@@ -59,13 +59,10 @@ export default class Validators extends Component{
         <h1 className="d-none d-lg-block">{title +" Validators"}</h1>
         <Nav pills className="status-switch">
             <NavItem>
-                <NavLink tag={Link} to="/validators" active={this.props.match.path=="/validators"}>All</NavLink>
+                <NavLink tag={Link} to="/validators/active" active={!this.props.jailed}>Active</NavLink>
             </NavItem>
             <NavItem>
-                <NavLink tag={Link} to="/validators/active" active={this.props.match.path=="/validators/active"}>Active</NavLink>
-            </NavItem>
-            <NavItem>
-                <NavLink tag={Link} to="/validators/jailed"  active={this.props.match.path=="/validators/jailed"}>Jailed</NavLink>
+                <NavLink tag={Link} to="/validators/jailed"  active={this.props.jailed}>Jailed</NavLink>
             </NavItem>
         </Nav>
         <p className="lead">{desc}</p>
