@@ -151,7 +151,9 @@ Meteor.methods({
                                 min_self_delegation: msg[m].value.min_self_delegation,
                                 operator_address: msg[m].value.validator_address,
                                 delegator_address: msg[m].value.delegator_address,
-                                voting_power: Math.ceil(parseInt(msg[m].value.value.amount) / 1000000)
+                                voting_power: Math.ceil(parseInt(msg[m].value.value.amount) / 1000000),
+                                jailed: false,
+                                status: 2
                             }
 
                             totalVotingPower += validator.voting_power;

@@ -53,7 +53,7 @@ export default class Header extends React.Component {
                 </DropdownMenu>
               </UncontrolledDropdown> */}
               <NavItem>
-                <NavLink tag={Link} to="/validators/active">Validators</NavLink>
+                <NavLink tag={Link} to="/validators">Validators</NavLink>
               </NavItem>
               <NavItem>
                 <NavLink tag={Link} to="/blocks">Blocks</NavLink>

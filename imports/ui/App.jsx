@@ -53,8 +53,9 @@ class App extends Component {
                             <Route exact path="/" component={Home} />
                             <Route path="/blocks" component={BlocksTable} />
                             <Route path="/transactions" component={Transactions} />
-                            <Route path="/validators/active" exact component={Validators} />
-                            <Route path="/validators/jailed" exact render={(props) => <Validators {...props} jailed={true} />} />
+                            <Route path="/validators" exact component={Validators} />
+                            <Route path="/validators/unbonding" render={(props) => <Validators {...props} jailed={false} status={1} />} />
+                            <Route path="/validators/jailed" render={(props) => <Validators {...props} jailed={true} />} />
                             <Route path="/validators/firstseen" component={ValidatorFirstSeen} />
                             <Route path="/validator" component={ValidatorDetails} />
                             <Route path="/proposals" component={Proposals} />

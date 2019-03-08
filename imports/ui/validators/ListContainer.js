@@ -9,17 +9,32 @@ export default ValidatorListContainer = withTracker((props) => {
     const chainHandle = Meteor.subscribe('chain.status');
     const loading = !validatorsHandle.ready() && !chainHandle.ready();
     let validatorsCond = {};
-    if (props.jailed != undefined){
+    console.log(props);
+    if (props.jailed){
         validatorsCond = {
-            jailed:props.jailed
+            jailed:true
         }
     }
     else{
-        validatorsCond = {
-            jailed: false
+        if (props.status != undefined){
+            // unbonding
+            validatorsCond = {
+                jailed: false,
+                status: props.status
+            }
+        }
+        else{
+            // active 
+            validatorsCond = {
+                jailed: false,
+                status: 2
+            }
         }
     }
+
     let options = {};
+
+    console.log(validatorsCond);
     switch(props.priority){
         case 0:
             options = {
