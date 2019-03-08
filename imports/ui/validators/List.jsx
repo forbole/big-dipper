@@ -40,7 +40,7 @@ export default class List extends Component{
                             index={i} 
                             validator={validator} 
                             address={validator.address} 
-                            totalPower={this.props.chainStatus.totalVotingPower}
+                            totalPower={this.props.chainStatus.activeVotingPower}
                             jailed={this.props.jailed}
                         />
                     })

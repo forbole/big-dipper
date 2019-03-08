@@ -133,6 +133,7 @@ Meteor.methods({
             // console.log(chainParams);
             // console.log(genesis);
 
+            let totalVotingPower = 0;
 
             // read gentx
             if (genesis.app_state.gentxs && (genesis.app_state.gentxs.length > 0)){
@@ -150,8 +151,10 @@ Meteor.methods({
                                 min_self_delegation: msg[m].value.min_self_delegation,
                                 operator_address: msg[m].value.validator_address,
                                 delegator_address: msg[m].value.delegator_address,
-                                voting_power: Math.floor(parseInt(msg[m].value.value.amount) / 1000000)
+                                voting_power: Math.ceil(parseInt(msg[m].value.value.amount) / 1000000)
                             }
+
+                            totalVotingPower += validator.voting_power;
 
                             // Validators.upsert({consensus_pubkey:msg[m].value.pubkey},validator);
                             Meteor.call('runCode', command, function(error, result){
@@ -215,6 +218,8 @@ Meteor.methods({
                             validator.operator_pubkey = validator.operator_pubkey[0].trim();
 
                             validator.voting_power = findVotingPower(validator, genValidators);
+                            totalVotingPower += validator.voting_power;
+
                             Validators.upsert({consensus_pubkey:validator.consensus_pubkey},validator);
                             VotingPowerHistory.insert({
                                 address: validator.address,
@@ -231,6 +236,7 @@ Meteor.methods({
             }
                 
             chainParams.readGenesis = true;
+            chainParams.activeVotingPower = totalVotingPower;
             let result = Chain.upsert({chainId:chainParams.chainId}, {$set:chainParams});
 
             // console.log(result);
