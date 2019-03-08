@@ -9,7 +9,7 @@ export default ValidatorListContainer = withTracker((props) => {
     const chainHandle = Meteor.subscribe('chain.status');
     const loading = !validatorsHandle.ready() && !chainHandle.ready();
     let validatorsCond = {};
-    console.log(props);
+    // console.log(props);
     if (props.jailed){
         validatorsCond = {
             jailed:true
@@ -34,7 +34,7 @@ export default ValidatorListContainer = withTracker((props) => {
 
     let options = {};
 
-    console.log(validatorsCond);
+    // console.log(validatorsCond);
     switch(props.priority){
         case 0:
             options = {

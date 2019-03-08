@@ -203,53 +203,62 @@ Meteor.methods({
                         // store valdiators exist records
                         let existingValidators = Validators.find({address:{$exists:true}}).fetch();
                         
-                        // record precommits and calculate uptime
-                        for (i in existingValidators){
-                            let record = {
-                                height: height,
-                                address: existingValidators[i].address,
-                                exists: false,
-                                voting_power: getValidatorVotingPower(validators.result.validators, existingValidators[i].address)
-                            }
+                        if (height > 1){
+                            // record precommits and calculate uptime
+                            // only record from block 2
+                            for (i in existingValidators){
+                                let record = {
+                                    height: height,
+                                    address: existingValidators[i].address,
+                                    exists: false,
+                                    voting_power: getValidatorVotingPower(validators.result.validators, existingValidators[i].address)
+                                }
 
-                            for (j in precommits){
-                                if (precommits[j] != null){
-                                    if (existingValidators[i].address == precommits[j].validator_address){
-                                        record.exists = true;
-                                        precommits.splice(j,1);                                        
-                                        break;
+                                for (j in precommits){
+                                    if (precommits[j] != null){
+                                        if (existingValidators[i].address == precommits[j].validator_address){
+                                            record.exists = true;
+                                            precommits.splice(j,1);                                        
+                                            break;
+                                        }
                                     }
                                 }
-                            }
 
-                            // calculate the uptime based on the records stored in previous blocks
-                            // only do this every 15 blocks ~
+                                // calculate the uptime based on the records stored in previous blocks
+                                // only do this every 15 blocks ~
 
-                            if ((height % 15) == 0){
-                                // let startAggTime = new Date();
-                                let numBlocks = Meteor.call('blocks.findUpTime', existingValidators[i].address);
-                                let uptime = 0;
-                                // let endAggTime = new Date();
-                                // console.log("Get aggregated uptime for "+existingValidators[i].address+": "+((endAggTime-startAggTime)/1000)+"seconds.");
-                                if ((numBlocks[0] != null) && (numBlocks[0].uptime != null)){
-                                    uptime = numBlocks[0].uptime;
-                                }
-                                if (record.exists){
-                                    if (uptime < Meteor.settings.public.uptimeWindow){
-                                        uptime++;                                           
+                                if ((height % 15) == 0){
+                                    // let startAggTime = new Date();
+                                    let numBlocks = Meteor.call('blocks.findUpTime', existingValidators[i].address);
+                                    let uptime = 0;
+                                    // let endAggTime = new Date();
+                                    // console.log("Get aggregated uptime for "+existingValidators[i].address+": "+((endAggTime-startAggTime)/1000)+"seconds.");
+                                    if ((numBlocks[0] != null) && (numBlocks[0].uptime != null)){
+                                        uptime = numBlocks[0].uptime;
                                     }
-                                    uptime = (uptime / Meteor.settings.public.uptimeWindow)*100;
-                                    bulkValidators.find({address:existingValidators[i].address}).updateOne({$set:{uptime:uptime, lastSeen:blockData.time}});
-                                }
-                                else{
-                                    uptime = (uptime / Meteor.settings.public.uptimeWindow)*100;
-                                    bulkValidators.find({address:existingValidators[i].address}).updateOne({$set:{uptime:uptime}});
-                                }
-                            }
 
-                            bulkValidatorRecords.insert(record);
-                            // ValidatorRecords.update({height:height,address:record.address},record);                            
-                        }                        
+                                    let base = Meteor.settings.public.uptimeWindow;
+                                    if (height < base){
+                                        base = height;
+                                    }
+                                    
+                                    if (record.exists){
+                                        if (uptime < base){
+                                            uptime++;                                           
+                                        }
+                                        uptime = (uptime / base)*100;
+                                        bulkValidators.find({address:existingValidators[i].address}).updateOne({$set:{uptime:uptime, lastSeen:blockData.time}});
+                                    }
+                                    else{
+                                        uptime = (uptime / base)*100;
+                                        bulkValidators.find({address:existingValidators[i].address}).updateOne({$set:{uptime:uptime}});
+                                    }
+                                }
+
+                                bulkValidatorRecords.insert(record);
+                                // ValidatorRecords.update({height:height,address:record.address},record);                            
+                            }                        
+                        }
 
                         let chainStatus = Chain.findOne({chainId:block.block_meta.header.chain_id});
                         let lastSyncedTime = chainStatus?chainStatus.lastSyncedTime:0;
