@@ -18,7 +18,7 @@ export default class Activites extends Component {
     updateState = () => {
         let msg = this.props.msg;
         switch (msg.type){
-            case "cosmos-sdk/Send":
+            case "cosmos-sdk/MsgSend":
                 Meteor.call('Transactions.findUser', msg.value.from_address, (err, result) => {
                     if (err){
                         console.log(err);
@@ -101,7 +101,7 @@ export default class Activites extends Component {
                 break;
             case "cosmos-sdk/MsgDelegate":
             case "cosmos-sdk/Undelegate":
-                Meteor.call('Transactions.findUser', msg.value.delegator_addr, (err, result) => {
+                Meteor.call('Transactions.findUser', msg.value.delegator_address, (err, result) => {
                     if (err){
                         console.log(err);
                     }
@@ -112,11 +112,11 @@ export default class Activites extends Component {
                     }
                     else {
                         this.setState({
-                            delegator: msg.value.delegator_addr
+                            delegator: msg.value.delegator_address
                         })
                     }
                 });
-                Meteor.call('Transactions.findUser', msg.value.validator_addr, (err, result) => {
+                Meteor.call('Transactions.findUser', msg.value.validator_address, (err, result) => {
                     if (err){
                         console.log(err);
                     }
@@ -127,13 +127,13 @@ export default class Activites extends Component {
                     }
                     else {
                         this.setState({
-                            validator: msg.value.validator_addr
+                            validator: msg.value.validator_address
                         })
                     }
                 });
                 break;
             case "cosmos-sdk/BeginRedelegate":    
-                Meteor.call('Transactions.findUser', msg.value.delegator_addr, (err, result) => {
+                Meteor.call('Transactions.findUser', msg.value.delegator_address, (err, result) => {
                     if (err){
                         console.log(err);
                     }
@@ -144,11 +144,11 @@ export default class Activites extends Component {
                     }
                     else {
                         this.setState({
-                            delegator: msg.value.delegator_addr
+                            delegator: msg.value.delegator_address
                         })
                     }
                 });
-                Meteor.call('Transactions.findUser', msg.value.validator_src_addr, (err, result) => {
+                Meteor.call('Transactions.findUser', msg.value.validator_src_address, (err, result) => {
                     if (err){
                         console.log(err);
                     }
@@ -159,11 +159,11 @@ export default class Activites extends Component {
                     }
                     else {
                         this.setState({
-                            sourceValidator: msg.value.validator_src_addr
+                            sourceValidator: msg.value.validator_src_address
                         })
                     }
                 });
-                Meteor.call('Transactions.findUser', msg.value.validator_dst_addr, (err, result) => {
+                Meteor.call('Transactions.findUser', msg.value.validator_dst_address, (err, result) => {
                     if (err){
                         console.log(err);
                     }
@@ -174,14 +174,14 @@ export default class Activites extends Component {
                     }
                     else {
                         this.setState({
-                            validator: msg.value.validator_dst_addr
+                            validator: msg.value.validator_dst_address
                         })
                     }
                 });
                 break;
 
             case "cosmos-sdk/MsgWithdrawValidatorCommission":
-                Meteor.call('Transactions.findUser', msg.value.validator_addr, (err, result) => {
+                Meteor.call('Transactions.findUser', msg.value.validator_address, (err, result) => {
                     if (err){
                         console.log(err);
                     }
@@ -192,13 +192,13 @@ export default class Activites extends Component {
                     }
                     else {
                         this.setState({
-                            validator: msg.value.validator_addr
+                            validator: msg.value.validator_address
                         })
                     }
                 });
                 break;
             case "cosmos-sdk/MsgWithdrawDelegationReward":
-                Meteor.call('Transactions.findUser', msg.value.validator_addr, (err, result) => {
+                Meteor.call('Transactions.findUser', msg.value.validator_address, (err, result) => {
                     if (err){
                         console.log(err);
                     }
@@ -209,11 +209,11 @@ export default class Activites extends Component {
                     }
                     else {
                         this.setState({
-                            validator: msg.value.validator_addr
+                            validator: msg.value.validator_address
                         })
                     }
                 });
-                Meteor.call('Transactions.findUser', msg.value.delegator_addr, (err, result) => {
+                Meteor.call('Transactions.findUser', msg.value.delegator_address, (err, result) => {
                     if (err){
                         console.log(err);
                     }
@@ -224,7 +224,7 @@ export default class Activites extends Component {
                     }
                     else {
                         this.setState({
-                            delegator: msg.value.delegator_addr
+                            delegator: msg.value.delegator_address
                         })
                     }
                 });
