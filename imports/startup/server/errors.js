@@ -1,0 +1,20 @@
+import { Errors } from '../../api/errors/errors.js';
+
+Errors.remove({});
+Errors.insert({codespace: "sdk", code: 1, message: "Internal Error"});
+Errors.insert({codespace: "sdk", code: 2, message: "Tx Decode Error"});
+Errors.insert({codespace: "sdk", code: 3, message: "Invalid Sequence Number"});
+Errors.insert({codespace: "sdk", code: 4, message: "Unauthorized"});
+Errors.insert({codespace: "sdk", code: 5, message: "Insufficient Funds"});
+Errors.insert({codespace: "sdk", code: 6, message: "Unknown Request"});
+Errors.insert({codespace: "sdk", code: 7, message: "Invalid Address"});
+Errors.insert({codespace: "sdk", code: 8, message: "Invalid PubKey"});
+Errors.insert({codespace: "sdk", code: 9, message: "Unknown Address"});
+Errors.insert({codespace: "sdk", code: 10, message: "Insufficient Coins"});
+Errors.insert({codespace: "sdk", code: 11, message: "Invalid Coins"});
+Errors.insert({codespace: "sdk", code: 12, message: "Out Of Gas"});
+Errors.insert({codespace: "sdk", code: 13, message: "Memo Too Large"});
+Errors.insert({codespace: "sdk", code: 14, message: "Insufficient Fee"});
+Errors.insert({codespace: "sdk", code: 15, message: "Too Many Signatures"});
+Errors.insert({codespace: "sdk", code: 16, message: "Gas Overflow"});
+Errors.insert({codespace: "sdk", code: 17, message: "No Signatures"});
