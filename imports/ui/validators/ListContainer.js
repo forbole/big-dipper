@@ -42,7 +42,8 @@ export default ValidatorListContainer = withTracker((props) => {
                     "description.moniker": props.monikerDir,
                     uptime: props.uptimeDir,
                     voting_power: props.votingPowerDir,
-                    "commission.rate": props.commissionDir
+                    "commission.rate": props.commissionDir,
+                    self_delegation: props.selfDelDir
                 }
             }
             break;
@@ -52,7 +53,8 @@ export default ValidatorListContainer = withTracker((props) => {
                     voting_power: props.votingPowerDir,
                     "description.moniker": props.monikerDir,
                     uptime: props.uptimeDir,
-                    "commission.rate": props.commissionDir
+                    "commission.rate": props.commissionDir,
+                    self_delegation: props.selfDelDir
                 }
             }
             break;
@@ -62,7 +64,8 @@ export default ValidatorListContainer = withTracker((props) => {
                     uptime: props.uptimeDir,
                     "description.moniker": props.monikerDir,
                     voting_power: props.votingPowerDir,
-                    "commission.rate": props.commissionDir
+                    "commission.rate": props.commissionDir,
+                    self_delegation: props.selfDelDir,
                 }
             }
             break;
@@ -72,10 +75,23 @@ export default ValidatorListContainer = withTracker((props) => {
                     "commission.rate": props.commissionDir,
                     voting_power: props.votingPowerDir,
                     "description.moniker": props.monikerDir,
-                    uptime: props.uptimeDir
+                    uptime: props.uptimeDir,
+                    self_delegation: props.selfDelDir
                 }
             }
             break;
+        case 4:
+            options = {
+                sort:{
+                    self_delegation: props.selfDelDir,
+                    "description.moniker": props.monikerDir,
+                    "commission.rate": props.commissionDir,
+                    voting_power: props.votingPowerDir,
+                    uptime: props.uptimeDir,
+                    
+                }
+            }
+            break;    
     }
     const validators = Validators.find(validatorsCond,options).fetch();
     const chainStatus = Chain.findOne({chainId:Meteor.settings.public.chainId});

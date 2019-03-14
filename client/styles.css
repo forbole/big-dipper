@@ -145,6 +145,7 @@ table td.voting-power{
 }
 
 .data.commission,
+.data.self-delegation,
 .voting-power:not(th){
     font-family: 'Inconsolata', monospace !important;
 }

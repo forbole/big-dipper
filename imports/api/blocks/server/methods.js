@@ -322,6 +322,7 @@ Meteor.methods({
                                                 validator.delegator_address = Meteor.call('getDelegator', validatorSet[val].operator_address);
                                                 validator.jailed = validatorSet[val].jailed;
                                                 validator.status = validatorSet[val].status;
+                                                validator.min_self_delegation = validatorSet[val].min_self_delegation;
                                                 validator.tokens = validatorSet[val].tokens;
                                                 validator.delegator_shares = validatorSet[val].delegator_shares;
                                                 validator.description = validatorSet[val].description;
@@ -330,6 +331,7 @@ Meteor.methods({
                                                 validator.unbonding_height = validatorSet[val].unbonding_height;
                                                 validator.unbonding_time = validatorSet[val].unbonding_time;
                                                 validator.commission = validatorSet[val].commission;
+                                                validator.self_delegation = validator.delegator_shares;
                                                 // validator.removed = false,
                                                 // validator.removedAt = 0
                                                 // validatorSet.splice(val, 1);
@@ -365,6 +367,17 @@ Meteor.methods({
                                             validator.unbonding_time = validatorSet[val].unbonding_time;
                                             validator.commission = validatorSet[val].commission;
                                             
+                                            let response = HTTP.get(LCD + '/staking/delegators/'+valExist.delegator_address+'/delegations/'+valExist.operator_address);
+                                           
+                                            if (response.statusCode == 200){
+                                                let selfDelegation = JSON.parse(response.content);
+                                                if (selfDelegation.shares){
+                                                    validator.self_delegation = parseFloat(selfDelegation.shares)/parseFloat(validator.delegator_shares);
+                                                }
+                                            }
+                                        
+                                        
+
                                             bulkValidators.find({consensus_pubkey: valExist.consensus_pubkey}).updateOne({$set:validator});
                                             // console.log("validator exisits: "+bulkValidators.length);
                                             // validatorSet.splice(val, 1);
