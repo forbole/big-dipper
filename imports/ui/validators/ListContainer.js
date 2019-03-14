@@ -42,7 +42,7 @@ export default ValidatorListContainer = withTracker((props) => {
                     "description.moniker": props.monikerDir,
                     uptime: props.uptimeDir,
                     voting_power: props.votingPowerDir,
-                    proposer_priority: props.proposerDir
+                    "commission.rate": props.commissionDir
                 }
             }
             break;
@@ -52,7 +52,7 @@ export default ValidatorListContainer = withTracker((props) => {
                     voting_power: props.votingPowerDir,
                     "description.moniker": props.monikerDir,
                     uptime: props.uptimeDir,
-                    proposer_priority: props.proposerDir
+                    "commission.rate": props.commissionDir
                 }
             }
             break;
@@ -62,14 +62,14 @@ export default ValidatorListContainer = withTracker((props) => {
                     uptime: props.uptimeDir,
                     "description.moniker": props.monikerDir,
                     voting_power: props.votingPowerDir,
-                    proposer_priority: props.proposerDir
+                    "commission.rate": props.commissionDir
                 }
             }
             break;
         case 3:
             options = {
                 sort:{
-                    proposer_priority: props.proposerDir,
+                    "commission.rate": props.commissionDir,
                     voting_power: props.votingPowerDir,
                     "description.moniker": props.monikerDir,
                     uptime: props.uptimeDir

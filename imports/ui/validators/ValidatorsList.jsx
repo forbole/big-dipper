@@ -11,7 +11,7 @@ export default class Validators extends Component{
             monikerDir: 1,
             votingPowerDir: -1,
             uptimeDir: -1,
-            proposerDir: -1,
+            commissionDir: -1,
             priority: 1
         }
     }
@@ -35,15 +35,14 @@ export default class Validators extends Component{
                 this.setState({priority:2});
                 break;
             case 3:
-                if (this.state.proposerDir==1){this.setState({proposerDir:-1});}
-                else{this.setState({proposerDir:1});}
+                if (this.state.commissionDir==1){this.setState({commissionDir:-1});}
+                else{this.setState({commissionDir:1});}
                 this.setState({priority:3});
                 break;
         }
     }
 
     render() {
-        console.log(this.props);
         let title = "Active";
         let desc = "Here is a list of active validators.";
         if (this.props.jailed != undefined){
@@ -76,11 +75,11 @@ export default class Validators extends Component{
                     <Card body>
                         <Row className="header">
                             <Col className="d-none d-md-block counter" md={1}>&nbsp;</Col>
-                            <Col className="moniker" md={3} onClick={(e) => this.toggleDir(0,e)}><i className="material-icons">perm_contact_calendar</i> <span className="d-inline-block d-md-none d-lg-inline-block">Moniker</span> {(this.state.monikerDir==1)?<i className="material-icons">arrow_drop_up</i>:<i className="material-icons">arrow_drop_down</i>}</Col>
-                            <Col className="voting-power" md={2} onClick={(e) => this.toggleDir(1,e)}><i className="material-icons">power</i> <span className="d-inline-block d-md-none d-lg-inline-block">Voting Power</span> {(this.state.votingPowerDir==1)?<i className="material-icons">arrow_drop_up</i>:<i className="material-icons">arrow_drop_down</i>}</Col>
+                            <Col className="moniker" md={2} onClick={(e) => this.toggleDir(0,e)}><i className="material-icons">perm_contact_calendar</i> <span className="d-inline-block d-md-none d-lg-inline-block">Moniker</span> {(this.state.monikerDir==1)?<i className="material-icons">arrow_drop_up</i>:<i className="material-icons">arrow_drop_down</i>}</Col>
+                            <Col className="voting-power" md={3} lg={2} onClick={(e) => this.toggleDir(1,e)}><i className="material-icons">power</i> <span className="d-inline-block d-md-none d-lg-inline-block">Voting Power</span> {(this.state.votingPowerDir==1)?<i className="material-icons">arrow_drop_up</i>:<i className="material-icons">arrow_drop_down</i>}</Col>
                             <Col className="status d-none d-md-block" md={1}><i className="material-icons">toggle_on</i> <span className="d-md-none d-lg-inline-block">Status</span></Col>
-                            {(!this.props.jailed)?<Col className="uptime" md={3} onClick={(e) => this.toggleDir(2,e)}><i className="material-icons">flash_on</i> <span className="d-inline-block d-md-none d-lg-inline-block">Uptime ({Meteor.settings.public.uptimeWindow} <i className="fas fa-cube"></i>)</span> {(this.state.uptimeDir==1)?<i className="material-icons">arrow_drop_up</i>:<i className="material-icons">arrow_drop_down</i>}</Col>:''}
-                            {(!this.props.jailed)?<Col className="proposer-priority text-right d-none d-md-block" onClick={(e) => this.toggleDir(3,e)}><i className="material-icons">swap_vertical_circle</i> <span className="d-md-none d-lg-inline-block">Priority</span> {(this.state.proposerDir==1)?<i className="material-icons">arrow_drop_up</i>:<i className="material-icons">arrow_drop_down</i>}</Col>:''}
+                            {(!this.props.jailed)?<Col className="commission" md={2} onClick={(e) => this.toggleDir(3,e)}><i className="material-icons">call_split</i> <span className="d-inline-block d-md-none d-lg-inline-block">Comission</span> {(this.state.commissionDir==1)?<i className="material-icons">arrow_drop_up</i>:<i className="material-icons">arrow_drop_down</i>}</Col>:""}
+                            {(!this.props.jailed)?<Col className="uptime" md={2} lg={3} onClick={(e) => this.toggleDir(2,e)}><i className="material-icons">flash_on</i> <span className="d-inline-block d-md-none d-lg-inline-block">Uptime ({Meteor.settings.public.uptimeWindow} <i className="fas fa-cube"></i>)</span> {(this.state.uptimeDir==1)?<i className="material-icons">arrow_drop_up</i>:<i className="material-icons">arrow_drop_down</i>}</Col>:''}
                             {(this.props.jailed)?<Col className="last-seen" md={3}><i className="far fa-clock"></i> <span className="d-md-none d-lg-inline-block">Last Seen (UTC)</span></Col>:''}
                         </Row>
                     </Card>
@@ -89,14 +88,14 @@ export default class Validators extends Component{
                             monikerDir={this.state.monikerDir} 
                             votingPowerDir={this.state.votingPowerDir} 
                             uptimeDir={this.state.uptimeDir}
-                            proposerDir={this.state.proposerDir} 
+                            commissionDir={this.state.commissionDir} 
                             priority={this.state.priority}
                             status={this.props.status}
                         />:<List 
                             monikerDir={this.state.monikerDir} 
                             votingPowerDir={this.state.votingPowerDir}
                             uptimeDir={this.state.uptimeDir}
-                            proposerDir={this.state.proposerDir}
+                            commissionDir={this.state.commissionDir}
                             priority={this.state.priority}
                         />}
                 </Col>

@@ -479,6 +479,10 @@ div.transactions-list div.header{
         margin-left:0;
         margin-right:0;
     }
+
+    .validator-info.row i.material-icons + span{
+        transform: inherit;
+    }
 }
 
 @media only screen and (max-width: 1023px){
@@ -506,6 +510,7 @@ div.transactions-list div.header{
 }
 
 @media only screen and (min-width: 1024px){
+    .validator-info.row i.material-icons + span,
     .tx-info .fee i.material-icons + span {
         transform: inherit;
     }
