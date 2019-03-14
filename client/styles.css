@@ -422,11 +422,11 @@ div.transactions-list div.header{
     div.validator-list div.validator-info div.data span.moniker{
         float: left;
         margin-left: 3px;
+        max-width:80%;
     }
 
     div.validator-list div.validator-info div.data.voting-power,
-    div.validator-list div.validator-info div.data.status,
-    div.validator-list div.validator-info div.data.uptime{
+    div.validator-list div.validator-info div.data.status{
         margin-top: -25px;
     }
 }
