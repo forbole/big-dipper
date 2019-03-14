@@ -6,6 +6,7 @@ import {
   NavLink } from 'reactstrap';
 
 import { Link } from 'react-router-dom';
+import moment from 'moment';
 
 export default class Footer extends React.Component {
   constructor(props) {
@@ -16,7 +17,7 @@ export default class Footer extends React.Component {
     return (
       <div>
         <Navbar color="light" light expand="md" fixed="bottom" id="footer" className="d-none d-md-flex">
-            <span className="text-muted"><a href="https://www.forbole.com" target="_blank">Forbole Limited</a> &copy;2018. </span>
+            <span className="text-muted"><a href="https://www.forbole.com" target="_blank">Forbole Limited</a> &copy;2018-{moment().format('YYYY')}. </span>
             <Nav className="ml-auto" navbar>
               <NavItem>
                 <NavLink href="https://www.github.com/forbole/big_dipper" target="_blank"><i className="fab fa-github"></i> Fork me!</NavLink>
