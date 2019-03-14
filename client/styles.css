@@ -144,6 +144,7 @@ table td.voting-power{
     text-align:right;
 }
 
+.data.commission,
 .voting-power:not(th){
     font-family: 'Inconsolata', monospace !important;
 }
