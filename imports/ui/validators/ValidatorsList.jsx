@@ -11,9 +11,9 @@ export default class Validators extends Component{
             monikerDir: 1,
             votingPowerDir: -1,
             uptimeDir: -1,
-            commissionDir: -1,
+            commissionDir: 1,
             selfDelDir: 1,
-            priority: 1
+            priority: 3
         }
     }
 
