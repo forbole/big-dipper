@@ -2,13 +2,9 @@
 Forbole Block Explorer for Cosmos
 
 ## Demo
-[Explore Cosmos Game of Stakes (game_of_stakes_6) with The Big Dipper](https://bigdipper.forbole.com)
+[Explore Cosmos Hub (cosmoshub-1) with The Big Dipper](https://cosmos.bigdipper.live)
 
-[Cosmos Testnet (gaia-12001)](https://gaia-12k1.bigdipper.live)
-
-[Cosmos Testnet (gaia-11001)](https://gaia-11k1.bigdipper.live)
-
-[Cosmos Testnet (gaia-10k)](https://gaia-10k.bigdipper.live)
+[Explore IRISnet (irishub) with The Big Dipper](https://iris.bigdipper.live)
 
 ## Projects running with the Big Dipper
 [JoyStream testnet](http://explorer.joystream.org/)
