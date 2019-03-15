@@ -132,7 +132,7 @@ export default class Activites extends Component {
                     }
                 });
                 break;
-            case "cosmos-sdk/BeginRedelegate":    
+            case "cosmos-sdk/MsgBeginRedelegate":    
                 Meteor.call('Transactions.findUser', msg.value.delegator_address, (err, result) => {
                     if (err){
                         console.log(err);
@@ -287,7 +287,7 @@ export default class Activites extends Component {
                 return <p><span className="address">{this.state.delegator}</span> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-warning">{numeral(msg.value.value.amount).format("0,0")} {msg.value.value.denom}</em> to <span className="address">{this.state.validator}</span>.</p>
             case "cosmos-sdk/Undelegate":
                 return <p><span className="address">{this.state.delegator}</span> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-warning">{numeral(msg.value.shares_amount).format("0,0")} </em> from <span className="address">{this.state.validator}</span>.</p>
-            case "cosmos-sdk/BeginRedelegate":
+            case "cosmos-sdk/MsgBeginRedelegate":
                 return <p><span className="address">{this.state.delegator}</span> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-warning">{numeral(msg.value.shares_amount).format("0.0")}</em> from <span className="address">{this.state.sourceValidator}</span> to <span className="address">{this.state.validator}</span>.</p>
             
             // gov

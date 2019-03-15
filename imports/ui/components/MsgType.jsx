@@ -18,7 +18,7 @@ export const MsgType = (props) => {
             return <Badge color="warning">Delegate</Badge>;
         case "cosmos-sdk/Undelegate":
             return <Badge color="warning">Undelegate</Badge>;
-        case "cosmos-sdk/BeginRedelegate":
+        case "cosmos-sdk/MsgBeginRedelegate":
             return <Badge color="warning">Redelegate</Badge>;
         
         // gov
