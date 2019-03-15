@@ -8,6 +8,13 @@ import PowerHistory from '../components/PowerHistory.jsx';
 import { Badge, Container, Row, Col, Card, CardImg, CardText, CardBody, CardTitle, CardSubtitle } from 'reactstrap';
 import KeybaseCheck from '../components/KeybaseCheck.jsx';
 
+addhttp = (url) => {
+    if (!/^(f|ht)tps?:\/\//i.test(url)) {
+       url = "http://" + url;
+    }
+    return url;
+}
+
 const JailStatus = (props) =>{
     return <Badge color={props.jailed?'danger':'success'}>{props.jailed?'Jailed':'Active'}</Badge>
 }
@@ -78,7 +85,7 @@ export default class Validator extends Component{
                     <Col md={4}>
                         <Card body className="text-center">
                             <div className="validator-avatar"><Avatar moniker={moniker} identity={identity} address={this.props.validator.address} list={false}/></div>
-                            <div className="moniker text-primary">{website?<a href={this.props.validator.description.website} target="_blank">{moniker} <i className="fas fa-link"></i></a>:moniker}</div>
+                            <div className="moniker text-primary">{website?<a href={addhttp(this.props.validator.description.website)} target="_blank">{moniker} <i className="fas fa-link"></i></a>:moniker}</div>
                             <div className="identity"><KeybaseCheck identity={identity} showKey /></div>
                             <div className="details">{details}</div>
                             <div className="website"></div>
