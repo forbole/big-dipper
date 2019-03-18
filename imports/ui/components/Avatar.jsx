@@ -11,15 +11,34 @@ export default class Avatar extends React.Component {
     // console.log(this.props.moniker);
     //     console.log(this.getColourHex(this.props.moniker));
       if (this.props.identity != ""){
-        fetch("https://keybase.io/_/api/1.0/user/lookup.json?key_suffix="+this.props.identity+"&fields=pictures")
-        .then(response => response.json())
-        .then(data => {
-            if (data.them && data.them.length > 0){
-                if (data.them[0].pictures){
-                  this.setState({avatar:data.them[0].pictures.primary.url});
-                }
+        if (this.props.identity.length == 16){
+          fetch("https://keybase.io/_/api/1.0/user/lookup.json?key_suffix="+this.props.identity+"&fields=pictures")
+          .then(response => response.json())
+          .then(data => {
+              if (data.them && data.them.length > 0){
+                  if (data.them[0].pictures){
+                    this.setState({avatar:data.them[0].pictures.primary.url});
+                  }
+              }
+          });
+        }
+        else if (this.props.identity.indexOf("keybase.io/team/")){
+          // fetch(this.props.identity)
+          // .then(response => response.text())
+          // .then(text => {
+          //   let parser = new DOMParser();
+          //   let htmlDocument = parser.parseFromString(text, "text/html");
+          //   let picture = htmlDocument.documentElement.querySelector(".kb-main-card img");
+          //   if (picture){
+          //     this.setState({avatar:picture.src});
+          //   }
+          // })
+          Meteor.call('getKeybaseTeamPic', this.props.identity, (err, result) => {
+            if (result){
+              this.setState({avatar:result});
             }
-        });
+          });
+        }
       }
   }
 
