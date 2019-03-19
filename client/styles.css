@@ -331,8 +331,14 @@ div.transactions-list div.tx-info .activity .card-body p{
     margin-bottom: 0;
 }
 
-div.transactions-list div.tx-info .badge{
+/* div.transactions-list div.tx-info .badge{
     margin-right: 0.2rem;
+} */
+
+div.transactions-list .error .alert .badge {
+    white-space: inherit;
+    /* display: block; */
+    text-align: left;
 }
 
 div.transactions-list div.tx-info .badge:not(:last-child) {

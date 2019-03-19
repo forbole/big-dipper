@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Row, Col, Card, CardBody } from 'reactstrap';
+import { Row, Col, Card, Alert } from 'reactstrap';
 import { TxIcon } from '../components/Icons.jsx';
 import Activities from '../components/Activities.jsx';
+import CosmosErrors from '../components/CosmosErrors.jsx';
 import TimeAgo from '../components/TimeAgo.jsx';
 import numeral from 'numeral';
 
@@ -20,6 +21,16 @@ const TransactionRow = (props) => {
         <Col xs={6} md={9} lg={2} className="fee"><i className="material-icons d-lg-none">monetization_on</i> {tx.tx.value.fee.amount?tx.tx.value.fee.amount.map((fee,i) => {
             return <span className="text-nowrap" key={i}>{numeral(fee.amount).format(0,0)} {fee.denom}</span>
         }):<span>No fee</span>}</Col>
+        {(tx.code)?<Col xs={{size:12, order:"last"}} className="error">
+            <Alert color="danger">
+                <CosmosErrors 
+                    code={tx.code}
+                    logs={tx.logs}
+                    gasWanted={tx.gas_wanted}
+                    gasUses={tx.gas_used}
+                />
+            </Alert>
+        </Col>:''}
     </Row>
 }
 
