@@ -23,16 +23,6 @@ export default class Avatar extends React.Component {
           });
         }
         else if (this.props.identity.indexOf("keybase.io/team/")){
-          // fetch(this.props.identity)
-          // .then(response => response.text())
-          // .then(text => {
-          //   let parser = new DOMParser();
-          //   let htmlDocument = parser.parseFromString(text, "text/html");
-          //   let picture = htmlDocument.documentElement.querySelector(".kb-main-card img");
-          //   if (picture){
-          //     this.setState({avatar:picture.src});
-          //   }
-          // })
           Meteor.call('getKeybaseTeamPic', this.props.identity, (err, result) => {
             if (result){
               this.setState({avatar:result});
