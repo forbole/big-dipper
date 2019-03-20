@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { ValidatorRecords, Analytics, MissedBlocksStats } from '../records.js';
+import { ValidatorRecords, Analytics, MissedBlocksStats, VPDistributions } from '../records.js';
 import { Validators } from '../../validators/validators.js';
 
 Meteor.publish('validator_records.all', function () {
@@ -12,6 +12,10 @@ Meteor.publish('validator_records.uptime', function(address, num){
 
 Meteor.publish('analytics.history', function(){
     return Analytics.find({},{sort:{height:-1},limit:50});
+});
+
+Meteor.publish('vpDistribution.twentyEighty', function(){
+    return VPDistributions.find({},{sort:{height:-1}, limit:1});
 });
 
 publishComposite('missedblocks.validator', function(address, type){

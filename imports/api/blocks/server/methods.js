@@ -5,7 +5,7 @@ import { Blockscon } from '/imports/api/blocks/blocks.js';
 import { Chain } from '/imports/api/chain/chain.js';
 import { ValidatorSets } from '/imports/api/validator-sets/validator-sets.js';
 import { Validators } from '/imports/api/validators/validators.js';
-import { ValidatorRecords, Analytics} from '/imports/api/records/records.js';
+import { ValidatorRecords, Analytics, VPDistributions} from '/imports/api/records/records.js';
 import { VotingPowerHistory } from '/imports/api/voting-power/history.js';
 import { Transactions } from '../../transactions/transactions.js';
 import { Evidences } from '../../evidences/evidences.js';
@@ -435,7 +435,6 @@ Meteor.methods({
                             
                         }
 
-
                         let endFindValidatorsNameTime = new Date();
                         console.log("Get validators name time: "+((endFindValidatorsNameTime-startFindValidatorsNameTime)/1000)+"seconds.");
                     
@@ -444,7 +443,6 @@ Meteor.methods({
                         Analytics.insert(analyticsData);
                         let endAnalyticsInsertTime = new Date();
                         console.log("Analytics insert time: "+((endAnalyticsInsertTime-startAnayticsInsertTime)/1000)+"seconds.");
-
 
                         let startVUpTime = new Date();
                         if (bulkValidators.length > 0){
@@ -471,7 +469,6 @@ Meteor.methods({
                             });
                         }
                         
-
                         let endVRTime = new Date();
                         console.log("Validator records update time: "+((endVRTime-startVRTime)/1000)+"seconds.");
 
@@ -491,6 +488,61 @@ Meteor.methods({
                             });
                         }
                         
+                        // calculate voting power distribution every 60 blocks ~ 5mins
+
+                        if (height % 60 == 1){
+                            console.log("===== calculate voting power distribution =====");
+                            let activeValidators = Validators.find({status:2,jailed:false},{sort:{voting_power:-1}}).fetch();
+                            let numTopTwenty = Math.ceil(activeValidators.length*0.2);
+                            let numBottomEighty = activeValidators.length - numTopTwenty;
+
+                            let topTwentyPower = 0;
+                            let bottomEightyPower = 0;
+                            
+                            let numTopThirtyFour = 0;
+                            let numBottomSixtySix = 0;
+                            let topThirtyFourPercent = 0;
+                            let bottomSixtySixPercent = 0;
+
+
+
+                            for (v in activeValidators){
+                                if (v < numTopTwenty){
+                                    topTwentyPower += activeValidators[v].voting_power;
+                                }
+                                else{
+                                    bottomEightyPower += activeValidators[v].voting_power;
+                                }
+
+                                
+                                if (topThirtyFourPercent < 0.34){
+                                    topThirtyFourPercent += activeValidators[v].voting_power / analyticsData.voting_power;
+                                    numTopThirtyFour++;
+                                }
+                            }
+
+                            bottomSixtySixPercent = 1 - topThirtyFourPercent;
+                            numBottomSixtySix = activeValidators.length - numTopThirtyFour;
+
+                            let vpDist = {
+                                height: height,
+                                numTopTwenty: numTopTwenty,
+                                topTwentyPower: topTwentyPower,
+                                numBottomEighty: numBottomEighty,
+                                bottomEightyPower: bottomEightyPower,
+                                numTopThirtyFour: numTopThirtyFour,
+                                topThirtyFourPercent: topThirtyFourPercent,
+                                numBottomSixtySix: numBottomSixtySix,
+                                bottomSixtySixPercent: bottomSixtySixPercent,
+                                numValidators: activeValidators.length,                            
+                                totalVotingPower: analyticsData.voting_power,
+                                createAt: new Date()
+                            }
+
+                            console.log(vpDist);
+
+                            VPDistributions.insert(vpDist);
+                        }
                     }                    
                 }
                 catch (e){
