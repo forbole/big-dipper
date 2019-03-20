@@ -401,6 +401,10 @@ div.transactions-list div.header{
     margin-top: 0.5em;
 }
 
+div#voting-power-dist .card{
+    margin-top: 0.5em;
+}
+
 @media only screen and (max-width: 768px){
     div#main{
         padding-bottom: 4.85rem;

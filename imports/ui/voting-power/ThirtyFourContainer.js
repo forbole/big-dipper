@@ -1,9 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { VPDistributions } from '/imports/api/records/records.js';
-import TwentyEighty from './TwentyEighty.jsx';
+import ThirtyFour from './ThirtyFour.jsx';
 
-export default TwentyEightyContainer = withTracker((props) => {
+export default ThirtyFourContainer = withTracker((props) => {
     const chartHandle = Meteor.subscribe('vpDistribution.latest');
     const loading = !chartHandle.ready();
     const stats = VPDistributions.findOne({});
@@ -13,5 +13,5 @@ export default TwentyEightyContainer = withTracker((props) => {
         statsExist,
         stats: statsExist ? stats : {}
     };
-})(TwentyEighty);
+})(ThirtyFour);
 

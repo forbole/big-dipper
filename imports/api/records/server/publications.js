@@ -14,7 +14,7 @@ Meteor.publish('analytics.history', function(){
     return Analytics.find({},{sort:{height:-1},limit:50});
 });
 
-Meteor.publish('vpDistribution.twentyEighty', function(){
+Meteor.publish('vpDistribution.latest', function(){
     return VPDistributions.find({},{sort:{height:-1}, limit:1});
 });
 

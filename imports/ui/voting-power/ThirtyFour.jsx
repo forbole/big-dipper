@@ -4,7 +4,7 @@ import { Row, Col, Card, CardImg, CardText, CardBody,
     CardTitle, CardSubtitle, Button, Progress } from 'reactstrap';
 import numeral from 'numeral';
 
-export default class TwentyEighty extends Component{
+export default class ThirtyFour extends Component{
     constructor(props){
         super(props);
         this.state = {
@@ -18,19 +18,20 @@ export default class TwentyEighty extends Component{
             let topPercent = this.props.stats.topTwentyPower/this.props.stats.totalVotingPower;
             let bottomPercent = this.props.stats.bottomEightyPower/this.props.stats.totalVotingPower;
 
+            let self = this;
             this.setState({
                 data:{
                     labels:
                         [
-                            "Top 20% ("+this.props.stats.numTopTwenty+") validators",
-                            "Rest 80% ("+this.props.stats.numBottomEighty+") validators"
+                            "No. of validators hold 34%+ VP",
+                            "No. of validators hold rest of VP"
                         ]
                     ,
                     datasets: [
                         {
                             data: [
-                                topPercent,
-                                bottomPercent
+                                this.props.stats.numTopThirtyFour,
+                                this.props.stats.numBottomSixtySix
                             ],
                             backgroundColor: [
                                 '#bd081c',
@@ -47,14 +48,12 @@ export default class TwentyEighty extends Component{
                     tooltips: {
                         callbacks: {
                             label: function(tooltipItem, data) {
-                                var label = data.labels[tooltipItem.index] || '';
-            
-                                if (label) {
-                                    label += ' hold ';
-                                }
-                                label += numeral(data.datasets[0].data[tooltipItem.index]).format("0.00%");
-                                label += " voting power";
-                                return label;
+                                // var label = data.datasets[0].data[tooltipItem.index] + " validators hold ";
+                                // label += numeral(data.datasets[0].data[tooltipItem.index]).format("0.00%");
+                                if (tooltipItem.index == 0)
+                                    return data.datasets[0].data[tooltipItem.index] + " validators hold "+numeral(self.props.stats.topThirtyFourPercent).format("0.00%")+" voting power";
+                                else 
+                                    return data.datasets[0].data[tooltipItem.index] + " validators hold "+numeral(self.props.stats.bottomSixtySixPercent).format("0.00%")+" voting power";
                             }
                         }
                     }
@@ -71,7 +70,7 @@ export default class TwentyEighty extends Component{
             if (this.props.statsExist && this.props.stats){
                 return (                    
                     <Card>
-                        <div className="card-header">Pareto Principle (20/80 rule)</div>
+                        <div className="card-header">34% Power</div>
                         <CardBody>
                             <Pie data={this.state.data} options={this.state.options} />
                         </CardBody>
