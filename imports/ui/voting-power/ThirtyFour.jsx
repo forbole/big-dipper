@@ -70,7 +70,7 @@ export default class ThirtyFour extends Component{
             if (this.props.statsExist && this.props.stats){
                 return (                    
                     <Card>
-                        <div className="card-header">34% Power</div>
+                        <div className="card-header">Min no. of validators hold 34%+ power</div>
                         <CardBody>
                             <Pie data={this.state.data} options={this.state.options} />
                         </CardBody>
