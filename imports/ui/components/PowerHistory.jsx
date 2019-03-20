@@ -34,8 +34,8 @@ export default class PowerHistory extends React.Component {
                                     </Col>
                                     <Col xs={12}>
                                         <Row>
-                                            <Col xs={4}>{(this.props.address == m.value.validator_dst_addr)?'From':'To'}</Col>
-                                            <Col xs={8} className="address" data-validator-address={(this.props.address == m.value.validator_dst_addr)?m.value.validator_src_addr:m.value.validator_dst_addr}>{(this.props.address == m.value.validator_dst_addr)?m.value.validator_src_addr:m.value.validator_dst_addr}</Col>
+                                            <Col xs={4}>{(this.props.address == m.value.validator_dst_address)?'From':'To'}</Col>
+                                            <Col xs={8} className="address" data-validator-address={(this.props.address == m.value.validator_dst_address)?m.value.validator_src_address:m.value.validator_dst_address}>{(this.props.address == m.value.validator_dst_address)?m.value.validator_src_address:m.value.validator_dst_address}</Col>
                                         </Row>
                                     </Col>
                                     <Col xs={12}>
