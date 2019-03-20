@@ -34,7 +34,7 @@ export default class Header extends React.Component {
   render() {
     return (
         <Navbar color="primary" dark expand="md" fixed="top">
-          <NavbarBrand tag={Link} to="/"><img src="/img/big-dipper.svg" className="img-fluid logo"/> <span className="d-none d-sm-inline-block">The Big Dipper&nbsp;</span><Badge color="secondary">beta</Badge> <Badge color="primary">{Meteor.settings.public.chainId}</Badge></NavbarBrand>
+          <NavbarBrand tag={Link} to="/"><img src="/img/big-dipper.svg" className="img-fluid logo"/> <span className="d-none d-lg-inline-block">The Big Dipper&nbsp;</span><Badge color="secondary">beta</Badge> <Badge color="primary">{Meteor.settings.public.chainId}</Badge></NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>
@@ -63,6 +63,9 @@ export default class Header extends React.Component {
               </NavItem>
               <NavItem>
                 <NavLink tag={Link} to="/proposals">Proposals</NavLink>
+              </NavItem>
+              <NavItem>
+                <NavLink tag={Link} to="/voting-power-distribution">Voting Power</NavLink>
               </NavItem>
             </Nav>
           </Collapse>

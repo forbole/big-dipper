@@ -6,7 +6,7 @@ import VotingPower from './VotingPower.jsx';
 export default VotingPowerContainer = withTracker((props) => {
     const chartHandle = Meteor.subscribe('validators.voting_power');
     const loading = !chartHandle.ready();
-    const stats = Validators.find({}).fetch();
+    const stats = Validators.find({},{sort:{voting_power:-1}}).fetch();
     const statsExist = !loading && !!stats;
     return {
         loading,
