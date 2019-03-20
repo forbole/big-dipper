@@ -17,7 +17,7 @@ import BlocksTable from '/imports/ui/blocks/BlocksTable.jsx';
 import Proposals from '/imports/ui/proposals/Proposals.jsx';
 import ValidatorDetails from '/imports/ui/validators/ValidatorDetails.jsx';
 import Transactions from '/imports/ui/transactions/TransactionsList.jsx';
-import VotingPower from '/imports/ui/voting-power/VotingPower.jsx';
+import Distribution from '/imports/ui/voting-power/Distribution.jsx';
 import moment from 'moment';
 
 
@@ -58,7 +58,7 @@ class App extends Component {
                             <Route path="/validators/unbonding" render={(props) => <Validators {...props} jailed={false} status={1} />} />
                             <Route path="/validators/jailed" render={(props) => <Validators {...props} jailed={true} />} />
                             <Route path="/validators/firstseen" component={ValidatorFirstSeen} />
-                            <Route path="/voting-power-distribution" component={VotingPower} />
+                            <Route path="/voting-power-distribution" component={Distribution} />
                             <Route path="/validator" component={ValidatorDetails} />
                             <Route path="/proposals" component={Proposals} />
                             <Route component={NotFound} />
