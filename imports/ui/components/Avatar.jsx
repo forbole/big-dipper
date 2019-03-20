@@ -22,7 +22,7 @@ export default class Avatar extends React.Component {
               }
           });
         }
-        else if (this.props.identity.indexOf("keybase.io/team/")){
+        else if (this.props.identity.indexOf("keybase.io/team/")>0){
           Meteor.call('getKeybaseTeamPic', this.props.identity, (err, result) => {
             if (result){
               this.setState({avatar:result});
