@@ -16,7 +16,7 @@ export const MsgType = (props) => {
             return <Badge color="warning">Edit Validator</Badge>;
         case "cosmos-sdk/MsgDelegate":
             return <Badge color="warning">Delegate</Badge>;
-        case "cosmos-sdk/Undelegate":
+        case "cosmos-sdk/MsgUndelegate":
             return <Badge color="warning">Undelegate</Badge>;
         case "cosmos-sdk/MsgBeginRedelegate":
             return <Badge color="warning">Redelegate</Badge>;

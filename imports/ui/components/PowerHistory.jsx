@@ -75,7 +75,7 @@ export default class PowerHistory extends React.Component {
                                         </Row>
                                     </Col>
                                 </Row>
-                            case "cosmos-sdk/Undelegate":
+                            case "cosmos-sdk/MsgUndelegate":
                                 return <Row key={j}>
                                     <Col xs={12}>
                                         <Row>
@@ -107,7 +107,7 @@ export default class PowerHistory extends React.Component {
                                         return <Col key={j}><Badge color="warning">Create Validator</Badge></Col>;
                                     case "cosmos-sdk/MsgUnjail":
                                         return <Col key={j}><Badge color="info">Unjail</Badge></Col>;
-                                    case "cosmos-sdk/Undelegate":
+                                    case "cosmos-sdk/MsgUndelegate":
                                         return <Col key={j}><Badge color="danger">Undelegate</Badge></Col>;
                                 }
                             }):''}
