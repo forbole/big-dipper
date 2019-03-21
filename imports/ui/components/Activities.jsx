@@ -19,7 +19,7 @@ MultiSend = (props) => {
             <ul>
                {props.msg.value.outputs.map((data,i) =>{
                     return <li key={i}>{data.address} received {data.coins.map((coin,j) =>{
-                        return <em key={j} className="text-success">{numeral(coin.amount).format("0,0")} {coin.denom}}</em>
+                        return <em key={j} className="text-success">{numeral(coin.amount).format("0,0")} {coin.denom}</em>
                     })}</li>
                })}
             </ul>

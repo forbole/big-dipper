@@ -331,6 +331,11 @@ div.transactions-list div.tx-info .activity .card-body p{
     margin-bottom: 0;
 }
 
+div.transactions-list div.tx-info .activity .card-body ul {
+    list-style: none;
+    padding-left: 1em;
+}
+
 /* div.transactions-list div.tx-info .badge{
     margin-right: 0.2rem;
 } */
