@@ -3,6 +3,30 @@ import { MsgType } from './MsgType.jsx';
 import { Link } from 'react-router-dom';
 import numeral from 'numeral';
 
+MultiSend = (props) => {
+    return <div>
+        <p>A <MsgType type={props.msg.type} /> happened.</p>
+        <p>The following sender(s)
+            <ul>
+               {props.msg.value.inputs.map((data,i) =>{
+                    return <li key={i}>{data.address} sent {data.coins.map((coin, j) =>{
+                            return <em key={j} className="text-success">{numeral(coin.amount).format("0,0")} {coin.denom}</em>
+                        })}
+                    </li>
+               })}
+            </ul>
+            to the following receipient(s)
+            <ul>
+               {props.msg.value.outputs.map((data,i) =>{
+                    return <li key={i}>{data.address} received {data.coins.map((coin,j) =>{
+                        return <em key={j} className="text-success">{numeral(coin.amount).format("0,0")} {coin.denom}}</em>
+                    })}</li>
+               })}
+            </ul>
+        </p>
+    </div>
+}
+
 export default class Activites extends Component {
     constructor(props){
         super(props);
@@ -50,6 +74,8 @@ export default class Activites extends Component {
                     }
                 });
                 break;
+            case "cosmos-sdk/MsgMultiSend":
+                break;    
             case "cosmos-sdk/MsgCreateValidator":
                 Meteor.call('Transactions.findUser', msg.value.delegator_address, (err, result) => {
                     if (err){
@@ -275,8 +301,8 @@ export default class Activites extends Component {
                     }
                 }
                 return <p>{this.state.from} {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-success">{amount}</em> to <span className="address">{this.state.to}</span>.</p>
-            case "cosmos-sdk/MultiSend":
-                return <MsgType type={msg.type} />
+            case "cosmos-sdk/MsgMultiSend":
+                return <MultiSend msg={msg} />
             
             // staking
             case "cosmos-sdk/MsgCreateValidator":

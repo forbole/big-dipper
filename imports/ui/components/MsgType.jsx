@@ -6,7 +6,7 @@ export const MsgType = (props) => {
         // bank
         case "cosmos-sdk/Send":
             return <Badge color="success">Send</Badge>
-        case "cosmos-sdk/MultiSend":
+        case "cosmos-sdk/MsgMultiSend":
             return <Badge color="success">Multi Send</Badge>
         
         // staking
