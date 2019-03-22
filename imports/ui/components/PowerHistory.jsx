@@ -17,7 +17,8 @@ export default class PowerHistory extends React.Component {
             console.log(err);
         }
         if (result){
-            console.log(result);
+            // console.log(result);
+            let self = this;
             this.setState({
                 tx: result.map((msg, i) => <CardFooter key={i} className="text-secondary"><Row>
                     <Col xs={12} sm={8}>
@@ -46,20 +47,25 @@ export default class PowerHistory extends React.Component {
                                     </Col>
                                 </Row>
                             case "cosmos-sdk/MsgDelegate":
-                                return <Row key={j}>
-                                    <Col xs={12}>
-                                        <Row>
-                                            <Col xs={4}>Delegator</Col>
-                                            <Col xs={8} className="address" data-delegator-address={m.value.delegator_address}>{m.value.delegator_address}</Col>
-                                        </Row>
-                                    </Col>
-                                    <Col xs={12}>
-                                        <Row>
-                                            <Col xs={4}>Amount</Col>
-                                            <Col xs={8}>{numeral(m.value.value.amount).format('0,0')} {m.value.value.denom}</Col>
-                                        </Row>
-                                    </Col>
-                                </Row>
+                                if (m.value.validator_address == self.props.address){                                
+                                    return <Row key={j}>
+                                        <Col xs={12}>
+                                            <Row>
+                                                <Col xs={4}>Delegator</Col>
+                                                <Col xs={8} className="address" data-delegator-address={m.value.delegator_address}>{m.value.delegator_address}</Col>
+                                            </Row>
+                                        </Col>
+                                        <Col xs={12}>
+                                            <Row>
+                                                <Col xs={4}>Amount</Col>
+                                                <Col xs={8}>{numeral(m.value.value.amount).format('0,0')} {m.value.value.denom}</Col>
+                                            </Row>
+                                        </Col>
+                                    </Row>
+                                }
+                                else{
+                                    return;
+                                }
                             case "cosmos-sdk/MsgCreateValidator":
                                 return <Row key={j}>
                                     <Col xs={12}>
@@ -102,7 +108,11 @@ export default class PowerHistory extends React.Component {
                                     case "cosmos-sdk/MsgBeginRedelegate":
                                         return <Col key={j}><Badge color="success">Redelegate</Badge></Col>;
                                     case "cosmos-sdk/MsgDelegate":
-                                        return <Col key={j}><Badge color="success">Delegate</Badge></Col>;
+                                        if (m.value.validator_address == self.props.address){
+                                            return <Col key={j}><Badge color="success">Delegate</Badge></Col>;
+                                        }
+                                        else
+                                            return;    
                                     case "cosmos-sdk/MsgCreateValidator":
                                         return <Col key={j}><Badge color="warning">Create Validator</Badge></Col>;
                                     case "cosmos-sdk/MsgUnjail":
