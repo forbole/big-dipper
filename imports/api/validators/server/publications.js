@@ -41,9 +41,13 @@ Meteor.publish('validators.voting_power', function(){
 });
 
 publishComposite('validator.details', function(address){
+    let options = {address:address};
+    if (address.indexOf(Meteor.settings.public.bech32PrefixValAddr) != -1){
+        options = {operator_address:address}
+    }
     return {
         find(){
-            return Validators.find({address:address})
+            return Validators.find(options)
         },
         children: [
             {
@@ -52,6 +56,14 @@ publishComposite('validator.details', function(address){
                         {address:val.address},
                         {sort:{height:-1}, limit:50}
                     )
+                }
+            },
+            {
+                find(val) {
+                    return ValidatorRecords.find(
+                        { address: val.address },
+                        { sort: {height: -1}, limit: Meteor.settings.public.uptimeWindow}
+                    );
                 }
             }
         ]
