@@ -370,13 +370,18 @@ Meteor.methods({
                                             // calculate self delegation percentage every 30 blocks
 
                                             if (height % 30 == 1){
-                                                let response = HTTP.get(LCD + '/staking/delegators/'+valExist.delegator_address+'/delegations/'+valExist.operator_address);
+                                                try{
+                                                    let response = HTTP.get(LCD + '/staking/delegators/'+valExist.delegator_address+'/delegations/'+valExist.operator_address);
                                             
-                                                if (response.statusCode == 200){
-                                                    let selfDelegation = JSON.parse(response.content);
-                                                    if (selfDelegation.shares){
-                                                        validator.self_delegation = parseFloat(selfDelegation.shares)/parseFloat(validator.delegator_shares);
-                                                    }
+                                                    if (response.statusCode == 200){
+                                                        let selfDelegation = JSON.parse(response.content);
+                                                        if (selfDelegation.shares){
+                                                            validator.self_delegation = parseFloat(selfDelegation.shares)/parseFloat(validator.delegator_shares);
+                                                        }
+                                                    }    
+                                                }
+                                                catch(e){
+                                                    // console.log(e);
                                                 }
                                             }
                                         
