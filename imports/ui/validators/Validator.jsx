@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import numeral from 'numeral';
 import moment from 'moment';
+import { Markdown } from 'react-showdown';
 import Block from '../components/Block.jsx';
 import Avatar from '../components/Avatar.jsx';
 import PowerHistory from '../components/PowerHistory.jsx';
@@ -78,6 +79,7 @@ export default class Validator extends Component{
                 let identity = (this.props.validator.description&&this.props.validator.description.identity)?this.props.validator.description.identity:"";
                 let website = (this.props.validator.description&&this.props.validator.description.website)?this.props.validator.description.website:undefined;
                 let details = (this.props.validator.description&&this.props.validator.description.details)?this.props.validator.description.details:"";
+
                 return <Row className="validator-details">
                     <Col xs={12}>
                         <Link to="/validators" className="btn btn-link"><i className="fas fa-caret-left"></i> Back to List</Link>
@@ -87,7 +89,7 @@ export default class Validator extends Component{
                             <div className="validator-avatar"><Avatar moniker={moniker} identity={identity} address={this.props.validator.address} list={false}/></div>
                             <div className="moniker text-primary">{website?<a href={addhttp(this.props.validator.description.website)} target="_blank">{moniker} <i className="fas fa-link"></i></a>:moniker}</div>
                             <div className="identity"><KeybaseCheck identity={identity} showKey /></div>
-                            <div className="details">{details}</div>
+                            <div className="details"><Markdown markup={ details } /></div>
                             <div className="website"></div>
                         </Card>
                         <Card>

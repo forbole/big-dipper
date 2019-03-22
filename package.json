@@ -23,6 +23,7 @@
     "react-dom": "^16.5.2",
     "react-google-tag-manager": "^2.2.1",
     "react-router-dom": "^4.3.1",
+    "react-showdown": "^1.6.0",
     "react-sidebar": "^3.0.2",
     "react-toastify": "^4.4.0",
     "reactstrap": "^6.4.0",
