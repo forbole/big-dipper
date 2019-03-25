@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { Table, Row, Col } from 'reactstrap';
+import { Row, Col } from 'reactstrap';
 import { Link } from 'react-router-dom';
-import { DenomSymbol, ProposalStatusIcon, VoteIcon } from '../components/Icons';
+import { ProposalStatusIcon, VoteIcon } from '../components/Icons';
 import numeral from 'numeral';
+import { Markdown } from 'react-showdown';
 
 export default class Proposal extends Component{
     constructor(props){
         super(props);
+
+        let showdown  = require('showdown');
+        showdown.setFlavor('github');
         this.state = {
             proposal: '',
             deposit: ''
@@ -43,7 +47,7 @@ export default class Proposal extends Component{
                     </Row>
                     <Row className="mb-2 border-top border-secondary">
                         <Col md={3} className="label">Description</Col>
-                        <Col md={9} className="value">{this.state.proposal.description}</Col>
+                        <Col md={9} className="value"><Markdown markup={this.state.proposal.description} /></Col>
                     </Row>
                     <Row className="mb-2 border-top border-secondary">
                         <Col md={3} className="label">Proposal Type</Col>
