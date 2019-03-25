@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardFooter, CardBody, Col, Row, Badge } from 'reactstrap';
 import momemt from 'moment';
 import numeral from 'numeral';
-// import { VelocityComponent } from 'velocity-react';
+import Account from './Account.jsx';
 
 export default class PowerHistory extends React.Component {
   constructor(props) {
@@ -23,20 +23,19 @@ export default class PowerHistory extends React.Component {
                 tx: result.map((msg, i) => <CardFooter key={i} className="text-secondary"><Row>
                     <Col xs={12} sm={8}>
                     {(msg.tx.value.msg && msg.tx.value.msg.length > 0)?msg.tx.value.msg.map((m, j) => {
-                        console.log(m);
                         switch (m.type){
                             case "cosmos-sdk/MsgBeginRedelegate":
                                 return <Row key={j}>
                                     <Col xs={12}>
                                         <Row>
                                             <Col xs={4}>Delegator</Col>
-                                            <Col xs={8} className="address" data-delegator-address={m.value.delegator_address}>{m.value.delegator_address}</Col>
+                                            <Col xs={8} className="address" data-delegator-address={m.value.delegator_address}><Account address={m.value.delegator_address} /></Col>
                                         </Row>
                                     </Col>
                                     <Col xs={12}>
                                         <Row>
                                             <Col xs={4}>{(this.props.address == m.value.validator_dst_address)?'From':'To'}</Col>
-                                            <Col xs={8} className="address" data-validator-address={(this.props.address == m.value.validator_dst_address)?m.value.validator_src_address:m.value.validator_dst_address}>{(this.props.address == m.value.validator_dst_address)?m.value.validator_src_address:m.value.validator_dst_address}</Col>
+                                            <Col xs={8} className="address" data-validator-address={(this.props.address == m.value.validator_dst_address)?m.value.validator_src_address:m.value.validator_dst_address}><Account address={(this.props.address == m.value.validator_dst_address)?m.value.validator_src_address:m.value.validator_dst_address} /></Col>
                                         </Row>
                                     </Col>
                                     <Col xs={12}>
@@ -52,7 +51,7 @@ export default class PowerHistory extends React.Component {
                                         <Col xs={12}>
                                             <Row>
                                                 <Col xs={4}>Delegator</Col>
-                                                <Col xs={8} className="address" data-delegator-address={m.value.delegator_address}>{m.value.delegator_address}</Col>
+                                                <Col xs={8} className="address" data-delegator-address={m.value.delegator_address}><Account address={m.value.delegator_address} /></Col>
                                             </Row>
                                         </Col>
                                         <Col xs={12}>
@@ -71,7 +70,7 @@ export default class PowerHistory extends React.Component {
                                     <Col xs={12}>
                                         <Row>
                                             <Col xs={4}>Delegator</Col>
-                                            <Col xs={8} className="address" data-delegator-address={m.value.delegator_address}>{m.value.delegator_address}</Col>
+                                            <Col xs={8} className="address" data-delegator-address={m.value.delegator_address}><Account address={m.value.delegator_address} /></Col>
                                         </Row>
                                     </Col>
                                     <Col xs={12}>
@@ -86,7 +85,7 @@ export default class PowerHistory extends React.Component {
                                     <Col xs={12}>
                                         <Row>
                                             <Col xs={4}>Delegator</Col>
-                                            <Col xs={8} className="address" data-delegator-address={m.value.delegator_address}>{m.value.delegator_address}</Col>
+                                            <Col xs={8} className="address" data-delegator-address={m.value.delegator_address}><Account address={m.value.delegator_address} /></Col>
                                         </Row>
                                     </Col>
                                     <Col xs={12}>
