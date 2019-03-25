@@ -16,10 +16,12 @@ export default class Proposal extends Component{
 
     componentDidUpdate(prevProps){
         if (this.props.proposal != prevProps.proposal){
-            console.log(this.props.proposal.value);
+            // console.log(this.props.proposal.value);
             this.setState({
                 proposal: this.props.proposal.value,
-                deposit: <div>{this.props.proposal.value.total_deposit?numeral(this.props.proposal.value.total_deposit[0].amount).format(0,0):''} <DenomSymbol denom={this.props.proposal.value.total_deposit?this.props.proposal.value.total_deposit[0].denom:'STAKE'} /></div>
+                deposit: <div>{this.props.proposal.value.total_deposit?this.props.proposal.value.total_deposit.map((deposit, i) => {
+                    return <div key={i}>{numeral(deposit.amount).format(0,0)} {deposit.denom}</div>
+                }):''} </div>
             })
         }
     }
