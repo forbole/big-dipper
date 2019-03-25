@@ -9,7 +9,7 @@ const ProposalRow = (props) => {
     return <tr>
     <th className="d-none d-sm-table-cell counter">{props.proposal.proposalId}</th>
     <td className="title"><Link to={"/proposals/"+props.proposal.proposalId}>{props.proposal.value.title}</Link></td>
-    <td className="status"><ProposalStatusIcon status={props.proposal.value.proposal_status}/><span className="d-none d-sm-inline"> {props.proposal.value.proposal_status}</span></td>
+    <td className="status"><ProposalStatusIcon status={props.proposal.value.proposal_status}/><span className="d-none d-sm-inline"> {props.proposal.value.proposal_status.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</span></td>
     <td className="submit-block">{moment.utc(props.proposal.value.submit_time).format("D MMM YYYY, h:mm:ssa")}</td>
     <td className="voting-start">{(props.proposal.value.voting_start_time != "0001-01-01T00:00:00Z")?moment.utc(props.proposal.value.voting_start_time).format("D MMM YYYY, h:mm:ssa"):'Not started'}</td>
     <td className="deposit text-right">{props.proposal.value.total_deposit?props.proposal.value.total_deposit.map((deposit, i) => {
