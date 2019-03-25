@@ -57,6 +57,10 @@ export default class Proposal extends Component{
                         <Col md={3} className="label">Proposal Status</Col>
                         <Col md={9} className="value"><ProposalStatusIcon status={this.state.proposal.proposal_status} /> {(this.state.proposal.proposal_status)?this.state.proposal.proposal_status.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" "):''}</Col>
                     </Row>
+                    <Row className="mb-2 border-top border-secondary">
+                        <Col md={3} className="label">Deposit</Col>
+                        <Col md={9} className="value">{this.state.deposit}</Col>
+                    </Row>
                     <Row className="mb-2 border-top border-secondary tally-result">
                         <Col md={3} className="label">Tally Result</Col>
                         <Col md={9} className="value">
@@ -71,8 +75,8 @@ export default class Proposal extends Component{
                         <Col md={9} className="value">{moment.utc(this.state.proposal.submit_time).format("D MMM YYYY, h:mm:ssa z")}</Col>
                     </Row>
                     <Row className="mb-2 border-top border-secondary">
-                        <Col md={3} className="label">Deposit</Col>
-                        <Col md={9} className="value">{this.state.deposit}</Col>
+                        <Col md={3} className="label">Deposit End Time</Col>
+                        <Col md={9} className="value">{moment.utc(this.state.proposal.deposit_end_time).format("D MMM YYYY, h:mm:ssa z")}</Col>
                     </Row>
                     <Row className="mb-2 border-top border-secondary">
                         <Col md={3} className="label">Start Voting Time</Col>
