@@ -55,7 +55,7 @@ export default class Proposal extends Component{
                     </Row>
                     <Row className="mb-2 border-top border-secondary">
                         <Col md={3} className="label">Proposal Status</Col>
-                        <Col md={9} className="value"><ProposalStatusIcon status={this.state.proposal.proposal_status} /> {this.state.proposal.proposal_status}</Col>
+                        <Col md={9} className="value"><ProposalStatusIcon status={this.state.proposal.proposal_status} /> {(this.state.proposal.proposal_status)?this.state.proposal.proposal_status.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" "):''}</Col>
                     </Row>
                     <Row className="mb-2 border-top border-secondary tally-result">
                         <Col md={3} className="label">Tally Result</Col>
