@@ -13,6 +13,7 @@ timerBlocks = 0;
 timerChain = 0;
 timerConsensus = 0;
 timerProposal = 0;
+timerProposalsResults = 0;
 timerMissedBlock = 0;
 timerAggregate = 0;
 
@@ -54,6 +55,17 @@ getProposals = () => {
         }
         if (result){
             console.log("get proposal: "+result);
+        }
+    });
+}
+
+getProposalsResults = () => {
+    Meteor.call('proposals.getProposalResults', (error, result) => {
+        if (error){
+            console.log("get proposals result: "+error);
+        }
+        if (result){
+            console.log("get proposals result: "+result);
         }
     });
 }
@@ -101,6 +113,9 @@ Meteor.startup(function(){
                 }, Meteor.settings.params.statusInterval);
                 timerProposal = Meteor.setInterval(function(){
                     getProposals();
+                }, Meteor.settings.params.proposalInterval);
+                timerProposalsResults = Meteor.setInterval(function(){
+                    getProposalsResults();
                 }, Meteor.settings.params.proposalInterval);
                 timerMissedBlock = Meteor.setInterval(function(){
                     updateMissedBlockStats();
