@@ -272,6 +272,24 @@ div#countdown {
     word-wrap: break-word;
 }
 
+.proposal .value .tally-result-value{
+    white-space: nowrap;
+}
+
+.proposal .tally-result-detail{
+    overflow: hidden;
+    width: 100%;
+}
+
+.proposal .tally-result-detail ol{
+    border-radius: 0.3em;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    background-color: #fff9fa;
+    white-space: nowrap;
+    overflow: auto;
+}
+
 .proposal .label{
     font-weight: bold;
 }
