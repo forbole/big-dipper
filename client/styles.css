@@ -290,6 +290,10 @@ div#countdown {
     overflow: auto;
 }
 
+.proposal .tally-info{
+    margin-top: 0.5em;
+}
+
 .proposal .label{
     font-weight: bold;
 }

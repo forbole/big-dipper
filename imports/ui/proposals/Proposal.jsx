@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { Row, Col } from 'reactstrap';
+import { Row, Col, Progress, Card } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { ProposalStatusIcon, VoteIcon } from '../components/Icons';
 import Account from '../components/Account.jsx';
@@ -22,7 +22,14 @@ export default class Proposal extends Component{
             proposal: '',
             deposit: '',
             tallyDate: '',
-            open: false
+            voteStarted: false,
+            totalVotes: 0,
+            open: false,
+            yesPercent: 0,
+            abstainPercent: 0,
+            noPercent: 0,
+            noWithVetoPercent: 0,
+            proposalValid: false
         }
     }
 
@@ -40,16 +47,38 @@ export default class Proposal extends Component{
             let endVotingTime = moment(this.props.proposal.value.voting_end_time);
             if (now.diff(endVotingTime) < 0){
                 // not reach end voting time yet
-                // console.log(this.props.proposal);
+                let totalVotes = 0;
+                for (let i in this.props.proposal.tally){
+                    totalVotes += parseInt(this.props.proposal.tally[i]);
+                }
+
                 this.setState({
                     tally: this.props.proposal.tally,
-                    tallyDate: moment.utc(this.props.proposal.updatedAt).format("D MMM YYYY, h:mm:ssa z")
+                    tallyDate: moment.utc(this.props.proposal.updatedAt).format("D MMM YYYY, h:mm:ssa z"),
+                    voteStarted: true,
+                    totalVotes: totalVotes,
+                    yesPercent: parseInt(this.props.proposal.tally.yes)/totalVotes*100,
+                    abstainPercent: parseInt(this.props.proposal.tally.abstain)/totalVotes*100,
+                    noPercent: parseInt(this.props.proposal.tally.no)/totalVotes*100,
+                    noWithVetoPercent: parseInt(this.props.proposal.tally.no_with_veto)/totalVotes*100,
+                    proposalValid: (this.state.totalVotes/this.props.chain.totalVotingPower > 0.3)?true:false
                 })
             }
             else{
+                let totalVotes = 0;
+                for (let i in this.props.proposal.value.final_tally_result){
+                    totalVotes += parseInt(this.props.proposal.value.final_tally_result[i]);
+                }
+
                 this.setState({
                     tally: this.props.proposal.value.final_tally_result,
-                    tallyDate: 'final'
+                    tallyDate: 'final',
+                    totalVotes: totalVotes,
+                    yesPercent: parseInt(this.props.proposal.value.final_tally_result.yes)/totalVotes*100,
+                    abstainPercent: parseInt(this.props.proposal.value.final_tally_result.abstain)/totalVotes*100,
+                    noPercent: parseInt(this.props.proposal.value.final_tally_result.no)/totalVotes*100,
+                    noWithVetoPercent: parseInt(this.props.proposal.value.final_tally_result.no_with_veto)/totalVotes*100,
+                    proposalValid: (this.state.totalVotes/this.props.chain.totalVotingPower > 0.3)?true:false
                 })
             }
         }
@@ -184,6 +213,19 @@ export default class Proposal extends Component{
                                     </Result>
                                 </Col>
                             </Row>
+                            {this.state.voteStarted?<Row>
+                                <Col xs={12}>
+                                    <Progress multi>
+                                        <Progress bar animated color="success" value={this.state.yesPercent}>Yes {numeral(this.state.yesPercent).format("0.00")}%</Progress>
+                                        <Progress bar animated color="warning" value={this.state.abstainPercent}>Abstain {numeral(this.state.abstainPercent).format("0.00")}%</Progress>
+                                        <Progress bar animated color="danger" value={this.state.noPercent}>No {numeral(this.state.noPercent).format("0.00")}%</Progress>
+                                        <Progress bar animated color="info" value={this.state.noWithVetoPercent}>No With Veto {numeral(this.state.noWithVetoPercent).format("0.00")}%</Progress>
+                                    </Progress>
+                                </Col>
+                                <Col xs={12}>
+                                    <Card body className="tally-info"><em><span className="text-info">{numeral(this.state.totalVotes/this.props.chain.totalVotingPower).format("0.00%")}</span> of online voting power has been voted.<br/>{this.state.proposalValid?'This proposal is valid.':'It will be a valid proposal once '+numeral(this.props.chain.totalVotingPower*this.props.chain.gov.tallyParams.quorum-this.state.totalVotes).format("0,0")+' more votes are casted.'}</em></Card>
+                                </Col>
+                            </Row>:'Voting not started yet.'}
                         </Col>
                     </Row>
                     <Row className="mb-2 border-top border-secondary">
