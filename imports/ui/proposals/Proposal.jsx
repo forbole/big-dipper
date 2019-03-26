@@ -44,42 +44,47 @@ export default class Proposal extends Component{
             });
 
             let now = moment();
-            let endVotingTime = moment(this.props.proposal.value.voting_end_time);
-            if (now.diff(endVotingTime) < 0){
-                // not reach end voting time yet
-                let totalVotes = 0;
-                for (let i in this.props.proposal.tally){
-                    totalVotes += parseInt(this.props.proposal.tally[i]);
-                }
 
-                this.setState({
-                    tally: this.props.proposal.tally,
-                    tallyDate: moment.utc(this.props.proposal.updatedAt).format("D MMM YYYY, h:mm:ssa z"),
-                    voteStarted: true,
-                    totalVotes: totalVotes,
-                    yesPercent: parseInt(this.props.proposal.tally.yes)/totalVotes*100,
-                    abstainPercent: parseInt(this.props.proposal.tally.abstain)/totalVotes*100,
-                    noPercent: parseInt(this.props.proposal.tally.no)/totalVotes*100,
-                    noWithVetoPercent: parseInt(this.props.proposal.tally.no_with_veto)/totalVotes*100,
-                    proposalValid: (this.state.totalVotes/this.props.chain.totalVotingPower > 0.3)?true:false
-                })
-            }
-            else{
-                let totalVotes = 0;
-                for (let i in this.props.proposal.value.final_tally_result){
-                    totalVotes += parseInt(this.props.proposal.value.final_tally_result[i]);
+            if (now.diff(moment(this.props.proposal.value.voting_start_time)) > 0){
+                let endVotingTime = moment(this.props.proposal.value.voting_end_time);
+                if (now.diff(endVotingTime) < 0){
+                    // not reach end voting time yet
+                    let totalVotes = 0;
+                    for (let i in this.props.proposal.tally){
+                        totalVotes += parseInt(this.props.proposal.tally[i]);
+                    }
+    
+                    this.setState({
+                        tally: this.props.proposal.tally,
+                        tallyDate: moment.utc(this.props.proposal.updatedAt).format("D MMM YYYY, h:mm:ssa z"),
+                        voteStarted: true,
+                        voteEnded: false,
+                        totalVotes: totalVotes,
+                        yesPercent: parseInt(this.props.proposal.tally.yes)/totalVotes*100,
+                        abstainPercent: parseInt(this.props.proposal.tally.abstain)/totalVotes*100,
+                        noPercent: parseInt(this.props.proposal.tally.no)/totalVotes*100,
+                        noWithVetoPercent: parseInt(this.props.proposal.tally.no_with_veto)/totalVotes*100,
+                        proposalValid: (this.state.totalVotes/this.props.chain.totalVotingPower > parseFloat(this.props.chain.gov.tallyParams.quorum))?true:false
+                    })
                 }
-
-                this.setState({
-                    tally: this.props.proposal.value.final_tally_result,
-                    tallyDate: 'final',
-                    totalVotes: totalVotes,
-                    yesPercent: parseInt(this.props.proposal.value.final_tally_result.yes)/totalVotes*100,
-                    abstainPercent: parseInt(this.props.proposal.value.final_tally_result.abstain)/totalVotes*100,
-                    noPercent: parseInt(this.props.proposal.value.final_tally_result.no)/totalVotes*100,
-                    noWithVetoPercent: parseInt(this.props.proposal.value.final_tally_result.no_with_veto)/totalVotes*100,
-                    proposalValid: (this.state.totalVotes/this.props.chain.totalVotingPower > 0.3)?true:false
-                })
+                else{
+                    let totalVotes = 0;
+                    for (let i in this.props.proposal.value.final_tally_result){
+                        totalVotes += parseInt(this.props.proposal.value.final_tally_result[i]);
+                    }
+    
+                    this.setState({
+                        tally: this.props.proposal.value.final_tally_result,
+                        tallyDate: 'final',
+                        voteEnded: true,
+                        totalVotes: totalVotes,
+                        yesPercent: parseInt(this.props.proposal.value.final_tally_result.yes)/totalVotes*100,
+                        abstainPercent: parseInt(this.props.proposal.value.final_tally_result.abstain)/totalVotes*100,
+                        noPercent: parseInt(this.props.proposal.value.final_tally_result.no)/totalVotes*100,
+                        noWithVetoPercent: parseInt(this.props.proposal.value.final_tally_result.no_with_veto)/totalVotes*100,
+                        proposalValid: (this.state.totalVotes/this.props.chain.totalVotingPower > parseFloat(this.props.chain.gov.tallyParams.quorum))?true:false
+                    })
+                }
             }
         }
     }
@@ -223,7 +228,7 @@ export default class Proposal extends Component{
                                     </Progress>
                                 </Col>
                                 <Col xs={12}>
-                                    <Card body className="tally-info"><em><span className="text-info">{numeral(this.state.totalVotes/this.props.chain.totalVotingPower).format("0.00%")}</span> of online voting power has been voted.<br/>{this.state.proposalValid?<span className="text-success">This proposal is valid.</span>:<span>It will be a valid proposal once <span className="text-info">{numeral(this.props.chain.totalVotingPower*this.props.chain.gov.tallyParams.quorum-this.state.totalVotes).format("0,0")}</span> more votes are casted.</span>}</em></Card>
+                                    <Card body className="tally-info"><em><span className="text-info">{numeral(this.state.totalVotes/this.props.chain.totalVotingPower).format("0.00%")}</span> of online voting power has been voted.<br/>{this.state.proposalValid?<span className="text-success">This proposal is {(!this.state.voteEnded)?'(tentatively) ':''}valid.</span>:<span>It will be a valid proposal once <span className="text-info">{numeral(this.props.chain.totalVotingPower*this.props.chain.gov.tallyParams.quorum-this.state.totalVotes).format("0,0")}</span> more votes are casted.</span>}</em></Card>
                                 </Col>
                             </Row>:'Voting not started yet.'}
                         </Col>
