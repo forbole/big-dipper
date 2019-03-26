@@ -223,7 +223,7 @@ export default class Proposal extends Component{
                                     </Progress>
                                 </Col>
                                 <Col xs={12}>
-                                    <Card body className="tally-info"><em><span className="text-info">{numeral(this.state.totalVotes/this.props.chain.totalVotingPower).format("0.00%")}</span> of online voting power has been voted.<br/>{this.state.proposalValid?'This proposal is valid.':'It will be a valid proposal once '+numeral(this.props.chain.totalVotingPower*this.props.chain.gov.tallyParams.quorum-this.state.totalVotes).format("0,0")+' more votes are casted.'}</em></Card>
+                                    <Card body className="tally-info"><em><span className="text-info">{numeral(this.state.totalVotes/this.props.chain.totalVotingPower).format("0.00%")}</span> of online voting power has been voted.<br/>{this.state.proposalValid?<span className="text-success">This proposal is valid.</span>:<span>It will be a valid proposal once <span className="text-info">{numeral(this.props.chain.totalVotingPower*this.props.chain.gov.tallyParams.quorum-this.state.totalVotes).format("0,0")}</span> more votes are casted.</span>}</em></Card>
                                 </Col>
                             </Row>:'Voting not started yet.'}
                         </Col>
