@@ -2,6 +2,7 @@ import React, {Component } from 'react';
 import { MsgType } from './MsgType.jsx';
 import { Link } from 'react-router-dom';
 import numeral from 'numeral';
+import Account from '../components/Account.jsx';
 
 MultiSend = (props) => {
     return <div>
@@ -318,11 +319,18 @@ export default class Activites extends Component {
             
             // gov
             case "cosmos-sdk/MsgSubmitProposal":
-                return <MsgType type={msg.type} />
+                return <p><Account address={msg.value.proposer} /> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> with title <Link to={"/proposals/"+this.props.tags[2].value}>{msg.value.title}</Link>.</p>
             case "cosmos-sdk/MsgDeposit":
-                return <MsgType type={msg.type} />
+                return <p><Account address={msg.value.depositor} /> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-info">{msg.value.amount.map((amount,i) =>{
+                    if (i>0){
+                        return " ,"+numeral(amount.amount).format("0,0")+" "+amount.denom;
+                    }
+                    else{
+                        return numeral(amount.amount).format("0,0")+" "+amount.denom;
+                    }
+                })}</em> to <Link to={"/proposals/"+msg.value.proposal_id}>proposal {msg.value.proposal_id}</Link>.</p>
             case "cosmos-sdk/MsgVote":
-                return <MsgType type={msg.type} />
+                return <p><Account address={msg.value.voter} /> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} />  <Link to={"/proposals/"+msg.value.proposal_id}>proposal {msg.value.proposal_id}</Link> with a <em className="text-info">{msg.value.option}</em>.</p>
             
             // distribution
             case "cosmos-sdk/MsgWithdrawValidatorCommission":
@@ -330,7 +338,7 @@ export default class Activites extends Component {
             case "cosmos-sdk/MsgWithdrawDelegationReward":
                 return <p><span className="address">{this.state.delegator}</span> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> from <span className="address">{this.state.validator}</span>.</p>
             case "cosmos-sdk/MsgModifyWithdrawAddress":
-                return <MsgType type={msg.type} />
+                return <p><Account address={msg.value.delegator_address}/> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /></p>
     
             // slashing
             case "cosmos-sdk/MsgUnjail":

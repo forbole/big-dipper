@@ -12,7 +12,7 @@ const TransactionRow = (props) => {
     // console.log(tx);
     return <Row className={(tx.code)?"tx-info invalid":"tx-info"}>
         <Col xs={12} lg={7} className="activity">{(tx.tx.value.msg && tx.tx.value.msg.length >0)?tx.tx.value.msg.map((msg,i) => {
-            return <Card body key={i}><Activities msg={msg} invalid={(!!tx.code)}/></Card>
+            return <Card body key={i}><Activities msg={msg} invalid={(!!tx.code)} tags={tx.tags} /></Card>
         }):''}</Col>
         <Col xs={{size:6,order:"last"}} md={{size:3, order: "last"}} lg={{size:1,order:"last"}} className="text-truncate"><i className="fas fa-hashtag d-lg-none"></i> <Link to="#">{tx.txhash}</Link></Col>
         <Col xs={6} md={9} lg={{size:2,order:"last"}} className="text-nowrap"><i className="material-icons">schedule</i> <span>{tx.block()?<TimeAgo time={tx.block().time} />:''}</span></Col>

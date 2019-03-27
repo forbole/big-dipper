@@ -23,6 +23,6 @@ export default class Account extends Component{
     }
 
     render(){
-        return <div>{this.state.address}</div>
+        return <span>{this.state.address}</span>
     }
 }
