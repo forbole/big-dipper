@@ -25,7 +25,8 @@ export default class Validator extends Component{
         this.state = {
             identity: "",
             records: "",
-            history: ""
+            history: "",
+            updateTime: ""
         }
     }
 
@@ -36,6 +37,40 @@ export default class Validator extends Component{
                 // console.log(prevState.validator.description);
                 if (this.state.identity != this.props.validator.description.identity){
                     this.setState({identity:this.props.validator.description.identity});
+                }
+            }
+
+            if (this.props.validator.commission){
+                if (this.props.validator.commission.update_time == Meteor.settings.public.genesisTime){
+                    this.setState({
+                        updateTime: "Never changed"
+                    });
+                }
+                else{
+                    Meteor.call('Validators.findCreateValidatorTime', this.props.validator.delegator_address, (error, result) => {
+                        if (error){
+                            console.log(error);
+                        }
+                        else{
+                            if (result){
+                                if (result == this.props.validator.commission.update_time){
+                                    this.setState({
+                                        updateTime: "Never changed"
+                                    });
+                                }
+                                else{
+                                    this.setState({
+                                        updateTime: "Updated "+moment(this.props.validator.commission.update_time).fromNow()
+                                    });    
+                                }
+                            }
+                            else{
+                                this.setState({
+                                    updateTime: "Updated "+moment(this.props.validator.commission.update_time).fromNow()
+                                });
+                            }
+                        }
+                    });
                 }
             }
 
@@ -114,7 +149,7 @@ export default class Validator extends Component{
                                     <Col sm={4} className="label">Self-Delegate Address</Col>
                                     <Col sm={8} className="value address" data-delegator-address={this.props.validator.delegator_address}>{this.props.validator.delegator_address}</Col>
                                     <Col sm={4} className="label">Commission Rate</Col>
-                                    <Col sm={8} className="value">{this.props.validator.commission?numeral(this.props.validator.commission.rate*100).format('0.00')+"%":''}</Col>
+                                    <Col sm={8} className="value">{this.props.validator.commission?numeral(this.props.validator.commission.rate*100).format('0.00')+"%":''} <small className="text-secondary">({this.state.updateTime})</small></Col>
                                     <Col sm={4} className="label">Max Rate</Col>
                                     <Col sm={8} className="value">{this.props.validator.commission?numeral(this.props.validator.commission.max_rate*100).format('0.00')+"%":''}</Col>
                                     <Col sm={4} className="label">Max Change Rate</Col>
