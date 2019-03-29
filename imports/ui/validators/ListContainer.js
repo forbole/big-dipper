@@ -40,9 +40,9 @@ export default ValidatorListContainer = withTracker((props) => {
             options = {
                 sort:{
                     "description.moniker": props.monikerDir,
+                    "commission.rate": props.commissionDir,
                     uptime: props.uptimeDir,
                     voting_power: props.votingPowerDir,
-                    "commission.rate": props.commissionDir,
                     self_delegation: props.selfDelDir
                 }
             }
@@ -73,8 +73,8 @@ export default ValidatorListContainer = withTracker((props) => {
             options = {
                 sort:{
                     "commission.rate": props.commissionDir,
-                    voting_power: props.votingPowerDir,
                     "description.moniker": props.monikerDir,
+                    voting_power: props.votingPowerDir,
                     uptime: props.uptimeDir,
                     self_delegation: props.selfDelDir
                 }
