@@ -291,7 +291,7 @@ export default class Activites extends Component {
         let msg = this.props.msg;
         switch (msg.type){
             // bank
-            case "cosmos-sdk/Send":
+            case "cosmos-sdk/MsgSend":
                 let amount = '';
                 for (let a in msg.value.amount){
                     if (a > 0){
@@ -301,7 +301,7 @@ export default class Activites extends Component {
                         amount += numeral(msg.value.amount[a].amount).format("0,0")+" "+msg.value.amount[a].denom;
                     }
                 }
-                return <p>{this.state.from} {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-success">{amount}</em> to <span className="address">{this.state.to}</span>.</p>
+                return <p><Account address={msg.value.from_address} /> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-success">{amount}</em> to <span className="address"><Account address={msg.value.to_address} /></span>.</p>
             case "cosmos-sdk/MsgMultiSend":
                 return <MultiSend msg={msg} />
             

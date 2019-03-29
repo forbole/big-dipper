@@ -4,7 +4,7 @@ import { Badge } from 'reactstrap';
 export const MsgType = (props) => {
     switch (props.type){
         // bank
-        case "cosmos-sdk/Send":
+        case "cosmos-sdk/MsgSend":
             return <Badge color="success">Send</Badge>
         case "cosmos-sdk/MsgMultiSend":
             return <Badge color="success">Multi Send</Badge>
