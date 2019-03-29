@@ -13,7 +13,7 @@ export default class Validators extends Component{
             uptimeDir: -1,
             commissionDir: 1,
             selfDelDir: 1,
-            priority: 3
+            priority: 0
         }
     }
 
