@@ -1,4 +1,6 @@
 import bech32 from 'bech32'
+import { HTTP } from 'meteor/http';
+import * as cheerio from 'cheerio';
 
 // Load future from fibers
 var Future = Npm.require("fibers/future");
@@ -29,10 +31,13 @@ Meteor.methods({
     },
     getDelegator: function(operatorAddr){
         let address = bech32.decode(operatorAddr);
-        // let hex = toHexString(bech32.fromWords(address.words)).toUpperCase();
-        // // console.log(address);
-
-        // let words = bech32.toWords(Buffer.from('foobar', 'utf8'))
         return bech32.encode(Meteor.settings.public.bech32PrefixAccAddr, address.words);
+    },
+    getKeybaseTeamPic: function(keybaseUrl){
+        let teamPage = HTTP.get(keybaseUrl);
+        if (teamPage.statusCode == 200){
+            let page = cheerio.load(teamPage.content);
+            return page(".kb-main-card img").attr('src');
+        }
     }
 })

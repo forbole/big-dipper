@@ -2,6 +2,31 @@ import React, {Component } from 'react';
 import { MsgType } from './MsgType.jsx';
 import { Link } from 'react-router-dom';
 import numeral from 'numeral';
+import Account from '../components/Account.jsx';
+
+MultiSend = (props) => {
+    return <div>
+        <p>A <MsgType type={props.msg.type} /> happened.</p>
+        <p>The following sender(s)
+            <ul>
+               {props.msg.value.inputs.map((data,i) =>{
+                    return <li key={i}>{data.address} sent {data.coins.map((coin, j) =>{
+                            return <em key={j} className="text-success">{numeral(coin.amount).format("0,0")} {coin.denom}</em>
+                        })}
+                    </li>
+               })}
+            </ul>
+            to the following receipient(s)
+            <ul>
+               {props.msg.value.outputs.map((data,i) =>{
+                    return <li key={i}>{data.address} received {data.coins.map((coin,j) =>{
+                        return <em key={j} className="text-success">{numeral(coin.amount).format("0,0")} {coin.denom}</em>
+                    })}</li>
+               })}
+            </ul>
+        </p>
+    </div>
+}
 
 export default class Activites extends Component {
     constructor(props){
@@ -112,11 +137,11 @@ export default class Activites extends Component {
                     }
                     else {
                         this.setState({
-                            delegator: msg.value.delegator_addr
+                            delegator: msg.value.delegator_address
                         })
                     }
                 });
-                Meteor.call('Transactions.findUser', msg.value.validator_addr, (err, result) => {
+                Meteor.call('Transactions.findUser', msg.value.validator_address, (err, result) => {
                     if (err){
                         console.log(err);
                     }
@@ -127,7 +152,7 @@ export default class Activites extends Component {
                     }
                     else {
                         this.setState({
-                            validator: msg.value.validator_addr
+                            validator: msg.value.validator_address
                         })
                     }
                 });
@@ -144,11 +169,11 @@ export default class Activites extends Component {
                     }
                     else {
                         this.setState({
-                            delegator: msg.value.delegator_addr
+                            delegator: msg.value.delegator_address
                         })
                     }
                 });
-                Meteor.call('Transactions.findUser', msg.value.validator_src_addr, (err, result) => {
+                Meteor.call('Transactions.findUser', msg.value.validator_src_address, (err, result) => {
                     if (err){
                         console.log(err);
                     }
@@ -159,11 +184,11 @@ export default class Activites extends Component {
                     }
                     else {
                         this.setState({
-                            sourceValidator: msg.value.validator_src_addr
+                            sourceValidator: msg.value.validator_src_address
                         })
                     }
                 });
-                Meteor.call('Transactions.findUser', msg.value.validator_dst_addr, (err, result) => {
+                Meteor.call('Transactions.findUser', msg.value.validator_dst_address, (err, result) => {
                     if (err){
                         console.log(err);
                     }
@@ -174,7 +199,7 @@ export default class Activites extends Component {
                     }
                     else {
                         this.setState({
-                            validator: msg.value.validator_dst_addr
+                            validator: msg.value.validator_dst_address
                         })
                     }
                 });
@@ -192,7 +217,7 @@ export default class Activites extends Component {
                     }
                     else {
                         this.setState({
-                            validator: msg.value.validator_addr
+                            validator: msg.value.validator_address
                         })
                     }
                 });
@@ -209,11 +234,11 @@ export default class Activites extends Component {
                     }
                     else {
                         this.setState({
-                            validator: msg.value.validator_addr
+                            validator: msg.value.validator_address
                         })
                     }
                 });
-                Meteor.call('Transactions.findUser', msg.value.delegator_addr, (err, result) => {
+                Meteor.call('Transactions.findUser', msg.value.delegator_address, (err, result) => {
                     if (err){
                         console.log(err);
                     }
@@ -224,7 +249,7 @@ export default class Activites extends Component {
                     }
                     else {
                         this.setState({
-                            delegator: msg.value.delegator_addr
+                            delegator: msg.value.delegator_address
                         })
                     }
                 });

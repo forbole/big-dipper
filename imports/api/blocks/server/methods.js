@@ -5,7 +5,7 @@ import { Blockscon } from '/imports/api/blocks/blocks.js';
 import { Chain } from '/imports/api/chain/chain.js';
 import { ValidatorSets } from '/imports/api/validator-sets/validator-sets.js';
 import { Validators } from '/imports/api/validators/validators.js';
-import { ValidatorRecords, Analytics} from '/imports/api/records/records.js';
+import { ValidatorRecords, Analytics, VPDistributions} from '/imports/api/records/records.js';
 import { VotingPowerHistory } from '/imports/api/voting-power/history.js';
 import { Transactions } from '../../transactions/transactions.js';
 import { Evidences } from '../../evidences/evidences.js';
@@ -203,53 +203,62 @@ Meteor.methods({
                         // store valdiators exist records
                         let existingValidators = Validators.find({address:{$exists:true}}).fetch();
                         
-                        // record precommits and calculate uptime
-                        for (i in existingValidators){
-                            let record = {
-                                height: height,
-                                address: existingValidators[i].address,
-                                exists: false,
-                                voting_power: getValidatorVotingPower(validators.result.validators, existingValidators[i].address)
-                            }
+                        if (height > 1){
+                            // record precommits and calculate uptime
+                            // only record from block 2
+                            for (i in existingValidators){
+                                let record = {
+                                    height: height,
+                                    address: existingValidators[i].address,
+                                    exists: false,
+                                    voting_power: getValidatorVotingPower(validators.result.validators, existingValidators[i].address)
+                                }
 
-                            for (j in precommits){
-                                if (precommits[j] != null){
-                                    if (existingValidators[i].address == precommits[j].validator_address){
-                                        record.exists = true;
-                                        precommits.splice(j,1);                                        
-                                        break;
+                                for (j in precommits){
+                                    if (precommits[j] != null){
+                                        if (existingValidators[i].address == precommits[j].validator_address){
+                                            record.exists = true;
+                                            precommits.splice(j,1);                                        
+                                            break;
+                                        }
                                     }
                                 }
-                            }
 
-                            // calculate the uptime based on the records stored in previous blocks
-                            // only do this every 15 blocks ~
+                                // calculate the uptime based on the records stored in previous blocks
+                                // only do this every 15 blocks ~
 
-                            if ((height % 15) == 0){
-                                // let startAggTime = new Date();
-                                let numBlocks = Meteor.call('blocks.findUpTime', existingValidators[i].address);
-                                let uptime = 0;
-                                // let endAggTime = new Date();
-                                // console.log("Get aggregated uptime for "+existingValidators[i].address+": "+((endAggTime-startAggTime)/1000)+"seconds.");
-                                if ((numBlocks[0] != null) && (numBlocks[0].uptime != null)){
-                                    uptime = numBlocks[0].uptime;
-                                }
-                                if (record.exists){
-                                    if (uptime < Meteor.settings.public.uptimeWindow){
-                                        uptime++;                                           
+                                if ((height % 15) == 0){
+                                    // let startAggTime = new Date();
+                                    let numBlocks = Meteor.call('blocks.findUpTime', existingValidators[i].address);
+                                    let uptime = 0;
+                                    // let endAggTime = new Date();
+                                    // console.log("Get aggregated uptime for "+existingValidators[i].address+": "+((endAggTime-startAggTime)/1000)+"seconds.");
+                                    if ((numBlocks[0] != null) && (numBlocks[0].uptime != null)){
+                                        uptime = numBlocks[0].uptime;
                                     }
-                                    uptime = (uptime / Meteor.settings.public.uptimeWindow)*100;
-                                    bulkValidators.find({address:existingValidators[i].address}).updateOne({$set:{uptime:uptime, lastSeen:blockData.time}});
-                                }
-                                else{
-                                    uptime = (uptime / Meteor.settings.public.uptimeWindow)*100;
-                                    bulkValidators.find({address:existingValidators[i].address}).updateOne({$set:{uptime:uptime}});
-                                }
-                            }
 
-                            bulkValidatorRecords.insert(record);
-                            // ValidatorRecords.update({height:height,address:record.address},record);                            
-                        }                        
+                                    let base = Meteor.settings.public.uptimeWindow;
+                                    if (height < base){
+                                        base = height;
+                                    }
+                                    
+                                    if (record.exists){
+                                        if (uptime < base){
+                                            uptime++;                                           
+                                        }
+                                        uptime = (uptime / base)*100;
+                                        bulkValidators.find({address:existingValidators[i].address}).updateOne({$set:{uptime:uptime, lastSeen:blockData.time}});
+                                    }
+                                    else{
+                                        uptime = (uptime / base)*100;
+                                        bulkValidators.find({address:existingValidators[i].address}).updateOne({$set:{uptime:uptime}});
+                                    }
+                                }
+
+                                bulkValidatorRecords.insert(record);
+                                // ValidatorRecords.update({height:height,address:record.address},record);                            
+                            }                        
+                        }
 
                         let chainStatus = Chain.findOne({chainId:block.block_meta.header.chain_id});
                         let lastSyncedTime = chainStatus?chainStatus.lastSyncedTime:0;
@@ -316,6 +325,7 @@ Meteor.methods({
                                                 validator.delegator_address = Meteor.call('getDelegator', validatorSet[val].operator_address);
                                                 validator.jailed = validatorSet[val].jailed;
                                                 validator.status = validatorSet[val].status;
+                                                validator.min_self_delegation = validatorSet[val].min_self_delegation;
                                                 validator.tokens = validatorSet[val].tokens;
                                                 validator.delegator_shares = validatorSet[val].delegator_shares;
                                                 validator.description = validatorSet[val].description;
@@ -324,6 +334,7 @@ Meteor.methods({
                                                 validator.unbonding_height = validatorSet[val].unbonding_height;
                                                 validator.unbonding_time = validatorSet[val].unbonding_time;
                                                 validator.commission = validatorSet[val].commission;
+                                                validator.self_delegation = validator.delegator_shares;
                                                 // validator.removed = false,
                                                 // validator.removedAt = 0
                                                 validatorSet.splice(val, 1);
@@ -360,6 +371,25 @@ Meteor.methods({
                                             validator.unbonding_time = validatorSet[val].unbonding_time;
                                             validator.commission = validatorSet[val].commission;
                                             
+                                            // calculate self delegation percentage every 30 blocks
+
+                                            if (height % 30 == 1){
+                                                try{
+                                                    let response = HTTP.get(LCD + '/staking/delegators/'+valExist.delegator_address+'/delegations/'+valExist.operator_address);
+                                            
+                                                    if (response.statusCode == 200){
+                                                        let selfDelegation = JSON.parse(response.content);
+                                                        if (selfDelegation.shares){
+                                                            validator.self_delegation = parseFloat(selfDelegation.shares)/parseFloat(validator.delegator_shares);
+                                                        }
+                                                    }    
+                                                }
+                                                catch(e){
+                                                    // console.log(e);
+                                                }
+                                            }
+                                        
+
                                             bulkValidators.find({consensus_pubkey: valExist.consensus_pubkey}).updateOne({$set:validator});
                                             // console.log("validator exisits: "+bulkValidators.length);
                                             validatorSet.splice(val, 1);
@@ -414,7 +444,6 @@ Meteor.methods({
                             
                         }
 
-
                         let endFindValidatorsNameTime = new Date();
                         console.log("Get validators name time: "+((endFindValidatorsNameTime-startFindValidatorsNameTime)/1000)+"seconds.");
                     
@@ -423,7 +452,6 @@ Meteor.methods({
                         Analytics.insert(analyticsData);
                         let endAnalyticsInsertTime = new Date();
                         console.log("Analytics insert time: "+((endAnalyticsInsertTime-startAnayticsInsertTime)/1000)+"seconds.");
-
 
                         let startVUpTime = new Date();
                         if (bulkValidators.length > 0){
@@ -450,7 +478,6 @@ Meteor.methods({
                             });
                         }
                         
-
                         let endVRTime = new Date();
                         console.log("Validator records update time: "+((endVRTime-startVRTime)/1000)+"seconds.");
 
@@ -470,6 +497,61 @@ Meteor.methods({
                             });
                         }
                         
+                        // calculate voting power distribution every 60 blocks ~ 5mins
+
+                        if (height % 60 == 1){
+                            console.log("===== calculate voting power distribution =====");
+                            let activeValidators = Validators.find({status:2,jailed:false},{sort:{voting_power:-1}}).fetch();
+                            let numTopTwenty = Math.ceil(activeValidators.length*0.2);
+                            let numBottomEighty = activeValidators.length - numTopTwenty;
+
+                            let topTwentyPower = 0;
+                            let bottomEightyPower = 0;
+                            
+                            let numTopThirtyFour = 0;
+                            let numBottomSixtySix = 0;
+                            let topThirtyFourPercent = 0;
+                            let bottomSixtySixPercent = 0;
+
+
+
+                            for (v in activeValidators){
+                                if (v < numTopTwenty){
+                                    topTwentyPower += activeValidators[v].voting_power;
+                                }
+                                else{
+                                    bottomEightyPower += activeValidators[v].voting_power;
+                                }
+
+                                
+                                if (topThirtyFourPercent < 0.34){
+                                    topThirtyFourPercent += activeValidators[v].voting_power / analyticsData.voting_power;
+                                    numTopThirtyFour++;
+                                }
+                            }
+
+                            bottomSixtySixPercent = 1 - topThirtyFourPercent;
+                            numBottomSixtySix = activeValidators.length - numTopThirtyFour;
+
+                            let vpDist = {
+                                height: height,
+                                numTopTwenty: numTopTwenty,
+                                topTwentyPower: topTwentyPower,
+                                numBottomEighty: numBottomEighty,
+                                bottomEightyPower: bottomEightyPower,
+                                numTopThirtyFour: numTopThirtyFour,
+                                topThirtyFourPercent: topThirtyFourPercent,
+                                numBottomSixtySix: numBottomSixtySix,
+                                bottomSixtySixPercent: bottomSixtySixPercent,
+                                numValidators: activeValidators.length,                            
+                                totalVotingPower: analyticsData.voting_power,
+                                createAt: new Date()
+                            }
+
+                            console.log(vpDist);
+
+                            VPDistributions.insert(vpDist);
+                        }
                     }                    
                 }
                 catch (e){

@@ -9,25 +9,41 @@ export default ValidatorListContainer = withTracker((props) => {
     const chainHandle = Meteor.subscribe('chain.status');
     const loading = !validatorsHandle.ready() && !chainHandle.ready();
     let validatorsCond = {};
-    if (props.jailed != undefined){
+    // console.log(props);
+    if (props.jailed){
         validatorsCond = {
-            jailed:props.jailed
+            jailed:true
         }
     }
     else{
-        validatorsCond = {
-            jailed: false
+        if (props.status != undefined){
+            // unbonding
+            validatorsCond = {
+                jailed: false,
+                status: props.status
+            }
+        }
+        else{
+            // active 
+            validatorsCond = {
+                jailed: false,
+                status: 2
+            }
         }
     }
+
     let options = {};
+
+    // console.log(validatorsCond);
     switch(props.priority){
         case 0:
             options = {
                 sort:{
                     "description.moniker": props.monikerDir,
+                    "commission.rate": props.commissionDir,
                     uptime: props.uptimeDir,
                     voting_power: props.votingPowerDir,
-                    proposer_priority: props.proposerDir
+                    self_delegation: props.selfDelDir
                 }
             }
             break;
@@ -37,7 +53,8 @@ export default ValidatorListContainer = withTracker((props) => {
                     voting_power: props.votingPowerDir,
                     "description.moniker": props.monikerDir,
                     uptime: props.uptimeDir,
-                    proposer_priority: props.proposerDir
+                    "commission.rate": props.commissionDir,
+                    self_delegation: props.selfDelDir
                 }
             }
             break;
@@ -47,20 +64,34 @@ export default ValidatorListContainer = withTracker((props) => {
                     uptime: props.uptimeDir,
                     "description.moniker": props.monikerDir,
                     voting_power: props.votingPowerDir,
-                    proposer_priority: props.proposerDir
+                    "commission.rate": props.commissionDir,
+                    self_delegation: props.selfDelDir,
                 }
             }
             break;
         case 3:
             options = {
                 sort:{
-                    proposer_priority: props.proposerDir,
-                    voting_power: props.votingPowerDir,
+                    "commission.rate": props.commissionDir,
                     "description.moniker": props.monikerDir,
-                    uptime: props.uptimeDir
+                    voting_power: props.votingPowerDir,
+                    uptime: props.uptimeDir,
+                    self_delegation: props.selfDelDir
                 }
             }
             break;
+        case 4:
+            options = {
+                sort:{
+                    self_delegation: props.selfDelDir,
+                    "description.moniker": props.monikerDir,
+                    "commission.rate": props.commissionDir,
+                    voting_power: props.votingPowerDir,
+                    uptime: props.uptimeDir,
+                    
+                }
+            }
+            break;    
     }
     const validators = Validators.find(validatorsCond,options).fetch();
     const chainStatus = Chain.findOne({chainId:Meteor.settings.public.chainId});

@@ -8,5 +8,5 @@ Meteor.publish('proposals.list', function () {
 
 Meteor.publish('proposals.one', function (id){
     check(id, Number);
-    return Proposals.find({proposalId:id}, {fields:{_id:1, proposalId:1, value:1}});
+    return Proposals.find({proposalId:id});
 })

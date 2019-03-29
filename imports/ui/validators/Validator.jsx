@@ -2,11 +2,19 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import numeral from 'numeral';
 import moment from 'moment';
+import { Markdown } from 'react-showdown';
 import Block from '../components/Block.jsx';
 import Avatar from '../components/Avatar.jsx';
 import PowerHistory from '../components/PowerHistory.jsx';
 import { Badge, Container, Row, Col, Card, CardImg, CardText, CardBody, CardTitle, CardSubtitle } from 'reactstrap';
 import KeybaseCheck from '../components/KeybaseCheck.jsx';
+
+addhttp = (url) => {
+    if (!/^(f|ht)tps?:\/\//i.test(url)) {
+       url = "http://" + url;
+    }
+    return url;
+}
 
 const JailStatus = (props) =>{
     return <Badge color={props.jailed?'danger':'success'}>{props.jailed?'Jailed':'Active'}</Badge>
@@ -17,7 +25,8 @@ export default class Validator extends Component{
         this.state = {
             identity: "",
             records: "",
-            history: ""
+            history: "",
+            updateTime: ""
         }
     }
 
@@ -28,6 +37,40 @@ export default class Validator extends Component{
                 // console.log(prevState.validator.description);
                 if (this.state.identity != this.props.validator.description.identity){
                     this.setState({identity:this.props.validator.description.identity});
+                }
+            }
+
+            if (this.props.validator.commission){
+                if (this.props.validator.commission.update_time == Meteor.settings.public.genesisTime){
+                    this.setState({
+                        updateTime: "Never changed"
+                    });
+                }
+                else{
+                    Meteor.call('Validators.findCreateValidatorTime', this.props.validator.delegator_address, (error, result) => {
+                        if (error){
+                            console.log(error);
+                        }
+                        else{
+                            if (result){
+                                if (result == this.props.validator.commission.update_time){
+                                    this.setState({
+                                        updateTime: "Never changed"
+                                    });
+                                }
+                                else{
+                                    this.setState({
+                                        updateTime: "Updated "+moment(this.props.validator.commission.update_time).fromNow()
+                                    });    
+                                }
+                            }
+                            else{
+                                this.setState({
+                                    updateTime: "Updated "+moment(this.props.validator.commission.update_time).fromNow()
+                                });
+                            }
+                        }
+                    });
                 }
             }
 
@@ -71,6 +114,7 @@ export default class Validator extends Component{
                 let identity = (this.props.validator.description&&this.props.validator.description.identity)?this.props.validator.description.identity:"";
                 let website = (this.props.validator.description&&this.props.validator.description.website)?this.props.validator.description.website:undefined;
                 let details = (this.props.validator.description&&this.props.validator.description.details)?this.props.validator.description.details:"";
+
                 return <Row className="validator-details">
                     <Col xs={12}>
                         <Link to="/validators" className="btn btn-link"><i className="fas fa-caret-left"></i> Back to List</Link>
@@ -78,9 +122,9 @@ export default class Validator extends Component{
                     <Col md={4}>
                         <Card body className="text-center">
                             <div className="validator-avatar"><Avatar moniker={moniker} identity={identity} address={this.props.validator.address} list={false}/></div>
-                            <div className="moniker text-primary">{website?<a href={this.props.validator.description.website} target="_blank">{moniker} <i className="fas fa-link"></i></a>:moniker}</div>
+                            <div className="moniker text-primary">{website?<a href={addhttp(this.props.validator.description.website)} target="_blank">{moniker} <i className="fas fa-link"></i></a>:moniker}</div>
                             <div className="identity"><KeybaseCheck identity={identity} showKey /></div>
-                            <div className="details">{details}</div>
+                            <div className="details"><Markdown markup={ details } /></div>
                             <div className="website"></div>
                         </Card>
                         <Card>
@@ -100,12 +144,12 @@ export default class Validator extends Component{
                             <CardBody>
                                 <Row>
                                     <Col xs={12}><h3><JailStatus jailed={this.props.validator.jailed} /></h3></Col>
-                                    <Col sm={4} className="label">Address in Hex</Col>
-                                    <Col sm={8} className="value address" data-validator-address={this.props.validator.address}>{this.props.validator.address}</Col>
                                     <Col sm={4} className="label">Operator Address</Col>
                                     <Col sm={8} className="value address" data-operator-address={this.props.validator.operator_address}>{this.props.validator.operator_address}</Col>
+                                    <Col sm={4} className="label">Self-Delegate Address</Col>
+                                    <Col sm={8} className="value address" data-delegator-address={this.props.validator.delegator_address}>{this.props.validator.delegator_address}</Col>
                                     <Col sm={4} className="label">Commission Rate</Col>
-                                    <Col sm={8} className="value">{this.props.validator.commission?numeral(this.props.validator.commission.rate*100).format('0.00')+"%":''}</Col>
+                                    <Col sm={8} className="value">{this.props.validator.commission?numeral(this.props.validator.commission.rate*100).format('0.00')+"%":''} <small className="text-secondary">({this.state.updateTime})</small></Col>
                                     <Col sm={4} className="label">Max Rate</Col>
                                     <Col sm={8} className="value">{this.props.validator.commission?numeral(this.props.validator.commission.max_rate*100).format('0.00')+"%":''}</Col>
                                     <Col sm={4} className="label">Max Change Rate</Col>
@@ -117,7 +161,7 @@ export default class Validator extends Component{
                             <div className="card-header">Voting Power</div>
                             <CardBody className="voting-power-card">
                                 <Row>
-                                    <Col xs={12}><h1 className="display-4 voting-power"><Badge color="primary" >{numeral(this.props.validator.voting_power).format('0,0')}</Badge></h1><span>(~{numeral(this.props.validator.voting_power/this.props.chainStatus.totalVotingPower*100).format('0.00')}%)</span></Col>
+                                    <Col xs={12}><h1 className="display-4 voting-power"><Badge color="primary" >{numeral(this.props.validator.voting_power).format('0,0')}</Badge></h1><span>(~{numeral(this.props.validator.voting_power/this.props.chainStatus.activeVotingPower*100).format('0.00')}%)</span></Col>
                                     <Col sm={4} className="label">Bond Height</Col>
                                     <Col sm={8} className="value">{numeral(this.props.validator.bond_height).format('0,0')}</Col>
                                     <Col sm={4} className="label">Proposer Priority</Col>

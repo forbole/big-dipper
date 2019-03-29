@@ -89,6 +89,8 @@ div#main{
 img.moniker-avatar-list{
     height: 24px;
     margin-right: 5px;
+    /* box-shadow: rgba(0,0,0,0.8) 0px 0px 1px; */
+    border: 1px solid rgba(0,0,0,0.3);
 }
 
 div.validator-list div.header div:not(.status){
@@ -142,6 +144,8 @@ table td.voting-power{
     text-align:right;
 }
 
+.data.commission,
+.data.self-delegation,
 .voting-power:not(th){
     font-family: 'Inconsolata', monospace !important;
 }
@@ -265,6 +269,29 @@ div#countdown {
 .proposal .label, 
 .proposal .value {
     padding: 0.3em;
+    word-wrap: break-word;
+}
+
+.proposal .value .tally-result-value{
+    white-space: nowrap;
+}
+
+.proposal .tally-result-detail{
+    overflow: hidden;
+    width: 100%;
+}
+
+.proposal .tally-result-detail ol{
+    border-radius: 0.3em;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    background-color: #fff9fa;
+    white-space: nowrap;
+    overflow: auto;
+}
+
+.proposal .tally-info{
+    margin-top: 0.5em;
 }
 
 .proposal .label{
@@ -327,8 +354,19 @@ div.transactions-list div.tx-info .activity .card-body p{
     margin-bottom: 0;
 }
 
-div.transactions-list div.tx-info .badge{
+div.transactions-list div.tx-info .activity .card-body ul {
+    list-style: none;
+    padding-left: 1em;
+}
+
+/* div.transactions-list div.tx-info .badge{
     margin-right: 0.2rem;
+} */
+
+div.transactions-list .error .alert .badge {
+    white-space: inherit;
+    /* display: block; */
+    text-align: left;
 }
 
 div.transactions-list div.tx-info .badge:not(:last-child) {
@@ -391,6 +429,10 @@ div.transactions-list div.header{
     margin-top: 0.5em;
 }
 
+div#voting-power-dist .card{
+    margin-top: 0.5em;
+}
+
 @media only screen and (max-width: 768px){
     div#main{
         padding-bottom: 4.85rem;
@@ -407,7 +449,7 @@ div.transactions-list div.header{
     }
 
     .mobile-menu li{
-        width: 20%;
+        width: 16.66%;
     }
 
     .mobile-menu li a{
@@ -422,11 +464,11 @@ div.transactions-list div.header{
     div.validator-list div.validator-info div.data span.moniker{
         float: left;
         margin-left: 3px;
+        max-width:80%;
     }
 
     div.validator-list div.validator-info div.data.voting-power,
-    div.validator-list div.validator-info div.data.status,
-    div.validator-list div.validator-info div.data.uptime{
+    div.validator-list div.validator-info div.data.status{
         margin-top: -25px;
     }
 }
@@ -480,6 +522,10 @@ div.transactions-list div.header{
         margin-left:0;
         margin-right:0;
     }
+
+    .validator-info.row i.material-icons + span{
+        transform: inherit;
+    }
 }
 
 @media only screen and (max-width: 1023px){
@@ -507,6 +553,7 @@ div.transactions-list div.header{
 }
 
 @media only screen and (min-width: 1024px){
+    .validator-info.row i.material-icons + span,
     .tx-info .fee i.material-icons + span {
         transform: inherit;
     }
