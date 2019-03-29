@@ -37,7 +37,7 @@ export const MsgType = (props) => {
         
         // distribution
         case "irishub/distr/MsgWithdrawDelegationRewardsAll":
-            return <Badge color="secondary">Withdraw All Rewards</Badge>;
+            return <Badge color="secondary">Withdraw All Delegation Rewards</Badge>;
         case "irishub/distr/MsgWithdrawDelegationReward":
             return <Badge color="secondary">Withdraw Rewards</Badge>;
         case "irishub/distr/MsgWithdrawValidatorRewardsAll":

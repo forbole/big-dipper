@@ -204,7 +204,9 @@ export default class Activites extends Component {
                     }
                 });
                 break;
-
+            
+            case "irishub/distr/MsgWithdrawDelegationRewardsAll":
+                break;
             case "irishub/distr/MsgWithdrawValidatorRewardsAll":
                 Meteor.call('Transactions.findUser', msg.value.validator_addr, (err, result) => {
                     if (err){
@@ -324,12 +326,14 @@ export default class Activites extends Component {
                 return <MsgType type={msg.type} />
             
             // distribution
+            case "irishub/distr/MsgWithdrawDelegationRewardsAll":
+                return <p><Account address={msg.value.delegator_addr} /> <MsgType type={msg.type} />.</p>
             case "irishub/distr/MsgWithdrawValidatorRewardsAll":
                 return <p><span className="address">{this.state.validator}</span> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} />.</p>
             case "irishub/distr/MsgWithdrawDelegationReward":
                 return <p><span className="address">{this.state.delegator}</span> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> from <span className="address">{this.state.validator}</span>.</p>
             case "irishub/distr/MsgModifyWithdrawAddress":
-                return <MsgType type={msg.type} />
+                return <p><Account address={msg.value.delegator_addr} /><MsgType type={msg.type} /> to {msg.value.withdraw_addr}.</p>
     
             // slashing
             case "irishub/slashing/MsgUnjail":
