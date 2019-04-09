@@ -287,7 +287,7 @@ export default class Activites extends Component {
     }
 
     render(){
-        // console.log(this.props);
+        console.log(this.props);
         let msg = this.props.msg;
         switch (msg.type){
             // bank
@@ -311,7 +311,7 @@ export default class Activites extends Component {
             case "cosmos-sdk/MsgEditValidator":
                 return <p>{this.state.validator} {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /></p>
             case "cosmos-sdk/MsgDelegate":
-                return <p><span className="address">{this.state.delegator}</span> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-warning">{numeral(msg.value.value.amount).format("0,0")} {msg.value.value.denom}</em> to <span className="address">{this.state.validator}</span>.</p>
+                return <p><span className="address">{this.state.delegator}</span> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-warning">{numeral(msg.value.amount).format("0,0")} {msg.value.denom}</em> to <span className="address">{this.state.validator}</span>.</p>
             case "cosmos-sdk/MsgUndelegate":
                 return <p><span className="address">{this.state.delegator}</span> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-warning">{numeral(msg.value.shares_amount).format("0,0")} shares</em> from <span className="address">{this.state.validator}</span>.</p>
             case "cosmos-sdk/MsgBeginRedelegate":
