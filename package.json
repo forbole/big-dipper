@@ -13,6 +13,7 @@
     "fibers": "^3.0.0",
     "jquery": "^3.3.1",
     "js-sha256": "^0.9.0",
+    "ledger-cosmos-js": "git+https://github.com/cosmos/ledger-cosmos-js.git",
     "meteor-node-stubs": "^0.4.1",
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.21",

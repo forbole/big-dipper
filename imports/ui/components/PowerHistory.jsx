@@ -40,8 +40,8 @@ export default class PowerHistory extends React.Component {
                                     </Col>
                                     <Col xs={12}>
                                         <Row>
-                                            <Col xs={4}>Shares</Col>
-                                            <Col xs={8}>{numeral(m.value.shares_amount).format('0,0.00')}</Col>
+                                            <Col xs={4}>Amount</Col>
+                                            <Col xs={8}>{numeral(m.value.amount.amount).format('0,0')} {m.value.amount.denom}</Col>
                                         </Row>
                                     </Col>
                                 </Row>
@@ -90,8 +90,8 @@ export default class PowerHistory extends React.Component {
                                     </Col>
                                     <Col xs={12}>
                                         <Row>
-                                            <Col xs={4}>Shares</Col>
-                                            <Col xs={8}>{numeral(m.value.shares_amount).format('0,0.00')}</Col>
+                                            <Col xs={4}>Amount</Col>
+                                            <Col xs={8}>{numeral(m.value.amount.amount).format('0,0')} {m.value.amount.denom}</Col>
                                         </Row>
                                     </Col>
                                 </Row>
