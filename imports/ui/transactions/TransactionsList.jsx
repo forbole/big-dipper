@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import List from './ListContainer.js';
 import { LoadMore } from '../components/LoadMore.jsx';
 import { Meteor } from 'meteor/meteor';
+import { Route, Switch, Link } from 'react-router-dom';
+import Transaction from './TransactionContainer.js';
+import Sidebar from "react-sidebar";
 
 export default class Transactions extends Component{
     constructor(props){
@@ -52,6 +55,9 @@ export default class Transactions extends Component{
         return <div id="transactions">
             <h1 className="d-none d-lg-block">Transactions</h1>
             <List limit={this.state.limit} />
+            <Switch>
+                <Route path="/transactions/:txId" render={(props)=> <Transaction {...props} />} />
+            </Switch>
             <LoadMore show={this.state.loadmore} />
         </div>
     }
