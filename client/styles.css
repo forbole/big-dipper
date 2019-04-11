@@ -81,9 +81,17 @@ a.navbar-brand .logo {
     line-height: 1;
 }
 
-div#main{
+div#main, div#transaction{
     padding-top: 6rem;
     padding-bottom: 3.85rem;
+}
+
+div#transaction .card.card-body{
+    overflow-x: auto;
+}
+
+div#transaction .card.card-body p {
+    margin-bottom: 0;
 }
 
 img.moniker-avatar-list{
@@ -251,7 +259,7 @@ div#countdown {
     text-overflow: ellipsis;
 }
 
-#home .card{
+#home .card, #transaction .card{
     margin: 0.75em 0;
 }
 
@@ -363,7 +371,7 @@ div.transactions-list div.tx-info .activity .card-body ul {
     margin-right: 0.2rem;
 } */
 
-div.transactions-list .error .alert .badge {
+.error .alert .badge {
     white-space: inherit;
     /* display: block; */
     text-align: left;
@@ -434,7 +442,7 @@ div#voting-power-dist .card{
 }
 
 @media only screen and (max-width: 768px){
-    div#main{
+    div#main, div#transaction{
         padding-bottom: 4.85rem;
     }
 
@@ -532,7 +540,7 @@ div#voting-power-dist .card{
         padding: 0 1rem;
     }
 
-    div#main {
+    div#main, div#transaction {
         padding-top: 3.5rem;
         /* padding-bottom: 4.8rem; */
     }
