@@ -19,7 +19,7 @@ export default class Transaction extends Component{
         }
         else{
             if (this.props.transactionExist){
-                console.log(this.props.transaction);
+                // console.log(this.props.transaction);
                 let tx = this.props.transaction;
                 return <Container id="transaction">
                     <h4>Transaction {(!tx.code)?<TxIcon valid />:<TxIcon />}</h4>

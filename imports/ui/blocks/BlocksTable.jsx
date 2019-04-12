@@ -1,18 +1,22 @@
 import React, { Component } from 'react';
 import { Meteor } from 'meteor/meteor';
-import { Table, Badge, Button, Container } from 'reactstrap';
+import { Container } from 'reactstrap';
 import HeaderRecord from './HeaderRecord.jsx';
 import Blocks from '/imports/ui/blocks/ListContainer.js'
 import { LoadMore } from '../components/LoadMore.jsx';
+import { Route, Switch } from 'react-router-dom';
+import Sidebar from "react-sidebar";
+import Block from './BlockContainer.js';
 
-class BlocksTable extends Component {
+export default class BlocksTable extends Component {
     constructor(props){
         super(props);
         this.state = {
             limit: Meteor.settings.public.initialPageSize,
+            sidebarOpen: (props.location.pathname.split("/blocks/").length == 2)
         };
 
-        // this.updateLimit.bind(this);
+        this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
     }
 
     isBottom(el) {
@@ -46,10 +50,42 @@ class BlocksTable extends Component {
         }
     };
 
+    componentDidUpdate(prevProps){
+        if (this.props.location.pathname != prevProps.location.pathname){
+            this.setState({
+                sidebarOpen: (this.props.location.pathname.split("/blocks/").length == 2)
+            })
+        }
+    }
+
+    onSetSidebarOpen(open) {
+        // console.log(open);
+        this.setState({ sidebarOpen: open }, (error, result) =>{
+            let timer = Meteor.setTimeout(() => {
+                if (!open){
+                    this.props.history.push('/blocks');
+                }
+                Meteor.clearTimeout(timer);
+            },500)
+        }); 
+    }
+
     render(){
         return <div>
             <h1 className="d-none d-lg-block">Lastest blocks</h1>
-            <Container fluid id="block-table">
+                <Switch>
+                    <Route path="/blocks/:blockId" render={(props)=> <Sidebar 
+                        sidebar={<Block {...props} />}
+                        open={this.state.sidebarOpen}
+                        onSetOpen={this.onSetSidebarOpen}
+                        styles={{ sidebar: { 
+                            background: "white", 
+                            position: "fixed",
+                            width: '85%'
+                        } }}
+                    >
+                    </Sidebar>} />
+                </Switch>            <Container fluid id="block-table">
                 <HeaderRecord />
                 <Blocks limit={this.state.limit} />
             </Container>
@@ -57,5 +93,3 @@ class BlocksTable extends Component {
         </div>
     }
 }
-
-export default BlocksTable;

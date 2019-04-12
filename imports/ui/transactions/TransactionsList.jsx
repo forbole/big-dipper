@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import List from './ListContainer.js';
 import { LoadMore } from '../components/LoadMore.jsx';
 import { Meteor } from 'meteor/meteor';
-import { Route, Switch, Link } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import Transaction from './TransactionContainer.js';
 import Sidebar from "react-sidebar";
 
@@ -81,7 +81,7 @@ export default class Transactions extends Component{
             <h1 className="d-none d-lg-block">Transactions</h1>
             <Switch>
                 <Route path="/transactions/:txId" render={(props)=> <Sidebar 
-                    sidebar=<Transaction {...props} />
+                    sidebar={<Transaction {...props} />}
                     open={this.state.sidebarOpen}
                     onSetOpen={this.onSetSidebarOpen}
                     styles={{ sidebar: { 

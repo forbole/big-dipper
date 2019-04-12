@@ -36,7 +36,7 @@ a.navbar-brand .logo {
     line-height: 1;
 }
 
-div#main, div#transaction{
+div#main, div#transaction, div#block{
     padding-top: 6rem;
     padding-bottom: 3.85rem;
 }
@@ -111,22 +111,6 @@ table td.voting-power{
 .data.self-delegation,
 .voting-power:not(th){
     font-family: monospace !important;
-}
-
-table#block-table th.height{
-    width: 15%;
-}
-
-table#block-table th.hash{
-    max-width: 35%;
-}
-
-table#block-table th.no-of-txs{
-    width: 20%;
-}
-
-table#block-table th.time{
-    width: 30%;
 }
 
 table.random-validators th.moniker{
@@ -210,7 +194,7 @@ div#countdown {
     text-overflow: ellipsis;
 }
 
-#home .card, #transaction .card{
+#home .card, #transaction .card, #block .card{
     margin: 0.75em 0;
 }
 
@@ -396,7 +380,7 @@ div#voting-power-dist .card{
 }
 
 @media only screen and (max-width: 767px){
-    div#main, div#transaction{
+    div#main, div#transaction, div#block{
         padding-bottom: 4.85rem;
     }
 
@@ -494,7 +478,7 @@ div#voting-power-dist .card{
         padding: 0 1rem;
     }
 
-    div#main, div#transaction {
+    div#main, div#transaction, div#block {
         padding-top: 3.5rem;
         /* padding-bottom: 4.8rem; */
     }
