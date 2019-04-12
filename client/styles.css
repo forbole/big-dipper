@@ -18,7 +18,7 @@ body {
 
 i.material-icons + span {
     transform: translateY(-7px);
-    display: inline-block;
+    display: inline-block !important;
 }
 
 div#loadmore {
@@ -177,10 +177,6 @@ table.proposal-list th.status{
     width: 15%;
 }
 
-
-th i.material-icons{
-    vertical-align: middle;
-}
 .status .value{
     display: block;
     font-weight: 100;
@@ -289,6 +285,7 @@ div#countdown {
     transform: translateY(-5px);
 }
 
+div#block-table div.block-info,
 div.transactions-list div.tx-info{
     padding-top: 0.4rem;
     padding-bottom: 0.4rem;
@@ -299,6 +296,7 @@ div.transactions-list div.tx-info{
     background-color: rgba(237, 20, 61, 0.2) !important;
 }
 
+div#block-table div.block-info:nth-child(2n),
 div.transactions-list div.tx-info:nth-child(2n){
     background-color: rgba(0,0,0,0.05);
 }
@@ -336,6 +334,7 @@ div.transactions-list div.tx-info .badge:not(:last-child) {
     margin-bottom: 0.2rem;
 }
 
+div#block-table div.header,
 div.transactions-list div.header{
     padding-top: 0.3rem;
     border-top: 1px solid #dee2e6;

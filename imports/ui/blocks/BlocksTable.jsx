@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Meteor } from 'meteor/meteor';
-import { Table, Badge, Button } from 'reactstrap';
+import { Table, Badge, Button, Container } from 'reactstrap';
 import HeaderRecord from './HeaderRecord.jsx';
 import Blocks from '/imports/ui/blocks/ListContainer.js'
 import { LoadMore } from '../components/LoadMore.jsx';
@@ -28,7 +28,7 @@ class BlocksTable extends Component {
     }
     
     trackScrolling = () => {
-        const wrappedElement = document.getElementById('blocks');
+        const wrappedElement = document.getElementById('block-table');
         if (this.isBottom(wrappedElement)) {
             // console.log('header bottom reached');
             document.removeEventListener('scroll', this.trackScrolling);
@@ -49,11 +49,10 @@ class BlocksTable extends Component {
     render(){
         return <div>
             <h1 className="d-none d-lg-block">Lastest blocks</h1>
-            <Table id="block-table" striped>
+            <Container fluid id="block-table">
                 <HeaderRecord />
-                <tbody id="blocks"><Blocks limit={this.state.limit} /></tbody>
-                
-            </Table>
+                <Blocks limit={this.state.limit} />
+            </Container>
             <LoadMore show={this.state.loadmore} />
             {/* <Button color="primary" onClick={this.updateLimit}>Load more</Button>{' '} */}
             {/* <div id="loading" className="loader"></div> */}

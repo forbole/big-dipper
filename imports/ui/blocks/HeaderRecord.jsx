@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Row, Col } from 'reactstrap';
 
 class HeaderRecord extends Component {
     constructor(props) {
@@ -6,15 +7,13 @@ class HeaderRecord extends Component {
     }
     render() {
         return(
-            <thead>
-                <tr>
-                    <th className="height"><i className="fas fa-database"></i> <span className="d-none d-sm-inline">Height</span></th>
-                    <th className="hash"><i className="fas fa-hashtag"></i> <span className="d-none d-sm-inline">Hash</span></th>
-                    <th className="proposer"><i className="material-icons">perm_contact_calendar</i> <span className="d-none d-sm-inline">Proposer</span></th>
-                    <th className="no-of-txs"><i className="fas fa-sync"></i> <span className="d-none d-sm-inline">No. of Txs</span></th>
-                    <th className="time"><i className="far fa-clock"></i> <span className="d-none d-sm-inline">Time (UTC)</span></th>
-                </tr>
-            </thead>
+            <Row className="header text-nowrap d-none d-sm-flex">                
+                <Col sm={2}><i className="fas fa-database"></i> <span className="d-none d-md-inline">Height</span></Col>
+                <Col sm={2}><i className="fas fa-hashtag"></i> <span className="d-none d-md-inline">Hash</span></Col>
+                <Col sm={3} md={2} lg={3}><i className="material-icons">perm_contact_calendar</i> <span className="d-none d-md-inline">Proposer</span></Col>
+                <Col sm={1} md={2}><i className="fas fa-sync"></i> <span className="d-none d-md-inline">No. of Txs</span></Col>
+                <Col sm={4} lg={3}><i className="far fa-clock"></i> <span className="d-none d-md-inline">Time (UTC)</span></Col>
+            </Row>
         );
     }
 }
