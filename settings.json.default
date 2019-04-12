@@ -19,7 +19,8 @@
         "lcd":"https://gaia-seeds.interblock.io:1317"
     },
     "debug": {
-        "startTimer": true
+        "startTimer": true,
+        "readGenesis": true
     },
     "bin":{
         "gaiacli": "/path/to/gaiacli",
