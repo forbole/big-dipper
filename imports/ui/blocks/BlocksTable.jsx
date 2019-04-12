@@ -54,8 +54,6 @@ class BlocksTable extends Component {
                 <Blocks limit={this.state.limit} />
             </Container>
             <LoadMore show={this.state.loadmore} />
-            {/* <Button color="primary" onClick={this.updateLimit}>Load more</Button>{' '} */}
-            {/* <div id="loading" className="loader"></div> */}
         </div>
     }
 }
