@@ -1,17 +1,16 @@
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
-import { BlockScan } from '/imports/api/blocks/blocks.js';
+import { Blockscon } from '/imports/api/blocks/blocks.js';
 import Block from './Block.jsx';
 
 export default BlockContainer = withTracker((props) => {
-    // console.log(props);
-    // const transactionsHandle = Meteor.subscribe('transactions.findOne', props.match.params.txId);
-    // const loading = !transactionsHandle.ready();
-    // const transaction = Transactions.findOne({txhash: props.match.params.txId});
-    // const transactionExist = !loading && !!transaction;
+    const blockHandle = Meteor.subscribe('blocks.findOne', parseInt(props.match.params.blockId));
+    const loading = !blockHandle.ready();
+    const block = Blockscon.findOne({height: parseInt(props.match.params.blockId)});
+    const blockExist = !loading && !!block;
     return {
-        // loading,
-        // transactionExist,
-        // transaction: transactionExist ? transaction : {},
+        loading,
+        blockExist,
+        block: blockExist ? block : {},
     };
 })(Block);
