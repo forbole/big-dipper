@@ -13,7 +13,9 @@ export default class Transaction extends Component{
 
     render(){
         if (this.props.loading){
-            return <div>Loading...</div>
+            return <Container id="transaction">
+                <div>Loading...</div>
+            </Container>
         }
         else{
             if (this.props.transactionExist){
