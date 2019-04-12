@@ -1,27 +1,3 @@
-@font-face {
-    font-family: 'averta-thin';
-    src: url('/fonts/averta_thin-webfont.woff2') format('woff2'),
-         url('/fonts/averta_thin-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'averta';
-    src: url('/fonts/averta-webfont.woff2') format('woff2'),
-         url('/fonts/averta-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'averta-bold';
-    src: url('/fonts/averta_bold-webfont.woff2') format('woff2'),
-         url('/fonts/averta_bold-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-
 body {
     font-size: inherit !important;
 }
@@ -52,11 +28,6 @@ div#loadmore {
 a.navbar-brand .logo {
     max-height: 40px;
     max-width: 40px;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
 }
 
 #footer{
@@ -139,7 +110,7 @@ table td.voting-power{
 .data.commission,
 .data.self-delegation,
 .voting-power:not(th){
-    font-family: 'Inconsolata', monospace !important;
+    font-family: monospace !important;
 }
 
 table#block-table th.height{
@@ -212,7 +183,7 @@ th i.material-icons{
 }
 .status .value{
     display: block;
-    font-family: "averta-thin", sans-serif;
+    font-weight: 100;
     -webkit-transition: all 2s ease-out;
     -moz-transition: all 2s ease-out;
     -o-transition: all 2s ease-out;
