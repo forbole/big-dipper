@@ -395,7 +395,7 @@ div#voting-power-dist .card{
     margin-top: 0.5em;
 }
 
-@media only screen and (max-width: 768px){
+@media only screen and (max-width: 767px){
     div#main, div#transaction{
         padding-bottom: 4.85rem;
     }
