@@ -1,27 +1,3 @@
-@font-face {
-    font-family: 'averta-thin';
-    src: url('/fonts/averta_thin-webfont.woff2') format('woff2'),
-         url('/fonts/averta_thin-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'averta';
-    src: url('/fonts/averta-webfont.woff2') format('woff2'),
-         url('/fonts/averta-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'averta-bold';
-    src: url('/fonts/averta_bold-webfont.woff2') format('woff2'),
-         url('/fonts/averta_bold-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-
 body {
     font-size: inherit !important;
 }
@@ -45,34 +21,13 @@ i.material-icons + span {
     display: inline-block;
 }
 
-div#loading {
-    display: none;
-    border: 8px solid #f3f3f3; /* Light grey */
-    border-top: 8px solid #bd081c; /* Forbole Red */
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 2s linear infinite;
+div#loadmore {
     margin: 0.5rem auto;
-    /* align-self: center; */
-    /* position: fixed; */
-    /* z-index: 9999; */
-    /* top: 35%;
-    left: 45%; */
-}
-
-div#loading.show{
-    display: block;
 }
 
 a.navbar-brand .logo {
     max-height: 40px;
     max-width: 40px;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
 }
 
 #footer{
@@ -81,9 +36,17 @@ a.navbar-brand .logo {
     line-height: 1;
 }
 
-div#main{
+div#main, div#transaction{
     padding-top: 6rem;
     padding-bottom: 3.85rem;
+}
+
+div#transaction .card.card-body{
+    overflow-x: auto;
+}
+
+div#transaction .card.card-body p {
+    margin-bottom: 0;
 }
 
 img.moniker-avatar-list{
@@ -147,7 +110,7 @@ table td.voting-power{
 .data.commission,
 .data.self-delegation,
 .voting-power:not(th){
-    font-family: 'Inconsolata', monospace !important;
+    font-family: monospace !important;
 }
 
 table#block-table th.height{
@@ -220,7 +183,7 @@ th i.material-icons{
 }
 .status .value{
     display: block;
-    font-family: "averta-thin", sans-serif;
+    font-weight: 100;
     -webkit-transition: all 2s ease-out;
     -moz-transition: all 2s ease-out;
     -o-transition: all 2s ease-out;
@@ -251,7 +214,7 @@ div#countdown {
     text-overflow: ellipsis;
 }
 
-#home .card{
+#home .card, #transaction .card{
     margin: 0.75em 0;
 }
 
@@ -363,7 +326,7 @@ div.transactions-list div.tx-info .activity .card-body ul {
     margin-right: 0.2rem;
 } */
 
-div.transactions-list .error .alert .badge {
+.error .alert .badge {
     white-space: inherit;
     /* display: block; */
     text-align: left;
@@ -434,7 +397,7 @@ div#voting-power-dist .card{
 }
 
 @media only screen and (max-width: 768px){
-    div#main{
+    div#main, div#transaction{
         padding-bottom: 4.85rem;
     }
 
@@ -532,7 +495,7 @@ div#voting-power-dist .card{
         padding: 0 1rem;
     }
 
-    div#main {
+    div#main, div#transaction {
         padding-top: 3.5rem;
         /* padding-bottom: 4.8rem; */
     }

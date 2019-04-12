@@ -1,6 +1,6 @@
 import React from 'react';
 import { Row, Col, Card, CardImg, CardText, CardBody,
-    CardTitle, CardSubtitle, Button } from 'reactstrap';
+    CardTitle, CardSubtitle, Button, Spinner } from 'reactstrap';
 import moment from 'moment';
 import numeral from 'numeral';
 
@@ -11,7 +11,7 @@ export default class ChainStatus extends React.Component {
 
     render(){
         if (this.props.loading){
-            return <div>loading</div>
+            return <Spinner type="grow" color="primary" />
         }
         else {
             if (this.props.statusExist && this.props.status.prevotes){

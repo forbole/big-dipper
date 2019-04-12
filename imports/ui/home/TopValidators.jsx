@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Table, Row, Col, Card, CardImg, CardText, CardBody,
-    CardTitle, CardSubtitle, Button, Progress } from 'reactstrap';
+    CardTitle, CardSubtitle, Button, Progress, Spinner } from 'reactstrap';
 import numeral from 'numeral';
 import Avatar from '../components/Avatar.jsx';
 
@@ -53,7 +53,7 @@ export default class TopValidators extends Component{
 
     render(){
         if (this.props.loading){
-            return <div>Loading</div>
+            return <Spinner type="grow" color="primary" />
         }
         else{
             if (this.props.validatorsExist && this.props.status.prevotes){

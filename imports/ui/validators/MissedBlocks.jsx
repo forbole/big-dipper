@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Table, Badge, Row, Col, Nav, NavItem, NavLink } from 'reactstrap';
+import { Table, Badge, Row, Col, Nav, NavItem, NavLink, Spinner } from 'reactstrap';
 import moment from 'moment';
 import { Meteor } from 'meteor/meteor';
 
@@ -41,7 +41,7 @@ export default class MissedBlocks extends Component{
 
     render() {
         if (this.props.loading){
-            return <div>Loading</div>
+            return <Spinner type="grow" color="primary" />
         }
         else{
             if (this.props.validatorExist){

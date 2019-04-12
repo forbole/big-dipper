@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Progress } from 'reactstrap';
+import { Table, Progress, Spinner } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 import numeral from 'numeral';
@@ -38,7 +38,7 @@ export default class FirstSeenList extends Component{
 
     render(){
         if (this.props.loading){
-            return <div>Loading</div>
+            return <Spinner type="grow" color="primary" />
         }
         else{
             return (

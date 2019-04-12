@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Badge, Progress, Row, Col, Card, CardBody } from 'reactstrap';
+import { Badge, Progress, Row, Col, Card, CardBody, Spinner } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 import { Meteor } from 'meteor/meteor';
@@ -57,7 +57,7 @@ export default class List extends Component{
 
     render(){
         if (this.props.loading){
-            return <div>Loading</div>
+            return <Spinner type="grow" color="primary" />
         }
         else{
             // console.log(this.props);

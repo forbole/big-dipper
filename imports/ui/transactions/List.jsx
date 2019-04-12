@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Row, Col, Card, Alert } from 'reactstrap';
+import { Row, Col, Card, Alert, Spinner } from 'reactstrap';
 import { TxIcon } from '../components/Icons.jsx';
 import Activities from '../components/Activities.jsx';
 import CosmosErrors from '../components/CosmosErrors.jsx';
@@ -14,7 +14,7 @@ const TransactionRow = (props) => {
         <Col xs={12} lg={7} className="activity">{(tx.tx.value.msg && tx.tx.value.msg.length >0)?tx.tx.value.msg.map((msg,i) => {
             return <Card body key={i}><Activities msg={msg} invalid={(!!tx.code)} tags={tx.tags} /></Card>
         }):''}</Col>
-        <Col xs={{size:6,order:"last"}} md={{size:3, order: "last"}} lg={{size:1,order:"last"}} className="text-truncate"><i className="fas fa-hashtag d-lg-none"></i> <Link to="#">{tx.txhash}</Link></Col>
+        <Col xs={{size:6,order:"last"}} md={{size:3, order: "last"}} lg={{size:1,order:"last"}} className="text-truncate"><i className="fas fa-hashtag d-lg-none"></i> <Link to={"/transactions/"+tx.txhash}>{tx.txhash}</Link></Col>
         <Col xs={6} md={9} lg={{size:2,order:"last"}} className="text-nowrap"><i className="material-icons">schedule</i> <span>{tx.block()?<TimeAgo time={tx.block().time} />:''}</span></Col>
         <Col xs={4} md={2} lg={1}><i className="fas fa-database d-lg-none"></i> <Link to="#">{numeral(tx.height).format(0,0)}</Link></Col>
         <Col xs={2} md={1}>{(!tx.code)?<TxIcon valid />:<TxIcon />}</Col>
@@ -60,7 +60,7 @@ export default class Transactions extends Component{
 
     render(){
         if (this.props.loading){
-            return <div>Loading...</div>;
+            return <Spinner type="grow" color="primary" />
         }
         else if (!this.props.transactionsExist){
             return <div>No transaction found.</div>

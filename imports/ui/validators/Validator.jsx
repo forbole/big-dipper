@@ -6,7 +6,7 @@ import { Markdown } from 'react-showdown';
 import Block from '../components/Block.jsx';
 import Avatar from '../components/Avatar.jsx';
 import PowerHistory from '../components/PowerHistory.jsx';
-import { Badge, Container, Row, Col, Card, CardImg, CardText, CardBody, CardTitle, CardSubtitle } from 'reactstrap';
+import { Badge, Container, Row, Col, Card, CardImg, CardText, CardBody, CardTitle, CardSubtitle, Spinner } from 'reactstrap';
 import KeybaseCheck from '../components/KeybaseCheck.jsx';
 
 addhttp = (url) => {
@@ -106,7 +106,7 @@ export default class Validator extends Component{
 
     render() {
         if (this.props.loading){
-            return <div>Loading</div>
+            return <Spinner type="grow" color="primary" />
         }
         else{
             if (this.props.validatorExist){
