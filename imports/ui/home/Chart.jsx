@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {Line} from 'react-chartjs-2';
 import { Row, Col, Card, CardImg, CardText, CardBody,
-    CardTitle, CardSubtitle, Button, Progress } from 'reactstrap';
+    CardTitle, CardSubtitle, Button, Progress, Spinner } from 'reactstrap';
 import moment from 'moment';
 
 export default class Chart extends Component{
@@ -180,7 +180,7 @@ export default class Chart extends Component{
 
     render(){
         if (this.props.loading){
-            return <div>Loading</div>
+            return <Spinner type="grow" color="primary" />
         }
         else{
             if (this.props.historyExist && (this.props.history.length > 0)){

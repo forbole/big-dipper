@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { Row, Col, Progress, Card } from 'reactstrap';
+import { Row, Col, Progress, Card, Spinner } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { ProposalStatusIcon, VoteIcon } from '../components/Icons';
 import Account from '../components/Account.jsx';
@@ -99,7 +99,7 @@ export default class Proposal extends Component{
 
     render(){
         if (this.props.loading){
-            return <div>Loading</div>
+            return <Spinner type="grow" color="primary" />
         }
         else{
             return <div>

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 // another small block render
 import Block from './block.js';
+import { Spinner } from 'reactstrap';
 export default class Blocks extends Component {
     constructor(props) {
         super(props);
@@ -24,7 +25,7 @@ export default class Blocks extends Component {
         if (this.props.loading) {
             return (
                 <tr>
-                    <th>Loading...</th>
+                    <th><Spinner type="grow" color="primary" /></th>
                 </tr>
             )
         }

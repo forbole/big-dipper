@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Row, Col, Card, CardImg, CardText, CardBody,
-    CardTitle, CardSubtitle, Button, Progress } from 'reactstrap';
+    CardTitle, CardSubtitle, Button, Progress, Spinner } from 'reactstrap';
 import Avatar from '../components/Avatar.jsx';
 import CountDown from '../components/CountDown.jsx';
 import moment from 'moment';
@@ -38,7 +38,7 @@ export default class Consensus extends Component{
 
     render(){
         if (this.props.loading){
-            return <div>Loading</div>
+            return <Spinner type="grow" color="primary" />
         }
         else{
             if (this.props.consensusExist && this.props.consensus.prevotes){

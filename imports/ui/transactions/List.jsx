@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Row, Col, Card, Alert } from 'reactstrap';
+import { Row, Col, Card, Alert, Spinner } from 'reactstrap';
 import { TxIcon } from '../components/Icons.jsx';
 import Activities from '../components/Activities.jsx';
 import CosmosErrors from '../components/CosmosErrors.jsx';
@@ -60,7 +60,7 @@ export default class Transactions extends Component{
 
     render(){
         if (this.props.loading){
-            return <div>Loading...</div>;
+            return <Spinner type="grow" color="primary" />
         }
         else if (!this.props.transactionsExist){
             return <div>No transaction found.</div>

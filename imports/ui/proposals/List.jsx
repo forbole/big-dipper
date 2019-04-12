@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { Table } from 'reactstrap';
+import { Table, Spinner } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { DenomSymbol, ProposalStatusIcon } from '../components/Icons.jsx';
 import numeral from 'numeral';
@@ -40,7 +40,7 @@ export default class List extends Component{
 
     render(){
         if (this.props.loading){
-            return <div>Loading</div>
+            return <Spinner type="grow" color="primary" />
         }
         else{
             return (

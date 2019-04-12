@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Row, Col, Card, CardBody, Alert } from 'reactstrap';
+import { Container, Row, Col, Card, CardBody, Alert, Spinner } from 'reactstrap';
 import { TxIcon } from '../components/Icons.jsx';
 import Activities from '../components/Activities.jsx';
 import CosmosErrors from '../components/CosmosErrors.jsx';
@@ -14,7 +14,7 @@ export default class Transaction extends Component{
     render(){
         if (this.props.loading){
             return <Container id="transaction">
-                <div>Loading...</div>
+                <Spinner type="grow" color="primary" />
             </Container>
         }
         else{

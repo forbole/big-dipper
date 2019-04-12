@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {HorizontalBar} from 'react-chartjs-2';
 import { Row, Col, Card, CardImg, CardText, CardBody,
-    CardTitle, CardSubtitle, Button, Progress } from 'reactstrap';
+    CardTitle, CardSubtitle, Button, Progress, Spinner } from 'reactstrap';
 import numeral from 'numeral';
 
 export default class VotingPower extends Component{
@@ -66,7 +66,7 @@ export default class VotingPower extends Component{
 
     render(){
         if (this.props.loading){
-            return <div>Loading</div>
+            return <Spinner type="grow" color="primary" />
         }
         else{
             if (this.props.statsExist && this.props.stats){
