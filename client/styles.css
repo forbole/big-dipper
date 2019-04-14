@@ -82,9 +82,9 @@ div.validator-list div.header div.last-seen span.d-md-none{
     transform: translateY(-1px);;
 }
 
-div.validator-list div.header .voting-power{
+/* div.validator-list div.header .voting-power{
     font-family: inherit !important;
-}
+} */
 
 table#block-table, 
 table.random-validators, 
@@ -107,11 +107,11 @@ table td.voting-power{
     text-align:right;
 }
 
-.data.commission,
+/* .data.commission,
 .data.self-delegation,
 .voting-power:not(th){
     font-family: monospace !important;
-}
+} */
 
 table.random-validators th.moniker{
     width: 35%;
