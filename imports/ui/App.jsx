@@ -52,7 +52,7 @@ class App extends Component {
                             <Route path="/validators/jailed" render={(props) => <Validators {...props} jailed={true} />} />
                             <Route path="/validators/firstseen" component={ValidatorFirstSeen} />
                             <Route path="/voting-power-distribution" component={Distribution} />
-                            <Route path="/validator" component={ValidatorDetails} />
+                            <Route path="/(validator|validators)" component={ValidatorDetails} />
                             <Route path="/proposals" component={Proposals} />
                             <Route component={NotFound} />
                         </Switch>
