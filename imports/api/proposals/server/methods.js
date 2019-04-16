@@ -19,24 +19,29 @@ Meteor.methods({
                 const bulkProposals = Proposals.rawCollection().initializeUnorderedBulkOp();
                 for (let i in proposals){
                     let proposal = proposals[i];
-                    proposal.proposalId = parseInt(proposal.value.proposal_id);
-                    let url = LCD + '/gov/proposals/'+proposal.proposalId+'/proposer';
-                    let response = HTTP.get(url);
-                    if (response.statusCode == 200){
-                        let proposer = JSON.parse(response.content);
-                        if (proposer.proposal_id && (proposer.proposal_id == proposal.value.proposal_id)){
-                            proposal.proposer = proposer.proposer;
-                        }
-                    }                    
-                    bulkProposals.find({proposalId: proposal.proposalId}).upsert().updateOne({$set:proposal});
-                    proposalIds.push(proposal.proposalId);
+                    proposal.proposalId = parseInt(proposal.proposal_id);
+                    try{
+                        let url = LCD + '/gov/proposals/'+proposal.proposalId+'/proposer';
+                        let response = HTTP.get(url);
+                        if (response.statusCode == 200){
+                            let proposer = JSON.parse(response.content);
+                            if (proposer.proposal_id && (proposer.proposal_id == proposal.proposal_id)){
+                                proposal.proposer = proposer.proposer;
+                            }
+                        }                    
+                        bulkProposals.find({proposalId: proposal.proposalId}).upsert().updateOne({$set:proposal});
+                        proposalIds.push(proposal.proposalId);    
+                    }
+                    catch(e){
+                        console.log(e);
+                    }
                 }
                 bulkProposals.find({proposalId:{$nin:proposalIds}}).update({$set:{"value.proposal_status":"Removed"}});
                 bulkProposals.execute();
             }
         }
         catch (e){
-
+            console.log(e);
         }
     },
     'proposals.getProposalResults': function(){

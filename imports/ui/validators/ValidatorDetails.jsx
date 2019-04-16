@@ -15,14 +15,12 @@ export default class ValidatorDetails extends Component{
             <Row>
                 <Col md={12}>
                     <Switch>
-                        <Route path="/validator/:address/missed/blocks" render={(props) => <MissedBlocks {...props} type='voter' />} />
-                        <Route path="/validator/:address/missed/precommits" render={(props) => <MissedBlocks {...props} type='proposer' />} />
-                        <Route exact path="/validator/:address" render={(props) => <Validator address={props.match.params.address} />} />
+                        <Route path="/(validator|validators)/:address/missed/blocks" render={(props) => <MissedBlocks {...props} type='voter' />} />
+                        <Route path="/(validator|validators)/:address/missed/precommits" render={(props) => <MissedBlocks {...props} type='proposer' />} />
+                        <Route exact path="/(validator|validators)/:address" render={(props) => <Validator address={props.match.params.address} />} />
                     </Switch>
                 </Col>
             </Row>    
-                    
-                
         </div>
     }
 
