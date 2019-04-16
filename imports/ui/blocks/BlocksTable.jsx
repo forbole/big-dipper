@@ -72,7 +72,7 @@ export default class BlocksTable extends Component {
 
     render(){
         return <div>
-            <h1 className="d-none d-lg-block">Lastest blocks</h1>
+            <h1 className="d-none d-lg-block">Latest blocks</h1>
                 <Switch>
                     <Route path="/blocks/:blockId" render={(props)=> <Sidebar 
                         sidebar={<Block {...props} />}
