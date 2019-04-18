@@ -38,3 +38,21 @@ publishComposite('transactions.findOne', function(hash){
         ]        
     }
 })
+
+publishComposite('transactions.height', function(height){
+    return {
+        find(){
+            return Transactions.find({height:height})
+        },
+        children: [
+            {
+                find(tx){
+                    return Blockscon.find(
+                        {height:tx.height},
+                        {fields:{time:1, height:1}}
+                    )
+                }
+            }
+        ]        
+    }
+})

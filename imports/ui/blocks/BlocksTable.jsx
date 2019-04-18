@@ -73,19 +73,20 @@ export default class BlocksTable extends Component {
     render(){
         return <div>
             <h1 className="d-none d-lg-block">Latest blocks</h1>
-                <Switch>
-                    <Route path="/blocks/:blockId" render={(props)=> <Sidebar 
-                        sidebar={<Block {...props} />}
-                        open={this.state.sidebarOpen}
-                        onSetOpen={this.onSetSidebarOpen}
-                        styles={{ sidebar: { 
-                            background: "white", 
-                            position: "fixed",
-                            width: '85%'
-                        } }}
-                    >
-                    </Sidebar>} />
-                </Switch>            <Container fluid id="block-table">
+            <Switch>
+                <Route path="/blocks/:blockId" render={(props)=> <Sidebar 
+                    sidebar={<Block {...props} />}
+                    open={this.state.sidebarOpen}
+                    onSetOpen={this.onSetSidebarOpen}
+                    styles={{ sidebar: { 
+                        background: "white", 
+                        position: "fixed",
+                        width: '85%'
+                    } }}
+                >
+                </Sidebar>} />
+            </Switch>
+            <Container fluid id="block-table">
                 <HeaderRecord />
                 <Blocks limit={this.state.limit} />
             </Container>

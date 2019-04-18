@@ -379,6 +379,22 @@ div#voting-power-dist .card{
     margin-top: 0.5em;
 }
 
+#block ul.tx-types{
+    height: 3.5em;
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+#block ul.tx-types li {
+    display: inline-block;
+    margin: 0 0.75em 0.5em 0 !important;
+}
+
+#block ul.tx-types .nav-link{
+    cursor: pointer;
+}
+
 @media only screen and (max-width: 767px){
     div#main, div#transaction, div#block{
         padding-bottom: 4.85rem;
@@ -416,6 +432,10 @@ div#voting-power-dist .card{
     div.validator-list div.validator-info div.data.voting-power,
     div.validator-list div.validator-info div.data.status{
         margin-top: -25px;
+    }
+
+    #block ul.tx-types .nav-link{
+        padding: 0.5em 0;
     }
 }
 

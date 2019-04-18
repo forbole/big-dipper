@@ -16,7 +16,7 @@ export default class Blocks extends Component {
                 let blocks = this.props.blocks.map((block) => (<Block key={block.height} hash={block.hash} block={block}/>));
                 this.setState(
                     {blocks: blocks}
-                )            
+                )
             }
         }
     }

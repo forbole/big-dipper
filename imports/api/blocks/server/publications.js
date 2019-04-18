@@ -3,10 +3,6 @@ import { Blockscon } from '../blocks.js';
 import { Validators } from '../../validators/validators.js';
 import { Transactions } from '../../transactions/transactions.js';
 
-// Meteor.publish('blocks.height', function (limit) {
-//     return Blockscon.find({}, {limit: limit, sort: {height: -1}});
-// });
-
 publishComposite('blocks.height', function(limit){
     return {
         find(){
@@ -37,19 +33,15 @@ publishComposite('blocks.findOne', function(height){
                         {height:block.height}
                     )
                 }
+            },
+            {
+                find(block){
+                    return Validators.find(
+                        {address:block.proposerAddress},
+                        {limit:1}
+                    )
+                }
             }
         ]
     }
 });
-
-// Meteor.publish('blocks.hash', function () {
-//     return Blockscon.find();
-// })
-
-// Meteor.publish('blocks.dataall', function () {
-//     return Blockscon.find();
-// })
-
-// Meteor.publish('blocks.datalimit', function (limit) {
-//     return Blockscon.find({},{sorted: {height: -1}, limit: limit});
-// })
