@@ -19,7 +19,20 @@ export default class VotingPower extends Component{
 
             let labels = [];
             let data = [];
+            let totalVotingPower = 0;
+            let accumulatePower = [];
             let backgroundColors = [];
+            
+            for (let i in this.props.stats){
+                totalVotingPower += this.props.stats[i].voting_power;
+                if (i > 0){
+                    accumulatePower[i] = accumulatePower[i-1] + this.props.stats[i].voting_power;
+                }
+                else{
+                    accumulatePower[i] = this.props.stats[i].voting_power;
+                }
+            }
+
             for (let v in this.props.stats){
                 labels.push(this.props.stats[v].description.moniker);
                 data.push(this.props.stats[v].voting_power);
@@ -41,7 +54,7 @@ export default class VotingPower extends Component{
                     tooltips: {
                         callbacks: {
                             label: function(tooltipItem, data) {
-                                return numeral(data.datasets[0].data[tooltipItem.index]).format("0,00");
+                                return numeral(data.datasets[0].data[tooltipItem.index]).format("0,0")+" ("+(numeral(data.datasets[0].data[tooltipItem.index]/totalVotingPower).format("0.00%")+", "+numeral(accumulatePower[tooltipItem.index]/totalVotingPower).format("0.00%"))+")";
                             }
                         }
                     },
