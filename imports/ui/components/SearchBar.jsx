@@ -39,14 +39,10 @@ export default class SearchBar extends Component {
     }
 
     handleMobileSearch = (e) => {
-        // console.log(this.state.queryString);
         this.redirectSearchResult(this.state.queryString);
         this.setState({
             queryString: ""
         })
-        // console.log($("#queryString"));
-        // redirectSearchResult(e.target.value);
-        // e.target.value = "";
     }
 
     handleSearch = (e) => {
