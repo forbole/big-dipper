@@ -19,7 +19,6 @@
     "moment-timezone": "^0.5.23",
     "numeral": "^2.0.6",
     "prop-types": "^15.7.2",
-    "raven-js": "^3.27.0",
     "react": "^16.8.6",
     "react-chartjs-2": "^2.7.6",
     "react-dom": "^16.8.6",

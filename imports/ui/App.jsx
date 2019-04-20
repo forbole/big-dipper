@@ -14,6 +14,7 @@ import ValidatorDetails from '/imports/ui/validators/ValidatorDetails.jsx';
 import Transactions from '/imports/ui/transactions/TransactionsList.jsx';
 import Distribution from '/imports/ui/voting-power/Distribution.jsx';
 import moment from 'moment';
+import SentryBoundary from '/imports/ui/components/SentryBoundary.jsx';
 import NotFound from '/imports/ui/pages/NotFound.jsx';
 
 import { ToastContainer, toast } from 'react-toastify';
@@ -43,19 +44,21 @@ class App extends Component {
                     <Header />
                     <Container fluid id="main">
                         <ToastContainer />
-                        <Switch>
-                            <Route exact path="/" component={Home} />
-                            <Route path="/blocks" component={BlocksTable} />
-                            <Route path="/transactions" component={Transactions} />
-                            <Route path="/validators" exact component={Validators} />
-                            <Route path="/validators/unbonding" render={(props) => <Validators {...props} jailed={false} status={1} />} />
-                            <Route path="/validators/jailed" render={(props) => <Validators {...props} jailed={true} />} />
-                            <Route path="/validators/firstseen" component={ValidatorFirstSeen} />
-                            <Route path="/voting-power-distribution" component={Distribution} />
-                            <Route path="/(validator|validators)" component={ValidatorDetails} />
-                            <Route path="/proposals" component={Proposals} />
-                            <Route component={NotFound} />
-                        </Switch>
+                        <SentryBoundary>
+                            <Switch>
+                                <Route exact path="/" component={Home} />
+                                <Route path="/blocks" component={BlocksTable} />
+                                <Route path="/transactions" component={Transactions} />
+                                <Route path="/validators" exact component={Validators} />
+                                <Route path="/validators/unbonding" render={(props) => <Validators {...props} jailed={false} status={1} />} />
+                                <Route path="/validators/jailed" render={(props) => <Validators {...props} jailed={true} />} />
+                                <Route path="/validators/firstseen" component={ValidatorFirstSeen} />
+                                <Route path="/voting-power-distribution" component={Distribution} />
+                                <Route path="/(validator|validators)" component={ValidatorDetails} />
+                                <Route path="/proposals" component={Proposals} />
+                                <Route component={NotFound} />
+                            </Switch>
+                        </SentryBoundary>
                     </Container>
                     <Footer />
                 </div>
