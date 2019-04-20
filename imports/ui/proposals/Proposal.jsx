@@ -60,10 +60,10 @@ export default class Proposal extends Component{
                             voteStarted: true,
                             voteEnded: false,
                             totalVotes: totalVotes,
-                            yesPercent: parseInt(this.props.proposal.tally.yes)/totalVotes*100,
-                            abstainPercent: parseInt(this.props.proposal.tally.abstain)/totalVotes*100,
-                            noPercent: parseInt(this.props.proposal.tally.no)/totalVotes*100,
-                            noWithVetoPercent: parseInt(this.props.proposal.tally.no_with_veto)/totalVotes*100,
+                            yesPercent: (totalVotes>0)?parseInt(this.props.proposal.tally.yes)/totalVotes*100:0,
+                            abstainPercent: (totalVotes>0)?parseInt(this.props.proposal.tally.abstain)/totalVotes*100:0,
+                            noPercent: (totalVotes>0)?parseInt(this.props.proposal.tally.no)/totalVotes*100:0,
+                            noWithVetoPercent: (totalVotes>0)?parseInt(this.props.proposal.tally.no_with_veto)/totalVotes*100:0,
                             proposalValid: (this.state.totalVotes/this.props.chain.totalVotingPower > parseFloat(this.props.chain.gov.tallyParams.quorum))?true:false
                         })
                     }
@@ -79,10 +79,10 @@ export default class Proposal extends Component{
                             voteStarted: true,
                             voteEnded: true,
                             totalVotes: totalVotes,
-                            yesPercent: parseInt(this.props.proposal.final_tally_result.yes)/totalVotes*100,
-                            abstainPercent: parseInt(this.props.proposal.final_tally_result.abstain)/totalVotes*100,
-                            noPercent: parseInt(this.props.proposal.final_tally_result.no)/totalVotes*100,
-                            noWithVetoPercent: parseInt(this.props.proposal.final_tally_result.no_with_veto)/totalVotes*100,
+                            yesPercent: (totalVotes>0)?parseInt(this.props.proposal.final_tally_result.yes)/totalVotes*100:0,
+                            abstainPercent: (totalVotes>0)?parseInt(this.props.proposal.final_tally_result.abstain)/totalVotes*100:0,
+                            noPercent: (totalVotes>0)?parseInt(this.props.proposal.final_tally_result.no)/totalVotes*100:0,
+                            noWithVetoPercent: (totalVotes>0)?parseInt(this.props.proposal.final_tally_result.no_with_veto)/totalVotes*100:0,
                             proposalValid: (this.state.totalVotes/this.props.chain.totalVotingPower > parseFloat(this.props.chain.gov.tallyParams.quorum))?true:false
                         })
                     }

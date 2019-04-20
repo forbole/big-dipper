@@ -205,6 +205,10 @@ div#countdown {
     border: 1px solid #ddd !important;
 }
 
+.tally-result .progress-bar {
+    height: 4em;
+}
+
 .proposal{
     padding: 1em;
     margin-bottom: 1em;
@@ -224,6 +228,7 @@ div#countdown {
     overflow: hidden;
     width: 100%;
 }
+
 
 .proposal .tally-result-detail ol{
     border-radius: 0.3em;
@@ -270,8 +275,8 @@ div#countdown {
     transform: translateY(-5px);
 }
 
-div#block-table div.block-info,
-div.transactions-list div.tx-info{
+div.block-info,
+div.tx-info{
     padding-top: 0.4rem;
     padding-bottom: 0.4rem;
     border-bottom: 1px solid #dee2e6;
@@ -279,6 +284,10 @@ div.transactions-list div.tx-info{
 
 .tx-info.invalid {
     background-color: rgba(237, 20, 61, 0.2) !important;
+}
+
+.error .alert-danger {
+    margin-bottom: 0;
 }
 
 div#block-table div.block-info:nth-child(2n),
