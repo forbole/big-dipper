@@ -128,7 +128,8 @@ export default class Block extends Component{
                                                 return <TransactionRow 
                                                     key={i} 
                                                     index={i} 
-                                                    tx={tx} 
+                                                    tx={tx}
+                                                    blockList 
                                                 />
                                             }):''}
                                         </Col>
@@ -142,6 +143,7 @@ export default class Block extends Component{
                                                     key={i} 
                                                     index={i} 
                                                     tx={tx} 
+                                                    blockList
                                                 />
                                             }):''}
                                         </Col>
@@ -155,6 +157,7 @@ export default class Block extends Component{
                                                     key={i} 
                                                     index={i} 
                                                     tx={tx} 
+                                                    blockList
                                                 />
                                             }):''}
                                         </Col>
@@ -168,6 +171,7 @@ export default class Block extends Component{
                                                     key={i} 
                                                     index={i} 
                                                     tx={tx} 
+                                                    blockList
                                                 />
                                             }):''}
                                         </Col>
@@ -181,6 +185,7 @@ export default class Block extends Component{
                                                     key={i} 
                                                     index={i} 
                                                     tx={tx} 
+                                                    blockList
                                                 />
                                             }):''}
                                         </Col>
