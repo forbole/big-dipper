@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react'; 
 import GoogleTagManager from '/imports/ui/components/GoogleTagManager.jsx';
-import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch, withRouter } from 'react-router-dom'
 import { Container } from 'reactstrap';
 import Header from '/imports/ui/components/Header.jsx';
 import Footer from '/imports/ui/components/Footer.jsx';
@@ -22,6 +22,7 @@ import 'react-toastify/dist/ReactToastify.min.css';
 
 // import './App.js'
 
+const RouteHeader = withRouter( ({history}) => <Header history={history}/>)
 
 class App extends Component {
     constructor(props){
@@ -41,7 +42,7 @@ class App extends Component {
             <Router>
                 <div>
                     {(Meteor.settings.public.gtm)?<GoogleTagManager gtmId={Meteor.settings.public.gtm} />:''}
-                    <Header />
+                    <RouteHeader />
                     <Container fluid id="main">
                         <ToastContainer />
                         <SentryBoundary>
