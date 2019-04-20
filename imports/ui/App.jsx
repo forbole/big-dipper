@@ -13,6 +13,7 @@ import Proposals from '/imports/ui/proposals/Proposals.jsx';
 import ValidatorDetails from '/imports/ui/validators/ValidatorDetails.jsx';
 import Transactions from '/imports/ui/transactions/TransactionsList.jsx';
 import Distribution from '/imports/ui/voting-power/Distribution.jsx';
+import SearchBar from '/imports/ui/components/SearchBar.jsx';
 import moment from 'moment';
 import SentryBoundary from '/imports/ui/components/SentryBoundary.jsx';
 import NotFound from '/imports/ui/pages/NotFound.jsx';
@@ -23,6 +24,7 @@ import 'react-toastify/dist/ReactToastify.min.css';
 // import './App.js'
 
 const RouteHeader = withRouter( ({history}) => <Header history={history}/>)
+const MobileSearchBar = withRouter( ({history}) => <SearchBar history={history} id="mobile-searchbar" mobile />)
 
 class App extends Component {
     constructor(props){
@@ -46,6 +48,7 @@ class App extends Component {
                     <Container fluid id="main">
                         <ToastContainer />
                         <SentryBoundary>
+                            <MobileSearchBar />
                             <Switch>
                                 <Route exact path="/" component={Home} />
                                 <Route path="/blocks" component={BlocksTable} />

@@ -35,9 +35,14 @@ a.navbar-brand .logo {
     margin-right: 0.5rem;
 }
 
-#header-search .form-control{
+#header-search .form-control,
+#mobile-searchbar .form-control{
     height: auto;
     padding: 0.5rem 0;
+}
+
+#mobile-searchbar {
+    margin-bottom: 0.5em;
 }
 
 #footer{
