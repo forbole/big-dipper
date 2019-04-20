@@ -541,6 +541,7 @@ Meteor.methods({
                                 bottomSixtySixPercent: bottomSixtySixPercent,
                                 numValidators: activeValidators.length,                            
                                 totalVotingPower: analyticsData.voting_power,
+                                blockTime: blockData.time,
                                 createAt: new Date()
                             }
 
