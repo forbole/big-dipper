@@ -8,6 +8,10 @@ import {
   Nav,
   NavItem,
   NavLink,
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  Button,
   UncontrolledDropdown,
   DropdownToggle,
   DropdownMenu,
@@ -31,13 +35,23 @@ export default class Header extends React.Component {
       console.log(this.state.isOpen);
     });
   }
+
+  handleSearch = (e) => {
+    if (e.key === 'Enter') {
+      // console.log(e.target.value);
+    }
+  }
+
   render() {
     return (
-        <Navbar color="primary" dark expand="md" fixed="top">
-          <NavbarBrand tag={Link} to="/"><img src="/img/big-dipper.svg" className="img-fluid logo"/> <span className="d-none d-lg-inline-block">The Big Dipper&nbsp;</span><Badge color="secondary">beta</Badge> <Badge color="primary">{Meteor.settings.public.chainId}</Badge></NavbarBrand>
+        <Navbar color="primary" dark expand="lg" fixed="top">
+          <NavbarBrand tag={Link} to="/"><img src="/img/big-dipper.svg" className="img-fluid logo"/> <span className="d-none d-xl-inline-block">The Big Dipper&nbsp;</span><Badge color="secondary">beta</Badge> <Badge color="primary">{Meteor.settings.public.chainId}</Badge></NavbarBrand>
+          <InputGroup className="d-none d-lg-flex" id="header-search">
+              <Input placeholder="Search tx / block / address" onKeyDown={this.handleSearch}/>
+          </InputGroup>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
-            <Nav className="ml-auto" navbar>
+            <Nav className="ml-auto text-nowrap" navbar>
               {/* <UncontrolledDropdown nav inNavbar>
                 <DropdownToggle nav caret>
                   Validators

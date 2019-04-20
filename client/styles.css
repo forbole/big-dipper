@@ -30,6 +30,16 @@ a.navbar-brand .logo {
     max-width: 40px;
 }
 
+#header-search{
+    margin-left: 2rem;
+    margin-right: 0.5rem;
+}
+
+#header-search .form-control{
+    height: auto;
+    padding: 0.5rem 0;
+}
+
 #footer{
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
