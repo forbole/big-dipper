@@ -4,11 +4,14 @@ import { TxIcon } from '../components/Icons.jsx';
 import Activities from '../components/Activities.jsx';
 import CosmosErrors from '../components/CosmosErrors.jsx';
 import { Link } from 'react-router-dom';
+import { Markdown } from 'react-showdown';
 import numeral from 'numeral';
 import moment from 'moment';
 export default class Transaction extends Component{
     constructor(props){
         super(props);
+        let showdown  = require('showdown');
+        showdown.setFlavor('github');
     }
 
     render(){
@@ -47,7 +50,8 @@ export default class Transaction extends Component{
                                     }):<span>No fee</span>}</Col>
                                 <Col md={4} className="label">Gas (used / wanted)</Col>
                                 <Col md={8} className="value">{numeral(tx.gas_used).format("0,0")} / {numeral(tx.gas_wanted).format("0,0")}</Col>
-
+                                <Col md={4} className="label">Memo</Col>
+                                <Col md={8} className="value"><Markdown markup={ tx.tx.value.memo } /></Col>
                             </Row>
                         </CardBody>
                     </Card>

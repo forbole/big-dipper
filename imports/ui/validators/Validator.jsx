@@ -21,6 +21,8 @@ const JailStatus = (props) =>{
 }
 export default class Validator extends Component{
     constructor(props){
+        let showdown  = require('showdown');
+        showdown.setFlavor('github');
         super(props);
         this.state = {
             identity: "",
