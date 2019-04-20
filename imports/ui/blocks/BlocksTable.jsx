@@ -81,7 +81,10 @@ export default class BlocksTable extends Component {
                     styles={{ sidebar: { 
                         background: "white", 
                         position: "fixed",
-                        width: '85%'
+                        width: '85%',
+                        zIndex: 4
+                    }, overlay:{
+                        zIndex: 3
                     } }}
                 >
                 </Sidebar>} />
