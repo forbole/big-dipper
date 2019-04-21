@@ -301,6 +301,10 @@ div.tx-info{
     background-color: rgba(237, 20, 61, 0.2) !important;
 }
 
+#transaction .error .alert-danger {
+    margin-bottom: 0.5em;
+}
+
 .error .alert-danger {
     margin-bottom: 0;
 }
