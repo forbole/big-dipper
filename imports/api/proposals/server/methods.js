@@ -20,20 +20,22 @@ Meteor.methods({
                 for (let i in proposals){
                     let proposal = proposals[i];
                     proposal.proposalId = parseInt(proposal.proposal_id);
-                    try{
-                        let url = LCD + '/gov/proposals/'+proposal.proposalId+'/proposer';
-                        let response = HTTP.get(url);
-                        if (response.statusCode == 200){
-                            let proposer = JSON.parse(response.content);
-                            if (proposer.proposal_id && (proposer.proposal_id == proposal.proposal_id)){
-                                proposal.proposer = proposer.proposer;
-                            }
-                        }                    
-                        bulkProposals.find({proposalId: proposal.proposalId}).upsert().updateOne({$set:proposal});
-                        proposalIds.push(proposal.proposalId);    
-                    }
-                    catch(e){
-                        console.log(e);
+                    if (proposal.proposalId > 0){
+                        try{
+                            let url = LCD + '/gov/proposals/'+proposal.proposalId+'/proposer';
+                            let response = HTTP.get(url);
+                            if (response.statusCode == 200){
+                                let proposer = JSON.parse(response.content);
+                                if (proposer.proposal_id && (proposer.proposal_id == proposal.proposal_id)){
+                                    proposal.proposer = proposer.proposer;
+                                }
+                            }                    
+                            bulkProposals.find({proposalId: proposal.proposalId}).upsert().updateOne({$set:proposal});
+                            proposalIds.push(proposal.proposalId);    
+                        }
+                        catch(e){
+                            console.log(e);
+                        }
                     }
                 }
                 bulkProposals.find({proposalId:{$nin:proposalIds}}).update({$set:{"value.proposal_status":"Removed"}});
@@ -50,36 +52,38 @@ Meteor.methods({
 
         if (proposals && (proposals.length > 0)){
             for (let i in proposals){
-                try{
-                    // get proposal deposits
-                    let url = LCD + '/gov/proposals/'+proposals[i].proposalId+'/deposits';
-                    let response = HTTP.get(url);
-                    let proposal = {proposalId: proposals[i].proposalId};
-                    if (response.statusCode == 200){
-                        let deposits = JSON.parse(response.content);
-                        proposal.deposits = deposits;
-                    }
+                if (parseInt(proposals[i].proposalId) > 0){
+                    try{
+                        // get proposal deposits
+                        let url = LCD + '/gov/proposals/'+proposals[i].proposalId+'/deposits';
+                        let response = HTTP.get(url);
+                        let proposal = {proposalId: proposals[i].proposalId};
+                        if (response.statusCode == 200){
+                            let deposits = JSON.parse(response.content);
+                            proposal.deposits = deposits;
+                        }
 
-                    url = LCD + '/gov/proposals/'+proposals[i].proposalId+'/votes';
-                    response = HTTP.get(url);
-                    if (response.statusCode == 200){
-                        let votes = JSON.parse(response.content);
-                        proposal.votes = votes;
-                    }
+                        url = LCD + '/gov/proposals/'+proposals[i].proposalId+'/votes';
+                        response = HTTP.get(url);
+                        if (response.statusCode == 200){
+                            let votes = JSON.parse(response.content);
+                            proposal.votes = votes;
+                        }
 
-                    url = LCD + '/gov/proposals/'+proposals[i].proposalId+'/tally';
-                    response = HTTP.get(url);
-                    if (response.statusCode == 200){
-                        let tally = JSON.parse(response.content);
-                        proposal.tally = tally;
-                    }
+                        url = LCD + '/gov/proposals/'+proposals[i].proposalId+'/tally';
+                        response = HTTP.get(url);
+                        if (response.statusCode == 200){
+                            let tally = JSON.parse(response.content);
+                            proposal.tally = tally;
+                        }
 
-                    proposal.updatedAt = new Date();
-                    Proposals.update({proposalId: proposals[i].proposalId}, {$set:proposal});
+                        proposal.updatedAt = new Date();
+                        Proposals.update({proposalId: proposals[i].proposalId}, {$set:proposal});
+                    }
+                    catch(e){
+
+                    }        
                 }
-                catch(e){
-
-                }                
             }
         }
     }
