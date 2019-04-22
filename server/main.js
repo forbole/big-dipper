@@ -15,6 +15,7 @@ timerConsensus = 0;
 timerProposal = 0;
 timerProposalsResults = 0;
 timerMissedBlock = 0;
+timerDelegation = 0;
 timerAggregate = 0;
 
 
@@ -81,6 +82,17 @@ updateMissedBlockStats = () => {
     });
 }
 
+getDelegations = () => {
+    Meteor.call('delegations.getDelegations', (error, result) => {
+        if (error){
+            console.log("get delegation error: "+ error)
+        }
+        else{
+            console.log("get delegtaions ok: "+ result)
+        }
+    });
+}
+
 aggregateHourly = () =>{
     // doing something every hour
 }
@@ -102,25 +114,34 @@ Meteor.startup(function(){
         }
         if (result){
             if (Meteor.settings.debug.startTimer){
-                timerConsensus = Meteor.setInterval(function(){
-                    getConsensusState();
-                }, Meteor.settings.params.consensusInterval);
-                timerBlocks = Meteor.setInterval(function(){
-                    updateBlock();
-                }, Meteor.settings.params.blockInterval);
-                timerChain = Meteor.setInterval(function(){
-                    updateChainStatus();
-                }, Meteor.settings.params.statusInterval);
-                timerProposal = Meteor.setInterval(function(){
-                    getProposals();
-                }, Meteor.settings.params.proposalInterval);
-                timerProposalsResults = Meteor.setInterval(function(){
-                    getProposalsResults();
-                }, Meteor.settings.params.proposalInterval);
-                timerMissedBlock = Meteor.setInterval(function(){
-                    updateMissedBlockStats();
-                }, Meteor.settings.params.missedBlocksInterval);
+                // timerConsensus = Meteor.setInterval(function(){
+                //     getConsensusState();
+                // }, Meteor.settings.params.consensusInterval);
+
+                // timerBlocks = Meteor.setInterval(function(){
+                //     updateBlock();
+                // }, Meteor.settings.params.blockInterval);
+
+                // timerChain = Meteor.setInterval(function(){
+                //     updateChainStatus();
+                // }, Meteor.settings.params.statusInterval);
+
+                // timerProposal = Meteor.setInterval(function(){
+                //     getProposals();
+                // }, Meteor.settings.params.proposalInterval);
+
+                // timerProposalsResults = Meteor.setInterval(function(){
+                //     getProposalsResults();
+                // }, Meteor.settings.params.proposalInterval);
+                
+                // timerMissedBlock = Meteor.setInterval(function(){
+                //     updateMissedBlockStats();
+                // }, Meteor.settings.params.missedBlocksInterval);
             
+                timerDelegation = Meteor.setInterval(function(){
+                    getDelegations();
+                }, Meteor.settings.params.delegationInterval);
+
                 timerAggregate = Meteor.setInterval(function(){
                     let now = new Date();
                     if ((now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)){
