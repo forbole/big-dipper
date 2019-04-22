@@ -148,9 +148,40 @@ Meteor.methods({
     },
     'Analytics.aggregateValidatorDailyBlockTime': function(){
         this.unblock();
-        // let validators = Validators.find({}).fetch();
-        // for (i in validators){
-        //     Blockscon.find({proposerAddress:validators[i].address, })
-        // }
+        let validators = Validators.find({}).fetch();
+        let now = new Date();
+        for (i in validators){
+            let averageBlockTime = 0;
+
+            let blocks = Blockscon.find({proposerAddress:validators[i].address, "time": { $gt: new Date(Date.now() - 24*60*60 * 1000) }}, {fields:{height:1}}).fetch();
+            // console.log(blocks);
+
+            if (blocks.length > 0){
+                let blockHeights = [];
+                for (b in blocks){
+                    blockHeights.push(blocks[b].height);
+                }
+    
+                // console.log(blockHeights);
+                let analytics = Analytics.find({height: {$in:blockHeights}}, {fields:{height:1,timeDiff:1}}).fetch();
+                // console.log(analytics);
+    
+                
+                for (a in analytics){
+                    averageBlockTime += analytics[a].timeDiff;
+                }
+
+                averageBlockTime = averageBlockTime / analytics.length;
+            }
+
+            AverageData.insert({
+                proposerAddress: validators[i].address,
+                averageBlockTime: averageBlockTime,
+                type: 'ValidatorDailyAverageBlockTime',
+                createdAt: now
+            })
+        }
+
+        return true;
     }
 })
