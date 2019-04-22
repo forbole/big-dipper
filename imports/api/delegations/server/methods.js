@@ -4,6 +4,7 @@ import { Validators } from '../../validators/validators.js';
 
 Meteor.methods({
     'delegations.getDelegations': function(){
+        this.unblock();
         let validators = Validators.find({}).fetch();
         let delegations = [];
         console.log("=== Getting delegations ===");
