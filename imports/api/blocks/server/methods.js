@@ -140,7 +140,7 @@ Meteor.methods({
                         blockData.height = height;
                         blockData.hash = block.block_meta.block_id.hash;
                         blockData.transNum = block.block_meta.header.num_txs;
-                        blockData.time = block.block.header.time;
+                        blockData.time = new Date(block.block.header.time);
                         blockData.lastBlockHash = block.block.header.last_block_id.hash;
                         blockData.proposerAddress = block.block.header.proposer_address;
                         blockData.validators = [];
@@ -265,7 +265,7 @@ Meteor.methods({
                         let timeDiff;
                         let blockTime = Meteor.settings.params.defaultBlockTime;
                         if (lastSyncedTime){
-                            let dateLatest = new Date(blockData.time);
+                            let dateLatest = blockData.time;
                             let dateLast = new Date(lastSyncedTime);
                             timeDiff = Math.abs(dateLatest.getTime() - dateLast.getTime());
                             blockTime = (chainStatus.blockTime * (blockData.height - 1) + timeDiff) / blockData.height;
