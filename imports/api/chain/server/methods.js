@@ -63,17 +63,15 @@ Meteor.methods({
             chain.activeVotingPower = activeVP;
 
             let totalVP = 0;
-
             if (parseInt(chain.latestBlockHeight) > 0){
-                url = LCD+'/staking/validators';
-                response = HTTP.get(url);
-                let validatorSet = JSON.parse(response.content);
-                chain.totalValidators = validatorSet.length;
-    
-                for (v in validatorSet){
-                    let vp = Math.round(parseFloat(eval(validatorSet[v].tokens)));
+                chain.totalValidators = Validators.find({}).count();
+                Validators.find({}).forEach((v) =>  {
+                    url = `${LCD}/staking/validators/${v.operator_address}`;
+                    response = HTTP.get(url);
+                    validator = JSON.parse(response.content)
+                    let vp = Math.round(parseFloat(eval(validator.tokens)));
                     totalVP += parseInt(vp);
-                }    
+                });
             }
 
             chain.totalVotingPower = totalVP;
