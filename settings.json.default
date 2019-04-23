@@ -1,8 +1,8 @@
 {
     "public":{
         "chainName": "Cosmos Testnet",
-        "chainId": "gaia-12001",
-        "gtm": "GTM-54321A",
+        "chainId": "{Chain ID}",
+        "gtm": "{Add your Google Tag Manager ID here}",
         "slashingWindow": 10000,
         "uptimeWindow": 250,
         "initialPageSize": 30,
@@ -13,7 +13,7 @@
         "bech32PrefixConsAddr": "cosmosvalcons",
         "bech32PrefixConsPub": "cosmosvalconspub"
     },
-    "genesisFile": "https://raw.githubusercontent.com/cosmos/testnets/master/gaia-12k/genesis.json",
+    "genesisFile": "{Replace the address of the genesis file of the chain}",
     "remote":{
         "rpc":"https://gaia-seeds.interblock.io",
         "lcd":"https://gaia-seeds.interblock.io:1317"
@@ -23,7 +23,6 @@
         "readGenesis": true
     },
     "bin":{
-        "gaiacli": "/path/to/gaiacli",
         "gaiadebug": "/path/to/gaiadebug"
     },
     "params":{
@@ -34,6 +33,7 @@
         "statusInterval":7500,
         "signingInfoInterval": 1800000,
         "proposalInterval": 5000,
-        "missedBlocksInterval": 60000
+        "missedBlocksInterval": 60000,
+        "delegationInterval": 900000
     }
 }
