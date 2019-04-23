@@ -21,6 +21,16 @@ i.material-icons + span {
     display: inline-block !important;
 }
 
+.more.dropdown .btn, .more.dropdown.btn:focus{
+    box-shadow: none;
+}
+
+.more.dropdown .btn{
+    position: absolute;
+    right: -1.74em;
+    top: -0.35em;
+}
+
 div#loadmore {
     margin: 0.5rem auto;
 }
