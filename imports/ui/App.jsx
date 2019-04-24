@@ -1,5 +1,5 @@
 
-import React, { Component } from 'react'; 
+import React, { Component } from 'react';
 import GoogleTagManager from '/imports/ui/components/GoogleTagManager.jsx';
 import { BrowserRouter as Router, Route, Switch, withRouter } from 'react-router-dom'
 import { Container } from 'reactstrap';
@@ -54,8 +54,9 @@ class App extends Component {
                                 <Route path="/blocks" component={BlocksTable} />
                                 <Route path="/transactions" component={Transactions} />
                                 <Route path="/validators" exact component={Validators} />
-                                <Route path="/validators/unbonding" render={(props) => <Validators {...props} jailed={false} status={1} />} />
-                                <Route path="/validators/jailed" render={(props) => <Validators {...props} jailed={true} />} />
+                                <Route path="/validators/unbonding" render={(props) => <Validators {...props} inactive={true} />} />
+                                <Route path="/validators/jailed" render={(props) => <Validators {...props} inactive={true} />} />
+                                <Route path="/validators/inactive" render={(props) => <Validators {...props} inactive={true} />} />
                                 <Route path="/validators/firstseen" component={ValidatorFirstSeen} />
                                 <Route path="/voting-power-distribution" component={Distribution} />
                                 <Route path="/(validator|validators)" component={ValidatorDetails} />

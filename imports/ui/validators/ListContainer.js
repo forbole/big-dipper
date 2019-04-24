@@ -10,25 +10,18 @@ export default ValidatorListContainer = withTracker((props) => {
     const loading = !validatorsHandle.ready() && !chainHandle.ready();
     let validatorsCond = {};
     // console.log(props);
-    if (props.jailed){
+    if (props.inactive){
         validatorsCond = {
-            jailed:true
+            $or: [
+                { status: { $lt : 2 } },
+                { jailed: true }
+            ]
         }
     }
     else{
-        if (props.status != undefined){
-            // unbonding
-            validatorsCond = {
-                jailed: false,
-                status: props.status
-            }
-        }
-        else{
-            // active 
-            validatorsCond = {
-                jailed: false,
-                status: 2
-            }
+        validatorsCond = {
+            jailed: false,
+            status: 2
         }
     }
 
@@ -88,10 +81,27 @@ export default ValidatorListContainer = withTracker((props) => {
                     "commission.rate": props.commissionDir,
                     voting_power: props.votingPowerDir,
                     uptime: props.uptimeDir,
-                    
                 }
             }
-            break;    
+            break;
+        case 5:
+            options = {
+                sort:{
+                    status: props.statusDir,
+                    jailed: props.jailedDir,
+                    "description.moniker": props.monikerDir,
+                }
+            }
+            break;
+        case 6:
+            options = {
+                sort:{
+                    jailed: props.jailedDir,
+                    status: props.statusDir,
+                    "description.moniker": props.monikerDir,
+                }
+            }
+            break;
     }
     const validators = Validators.find(validatorsCond,options).fetch();
     const chainStatus = Chain.findOne({chainId:Meteor.settings.public.chainId});

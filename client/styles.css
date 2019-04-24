@@ -279,6 +279,10 @@ div#countdown {
     margin-bottom: 1em;
 }
 
+.validator-details .card-body h3 .badge.badge-danger{
+    margin-right: 0.5em;
+}
+
 .address{
     white-space: nowrap;
     overflow-y: auto;

@@ -16,9 +16,15 @@ addhttp = (url) => {
     return url;
 }
 
-const JailStatus = (props) =>{
-    return <Badge color={props.jailed?'danger':'success'}>{props.jailed?'Jailed':'Active'}</Badge>
+const StatusBadge = (props) =>{
+    const statusColor = ['secondary', 'warning', 'success'];
+    const statusText = ['Unbonded', 'Unbonding', 'Active'];
+    return <h3>
+        {props.jailed?<Badge color='danger'>Jailed</Badge>:''}
+        <Badge color={statusColor[props.bondingStatus]}>{statusText[props.bondingStatus]}</Badge>
+    </h3>;
 }
+
 export default class Validator extends Component{
     constructor(props){
         let showdown  = require('showdown');
@@ -63,7 +69,7 @@ export default class Validator extends Component{
                                 else{
                                     this.setState({
                                         updateTime: "Updated "+moment(this.props.validator.commission.update_time).fromNow()
-                                    });    
+                                    });
                                 }
                             }
                             else{
@@ -80,18 +86,18 @@ export default class Validator extends Component{
                 if (this.props.validator.history().length > 0){
                     this.setState({
                         history: this.props.validator.history().map((history, i) => {
-                            return <PowerHistory 
-                                key={i} 
-                                type={history.type} 
-                                prevVotingPower={history.prev_voting_power} 
-                                votingPower={history.voting_power} 
-                                time={history.block_time} 
-                                height={history.height} 
-                                address={this.props.validator.operator_address}    
+                            return <PowerHistory
+                                key={i}
+                                type={history.type}
+                                prevVotingPower={history.prev_voting_power}
+                                votingPower={history.voting_power}
+                                time={history.block_time}
+                                height={history.height}
+                                address={this.props.validator.operator_address}
                                 />
                         })
                     })
-                }    
+                }
             }
         }
 
@@ -101,7 +107,7 @@ export default class Validator extends Component{
                     records: this.props.records.map((record, i) => {
                         return <Block key={i} exists={record.exists} height={record.height} />
                     })
-                })    
+                })
             }
         }
     }
@@ -145,7 +151,7 @@ export default class Validator extends Component{
                             <div className="card-header">Validator Info</div>
                             <CardBody>
                                 <Row>
-                                    <Col xs={12}><h3><JailStatus jailed={this.props.validator.jailed} /></h3></Col>
+                                    <Col xs={12}><StatusBadge bondingStatus={this.props.validator.status} jailed={this.props.validator.jailed} /></Col>
                                     <Col sm={4} className="label">Operator Address</Col>
                                     <Col sm={8} className="value address" data-operator-address={this.props.validator.operator_address}>{this.props.validator.operator_address}</Col>
                                     <Col sm={4} className="label">Self-Delegate Address</Col>
