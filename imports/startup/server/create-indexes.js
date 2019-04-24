@@ -1,6 +1,6 @@
 import { Blockscon } from '../../api/blocks/blocks.js';
 import { Proposals } from '../../api/proposals/proposals.js';
-import { ValidatorRecords, Analytics, MissedBlocksStats } from '../../api/records/records.js';
+import { ValidatorRecords, Analytics, MissedBlocksStats, AverageData, AverageValidatorData } from '../../api/records/records.js';
 // import { Status } from '../../api/status/status.js';
 import { Transactions } from '../../api/transactions/transactions.js';
 import { ValidatorSets } from '../../api/validator-sets/validator-sets.js';
@@ -23,6 +23,8 @@ MissedBlocksStats.rawCollection().createIndex({proposer:1});
 MissedBlocksStats.rawCollection().createIndex({voter:1});
 MissedBlocksStats.rawCollection().createIndex({proposer:1, voter:1},{unique:true});
 
+AverageData.rawCollection().createIndex({type:1, createAt:1},{unique:true});
+AverageValidatorData.rawCollection().createIndex({address:1,createAt:1},{unique:true});
 // Status.rawCollection.createIndex({})
 
 Transactions.rawCollection().createIndex({txhash:1},{unique:true});
