@@ -74,7 +74,7 @@ Meteor.methods({
                         totalVP += parseInt(vp);
                     }
                     catch (e){
-                        
+                        console.log("Can't find validator: "+v.address)
                     }
                 });
             }
