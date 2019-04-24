@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Switch, Route } from 'react-router-dom';
 import numeral from 'numeral';
 import moment from 'moment';
 import { Markdown } from 'react-showdown';
 import Block from '../components/Block.jsx';
 import Avatar from '../components/Avatar.jsx';
 import PowerHistory from '../components/PowerHistory.jsx';
-import { Badge, Container, Row, Col, Card, CardImg, CardText, CardBody, CardTitle, CardSubtitle, Spinner } from 'reactstrap';
+import { Badge, Row, Col, Card,
+     CardBody, Spinner, Nav, NavItem, NavLink } from 'reactstrap';
 import KeybaseCheck from '../components/KeybaseCheck.jsx';
+import ValidatorDelegations from './Delegations.jsx';
+import ValidatorTransactions from './Transactions.jsx';
 
 addhttp = (url) => {
     if (!/^(f|ht)tps?:\/\//i.test(url)) {
@@ -112,6 +115,7 @@ export default class Validator extends Component{
         }
         else{
             if (this.props.validatorExist){
+                console.log(this.props.match);
                 let moniker = (this.props.validator.description&&this.props.validator.description.moniker)?this.props.validator.description.moniker:this.props.validator.address;
                 let identity = (this.props.validator.description&&this.props.validator.description.identity)?this.props.validator.description.identity:"";
                 let website = (this.props.validator.description&&this.props.validator.description.website)?this.props.validator.description.website:undefined;
@@ -181,12 +185,26 @@ export default class Validator extends Component{
                                 </Row>
                             </CardBody>
                         </Card>
-                        <Card>
+                        <Nav pills>
+                            <NavItem>
+                                <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address} active>Power Change</NavLink>
+                            </NavItem>
+                            <NavItem>
+                                <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address+"/delegations"} >Delegations</NavLink>
+                            </NavItem>
+                            <NavItem>
+                                <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address+"/transactions"} >Transactions</NavLink>
+                            </NavItem>
+                        </Nav>
+                        {/* <Card>
                             <div className="card-header">Change History (Recent {this.state.history.length} records)</div>
-                        </Card>
-                        <div className="power-history">
-                            {this.state.history}
-                        </div>
+                        </Card> */}
+                        <Switch>
+                            <Route exact path="/(validator|validators)/:address" render={() => <div className="power-history">{this.state.history}</div> } />
+                            <Route path="/(validator|validators)/:address/delegations" render={() => <ValidatorDelegations address={this.props.validator.operator_address} />} />
+                            <Route path="/(validator|validators)/:address/transactions" render={() => <ValidatorTransactions address={this.props.validator.operator_address} />} />
+                        </Switch>
+                        
                         <Link to="/validators" className="btn btn-link"><i className="fas fa-caret-left"></i> Back to List</Link>
                     </Col>
                 </Row>
