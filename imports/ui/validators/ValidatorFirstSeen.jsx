@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Badge, Row, Col } from 'reactstrap';
+import { Row, Col } from 'reactstrap';
 import FirstSeenListContainer from './FirstSeen.js';
 
 export default class ValidatorFirstSeen extends Component{
