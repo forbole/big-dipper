@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { ValidatorRecords, Analytics, AverageData } from '../records.js';
+import { ValidatorRecords, Analytics, AverageData, AverageValidatorData } from '../records.js';
 import { Validators } from '../../validators/validators.js';
 import { Status } from '../../status/status.js';
 import { MissedBlocksStats } from '../records.js';
@@ -91,12 +91,12 @@ Meteor.methods({
     },
     'Analytics.aggregateBlockTimeAndVotingPower': function(time){
         this.unblock();
-        let analytics;
-        let averageBlockTime = 0;
-        let averageVotingPower = 0;
-
+        let now = new Date();
         if (time == 'm'){
-            analytics = Analytics.find({ "time": { $gt: new Date(Date.now() - 60 * 1000) } }).fetch();
+            let averageBlockTime = 0;
+            let averageVotingPower = 0;
+    
+            let analytics = Analytics.find({ "time": { $gt: new Date(Date.now() - 60 * 1000) } }).fetch();
             if (analytics.length > 0){
                 for (i in analytics){
                     averageBlockTime += analytics[i].timeDiff;
@@ -106,10 +106,18 @@ Meteor.methods({
                 averageVotingPower = averageVotingPower / analytics.length;
 
                 Chain.update({chainId:Meteor.settings.public.chainId},{$set:{lastMinuteVotingPower:averageVotingPower, lastMinuteBlockTime:averageBlockTime}});
+                AverageData.insert({
+                    averageBlockTime: averageBlockTime,
+                    averageVotingPower: averageVotingPower,
+                    type: time,
+                    createdAt: now
+                })
             }
         }
         if (time == 'h'){
-            analytics = Analytics.find({ "time": { $gt: new Date(Date.now() - 60*60 * 1000) } }).fetch();
+            let averageBlockTime = 0;
+            let averageVotingPower = 0;
+            let analytics = Analytics.find({ "time": { $gt: new Date(Date.now() - 60*60 * 1000) } }).fetch();
             if (analytics.length > 0){
                 for (i in analytics){
                     averageBlockTime += analytics[i].timeDiff;
@@ -119,11 +127,19 @@ Meteor.methods({
                 averageVotingPower = averageVotingPower / analytics.length;
 
                 Chain.update({chainId:Meteor.settings.public.chainId},{$set:{lastHourVotingPower:averageVotingPower, lastHourBlockTime:averageBlockTime}});
+                AverageData.insert({
+                    averageBlockTime: averageBlockTime,
+                    averageVotingPower: averageVotingPower,
+                    type: time,
+                    createdAt: now
+                })
             }
         }
 
         if (time == 'd'){
-            analytics = Analytics.find({ "time": { $gt: new Date(Date.now() - 24*60*60 * 1000) } });
+            let averageBlockTime = 0;
+            let averageVotingPower = 0;
+            let analytics = Analytics.find({ "time": { $gt: new Date(Date.now() - 24*60*60 * 1000) } });
             if (analytics.length > 0){
                 for (i in analytics){
                     averageBlockTime += analytics[i].timeDiff;
@@ -133,16 +149,14 @@ Meteor.methods({
                 averageVotingPower = averageVotingPower / analytics.length;
 
                 Chain.update({chainId:Meteor.settings.public.chainId},{$set:{lastDayVotingPower:averageVotingPower, lastDayBlockTime:averageBlockTime}});
+                AverageData.insert({
+                    averageBlockTime: averageBlockTime,
+                    averageVotingPower: averageVotingPower,
+                    type: time,
+                    createdAt: now
+                })
             }
         }
-
-        AverageData.insert({
-            averageBlockTime: averageBlockTime,
-            averageVotingPower: averageVotingPower,
-            type: time,
-            createdAt: new Date()
-        })
-
 
         return analytics.length;
     },
@@ -174,7 +188,7 @@ Meteor.methods({
                 averageBlockTime = averageBlockTime / analytics.length;
             }
 
-            AverageData.insert({
+            AverageValidatorData.insert({
                 proposerAddress: validators[i].address,
                 averageBlockTime: averageBlockTime,
                 type: 'ValidatorDailyAverageBlockTime',
