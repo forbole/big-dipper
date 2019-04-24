@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import numeral from 'numeral';
+import {numeralRounding} from '../utils.jsx';
 import moment from 'moment';
 import { Markdown } from 'react-showdown';
 import Block from '../components/Block.jsx';
@@ -63,7 +64,7 @@ export default class Validator extends Component{
                                 else{
                                     this.setState({
                                         updateTime: "Updated "+moment(this.props.validator.commission.update_time).fromNow()
-                                    });    
+                                    });
                                 }
                             }
                             else{
@@ -80,18 +81,18 @@ export default class Validator extends Component{
                 if (this.props.validator.history().length > 0){
                     this.setState({
                         history: this.props.validator.history().map((history, i) => {
-                            return <PowerHistory 
-                                key={i} 
-                                type={history.type} 
-                                prevVotingPower={history.prev_voting_power} 
-                                votingPower={history.voting_power} 
-                                time={history.block_time} 
-                                height={history.height} 
-                                address={this.props.validator.operator_address}    
+                            return <PowerHistory
+                                key={i}
+                                type={history.type}
+                                prevVotingPower={history.prev_voting_power}
+                                votingPower={history.voting_power}
+                                time={history.block_time}
+                                height={history.height}
+                                address={this.props.validator.operator_address}
                                 />
                         })
                     })
-                }    
+                }
             }
         }
 
@@ -101,7 +102,7 @@ export default class Validator extends Component{
                     records: this.props.records.map((record, i) => {
                         return <Block key={i} exists={record.exists} height={record.height} />
                     })
-                })    
+                })
             }
         }
     }
@@ -163,7 +164,7 @@ export default class Validator extends Component{
                             <div className="card-header">Voting Power</div>
                             <CardBody className="voting-power-card">
                                 <Row>
-                                    <Col xs={12}><h1 className="display-4 voting-power"><Badge color="primary" >{numeral(this.props.validator.voting_power).format('0,0')}</Badge></h1><span>(~{numeral(this.props.validator.voting_power/this.props.chainStatus.activeVotingPower*100).format('0.00')}%)</span></Col>
+                                    <Col xs={12}><h1 className="display-4 voting-power"><Badge color="primary" >{numeral(this.props.validator.voting_power).format('0,0')}</Badge></h1><span>(~{numeral(this.props.validator.voting_power/this.props.chainStatus.activeVotingPower).format('0.00%', numeralRounding)})</span></Col>
                                     <Col sm={4} className="label">Bond Height</Col>
                                     <Col sm={8} className="value">{numeral(this.props.validator.bond_height).format('0,0')}</Col>
                                     <Col sm={4} className="label">Proposer Priority</Col>

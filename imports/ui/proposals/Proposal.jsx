@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { ProposalStatusIcon, VoteIcon } from '../components/Icons';
 import Account from '../components/Account.jsx';
 import numeral from 'numeral';
+import {numeralRounding} from '../utils.jsx';
 import { Markdown } from 'react-showdown';
 import posed from 'react-pose';
 
@@ -53,7 +54,7 @@ export default class Proposal extends Component{
                         for (let i in this.props.proposal.tally){
                             totalVotes += parseInt(this.props.proposal.tally[i]);
                         }
-        
+
                         this.setState({
                             tally: this.props.proposal.tally,
                             tallyDate: moment.utc(this.props.proposal.updatedAt).format("D MMM YYYY, h:mm:ssa z"),
@@ -72,7 +73,7 @@ export default class Proposal extends Component{
                         for (let i in this.props.proposal.final_tally_result){
                             totalVotes += parseInt(this.props.proposal.final_tally_result[i]);
                         }
-        
+
                         this.setState({
                             tally: this.props.proposal.final_tally_result,
                             tallyDate: 'final',
@@ -225,14 +226,14 @@ export default class Proposal extends Component{
                                 {this.state.voteStarted?<Row>
                                     <Col xs={12}>
                                         <Progress multi>
-                                            <Progress bar animated color="success" value={this.state.yesPercent}>Yes {numeral(this.state.yesPercent).format("0.00")}%</Progress>
-                                            <Progress bar animated color="warning" value={this.state.abstainPercent}>Abstain {numeral(this.state.abstainPercent).format("0.00")}%</Progress>
-                                            <Progress bar animated color="danger" value={this.state.noPercent}>No {numeral(this.state.noPercent).format("0.00")}%</Progress>
-                                            <Progress bar animated color="info" value={this.state.noWithVetoPercent}>No With Veto {numeral(this.state.noWithVetoPercent).format("0.00")}%</Progress>
+                                            <Progress bar animated color="success" value={this.state.yesPercent}>Yes {numeral(this.state.yesPercent).format("0.00", numeralRounding)}%</Progress>
+                                            <Progress bar animated color="warning" value={this.state.abstainPercent}>Abstain {numeral(this.state.abstainPercent).format("0.00", numeralRounding)}%</Progress>
+                                            <Progress bar animated color="danger" value={this.state.noPercent}>No {numeral(this.state.noPercent).format("0.00", numeralRounding)}%</Progress>
+                                            <Progress bar animated color="info" value={this.state.noWithVetoPercent}>No With Veto {numeral(this.state.noWithVetoPercent).format("0.00", numeralRounding)}%</Progress>
                                         </Progress>
                                     </Col>
                                     <Col xs={12}>
-                                        <Card body className="tally-info"><em><span className="text-info">{numeral(this.state.totalVotes/this.props.chain.totalVotingPower).format("0.00%")}</span> of online voting power has been voted.<br/>{this.state.proposalValid?<span className="text-success">This proposal is {(!this.state.voteEnded)?'(tentatively) ':''}<strong>valid</strong>.</span>:(this.state.voteEnded)?<span className="text-danger">Less than {numeral(this.props.chain.gov.tallyParams.quorum).format("0.00%")} of voting power is voted. This proposal is <strong>invalid</strong>.</span>:<span>It will be a valid proposal once <span className="text-info">{numeral(this.props.chain.totalVotingPower*this.props.chain.gov.tallyParams.quorum-this.state.totalVotes).format("0,0")}</span> more votes are casted.</span>}</em></Card>
+                                        <Card body className="tally-info"><em><span className="text-info">{numeral(this.state.totalVotes/this.props.chain.totalVotingPower).format("0.00%", numeralRounding)}</span> of online voting power has been voted.<br/>{this.state.proposalValid?<span className="text-success">This proposal is {(!this.state.voteEnded)?'(tentatively) ':''}<strong>valid</strong>.</span>:(this.state.voteEnded)?<span className="text-danger">Less than {numeral(this.props.chain.gov.tallyParams.quorum).format("0.00%", numeralRounding)} of voting power is voted. This proposal is <strong>invalid</strong>.</span>:<span>It will be a valid proposal once <span className="text-info">{numeral(this.props.chain.totalVotingPower*this.props.chain.gov.tallyParams.quorum-this.state.totalVotes).format("0,0")}</span> more votes are casted.</span>}</em></Card>
                                     </Col>
                                 </Row>:'Voting not started yet.'}
                             </Col>
