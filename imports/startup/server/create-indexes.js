@@ -23,8 +23,8 @@ MissedBlocksStats.rawCollection().createIndex({proposer:1});
 MissedBlocksStats.rawCollection().createIndex({voter:1});
 MissedBlocksStats.rawCollection().createIndex({proposer:1, voter:1},{unique:true});
 
-AverageData.rawCollection().createIndex({type:1, createAt:1},{unique:true});
-AverageValidatorData.rawCollection().createIndex({address:1,createAt:1},{unique:true});
+AverageData.rawCollection().createIndex({type:1, createdAt:-1},{unique:true});
+AverageValidatorData.rawCollection().createIndex({proposerAddress:1,createdAt:-1},{unique:true});
 // Status.rawCollection.createIndex({})
 
 Transactions.rawCollection().createIndex({txhash:1},{unique:true});
