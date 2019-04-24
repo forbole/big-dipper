@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Table, Badge, Row, Col, Nav, NavItem, NavLink, Spinner } from 'reactstrap';
+import { Table, Row, Col, Nav, NavItem, NavLink, Spinner } from 'reactstrap';
 import moment from 'moment';
 import { Meteor } from 'meteor/meteor';
 
@@ -35,7 +35,7 @@ export default class MissedBlocks extends Component{
 
 
             }
-            
+
         }
     }
 
@@ -74,6 +74,6 @@ export default class MissedBlocks extends Component{
             }
             else return <div>Validator doesn't exist.</div>
         }
-        
+
     }
 }
