@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Badge, Container, Row, Col } from 'reactstrap';
+import { Row, Col } from 'reactstrap';
 import { Route, Switch } from 'react-router-dom';
 import Validator from './ValidatorContainer.js';
 import MissedBlocks from './MissedBlocksContainer.js';
@@ -20,7 +20,7 @@ export default class ValidatorDetails extends Component{
                         <Route path="/(validator|validators)/:address" render={(props) => <Validator address={props.match.params.address} {...props}/>} />
                     </Switch>
                 </Col>
-            </Row>    
+            </Row>
         </div>
     }
 

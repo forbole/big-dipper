@@ -67,10 +67,15 @@ Meteor.methods({
                 chain.totalValidators = Validators.find({}).count();
                 Validators.find({}).forEach((v) =>  {
                     url = `${LCD}/staking/validators/${v.operator_address}`;
-                    response = HTTP.get(url);
-                    validator = JSON.parse(response.content)
-                    let vp = Math.round(parseFloat(eval(validator.tokens)));
-                    totalVP += parseInt(vp);
+                    try{
+                        response = HTTP.get(url);
+                        validator = JSON.parse(response.content);
+                        let vp = Math.round(parseFloat(eval(validator.tokens)));
+                        totalVP += parseInt(vp);
+                    }
+                    catch (e){
+                        console.log("Can't find validator: "+v.address)
+                    }
                 });
             }
 
