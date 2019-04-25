@@ -122,7 +122,7 @@ export default class Validator extends Component{
         }
         else{
             if (this.props.validatorExist){
-                console.log(this.props.match);
+                // console.log(this.props);
                 let moniker = (this.props.validator.description&&this.props.validator.description.moniker)?this.props.validator.description.moniker:this.props.validator.address;
                 let identity = (this.props.validator.description&&this.props.validator.description.identity)?this.props.validator.description.identity:"";
                 let website = (this.props.validator.description&&this.props.validator.description.website)?this.props.validator.description.website:undefined;
@@ -194,13 +194,13 @@ export default class Validator extends Component{
                         </Card>
                         <Nav pills>
                             <NavItem>
-                                <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address} active>Power Change</NavLink>
+                                <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address} active={!(this.props.location.pathname.match(/(delegations|transactions)/gm))}>Power Change</NavLink>
                             </NavItem>
                             <NavItem>
-                                <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address+"/delegations"} >Delegations</NavLink>
+                                <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address+"/delegations"} active={(this.props.location.pathname.match(/delegations/gm))}>Delegations</NavLink>
                             </NavItem>
                             <NavItem>
-                                <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address+"/transactions"} >Transactions</NavLink>
+                                <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address+"/transactions"} active={(this.props.location.pathname.match(/transactions/gm))}>Transactions</NavLink>
                             </NavItem>
                         </Nav>
                         {/* <Card>

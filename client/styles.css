@@ -283,6 +283,10 @@ div#countdown {
     margin-right: 0.5em;
 }
 
+.validator-details  ul.nav{
+    margin-bottom: 0.8em;
+}
+
 .address{
     white-space: nowrap;
     overflow-y: auto;
