@@ -78,9 +78,7 @@ export default class Validators extends Component{
                 </NavItem>
                 <NavItem>
                     <NavLink tag={Link} to="/validators/inactive"
-                             active={(this.props.match.url.indexOf("unbonding")>0 ||
-                                      this.props.match.url.indexOf("jailed")>0 ||
-                                      this.props.match.url.indexOf("inactive")>0)}>
+                             active={(this.props.match.url.indexOf("inactive")>0)}>
                         Inactive
                     </NavLink>
                 </NavItem>

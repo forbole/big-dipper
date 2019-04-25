@@ -54,8 +54,8 @@ class App extends Component {
                                 <Route path="/blocks" component={BlocksTable} />
                                 <Route path="/transactions" component={Transactions} />
                                 <Route path="/validators" exact component={Validators} />
-                                <Route path="/validators/unbonding" render={(props) => <Validators {...props} inactive={true} />} />
-                                <Route path="/validators/jailed" render={(props) => <Validators {...props} inactive={true} />} />
+                                {/* <Route path="/validators/unbonding" render={(props) => <Validators {...props} inactive={true} />} /> */}
+                                {/* <Route path="/validators/jailed" render={(props) => <Validators {...props} inactive={true} />} /> */}
                                 <Route path="/validators/inactive" render={(props) => <Validators {...props} inactive={true} />} />
                                 <Route path="/validators/firstseen" component={ValidatorFirstSeen} />
                                 <Route path="/voting-power-distribution" component={Distribution} />
