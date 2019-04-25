@@ -199,9 +199,9 @@ export default class Validator extends Component{
                             <NavItem>
                                 <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address+"/delegations"} active={(this.props.location.pathname.match(/delegations/gm))}>Delegations</NavLink>
                             </NavItem>
-                            <NavItem>
+                            {/* <NavItem>
                                 <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address+"/transactions"} active={(this.props.location.pathname.match(/transactions/gm))}>Transactions</NavLink>
-                            </NavItem>
+                            </NavItem> */}
                         </Nav>
                         {/* <Card>
                             <div className="card-header">Change History (Recent {this.state.history.length} records)</div>
