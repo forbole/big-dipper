@@ -11,7 +11,9 @@
         "bech32PrefixValAddr": "cosmosvaloper",
         "bech32PrefixValPub": "cosmosvaloperpub",
         "bech32PrefixConsAddr": "cosmosvalcons",
-        "bech32PrefixConsPub": "cosmosvalconspub"
+        "bech32PrefixConsPub": "cosmosvalconspub",
+        "stakingDenom": "ATOM",
+        "stakingFraction": 1000000
     },
     "genesisFile": "{Replace the address of the genesis file of the chain}",
     "remote":{
