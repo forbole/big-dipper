@@ -28,7 +28,8 @@ export default class ChainStatus extends React.Component {
                 blockTime: moment.utc(this.props.status.latestBlockTime).format("D MMM YYYY hh:mm:ssa z"),
                 delegatedTokens: numeral(this.props.status.totalVotingPower).format('0,0.00a'),
                 numValidators: this.props.status.validators,
-                totalNumValidators: this.props.status.totalValidators
+                totalNumValidators: this.props.status.totalValidators,
+                bondedTokens: numeral(this.props.status.bondedTokens/Meteor.settings.public.stakingFraction).format("0,0.00a")
             })
 
             switch (this.state.avgBlockTimeType){
@@ -194,7 +195,7 @@ export default class ChainStatus extends React.Component {
                                     </DropdownMenu>
                                 </UncontrolledDropdown>
                                 <CardTitle>Online Voting Power ({this.state.votingPowerText})</CardTitle>
-                                <CardText><span className="display-4 value text-primary">{this.state.votingPower}</span>from {this.state.delegatedTokens} tokens delegated</CardText>   
+                                <CardText><span className="display-4 value text-primary">{this.state.votingPower}</span>from {this.state.bondedTokens} {Meteor.settings.public.stakingDenom}s delegated</CardText>   
                             </Card>
                         </Col>
                     </Row>

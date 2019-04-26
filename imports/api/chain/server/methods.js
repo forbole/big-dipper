@@ -62,24 +62,34 @@ Meteor.methods({
             }
             chain.activeVotingPower = activeVP;
 
-            let totalVP = 0;
+            // let totalVP = 0;
             if (parseInt(chain.latestBlockHeight) > 0){
-                chain.totalValidators = Validators.find({}).count();
-                Validators.find({}).forEach((v) =>  {
-                    url = `${LCD}/staking/validators/${v.operator_address}`;
-                    try{
-                        response = HTTP.get(url);
-                        validator = JSON.parse(response.content);
-                        let vp = Math.round(parseFloat(eval(validator.tokens)));
-                        totalVP += parseInt(vp);
-                    }
-                    catch (e){
-                        console.log("Can't find validator: "+v.address)
-                    }
-                });
+                url = LCD + '/staking/pool';
+                try{
+                    response = HTTP.get(url);
+                    let bonding = JSON.parse(response.content);
+                    chain.bondedTokens = bonding.bonded_tokens;
+                    chain.notBondedTokens = bonding.not_bonded_tokens;
+                }
+                catch(e){
+                    console.log(e);
+                }
+                // chain.totalValidators = Validators.find({}).count();
+                // Validators.find({}).forEach((v) =>  {
+                //     url = `${LCD}/staking/validators/${v.operator_address}`;
+                //     try{
+                //         response = HTTP.get(url);
+                //         validator = JSON.parse(response.content);
+                //         let vp = Math.round(parseFloat(eval(validator.tokens)));
+                //         totalVP += parseInt(vp);
+                //     }
+                //     catch (e){
+                //         console.log("Can't find validator: "+v.address)
+                //     }
+                // });
             }
 
-            chain.totalVotingPower = totalVP;
+            // chain.totalVotingPower = totalVP;
 
             Chain.update({chainId:chain.chainId}, {$set:chain}, {upsert: true});
 
