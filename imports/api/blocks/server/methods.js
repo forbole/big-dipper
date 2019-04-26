@@ -110,11 +110,39 @@ Meteor.methods({
         if (until > curr) {
             SYNCING = true;
 
+            let validatorSet;
             // get latest validator candidate information
             url = LCD+'/staking/validators';
-            response = HTTP.get(url);
-            console.log(url);
-            let validatorSet = JSON.parse(response.content);
+
+            try{
+                response = HTTP.get(url);
+                validatorSet = JSON.parse(response.content);
+            }
+            catch(e){
+                console.log(e);
+            }
+            
+            url = LCD+'/staking/validators?status=unbonding';
+
+            try{
+                response = HTTP.get(url);
+                [...validatorSet] = [...validatorSet, ...JSON.parse(response.content)];
+            }
+            catch(e){
+                console.log(e);
+            }
+
+            url = LCD+'/staking/validators?status=unbonded';
+
+            try{
+                response = HTTP.get(url);
+                [...validatorSet] = [...validatorSet, ...JSON.parse(response.content)];
+            }
+            catch(e){
+                console.log(e);
+            }
+
+            console.log("all validators: "+validatorSet.length);
 
             for (let height = curr+1 ; height <= until ; height++) {
                 let startBlockTime = new Date();
