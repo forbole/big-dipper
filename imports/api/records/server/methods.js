@@ -92,6 +92,7 @@ Meteor.methods({
     'Analytics.aggregateBlockTimeAndVotingPower': function(time){
         this.unblock();
         let now = new Date();
+        
         if (time == 'm'){
             let averageBlockTime = 0;
             let averageVotingPower = 0;
@@ -159,7 +160,7 @@ Meteor.methods({
             }
         }
 
-        return analytics.length;
+        // return analytics.length;
     },
     'Analytics.aggregateValidatorDailyBlockTime': function(){
         this.unblock();
