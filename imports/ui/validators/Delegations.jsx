@@ -36,7 +36,7 @@ export default class ValidatorDelegations extends Component{
     render(){
         return <Card>
             <CardHeader>{(this.state.numDelegatiors > 0)?this.state.numDelegatiors:'No'} delegators {(this.state.numDelegatiors > 0)?<small className="text-secondary">({numeral(this.props.tokens/this.state.numDelegatiors/Meteor.settings.public.stakingFraction).format('0,0.00')} {Meteor.settings.public.stakingDenom}s / delegator)</small>:''}</CardHeader>
-            <CardBody>
+            <CardBody className="list">
                 <Container fluid>
                     <Row className="header text-nowrap d-none d-lg-flex">
                         <Col md={8}><i className="fas fa-at"></i> <span>Addresses</span></Col>
