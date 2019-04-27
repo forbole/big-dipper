@@ -28,6 +28,12 @@ Meteor.methods({
             }
         }
 
+        for (i in delegations){
+            if (delegations[i] && delegations[i].shares)
+                delegations[i].shares = parseFloat(delegations[i].shares);
+        }
+
+        // console.log(delegations);
         let data = {
             delegations: delegations,
             createdAt: new Date(),
