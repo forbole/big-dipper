@@ -470,10 +470,6 @@ div#voting-power-dist .card{
     #block ul.tx-types .nav-link{
         padding: 0.5em 0;
     }
-
-    .card-body.list{
-        padding: 0;
-    }
 }
 
 @media only screen and (min-width: 768px){
@@ -551,6 +547,10 @@ div#voting-power-dist .card{
 
     #validator-list .lead{
         padding-top: 2.5rem;
+    }
+
+    .card-body.list{
+        padding: 0;
     }
 }
 
