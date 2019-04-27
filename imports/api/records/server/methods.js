@@ -141,7 +141,6 @@ Meteor.methods({
             let averageBlockTime = 0;
             let averageVotingPower = 0;
             let analytics = Analytics.find({ "time": { $gt: new Date(Date.now() - 24*60*60 * 1000) } }).fetch();
-            console.log("Analytics last day:"+analytics.length)
             if (analytics.length > 0){
                 for (i in analytics){
                     averageBlockTime += analytics[i].timeDiff;
