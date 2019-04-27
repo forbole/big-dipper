@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Card, CardHeader, CardBody, Container, Row, Col, Spinner } from 'reactstrap';
 import numeral from 'numeral';
 import Account from '../components/Account.jsx';
+import { Mongo } from 'meteor/mongo';
+
 
 export default class ValidatorDelegations extends Component{
     constructor(props){
@@ -20,14 +22,20 @@ export default class ValidatorDelegations extends Component{
             }
 
             if (result){
-                console.log(result);
+                // console.log(result);
+                // Delegations.remove({});
+                let Delegations = new Mongo.Collection(null);
+                result.forEach((delegation,i) => {
+                    Delegations.insert(delegation);
+                })
+                let delegations = Delegations.find({},{sort:{shares:-1}}).fetch();
                 this.setState({
                     loading: false,
-                    numDelegatiors:result.length,
-                    delegations: result.map((d, i) => {
+                    numDelegatiors:delegations.length,
+                    delegations: delegations.map((d, i) => {
                         return <Row key={i} className="delegation-info">
-                                <Col md={8} className="text-nowrap overflow-auto"><Account address={d.delegations.delegator_address} /></Col>
-                                <Col md={4}>{numeral(d.delegations.shares/this.props.shares*this.props.tokens/Meteor.settings.public.stakingFraction).format("0,0.00")} {Meteor.settings.public.stakingDenom}s</Col>
+                                <Col md={8} className="text-nowrap overflow-auto"><Account address={d.delegator_address} /></Col>
+                                <Col md={4}>{numeral(d.shares/this.props.shares*this.props.tokens/Meteor.settings.public.stakingFraction).format("0,0.00")} {Meteor.settings.public.stakingDenom}s</Col>
                             </Row>
                     })
                 })
