@@ -298,7 +298,8 @@ div#countdown {
 }
 
 div.block-info,
-div.tx-info{
+div.tx-info,
+div.delegation-info{
     padding-top: 0.4rem;
     padding-bottom: 0.4rem;
     border-bottom: 1px solid #dee2e6;
@@ -317,7 +318,8 @@ div.tx-info{
 }
 
 div#block-table div.block-info:nth-child(2n),
-div.transactions-list div.tx-info:nth-child(2n){
+div.transactions-list div.tx-info:nth-child(2n),
+div.delegation-info:nth-child(2n){
     background-color: rgba(0,0,0,0.05);
 }
 

@@ -197,7 +197,7 @@ export default class Validator extends Component{
                                 <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address} active={!(this.props.location.pathname.match(/(delegations|transactions)/gm))}>Power Change</NavLink>
                             </NavItem>
                             <NavItem>
-                                <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address+"/delegations"} active={(this.props.location.pathname.match(/delegations/gm).length > 0)}>Delegations</NavLink>
+                                <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address+"/delegations"} active={(this.props.location.pathname.match(/delegations/gm) && this.props.location.pathname.match(/delegations/gm).length > 0)}>Delegations</NavLink>
                             </NavItem>
                             {/* <NavItem>
                                 <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address+"/transactions"} active={(this.props.location.pathname.match(/transactions/gm))}>Transactions</NavLink>
