@@ -41,7 +41,7 @@ let errors = {
         10: "Invalid Genesis",
         11: "Invalid Proposal Status"
     },
-    "DISTR": {
+    "distr": {
         103: "Invalid Input",
         104: "No Distribution Info",
         105: "No Validator Commission",
