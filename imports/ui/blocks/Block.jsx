@@ -1,32 +1,21 @@
 import React, { Component } from 'react';
-import { Container, TabContent, TabPane, Nav, NavItem, NavLink, Button, CardTitle, CardText, Row, Col, Card, CardBody, Alert, Spinner } from 'reactstrap';
+import { Container, Row, Col, Card, CardBody, Spinner } from 'reactstrap';
 import { Link,  } from 'react-router-dom';
 import numeral from 'numeral';
 import moment from 'moment';
 import Avatar from '../components/Avatar.jsx';
-import classnames from 'classnames';
-import { TransactionRow } from '../transactions/TransactionRow.jsx';
+import TranactionTabs from '../transactions/TransactionTabs.jsx';
 export default class Block extends Component{
     constructor(props){
         super(props);
 
-        this.toggle = this.toggle.bind(this);
         this.state = {
-            activeTab: 'tx-transfer',
             transferTxs: {},
             stakingTxs: {},
             distributionTxs: {},
             governanceTxs: {},
             slashingTxs: {},
         };
-    }
-
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-          this.setState({
-            activeTab: tab
-          });
-        }
     }
 
     componentDidUpdate(prevProps){
@@ -75,125 +64,13 @@ export default class Block extends Component{
                             </Row>
                         </CardBody>
                     </Card>
-                    <Card>
-                        <div className="card-header">Transactions</div>
-                        <CardBody>
-                            <Nav tabs className="tx-types">
-                                <NavItem>
-                                    <NavLink
-                                    className={classnames({ active: this.state.activeTab === 'tx-transfer' })}
-                                    onClick={() => { this.toggle('tx-transfer'); }}
-                                    >
-                                    Transfer ({numeral(this.state.transferTxs.length).format("0,0")})
-                                    </NavLink>
-                                </NavItem>
-                                <NavItem>
-                                    <NavLink
-                                    className={classnames({ active: this.state.activeTab === 'tx-staking' })}
-                                    onClick={() => { this.toggle('tx-staking'); }}
-                                    >
-                                    Staking ({numeral(this.state.stakingTxs.length).format("0,0")})
-                                    </NavLink>
-                                </NavItem>
-                                <NavItem>
-                                    <NavLink
-                                    className={classnames({ active: this.state.activeTab === 'tx-distr' })}
-                                    onClick={() => { this.toggle('tx-distr'); }}
-                                    >
-                                    Distribution ({numeral(this.state.distributionTxs.length).format("0,0")})
-                                    </NavLink>
-                                </NavItem>
-                                <NavItem>
-                                    <NavLink
-                                    className={classnames({ active: this.state.activeTab === 'tx-gov' })}
-                                    onClick={() => { this.toggle('tx-gov'); }}
-                                    >
-                                    Governance ({numeral(this.state.governanceTxs.length).format("0,0")})
-                                    </NavLink>
-                                </NavItem>
-                                <NavItem>
-                                    <NavLink
-                                    className={classnames({ active: this.state.activeTab === 'tx-slashing' })}
-                                    onClick={() => { this.toggle('tx-slashing'); }}
-                                    >
-                                    Slashing ({numeral(this.state.slashingTxs.length).format("0,0")})
-                                    </NavLink>
-                                </NavItem>
-                            </Nav>
-                            <TabContent activeTab={this.state.activeTab}>
-                                <TabPane tabId="tx-transfer">
-                                    <Row>
-                                        <Col>
-                                            {(this.state.transferTxs.length > 0)?this.state.transferTxs.map((tx, i) => {
-                                                return <TransactionRow 
-                                                    key={i} 
-                                                    index={i} 
-                                                    tx={tx}
-                                                    blockList 
-                                                />
-                                            }):''}
-                                        </Col>
-                                    </Row>
-                                </TabPane>
-                                <TabPane tabId="tx-staking">
-                                    <Row>
-                                        <Col>
-                                            {(this.state.stakingTxs.length > 0)?this.state.stakingTxs.map((tx, i) => {
-                                                return <TransactionRow 
-                                                    key={i} 
-                                                    index={i} 
-                                                    tx={tx} 
-                                                    blockList
-                                                />
-                                            }):''}
-                                        </Col>
-                                    </Row>
-                                </TabPane>
-                                <TabPane tabId="tx-distr">
-                                    <Row>
-                                        <Col>
-                                            {(this.state.distributionTxs.length > 0)?this.state.distributionTxs.map((tx, i) => {
-                                                return <TransactionRow 
-                                                    key={i} 
-                                                    index={i} 
-                                                    tx={tx} 
-                                                    blockList
-                                                />
-                                            }):''}
-                                        </Col>
-                                    </Row>
-                                </TabPane>
-                                <TabPane tabId="tx-gov">
-                                    <Row>
-                                        <Col>
-                                            {(this.state.governanceTxs.length > 0)?this.state.governanceTxs.map((tx, i) => {
-                                                return <TransactionRow 
-                                                    key={i} 
-                                                    index={i} 
-                                                    tx={tx} 
-                                                    blockList
-                                                />
-                                            }):''}
-                                        </Col>
-                                    </Row>
-                                </TabPane>
-                                <TabPane tabId="tx-slashing">
-                                    <Row>
-                                        <Col>
-                                            {(this.state.slashingTxs.length > 0)?this.state.slashingTxs.map((tx, i) => {
-                                                return <TransactionRow 
-                                                    key={i} 
-                                                    index={i} 
-                                                    tx={tx} 
-                                                    blockList
-                                                />
-                                            }):''}
-                                        </Col>
-                                    </Row>
-                                </TabPane>
-                            </TabContent>
-                        </CardBody>
-                    </Card>
+                    <TranactionTabs 
+                        transferTxs={this.state.transferTxs}
+                        stakingTxs={this.state.stakingTxs}
+                        distributionTxs={this.state.distributionTxs}
+                        governanceTxs={this.state.governanceTxs}
+                        slashingTxs={this.state.slashingTxs}
+                    />
                 </Container>
             }
             else{
