@@ -7,6 +7,7 @@ import Header from '/imports/ui/components/Header.jsx';
 import Footer from '/imports/ui/components/Footer.jsx';
 import Home from '/imports/ui/home/Home.jsx';
 import Validators from '/imports/ui/validators/ValidatorsList.jsx';
+import Account from '/imports/ui/accounts/Account.jsx';
 import ValidatorFirstSeen from '/imports/ui/validators/ValidatorFirstSeen.jsx';
 import BlocksTable from '/imports/ui/blocks/BlocksTable.jsx';
 import Proposals from '/imports/ui/proposals/Proposals.jsx';
@@ -53,9 +54,8 @@ class App extends Component {
                                 <Route exact path="/" component={Home} />
                                 <Route path="/blocks" component={BlocksTable} />
                                 <Route path="/transactions" component={Transactions} />
+                                <Route path="/account/:address" render={(props)=><Account {...props} />} />
                                 <Route path="/validators" exact component={Validators} />
-                                {/* <Route path="/validators/unbonding" render={(props) => <Validators {...props} inactive={true} />} /> */}
-                                {/* <Route path="/validators/jailed" render={(props) => <Validators {...props} inactive={true} />} /> */}
                                 <Route path="/validators/inactive" render={(props) => <Validators {...props} inactive={true} />} />
                                 <Route path="/validators/firstseen" component={ValidatorFirstSeen} />
                                 <Route path="/voting-power-distribution" component={Distribution} />
