@@ -37,7 +37,7 @@ It will create a packaged Node JS tarball at `../output`. Deploy that packaged N
 ---
 ## Donations :pray:
 
-The Big Dipper is always fee and open. Anyone can use to monitor available Cosmos hub or zones, or port to your own chain built with Cosmos SDK. We welcome any supports to keep us working on this project.
+The Big Dipper is always fee and open. Anyone can use to monitor available Cosmos hub or zones, or port to your own chain built with Cosmos SDK. We welcome any supports to help us improve this project.
 
 ATOM: `cosmos1n67vdlaejpj3uzswr9qapeg76zlkusj5k875ma`\
 BTC: `1HrTuvS83VoUVA79wTifko69ziWTjEXzQS`\
