@@ -11,7 +11,7 @@ import { Badge, Row, Col, Card,
      CardBody, Spinner, Nav, NavItem, NavLink } from 'reactstrap';
 import KeybaseCheck from '../components/KeybaseCheck.jsx';
 import ValidatorDelegations from './Delegations.jsx';
-import ValidatorTransactions from './Transactions.jsx';
+import ValidatorTransactions from './TransactionsContainer.js';
 
 addhttp = (url) => {
     if (!/^(f|ht)tps?:\/\//i.test(url)) {
@@ -199,14 +199,14 @@ export default class Validator extends Component{
                             <NavItem>
                                 <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address+"/delegations"} active={(this.props.location.pathname.match(/delegations/gm) && this.props.location.pathname.match(/delegations/gm).length > 0)}>Delegations</NavLink>
                             </NavItem>
-                            {/* <NavItem>
-                                <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address+"/transactions"} active={(this.props.location.pathname.match(/transactions/gm))}>Transactions</NavLink>
-                            </NavItem> */}
+                            <NavItem>
+                                <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address+"/transactions"} active={(this.props.location.pathname.match(/transactions/gm) && this.props.location.pathname.match(/transactions/gm).length > 0)}>Transactions</NavLink>
+                            </NavItem>
                         </Nav>
                         <Switch>
                             <Route exact path="/(validator|validators)/:address" render={() => <div className="power-history">{this.state.history}</div> } />
                             <Route path="/(validator|validators)/:address/delegations" render={() => <ValidatorDelegations address={this.props.validator.operator_address} tokens={this.props.validator.tokens} shares={this.props.validator.delegator_shares} />} />
-                            {/* <Route path="/(validator|validators)/:address/transactions" render={() => <ValidatorTransactions address={this.props.validator.operator_address} />} /> */}
+                            <Route path="/(validator|validators)/:address/transactions" render={() => <ValidatorTransactions validator={this.props.validator.operator_address} delegator={this.props.validator.delegator_address} />} />
                         </Switch>
                         
                         <Link to="/validators" className="btn btn-link"><i className="fas fa-caret-left"></i> Back to List</Link>
