@@ -1,4 +1,4 @@
-# Big Dipper
+# Big Dipper :sparkles:
 Forbole Block Explorer for Cosmos
 
 ## Projects running on mainnets
@@ -34,12 +34,13 @@ meteor --settings settings.json
 
 It will create a packaged Node JS tarball at `../output`. Deploy that packaged Node JS project with process manager like [forever](https://www.npmjs.com/package/forever) or [Phusion Passenger](https://www.phusionpassenger.com/library/walkthroughs/basics/nodejs/fundamental_concepts.html).
 
-## Donations
+---
+## Donations :pray:
 
 The Big Dipper is always fee and open. Anyone can use to monitor available Cosmos hub or zones, or port to your own chain built with Cosmos SDK. We welcome any supports to keep us working on this project.
 
-ATOM: `cosmos1n67vdlaejpj3uzswr9qapeg76zlkusj5k875ma`
-BTC: `1HrTuvS83VoUVA79wTifko69ziWTjEXzQS`
+ATOM: `cosmos1n67vdlaejpj3uzswr9qapeg76zlkusj5k875ma`\
+BTC: `1HrTuvS83VoUVA79wTifko69ziWTjEXzQS`\
 ETH: `0xec3AaC5023E0C9E2a76A223E4e312f275c76Cd77`
 
 And by downloading and using [Brave](https://brave.com/big517).
