@@ -5,9 +5,10 @@ import Transaction from './Transaction.jsx';
 
 export default TransactionContainer = withTracker((props) => {
     // console.log(props);
-    const transactionsHandle = Meteor.subscribe('transactions.findOne', props.match.params.txId);
+    let txId = props.match.params.txId.toUpperCase();
+    const transactionsHandle = Meteor.subscribe('transactions.findOne', txId);
     const loading = !transactionsHandle.ready();
-    const transaction = Transactions.findOne({txhash: props.match.params.txId});
+    const transaction = Transactions.findOne({txhash: txId});
     const transactionExist = !loading && !!transaction;
     return {
         loading,
