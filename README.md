@@ -13,7 +13,7 @@ Forbole Block Explorer for Cosmos
 ## How to run The Big Dipper
 
 1. Copy `settings.json.default` to `settings.json`.
-2. Update paths to `gaiacli` and `gaiadebug`.
+2. Update path to `gaiadebug`.
 3. Update the RPC and LCD URLs.
 4. Update Bech32 address prefixes.
 5. Update genesis file location.
