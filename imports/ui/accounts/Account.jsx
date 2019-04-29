@@ -85,7 +85,7 @@ export default class Account extends Component{
         else if (this.state.accountExists){
             return <div id="account">
                 <h1 className="d-none d-lg-block">Account Details</h1>
-                <h3>{this.props.match.params.address}</h3>
+                <h3 className="text-primary">{this.props.match.params.address}</h3>
                 <Row>
                     <Col><Card>
                         <CardHeader>Balance</CardHeader>
