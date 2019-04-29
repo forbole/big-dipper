@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Spinner, Row, Col, Card, CardHeader, CardBody } from 'reactstrap';
 import numeral from 'numeral';
-import Account from '../components/Account.jsx';
+import AccountCopy from '../components/AccountCopy.jsx';
 
 export default class AccountDetails extends Component{
     constructor(props){
@@ -86,7 +86,7 @@ export default class AccountDetails extends Component{
         else if (this.state.accountExists){
             return <div id="account">
                 <h1 className="d-none d-lg-block">Account Details</h1>
-                <h3 className="text-primary"><Account address={this.props.match.params.address} /></h3>
+                <h3 className="text-primary"><AccountCopy address={this.props.match.params.address} /></h3>
                 <Row>
                     <Col><Card>
                         <CardHeader>Balance</CardHeader>

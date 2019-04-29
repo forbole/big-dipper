@@ -21,6 +21,10 @@ i.material-icons + span {
     display: inline-block !important;
 }
 
+.copy-button{
+    cursor: pointer;
+}
+
 .more.dropdown .btn, .more.dropdown.btn:focus{
     box-shadow: none;
 }
