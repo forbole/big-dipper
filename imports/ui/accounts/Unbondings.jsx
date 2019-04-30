@@ -3,6 +3,7 @@ import { Card, CardHeader, CardBody, Container, Row, Col, Spinner } from 'reacts
 import numbro from 'numbro';
 import Account from '../components/Account.jsx';
 import { Mongo } from 'meteor/mongo';
+import moment from 'moment';
 
 
 export default class AccountUnbondings extends Component{
@@ -30,9 +31,16 @@ export default class AccountUnbondings extends Component{
                         numUnbondings:result.length,
                         unbondings: result.map((u, i) => {
                             return <Row key={i} className="delegation-info">
-                                    <Col md={8} className="text-nowrap overflow-auto"><Account address={u.validator_address} /></Col>
-                                    <Col md={4}>{u.entries.map((entry,j) => {
-                                        return <div key={j}>{numbro(entry.balance).format("0,000a")}</div>
+                                    <Col md={5} className="text-nowrap overflow-auto"><Account address={u.validator_address} /></Col>
+                                    <Col md={7}>{u.entries.map((entry,j) => {
+                                        return <Row key={j}>
+                                            <Col md={6}>
+                                                {numbro(entry.balance).format("0,000a")}
+                                            </Col>
+                                            <Col md={6}>
+                                                {moment.utc(entry.completion_time).fromNow()}
+                                            </Col>
+                                        </Row>
                                     })}</Col>
                                 </Row>
                         })
@@ -53,8 +61,13 @@ export default class AccountUnbondings extends Component{
                 <CardBody className="list overflow-auto">
                     <Container fluid>
                         <Row className="header text-nowrap d-none d-lg-flex">
-                            <Col md={8}><i className="fas fa-at"></i> <span>Validators</span></Col>
-                            <Col md={4}><i className="fas fa-piggy-bank"></i> <span>Shares</span></Col>
+                            <Col md={5}><i className="fas fa-at"></i> <span>Validators</span></Col>
+                            <Col md={7}>
+                                <Row>
+                                    <Col md={6}><i className="fas fa-piggy-bank"></i> <span>Shares</span></Col>
+                                    <Col md={6}><i className="fas fa-clock"></i> <span>Mature</span></Col>
+                                </Row>
+                            </Col>
                         </Row>
                         {this.state.unbondings}
                     </Container>
