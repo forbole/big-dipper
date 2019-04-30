@@ -7,7 +7,7 @@ export default class Account extends Component{
         super(props);
 
         this.state = {
-            address: this.props.address
+            address: <Link to={this.props.address}>{this.props.address}</Link>
         }
     }
 
@@ -23,6 +23,6 @@ export default class Account extends Component{
     }
 
     render(){
-        return <span>{this.state.address}</span>
+        return <span className={(this.props.copy)?"address overflow-auto d-inline-block copy":"address overflow-auto d-inline"} >{this.state.address}</span>
     }
 }

@@ -291,9 +291,13 @@ div#countdown {
     margin-bottom: 0.8em;
 }
 
-.address{
+/* .address{
     white-space: nowrap;
     overflow-y: auto;
+} */
+
+.address.copy{
+    max-width: calc(100% - 1.2em);
 }
 
 .vp-diff{
