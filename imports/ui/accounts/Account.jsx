@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
-import { Spinner, Row, Col, Card, CardHeader, CardBody, Progress } from 'reactstrap';
+import { Spinner, Container, Row, Col, Card, CardHeader, CardBody, Progress } from 'reactstrap';
 import numbro from 'numbro';
 import AccountCopy from '../components/AccountCopy.jsx';
+import Account from '../components/Account.jsx';
+import Delegations from './Delegations.jsx';
+
 
 export default class AccountDetails extends Component{
     constructor(props){
@@ -144,6 +147,17 @@ export default class AccountDetails extends Component{
                             </Row>
                         </CardBody>
                     </Card></Col>
+                </Row>
+                <Row>
+                    <Col md={6}>
+                        <Delegations address={this.props.match.params.address}/>
+                    </Col>
+                    <Col md={6}>
+                        <Card>
+                            <CardHeader>Unbondings</CardHeader>
+                            <CardBody></CardBody>
+                        </Card>
+                    </Col>
                 </Row>
             </div>
         }

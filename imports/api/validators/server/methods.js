@@ -42,17 +42,5 @@ Meteor.methods({
         catch (e){
             console.log(e);
         }
-
-            // let delegations = Delegations.rawCollection().aggregate([
-        //     { $match:{createdAt:{$gt:new Date(Date.now()-Meteor.settings.public.delegationInterval)}} },
-        //     { $sort: {createdAt:-1}},
-        //     { $limit: 1},
-        //     { $unwind: "$delegations" },
-        //     { $match:{"delegations.validator_address": address}},
-        //     { $project:{"delegations.delegator_address":1, "delegations.shares":1, "delegations.validator_address":1}},
-        //     { $sort: {"delegations.shares":-1}}
-        // ]);
-
-        // return delegations.toArray();
     }
 });

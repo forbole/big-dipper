@@ -212,7 +212,10 @@ div#countdown {
     text-overflow: ellipsis;
 }
 
-#home .card, #transaction .card, #block .card{
+#home .card, 
+#transaction .card, 
+#block .card,
+#account .card{
     /* margin: 0 0 0.75em 0; */
     margin-bottom: 0.75em;
 }
