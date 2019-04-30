@@ -27,5 +27,16 @@ Meteor.methods({
         else{
             return "No coingecko Id provided."
         }
+    },
+    'coinStats.getStats': function(){
+        this.unblock();
+        let coinId = Meteor.settings.public.coingeckoId;
+        if (coinId){
+            return (CoinStats.findOne({},{sort:{last_updated_at:-1}}));
+        }
+        else{
+            return "No coingecko Id provided.";
+        }
+
     }
 })

@@ -13,11 +13,19 @@ export default class AccountDetails extends Component{
             delegated: 0,
             unbonding: 0,
             rewards: 0,
-            total: 0
+            total: 0,
+            price: 0
         }
     }
 
-    componentDidMount(){
+    getBalance(){
+        Meteor.call('coinStats.getStats', (error, result) => {
+            if (result){
+                this.setState({
+                    price: result.usd
+                })
+            }
+        });
         Meteor.call('accounts.getBalance', this.props.match.params.address, (error, result) => {
             if (error){
                 console.log(error);
@@ -27,7 +35,7 @@ export default class AccountDetails extends Component{
             }
 
             if (result){
-                console.log(result);
+                // console.log(result);
                 if (result.available){
                     this.setState({
                         available: parseFloat(result.available.amount),
@@ -72,8 +80,14 @@ export default class AccountDetails extends Component{
         })
     }
 
-    componentDidUpdate(prevProps){
+    componentDidMount(){
+        this.getBalance();
+    }
 
+    componentDidUpdate(prevProps){
+        if (this.props != prevProps){
+            this.getBalance();
+        }
     }
 
     render(){
@@ -124,7 +138,7 @@ export default class AccountDetails extends Component{
                                     <Row>
                                         <Col xs={4} className="label d-flex align-self-end"><div className="infinity" />Total</Col>
                                         <Col xs={8} className="value text-right">{numbro(this.state.total/Meteor.settings.public.stakingFraction).format("0,0.000a")} {Meteor.settings.public.stakingDenom}s</Col>
-                                        <Col xs={12} className="dollar-value text-right text-secondary">~{numbro(this.state.total/Meteor.settings.public.stakingFraction*3.9).format("$0,0.000a")} ($3.91/ATOM)</Col>
+                                        <Col xs={12} className="dollar-value text-right text-secondary">~{numbro(this.state.total/Meteor.settings.public.stakingFraction*this.state.price).format("$0,0.000a")} ({numbro(this.state.price).format("$0,0.00")}/ATOM)</Col>
                                     </Row>
                                 </Col>
                             </Row>
