@@ -5,7 +5,7 @@ import { TxIcon } from '../components/Icons.jsx';
 import Activities from '../components/Activities.jsx';
 import CosmosErrors from '../components/CosmosErrors.jsx';
 import TimeAgo from '../components/TimeAgo.jsx';
-import numeral from 'numeral';
+import numbro from 'numbro';
 import { TransactionRow } from './TransactionRow.jsx';
 
 export default class Transactions extends Component{

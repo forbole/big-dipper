@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Badge } from 'reactstrap';
-import numeral from 'numeral';
+import numbro from 'numbro';
 
 let errors = {
     "sdk": {
@@ -84,7 +84,7 @@ export default class CosmosErrors extends Component {
             if (props.code == 12){
                 this.state = {
                     error: errors.sdk[12],
-                    message: "gas uses ("+numeral(props.gasUses).format("0,0")+") > gas wanted ("+numeral(props.gasWanted).format("0,0")+")"
+                    message: "gas uses ("+numbro(props.gasUses).format("0,0")+") > gas wanted ("+numbro(props.gasWanted).format("0,0")+")"
                 }
             }
         }

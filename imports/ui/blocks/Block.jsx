@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Container, Row, Col, Card, CardBody, Spinner } from 'reactstrap';
 import { Link,  } from 'react-router-dom';
-import numeral from 'numeral';
+import numbro from 'numbro';
 import moment from 'moment';
 import Avatar from '../components/Avatar.jsx';
 import TranactionTabs from '../transactions/TransactionTabs.jsx';
@@ -48,7 +48,7 @@ export default class Block extends Component{
                 let identity = proposer?proposer.description.identity:'';
 
                 return <Container id="block">
-                    <h4>Block {numeral(block.height).format("0,0")}</h4>
+                    <h4>Block {numbro(block.height).format("0,0")}</h4>
                     <Card>
                         <div className="card-header">Information</div>
                         <CardBody>
@@ -58,7 +58,7 @@ export default class Block extends Component{
                                 <Col md={4} className="label">Proposer</Col>
                                 <Col md={8} className="value"><Link to={"/validator/"+((proposer)?proposer.operator_address:'')}><Avatar moniker={moniker} identity={identity} address={block.proposerAddress} list={true} /> {moniker}</Link></Col>
                                 <Col md={4} className="label">No. of Transactions</Col>
-                                <Col md={8} className="value">{numeral(block.transNum).format("0,0")}</Col>
+                                <Col md={8} className="value">{numbro(block.transNum).format("0,0")}</Col>
                                 <Col md={4} className="label">Time</Col>
                                 <Col md={8} className="value">{moment.utc(block.time).format("D MMM YYYY, h:mm:ssa z")} ({moment(block.time).fromNow()})</Col>
                             </Row>

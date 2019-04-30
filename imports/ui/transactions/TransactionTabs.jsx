@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col, Card, CardHeader, CardBody } from 'reactstrap';
 import classnames from 'classnames';
-import numeral from 'numeral';
+import numbro from 'numbro';
 import { TransactionRow } from './TransactionRow.jsx';
 
 export default class TransactionTabs extends Component{
@@ -48,7 +48,7 @@ export default class TransactionTabs extends Component{
                         className={classnames({ active: this.state.activeTab === 'tx-transfer' })}
                         onClick={() => { this.toggle('tx-transfer'); }}
                         >
-                        Transfer ({numeral(this.state.transferTxs.length).format("0,0")})
+                        Transfer ({numbro(this.state.transferTxs.length).format("0,0")})
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -56,7 +56,7 @@ export default class TransactionTabs extends Component{
                         className={classnames({ active: this.state.activeTab === 'tx-staking' })}
                         onClick={() => { this.toggle('tx-staking'); }}
                         >
-                        Staking ({numeral(this.state.stakingTxs.length).format("0,0")})
+                        Staking ({numbro(this.state.stakingTxs.length).format("0,0")})
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -64,7 +64,7 @@ export default class TransactionTabs extends Component{
                         className={classnames({ active: this.state.activeTab === 'tx-distr' })}
                         onClick={() => { this.toggle('tx-distr'); }}
                         >
-                        Distribution ({numeral(this.state.distributionTxs.length).format("0,0")})
+                        Distribution ({numbro(this.state.distributionTxs.length).format("0,0")})
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -72,7 +72,7 @@ export default class TransactionTabs extends Component{
                         className={classnames({ active: this.state.activeTab === 'tx-gov' })}
                         onClick={() => { this.toggle('tx-gov'); }}
                         >
-                        Governance ({numeral(this.state.governanceTxs.length).format("0,0")})
+                        Governance ({numbro(this.state.governanceTxs.length).format("0,0")})
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -80,7 +80,7 @@ export default class TransactionTabs extends Component{
                         className={classnames({ active: this.state.activeTab === 'tx-slashing' })}
                         onClick={() => { this.toggle('tx-slashing'); }}
                         >
-                        Slashing ({numeral(this.state.slashingTxs.length).format("0,0")})
+                        Slashing ({numbro(this.state.slashingTxs.length).format("0,0")})
                         </NavLink>
                     </NavItem>
                 </Nav>

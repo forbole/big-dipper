@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {Pie} from 'react-chartjs-2';
 import { Row, Col, Card, CardImg, CardText, CardBody,
     CardTitle, CardSubtitle, Button, Progress, Spinner } from 'reactstrap';
-import numeral from 'numeral';
+import numbro from 'numbro';
 
 export default class TwentyEighty extends Component{
     constructor(props){
@@ -52,7 +52,7 @@ export default class TwentyEighty extends Component{
                                 if (label) {
                                     label += ' hold ';
                                 }
-                                label += numeral(data.datasets[0].data[tooltipItem.index]).format("0.00%");
+                                label += numbro(data.datasets[0].data[tooltipItem.index]).format("0.00%");
                                 label += " voting power";
                                 return label;
                             }

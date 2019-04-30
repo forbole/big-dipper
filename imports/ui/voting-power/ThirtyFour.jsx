@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {Pie} from 'react-chartjs-2';
 import { Row, Col, Card, CardImg, CardText, CardBody,
     CardTitle, CardSubtitle, Button, Progress, Spinner } from 'reactstrap';
-import numeral from 'numeral';
+import numbro from 'numbro';
 
 export default class ThirtyFour extends Component{
     constructor(props){
@@ -49,11 +49,11 @@ export default class ThirtyFour extends Component{
                         callbacks: {
                             label: function(tooltipItem, data) {
                                 // var label = data.datasets[0].data[tooltipItem.index] + " validators hold ";
-                                // label += numeral(data.datasets[0].data[tooltipItem.index]).format("0.00%");
+                                // label += numbro(data.datasets[0].data[tooltipItem.index]).format("0.00%");
                                 if (tooltipItem.index == 0)
-                                    return data.datasets[0].data[tooltipItem.index] + " validators hold "+numeral(self.props.stats.topThirtyFourPercent).format("0.00%")+" voting power";
+                                    return data.datasets[0].data[tooltipItem.index] + " validators hold "+numbro(self.props.stats.topThirtyFourPercent).format("0.00%")+" voting power";
                                 else 
-                                    return data.datasets[0].data[tooltipItem.index] + " validators hold "+numeral(self.props.stats.bottomSixtySixPercent).format("0.00%")+" voting power";
+                                    return data.datasets[0].data[tooltipItem.index] + " validators hold "+numbro(self.props.stats.bottomSixtySixPercent).format("0.00%")+" voting power";
                             }
                         }
                     }

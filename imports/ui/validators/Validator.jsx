@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Link, Switch, Route } from 'react-router-dom';
-import numeral from 'numeral';
-import {numeralRounding} from '../utils.jsx';
+import numbro from 'numbro';
 import moment from 'moment';
 import { Markdown } from 'react-showdown';
 import Block from '../components/Block.jsx';
@@ -162,11 +161,11 @@ export default class Validator extends Component{
                                     <Col sm={4} className="label">Self-Delegate Address</Col>
                                     <Col sm={8} className="value address" data-delegator-address={this.props.validator.delegator_address}><Link to={"/account/"+this.props.validator.delegator_address}>{this.props.validator.delegator_address}</Link></Col>
                                     <Col sm={4} className="label">Commission Rate</Col>
-                                    <Col sm={8} className="value">{this.props.validator.commission?numeral(this.props.validator.commission.rate*100).format('0.00')+"%":''} <small className="text-secondary">({this.state.updateTime})</small></Col>
+                                    <Col sm={8} className="value">{this.props.validator.commission?numbro(this.props.validator.commission.rate*100).format('0.00')+"%":''} <small className="text-secondary">({this.state.updateTime})</small></Col>
                                     <Col sm={4} className="label">Max Rate</Col>
-                                    <Col sm={8} className="value">{this.props.validator.commission?numeral(this.props.validator.commission.max_rate*100).format('0.00')+"%":''}</Col>
+                                    <Col sm={8} className="value">{this.props.validator.commission?numbro(this.props.validator.commission.max_rate*100).format('0.00')+"%":''}</Col>
                                     <Col sm={4} className="label">Max Change Rate</Col>
-                                    <Col sm={8} className="value">{this.props.validator.commission?numeral(this.props.validator.commission.max_change_rate*100).format('0.00')+"%":''}</Col>
+                                    <Col sm={8} className="value">{this.props.validator.commission?numbro(this.props.validator.commission.max_change_rate*100).format('0.00')+"%":''}</Col>
                                 </Row>
                             </CardBody>
                         </Card>
@@ -174,18 +173,18 @@ export default class Validator extends Component{
                             <div className="card-header">Voting Power</div>
                             <CardBody className="voting-power-card">
                                 <Row>
-                                    <Col xs={12}><h1 className="display-4 voting-power"><Badge color="primary" >{numeral(this.props.validator.voting_power).format('0,0')}</Badge></h1><span>(~{numeral(this.props.validator.voting_power/this.props.chainStatus.activeVotingPower).format('0.00%', numeralRounding)})</span></Col>
+                                    <Col xs={12}><h1 className="display-4 voting-power"><Badge color="primary" >{numbro(this.props.validator.voting_power).format('0,0')}</Badge></h1><span>(~{numbro(this.props.validator.voting_power/this.props.chainStatus.activeVotingPower).format('0.00%')})</span></Col>
                                     <Col sm={4} className="label">Bond Height</Col>
-                                    <Col sm={8} className="value">{numeral(this.props.validator.bond_height).format('0,0')}</Col>
+                                    <Col sm={8} className="value">{numbro(this.props.validator.bond_height).format('0,0')}</Col>
                                     <Col sm={4} className="label">Proposer Priority</Col>
-                                    <Col sm={8} className="value">{numeral(this.props.validator.proposer_priority).format('0,0')}</Col>
+                                    <Col sm={8} className="value">{numbro(this.props.validator.proposer_priority).format('0,0')}</Col>
                                     <Col sm={4} className="label">Delegator Shares</Col>
-                                    <Col sm={8} className="value">{numeral(this.props.validator.delegator_shares).format('0,0.00')}</Col>
+                                    <Col sm={8} className="value">{numbro(this.props.validator.delegator_shares).format('0,0.00')}</Col>
                                     <Col sm={4} className="label">Tokens</Col>
-                                    <Col sm={8} className="value">{numeral(this.props.validator.tokens).format('0,0.00')}</Col>
+                                    <Col sm={8} className="value">{numbro(this.props.validator.tokens).format('0,0.00')}</Col>
                                     {(this.props.validator.jailed)?<Col xs={12} >
                                         <Row><Col md={4} className="label">Unbonding Height</Col>
-                                        <Col md={8} className="value">{numeral(this.props.validator.unbonding_height).format('0,0')}</Col>
+                                        <Col md={8} className="value">{numbro(this.props.validator.unbonding_height).format('0,0')}</Col>
                                         <Col md={4} className="label">Unbonding Time</Col>
                                         <Col md={8} className="value">{moment.utc(this.props.validator.unbonding_time).format("D MMM YYYY, h:mm:ssa z")}</Col>
                                         </Row></Col>:''}

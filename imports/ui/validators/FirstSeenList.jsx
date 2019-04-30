@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Table, Progress, Spinner } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
-import numeral from 'numeral';
+import numbro from 'numbro';
 import Avatar from '../components/Avatar.jsx';
 
 const ValidatorRow = (props) => {
@@ -12,7 +12,7 @@ const ValidatorRow = (props) => {
         <th scope="row" className="d-none d-md-table-cell counter">{props.index+1}</th>
         <td><Link to={"/validator/"+props.validator.address}><Avatar moniker={moniker} identity={identity} address={props.validator.address} list={true} /> {moniker}</Link></td>
         <td>{props.validator.address}</td>
-        <td>{(props.validator.firstSeen().height)?numeral(props.validator.firstSeen().height).format('0,0'):''}</td>
+        <td>{(props.validator.firstSeen().height)?numbro(props.validator.firstSeen().height).format('0,0'):''}</td>
     </tr>
 }
 

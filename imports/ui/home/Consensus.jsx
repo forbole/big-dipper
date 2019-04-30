@@ -5,7 +5,7 @@ import { Row, Col, Card, CardImg, CardText, CardBody,
 import Avatar from '../components/Avatar.jsx';
 import CountDown from '../components/CountDown.jsx';
 import moment from 'moment';
-import numeral from 'numeral';
+import numbro from 'numbro';
 
 export default class Consensus extends Component{
     constructor(props){
@@ -59,7 +59,7 @@ export default class Consensus extends Component{
                                         <Col md={2}>
                                             <Row>
                                                 <Col md={12} xs={4}><CardSubtitle>Height</CardSubtitle></Col>
-                                                <Col md={12} xs={8}><span className="value">{numeral(this.props.consensus.votingHeight).format('0,0')}</span></Col>
+                                                <Col md={12} xs={8}><span className="value">{numbro(this.props.consensus.votingHeight).format('0,0')}</span></Col>
                                             </Row>
                                         </Col>
                                         <Col md={2}>

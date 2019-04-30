@@ -17,7 +17,7 @@
     "meteor-node-stubs": "^0.4.1",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.23",
-    "numeral": "^2.0.6",
+    "numbro": "^2.1.2",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-chartjs-2": "^2.7.6",

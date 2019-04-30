@@ -4,8 +4,7 @@ import { Row, Col, Progress, Card, Spinner } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { ProposalStatusIcon, VoteIcon } from '../components/Icons';
 import Account from '../components/Account.jsx';
-import numeral from 'numeral';
-import {numeralRounding} from '../utils.jsx';
+import numbro from 'numbro';
 import { Markdown } from 'react-showdown';
 import posed from 'react-pose';
 
@@ -40,7 +39,7 @@ export default class Proposal extends Component{
             this.setState({
                 proposal: this.props.proposal,
                 deposit: <div>{this.props.proposal.total_deposit?this.props.proposal.total_deposit.map((deposit, i) => {
-                    return <div key={i}>{numeral(deposit.amount).format(0,0)} {deposit.denom}</div>
+                    return <div key={i}>{numbro(deposit.amount).format(0,0)} {deposit.denom}</div>
                 }):''} </div>
             });
 
@@ -144,7 +143,7 @@ export default class Proposal extends Component{
                                             return <li key={i}>
                                                 <Account address={deposit.depositor} />
                                                 {deposit.amount.map((amount, j) => {
-                                                    return <div key={j}>{numeral(amount.amount).format("0,0")} {amount.denom}</div>
+                                                    return <div key={j}>{numbro(amount.amount).format("0,0")} {amount.denom}</div>
                                                 })}
                                             </li>
                                         }):''}
@@ -157,7 +156,7 @@ export default class Proposal extends Component{
                             <Col md={9} className="value">
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><VoteIcon vote="yes" /> Yes</Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numeral(this.state.tally.yes).format("0,0"):''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(this.state.tally.yes).format("0,0"):''}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(1,e)}><i className="material-icons">{this.state.open === 1 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
                                         <Result className="tally-result-detail" pose={this.state.open === 1 ? 'open' : 'closed'}>
@@ -174,7 +173,7 @@ export default class Proposal extends Component{
                                 </Row>
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><VoteIcon vote="abstain" /> Abstain</Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numeral(this.state.tally.abstain).format("0,0"):''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(this.state.tally.abstain).format("0,0"):''}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(2,e)}><i className="material-icons">{this.state.open === 2 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
                                         <Result className="tally-result-detail" pose={this.state.open === 2 ? 'open' : 'closed'}>
@@ -191,7 +190,7 @@ export default class Proposal extends Component{
                                 </Row>
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><VoteIcon vote="no" /> No</Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numeral(this.state.tally.no).format("0,0"):''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(this.state.tally.no).format("0,0"):''}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(3,e)}><i className="material-icons">{this.state.open === 3 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
                                         <Result className="tally-result-detail" pose={this.state.open === 3 ? 'open' : 'closed'}>
@@ -208,7 +207,7 @@ export default class Proposal extends Component{
                                 </Row>
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><VoteIcon vote="no_with_veto" /> No with Veto</Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numeral(this.state.tally.no_with_veto).format("0,0"):''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(this.state.tally.no_with_veto).format("0,0"):''}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(4,e)}><i className="material-icons">{this.state.open === 4 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
                                         <Result className="tally-result-detail" pose={this.state.open === 4 ? 'open' : 'closed'}>
@@ -226,14 +225,14 @@ export default class Proposal extends Component{
                                 {this.state.voteStarted?<Row>
                                     <Col xs={12}>
                                         <Progress multi>
-                                            <Progress bar animated color="success" value={this.state.yesPercent}>Yes {numeral(this.state.yesPercent).format("0.00", numeralRounding)}%</Progress>
-                                            <Progress bar animated color="warning" value={this.state.abstainPercent}>Abstain {numeral(this.state.abstainPercent).format("0.00", numeralRounding)}%</Progress>
-                                            <Progress bar animated color="danger" value={this.state.noPercent}>No {numeral(this.state.noPercent).format("0.00", numeralRounding)}%</Progress>
-                                            <Progress bar animated color="info" value={this.state.noWithVetoPercent}>No With Veto {numeral(this.state.noWithVetoPercent).format("0.00", numeralRounding)}%</Progress>
+                                            <Progress bar animated color="success" value={this.state.yesPercent}>Yes {numbro(this.state.yesPercent).format("0.00")}%</Progress>
+                                            <Progress bar animated color="warning" value={this.state.abstainPercent}>Abstain {numbro(this.state.abstainPercent).format("0.00")}%</Progress>
+                                            <Progress bar animated color="danger" value={this.state.noPercent}>No {numbro(this.state.noPercent).format("0.00")}%</Progress>
+                                            <Progress bar animated color="info" value={this.state.noWithVetoPercent}>No With Veto {numbro(this.state.noWithVetoPercent).format("0.00")}%</Progress>
                                         </Progress>
                                     </Col>
                                     <Col xs={12}>
-                                        <Card body className="tally-info"><em><span className="text-info">{numeral(this.state.totalVotes/this.props.chain.totalVotingPower).format("0.00%", numeralRounding)}</span> of online voting power has been voted.<br/>{this.state.proposalValid?<span className="text-success">This proposal is {(!this.state.voteEnded)?'(tentatively) ':''}<strong>valid</strong>.</span>:(this.state.voteEnded)?<span className="text-danger">Less than {numeral(this.props.chain.gov.tallyParams.quorum).format("0.00%", numeralRounding)} of voting power is voted. This proposal is <strong>invalid</strong>.</span>:<span>It will be a valid proposal once <span className="text-info">{numeral(this.props.chain.totalVotingPower*this.props.chain.gov.tallyParams.quorum-this.state.totalVotes).format("0,0")}</span> more votes are casted.</span>}</em></Card>
+                                        <Card body className="tally-info"><em><span className="text-info">{numbro(this.state.totalVotes/this.props.chain.totalVotingPower).format("0.00%")}</span> of online voting power has been voted.<br/>{this.state.proposalValid?<span className="text-success">This proposal is {(!this.state.voteEnded)?'(tentatively) ':''}<strong>valid</strong>.</span>:(this.state.voteEnded)?<span className="text-danger">Less than {numbro(this.props.chain.gov.tallyParams.quorum).format("0.00%")} of voting power is voted. This proposal is <strong>invalid</strong>.</span>:<span>It will be a valid proposal once <span className="text-info">{numbro(this.props.chain.totalVotingPower*this.props.chain.gov.tallyParams.quorum-this.state.totalVotes).format("0,0")}</span> more votes are casted.</span>}</em></Card>
                                     </Col>
                                 </Row>:'Voting not started yet.'}
                             </Col>

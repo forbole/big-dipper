@@ -2,7 +2,7 @@ import React from 'react';
 import { Row, Col, Card, CardText, 
     CardTitle, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Spinner } from 'reactstrap';
 import moment from 'moment';
-import numeral from 'numeral';
+import numbro from 'numbro';
 
 export default class ChainStatus extends React.Component {
     constructor(props) {
@@ -24,33 +24,33 @@ export default class ChainStatus extends React.Component {
     componentDidUpdate(prevProps){
         if (prevProps != this.props){
             this.setState({
-                blockHeight: numeral(this.props.status.latestBlockHeight).format(0,0),
+                blockHeight: numbro(this.props.status.latestBlockHeight).format(0,0),
                 blockTime: moment.utc(this.props.status.latestBlockTime).format("D MMM YYYY hh:mm:ssa z"),
-                delegatedTokens: numeral(this.props.status.totalVotingPower).format('0,0.00a'),
+                delegatedTokens: numbro(this.props.status.totalVotingPower).format('0,0.00a'),
                 numValidators: this.props.status.validators,
                 totalNumValidators: this.props.status.totalValidators,
-                bondedTokens: numeral(this.props.status.bondedTokens/Meteor.settings.public.stakingFraction).format("0,0.00a")
+                bondedTokens: numbro(this.props.status.bondedTokens/Meteor.settings.public.stakingFraction).format("0,0.00a")
             })
 
             switch (this.state.avgBlockTimeType){
                 case "":
                     this.setState({
-                        averageBlockTime: numeral(this.props.status.blockTime/1000).format('0,0.00')
+                        averageBlockTime: numbro(this.props.status.blockTime/1000).format('0,0.00')
                     })
                     break;
                 case "m":
                     this.setState({
-                        averageBlockTime: numeral(this.props.status.lastMinuteBlockTime/1000).format('0,0.00')
+                        averageBlockTime: numbro(this.props.status.lastMinuteBlockTime/1000).format('0,0.00')
                     })
                     break;
                 case "h":
                     this.setState({
-                        averageBlockTime: numeral(this.props.status.lastHourBlockTime/1000).format('0,0.00')
+                        averageBlockTime: numbro(this.props.status.lastHourBlockTime/1000).format('0,0.00')
                     })
                     break;
                 case "d":
                     this.setState({
-                        averageBlockTime: numeral(this.props.status.lastDayBlockTime/1000).format('0,0.00')
+                        averageBlockTime: numbro(this.props.status.lastDayBlockTime/1000).format('0,0.00')
                     })
                     break;
             }
@@ -58,17 +58,17 @@ export default class ChainStatus extends React.Component {
             switch (this.state.avgVotingPowerType){
                 case "":
                     this.setState({
-                        votingPower: numeral(this.props.status.activeVotingPower).format('0,0.00a'),
+                        votingPower: numbro(this.props.status.activeVotingPower).format('0,0.00a'),
                     });
                     break;
                 case "h":
                     this.setState({
-                        votingPower: numeral(this.props.status.lastHourVotingPower).format('0,0.00a'),
+                        votingPower: numbro(this.props.status.lastHourVotingPower).format('0,0.00a'),
                     });
                     break;
                 case "d":
                     this.setState({
-                        votingPower: numeral(this.props.status.lastDayVotingPower).format('0,0.00a'),
+                        votingPower: numbro(this.props.status.lastDayVotingPower).format('0,0.00a'),
                     });
                     break;
 
@@ -84,28 +84,28 @@ export default class ChainStatus extends React.Component {
                 this.setState({
                     blockTimeText: "All",
                     avgBlockTimeType: "",
-                    averageBlockTime: numeral(this.props.status.blockTime/1000).format('0,0.00')
+                    averageBlockTime: numbro(this.props.status.blockTime/1000).format('0,0.00')
                 })
                 break;
             case "m":
                 this.setState({
                     blockTimeText: "1m",
                     avgBlockTimeType: "m",
-                    averageBlockTime: numeral(this.props.status.lastMinuteBlockTime/1000).format('0,0.00')
+                    averageBlockTime: numbro(this.props.status.lastMinuteBlockTime/1000).format('0,0.00')
                 })
                 break;
             case "h":
                 this.setState({
                     blockTimeText: "1h",
                     avgBlockTimeType: "h",
-                    averageBlockTime: numeral(this.props.status.lastHourBlockTime/1000).format('0,0.00')
+                    averageBlockTime: numbro(this.props.status.lastHourBlockTime/1000).format('0,0.00')
                 })
                 break;
             case "d":
                 this.setState({
                     blockTimeText: "1d",
                     avgBlockTimeType: "d",
-                    averageBlockTime: numeral(this.props.status.lastDayBlockTime/1000).format('0,0.00')
+                    averageBlockTime: numbro(this.props.status.lastDayBlockTime/1000).format('0,0.00')
                 })
                 break;
 
@@ -119,21 +119,21 @@ export default class ChainStatus extends React.Component {
                 this.setState({
                     votingPowerText: "Now",
                     avgVotingPowerType: "",
-                    votingPower: numeral(this.props.status.activeVotingPower).format('0,0.00a')
+                    votingPower: numbro(this.props.status.activeVotingPower).format('0,0.00a')
                 })
                 break;
             case "h":
                 this.setState({
                     votingPowerText: "1h",
                     avgVotingPowerType: "h",
-                    votingPower: numeral(this.props.status.lastHourVotingPower).format('0,0.00a')
+                    votingPower: numbro(this.props.status.lastHourVotingPower).format('0,0.00a')
                 })
                 break;
             case "d":
                 this.setState({
                     votingPowerText: "1d",
                     avgVotingPowerType: "d",
-                    votingPower: numeral(this.props.status.lastDayVotingPower).format('0,0.00a')
+                    votingPower: numbro(this.props.status.lastDayVotingPower).format('0,0.00a')
                 })
                 break;
 

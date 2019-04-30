@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardFooter, CardBody, Col, Row, Badge } from 'reactstrap';
 import momemt from 'moment';
-import numeral from 'numeral';
+import numbro from 'numbro';
 import Account from './Account.jsx';
 
 export default class PowerHistory extends React.Component {
@@ -9,7 +9,7 @@ export default class PowerHistory extends React.Component {
     super(props);
     this.state = {
         tx : "",
-        diff: <span className={"text-"+((props.votingPower - props.prevVotingPower>0)?"success":"danger")+" vp-diff"}>({numeral(props.votingPower - props.prevVotingPower).format("+0,0")})</span>
+        diff: <span className={"text-"+((props.votingPower - props.prevVotingPower>0)?"success":"danger")+" vp-diff"}>({numbro(props.votingPower - props.prevVotingPower).format("+0,0")})</span>
     }
 
     Meteor.call('Transactions.findDelegation', this.props.address, this.props.height, (err, result) => {
@@ -41,7 +41,7 @@ export default class PowerHistory extends React.Component {
                                     <Col xs={12}>
                                         <Row>
                                             <Col xs={4}>Amount</Col>
-                                            <Col xs={8}>{numeral(m.value.amount.amount).format('0,0')} {m.value.amount.denom}</Col>
+                                            <Col xs={8}>{numbro(m.value.amount.amount).format('0,0')} {m.value.amount.denom}</Col>
                                         </Row>
                                     </Col>
                                 </Row>
@@ -57,7 +57,7 @@ export default class PowerHistory extends React.Component {
                                         <Col xs={12}>
                                             <Row>
                                                 <Col xs={4}>Amount</Col>
-                                                <Col xs={8}>{numeral(m.value.value.amount).format('0,0')} {m.value.value.denom}</Col>
+                                                <Col xs={8}>{numbro(m.value.value.amount).format('0,0')} {m.value.value.denom}</Col>
                                             </Row>
                                         </Col>
                                     </Row>
@@ -76,7 +76,7 @@ export default class PowerHistory extends React.Component {
                                     <Col xs={12}>
                                         <Row>
                                             <Col xs={4}>Amount</Col>
-                                            <Col xs={8}>{numeral(m.value.value.amount).format('0,0')} {m.value.value.denom}</Col>
+                                            <Col xs={8}>{numbro(m.value.value.amount).format('0,0')} {m.value.value.denom}</Col>
                                         </Row>
                                     </Col>
                                 </Row>
@@ -91,7 +91,7 @@ export default class PowerHistory extends React.Component {
                                     <Col xs={12}>
                                         <Row>
                                             <Col xs={4}>Amount</Col>
-                                            <Col xs={8}>{numeral(m.value.amount.amount).format('0,0')} {m.value.amount.denom}</Col>
+                                            <Col xs={8}>{numbro(m.value.amount.amount).format('0,0')} {m.value.amount.denom}</Col>
                                         </Row>
                                     </Col>
                                 </Row>
@@ -125,10 +125,10 @@ export default class PowerHistory extends React.Component {
                                 <Col xs={4} sm={6}>Fee</Col>
                                 <Col xs={8} sm={6}>{(msg.tx.value.fee.amount&& msg.tx.value.fee.amount.length>0)?msg.tx.value.fee.amount.map((amount,i)=>{
                                     if (i > 0){
-                                        return <span key={i}> ,{numeral(amount.amount).format('0,0')} {amount.denom}</span>
+                                        return <span key={i}> ,{numbro(amount.amount).format('0,0')} {amount.denom}</span>
                                     }
                                     else{
-                                        return <span key={i}>{numeral(amount.amount).format('0,0')} {amount.denom}</span>
+                                        return <span key={i}>{numbro(amount.amount).format('0,0')} {amount.denom}</span>
                                     }
                                 }):'0'}</Col>
                             </Row>
@@ -162,8 +162,8 @@ export default class PowerHistory extends React.Component {
             <CardBody>
             <Row>
                 <Col xs={2} className={(this.props.type == 'down' || this.props.type == 'remove')?'text-danger':(this.props.type == 'up'?'text-success':'text-warning')}><i className={changeClass}></i> </Col>
-                <Col xs={10} sm={6} ><span className="voting-power">{numeral(this.props.prevVotingPower).format('0,0')}</span> <i className="material-icons text-info">arrow_forward</i> <span className="voting-power">{numeral(this.props.votingPower).format('0,0')}</span> {this.state.diff}</Col>
-                <Col xs={{size:10, offset:2}} sm={{offset:0, size:4}} className="text-secondary"><i className="fas fa-cube"></i> {numeral(this.props.height).format('0,0')}<br/><i className="far fa-clock"></i> {momemt.utc(this.props.time).format("D MMM YYYY, h:mm:ssa z")}</Col>
+                <Col xs={10} sm={6} ><span className="voting-power">{numbro(this.props.prevVotingPower).format('0,0')}</span> <i className="material-icons text-info">arrow_forward</i> <span className="voting-power">{numbro(this.props.votingPower).format('0,0')}</span> {this.state.diff}</Col>
+                <Col xs={{size:10, offset:2}} sm={{offset:0, size:4}} className="text-secondary"><i className="fas fa-cube"></i> {numbro(this.props.height).format('0,0')}<br/><i className="far fa-clock"></i> {momemt.utc(this.props.time).format("D MMM YYYY, h:mm:ssa z")}</Col>
             </Row>
             </CardBody>
             {this.state.tx}

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {HorizontalBar} from 'react-chartjs-2';
 import { Row, Col, Card, CardImg, CardText, CardBody,
     CardTitle, CardSubtitle, Button, Progress, Spinner } from 'reactstrap';
-import numeral from 'numeral';
+import numbro from 'numbro';
 
 export default class VotingPower extends Component{
     constructor(props){
@@ -54,7 +54,7 @@ export default class VotingPower extends Component{
                     tooltips: {
                         callbacks: {
                             label: function(tooltipItem, data) {
-                                return numeral(data.datasets[0].data[tooltipItem.index]).format("0,0")+" ("+(numeral(data.datasets[0].data[tooltipItem.index]/totalVotingPower).format("0.00%")+", "+numeral(accumulatePower[tooltipItem.index]/totalVotingPower).format("0.00%"))+")";
+                                return numbro(data.datasets[0].data[tooltipItem.index]).format("0,0")+" ("+(numbro(data.datasets[0].data[tooltipItem.index]/totalVotingPower).format("0.00%")+", "+numbro(accumulatePower[tooltipItem.index]/totalVotingPower).format("0.00%"))+")";
                             }
                         }
                     },
@@ -65,7 +65,7 @@ export default class VotingPower extends Component{
                                 beginAtZero:true,
                                 userCallback: function(value, index, values) {
                                     // Convert the number to a string and splite the string every 3 charaters from the end
-                                    return numeral(value).format("0,0");
+                                    return numbro(value).format("0,0");
                                 }
                             }
                         }]

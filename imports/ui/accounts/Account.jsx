@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Spinner, Row, Col, Card, CardHeader, CardBody } from 'reactstrap';
-import numeral from 'numeral';
+import numbro from 'numbro';
 import AccountCopy from '../components/AccountCopy.jsx';
 
 export default class AccountDetails extends Component{
@@ -93,23 +93,23 @@ export default class AccountDetails extends Component{
                         <CardBody>
                             <Row>
                                 <Col md={4} className="label">Available</Col>
-                                <Col md={8} className="value">{numeral(this.state.available/Meteor.settings.public.stakingFraction).format("0,0.000")}</Col>
+                                <Col md={8} className="value">{numbro(this.state.available/Meteor.settings.public.stakingFraction).format("0,0.000")}</Col>
                             </Row>
                             <Row>
                                 <Col md={4} className="label">Delegated</Col>
-                                <Col md={8} className="value">{numeral(this.state.delegated/Meteor.settings.public.stakingFraction).format("0,0.000")}</Col>
+                                <Col md={8} className="value">{numbro(this.state.delegated/Meteor.settings.public.stakingFraction).format("0,0.000")}</Col>
                             </Row>
                             <Row>
                                 <Col md={4} className="label">Unbonding</Col>
-                                <Col md={8} className="value">{numeral(this.state.unbonding/Meteor.settings.public.stakingFraction).format("0,0.000")}</Col>
+                                <Col md={8} className="value">{numbro(this.state.unbonding/Meteor.settings.public.stakingFraction).format("0,0.000")}</Col>
                             </Row>
                             <Row>
                                 <Col md={4} className="label">Rewards</Col>
-                                <Col md={8} className="value">{numeral(this.state.rewards/Meteor.settings.public.stakingFraction).format("0,0.000")}</Col>
+                                <Col md={8} className="value">{numbro(this.state.rewards/Meteor.settings.public.stakingFraction).format("0,0.000")}</Col>
                             </Row>
                             <Row>
                                 <Col md={4} className="label">Total</Col>
-                                <Col md={8} className="value">{numeral(this.state.total/Meteor.settings.public.stakingFraction).format("0,0.000")} {Meteor.settings.public.stakingDenom}s</Col>
+                                <Col md={8} className="value">{numbro(this.state.total/Meteor.settings.public.stakingFraction).format("0,0.000")} {Meteor.settings.public.stakingDenom}s</Col>
                             </Row>
                         </CardBody>
                     </Card></Col>
