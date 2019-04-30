@@ -291,13 +291,52 @@ div#countdown {
     margin-bottom: 0.8em;
 }
 
-/* .address{
-    white-space: nowrap;
-    overflow-y: auto;
-} */
-
 .address.copy{
     max-width: calc(100% - 1.2em);
+}
+
+.account-distributions .progress {
+    height: 1.5em !important;
+    border-radius: 0.2em;
+    margin-bottom: 0.8em;
+}
+
+.account-distributions .progress .row{
+    padding-bottom: 0.2em;
+}
+
+#account .infinity{
+    display: inline-block;
+    margin-right: 0.5em;
+    height: 1em;
+    width: 1em;
+    transform: translateY(2px);
+    border-radius: 0.2em;
+}
+
+#account .available{
+    background-color: #9C27B0
+}
+
+#account .delegated{
+    background-color: #6610f2
+}
+
+#account .unbonding{
+    background-color: #2196F3
+}
+
+#account .rewards{
+    background-color: #20c997
+}
+
+#account .total{
+    margin-top: 0.8em;
+}
+
+#account .total .value{
+    font-size: 1.5em;
+    transform: translateY(3px);
 }
 
 .vp-diff{
