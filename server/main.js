@@ -102,7 +102,16 @@ aggregateMinutely = () =>{
         else{
             console.log("aggregate minutely block time ok: "+result)
         }
-    })
+    });
+
+    Meteor.call('coinStats.getCoinStats', (error, result) => {
+        if (error){
+            console.log("get coin stats: "+error);
+        }
+        else{
+            console.log("get coin stats ok: "+result)
+        }
+    });
 }
 
 aggregateHourly = () =>{
@@ -114,7 +123,7 @@ aggregateHourly = () =>{
         else{
             console.log("aggregate hourly block time ok: "+result)
         }
-    })
+    });
 }
 
 aggregateDaily = () =>{

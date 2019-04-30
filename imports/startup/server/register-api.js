@@ -26,3 +26,5 @@ import '../../api/delegations/server/publications.js';
 import '../../api/status/server/publications.js';
 
 import '../../api/accounts/server/methods.js';
+
+import '../../api/coin-stats/server/methods.js';

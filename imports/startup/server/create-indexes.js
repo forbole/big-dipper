@@ -7,6 +7,7 @@ import { ValidatorSets } from '../../api/validator-sets/validator-sets.js';
 import { Validators } from '../../api/validators/validators.js';
 import { VotingPowerHistory } from '../../api/voting-power/history.js';
 import { Evidences } from '../../api/evidences/evidences.js';
+import { CoinStats } from '../../api/coin-stats/coin-stats.js';
 
 Blockscon.rawCollection().createIndex({height: -1},{unique:true});
 Blockscon.rawCollection().createIndex({proposerAddress:1});
@@ -42,4 +43,4 @@ Validators.rawCollection().createIndex({"pub_key.value":1},{unique:true, partial
 VotingPowerHistory.rawCollection().createIndex({address:1,height:-1});
 VotingPowerHistory.rawCollection().createIndex({type:1});
 
-
+CoinStats.rawCollection().createIndex({last_updated_at:-1},{unique:true});
