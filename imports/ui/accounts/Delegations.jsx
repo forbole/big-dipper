@@ -22,7 +22,6 @@ export default class AccountDelegations extends Component{
             }
 
             if (result){
-                console.log(result);
                 // Delegations.remove({});
                 let Delegations = new Mongo.Collection(null);
                 result.forEach((delegation,i) => {

@@ -22,7 +22,6 @@ export default class AccountUnbondings extends Component{
                 console.log(error);
             }
             else{
-                console.log(result);
                 this.setState({
                     loading:false
                 });
