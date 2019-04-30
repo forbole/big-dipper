@@ -4,6 +4,7 @@ import numbro from 'numbro';
 import AccountCopy from '../components/AccountCopy.jsx';
 import Account from '../components/Account.jsx';
 import Delegations from './Delegations.jsx';
+import Unbondings from './Unbondings.jsx';
 
 
 export default class AccountDetails extends Component{
@@ -153,10 +154,7 @@ export default class AccountDetails extends Component{
                         <Delegations address={this.props.match.params.address}/>
                     </Col>
                     <Col md={6}>
-                        <Card>
-                            <CardHeader>Unbondings</CardHeader>
-                            <CardBody></CardBody>
-                        </Card>
+                        <Unbondings address={this.props.match.params.address} />
                     </Col>
                 </Row>
             </div>

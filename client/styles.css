@@ -574,6 +574,10 @@ div#voting-power-dist .card{
     .validator-info.row i.material-icons + span{
         transform: inherit;
     }
+
+    #account .card-body.list{
+        height: 15em;
+    }
 }
 
 @media only screen and (max-width: 1023px){

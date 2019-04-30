@@ -82,12 +82,6 @@ Meteor.methods({
             let unbondings = HTTP.get(url);
             if (unbondings.statusCode == 200){
                 unbondings = JSON.parse(unbondings.content);
-                console.log(unbondings);
-                // unbondings.forEach((unbonding, i) => {
-                //     if (unbondings[i] && unbondings[i].shares)
-                //         unbondings[i].shares = parseFloat(unbondings[i].shares);
-                // })
-                
                 return unbondings;
             };
         }

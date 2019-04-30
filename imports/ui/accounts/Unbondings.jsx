@@ -5,40 +5,40 @@ import Account from '../components/Account.jsx';
 import { Mongo } from 'meteor/mongo';
 
 
-export default class AccountDelegations extends Component{
+export default class AccountUnbondings extends Component{
     constructor(props){
         super(props);
         this.state = {
             loading: true,
-            numDelegations: 0,
-            delegations: ''
+            numUnbondings: 0,
+            unbondings: ''
         }
     }
 
     componentDidMount(){
-        Meteor.call('accounts.getAllDelegations', this.props.address, (error, result) => {
+        Meteor.call('accounts.getAllUnbondings', this.props.address, (error, result) => {
             if (error){
                 console.log(error);
             }
-
-            if (result){
+            else{
                 console.log(result);
-                // Delegations.remove({});
-                let Delegations = new Mongo.Collection(null);
-                result.forEach((delegation,i) => {
-                    Delegations.insert(delegation);
-                })
-                let delegations = Delegations.find({},{sort:{shares:-1}}).fetch();
                 this.setState({
-                    loading: false,
-                    numDelegations:delegations.length,
-                    delegations: delegations.map((d, i) => {
-                        return <Row key={i} className="delegation-info">
-                                <Col md={8} className="text-nowrap overflow-auto"><Account address={d.validator_address} /></Col>
-                                <Col md={4}>{numbro(d.shares).format("0,0.000a")}</Col>
-                            </Row>
+                    loading:false
+                });
+                if (result){
+                    this.setState({
+                        numUnbondings:result.length,
+                        unbondings: result.map((u, i) => {
+                            return <Row key={i} className="delegation-info">
+                                    <Col md={8} className="text-nowrap overflow-auto"><Account address={u.validator_address} /></Col>
+                                    <Col md={4}>{u.entries.map((entry,j) => {
+                                        return <div key={j}>{numbro(entry.balance).format("0,000a")}</div>
+                                    })}</Col>
+                                </Row>
+                        })
                     })
-                })
+    
+                }
             }
         })
     }
@@ -49,14 +49,14 @@ export default class AccountDelegations extends Component{
         }
         else{
             return <Card>
-                <CardHeader>{(this.state.numDelegations > 0)?this.state.numDelegations:'No'} delegations</CardHeader>
+                <CardHeader>{(this.state.numUnbondings > 0)?this.state.numUnbondings:'No'} unbondings</CardHeader>
                 <CardBody className="list overflow-auto">
                     <Container fluid>
                         <Row className="header text-nowrap d-none d-lg-flex">
                             <Col md={8}><i className="fas fa-at"></i> <span>Validators</span></Col>
                             <Col md={4}><i className="fas fa-piggy-bank"></i> <span>Shares</span></Col>
                         </Row>
-                        {this.state.delegations}
+                        {this.state.unbondings}
                     </Container>
                 </CardBody>
             </Card>
