@@ -87,7 +87,7 @@ export default class Validators extends Component{
             <Row className="validator-list">
                 <Col md={12}>
                     <Card body>
-                        <Row className="header">
+                        <Row className="header text-nowrap">
                             <Col className="d-none d-md-block counter" md={1}>&nbsp;</Col>
                             <Col className="moniker" md={2} onClick={(e) => this.toggleDir(0,e)}><i className="material-icons">perm_contact_calendar</i> <span className="d-inline-block d-md-none d-lg-inline-block">Moniker</span> {renderToggleIcon(this.state.monikerDir)} </Col>
                             <Col className="voting-power" md={3} lg={2} onClick={(e) => this.toggleDir(1,e)}><i className="material-icons">power</i> <span className="d-inline-block d-md-none d-lg-inline-block">Voting Power</span> {renderToggleIcon(this.state.votingPowerDir)} </Col>
