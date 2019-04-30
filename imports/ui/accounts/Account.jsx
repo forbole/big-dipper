@@ -124,7 +124,7 @@ export default class AccountDetails extends Component{
                                     <Row>
                                         <Col xs={4} className="label d-flex align-self-end"><div className="infinity" />Total</Col>
                                         <Col xs={8} className="value text-right">{numbro(this.state.total/Meteor.settings.public.stakingFraction).format("0,0.000a")} {Meteor.settings.public.stakingDenom}s</Col>
-                                        <Col xs={12} className="dollar-value text-right text-secondary">(~{numbro(this.state.total/Meteor.settings.public.stakingFraction*3.9).format("$0,0.000a")})</Col>
+                                        <Col xs={12} className="dollar-value text-right text-secondary">~{numbro(this.state.total/Meteor.settings.public.stakingFraction*3.9).format("$0,0.000a")} ($3.91/ATOM)</Col>
                                     </Row>
                                 </Col>
                             </Row>
