@@ -49,7 +49,7 @@ export default class AccountDelegations extends Component{
         }
         else{
             return <Card>
-                <CardHeader>{(this.state.numDelegations > 0)?this.state.numDelegations:'No'} delegations</CardHeader>
+                <CardHeader>{(this.state.numDelegations > 0)?this.state.numDelegations:'No'} delegation{(this.state.numDelegations>1)?'s':''}</CardHeader>
                 <CardBody className="list overflow-auto">
                     <Container fluid>
                         <Row className="header text-nowrap d-none d-lg-flex">

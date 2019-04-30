@@ -57,7 +57,7 @@ export default class AccountUnbondings extends Component{
         }
         else{
             return <Card>
-                <CardHeader>{(this.state.numUnbondings > 0)?this.state.numUnbondings:'No'} unbondings</CardHeader>
+                <CardHeader>{(this.state.numUnbondings > 0)?this.state.numUnbondings:'No'} unbonding{(this.state.numUnbondings>1)?'s':''}</CardHeader>
                 <CardBody className="list overflow-auto">
                     <Container fluid>
                         <Row className="header text-nowrap d-none d-lg-flex">
