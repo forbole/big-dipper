@@ -1,7 +1,7 @@
 import React, {Component } from 'react';
 import { MsgType } from './MsgType.jsx';
 import { Link } from 'react-router-dom';
-import numeral from 'numeral';
+import numbro from 'numbro';
 import Account from '../components/Account.jsx';
 
 MultiSend = (props) => {
@@ -10,8 +10,8 @@ MultiSend = (props) => {
         <p>The following sender(s)
             <ul>
                {props.msg.value.inputs.map((data,i) =>{
-                    return <li key={i}>{data.address} sent {data.coins.map((coin, j) =>{
-                            return <em key={j} className="text-success">{numeral(coin.amount).format("0,0")} {coin.denom}</em>
+                    return <li key={i}><Account address={data.address}/> sent {data.coins.map((coin, j) =>{
+                            return <em key={j} className="text-success">{numbro(coin.amount).format("0,0")} {coin.denom}</em>
                         })}
                     </li>
                })}
@@ -19,8 +19,8 @@ MultiSend = (props) => {
             to the following receipient(s)
             <ul>
                {props.msg.value.outputs.map((data,i) =>{
-                    return <li key={i}>{data.address} received {data.coins.map((coin,j) =>{
-                        return <em key={j} className="text-success">{numeral(coin.amount).format("0,0")} {coin.denom}</em>
+                    return <li key={i}><Account address={data.address}/> received {data.coins.map((coin,j) =>{
+                        return <em key={j} className="text-success">{numbro(coin.amount).format("0,0")} {coin.denom}</em>
                     })}</li>
                })}
             </ul>
@@ -31,13 +31,6 @@ MultiSend = (props) => {
 export default class Activites extends Component {
     constructor(props){
         super(props);
-        this.state = {
-            from: "",
-            to: "",
-            delegator: "",
-            sourceValidator: "",
-            validator: ""
-        }
     }
 
     render(){
@@ -49,10 +42,10 @@ export default class Activites extends Component {
                 let amount = '';
                 for (let a in msg.value.amount){
                     if (a > 0){
-                        amount += ', '+numeral(msg.value.amount[a].amount).format("0,0")+" "+msg.value.amount[a].denom;
+                        amount += ', '+numbro(msg.value.amount[a].amount).format("0,0")+" "+msg.value.amount[a].denom;
                     }
                     else{
-                        amount += numeral(msg.value.amount[a].amount).format("0,0")+" "+msg.value.amount[a].denom;
+                        amount += numbro(msg.value.amount[a].amount).format("0,0")+" "+msg.value.amount[a].denom;
                     }
                 }
                 return <p><Account address={msg.value.from_address} /> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-success">{amount}</em> to <span className="address"><Account address={msg.value.to_address} /></span>.</p>
@@ -65,11 +58,11 @@ export default class Activites extends Component {
             case "cosmos-sdk/MsgEditValidator":
                 return <p><Account address={msg.value.address}/> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /></p>
             case "cosmos-sdk/MsgDelegate":
-                return <p><Account address={msg.value.delegator_address}/> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-warning">{numeral(msg.value.amount.amount).format("0,0")} {msg.value.amount.denom}</em> to <Account address={msg.value.validator_address} />.</p>
+                return <p><Account address={msg.value.delegator_address}/> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-warning">{numbro(msg.value.amount.amount).format("0,0")} {msg.value.amount.denom}</em> to <Account address={msg.value.validator_address} />.</p>
             case "cosmos-sdk/MsgUndelegate":
-                return <p><Account address={msg.value.delegator_address} /> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-warning">{numeral(msg.value.amount.amount).format("0,0")} {msg.value.amount.denom}</em> from <Account address={msg.value.validator_address} />.</p>
+                return <p><Account address={msg.value.delegator_address} /> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-warning">{numbro(msg.value.amount.amount).format("0,0")} {msg.value.amount.denom}</em> from <Account address={msg.value.validator_address} />.</p>
             case "cosmos-sdk/MsgBeginRedelegate":
-                return <p><Account address={msg.value.delegator_address} /> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-warning">{numeral(msg.value.amount.amount).format("0,0")} {msg.value.amount.denom}</em> from <Account address={msg.value.validator_src_address} /> to <Account address={msg.value.validator_dst_address} />.</p>
+                return <p><Account address={msg.value.delegator_address} /> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-warning">{numbro(msg.value.amount.amount).format("0,0")} {msg.value.amount.denom}</em> from <Account address={msg.value.validator_src_address} /> to <Account address={msg.value.validator_dst_address} />.</p>
             
             // gov
             case "cosmos-sdk/MsgSubmitProposal":
@@ -77,10 +70,10 @@ export default class Activites extends Component {
             case "cosmos-sdk/MsgDeposit":
                 return <p><Account address={msg.value.depositor} /> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-info">{msg.value.amount.map((amount,i) =>{
                     if (i>0){
-                        return " ,"+numeral(amount.amount).format("0,0")+" "+amount.denom;
+                        return " ,"+numbro(amount.amount).format("0,0")+" "+amount.denom;
                     }
                     else{
-                        return numeral(amount.amount).format("0,0")+" "+amount.denom;
+                        return numbro(amount.amount).format("0,0")+" "+amount.denom;
                     }
                 })}</em> to <Link to={"/proposals/"+msg.value.proposal_id}>proposal {msg.value.proposal_id}</Link>.</p>
             case "cosmos-sdk/MsgVote":
@@ -90,7 +83,7 @@ export default class Activites extends Component {
             case "cosmos-sdk/MsgWithdrawValidatorCommission":
                 return <p><Account address={msg.value.validator_address} /> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} />.</p>
             case "cosmos-sdk/MsgWithdrawDelegationReward":
-                return <p><span className="address">{this.state.delegator}</span> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> from <Account address={msg.value.validator_address} />.</p>
+                return <p><Account address={msg.value.delegator_address}/> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> from <Account address={msg.value.validator_address} />.</p>
             case "cosmos-sdk/MsgModifyWithdrawAddress":
                 return <p><Account address={msg.value.delegator_address}/> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /></p>
     
