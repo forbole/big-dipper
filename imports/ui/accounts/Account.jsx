@@ -5,7 +5,7 @@ import AccountCopy from '../components/AccountCopy.jsx';
 import Account from '../components/Account.jsx';
 import Delegations from './Delegations.jsx';
 import Unbondings from './Unbondings.jsx';
-
+import AccountTransactions from '../components/TransactionsContainer.js';
 
 export default class AccountDetails extends Component{
     constructor(props){
@@ -155,6 +155,11 @@ export default class AccountDetails extends Component{
                     </Col>
                     <Col md={6}>
                         <Unbondings address={this.props.match.params.address} />
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <AccountTransactions delegator={this.props.match.params.address} />
                     </Col>
                 </Row>
             </div>

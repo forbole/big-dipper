@@ -10,7 +10,7 @@ import { Badge, Row, Col, Card,
      CardBody, Spinner, Nav, NavItem, NavLink } from 'reactstrap';
 import KeybaseCheck from '../components/KeybaseCheck.jsx';
 import ValidatorDelegations from './Delegations.jsx';
-import ValidatorTransactions from './TransactionsContainer.js';
+import ValidatorTransactions from '../components/TransactionsContainer.js';
 
 addhttp = (url) => {
     if (!/^(f|ht)tps?:\/\//i.test(url)) {
