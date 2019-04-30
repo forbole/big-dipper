@@ -7,7 +7,7 @@ export default class Account extends Component{
         super(props);
 
         this.state = {
-            address: <Link to={this.props.address}>{this.props.address}</Link>
+            address: <Link to={"/account/"+this.props.address}>{this.props.address}</Link>
         }
     }
 
