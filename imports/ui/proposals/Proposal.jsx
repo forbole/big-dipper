@@ -104,13 +104,13 @@ export default class Proposal extends Component{
             return <Spinner type="grow" color="primary" />
         }
         else{
-            if (this.state.proposal != ''){
+            if (this.props.proposalExist && this.state.proposal != ''){
                 // console.log(this.state.proposal);
                 return <div>
                     <div className="proposal bg-light">
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label">Proposal ID</Col>
-                            <Col md={9} className="value">{this.state.proposal.proposal_id}</Col>
+                            <Col md={9} className="value">{this.props.proposal.proposal_id}</Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label">Proposer</Col>
@@ -118,19 +118,19 @@ export default class Proposal extends Component{
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label">Title</Col>
-                            <Col md={9} className="value">{this.state.proposal.proposal_content.value.title}</Col>
+                            <Col md={9} className="value">{this.props.proposal.proposal_content.value.title}</Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label">Description</Col>
-                            <Col md={9} className="value"><Markdown markup={this.state.proposal.proposal_content.value.description} /></Col>
+                            <Col md={9} className="value"><Markdown markup={this.props.proposal.proposal_content.value.description} /></Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label">Proposal Type</Col>
-                            <Col md={9} className="value">{this.state.proposal.proposal_content.type.substr(4).match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</Col>
+                            <Col md={9} className="value">{this.props.proposal.proposal_content.type.substr(4).match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label">Proposal Status</Col>
-                            <Col md={9} className="value"><ProposalStatusIcon status={this.state.proposal.proposal_status} /> {(this.state.proposal.proposal_status)?this.state.proposal.proposal_status.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" "):''}</Col>
+                            <Col md={9} className="value"><ProposalStatusIcon status={this.props.proposal.proposal_status} /> {(this.props.proposal.proposal_status)?this.props.proposal.proposal_status.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" "):''}</Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label">Deposit</Col>
