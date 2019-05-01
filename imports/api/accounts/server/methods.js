@@ -12,7 +12,8 @@ Meteor.methods({
             if (available.statusCode == 200){
                 // console.log(JSON.parse(available.content))
                 balance.available = JSON.parse(available.content);
-                balance.available = balance.available[0];
+                if (balance.available && balance.available.length > 0)
+                    balance.available = balance.available[0];
             }
         }
         catch (e){
@@ -63,10 +64,12 @@ Meteor.methods({
             let delegations = HTTP.get(url);
             if (delegations.statusCode == 200){
                 delegations = JSON.parse(delegations.content);
-                delegations.forEach((delegation, i) => {
-                    if (delegations[i] && delegations[i].shares)
-                        delegations[i].shares = parseFloat(delegations[i].shares);
-                })
+                if (delegations && delegations.length > 0){
+                    delegations.forEach((delegation, i) => {
+                        if (delegations[i] && delegations[i].shares)
+                            delegations[i].shares = parseFloat(delegations[i].shares);
+                    })    
+                }
                 
                 return delegations;
             };

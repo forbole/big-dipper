@@ -20,26 +20,29 @@ export default class AccountDelegations extends Component{
             if (error){
                 console.log(error);
             }
-
-            if (result){
+            else{
                 this.setState({
                     loading:false
                 });
-                let Delegations = new Mongo.Collection(null);
-                result.forEach((delegation,i) => {
-                    Delegations.insert(delegation);
-                })
-                let delegations = Delegations.find({},{sort:{shares:-1}}).fetch();
-                this.setState({
-                    numDelegations:delegations.length,
-                    delegations: delegations.map((d, i) => {
-                        return <Row key={i} className="delegation-info">
-                                <Col md={8} className="text-nowrap overflow-auto"><Account address={d.validator_address} /></Col>
-                                <Col md={4}>{numbro(d.shares).format("0,0.000a")}</Col>
-                            </Row>
+                if (result){
+
+                    let Delegations = new Mongo.Collection(null);
+                    result.forEach((delegation,i) => {
+                        Delegations.insert(delegation);
                     })
-                })
+                    let delegations = Delegations.find({},{sort:{shares:-1}}).fetch();
+                    this.setState({
+                        numDelegations:delegations.length,
+                        delegations: delegations.map((d, i) => {
+                            return <Row key={i} className="delegation-info">
+                                    <Col md={8} className="text-nowrap overflow-auto"><Account address={d.validator_address} /></Col>
+                                    <Col md={4}>{numbro(d.shares).format("0,0.000a")}</Col>
+                                </Row>
+                        })
+                    })
+                }
             }
+
         })
     }
 
@@ -50,7 +53,7 @@ export default class AccountDelegations extends Component{
         else{
             return <Card>
                 <CardHeader>{(this.state.numDelegations > 0)?this.state.numDelegations:'No'} delegation{(this.state.numDelegations>1)?'s':''}</CardHeader>
-                <CardBody className="list overflow-auto">
+                {(this.state.numDelegations > 0)?<CardBody className="list overflow-auto">
                     <Container fluid>
                         <Row className="header text-nowrap d-none d-lg-flex">
                             <Col md={8}><i className="fas fa-at"></i> <span>Validators</span></Col>
@@ -58,7 +61,7 @@ export default class AccountDelegations extends Component{
                         </Row>
                         {this.state.delegations}
                     </Container>
-                </CardBody>
+                </CardBody>:''}
             </Card>
         }
     }
