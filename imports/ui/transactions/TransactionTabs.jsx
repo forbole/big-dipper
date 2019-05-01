@@ -40,7 +40,7 @@ export default class TransactionTabs extends Component{
 
     render(){
         return <Card>
-            <CardHeader>Transactions</CardHeader>
+            <CardHeader>Transactions <small>(last 100)</small></CardHeader>
             <CardBody>
                 <Nav tabs className="tx-types">
                     <NavItem>

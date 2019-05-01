@@ -4,7 +4,7 @@ import { Transactions } from '/imports/api/transactions/transactions.js';
 import ValidatorTransactions from './Transactions.jsx';
 
 export default TransactionsContainer = withTracker((props) => {
-    const transactionsHandle = Meteor.subscribe('transactions.validator', props.validator, props.delegator);
+    const transactionsHandle = Meteor.subscribe('transactions.validator', props.validator, props.delegator, props.limit);
     const loading = !transactionsHandle.ready();
     const transactions = Transactions.find({}, {sort:{height:-1}});
     const transactionsExist = !loading && !!transactions;

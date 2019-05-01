@@ -159,7 +159,7 @@ export default class AccountDetails extends Component{
                 </Row>
                 <Row>
                     <Col>
-                        <AccountTransactions delegator={this.props.match.params.address} />
+                        <AccountTransactions delegator={this.props.match.params.address} limit={100}/>
                     </Col>
                 </Row>
             </div>

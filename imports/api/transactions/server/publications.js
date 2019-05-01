@@ -21,7 +21,7 @@ publishComposite('transactions.list', function(limit = 30){
     }
 });
 
-publishComposite('transactions.validator', function(validatorAddress, delegatorAddress){
+publishComposite('transactions.validator', function(validatorAddress, delegatorAddress, limit=100){
     let query = {};
     if (validatorAddress && delegatorAddress){
         query = {$or:[{"tags.value":validatorAddress}, {"tags.value":delegatorAddress}]}
@@ -33,7 +33,7 @@ publishComposite('transactions.validator', function(validatorAddress, delegatorA
 
     return {
         find(){
-            return Transactions.find(query, {sort:{height:-1}})
+            return Transactions.find(query, {sort:{height:-1}, limit:limit})
         },
         children:[
             {
