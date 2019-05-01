@@ -22,14 +22,15 @@ export default class AccountDelegations extends Component{
             }
 
             if (result){
-                // Delegations.remove({});
+                this.setState({
+                    loading:false
+                });
                 let Delegations = new Mongo.Collection(null);
                 result.forEach((delegation,i) => {
                     Delegations.insert(delegation);
                 })
                 let delegations = Delegations.find({},{sort:{shares:-1}}).fetch();
                 this.setState({
-                    loading: false,
                     numDelegations:delegations.length,
                     delegations: delegations.map((d, i) => {
                         return <Row key={i} className="delegation-info">
