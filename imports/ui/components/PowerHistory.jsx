@@ -76,7 +76,7 @@ export default class PowerHistory extends React.Component {
                                     <Col xs={12}>
                                         <Row>
                                             <Col xs={4}>Amount</Col>
-                                            <Col xs={8}>{numbro(m.value.amount.amount).format('0,0')} {m.value.amount.denom}</Col>
+                                            <Col xs={8}>{numbro(m.value.value.amount).format('0,0')} {m.value.value.denom}</Col>
                                         </Row>
                                     </Col>
                                 </Row>
