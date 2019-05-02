@@ -133,7 +133,7 @@ const getVoteDetail = (votes) => {
 
                             } else {
                                 let validator = Validators.findOne({operator_address: delegation.validator_address});
-                                if (validator.delegator_shares != 0){ // avoiding division by zero
+                                if (validator && validator.delegator_shares != 0){ // avoiding division by zero
                                     votingPower += (shares/parseFloat(validator.delegator_shares)) * parseFloat(validator.tokens);
                                 }
                             }
