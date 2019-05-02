@@ -24,7 +24,7 @@ export default class ChainStatus extends React.Component {
     componentDidUpdate(prevProps){
         if (prevProps != this.props){
             this.setState({
-                blockHeight: numbro(this.props.status.latestBlockHeight).format(0,0),
+                blockHeight: numbro(this.props.status.latestBlockHeight).format({thousandSeparated: true}),
                 blockTime: moment.utc(this.props.status.latestBlockTime).format("D MMM YYYY hh:mm:ssa z"),
                 delegatedTokens: numbro(this.props.status.totalVotingPower).format('0,0.00a'),
                 numValidators: this.props.status.validators,
