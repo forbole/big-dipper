@@ -46,7 +46,7 @@ export default class PowerHistory extends React.Component {
                                     </Col>
                                 </Row>
                             case "cosmos-sdk/MsgDelegate":
-                                if (m.value.validator_address == self.props.address){                                
+                                if (m.value.validator_address == self.props.address){      
                                     return <Row key={j}>
                                         <Col xs={12}>
                                             <Row>
@@ -57,7 +57,7 @@ export default class PowerHistory extends React.Component {
                                         <Col xs={12}>
                                             <Row>
                                                 <Col xs={4}>Amount</Col>
-                                                <Col xs={8}>{numbro(m.value.value.amount).format('0,0')} {m.value.value.denom}</Col>
+                                                <Col xs={8}>{numbro(m.value.amount.amount).format('0,0')} {m.value.amount.denom}</Col>
                                             </Row>
                                         </Col>
                                     </Row>
@@ -76,7 +76,7 @@ export default class PowerHistory extends React.Component {
                                     <Col xs={12}>
                                         <Row>
                                             <Col xs={4}>Amount</Col>
-                                            <Col xs={8}>{numbro(m.value.value.amount).format('0,0')} {m.value.value.denom}</Col>
+                                            <Col xs={8}>{numbro(m.value.amount.amount).format('0,0')} {m.value.amount.denom}</Col>
                                         </Row>
                                     </Col>
                                 </Row>
