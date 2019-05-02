@@ -11,7 +11,7 @@ export default class Account extends Component{
         }
     }
 
-    componentDidMount(){
+    updateAccount = () => {
         Meteor.call('Transactions.findUser', this.props.address, (error, result) => {
             if (result){
                 // console.log(result);
@@ -20,6 +20,16 @@ export default class Account extends Component{
                 })
             }
         })
+    }
+
+    componentDidMount(){
+        this.updateAccount();
+    }
+
+    componentDidUpdate(prevProps){
+        if (this.props != prevProps){
+            this.updateAccount();
+        }
     }
 
     render(){

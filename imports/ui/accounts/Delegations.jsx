@@ -15,7 +15,7 @@ export default class AccountDelegations extends Component{
         }
     }
 
-    componentDidMount(){
+    updateDelegations = () =>{
         Meteor.call('accounts.getAllDelegations', this.props.address, (error, result) => {
             if (error){
                 console.log(error);
@@ -42,8 +42,17 @@ export default class AccountDelegations extends Component{
                     })
                 }
             }
-
         })
+    }
+
+    componentDidMount(){
+        this.updateDelegations();
+    }
+
+    componentDidUpdate(prevProps){
+        if (this.props != prevProps){
+            this.updateDelegations();
+        }
     }
 
     render(){

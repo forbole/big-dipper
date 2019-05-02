@@ -11,6 +11,7 @@ export default class AccountDetails extends Component{
     constructor(props){
         super(props);
         this.state = {
+            address: props.match.params.address,
             loading: true,
             accountExists: false,
             available: 0,
@@ -90,7 +91,19 @@ export default class AccountDetails extends Component{
 
     componentDidUpdate(prevProps){
         if (this.props != prevProps){
-            this.getBalance();
+            this.setState({
+                address: this.props.match.params.address,
+                loading: true,
+                accountExists: false,
+                available: 0,
+                delegated: 0,
+                unbonding: 0,
+                rewards: 0,
+                total: 0,
+                price: 0
+            }, () => {
+                this.getBalance();
+            })
         }
     }
 
@@ -104,7 +117,7 @@ export default class AccountDetails extends Component{
         else if (this.state.accountExists){
             return <div id="account">
                 <h1 className="d-none d-lg-block">Account Details</h1>
-                <h3 className="text-primary"><AccountCopy address={this.props.match.params.address} /></h3>
+                <h3 className="text-primary"><AccountCopy address={this.state.address} /></h3>
                 <Row>
                     <Col><Card>
                         <CardHeader>Balance</CardHeader>
@@ -151,15 +164,15 @@ export default class AccountDetails extends Component{
                 </Row>
                 <Row>
                     <Col md={6}>
-                        <Delegations address={this.props.match.params.address}/>
+                        <Delegations address={this.state.address}/>
                     </Col>
                     <Col md={6}>
-                        <Unbondings address={this.props.match.params.address} />
+                        <Unbondings address={this.state.address} />
                     </Col>
                 </Row>
                 <Row>
                     <Col>
-                        <AccountTransactions delegator={this.props.match.params.address} limit={100}/>
+                        <AccountTransactions delegator={this.state.address} limit={100}/>
                     </Col>
                 </Row>
             </div>
