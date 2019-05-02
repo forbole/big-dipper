@@ -8,6 +8,9 @@ import { Validators } from '../../api/validators/validators.js';
 import { VotingPowerHistory } from '../../api/voting-power/history.js';
 import { Evidences } from '../../api/evidences/evidences.js';
 import { CoinStats } from '../../api/coin-stats/coin-stats.js';
+import { ChainStates } from '../../api/chain/chain.js';
+
+ChainStates.rawCollection().createIndex({height: -1},{unique:true});
 
 Blockscon.rawCollection().createIndex({height: -1},{unique:true});
 Blockscon.rawCollection().createIndex({proposerAddress:1});

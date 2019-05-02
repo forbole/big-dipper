@@ -29,7 +29,7 @@ export default class ChainStatus extends React.Component {
                 delegatedTokens: numbro(this.props.status.totalVotingPower).format('0,0.00a'),
                 numValidators: this.props.status.validators,
                 totalNumValidators: this.props.status.totalValidators,
-                bondedTokens: numbro(this.props.status.bondedTokens/Meteor.settings.public.stakingFraction).format("0,0.00a")
+                bondedTokens: numbro(this.props.states.bondedTokens/Meteor.settings.public.stakingFraction).format("0,0.00a")
             })
 
             switch (this.state.avgBlockTimeType){

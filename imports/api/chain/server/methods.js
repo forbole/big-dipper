@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
-import { Chain } from '../chain.js';
+import { Chain, ChainStates } from '../chain.js';
 import { Validators } from '../../validators/validators.js';
 import { VotingPowerHistory } from '../../voting-power/history.js';
 
@@ -62,31 +62,68 @@ Meteor.methods({
             }
             chain.activeVotingPower = activeVP;
 
-            // let totalVP = 0;
+            // Get chain states
             if (parseInt(chain.latestBlockHeight) > 0){
+                let chainStates = {};
+                chainStates.height = parseInt(status.sync_info.latest_block_height);
+                chainStates.time = new Date(status.sync_info.latest_block_time);
+
                 url = LCD + '/staking/pool';
                 try{
                     response = HTTP.get(url);
                     let bonding = JSON.parse(response.content);
-                    chain.bondedTokens = bonding.bonded_tokens;
-                    chain.notBondedTokens = bonding.not_bonded_tokens;
+                    // chain.bondedTokens = bonding.bonded_tokens;
+                    // chain.notBondedTokens = bonding.not_bonded_tokens;
+                    chainStates.bondedTokens = parseInt(bonding.bonded_tokens);
+                    chainStates.notBondedTokens = parseInt(bonding.not_bonded_tokens);
                 }
                 catch(e){
                     console.log(e);
                 }
-                // chain.totalValidators = Validators.find({}).count();
-                // Validators.find({}).forEach((v) =>  {
-                //     url = `${LCD}/staking/validators/${v.operator_address}`;
-                //     try{
-                //         response = HTTP.get(url);
-                //         validator = JSON.parse(response.content);
-                //         let vp = Math.round(parseFloat(eval(validator.tokens)));
-                //         totalVP += parseInt(vp);
-                //     }
-                //     catch (e){
-                //         console.log("Can't find validator: "+v.address)
-                //     }
-                // });
+
+                url = LCD + '/distribution/community_pool';
+                try {
+                    response = HTTP.get(url);
+                    let pool = JSON.parse(response.content);
+                    if (pool && pool.length > 0){
+                        chainStates.communityPool = [];
+                        pool.forEach((amount, i) => {
+                            chainStates.communityPool.push({
+                                denom: amount.denom,
+                                amount: parseFloat(amount.amount)
+                            })
+                        })
+                    }
+                }
+                catch (e){
+                    console.log(e)
+                }
+
+                url = LCD + '/minting/inflation';
+                try{
+                    response = HTTP.get(url);
+                    let inflation = JSON.parse(response.content);
+                    if (inflation){
+                        chainStates.inflation = parseFloat(inflation)
+                    }
+                }
+                catch(e){
+                    console.log(e);
+                }
+
+                url = LCD + '/minting/annual-provisions';
+                try{
+                    response = HTTP.get(url);
+                    let provisions = JSON.parse(response.content);
+                    if (provisions){
+                        chainStates.annualProvisions = parseFloat(provisions)
+                    }
+                }
+                catch(e){
+                    console.log(e);
+                }
+
+                ChainStates.insert(chainStates);
             }
 
             // chain.totalVotingPower = totalVP;
