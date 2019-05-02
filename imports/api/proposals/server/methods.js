@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 import { Proposals } from '../proposals.js';
+import { Validators } from '../../validators/validators.js';
 // import { Promise } from 'meteor/promise';
 
 Meteor.methods({
@@ -29,9 +30,9 @@ Meteor.methods({
                                 if (proposer.proposal_id && (proposer.proposal_id == proposal.proposal_id)){
                                     proposal.proposer = proposer.proposer;
                                 }
-                            }                    
+                            }
                             bulkProposals.find({proposalId: proposal.proposalId}).upsert().updateOne({$set:proposal});
-                            proposalIds.push(proposal.proposalId);    
+                            proposalIds.push(proposal.proposalId);
                         }
                         catch(e){
                             bulkProposals.find({proposalId: proposal.proposalId}).upsert().updateOne({$set:proposal});
@@ -50,7 +51,7 @@ Meteor.methods({
     },
     'proposals.getProposalResults': function(){
         this.unblock();
-        let proposals = Proposals.find({"value.proposal_status":{$nin:["Passed", "Rejected", "Removed"]}}).fetch();
+        let proposals = Proposals.find({"proposal_status":{$nin:["Passed", "Rejected", "Removed"]}}).fetch();
 
         if (proposals && (proposals.length > 0)){
             for (let i in proposals){
@@ -69,7 +70,7 @@ Meteor.methods({
                         response = HTTP.get(url);
                         if (response.statusCode == 200){
                             let votes = JSON.parse(response.content);
-                            proposal.votes = votes;
+                            proposal.votes = getVoteDetail(votes);
                         }
 
                         url = LCD + '/gov/proposals/'+proposals[i].proposalId+'/tally';
@@ -84,9 +85,75 @@ Meteor.methods({
                     }
                     catch(e){
 
-                    }        
+                    }
                 }
             }
         }
     }
 })
+
+const getVoteDetail = (votes) => {
+    if (!votes) {
+        return [];
+    }
+
+    let voters = votes.map((vote) => vote.voter);
+    let votingPowerMap = {};
+    let validatorAddressMap = {};
+    Validators.find({delegator_address: {$in: voters}}).forEach((validator) => {
+        votingPowerMap[validator.delegator_address] = {
+            moniker: validator.description.moniker,
+            address: validator.address,
+            tokens: parseFloat(validator.tokens),
+            delegatorShares: parseFloat(validator.delegator_shares),
+            deductedShares: parseFloat(validator.delegator_shares)
+        }
+        validatorAddressMap[validator.operator_address] = validator.delegator_address;
+    });
+    voters.forEach((voter) => {
+        if (!votingPowerMap[voter]) {
+            // voter is not a validator
+            let url = `${LCD}/staking/delegators/${voter}/delegations`;
+            let delegations;
+            let votingPower = 0;
+            try{
+                let response = HTTP.get(url);
+                if (response.statusCode == 200){
+                    delegations = JSON.parse(response.content);
+                    if (delegations) {
+                        delegations.forEach((delegation) => {
+                            let shares = parseFloat(delegation.shares);
+                            if (validatorAddressMap[delegation.validator_address]) {
+                                // deduct delegated shareds from validator if a delegator votes
+                                let validator = votingPowerMap[validatorAddressMap[delegation.validator_address]];
+                                validator.deductedShares -= shares;
+                                if (validator.delegator_shares != 0){ // avoiding division by zero
+                                    votingPower += (shares/validator.delegatorShares) * validator.tokens;
+                                }
+
+                            } else {
+                                let validator = Validators.findOne({operator_address: delegation.validator_address});
+                                if (validator.delegator_shares != 0){ // avoiding division by zero
+                                    votingPower += (shares/parseFloat(validator.delegator_shares)) * parseFloat(validator.tokens);
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+            catch (e){
+                console.log(e);
+            }
+            votingPowerMap[voter] = {votingPower: votingPower};
+        }
+    });
+    return votes.map((vote) => {
+        let voter = votingPowerMap[vote.voter];
+        let votingPower = voter.votingPower;
+        if (votingPower == undefined) {
+            // voter is a validator
+            votingPower = voter.delegatorShares?((voter.deductedShares/voter.delegatorShares) * voter.tokens):0;
+        }
+        return {...vote, votingPower};
+    });
+}

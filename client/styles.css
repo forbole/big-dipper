@@ -110,15 +110,15 @@ div.validator-list div.header div.last-seen span.d-md-none{
     transform: translateY(-1px);;
 }
 
-table#block-table, 
-table.random-validators, 
+table#block-table,
+table.random-validators,
 table.validator-list,
 table.proposal-list {
     table-layout: fixed;
     width: 100%;
-    white-space: nowrap;    
+    white-space: nowrap;
 }
-table#block-table td, 
+table#block-table td,
 table.random-validators td,
 table.validator-list td,
 table.proposal-list td{
@@ -212,8 +212,8 @@ div#countdown {
     text-overflow: ellipsis;
 }
 
-#home .card, 
-#transaction .card, 
+#home .card,
+#transaction .card,
 #block .card,
 #account .card{
     /* margin: 0 0 0.75em 0; */
@@ -235,7 +235,7 @@ div#countdown {
     margin-bottom: 1em;
 }
 
-.proposal .label, 
+.proposal .label,
 .proposal .value {
     padding: 0.3em;
     word-wrap: break-word;
@@ -251,13 +251,10 @@ div#countdown {
 }
 
 
-.proposal .tally-result-detail ol{
-    border-radius: 0.3em;
-    padding-top: 1em;
-    padding-bottom: 1em;
-    background-color: #fff9fa;
+.proposal .tally-result-table .moniker.data{
     white-space: nowrap;
-    overflow: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .proposal .tally-info{
@@ -493,6 +490,11 @@ div#voting-power-dist .card{
         margin-bottom: 0.8rem;
     }
 
+
+    .proposal .tally-result-table .card.card-body{
+        margin: 0.4rem 0.8rem;
+    }
+
     .mobile-menu li{
         width: 16.66%;
     }
@@ -500,7 +502,7 @@ div#voting-power-dist .card{
     .mobile-menu li a{
         text-align: center;
     }
-        
+
     div.validator-list div.validator-info img.moniker-avatar-list{
         height: 48px;
         float: left;
@@ -534,16 +536,19 @@ div#voting-power-dist .card{
         text-align: right;
     }
 
-    #validator-list div.validator-list .card.card-body{
+    #validator-list div.validator-list .card.card-body,
+    .proposal .tally-result-table .card.card-body{
         padding: 0;
     }
 
-    #validator-list div.validator-list .card{
+    #validator-list div.validator-list .card,
+    .proposal .tally-result-table .card{
         -webkit-box-shadow: none;
         box-shadow: none;
     }
 
-    #validator-list div.validator-list div.header{
+    #validator-list div.validator-list div.header,
+    .proposal .tally-result-table div.header{
         padding-top: 0.3rem;
         border-top: 1px solid #dee2e6;
         border-bottom: 2px solid #dee2e6;
@@ -555,18 +560,24 @@ div#voting-power-dist .card{
         padding-right: 5px;
     }
 
-    div.validator-list div.validator-info{
+    div.validator-list div.validator-info,
+    .tally-result-table .voter-info{
         padding-top: 0.4rem;
         padding-bottom: 0.4rem;
         border-bottom: 1px solid #dee2e6;
     }
 
-    div.validator-list div.card-body:nth-child(2n) div.validator-info{
+    .voter-info .data.counter{
+        padding-left: 1.5em;
+    }
+
+    div.validator-list div.card-body:nth-child(2n) div.validator-info,
+    .proposal .tally-result-table div.card-body:nth-child(2n) .voter-info{
         background-color: rgba(0,0,0,0.05);
     }
 
     div.transactions-list div.header,
-    div.transactions-list div.tx-info{ 
+    div.transactions-list div.tx-info{
         margin-left:0;
         margin-right:0;
     }

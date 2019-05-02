@@ -29,7 +29,8 @@ export default class Proposal extends Component{
             abstainPercent: 0,
             noPercent: 0,
             noWithVetoPercent: 0,
-            proposalValid: false
+            proposalValid: false,
+            orderDir: -1
         }
     }
 
@@ -99,6 +100,56 @@ export default class Proposal extends Component{
         });
     }
 
+    toggleDir(e) {
+        e.preventDefault();
+        this.setState({
+            orderDir: this.state.orderDir * -1
+        });
+    }
+
+    renderTallyResultDetail(openState, option) {
+        let votes = this.props.proposal.votes?this.props.proposal.votes.filter((vote) => vote.option == option):[];
+        let orderDir = this.state.orderDir;
+        votes = votes.sort((vote1, vote2) => (vote1['votingPower'] - vote2['votingPower']) * orderDir);
+
+        return <Result className="tally-result-detail" pose={this.state.open === openState ? 'open' : 'closed'}>
+                <Card className='tally-result-table'>
+                    {(votes.length)?<Card body><Row className="header text-nowrap">
+                        <Col className="d-none d-md-block counter" md={1}>&nbsp;</Col>
+                        <Col className="moniker" md={4}>
+                            <i className="material-icons">perm_contact_calendar</i>
+                            <span className="d-inline-block d-md-none d-lg-inline-block">Voter</span>
+                        </Col>
+                        <Col className="voting-power" md={4} onClick={(e) => this.toggleDir(e)}>
+                            <i className="material-icons">power</i>
+                            <span className="d-inline-block d-md-none d-lg-inline-block">Voting Power</span>
+                            <i className="material-icons"> {(this.state.orderDir == 1)?'arrow_drop_up':'arrow_drop_down'}</i>
+                        </Col>
+                        <Col className="voting-power-percent" md={3}>
+                            <i className="material-icons">equalizer</i>
+                            <span className="d-inline-block d-md-none d-lg-inline-block">Voting Power %</span>
+                        </Col>
+                    </Row></Card>:""}
+                    {votes.map((vote, i) =>
+                        <Card body key={i}><Row className='voter-info'>
+                            <Col className="d-none d-md-block counter data" md={1}>{i+1}</Col>
+                            <Col className="moniker data" md={4}>
+                                <Account address={vote.voter} />
+                            </Col>
+                            <Col className="voting-power data" md={4}>
+                                <i className="material-icons d-md-none">power</i>
+                                {(vote.votingPower!==undefined)?numbro(vote.votingPower).format('0,0.00'):""}
+                            </Col>
+                            <Col className="voting-power-percent data" md={3}>
+                                <i className="material-icons d-md-none">equalizer</i>
+                                {(vote.votingPower!==undefined)?numbro(vote.votingPower/this.state.totalVotes).format('0,0.00%'):""}
+                            </Col>
+                        </Row></Card>
+                    )}
+                </Card>
+            </Result>
+    }
+
     render(){
         if (this.props.loading){
             return <Spinner type="grow" color="primary" />
@@ -159,16 +210,7 @@ export default class Proposal extends Component{
                                     <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(this.state.tally.yes).format("0,0"):''}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(1,e)}><i className="material-icons">{this.state.open === 1 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
-                                        <Result className="tally-result-detail" pose={this.state.open === 1 ? 'open' : 'closed'}>
-                                                <ol>
-                                                    {this.props.proposal.votes?this.props.proposal.votes.map((vote,i)=>{
-                                                        if (vote.option == 'Yes'){
-                                                            return <li key={i}><Account address={vote.voter} /></li>
-                                                        }
-                                                        else return ''
-                                                    }):''}
-                                                </ol>
-                                        </Result>
+                                        {this.renderTallyResultDetail(1, 'Yes')}
                                     </Col>
                                 </Row>
                                 <Row>
@@ -176,16 +218,7 @@ export default class Proposal extends Component{
                                     <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(this.state.tally.abstain).format("0,0"):''}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(2,e)}><i className="material-icons">{this.state.open === 2 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
-                                        <Result className="tally-result-detail" pose={this.state.open === 2 ? 'open' : 'closed'}>
-                                                <ol>
-                                                    {this.props.proposal.votes?this.props.proposal.votes.map((vote,i)=>{
-                                                        if (vote.option == 'Abstain'){
-                                                            return <li key={i}><Account address={vote.voter} /></li>
-                                                        }
-                                                        else return ''
-                                                    }):''}
-                                                </ol>
-                                        </Result>
+                                        {this.renderTallyResultDetail(2, 'Abstain')}
                                     </Col>
                                 </Row>
                                 <Row>
@@ -193,16 +226,7 @@ export default class Proposal extends Component{
                                     <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(this.state.tally.no).format("0,0"):''}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(3,e)}><i className="material-icons">{this.state.open === 3 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
-                                        <Result className="tally-result-detail" pose={this.state.open === 3 ? 'open' : 'closed'}>
-                                                <ol>
-                                                    {this.props.proposal.votes?this.props.proposal.votes.map((vote,i)=>{
-                                                        if (vote.option == 'No'){
-                                                            return <li key={i}><Account address={vote.voter} /></li>
-                                                        }
-                                                        else return ''
-                                                    }):''}
-                                                </ol>
-                                        </Result>
+                                        {this.renderTallyResultDetail(3, 'No')}
                                     </Col>
                                 </Row>
                                 <Row>
@@ -210,16 +234,7 @@ export default class Proposal extends Component{
                                     <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(this.state.tally.no_with_veto).format("0,0"):''}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(4,e)}><i className="material-icons">{this.state.open === 4 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
-                                        <Result className="tally-result-detail" pose={this.state.open === 4 ? 'open' : 'closed'}>
-                                                <ol>
-                                                    {this.props.proposal.votes?this.props.proposal.votes.map((vote,i)=>{
-                                                        if (vote.option == 'NoWithVeto'){
-                                                            return <li key={i}><Account address={vote.voter} /></li>
-                                                        }
-                                                        else return ''
-                                                    }):''}
-                                                </ol>
-                                        </Result>
+                                        {this.renderTallyResultDetail(4, 'NoWithVeto')}
                                     </Col>
                                 </Row>
                                 {this.state.voteStarted?<Row>
