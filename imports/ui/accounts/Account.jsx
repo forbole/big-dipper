@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { Spinner, Container, Row, Col, Card, CardHeader, CardBody, Progress } from 'reactstrap';
+import { Spinner, UncontrolledTooltip, Row, Col, Card, CardHeader, CardBody, Progress } from 'reactstrap';
 import numbro from 'numbro';
 import AccountCopy from '../components/AccountCopy.jsx';
-import Account from '../components/Account.jsx';
 import Delegations from './Delegations.jsx';
 import Unbondings from './Unbondings.jsx';
 import AccountTransactions from '../components/TransactionsContainer.js';

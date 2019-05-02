@@ -36,7 +36,7 @@ export default class AccountDelegations extends Component{
                         delegations: delegations.map((d, i) => {
                             return <Row key={i} className="delegation-info">
                                     <Col md={8} className="text-nowrap overflow-auto"><Account address={d.validator_address} /></Col>
-                                    <Col md={4}>{numbro(d.shares).format("0,0.000a")}</Col>
+                                    <Col md={4}>{numbro(d.shares).format("0,0")}</Col>
                                 </Row>
                         })
                     })

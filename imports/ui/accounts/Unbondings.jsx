@@ -34,7 +34,7 @@ export default class AccountUnbondings extends Component{
                                     <Col md={7}>{u.entries.map((entry,j) => {
                                         return <Row key={j}>
                                             <Col md={6}>
-                                                {numbro(entry.balance).format("0,000a")}
+                                                {numbro(entry.balance).format("0,0")}
                                             </Col>
                                             <Col md={6}>
                                                 {moment.utc(entry.completion_time).fromNow()}
