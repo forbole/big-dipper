@@ -173,7 +173,7 @@ export default class Validator extends Component{
                             <div className="card-header">Voting Power</div>
                             <CardBody className="voting-power-card">
                                 <Row>
-                                    <Col xs={12}><h1 className="display-4 voting-power"><Badge color="primary" >{numbro(this.props.validator.voting_power).format('0,0')}</Badge></h1><span>(~{numbro(this.props.validator.voting_power/this.props.chainStatus.activeVotingPower).format('0.00%')})</span></Col>
+                                    {this.props.validator.voting_power?<Col xs={12}><h1 className="display-4 voting-power"><Badge color="primary" >{numbro(this.props.validator.voting_power).format('0,0')}</Badge></h1><span>(~{numbro(this.props.validator.voting_power/this.props.chainStatus.activeVotingPower).format('0.00%')})</span></Col>:''}
                                     <Col sm={4} className="label">Self Delegation Ratio</Col>
                                     <Col sm={8} className="value">{this.props.validator.self_delegation?<span>{numbro(this.props.validator.self_delegation).format("0,0.00%")} <small className="text-secondary">(~{numbro(this.props.validator.voting_power*this.props.validator.self_delegation).format({thousandSeparated: true,mantissa:0})} {Meteor.settings.public.stakingDenom})</small></span>:'N/A'}</Col>
                                     <Col sm={4} className="label">Proposer Priority</Col>
