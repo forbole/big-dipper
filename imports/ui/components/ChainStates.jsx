@@ -8,8 +8,8 @@ export default class ChainStates extends Component{
     constructor(props){
         super(props);
         this.state ={
-            price: "$0",
-            marketCap: "$0",
+            price: "$-",
+            marketCap: "$-",
             inflation: 0,
             communityPool: 0
         }
