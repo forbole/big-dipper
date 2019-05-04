@@ -601,7 +601,7 @@ div#voting-power-dist .card{
         /* padding-bottom: 4.8rem; */
     }
 
-    #validator-list ul.status-switch {
+    /* #validator-list ul.status-switch {
         position: fixed;
         background-color: #fff;
         width: 100%;
@@ -612,7 +612,7 @@ div#voting-power-dist .card{
 
     #validator-list .lead{
         padding-top: 2.5rem;
-    }
+    } */
 
     .card-body.list{
         padding: 0;
