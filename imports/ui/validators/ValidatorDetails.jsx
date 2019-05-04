@@ -3,6 +3,7 @@ import { Row, Col } from 'reactstrap';
 import { Route, Switch } from 'react-router-dom';
 import Validator from './ValidatorContainer.js';
 import MissedBlocks from './MissedBlocksContainer.js';
+import ChainStates from '../components/ChainStatesContainer.js'
 
 export default class ValidatorDetails extends Component{
     constructor(props){
@@ -11,7 +12,10 @@ export default class ValidatorDetails extends Component{
 
     render() {
         return <div>
-        <h1 className="d-none d-lg-block">Validator Details</h1>
+            <Row>
+                <Col lg={3} xs={12}><h1 className="d-none d-lg-block"><h1 className="d-none d-lg-block">Validator Details</h1></h1></Col>
+                <Col lg={9} xs={12} className="text-lg-right"><ChainStates /></Col>
+            </Row>
             <Row>
                 <Col md={12}>
                     <Switch>

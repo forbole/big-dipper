@@ -5,6 +5,7 @@ import AccountCopy from '../components/AccountCopy.jsx';
 import Delegations from './Delegations.jsx';
 import Unbondings from './Unbondings.jsx';
 import AccountTransactions from '../components/TransactionsContainer.js';
+import ChainStates from '../components/ChainStatesContainer.js'
 
 export default class AccountDetails extends Component{
     constructor(props){
@@ -115,7 +116,10 @@ export default class AccountDetails extends Component{
         }
         else if (this.state.accountExists){
             return <div id="account">
-                <h1 className="d-none d-lg-block">Account Details</h1>
+                <Row>
+                    <Col md={3} xs={12}><h1 className="d-none d-lg-block">Account Details</h1></Col>
+                    <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
+                </Row>
                 <h3 className="text-primary"><AccountCopy address={this.state.address} /></h3>
                 <Row>
                     <Col><Card>

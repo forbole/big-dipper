@@ -110,6 +110,11 @@ div.validator-list div.header div.last-seen span.d-md-none{
     transform: translateY(-1px);;
 }
 
+div#block-table,
+#transactions div.transactions-list{
+    margin-top: 0.5em;
+}
+
 table#block-table,
 table.random-validators,
 table.validator-list,
@@ -118,6 +123,7 @@ table.proposal-list {
     width: 100%;
     white-space: nowrap;
 }
+
 table#block-table td,
 table.random-validators td,
 table.validator-list td,
@@ -601,6 +607,9 @@ div#voting-power-dist .card{
         /* padding-bottom: 4.8rem; */
     }
 
+    #validator-list ul.status-switch{
+        margin-top: 0.5em;
+    }
     /* #validator-list ul.status-switch {
         position: fixed;
         background-color: #fff;
