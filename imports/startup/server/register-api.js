@@ -12,9 +12,6 @@ import '../../api/validators/server/publications.js';
 import '../../api/records/server/methods.js';
 import '../../api/records/server/publications.js';
 
-import '../../api/proposals/server/methods.js';
-import '../../api/proposals/server/publications.js';
-
 import '../../api/voting-power/server/publications.js';
 
 import '../../api/transactions/server/methods.js';

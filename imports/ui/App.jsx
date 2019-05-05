@@ -10,7 +10,6 @@ import Validators from '/imports/ui/validators/ValidatorsList.jsx';
 import Account from '/imports/ui/accounts/Account.jsx';
 import ValidatorFirstSeen from '/imports/ui/validators/ValidatorFirstSeen.jsx';
 import BlocksTable from '/imports/ui/blocks/BlocksTable.jsx';
-import Proposals from '/imports/ui/proposals/Proposals.jsx';
 import ValidatorDetails from '/imports/ui/validators/ValidatorDetails.jsx';
 import Transactions from '/imports/ui/transactions/TransactionsList.jsx';
 import Distribution from '/imports/ui/voting-power/Distribution.jsx';
@@ -60,7 +59,6 @@ class App extends Component {
                                 <Route path="/validators/firstseen" component={ValidatorFirstSeen} />
                                 <Route path="/voting-power-distribution" component={Distribution} />
                                 <Route path="/(validator|validators)" component={ValidatorDetails} />
-                                <Route path="/proposals" component={Proposals} />
                                 <Route component={NotFound} />
                             </Switch>
                         </SentryBoundary>
