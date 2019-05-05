@@ -170,15 +170,14 @@ Meteor.methods({
                     bonusProposerReward: genesis.app_state.distr.bonus_proposer_reward,
                     withdrawAddrEnabled: genesis.app_state.distr.withdraw_addr_enabled
                 },
-                gov: {
-                    startingProposalId: genesis.app_state.gov.starting_proposal_id,
-                    depositParams: genesis.app_state.gov.deposit_params,
-                    votingParams: genesis.app_state.gov.voting_params,
-                    tallyParams: genesis.app_state.gov.tally_params
-                },
+                treasury: genesis.app_state.treasury,
+                budget: genesis.app_state.budget,
+                oracle: genesis.app_state.oracle,
+                crisis: genesis.app_state.crisis,
                 slashing:{
                     params: genesis.app_state.slashing.params
-                }
+                },
+                market: genesis.app_state.market
             }
 
             let totalVotingPower = 0;
