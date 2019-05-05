@@ -14,20 +14,19 @@ function toHexString(byteArray) {
 }
 
 Meteor.methods({
-    runCode: function (command) {
-        // This method call won't return immediately, it will wait for the
-        // asynchronous code to finish, so we call unblock to allow this client
-        // to queue other method calls (see Meteor docs)
-        this.unblock();
-        var future=new Future();
-        exec(command,function(error,stdout,stderr){
-        if(error){
-            console.log(error);
-            throw new Meteor.Error(500,command+" failed");
-        }
-        future.return(stdout.toString());
-        });
-        return future.wait();
+    pubkeyToBech32: function(pubkey, prefix) {
+        // '1624DE6420' is ed25519 pubkey prefix
+        let pubkeyAminoPrefix = Buffer.from('1624DE6420', 'hex')
+        let buffer = Buffer.alloc(37)
+        pubkeyAminoPrefix.copy(buffer, 0)
+        Buffer.from(pubkey.value, 'base64').copy(buffer, pubkeyAminoPrefix.length)
+        return bech32.encode(prefix, bech32.toWords(buffer))
+    },
+    bech32ToPubkey: function(pubkey) {
+        // '1624DE6420' is ed25519 pubkey prefix
+        let pubkeyAminoPrefix = Buffer.from('1624DE6420', 'hex')
+        let buffer = Buffer.from(bech32.fromWords(bech32.decode(pubkey).words));
+        return buffer.slice(pubkeyAminoPrefix.length).toString('base64');
     },
     getDelegator: function(operatorAddr){
         let address = bech32.decode(operatorAddr);
