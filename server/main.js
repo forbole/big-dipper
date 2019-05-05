@@ -12,8 +12,6 @@ LCD = Meteor.settings.remote.lcd;
 timerBlocks = 0;
 timerChain = 0;
 timerConsensus = 0;
-timerProposal = 0;
-timerProposalsResults = 0;
 timerMissedBlock = 0;
 timerDelegation = 0;
 timerAggregate = 0;
@@ -47,28 +45,6 @@ getConsensusState = () => {
             console.log("get consensus: "+error)
         }
     })
-}
-
-getProposals = () => {
-    Meteor.call('proposals.getProposals', (error, result) => {
-        if (error){
-            console.log("get porposal: "+ error);
-        }
-        if (result){
-            console.log("get proposal: "+result);
-        }
-    });
-}
-
-getProposalsResults = () => {
-    Meteor.call('proposals.getProposalResults', (error, result) => {
-        if (error){
-            console.log("get proposals result: "+error);
-        }
-        if (result){
-            console.log("get proposals result: "+result);
-        }
-    });
 }
 
 updateMissedBlockStats = () => {
@@ -172,14 +148,6 @@ Meteor.startup(function(){
                     updateChainStatus();
                 }, Meteor.settings.params.statusInterval);
 
-                timerProposal = Meteor.setInterval(function(){
-                    getProposals();
-                }, Meteor.settings.params.proposalInterval);
-
-                timerProposalsResults = Meteor.setInterval(function(){
-                    getProposalsResults();
-                }, Meteor.settings.params.proposalInterval);
-                
                 timerMissedBlock = Meteor.setInterval(function(){
                     updateMissedBlockStats();
                 }, Meteor.settings.params.missedBlocksInterval);

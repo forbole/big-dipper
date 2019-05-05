@@ -100,30 +100,6 @@ Meteor.methods({
                     console.log(e)
                 }
 
-                url = LCD + '/minting/inflation';
-                try{
-                    response = HTTP.get(url);
-                    let inflation = JSON.parse(response.content);
-                    if (inflation){
-                        chainStates.inflation = parseFloat(inflation)
-                    }
-                }
-                catch(e){
-                    console.log(e);
-                }
-
-                url = LCD + '/minting/annual-provisions';
-                try{
-                    response = HTTP.get(url);
-                    let provisions = JSON.parse(response.content);
-                    if (provisions){
-                        chainStates.annualProvisions = parseFloat(provisions)
-                    }
-                }
-                catch(e){
-                    console.log(e);
-                }
-
                 ChainStates.insert(chainStates);
             }
 
@@ -163,7 +139,6 @@ Meteor.methods({
                     pool: genesis.app_state.staking.pool,
                     params: genesis.app_state.staking.params
                 },
-                mint: genesis.app_state.mint,
                 distr: {
                     communityTax: genesis.app_state.distr.community_tax,
                     baseProposerReward: genesis.app_state.distr.base_proposer_reward,
