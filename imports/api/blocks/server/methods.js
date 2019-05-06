@@ -123,25 +123,25 @@ Meteor.methods({
                 console.log(e);
             }
 
-            url = LCD+'/staking/validators?status=unbonding';
+            // url = LCD+'/staking/validators?status=unbonding';
 
-            try{
-                response = HTTP.get(url);
-                [...validatorSet] = [...validatorSet, ...JSON.parse(response.content)];
-            }
-            catch(e){
-                console.log(e);
-            }
+            // try{
+            //     response = HTTP.get(url);
+            //     [...validatorSet] = [...validatorSet, ...JSON.parse(response.content)];
+            // }
+            // catch(e){
+            //     console.log(e);
+            // }
 
-            url = LCD+'/staking/validators?status=unbonded';
+            // url = LCD+'/staking/validators?status=unbonded';
 
-            try{
-                response = HTTP.get(url);
-                [...validatorSet] = [...validatorSet, ...JSON.parse(response.content)];
-            }
-            catch(e){
-                console.log(e);
-            }
+            // try{
+            //     response = HTTP.get(url);
+            //     [...validatorSet] = [...validatorSet, ...JSON.parse(response.content)];
+            // }
+            // catch(e){
+            //     console.log(e);
+            // }
 
             console.log("all validators: "+validatorSet.length);
 
@@ -597,7 +597,7 @@ Meteor.methods({
                 console.log("This block used: "+((endBlockTime-startBlockTime)/1000)+"seconds.");
             }
             SYNCING = false;
-            Chain.update({chainId:Meteor.settings.public.chainId}, {$set:{lastBlocksSyncedTime:new Date()}});
+            Chain.update({chainId:Meteor.settings.public.chainId}, {$set:{lastBlocksSyncedTime:new Date(), totalValidators:validatorSet.length}});
         }
 
         return until;
