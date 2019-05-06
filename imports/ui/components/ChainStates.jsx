@@ -10,7 +10,6 @@ export default class ChainStates extends Component{
         this.state ={
             price: "$-",
             marketCap: "$-",
-            inflation: 0,
             communityPool: 0
         }
     }
@@ -20,9 +19,12 @@ export default class ChainStates extends Component{
             if (this.props.chainStates.communityPool){
                 this.setState({
                     communityPool: this.props.chainStates.communityPool.map((pool,i) => {
-                        return <span key={i}>{numbro(pool.amount/Meteor.settings.public.stakingFraction).format("0,0.00")} {Meteor.settings.public.stakingDenom}</span>
-                    }),
-                    inflation: numbro(this.props.chainStates.inflation).format("0.00%")
+                        // return <span key={i}>{(pool.denom=='uluna')?(numbro(pool.amount/Meteor.settings.public.stakingFraction).format("0,0.0000")+' '+Meteor.settings.public.stakingDenom): numbro(pool.amount).format("0,0.0000")+' '+pool.denom} </span>
+                        if (i>0){
+                            return <span key={i}>, {numbro(pool.amount).format("0,0.0000")+' '+pool.denom}</span>
+                        }
+                        else return <span key={i}>{numbro(pool.amount).format("0,0.0000")+' '+pool.denom}</span>
+                    })
                 })
             }
         }
@@ -40,10 +42,9 @@ export default class ChainStates extends Component{
         return <Card className="d-lg-inline-block">
             <CardHeader>
                 <Row className="text-nowrap">
-                    <Col xs={4} md="auto"><small><span>Price:</span> <strong>{this.state.price}</strong></small></Col>
-                    <Col xs={8} md="auto"><small><span>Market Cap:</span> <strong>{this.state.marketCap}</strong></small></Col>
-                    <Col xs={4} md="auto"><small><span>Inflation:</span> <strong>{this.state.inflation}</strong></small></Col>
-                    <Col xs={8} md="auto"><small><span>Community Pool:</span> <strong>{this.state.communityPool}</strong></small></Col>
+                    {/* <Col xs={4} md="auto"><small><span>Price:</span> <strong>{this.state.price}</strong></small></Col>
+                    <Col xs={8} md="auto"><small><span>Market Cap:</span> <strong>{this.state.marketCap}</strong></small></Col> */}
+                    <Col xs={12} md="auto"><small><span>Community Pool:</span> <strong>{this.state.communityPool}</strong></small></Col>
                 </Row>
             </CardHeader>
         </Card>
