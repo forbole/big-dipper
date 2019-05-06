@@ -68,9 +68,9 @@ export default class Chart extends Component{
                             lineTension: 0,
                             yAxisID: 'Time',
                             pointRadius: 1,
-                            borderColor: 'rgba(156,39,176,0.5)',
+                            borderColor: 'rgba(40,130,175,0.5)',
                             borderJoinStyle: 'round',
-                            backgroundColor: 'rgba(229,112,249,0.5)',
+                            backgroundColor: 'rgba(114,159,247,0.5)',
                             data: blockTime,
                             tooltips: {
                                 callbacks: {
@@ -92,9 +92,9 @@ export default class Chart extends Component{
                             lineTension: 0,
                             yAxisID: 'Time',
                             pointRadius: 1,
-                            borderColor: 'rgba(189,28,8,0.5)',
+                            borderColor: 'rgba(33,37,41,0.5)',
                             borderJoinStyle: 'round',
-                            backgroundColor: 'rgba(255,103,109,0.5)',
+                            backgroundColor: 'rgba(105,116,255,0.5)',
                             data: timeDiff,
                             tooltips: {
                                 callbacks: {
@@ -116,9 +116,9 @@ export default class Chart extends Component{
                             lineTension: 0,
                             yAxisID: 'Validators',
                             pointRadius: 1,
-                            borderColor: 'rgba(255,152,0,0.5)',
+                            borderColor: 'rgba(24,188,156,0.5)',
                             borderJoinStyle: 'round',
-                            backgroundColor: 'rgba(255,193,101,0.5)',
+                            backgroundColor: 'rgba(63,142,127,0.5)',
                             data: validators
                         }
                     ]

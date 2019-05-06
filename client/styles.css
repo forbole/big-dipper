@@ -2,6 +2,10 @@ body {
     font-size: inherit !important;
 }
 
+h1 {
+    font-size: 2em !important;
+}
+
 .not-found{
     position: absolute;
     text-align: center;
@@ -82,6 +86,10 @@ img.moniker-avatar-list{
     height: 24px;
     margin-right: 5px;
     border: 1px solid rgba(0,0,0,0.3);
+}
+
+.validator-list .card-body {
+    border: none;
 }
 
 div.validator-list div.header div:not(.status){
@@ -185,6 +193,12 @@ table.proposal-list th.status{
     width: 15%;
 }
 
+#home .status button{
+    background-color: transparent !important;
+    border: none;
+    color: #212529;
+}
+
 .status .value{
     display: block;
     font-weight: 100;
@@ -203,7 +217,7 @@ div#countdown {
 
 #countdown.flip-clock-wrapper ul li a div div.inn,
 #countdown .flip-clock-dot{
-    background-color: #bd081c;
+    background-color: #212529;
 }
 
 .consensus-state.status .card-subtitle{
@@ -420,7 +434,7 @@ div.transactions-list div.header{
     height: 1.5em;
     display: inline-block;
     margin-right: 0.2em;
-    border: 0.1em solid #bd081c;
+    border: 0.1em solid #212529;
     -webkit-box-shadow: 1px 1px 3px 0px rgba(163,163,163,1);
     -moz-box-shadow: 1px 1px 3px 0px rgba(163,163,163,1);
     box-shadow: 1px 1px 3px 0px rgba(163,163,163,1);
@@ -428,7 +442,7 @@ div.transactions-list div.header{
 }
 
 .blocks-list .block .full{
-    background-color: #bd081c;
+    background-color: #212529;
 }
 
 .blocks-list .block .full,
@@ -610,18 +624,6 @@ div#voting-power-dist .card{
     #validator-list ul.status-switch{
         margin-top: 0.5em;
     }
-    /* #validator-list ul.status-switch {
-        position: fixed;
-        background-color: #fff;
-        width: 100%;
-        z-index: 1;
-        padding: 5px 0;
-        margin-top: -5px
-    }
-
-    #validator-list .lead{
-        padding-top: 2.5rem;
-    } */
 
     .card-body.list{
         padding: 0;
