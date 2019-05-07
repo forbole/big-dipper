@@ -6,6 +6,8 @@ Forbole Block Explorer for Cosmos
 
 [Explore IRISnet (irishub) with The Big Dipper](https://iris.bigdipper.live)
 
+[Explore Terra (columbus-1) with The Big Dipper](https://terra.bigdipper.live)
+
 ## Projects with testnets
 
 [Sentinel testnet](https://explorer.sentinel.co/)
