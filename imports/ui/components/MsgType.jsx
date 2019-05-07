@@ -21,14 +21,6 @@ export const MsgType = (props) => {
         case "cosmos-sdk/MsgBeginRedelegate":
             return <Badge color="warning">Redelegate</Badge>;
         
-        // gov
-        case "cosmos-sdk/MsgSubmitProposal":
-            return <Badge color="info">Submit Proposal</Badge>
-        case "cosmos-sdk/MsgDeposit":
-            return <Badge color="info">Deposit</Badge>
-        case "cosmos-sdk/MsgVote":
-            return <Badge color="info">Vote</Badge>;
-        
         // distribution
         case "cosmos-sdk/MsgWithdrawValidatorCommission":
             return <Badge color="secondary">Withdraw Commission</Badge>;
@@ -46,6 +38,22 @@ export const MsgType = (props) => {
             return <Badge color="dark">IBC Transfer</Badge>;
         case "cosmos-sdk/IBCReceiveMsg":
             return <Badge color="dark">IBC Receive</Badge>;
+
+        // market
+        case "market/MsgSwap":
+            return <Badge color="info">Swap</Badge>
+        
+        // oracle
+        case "oracle/MsgPriceFeed":
+            return <Badge color="dark">Vote Price Feed</Badge>
+        
+        // budget
+        case "budget/MsgSubmitProgram":
+            return <Badge color="primary">Submit Program</Badge>
+        case "budget/MsgWithdrawProgram":
+            return <Badge color="primary">Withdraw Program</Badge>
+        case "budget/MsgVoteProgram":
+            return <Badge color="primary">Vote Program</Badge>
 
         default:
             return <Badge color="primary">{props.type}</Badge>;
