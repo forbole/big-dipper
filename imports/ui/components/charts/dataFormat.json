@@ -1,0 +1,108 @@
+{
+	layout: ['component1Id','component2Id', 'component3Id'],
+	scales: [{
+		scaleId: 'string',
+		type: 'Linear | Log | ModifiedLog | Time | Category | Color | '
+		      'InterpolatedColor',
+		colorScale: 'linear| log | sqrt | pow', // for InterpolatedColor
+	    domain: [],
+	    range: [], // | REDS, BLUES, POSNEG for InterpolatedColor
+	    ticks: []
+	}...],
+	components: {
+		plots: [{
+			plotId: 'string',
+			type: 'Area | Bar | ClusteredBar | Line | Pie | Rectangle | '
+				  'Scatter | Segment | StackedArea | StackedBar | Waterfall',
+			x: {
+				value: 'any | function',
+				scale: 'null | scaleId'
+			},
+			y: {
+				value: 'any | function',
+				scale: 'null | scaleId'
+			},
+			sectorValue: {
+				value: 'any | function',
+				scale: 'null | scaleId'
+			},
+			attrs: [{
+				attr: 'string',
+				value: 'any | function',
+				scale: 'null | scaleId'
+			}...],
+			datasets: [{
+				datasetId: 'string',
+				label: '',
+				color: ''
+				data: [],
+			}...],
+			interactions: {
+				Click: {
+					onClick: (component, point, event) => {},
+					onDoubleClick :(component, point, event) => {}
+				}
+				Drag: {
+					onDrag: (component, start, end) => {},
+					onDragEnd: (component, start, end) => {},
+					onDragStart: (component, start, end) => {},
+				}
+				Key: {
+					onKeyPress: (component, keyCode) => {},
+					onKeyRelease: (component, keyCode) => {},
+				}
+				PanZoom: {
+					xScales: ['scaleId'...],
+					yScales: ['scaleId'...]
+				},
+				Pointer: {
+					onPointerEnter: (component, point) => {},
+					onPointerExit: (component, point) => {},
+					onPointerMove: (component, point) => {},
+				},
+			}
+		}...],
+		axes: [{
+			axisId: 'string',
+			type: 'Category | Numeric | Time',
+			scale: 'scaleId',
+			orientation: 'bottom | left | right | top',
+			xAlignment: 'left | center | right',
+			yAlignment: 'top | center | bottom',
+			interaction: {...}
+		}...],
+		legends: [{
+			legendId: 'string',
+			type: 'Regular | InterpolatedColor',
+			plotIds: ['plotId'..],
+			colorScaleId: 'scaleId',
+			xAlignment: 'left | center | right',
+			yAlignment: 'top | center | bottom',
+			interaction: {...}
+		}...],
+		labels: [{
+			labelId: 'string',
+			type: 'Axis | Regular | Title',
+			angle: 'number',
+			padding: 'number',
+			text: 'string',
+			xAlignment: 'left | center | right',
+			yAlignment: 'top | center | bottom',
+			interaction: {...}
+		}...],
+		gridlines: [{
+			gridlineId: 'string',
+			xScale: 'scaleId',
+			yScale: 'scaleId',
+			interaction: {...}
+		}...],
+		groups: [{
+			groupId: 'string',
+			type: 'Regular | Plot',
+			components: ['componentId'...],
+			interaction: {...}
+
+		}]
+
+	}
+}
