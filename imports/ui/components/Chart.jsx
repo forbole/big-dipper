@@ -1,10 +1,20 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import { Tooltip } from 'reactstrap';
 import { Axes, Components, Dataset, Interactions, Plots, Scales } from 'plottable';
+
 
 export default class PChart extends Component{
     constructor(props){
         super(props);
-		this.targetRef = React.createRef();
+        this.targetRef = React.createRef();
+        this.tooltipRef = React.createRef();
+        this.state = {
+            tooltipTarget: '.chart_warpper',
+            tooltipOpen: false,
+            tooltipContent: null,
+            tooltipPosition: null
+        }
     }
 
     loadScales() {
@@ -164,6 +174,8 @@ export default class PChart extends Component{
 
             if (plotData.interactions)
                 this.loadInteractions(plotData.interactions, plot);
+            if (plotData.tooltip)
+                this.addTooltipQueue.push([plotData.tooltip, plot, plotId]);
 
             this.components[plotId] = plot;
         });
@@ -199,6 +211,8 @@ export default class PChart extends Component{
 
             if (axisData.interactions)
                 this.loadInteractions(axisData.interactions, axis);
+            if (axisData.tooltip)
+                this.addTooltipQueue.push([axisData.tooltip, axis, axisId]);
 
             this.components[axisId] = axis;
         });
@@ -231,6 +245,8 @@ export default class PChart extends Component{
 
             if (labelData.interactions)
                 this.loadInteractions(labelData.interactions, label);
+            if (labelData.tooltip)
+                this.addTooltipQueue.push([labelData.tooltip, label, labelId]);
 
             this.components[labelId] = label;
         });
@@ -248,6 +264,8 @@ export default class PChart extends Component{
 
             if (gridData.interactions)
                 this.loadInteractions(gridData.interactions, grid);
+            if (gridData.tooltip)
+                this.addTooltipQueue.push([gridData.tooltip, grid, gridId]);
 
             this.components[gridId] = grid;
         });
@@ -292,6 +310,8 @@ export default class PChart extends Component{
 
             if (legendData.interactions)
                 this.loadInteractions(legendData.interactions, legend);
+            if (legendData.tooltip)
+                this.addTooltipQueue.push([legendData.tooltip, legend, legendId]);
 
             this.components[legendId] = legend;
         });
@@ -320,6 +340,8 @@ export default class PChart extends Component{
 
             if (groupData.interactions)
                 this.loadInteractions(groupData.interactions, group);
+            if (groupData.tooltip)
+                this.addTooltipQueue.push([groupData.tooltip, group, groupId]);
 
             this.components[groupId] = group;
         });
@@ -436,7 +458,6 @@ export default class PChart extends Component{
             }
         }
         interaction.attachTo(component);
-
     }
 
     loadInteractions(interactions, component) {
@@ -464,6 +485,42 @@ export default class PChart extends Component{
         };
     }
 
+    addTooltip(tooltip, component, componentId) {
+        let selection = component.foreground().append("circle").attrs({
+            r:3,
+            opacity:0,
+            id: `${componentId}_tooltip`});
+        let interaction = new Interactions.Pointer();
+        interaction.onPointerMove((point) => {
+            let closest = component.entityNearest(point);
+            if (closest) {
+                if (!this.state.tooltipPosition || this.state.tooltipPosition[0] != closest.position.x
+                    || this.state.tooltipPosition[1] != closest.position.x) {
+                    // workaround for tooltip updateTarget only does shallow comparison
+                    let newSelection = selection.clone();
+                    newSelection.attrs({
+                        cx: closest.position.x,
+                        cy: closest.position.y
+                    });
+                    selection.remove();
+                    selection = newSelection;
+                    this.setState({
+                        tooltipTarget: newSelection.node(),
+                        tooltipOpen: true,
+                        tooltipContent: tooltip(component, point, closest),
+                        tooltipContainer: component.foreground().node(),
+                        tooltipPosition: [closest.position.x, closest.position.y]
+                    })
+                }
+            } else {
+                this.setState({
+                    tooltipOpen: false,
+                })
+            }
+        });
+        interaction.attachTo(component);
+    }
+
     createLayout() {
         let layout = this.props.layout;
         if (!Array.isArray(layout) || layout.length == 0 || !Array.isArray(layout[0])) {
@@ -474,11 +531,12 @@ export default class PChart extends Component{
     }
 
     componentDidMount(){
+        this.addTooltipQueue = [];
         this.loadScales();
         this.loadComponents();
         this.createLayout();
-		this.table.renderTo(this.targetRef.current);
-
+        this.table.renderTo(this.targetRef.current);
+        this.addTooltipQueue.forEach((args) => this.addTooltip.bind(this).apply(null, args));
     }
     /*
     TODO: detach plots/eventlistener
@@ -492,12 +550,14 @@ export default class PChart extends Component{
     TODO: updates plots instead of rerender unless it updates target width/height
     TODO: add width/height as props
     shouldComponentUpdate(nextProps, nextState){
-     	return false;
+        return false;
     }
     */
 
     render(){
-        return <div ref={this.targetRef} style={{width: '600px', height:'300px'}}>
+        return <div className='chart_warpper'>
+            <div ref={this.targetRef} style={{width: '600px', height:'300px'}}/>
+            <Tooltip target={this.state.tooltipTarget} isOpen={this.state.tooltipOpen} innerRef={this.tooltipRef}>{this.state.tooltipContent}</Tooltip>
         </div>;
     }
 }
@@ -566,7 +626,8 @@ props defintions:
                     onPointerExit: (component, point) => {},
                     onPointerMove: (component, point) => {},
                 },
-            }
+            },
+            tooltip: (component, point, data) => {}`
         }...],
         axes: [{
             axisId: 'string',
@@ -575,7 +636,8 @@ props defintions:
             orientation: 'bottom | left | right | top',
             xAlignment: 'left | center | right',
             yAlignment: 'top | center | bottom',
-            interaction: {...}
+            interaction: {...},
+            tooltip: (component, point, data) => {}`
         }...],
         legends: [{
             legendId: 'string',
@@ -584,7 +646,8 @@ props defintions:
             colorScaleId: 'scaleId',
             xAlignment: 'left | center | right',
             yAlignment: 'top | center | bottom',
-            interaction: {...}
+            interaction: {...},
+            tooltip: (component, point, data) => {}`
         }...],
         labels: [{
             labelId: 'string',
@@ -594,22 +657,133 @@ props defintions:
             text: 'string',
             xAlignment: 'left | center | right',
             yAlignment: 'top | center | bottom',
-            interaction: {...}
+            interaction: {...},
+            tooltip: (component, point, data) => {}`
         }...],
         gridlines: [{
             gridlineId: 'string',
             xScale: 'scaleId',
             yScale: 'scaleId',
-            interaction: {...}
+            interaction: {...},
+            tooltip: (component, point, data) => {}`
         }...],
         groups: [{
             groupId: 'string',
             type: 'Regular | Plot',
             components: ['componentId'...],
-            interaction: {...}
-
+            interaction: {...},
+            tooltip: (component, point, data) => {}`
         }]
 
     }
 }
+E.g.
+
+let layout = [
+    ['yAxis', 'group', 'legend'],
+    [null, 'xAxis', null]];
+let scales = [{
+    scaleId: 'xScale',
+    type: 'Linear'
+}, {
+    scaleId: 'yScale',
+    type: 'Linear'
+}];
+let components = {
+    plots: [{
+        plotId: 'plot',
+        type: 'Line',
+        x: {
+            value: (ds) => ds.x,
+            scale: 'xScale'
+        },
+        y: {
+            value: (ds) => ds.y,
+            scale: 'yScale'
+        },
+        datasets: [{
+            datasetId: 'dataset1',
+            label: 'set 1',
+            color: 'RED',
+            data: [
+              { "x": 0, "y": 1 },
+              { "x": 1, "y": 2 },
+              { "x": 2, "y": 4 },
+              { "x": 3, "y": 8 }
+            ]
+        }, {
+            datasetId: 'dataset2',
+            label: 'set 2',
+            color: 'BLUE',
+            data: [
+              { "x": 0, "y": 5 },
+              { "x": 1, "y": 1 },
+              { "x": 2, "y": 6 },
+              { "x": 3, "y": 9 }
+            ]
+        }]},
+        {
+        plotId: 'plot2',
+        type: 'Line',
+        x: {
+            value: (ds) => ds.x,
+            scale: 'xScale'
+        },
+        y: {
+            value: 4,
+            scale: 'yScale'
+        },
+        datasets: [{
+            datasetId: 'dataset3',
+            label: 'target',
+            color: 'GREEN',
+            data: [
+              { "x": 0},
+              { "x": 1},
+              { "x": 2},
+              { "x": 3}
+            ]
+        }]
+    }],
+    axes: [{
+        axisId: 'xAxis',
+        type: 'Numeric',
+        scale: 'xScale',
+        orientation: 'bottom',
+        interactions: {
+            PanZoom: {
+                xScales: ['xScale']
+            }
+        }
+    },{
+        axisId: 'yAxis',
+        type: 'Numeric',
+        scale: 'yScale',
+        orientation: 'left',
+        interactions: {
+            PanZoom: {
+                yScales: ['yScale']
+            }
+        }
+    }],
+    groups: [{
+        groupId: 'group',
+        type: 'Plot',
+        components: ['plot', 'plot2'],
+        interactions: {
+            Pointer: {
+                onPointerMove: (component, point) => {
+                    console.log(component.entityNearest(point));
+                }
+            }
+        },
+        tooltip: (component, point, data) => `(${data.datum.x},${data.datum.y})`
+    }],
+    legends: [{
+        legendId: 'legend',
+        type: 'Regular',
+        plotIds: ['plot', 'plot2'],
+    }]
+};
+<PChart layout={layout}, scales={scales}, components={components} />
 */
