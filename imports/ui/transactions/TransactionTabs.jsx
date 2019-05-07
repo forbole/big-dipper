@@ -13,7 +13,7 @@ export default class TransactionTabs extends Component{
             transferTxs: {},
             stakingTxs: {},
             distributionTxs: {},
-            governanceTxs: {},
+            // governanceTxs: {},
             slashingTxs: {}
         }
     }
@@ -32,7 +32,7 @@ export default class TransactionTabs extends Component{
                 transferTxs: this.props.transferTxs,
                 stakingTxs: this.props.stakingTxs,
                 distributionTxs: this.props.distributionTxs,
-                governanceTxs: this.props.governanceTxs,
+                // governanceTxs: this.props.governanceTxs,
                 slashingTxs: this.props.slashingTxs
             })    
         }
@@ -65,14 +65,6 @@ export default class TransactionTabs extends Component{
                         onClick={() => { this.toggle('tx-distr'); }}
                         >
                         Distribution ({numbro(this.state.distributionTxs.length).format("0,0")})
-                        </NavLink>
-                    </NavItem>
-                    <NavItem>
-                        <NavLink
-                        className={classnames({ active: this.state.activeTab === 'tx-gov' })}
-                        onClick={() => { this.toggle('tx-gov'); }}
-                        >
-                        Governance ({numbro(this.state.governanceTxs.length).format("0,0")})
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -117,20 +109,6 @@ export default class TransactionTabs extends Component{
                         <Row>
                             <Col>
                                 {(this.state.distributionTxs.length > 0)?this.state.distributionTxs.map((tx, i) => {
-                                    return <TransactionRow 
-                                        key={i} 
-                                        index={i} 
-                                        tx={tx} 
-                                        blockList
-                                    />
-                                }):''}
-                            </Col>
-                        </Row>
-                    </TabPane>
-                    <TabPane tabId="tx-gov">
-                        <Row>
-                            <Col>
-                                {(this.state.governanceTxs.length > 0)?this.state.governanceTxs.map((tx, i) => {
                                     return <TransactionRow 
                                         key={i} 
                                         index={i} 

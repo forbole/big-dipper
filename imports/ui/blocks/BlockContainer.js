@@ -39,13 +39,6 @@ export default BlockContainer = withTracker((props) => {
                 {"tx.value.msg.type":"cosmos-sdk/MsgModifyWithdrawAddress"}
             ]
         }).fetch() : {},
-        governanceTxs: transactionsExist ? Transactions.find({
-            $or: [
-                {"tx.value.msg.type":"cosmos-sdk/MsgSubmitProposal"},
-                {"tx.value.msg.type":"cosmos-sdk/MsgDeposit"},
-                {"tx.value.msg.type":"cosmos-sdk/MsgVote"}
-            ]
-        }).fetch() : {},
         slashingTxs: transactionsExist ? Transactions.find({
             $or: [
                 {"tx.value.msg.type":"cosmos-sdk/MsgUnjail"}
