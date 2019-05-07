@@ -25,7 +25,7 @@ export default class PChart extends Component{
             scales.forEach((scaleData) => {
                 let scaleId = scaleData.scaleId;
                 if (this.scales[scaleId])
-                    throw`duplicate scaleId: ${scaleId}.`;
+                    throw `duplicate scaleId: ${scaleId}.`;
 
                 let scale;
                 switch (scaleData.type) {
@@ -51,7 +51,7 @@ export default class PChart extends Component{
                         scale = new Scales.InterpolatedColor(scaleData.colorScale);
                         break;
                     default:
-                        throw`${scaleData.type} is not a valid type for Scale.`;
+                        throw `${scaleData.type} is not a valid type for Scale.`;
                 }
                 if (scaleData.domain)
                     scale.domain(scaleData.domain);
@@ -70,7 +70,7 @@ export default class PChart extends Component{
         if (this.scales.hasOwnProperty(scaleId)) {
             return this.scales[scaleId];
         }
-        throw`invalid scaleId: ${scaleId}`;
+        throw `invalid scaleId: ${scaleId}`;
     }
 
 
@@ -80,18 +80,33 @@ export default class PChart extends Component{
         if (this.components.hasOwnProperty(componentId)) {
             return this.components[componentId];
         }
-        throw`invalid componentId: ${componentId}`;
+        throw `invalid componentId: ${componentId}`;
+    }
+
+    getDataset(datasetId) {
+        if (this.datasets.hasOwnProperty(datasetId))
+            return this.datasets[datasetId];
+        throw `invalid datasetId: ${datasetId}`;
+    }
+    loadDatasets() {
+        this.datasets = {};
+        this.props.datasets.forEach((datasetData) => {
+            let datasetId = datasetData.datasetId;
+            if (this.datasets[datasetId])
+                throw `duplicate datasetId: ${datasetId}.`;
+            let dataset = new Dataset(
+                datasetData.data, {...datasetData, data:null});
+            this.datasets[datasetId] = dataset;
+        });
     }
 
     loadPlots() {
-        // TODO: move datasets outside of plot so plots can share dataset
         // TODO: add renderer('canvas') for supported types
-        this.datasets = {};
         this.plotColorScales = {};
         this.props.components.plots.forEach((plotData) =>{
             let plotId = plotData.plotId;
             if (this.components[plotId])
-                throw`duplicate componentId: ${plotId}.`;
+                throw `duplicate componentId: ${plotId}.`;
 
             let plot;
             switch (plotData.type) {
@@ -129,7 +144,7 @@ export default class PChart extends Component{
                     plot = new Plots.Waterfall();
                     break;
                 default:
-                    throw`${plotData.type} is not a valid type for Scale.`
+                    throw `${plotData.type} is not a valid type for Scale.`
             }
             if (plotData.type === 'Pie' && plotData.sectorValue)
                 plot.sectorValue(plotData.sectorValue.value,
@@ -150,15 +165,10 @@ export default class PChart extends Component{
                 });
             let allDatasetsHaveColor = true;
             if (plotData.datasets) {
-                plotData.datasets.forEach((datasetData) => {
-                    let datasetId = datasetData.datasetId;
-                    if (this.datasets[datasetId])
-                        throw`duplicate datasetId: ${datasetId}.`;
-                    let dataset = new Dataset(
-                        datasetData.data, {...datasetData, data:null});
-                    this.datasets[datasetId] = dataset;
+                plotData.datasets.forEach((datasetId) => {
+                    let dataset = this.getDataset(datasetId);
                     plot.addDataset(dataset);
-                    allDatasetsHaveColor = allDatasetsHaveColor && !!datasetData.color;
+                    allDatasetsHaveColor = allDatasetsHaveColor && !!datasetData.metadata().color;
                 });
             }
 
@@ -185,7 +195,7 @@ export default class PChart extends Component{
         this.props.components.axes.forEach((axisData) => {
             let axisId = axisData.axisId;
             if (this.components[axisId])
-                throw`duplicate componentId: ${axisId}.`;
+                throw `duplicate componentId: ${axisId}.`;
 
             let axis;
             switch (axisData.type) {
@@ -202,7 +212,7 @@ export default class PChart extends Component{
                         this.getScale(axisData.scale), axisData.orientation);
                     break;
                 default:
-                    throw`${axisData.type} is not a valid type for Axis.`
+                    throw `${axisData.type} is not a valid type for Axis.`
             }
             if (axisData.xAlignment)
                 axis.xAlignment(axisData.xAlignment);
@@ -222,7 +232,7 @@ export default class PChart extends Component{
         this.props.components.labels.forEach((labelData) => {
             let labelId = labelData.labelId;
             if (this.components[labelId])
-                throw`duplicate componentId: ${labelId}.`;
+                throw `duplicate componentId: ${labelId}.`;
 
             let label;
             switch (labelData.type) {
@@ -233,7 +243,7 @@ export default class PChart extends Component{
                 case 'Title':
                     label = new Label.Title(labelData.text, labelData.angel);
                 default:
-                    throw`${labelData.type} is not a valid type for Label.`;
+                    throw `${labelData.type} is not a valid type for Label.`;
             }
             if (labelData.xAlignment)
                 label.xAlignment(labelData.xAlignment);
@@ -256,7 +266,7 @@ export default class PChart extends Component{
         this.props.components.gridlines.forEach((gridlineData) => {
             let gridId = gridlineData.gridlineId;
             if (this.components[gridId])
-                throw`duplicate componentId: ${gridId}.`;
+                throw `duplicate componentId: ${gridId}.`;
 
             let grid = new Components.Gridline(
                 xScale=this.getScale(gradlineData.xScale),
@@ -277,21 +287,26 @@ export default class PChart extends Component{
             let legendId = legendData.legendId;
             let plotId = legendData.plotId;
             if (this.components[legendId])
-                throw`duplicate componentId: ${legendId}.`;
+                throw `duplicate componentId: ${legendId}.`;
 
             let legend;
             switch (legendData.type) {
                 case 'Regular':
                     let domain = [];
                     let range = [];
-                    legendData.plotIds.forEach((plotId) => {
-                        let plot = this.getComponent(plotId);
-                        plot.datasets().forEach((dataset) => {
-                            let metadata = dataset.metadata();
-                            domain.push(metadata.label);
-                            range.push(metadata.color);
+                    if (legendData.domain && legendData.range) {
+                        domain = legendData.domain;
+                        range = legendData.range;
+                    } else {
+                        legendData.plotIds.forEach((plotId) => {
+                            let plot = this.getComponent(plotId);
+                            plot.datasets().forEach((dataset) => {
+                                let metadata = dataset.metadata();
+                                domain.push(metadata.label);
+                                range.push(metadata.color);
+                            });
                         });
-                    });
+                    }
                     let colorScale = new Scales.Color().domain(domain).range(range);
                     legend = new Components.Legend(colorScale);
                     break;
@@ -300,7 +315,7 @@ export default class PChart extends Component{
                     legend = new Components.InterpolatedColorLegend(
                         this.getScale(legendData.colorScaleId));
                 default:
-                    throw`${legendData.type} is not a valid type for Legend.`
+                    throw `${legendData.type} is not a valid type for Legend.`
             }
 
             if (legendData.xAlignment)
@@ -322,7 +337,7 @@ export default class PChart extends Component{
         this.props.components.groups.forEach((groupData) => {
             let groupId = groupData.groupId;
             if (this.components[groupId])
-                throw`duplicate componentId: ${groupId}.`;
+                throw `duplicate componentId: ${groupId}.`;
 
             let group;
             switch (groupData.type) {
@@ -333,7 +348,7 @@ export default class PChart extends Component{
                     group = new Components.PlotGroup();
                     break;
                 default:
-                    throw`${groupData.type} is not a valid type for Group.`
+                    throw `${groupData.type} is not a valid type for Group.`
             }
             groupData.components.forEach((componentId) =>
                 group.append(this.getComponent(componentId)));
@@ -479,7 +494,7 @@ export default class PChart extends Component{
                     this.attachPointerInteraction(interactions[interaction], component);
                     break;
                 default:
-                    throw`unrecognized interaction ${interaction}.`
+                    throw `unrecognized interaction ${interaction}.`
             }
 
         };
@@ -575,6 +590,12 @@ props defintions:
         range: [], // | REDS, BLUES, POSNEG for InterpolatedColor
         ticks: []
     }...],
+    datasets: [{
+        datasetId: ''
+        label: '',
+        color: ''
+        data: [],
+    }...],
     components: {
         plots: [{
             plotId: 'string',
@@ -597,12 +618,7 @@ props defintions:
                 value: 'any | function',
                 scale: 'null | scaleId'
             }...],
-            datasets: [{
-                datasetId: 'string',
-                label: '',
-                color: ''
-                data: [],
-            }...],
+            datasets: ['datasetId'...],
             interactions: {
                 Click: {
                     onClick: (component, point, event) => {},
@@ -689,6 +705,35 @@ let scales = [{
     scaleId: 'yScale',
     type: 'Linear'
 }];
+let datasets = [{
+    datasetId: 'dataset1',
+    label: 'set 1',
+    color: 'RED',
+    data: [
+      { "x": 0, "y": 1 },
+      { "x": 1, "y": 2 },
+      { "x": 2, "y": 4 },
+      { "x": 3, "y": 8 }
+]}, {
+    datasetId: 'dataset2',
+    label: 'set 2',
+    color: 'BLUE',
+    data: [
+      { "x": 0, "y": 5 },
+      { "x": 1, "y": 1 },
+      { "x": 2, "y": 6 },
+      { "x": 3, "y": 9 }
+]},{
+    datasetId: 'dataset3',
+    label: 'target',
+    color: 'GREEN',
+    data: [
+      { "x": 0},
+      { "x": 1},
+      { "x": 2},
+      { "x": 3}
+    ]
+}]
 let components = {
     plots: [{
         plotId: 'plot',
@@ -701,27 +746,7 @@ let components = {
             value: (ds) => ds.y,
             scale: 'yScale'
         },
-        datasets: [{
-            datasetId: 'dataset1',
-            label: 'set 1',
-            color: 'RED',
-            data: [
-              { "x": 0, "y": 1 },
-              { "x": 1, "y": 2 },
-              { "x": 2, "y": 4 },
-              { "x": 3, "y": 8 }
-            ]
-        }, {
-            datasetId: 'dataset2',
-            label: 'set 2',
-            color: 'BLUE',
-            data: [
-              { "x": 0, "y": 5 },
-              { "x": 1, "y": 1 },
-              { "x": 2, "y": 6 },
-              { "x": 3, "y": 9 }
-            ]
-        }]},
+        datasets: ['dataset1', 'dataset2']},
         {
         plotId: 'plot2',
         type: 'Line',
@@ -733,17 +758,7 @@ let components = {
             value: 4,
             scale: 'yScale'
         },
-        datasets: [{
-            datasetId: 'dataset3',
-            label: 'target',
-            color: 'GREEN',
-            data: [
-              { "x": 0},
-              { "x": 1},
-              { "x": 2},
-              { "x": 3}
-            ]
-        }]
+        datasets: ['dataset3']
     }],
     axes: [{
         axisId: 'xAxis',
@@ -785,5 +800,5 @@ let components = {
         plotIds: ['plot', 'plot2'],
     }]
 };
-<PChart layout={layout}, scales={scales}, components={components} />
+<PChart layout={layout}, scales={scales}, components={components} datasets={datasets}/>
 */
