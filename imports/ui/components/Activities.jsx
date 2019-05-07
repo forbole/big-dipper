@@ -62,22 +62,7 @@ export default class Activites extends Component {
             case "cosmos-sdk/MsgUndelegate":
                 return <p><Account address={msg.value.delegator_address} /> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-warning">{numbro(msg.value.amount.amount).format("0,0")} {msg.value.amount.denom}</em> from <Account address={msg.value.validator_address} />.</p>
             case "cosmos-sdk/MsgBeginRedelegate":
-                return <p><Account address={msg.value.delegator_address} /> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-warning">{numbro(msg.value.amount.amount).format("0,0")} {msg.value.amount.denom}</em> from <Account address={msg.value.validator_src_address} /> to <Account address={msg.value.validator_dst_address} />.</p>
-            
-            // gov
-            case "cosmos-sdk/MsgSubmitProposal":
-                return <p><Account address={msg.value.proposer} /> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> with title <Link to={"/proposals/"+this.props.tags[2].value}>{msg.value.title}</Link>.</p>
-            case "cosmos-sdk/MsgDeposit":
-                return <p><Account address={msg.value.depositor} /> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-info">{msg.value.amount.map((amount,i) =>{
-                    if (i>0){
-                        return " ,"+numbro(amount.amount).format("0,0")+" "+amount.denom;
-                    }
-                    else{
-                        return numbro(amount.amount).format("0,0")+" "+amount.denom;
-                    }
-                })}</em> to <Link to={"/proposals/"+msg.value.proposal_id}>proposal {msg.value.proposal_id}</Link>.</p>
-            case "cosmos-sdk/MsgVote":
-                return <p><Account address={msg.value.voter} /> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} />  <Link to={"/proposals/"+msg.value.proposal_id}>proposal {msg.value.proposal_id}</Link> with a <em className="text-info">{msg.value.option}</em>.</p>
+                return <p><Account address={msg.value.delegator_address} /> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-warning">{numbro(msg.value.amount.amount).format("0,0")} {msg.value.amount.denom}</em> from <Account address={msg.value.validator_src_address} /> to <Account address={msg.value.validator_dst_address} />.</p>            
             
             // distribution
             case "cosmos-sdk/MsgWithdrawValidatorCommission":
@@ -96,7 +81,23 @@ export default class Activites extends Component {
                 return <MsgType type={msg.type} />
             case "cosmos-sdk/IBCReceiveMsg":
                 return <MsgType type={msg.type} />
-    
+
+            // market
+            case "market/MsgSwap":
+                return <p><Account address={msg.value.trader}/> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-info">{numbro(msg.value.offer_coin.amount).format("0,0")} {msg.value.offer_coin.denom}</em> to <em className="text-info">{msg.value.ask_denom}</em>.</p>
+        
+            // oracle
+            case "oracle/MsgPriceFeed":
+                return <p><Account address={msg.value.feeder}/> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-dark">{msg.value.denom}</em> at <em className="text-dark">{numbro(msg.value.price).format("0,0.0000")}</em>.</p>
+            
+            // budget
+            case "budget/MsgSubmitProgram":
+                return <p><MsgType type={msg.type} /></p>
+            case "budget/MsgWithdrawProgram":
+                return <p><MsgType type={msg.type} /></p>
+            case "budget/MsgVoteProgram":
+                return <p><MsgType type={msg.type} /></p>
+            
             default:
                 return <div>{JSON.stringify(msg.value)}</div>
         }
