@@ -28,24 +28,14 @@ let errors = {
         103: "Invalid Input",
         104: "Validator Jailed"
     },
-    "gov": {
-        1: "Unknown Proposal",
-        2: "Inactive Proposal",
-        3: "Already Active Proposal",
-        4: "Already Finished Proposal",
-        5: "Address Not Staked",
-        6: "Invalid Title",
-        7: "Invalid Description",
-        8: "Invalid Proposal Type",
-        9: "Invalid Vote",
-        10: "Invalid Genesis",
-        11: "Invalid Proposal Status"
-    },
     "distr": {
         103: "Invalid Input",
         104: "No Distribution Info",
         105: "No Validator Commission",
         106: "Set Withdraw Addrress Disabled"
+    },
+    "crisis": {
+        103: "Invalid Input"
     },
     "bank":{
         101: "Send Disabled",
@@ -57,6 +47,27 @@ let errors = {
         103: "Validator Not Jailed",
         104: "Missing Self Delegation",
         105: "Self Delegation Too Low"
+    },
+    "market": {
+        1: 'Insufficient Swap',
+        2: 'No Effective Price',
+        3: 'Recursive Swap',
+        4: 'Exceeds Swap Limit'
+    },
+    "oracle": {
+        1: 'Unknown Denom',
+        2: 'Invalid Price',
+        3: 'Voter Not Validator',
+        4: 'Invalid Vote'
+    },
+    "budget": {
+        1: 'Invalid Program ID',
+        2: 'Invalid Title',
+        3: 'Invalid Description',
+        4: 'Program Not Found',
+        5: 'Vote Not Found',
+        6: 'Invalid Submitter',
+        7: 'Refund Failed'
     }
 }
 
