@@ -39,6 +39,30 @@ i.material-icons + span {
     top: -0.35em;
 }
 
+span#network-nav{
+    font-size: 1rem;
+    color: #fff;
+    font-weight: bold;
+}
+
+#header .dropdown-header{
+    font-size: 1rem !important;
+}
+
+.dropdown-item.disabled a, 
+.dropdown-item:disabled a{
+    color: #666;
+}
+
+#header .dropdown-header img{
+    height: 2em;
+    margin-right: 0.25em;
+}
+
+#header .dropdown-item a span.badge{
+    transform: translateY(-1px);
+}
+
 div#loadmore {
     margin: 0.5rem auto;
 }
@@ -49,7 +73,7 @@ a.navbar-brand .logo {
 }
 
 #header-search{
-    margin-left: 2rem;
+    margin-left: 1rem;
     margin-right: 0.5rem;
 }
 
@@ -635,4 +659,9 @@ div#voting-power-dist .card{
     .tx-info .fee i.material-icons + span {
         transform: inherit;
     }
+
+    span#network-nav{
+        margin-left: 2.5em;
+    }
+
 }
