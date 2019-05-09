@@ -1,66 +1,90 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Tooltip } from 'reactstrap';
+import _ from 'lodash';
 import { Axes, Components, Dataset, Interactions, Plots, Scales } from 'plottable';
-
+import * as d3 from "d3";
+/*
+    TODO:
+    1) validate props
+    2) add tests
+    2.5) add a simple end-end test by creating a dev only page that shows various charts
+    3) break it down, modularize, and refactor
+    4) publish forked plottable to npm and use that instead
+    5) decide to check if new value is null or just let it be no-op
+ */
+const getCombinedMap = (newArray, curArray, id) => {
+    let combinedMap = {}
+    newArray.forEach((entry, i) => combinedMap[entry[id]] = {'newId': i});
+    curArray.forEach((entry, i) => {
+        if (combinedMap[entry[id]])
+            combinedMap[entry[id]]['curId'] = i;
+        else
+            combinedMap[entry[id]] = {'curId': i};
+    })
+    return combinedMap;
+}
 
 export default class PChart extends Component{
     constructor(props){
         super(props);
         this.targetRef = React.createRef();
-        this.tooltipRef = React.createRef();
-        this.state = {
-            tooltipTarget: '.chart_warpper',
-            tooltipOpen: false,
-            tooltipContent: null,
-            tooltipPosition: null
+        // this.tooltipRef = React.createRef();
+        // this.state = {
+        //     tooltipTarget: '.chart_warpper',
+        //     tooltipOpen: false,
+        //     tooltipContent: null,
+        //     tooltipPosition: null
+        // }
+    }
+
+    createScale(scaleData) {
+        let scaleId = scaleData.scaleId;
+        if (this.scales[scaleId])
+            throw `duplicate scaleId: ${scaleId}.`;
+
+        let scale;
+        switch (scaleData.type) {
+            case 'Linear':
+                scale = new Scales.Linear();
+                break;
+            case 'Log':
+                scale = new Scales.Log();
+                break;
+            case 'ModifiedLog':
+                scale = new Scales.ModifiedLog();
+                break;
+            case 'Time':
+                scale = new Scales.Time();
+                break;
+            case 'Category':
+                scale = new Scales.Category();
+                break;
+            case 'Color':
+                scale = new Scales.Color();
+                break;
+            case 'InterpolatedColor':
+                scale = new Scales.InterpolatedColor(scaleData.colorScale);
+                break;
+            default:
+                throw `${scaleData.type} is not a valid type for Scale.`;
         }
+        if (scaleData.domain)
+            scale.domain(scaleData.domain);
+        if (scaleData.range)
+            scale.range(scaleData.range);
+        /* TODO: add tickGenerator */
+
+        return scale;
     }
 
     loadScales() {
         this.scales = {};
-
         const scales = this.props.scales;
         if (scales) {
-            scales.forEach((scaleData) => {
-                let scaleId = scaleData.scaleId;
-                if (this.scales[scaleId])
-                    throw `duplicate scaleId: ${scaleId}.`;
-
-                let scale;
-                switch (scaleData.type) {
-                    case 'Linear':
-                        scale = new Scales.Linear();
-                        break;
-                    case 'Log':
-                        scale = new Scales.Log();
-                        break;
-                    case 'ModifiedLog':
-                        scale = new Scales.ModifiedLog();
-                        break;
-                    case 'Time':
-                        scale = new Scales.Time();
-                        break;
-                    case 'Category':
-                        scale = new Scales.Category();
-                        break;
-                    case 'Color':
-                        scale = new Scales.Color();
-                        break;
-                    case 'InterpolatedColor':
-                        scale = new Scales.InterpolatedColor(scaleData.colorScale);
-                        break;
-                    default:
-                        throw `${scaleData.type} is not a valid type for Scale.`;
-                }
-                if (scaleData.domain)
-                    scale.domain(scaleData.domain);
-                if (scaleData.range)
-                    scale.range(scaleData.range);
-                if (scaleData.ticks)
-                    scale.ticks(ticks);
-                this.scales[scaleId] = scale;
-            });
+            scales.forEach((scaleData) =>
+                this.scales[scaleData.scaleId] = this.createScale(scaleData)
+            );
         }
     }
 
@@ -72,7 +96,6 @@ export default class PChart extends Component{
         }
         throw `invalid scaleId: ${scaleId}`;
     }
-
 
     getComponent(componentId) {
         if (componentId == null)
@@ -88,355 +111,363 @@ export default class PChart extends Component{
             return this.datasets[datasetId];
         throw `invalid datasetId: ${datasetId}`;
     }
+
+    createDataset(datasetData) {
+        let datasetId = datasetData.datasetId;
+        if (this.datasets[datasetId])
+            throw `duplicate datasetId: ${datasetId}.`;
+        return new Dataset(datasetData.data, _.omit(datasetData, 'data'));
+    }
+
     loadDatasets() {
         this.datasets = {};
         this.props.datasets.forEach((datasetData) => {
-            let datasetId = datasetData.datasetId;
-            if (this.datasets[datasetId])
-                throw `duplicate datasetId: ${datasetId}.`;
-            let dataset = new Dataset(
-                datasetData.data, {...datasetData, data:null});
-            this.datasets[datasetId] = dataset;
+            this.datasets[datasetData.datasetId] = this.createDataset(datasetData);
         });
     }
 
-    loadPlots() {
+    createPlot(plotData) {
         // TODO: add renderer('canvas') for supported types
-        this.plotColorScales = {};
-        this.props.components.plots.forEach((plotData) =>{
-            let plotId = plotData.plotId;
-            if (this.components[plotId])
-                throw `duplicate componentId: ${plotId}.`;
+        let plotId = plotData.plotId;
+        if (this.components[plotId])
+            throw `duplicate componentId: ${plotId}.`;
 
-            let plot;
-            switch (plotData.type) {
-                case 'Area':
-                    plot = new Plots.Area();
-                    break;
-                case 'Bar':
-                    plot = new Plots.Bar();
-                    break;
-                case 'ClusteredBar':
-                    plot = new Plots.ClusteredBar();
-                    break;
-                case 'Line':
-                    plot = new Plots.Line();
-                    break;
-                case 'Pie':
-                    plot = new Plots.Pie();
-                    break;
-                case 'Rectangle':
-                    plot = new Plots.Rectangle();
-                    break;
-                case 'Scatter':
-                    plot = new Plots.Scatter();
-                    break;
-                case 'Segment':
-                    plot = new Plots.Segment();
-                    break;
-                case 'StackedArea':
-                    plot = new Plots.StackedArea();
-                    break;
-                case 'StackedBar':
-                    plot = new Plots.StackedBar();
-                    break;
-                case 'Waterfall':
-                    plot = new Plots.Waterfall();
-                    break;
-                default:
-                    throw `${plotData.type} is not a valid type for Scale.`
-            }
-            if (plotData.type === 'Pie' && plotData.sectorValue)
-                plot.sectorValue(plotData.sectorValue.value,
-                                 this.getScale(plotData.sectorValue.scale));
-            if (plotData.type !== 'Pie' && plotData.x)
-                plot.x(plotData.x.value, this.getScale(plotData.x.scale));
-            if (plotData.type !== 'Pie' && plotData.y)
-                plot.y(plotData.y.value, this.getScale(plotData.y.scale));
-            // TODO: use fill/stroke for different types of plots
-            let hasFill = false
-            let hasStroke = false;
-            if (plotData.attrs)
-                plotData.attrs.forEach((attrData) => {
-                    plot.attr(attrData.attr, attrData.value,
-                              this.getScale(attrData.scale))
-                    hasFill = hasFill || attrData.attr == 'fill';
-                    hasStroke = hasStroke || attrData.attr == 'stroke';
-                });
-            let allDatasetsHaveColor = true;
-            if (plotData.datasets) {
-                plotData.datasets.forEach((datasetId) => {
-                    let dataset = this.getDataset(datasetId);
-                    plot.addDataset(dataset);
-                    allDatasetsHaveColor = allDatasetsHaveColor && !!datasetData.metadata().color;
-                });
-            }
+        let plot;
+        switch (plotData.type) {
+            case 'Area':
+                plot = new Plots.Area();
+                break;
+            case 'Bar':
+                plot = new Plots.Bar();
+                break;
+            case 'ClusteredBar':
+                plot = new Plots.ClusteredBar();
+                break;
+            case 'Line':
+                plot = new Plots.Line();
+                break;
+            case 'Pie':
+                plot = new Plots.Pie();
+                break;
+            case 'Rectangle':
+                plot = new Plots.Rectangle();
+                break;
+            case 'Scatter':
+                plot = new Plots.Scatter();
+                break;
+            case 'Segment':
+                plot = new Plots.Segment();
+                break;
+            case 'StackedArea':
+                plot = new Plots.StackedArea();
+                break;
+            case 'StackedBar':
+                plot = new Plots.StackedBar();
+                break;
+            case 'Waterfall':
+                plot = new Plots.Waterfall();
+                break;
+            default:
+                throw `${plotData.type} is not a valid type for Scale.`
+        }
+        if (plotData.type === 'Pie' && plotData.sectorValue)
+            plot.sectorValue(plotData.sectorValue.value,
+                             this.getScale(plotData.sectorValue.scale));
+        if (plotData.type !== 'Pie' && plotData.x)
+            plot.x(plotData.x.value, this.getScale(plotData.x.scale));
+        if (plotData.type !== 'Pie' && plotData.y)
+            plot.y(plotData.y.value, this.getScale(plotData.y.scale));
+        // TODO: use fill/stroke for different types of plots
+        let hasFill = false
+        let hasStroke = false;
+        if (plotData.attrs)
+            plotData.attrs.forEach((attrData) => {
+                plot.attr(attrData.attr, attrData.value,
+                          this.getScale(attrData.scale))
+                hasFill = hasFill || attrData.attr == 'fill';
+                hasStroke = hasStroke || attrData.attr == 'stroke';
+            });
+        let allDatasetsHaveColor = true;
+        if (plotData.datasets) {
+            plotData.datasets.forEach((datasetId) => {
+                let dataset = this.getDataset(datasetId);
+                plot.addDataset(dataset);
+                allDatasetsHaveColor = allDatasetsHaveColor && !!dataset.metadata().color;
+            });
+        }
 
-            if (!hasFill && !hasStroke && allDatasetsHaveColor) {
-                plot.attr('stroke', (d, i, ds) => ds.metadata().color);
-            }
+        if (!hasFill && !hasStroke && allDatasetsHaveColor) {
+            plot.attr('stroke', (d, i, ds) => ds.metadata().color);
+        }
 
-            /*if (plot.attr('fill') && plot.attr('fill').scale) {
-                this.plotColorScales[plotId] = plot.attr('fill').scale;
-            } else if (plot.attr('stroke') && plot.attr('stroke').scale) {
-                this.plotColorScales[plotId] = plot.attr('stroke').scale;
-            }*/
+        /*if (plot.attr('fill') && plot.attr('fill').scale) {
+            this.plotColorScales[plotId] = plot.attr('fill').scale;
+        } else if (plot.attr('stroke') && plot.attr('stroke').scale) {
+            this.plotColorScales[plotId] = plot.attr('stroke').scale;
+        }*/
 
-            if (plotData.interactions)
-                this.loadInteractions(plotData.interactions, plot);
-            if (plotData.tooltip)
-                this.addTooltipQueue.push([plotData.tooltip, plot, plotId]);
+        if (plotData.interactions)
+            this.loadInteractions(plotData.interactions, plot, plotId);
+        // if (plotData.tooltip)
+        //     this.addTooltipQueue.push([plotData.tooltip, plot, plotId]);
 
-            this.components[plotId] = plot;
-        });
+        if (plotData.labelsEnabled != null)
+            plot.labelsEnabled(plotData.labelsEnabled);
+        if (plotData.labelFormatter)
+            plot.labelFormatter(plotData.labelFormatter);
+        return plot;
     }
 
-    loadAxes() {
-        this.props.components.axes.forEach((axisData) => {
-            let axisId = axisData.axisId;
-            if (this.components[axisId])
-                throw `duplicate componentId: ${axisId}.`;
+    createAxis(axisData) {
+        let axisId = axisData.axisId;
+        if (this.components[axisId])
+            throw `duplicate componentId: ${axisId}.`;
 
-            let axis;
-            switch (axisData.type) {
-                case 'Category':
-                    axis = new Axes.Category(
-                        this.getScale(axisData.scale), axisData.orientation);
-                    break;
-                case 'Numeric':
-                    axis = new Axes.Numeric(
-                        this.getScale(axisData.scale), axisData.orientation);
-                    break;
-                case 'Time':
-                    axis = new Axes.Time(
-                        this.getScale(axisData.scale), axisData.orientation);
-                    break;
-                default:
-                    throw `${axisData.type} is not a valid type for Axis.`
-            }
-            if (axisData.xAlignment)
-                axis.xAlignment(axisData.xAlignment);
-            if (axisData.yAlignment)
-                axis.yAlignment(axisData.yAlignment);
+        let axis;
+        switch (axisData.type) {
+            case 'Category':
+                axis = new Axes.Category(
+                    this.getScale(axisData.scale), axisData.orientation);
+                break;
+            case 'Numeric':
+                axis = new Axes.Numeric(
+                    this.getScale(axisData.scale), axisData.orientation);
+                break;
+            case 'Time':
+                axis = new Axes.Time(
+                    this.getScale(axisData.scale), axisData.orientation);
+                break;
+            default:
+                throw `${axisData.type} is not a valid type for Axis.`
+        }
+        if (axisData.xAlignment)
+            axis.xAlignment(axisData.xAlignment);
+        if (axisData.yAlignment)
+            axis.yAlignment(axisData.yAlignment);
 
-            if (axisData.interactions)
-                this.loadInteractions(axisData.interactions, axis);
-            if (axisData.tooltip)
-                this.addTooltipQueue.push([axisData.tooltip, axis, axisId]);
+        if (axisData.interactions)
+            this.loadInteractions(axisData.interactions, axis, axisId);
+        // if (axisData.tooltip)
+        //     this.addTooltipQueue.push([axisData.tooltip, axis, axisId]);
 
-            this.components[axisId] = axis;
-        });
+        return axis;
     }
 
-    loadLabels() {
-        this.props.components.labels.forEach((labelData) => {
-            let labelId = labelData.labelId;
-            if (this.components[labelId])
-                throw `duplicate componentId: ${labelId}.`;
+    createLabel(labelData) {
+        let labelId = labelData.labelId;
+        if (this.components[labelId])
+            throw `duplicate componentId: ${labelId}.`;
 
-            let label;
-            switch (labelData.type) {
-                case 'Axis':
-                    label = new Label.Axis(labelData.text, labelData.angel);
-                case 'Regular':
-                    label = new Label.Regular(labelData.text, labelData.angel);
-                case 'Title':
-                    label = new Label.Title(labelData.text, labelData.angel);
-                default:
-                    throw `${labelData.type} is not a valid type for Label.`;
-            }
-            if (labelData.xAlignment)
-                label.xAlignment(labelData.xAlignment);
-            if (labelData.yAlignment)
-                label.yAlignment(labelData.yAlignment);
-            if (labelData.padding)
-                label.padding(labelData.padding);
+        let label;
+        switch (labelData.type) {
+            case 'Axis':
+                label = new Label.Axis(labelData.text, labelData.angel);
+            case 'Regular':
+                label = new Label.Regular(labelData.text, labelData.angel);
+            case 'Title':
+                label = new Label.Title(labelData.text, labelData.angel);
+            default:
+                throw `${labelData.type} is not a valid type for Label.`;
+        }
+        if (labelData.xAlignment)
+            label.xAlignment(labelData.xAlignment);
+        if (labelData.yAlignment)
+            label.yAlignment(labelData.yAlignment);
+        if (labelData.padding)
+            label.padding(labelData.padding);
 
 
-            if (labelData.interactions)
-                this.loadInteractions(labelData.interactions, label);
-            if (labelData.tooltip)
-                this.addTooltipQueue.push([labelData.tooltip, label, labelId]);
+        if (labelData.interactions)
+            this.loadInteractions(labelData.interactions, label, labelId);
+        // if (labelData.tooltip)
+        //     this.addTooltipQueue.push([labelData.tooltip, label, labelId]);
 
-            this.components[labelId] = label;
-        });
+        return label;
     }
 
-    loadGridlines() {
-        this.props.components.gridlines.forEach((gridlineData) => {
-            let gridId = gridlineData.gridlineId;
-            if (this.components[gridId])
-                throw `duplicate componentId: ${gridId}.`;
+    createGridline(gridlineData) {
+        let gridId = gridlineData.ggridlineId;
+        if (this.components[gridId])
+            throw `duplicate componentId: ${gridId}.`;
 
-            let grid = new Components.Gridline(
-                xScale=this.getScale(gradlineData.xScale),
-                yScale=this.getScale(gradlineData.yScale));
+        let grid = new Components.Gridline(
+            xScale=this.getScale(gradlineData.xScale),
+            yScale=this.getScale(gradlineData.yScale));
 
-            if (gridData.interactions)
-                this.loadInteractions(gridData.interactions, grid);
-            if (gridData.tooltip)
-                this.addTooltipQueue.push([gridData.tooltip, grid, gridId]);
+        if (gridData.interactions)
+            this.loadInteractions(gridData.interactions, grid, gridId);
+        // if (gridData.tooltip)
+        //     this.addTooltipQueue.push([gridData.tooltip, grid, gridId]);
 
-            this.components[gridId] = grid;
-        });
+        return grid;
     }
 
-    loadLegends() {
+    getColorDomainRangeFromPlots(plotIds) {
+        let domain = [], range = [];
+        plotIds.forEach((plotId) => {
+            let plot = this.getComponent(plotId);
+            plot.datasets().forEach((dataset) => {
+                let metadata = dataset.metadata();
+                domain.push(metadata.label);
+                range.push(metadata.color);
+            });
+        });
+        return {domain, range};
+    }
+
+    createLegend(legendData){
         // TODO: should take PlotGroup as well
-        this.props.components.legends.forEach((legendData) => {
-            let legendId = legendData.legendId;
-            let plotId = legendData.plotId;
-            if (this.components[legendId])
-                throw `duplicate componentId: ${legendId}.`;
+        let legendId = legendData.legendId;
+        let plotId = legendData.plotId;
+        if (this.components[legendId])
+            throw `duplicate componentId: ${legendId}.`;
 
-            let legend;
-            switch (legendData.type) {
-                case 'Regular':
-                    let domain = [];
-                    let range = [];
-                    if (legendData.domain && legendData.range) {
-                        domain = legendData.domain;
-                        range = legendData.range;
-                    } else {
-                        legendData.plotIds.forEach((plotId) => {
-                            let plot = this.getComponent(plotId);
-                            plot.datasets().forEach((dataset) => {
-                                let metadata = dataset.metadata();
-                                domain.push(metadata.label);
-                                range.push(metadata.color);
-                            });
-                        });
-                    }
-                    let colorScale = new Scales.Color().domain(domain).range(range);
-                    legend = new Components.Legend(colorScale);
-                    break;
+        let legend;
+        switch (legendData.type) {
+            case 'Regular':
+                let domain = [];
+                let range = [];
+                if (legendData.domain && legendData.range) {
+                    domain = legendData.domain;
+                    range = legendData.range;
+                } else {
+                    ({domain, range} = getColorDomainRangeFromPlots(legendData.plotIds));
+                }
+                let colorScale = new Scales.Color().domain(domain).range(range);
+                legend = new Components.Legend(colorScale);
+                break;
 
-                case 'InterpolatedColor':
-                    legend = new Components.InterpolatedColorLegend(
-                        this.getScale(legendData.colorScaleId));
-                default:
-                    throw `${legendData.type} is not a valid type for Legend.`
-            }
+            case 'InterpolatedColor':
+                legend = new Components.InterpolatedColorLegend(
+                    this.getScale(legendData.colorScaleId));
+            default:
+                throw `${legendData.type} is not a valid type for Legend.`
+        }
 
-            if (legendData.xAlignment)
-                legend.xAlignment(legendData.xAlignment);
-            if (legendData.yAlignment)
-                legend.yAlignment(legendData.yAlignment);
+        if (legendData.xAlignment)
+            legend.xAlignment(legendData.xAlignment);
+        if (legendData.yAlignment)
+            legend.yAlignment(legendData.yAlignment);
 
-            if (legendData.interactions)
-                this.loadInteractions(legendData.interactions, legend);
-            if (legendData.tooltip)
-                this.addTooltipQueue.push([legendData.tooltip, legend, legendId]);
+        if (legendData.interactions)
+            this.loadInteractions(legendData.interactions, legend, legendId);
+        // if (legendData.tooltip)
+        //     this.addTooltipQueue.push([legendData.tooltip, legend, legendId]);
 
-            this.components[legendId] = legend;
-        });
+        return legend;
     }
 
-    loadGroups() {
-        this.groups = {};
-        this.props.components.groups.forEach((groupData) => {
-            let groupId = groupData.groupId;
-            if (this.components[groupId])
-                throw `duplicate componentId: ${groupId}.`;
+    createGroup() {
+        let groupId = groupData.groupId;
+        if (this.components[groupId])
+            throw `duplicate componentId: ${groupId}.`;
 
-            let group;
-            switch (groupData.type) {
-                case 'Regular':
-                    group = new Components.Group();
-                    break;
-                case 'Plot':
-                    group = new Components.PlotGroup();
-                    break;
-                default:
-                    throw `${groupData.type} is not a valid type for Group.`
-            }
-            groupData.components.forEach((componentId) =>
-                group.append(this.getComponent(componentId)));
+        let group;
+        switch (groupData.type) {
+            case 'Regular':
+                group = new Components.Group();
+                break;
+            case 'Plot':
+                group = new Components.PlotGroup();
+                break;
+            default:
+                throw `${groupData.type} is not a valid type for Group.`
+        }
+        groupData.components.forEach((componentId) =>
+            group.append(this.getComponent(componentId)));
 
-            if (groupData.interactions)
-                this.loadInteractions(groupData.interactions, group);
-            if (groupData.tooltip)
-                this.addTooltipQueue.push([groupData.tooltip, group, groupId]);
+        if (groupData.interactions)
+            this.loadInteractions(groupData.interactions, group, groupId);
+        // if (groupData.tooltip)
+        //     this.addTooltipQueue.push([groupData.tooltip, group, groupId]);
 
-            this.components[groupId] = group;
-        });
+        return group;
     }
 
     loadComponents() {
         this.components = {};
-        let components = this.props.components;
-        if (components) {
-            if (components.plots)
-                this.loadPlots();
-            if (components.axes)
-                this.loadAxes();
-            if (components.legends)
-                this.loadLegends();
-            if (components.labels)
-                this.loadLabels();
-            if (components.gridlines)
-                this.loadGridlines();
-            if (components.groups)
-                this.loadGroups();
-        }
+        this.interactions = {};
+        let components = this.props.components || {};
+        let componentMeta = [
+            {type: 'plots', id: 'plotId', createMethod: this.createPlot},
+            {type: 'axes', id: 'axisId', createMethod: this.createAxis},
+            {type: 'labels', id: 'labelId', createMethod: this.createLabel},
+            {type: 'gridlines', id: 'ggridlineId', createMethod: this.createGridline},
+            {type: 'legends', id: 'legendId', createMethod: this.createLegend},
+            {type: 'groups', id: 'groupId', createMethod: this.createGroup}
+        ];
+        componentMeta.forEach(({type, id, createMethod}) => {
+            let entities = components[type] || [];
+            entities.forEach((data) => {
+                this.components[data[id]] = createMethod.call(this, data);
+            });
+        })
     }
 
-    attachClickInteraction(interactionData, component) {
+    attachClickInteraction(interactionData, component, componentId) {
         let interaction = new Interactions.Click();
         for (let action in interactionData) {
             switch (action) {
                 case 'onClick':
-                    interaction.onClick(interactionData[action].bind(null, component));
+                    interaction.onClick(interactionData[action].bind(null, component, this));
                     break;
                 case 'onDoubleClick':
-                    interaction.onDoubleClick(interactionData[action].bind(null, component));
+                    interaction.onDoubleClick(interactionData[action].bind(null, component, this));
                     break;
                 default:
                     throw `invalid event ${action} for Click Interaction.`;
             }
         }
         interaction.attachTo(component);
+        let interactions = _.get(this.interactions, componentId, []);
+        interactions.push(interaction);
+        this.interactions[componentId] = interactions;
     }
 
-    attachDragInteraction(interactionData, component) {
+    attachDragInteraction(interactionData, component, componentId) {
         let interaction = new Interactions.Drag();
         for (let action in interactionData) {
             switch (action) {
                 case 'onDragStart':
-                    interaction.onDragStart(interactionData[action].bind(null, component));
+                    interaction.onDragStart(interactionData[action].bind(null, component, this));
                     break;
                 case 'onDrag':
-                    interaction.onDrag(interactionData[action].bind(null, component));
+                    interaction.onDrag(interactionData[action].bind(null, component, this));
                     break;
                 case 'onDragEnd':
-                    interaction.onDragEnd(interactionData[action].bind(null, component));
+                    interaction.onDragEnd(interactionData[action].bind(null, component, this));
                     break;
                 default:
                     throw `invalid event ${action} for Drag Interaction.`;
             }
         }
         interaction.attachTo(component);
-
+        let interactions = _.get(this.interactions, componentId, []);
+        interactions.push(interaction);
+        this.interactions[componentId] = interactions;
     }
 
-    attachKeyInteraction(interactionData, component) {
+    attachKeyInteraction(interactionData, component, componentId) {
         let interaction = new Interactions.Key();
         for (let action in interactionData) {
             switch (action) {
                 case 'onKeyPress':
-                    interaction.onKeyPress(interactionData[action].bind(null, component));
+                    interaction.onKeyPress(interactionData[action].bind(null, component, this));
                     break;
                 case 'onKeyRelease':
-                    interaction.onKeyRelease(interactionData[action].bind(null, component));
+                    interaction.onKeyRelease(interactionData[action].bind(null, component, this));
                     break;
                 default:
                     throw `invalid event ${action} for Key Interaction.`;
             }
         }
         interaction.attachTo(component);
+        let interactions = _.get(this.interactions, componentId, []);
+        interactions.push(interaction);
+        this.interactions[componentId] = interactions;
     }
 
-    attachPanZoomInteraction(interactionData, component) {
+    attachPanZoomInteraction(interactionData, component, componentId) {
         let interaction = new Interactions.PanZoom();
         for (let action in interactionData) {
             switch (action) {
@@ -453,29 +484,35 @@ export default class PChart extends Component{
             }
         }
         interaction.attachTo(component);
+        let interactions = _.get(this.interactions, componentId, []);
+        interactions.push(interaction);
+        this.interactions[componentId] = interactions;
     }
 
-    attachPointerInteraction(interactionData, component) {
+    attachPointerInteraction(interactionData, component, componentId) {
         let interaction = new Interactions.Pointer();
         for (let action in interactionData) {
             switch (action) {
                 case 'onPointerEnter':
-                    interaction.onPointerEnter(interactionData[action].bind(null, component));
+                    interaction.onPointerEnter(interactionData[action].bind(null, component, this));
                     break;
                 case 'onPointerExit':
-                    interaction.onPointerExit(interactionData[action].bind(null, component));
+                    interaction.onPointerExit(interactionData[action].bind(null, component, this));
                     break;
                 case 'onPointerMove':
-                    interaction.onPointerMove(interactionData[action].bind(null, component));
+                    interaction.onPointerMove(interactionData[action].bind(null, component, this));
                     break;
                 default:
                     throw `invalid event ${action} for Pointer Interaction.`;
             }
         }
         interaction.attachTo(component);
+        let interactions = _.get(this.interactions, componentId, []);
+        interactions.push(interaction);
+        this.interactions[componentId] = interactions;
     }
 
-    loadInteractions(interactions, component) {
+    loadInteractions(interactions, component, componentId) {
         for (let interaction in interactions) {
             switch (interaction) {
                 case 'Click':
@@ -500,41 +537,43 @@ export default class PChart extends Component{
         };
     }
 
-    addTooltip(tooltip, component, componentId) {
-        let selection = component.foreground().append("circle").attrs({
-            r:3,
-            opacity:0,
-            id: `${componentId}_tooltip`});
-        let interaction = new Interactions.Pointer();
-        interaction.onPointerMove((point) => {
-            let closest = component.entityNearest(point);
-            if (closest) {
-                if (!this.state.tooltipPosition || this.state.tooltipPosition[0] != closest.position.x
-                    || this.state.tooltipPosition[1] != closest.position.x) {
-                    // workaround for tooltip updateTarget only does shallow comparison
-                    let newSelection = selection.clone();
-                    newSelection.attrs({
-                        cx: closest.position.x,
-                        cy: closest.position.y
-                    });
-                    selection.remove();
-                    selection = newSelection;
-                    this.setState({
-                        tooltipTarget: newSelection.node(),
-                        tooltipOpen: true,
-                        tooltipContent: tooltip(component, point, closest),
-                        tooltipContainer: component.foreground().node(),
-                        tooltipPosition: [closest.position.x, closest.position.y]
-                    })
-                }
-            } else {
-                this.setState({
-                    tooltipOpen: false,
-                })
-            }
-        });
-        interaction.attachTo(component);
-    }
+    // addTooltip(tooltip, component, componentId) {
+    //     /* TODO: user popper.js */
+    //     /* TODO: calculate pie chart postion differently */
+    //     let selection = component.foreground().append("circle").attrs({
+    //         r:3,
+    //         opacity:0,
+    //         id: `${componentId}_tooltip`});
+    //     let interaction = new Interactions.Pointer();
+    //     interaction.onPointerMove((point) => {
+    //         let closest = component.entityNearest(point);
+    //         if (closest) {
+    //             if (!this.state.tooltipPosition || this.state.tooltipPosition[0] != closest.position.x
+    //                 || this.state.tooltipPosition[1] != closest.position.x) {
+    //                 // workaround for tooltip updateTarget only does shallow comparison
+    //                 let newSelection = selection.clone();
+    //                 newSelection.attrs({
+    //                     cx: closest.position.x,
+    //                     cy: closest.position.y
+    //                 });
+    //                 selection.remove();
+    //                 selection = newSelection;
+    //                 this.setState({
+    //                     tooltipTarget: newSelection.node(),
+    //                     tooltipOpen: true,
+    //                     tooltipContent: tooltip(component, point, closest),
+    //                     tooltipContainer: component.foreground().node(),
+    //                     tooltipPosition: [closest.position.x, closest.position.y]
+    //                 })
+    //             }
+    //         } else {
+    //             this.setState({
+    //                 tooltipOpen: false,
+    //             })
+    //         }
+    //     });
+    //     interaction.attachTo(component);
+    // }
 
     createLayout() {
         let layout = this.props.layout;
@@ -546,13 +585,350 @@ export default class PChart extends Component{
     }
 
     componentDidMount(){
-        this.addTooltipQueue = [];
+        // this.addTooltipQueue = [];
         this.loadScales();
+        this.loadDatasets();
         this.loadComponents();
         this.createLayout();
         this.table.renderTo(this.targetRef.current);
-        this.addTooltipQueue.forEach((args) => this.addTooltip.bind(this).apply(null, args));
+        // this.addTooltipQueue.forEach((args) => this.addTooltip.bind(this).apply(null, args));
     }
+
+    updateScales(newScales, curScales) {
+        let scalesDiff = {};
+        if (!_.isEqual(newScales, curScales)) {
+            let scalesMap = getCombinedMap(newScales, curScales, 'scaleId');
+            for (let scaleId in scalesMap) {
+                let {newId, curId} = scalesMap[scaleId];
+                if (newId == undefined) {
+                    _.unset(this.scales, scaleId);
+                    scalesDiff[scaleId] = 'removed';
+                    continue;
+                } if (curId == undefined) {
+                    this.scales[scaleId] = createScale(newScales[newId]);
+                    scalesDiff[scaleId] = 'new';
+                    continue;
+                }
+                let scale = this.scales[scaleId];
+                let [ newScale, curScale ] = [newScales[newId], curScales[curId]];
+                if (!_.isEqual(newScale, curScale)) {
+                    if (newScale.type !== curScale.type ||
+                        (newScale.type == 'InterpolatedColor' && newScale.colorScale != curScale.colorScale)) {
+                        this.scales[scaleId] = createScale(newScales[newId]);
+                        scalesDiff[scaleId] = 'update';
+                        continue;
+                    }
+                    if (newScale.domain != curScale.domain) {
+                        if (newScale.domain == undefined)
+                            scale.autoDomain();
+                        else
+                            scale.domain(newScale.domain);
+                    }
+                    if (newScale.range != curScale.range) {
+                        if (newScale.range == undefined)
+                            scale.autoRange();
+                        else
+                            scale.range(newScale.range);
+                    }
+                }
+            }
+        }
+        return scalesDiff;
+    }
+
+    updateDatasets(newDatasets, curDatasets) {
+        let datasetDiff = {}
+        if (!_.isEqual(newDatasets, curDatasets)) {
+            let datasetsMap = getCombinedMap(newDatasets, curDatasets, 'datasetId');
+            for (let datasetId in datasetsMap) {
+                let {newId, curId} = datasetsMap[datasetId];
+                if (newId == undefined) {
+                    _.unset(this.datasets, datasetId);
+                    datasetDiff[datasetId] = 'removed';
+                } else if (curId == undefined) {
+                    this.datasets[datasetId] = createDataset(newScales[newId]);
+                    datasetDiff[datasetId] = 'new';
+                } else {
+                    let dataset = this.datasets[datasetId];
+                    let datasetData = newDatasets[newId];
+                    dataset.data(datasetData.data);
+                    dataset.metadata(_.omit(datasetData, data));
+                }
+            }
+        }
+    }
+
+    reloadInteractions(interactionsData=[], component, componentId) {
+        let interactions = this.interactions[componentId] || [];
+        interactions.forEach((interaction)=> interaction.detach());
+        this.interactions[componentId] = [];
+        if (interactionsData.interactions)
+            this.loadInteractions(interactionsData, component, componentId);
+    }
+
+    updatePlots(curPlots=[], newPlots=[], scalesDiff, componentsDiff) {
+        let plotsMap = getCombinedMap(newPlots, curPlots, 'plotId');
+        for (let plotId in plotsMap) {
+            let {newId, curId} = plotsMap[plotId];
+            if (newId == undefined) {
+                _.unset(this.components, plotId);
+                componentsDiff[plotId] = 'removed';
+                continue;
+            } if (curId == undefined || newPlots[newId].type !== curPlots[curId].type) {
+                this.components[plotId] = createPlot(newPlots[newId]);
+                componentsDiff[plotId] = 'new';
+                continue;
+            }
+            let [newPlot, curPlot] = [newPlots[newId], curPlots[curId]]
+            let plot = this.components[plotId];
+            if (newPlot.type !== 'Pie') {
+                if (!_.isEqual(newPlot.x, curPlot.x)) {
+                    plot.x(newPlot.x.value, this.getScale(newPlot.x.scale));
+                } else if (curPlot.x.scale && _.has(scalesDiff, curPlot.x.scale)) {
+                    plot.x(curPlot.x.value, this.getScale(curPlot.x.scale));
+                }
+                if (!_.isEqual(newPlot.y, curPlot.y)) {
+                    plot.y(newPlot.y.value, this.getScale(newPlot.y.scale));
+                } else if (curPlot.y.scale && _.has(scalesDiff, curPlot.y.scale)) {
+                    plot.y(curPlot.y.value, this.getScale(curPlot.y.scale));
+                }
+            } else {
+                if (!_.isEqual(newPlot.sectorValue, curPlot.sectorValue)) {
+                    plot.sectorValue(newPlot.sectorValue.value, this.getScale(newPlot.sectorValue.scale));
+                } else if (curPlot.sectorValue.scale && _.has(scalesDiff, curPlot.sectorValue.scale)) {
+                    plot.sectorValue(curPlot.sectorValue.value, this.getScale(curPlot.sectorValue.scale));
+                }
+            }
+            let attrsMap = getCombinedMap(newPlot.attrs, curPlot.attrs, 'attr');
+            for (let attr in attrsMap) {
+                let {newId: nattrId, curId: cattrid} = attrsMap[attr];
+                if (nattrId == undefined) {
+                    let oldScale = plot.attr(attr).scale;
+                    plot._attrBindings.remove(attr);
+                    plot._uninstallScaleForKey(oldScale, attr);
+                    plot._clearAttrToProjectorCache();
+                } else {
+                    /* TODO: check if new and cur are different to improve performance */
+                    let attrData = newPlot.attrs[nattrId];
+                    plot.attr(attr, attrData.value, this.getScale(attrData.scale));
+                }
+            }
+            if (!_.isEqual(newPlot.datasets, curPlot.datasets)) {
+                let datasets = newPlot.datasets.map((id)=> this.getDataset(id));
+                plot.datasets(datasets);
+            } if (newPlot.labelsEnabled != curPlot.labelsEnabled) {
+                plot.labelsEnabled(newPlot.labelsEnabled);  // TODO<#5>
+            } if (newPlot.labelFormatter != curPlot.labelFormatter) {
+                plot.labelFormatter(newPlot.labelFormatter);  // TODO<#5>
+            } if (!_.isEqual(newPlot.interactions, curPlot.interactions)) {
+                // TODO: need to deep compare functions
+                this.reloadInteractions(newPlot.interactions, plot, plotId);
+            }
+        }
+        return componentsDiff;
+    }
+
+    updateAxes(curAxes=[], newAxes=[], scalesDiff, componentsDiff) {
+        let axesMap = getCombinedMap(newAxes, curAxes, 'axisId');
+        for (let axisId in axesMap) {
+            let {newId, curId} = axesMap[axisId];
+            if (newId == undefined) {
+                _.unset(this.components, axisId);
+                componentsDiff[axisId] = 'removed';
+                continue;
+            } if (curId == undefined || newAxes[newId].type != curAxes[curId].type) {
+                this.components[axisId] = createAxis(newAxes[newId]);
+                componentsDiff[axisId] = 'new';
+                continue;
+            }
+            let axis = this.components[axisId];
+            let newAxis = newAxes[newId], curAxis = curAxes[curId];
+            if (newAxis.scale != curAxis.scale || _.has(scalesDiff, curAxis.scale)) {
+                /* TODO<plottable> should add public method to reset scale on Plottable */
+                axis.getScale().offUpdate(axis._rescaleCallback);
+                axis._scale = axis.getScale(newAxis.scale);
+                axis.getScale().onUpdate(axis._rescaleCallback);
+            } if (newAxis.orientation != curAxis.orientation) {
+                axis.orientation(newAxis.orientation);  // TODO<#5>
+            } if (newAxis.xAlignment != curAxis.xAlignment) {
+                axis.xAlignment(newAxis.xAlignment);  // TODO<#5>
+            } if (newAxis.yAlignment != curAxis.yAlignment) {
+                axis.yAlignment(newAxis.yAlignment);  // TODO<#5>
+            } if (!_.isEqual(newAxis.interactions, curAxis.interactions)) {
+                // TODO: need to deep compare functions
+                this.reloadInteractions(newAxis.interactions, axis, axisId);
+            }
+        }
+        return componentsDiff;
+    }
+
+    updateLegends(curLegends=[], newLegends=[], scalesDiff, componentsDiff) {
+        let legendsMap = getCombinedMap(newLegends, curLegends, 'legendId');
+        for (let legendId in legendsMap) {
+            let {newId, curId} = legendsMap[legendId];
+            if (newId == undefined) {
+                _.unset(this.components, legendId);
+                componentsDiff[legendId] = 'removed';
+                continue;
+            } if (curId == undefined || newLegends[newId].type != curLegends[curId].type) {
+                this.components[legendId] = createLegend(newLegends[newId]);
+                componentsDiff[legendId] = 'new';
+                continue;
+            }
+            let legend = this.components[legendId];
+            let newLegend = newLegend[newId], curLegend = LegendAxes[curId];
+            if (newLegends[newId].type == 'Regular') {
+                if (newLegends.domain && newLegends.range) {
+                    if (!_.isEqual(newLegend.domain, curLegend.domain)) {
+                        legend.domain(newLegend.domain);
+                    } if (!_.isEqual(newLegend.range, curLegend.range)) {
+                        legend.range(newLegend.range);
+                    }
+                } else {
+                    /* TODO<perf> check if plotsId updated, or plots updated or datasetUpdated */
+                    let {domain, range} = getColorDomainRangeFromPlots(newLegends.plotIds);
+                    legend.domain(domain).range(range);
+                }
+            } if (newLegend.xAlignment != curLegend.xAlignment) {
+                legend.xAlignment(newLegend.xAlignment);  // TODO<#5>
+            } if (newLegend.yAlignment != curLegend.yAlignment) {
+                legend.yAlignment(newLegend.yAlignment);  // TODO<#5>
+            }  if (!_.isEqual(newLegend.interactions, curLegend.interactions)) {
+                // TODO<perf>: need to deep compare functions
+                this.reloadInteractions(newLegend.interactions, legend, legendId);
+            }
+        }
+        return componentsDiff;
+    }
+
+    updateLabels(curLabels=[], newLabels=[], scalesDiff, componentsDiff) {
+        let labelsMap = getCombinedMap(newLabels, curLabels, 'labelId');
+        for (let labelId in labelsMap) {
+            let {newId, curId} = labelsMap[labelId];
+            if (newId == undefined) {
+                _.unset(this.components, labelId);
+                componentsDiff[labelId] = 'removed';
+                continue;
+            } if (curId == undefined || newLabels[newId].type != curLabels[curId].type) {
+                this.components[labelId] = createLabel(newLabels[newId]);
+                componentsDiff[labelId] = 'new';
+                continue;
+            }
+            let label = this.components[labelId];
+            let newLabel = newLabel[newId], curLabel = LabelurAxes[curId];
+            if (newLabel.xAlignment != curLabel.xAlignment) {
+                label.xAlignment(newLabel.xAlignment);  // TODO<#5>
+            } if (newLabel.yAlignment != curLabel.yAlignment) {
+                label.yAlignment(newLabel.yAlignment);  // TODO<#5>
+            } if (newLabel.padding != curLabel.padding) {
+                label.padding(newLabel.padding);  // TODO<#5>
+            } if (!_.isEqual(newLabel.interactions, curLabel.interactions)) {
+                // TODO: need to deep compare functions
+                this.reloadInteractions(newLabel.interactions, label, labelId);
+            }
+        }
+        return componentsDiff;
+    }
+
+    updateGridlines(curGridlines=[], newGridlines=[], scalesDiff, componentsDiff) {
+        let gridlinesMap = getCombinedMap(newGridlines, curGridlines, 'gridlineId');
+        for (let gridlineId in gridlinesMap) {
+            let {newId, curId} = gridlinesMap[gridlineId];
+            if (newId == undefined) {
+                _.unset(this.components, gridlineId);
+                componentsDiff[gridlineId] = 'removed';
+                continue;
+            } if (curId == undefined) {
+                this.components[gridlineId] = createGridline(newGridlines[newId]);
+                componentsDiff[gridlineId] = 'new';
+                continue;
+            }
+            let gridline = this.components[gridlineId];
+            let newGridline = newGridline[newId], curGridline = curGridline[curId];
+            if (newGridline.xScale !== curGridline.xScale || _.has(scalesDiff, curGridline.xScale)) {
+                gridline.xScale = this.getScale(newGridline.xScale);
+            } if (newGridline.yScale !== curGridline.yScale || _.has(scalesDiff, curGridline.yScale)) {
+                gridline.yScale = this.getScale(newGridline.yScale);
+            } if (!_.isEqual(newGridline.interactions, curGridline.interactions)) {
+                // TODO: need to deep compare functions
+                this.reloadInteractions(newGridline.interactions, gridline, gridlineId);
+            }
+        }
+        return componentsDiff;
+    }
+
+    updateGroups(curGroups=[], newGroups=[], scalesDiff, componentsDiff) {
+        let groupsMap = getCombinedMap(newGroups, curGroups, 'groupId');
+        for (let groupId in groupsMap) {
+            // update componentsDiff in first pass, since a group may refer to another group
+            let {newId, curId} = groupsMap[groupId];
+            if (newId == undefined) {
+                _.unset(this.components, groupId);
+                componentsDiff[groupId] = 'removed';
+            } else if (curId == undefined || newGroups[newId].type != curGroups[curId].type) {
+                this.components[groupId] = createGroup(newGroups[newId]);
+                componentsDiff[groupId] = 'new';
+            }
+        }
+        for (let groupId in groupsMap) {
+            let {newId, curId} = groupsMap[groupId];
+            if (componentsDiff[groupId]) continue;
+
+            let group = this.components[groupId];
+            let newGroup = newGroup[newId];
+
+            group.components().forEach((component) => group.remove());
+            newGroup.components.forEach((componentId) =>
+                group.append(this.getComponent(componentId)));
+
+            if (!_.isEqual(newGroup.interactions, curGroup.interactions)) {
+                // TODO: need to deep compare functions
+                this.reloadInteractions(newGroup.interactions, group, groupId);
+            }
+        }
+        return componentsDiff;
+    }
+
+    updateComponents(prevComps, curComps, scalesDiff) {
+        let componentsDiff = {}
+        this.updatePlots(curComps.plots, prevComps.plots, scalesDiff, componentsDiff);
+        this.updateAxes(curComps.axes, prevComps.axes, scalesDiff, componentsDiff);
+        this.updateLegends(curComps.legends, prevComps.legends, scalesDiff, componentsDiff);
+        this.updateLabels(curComps.labels, prevComps.labels, scalesDiff, componentsDiff);
+        this.updateGridlines(curComps.gridlines, prevComps.gridlines, scalesDiff, componentsDiff);
+        this.updateGroups(curComps.groups, prevComps.groups, scalesDiff, componentsDiff);
+        return componentsDiff;
+    }
+
+    updateLayout(newLayout, curLayout, componentsDiff) {
+        let newDim = newLayout.map((row) => row.length);
+        let curDim = curLayout.map((row) => row.length);
+        if (!_.isEqual(newDim, curDim)) {
+            this.createLayout();
+            return;
+        }
+        curLayout.forEach((row, i) => row.forEach((curCompId, j) => {
+            let newCompId = newLayout[i][j];
+            if (!curCompId == newCompId || _.has(componentsDiff, curCompId)) {
+                let oldComponent = this.table.componentAt(i, j);
+                this.table.remove(oldComponent);
+                this.table.add(this.getComponent(newCompId), i, j);
+            }
+        }))
+    }
+
+    componentDidUpdate(prevProps, prevState){
+        if (this.props !== prevProps) {
+            this.table.detach();
+            let scalesDiff = this.updateScales(this.props.scales, prevProps.scales);
+            this.updateDatasets(this.props.datasets, prevProps.datasets);
+            let componentsDiff = this.updateComponents(
+                this.props.components, prevProps.components, scalesDiff);
+            this.updateLayout(this.props.layout, prevProps.layout, componentsDiff);
+            this.table.renderTo(this.targetRef.current);
+        }
+    }
+
     /*
     TODO: detach plots/eventlistener
     componentWillUnmount(){
@@ -562,7 +938,6 @@ export default class PChart extends Component{
 
 
     /*
-    TODO: updates plots instead of rerender unless it updates target width/height
     TODO: add width/height as props
     shouldComponentUpdate(nextProps, nextState){
         return false;
@@ -571,12 +946,22 @@ export default class PChart extends Component{
 
     render(){
         return <div className='chart_warpper'>
-            <div ref={this.targetRef} style={{width: '600px', height:'300px'}}/>
-            <Tooltip target={this.state.tooltipTarget} isOpen={this.state.tooltipOpen} innerRef={this.tooltipRef}>{this.state.tooltipContent}</Tooltip>
+            <div ref={this.targetRef} style={this.props.config}/>
+            {/*<Tooltip target={this.state.tooltipTarget} isOpen={this.state.tooltipOpen} innerRef={this.tooltipRef}>{this.state.tooltipContent}</Tooltip>*/}
         </div>;
     }
 }
 
+PChart.defaultProps = {
+    config: {
+        width: '300px',
+        height: '300px',
+    },
+    layout: {},
+    scales: [],
+    components: [],
+    datasets: []
+};
 /*
 props defintions:
 {
@@ -588,7 +973,6 @@ props defintions:
         colorScale: 'linear| log | sqrt | pow', // for InterpolatedColor
         domain: [],
         range: [], // | REDS, BLUES, POSNEG for InterpolatedColor
-        ticks: []
     }...],
     datasets: [{
         datasetId: ''
@@ -618,29 +1002,31 @@ props defintions:
                 value: 'any | function',
                 scale: 'null | scaleId'
             }...],
+            labelsEnabled: boolean,
+            labelFormatter: (value) => 'formatted string',
             datasets: ['datasetId'...],
             interactions: {
                 Click: {
-                    onClick: (component, point, event) => {},
+                    onClick: (component, chart, point, event) => {},
                     onDoubleClick :(component, point, event) => {}
                 }
                 Drag: {
-                    onDrag: (component, start, end) => {},
-                    onDragEnd: (component, start, end) => {},
-                    onDragStart: (component, start, end) => {},
+                    onDrag: (component, chart, start, end) => {},
+                    onDragEnd: (component, chart, start, end) => {},
+                    onDragStart: (component, chart, start, end) => {},
                 }
                 Key: {
-                    onKeyPress: (component, keyCode) => {},
-                    onKeyRelease: (component, keyCode) => {},
+                    onKeyPress: (component, chart, keyCode) => {},
+                    onKeyRelease: (component, chart, keyCode) => {},
                 }
                 PanZoom: {
                     xScales: ['scaleId'...],
                     yScales: ['scaleId'...]
                 },
                 Pointer: {
-                    onPointerEnter: (component, point) => {},
-                    onPointerExit: (component, point) => {},
-                    onPointerMove: (component, point) => {},
+                    onPointerEnter: (component, chart, point) => {},
+                    onPointerExit: (component, chart, point) => {},
+                    onPointerMove: (component, chart, point) => {},
                 },
             },
             tooltip: (component, point, data) => {}`
@@ -660,10 +1046,12 @@ props defintions:
             type: 'Regular | InterpolatedColor',
             plotIds: ['plotId'..],
             colorScaleId: 'scaleId',
+            domain: [],
+            range: [],
             xAlignment: 'left | center | right',
             yAlignment: 'top | center | bottom',
             interaction: {...},
-            tooltip: (component, point, data) => {}`
+            tooltip: (component, point, data) => {}
         }...],
         labels: [{
             labelId: 'string',
@@ -787,7 +1175,7 @@ let components = {
         components: ['plot', 'plot2'],
         interactions: {
             Pointer: {
-                onPointerMove: (component, point) => {
+                onPointerMove: (component, chart, point) => {
                     console.log(component.entityNearest(point));
                 }
             }
