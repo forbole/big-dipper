@@ -35,6 +35,26 @@ i.material-icons + span {
     top: -0.35em;
 }
 
+span#network-nav{
+    font-size: 1rem;
+    color: #fff;
+    font-weight: bold;
+}
+
+#header .dropdown-header{
+    font-size: 1rem !important;
+}
+
+.dropdown-item.disabled a, 
+.dropdown-item:disabled a{
+    color: #666;
+}
+
+#header .dropdown-header img{
+    height: 2em;
+    margin-right: 0.5em;
+}
+
 div#loadmore {
     margin: 0.5rem auto;
 }
@@ -45,7 +65,7 @@ a.navbar-brand .logo {
 }
 
 #header-search{
-    margin-left: 2rem;
+    margin-left: 1rem;
     margin-right: 0.5rem;
 }
 
@@ -610,19 +630,6 @@ div#voting-power-dist .card{
     #validator-list ul.status-switch{
         margin-top: 0.5em;
     }
-    /* #validator-list ul.status-switch {
-        position: fixed;
-        background-color: #fff;
-        width: 100%;
-        z-index: 1;
-        padding: 5px 0;
-        margin-top: -5px
-    }
-
-    #validator-list .lead{
-        padding-top: 2.5rem;
-    } */
-
     .card-body.list{
         padding: 0;
     }
@@ -633,4 +640,9 @@ div#voting-power-dist .card{
     .tx-info .fee i.material-icons + span {
         transform: inherit;
     }
+
+    span#network-nav{
+        margin-left: 2.5em;
+    }
+
 }
