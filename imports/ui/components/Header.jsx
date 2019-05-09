@@ -45,7 +45,7 @@ export default class Header extends Component {
                     <DropdownItem header><img src={network.logo} /> {network.name}</DropdownItem>
                     {network.links.map((link, k) => {
                         return <DropdownItem key={k} disabled={link.chain_id == Meteor.settings.public.chainId}>
-                          <a href={link.url} target="_blank">{link.chain_id} ({link.name})</a>
+                          <a href={link.url} target="_blank">{link.chain_id} <Badge size="xs" color="secondary">{link.name}</Badge></a>
                         </DropdownItem>})}
                     {(i < networks.length - 1)?<DropdownItem divider />:''}
                   </span>

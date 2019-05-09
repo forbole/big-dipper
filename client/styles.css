@@ -55,6 +55,10 @@ span#network-nav{
     margin-right: 0.25em;
 }
 
+#header .dropdown-item a span.badge{
+    transform: translateY(-1px);
+}
+
 div#loadmore {
     margin: 0.5rem auto;
 }
