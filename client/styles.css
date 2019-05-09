@@ -2,6 +2,15 @@ body {
     font-size: inherit !important;
 }
 
+.no-select {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 .not-found{
     position: absolute;
     text-align: center;
@@ -273,6 +282,30 @@ div#countdown {
 
 .proposal .tally-result i.fas{
     min-width: 1.5em;
+}
+
+.proposal .card-header-tabs .nav-link {
+    margin: -0.5em 0.5em 0 0.5em;
+    padding: 0.5rem 1.5rem;
+    box-shadow: initial;
+    color: #bd081c;
+    cursor: pointer;
+}
+
+.proposal .card-header-tabs .nav-link.active:not(:hover), .nav-link.active:focus:not(:hover) {
+    border: none;
+    -webkit-box-shadow: initial;
+    box-shadow: initial;
+    color: #bd081c;
+}
+.proposal .card-header-tabs .nav-link.active:hover {
+    border: none;
+    background: #fff;
+    color: #bd081c;
+}
+
+.proposal .plottable .label-area text {
+    font-size: 1.5em;
 }
 
 .validator-details .moniker{
