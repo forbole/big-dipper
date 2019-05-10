@@ -1,0 +1,12 @@
+_locale: 'en-US'
+_namespace: ''
+
+navbar:
+    siteName: 'The Big Dipper'
+    validators: 'Validators'
+    blocks: 'Blocks'
+    transaction: 'Transactions'
+    proposal: 'Proposals'
+    votingPower: 'Voting Power'
+    license: 'LICENSE'
+    forkMe: 'Fork me!'

@@ -20,7 +20,9 @@ import {
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import SearchBar from './SearchBar.jsx';
+import i18n from 'meteor/universe:i18n';
 
+const T = i18n.createComponent();
 export default class Header extends Component {
   constructor(props) {
     super(props);
@@ -65,7 +67,7 @@ export default class Header extends Component {
   render() {
     return (
         <Navbar color="primary" dark expand="lg" fixed="top" id="header">
-          <NavbarBrand tag={Link} to="/"><img src="/img/big-dipper.svg" className="img-fluid logo"/> <span className="d-none d-xl-inline-block">The Big Dipper&nbsp;</span><Badge color="secondary">beta</Badge> </NavbarBrand>
+          <NavbarBrand tag={Link} to="/"><img src="/img/big-dipper.svg" className="img-fluid logo"/> <span className="d-none d-xl-inline-block"><T>navbar.siteName</T>&nbsp;</span><Badge color="secondary">beta</Badge> </NavbarBrand>
           <UncontrolledDropdown className="d-inline text-nowrap">
               <DropdownToggle caret={(this.state.networks !== "")} tag="span" size="sm" id="network-nav">{Meteor.settings.public.chainId}</DropdownToggle>
               {this.state.networks}
