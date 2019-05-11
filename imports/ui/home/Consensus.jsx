@@ -84,7 +84,7 @@ export default class Consensus extends Component{
                                         </Col>
                                     </Row>                            
                                 </Col>
-                                <Col md={4} lg={6}><CardSubtitle><T>common.voitngPower</T></CardSubtitle><Progress animated value={this.props.consensus.votedPower} className="value">{this.props.consensus.votedPower}%</Progress></Col>
+                                <Col md={4} lg={6}><CardSubtitle><T>common.votingPower</T></CardSubtitle><Progress animated value={this.props.consensus.votedPower} className="value">{this.props.consensus.votedPower}%</Progress></Col>
                             </Row>
                             </CardBody>
                         </Card>

@@ -4,7 +4,7 @@ _namespace: ''
 common:
     height: 'Height'
     proposer: 'Proposer'
-    voitngPower: 'Voting Power'
+    votingPower: 'Voting Power'
 navbar:
     siteName: 'The Big Dipper'
     version: 'beta'
@@ -40,3 +40,12 @@ chainStatus:
     outOfValidators: 'out of {$totalValidators} validators'
     onlineVotingPower: 'Online Voting Power'
     fromTotalStakes: '{$percent} from {$totalStakes} {$denom}s'
+analytics:
+    blockTimeHistory: 'Block Time History'
+    averageBlockTime: 'Average Block Time'
+    blockInterval: 'Block Interval'
+    noOfValidators: 'No. of Validators'
+validators:
+    randomValidators: 'Random Validators'
+    moniker: 'Moniker'
+    uptime: 'Uptime'
