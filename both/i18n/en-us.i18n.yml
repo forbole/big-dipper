@@ -19,7 +19,12 @@ consensus:
     consensusState: 'Consensus State'
     round: 'Round'
     step: 'Step'
-chainState:
+chainStates:
+    price: 'Price'
+    marketCap: 'Market Cap'
+    inflation: 'Inflation'
+    communityPool: 'Community Pool'
+chainStatus:    
     latestHeight: 'Latest Block Height'
     averageBlockTime: 'Average Block Time'
     allTime: 'All Time'
