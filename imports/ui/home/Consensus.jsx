@@ -84,7 +84,7 @@ export default class Consensus extends Component{
                                         </Col>
                                     </Row>                            
                                 </Col>
-                                <Col md={4} lg={6}><CardSubtitle><T>common.votingPower</T></CardSubtitle><Progress animated value={this.props.consensus.votedPower} className="value">{this.props.consensus.votedPower}%</Progress></Col>
+                                <Col md={4} lg={6}><CardSubtitle><T>common.voitngPower</T></CardSubtitle><Progress animated value={this.props.consensus.votedPower} className="value">{this.props.consensus.votedPower}%</Progress></Col>
                             </Row>
                             </CardBody>
                         </Card>
@@ -96,7 +96,7 @@ export default class Consensus extends Component{
                 let diff = genesisTime.diff(current);
         
                 return <div className="text-center"><Card body inverse color="danger">
-                    <span>The chain is going to start in</span>             
+                    <span><T>chainStatus.startMessage</T></span>             
                 </Card>
                 <CountDown genesisTime={diff/1000}/>
                 </div>

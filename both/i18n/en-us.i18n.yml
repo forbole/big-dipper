@@ -25,6 +25,7 @@ chainStates:
     inflation: 'Inflation'
     communityPool: 'Community Pool'
 chainStatus:
+    startMessage: 'The chain is going to start in'
     stopWarning: 'The chain appears to be stopped for <em>{$time}</em>! Feed me with new blocks 😭!'
     latestHeight: 'Latest Block Height'
     averageBlockTime: 'Average Block Time'
