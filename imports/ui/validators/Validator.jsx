@@ -216,7 +216,7 @@ export default class Validator extends Component{
                 </Row>
             }
             else{
-                return <div>Validator doesn't exist.</div>
+                return <div><T>validators.validatorNotExists</T></div>
             }
         }
     }

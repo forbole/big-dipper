@@ -80,3 +80,4 @@ validators:
     powerChange: 'Power Change'
     delegations: 'Delegations'
     transactions: 'Transactions'
+    validatorNotExists: 'Validator does not exist.'
