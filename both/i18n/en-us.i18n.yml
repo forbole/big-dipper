@@ -5,6 +5,9 @@ common:
     height: 'Height'
     proposer: 'Proposer'
     votingPower: 'Voting Power'
+    addresses: 'Addresses'
+    amounts: 'Amounts'
+    delegators: 'delegators'
     backToList: 'Back to List'
     more: 'More'
 navbar:
