@@ -27,10 +27,19 @@ export default class Header extends Component {
   constructor(props) {
     super(props);
 
+    this.toggle = this.toggle.bind(this);
     this.state = {
       isOpen: false,
       networks: ""
     };
+  }
+
+  toggle() {
+    this.setState({
+      isOpen: !this.state.isOpen
+    }, ()=>{
+      console.log(this.state.isOpen);
+    });
   }
 
   componentDidMount(){
