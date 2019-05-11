@@ -24,7 +24,8 @@ chainStates:
     marketCap: 'Market Cap'
     inflation: 'Inflation'
     communityPool: 'Community Pool'
-chainStatus:    
+chainStatus:
+    stopWarning: 'The chain appears to be stopped for <em>{$time}</em>! Feed me with new blocks 😭!'
     latestHeight: 'Latest Block Height'
     averageBlockTime: 'Average Block Time'
     allTime: 'All Time'
