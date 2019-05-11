@@ -67,7 +67,7 @@ export default class Header extends Component {
   render() {
     return (
         <Navbar color="primary" dark expand="lg" fixed="top" id="header">
-          <NavbarBrand tag={Link} to="/"><img src="/img/big-dipper.svg" className="img-fluid logo"/> <span className="d-none d-xl-inline-block"><T>navbar.siteName</T>&nbsp;</span><Badge color="secondary">beta</Badge> </NavbarBrand>
+          <NavbarBrand tag={Link} to="/"><img src="/img/big-dipper.svg" className="img-fluid logo"/> <span className="d-none d-xl-inline-block"><T>navbar.siteName</T>&nbsp;</span><Badge color="secondary"><T>navbar.version</T></Badge> </NavbarBrand>
           <UncontrolledDropdown className="d-inline text-nowrap">
               <DropdownToggle caret={(this.state.networks !== "")} tag="span" size="sm" id="network-nav">{Meteor.settings.public.chainId}</DropdownToggle>
               {this.state.networks}
@@ -77,19 +77,19 @@ export default class Header extends Component {
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto text-nowrap" navbar>
               <NavItem>
-                <NavLink tag={Link} to="/validators">Validators</NavLink>
+                <NavLink tag={Link} to="/validators"><T>navbar.validators</T></NavLink>
               </NavItem>
               <NavItem>
-                <NavLink tag={Link} to="/blocks">Blocks</NavLink>
+                <NavLink tag={Link} to="/blocks"><T>navbar.blocks</T></NavLink>
               </NavItem>
               <NavItem>
-                <NavLink tag={Link} to="/transactions">Transactions</NavLink>
+                <NavLink tag={Link} to="/transactions"><T>navbar.transactions</T></NavLink>
               </NavItem>
               <NavItem>
-                <NavLink tag={Link} to="/proposals">Proposals</NavLink>
+                <NavLink tag={Link} to="/proposals"><T>navbar.proposals</T></NavLink>
               </NavItem>
               <NavItem>
-                <NavLink tag={Link} to="/voting-power-distribution">Voting Power</NavLink>
+                <NavLink tag={Link} to="/voting-power-distribution"><T>navbar.votingPower</T></NavLink>
               </NavItem>
             </Nav>
           </Collapse>
