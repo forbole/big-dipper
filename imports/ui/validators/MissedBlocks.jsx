@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 import { Table, Row, Col, Nav, NavItem, NavLink, Spinner } from 'reactstrap';
 import moment from 'moment';
 import { Meteor } from 'meteor/meteor';
+import i18n from 'meteor/universe:i18n';
 
+const T = i18n.createComponent();
 export default class MissedBlocks extends Component{
     constructor(props){
         super(props);
@@ -46,14 +48,14 @@ export default class MissedBlocks extends Component{
         else{
             if (this.props.validatorExist){
                 return <div>
-                    <Link to={"/validator/"+this.props.validator.address} className="btn btn-link"><i className="fas fa-caret-left"></i> Back to Validator</Link>
-                    <h2>Missed blocks of {this.props.validator.description.moniker}</h2>
+                    <Link to={"/validator/"+this.props.validator.address} className="btn btn-link"><i className="fas fa-caret-left"></i> <T>validators.backToValidator</T></Link>
+                    <h2><T moniker={this.props.validator.description.moniker}>validators.missedBlocksTitle</T></h2>
                     <Nav pills>
                         <NavItem>
-                            <NavLink tag={Link} to={"/validator/"+this.props.validator.address+"/missed/blocks"} active={this.props.match.path.indexOf("/missed/blocks")>0}>Missed Blocks</NavLink>
+                            <NavLink tag={Link} to={"/validator/"+this.props.validator.address+"/missed/blocks"} active={this.props.match.path.indexOf("/missed/blocks")>0}><T>validators.missedBlocks</T></NavLink>
                         </NavItem>
                         <NavItem>
-                            <NavLink tag={Link} to={"/validator/"+this.props.validator.address+"/missed/precommits"} active={this.props.match.path.indexOf("/missed/precommits")>0}>Missed Precommits</NavLink>
+                            <NavLink tag={Link} to={"/validator/"+this.props.validator.address+"/missed/precommits"} active={this.props.match.path.indexOf("/missed/precommits")>0}><T>validators.missedPrecommits</T></NavLink>
                         </NavItem>
                     </Nav>
                     {(this.props.missedBlocks&&this.props.missedBlocks.length>0)?
@@ -72,7 +74,7 @@ export default class MissedBlocks extends Component{
                     {this.props.statusExist?<div><em>Last sync time: {moment.utc(this.props.status.lastMissedBlockTime).format("D MMM YYYY, h:mm:ssa")}</em></div>:''}
                 </div>
             }
-            else return <div>Validator doesn't exist.</div>
+            else return <div><T>validators.validatorNotExists</T></div>
         }
 
     }

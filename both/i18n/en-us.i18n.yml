@@ -81,3 +81,7 @@ validators:
     delegations: 'Delegations'
     transactions: 'Transactions'
     validatorNotExists: 'Validator does not exist.'
+    backToValidator: 'Back to Validator'
+    missedBlocks: 'Missed Blocks'
+    missedPrecommits: 'Missed Precommits'
+    missedBlocksTitle: 'Missed blocks of {$moniker}'
