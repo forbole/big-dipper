@@ -33,7 +33,7 @@ export default class Blocks extends Component {
             return this.state.blocks;
         }
         else{
-            return <tr><td>No blocks.</td></tr>
+            return <tr><td><T>blocks.noBlock</T></td></tr>
         }
     }
 }
