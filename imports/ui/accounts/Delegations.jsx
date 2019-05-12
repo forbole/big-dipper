@@ -3,7 +3,9 @@ import { Card, CardHeader, CardBody, Container, Row, Col, Spinner } from 'reacts
 import numbro from 'numbro';
 import Account from '../components/Account.jsx';
 import { Mongo } from 'meteor/mongo';
+import i18n from 'meteor/universe:i18n';
 
+const T = i18n.createComponent();
 
 export default class AccountDelegations extends Component{
     constructor(props){
@@ -61,12 +63,12 @@ export default class AccountDelegations extends Component{
         }
         else{
             return <Card>
-                <CardHeader>{(this.state.numDelegations > 0)?this.state.numDelegations:'No'} delegation{(this.state.numDelegations>1)?'s':''}</CardHeader>
+                <CardHeader>{(this.state.numDelegations > 0)?this.state.numDelegations:<T>accounts.no</T>} <T>accounts.delegation</T>{(this.state.numDelegations>1)?<T>accounts.plural</T>:''}</CardHeader>
                 {(this.state.numDelegations > 0)?<CardBody className="list overflow-auto">
                     <Container fluid>
                         <Row className="header text-nowrap d-none d-lg-flex">
-                            <Col md={8}><i className="fas fa-at"></i> <span>Validators</span></Col>
-                            <Col md={4}><i className="fas fa-piggy-bank"></i> <span>Shares</span></Col>
+                            <Col md={8}><i className="fas fa-at"></i> <span><T>accounts.validators</T></span></Col>
+                            <Col md={4}><i className="fas fa-piggy-bank"></i> <span>accounts.shares</span></Col>
                         </Row>
                         {this.state.delegations}
                     </Container>

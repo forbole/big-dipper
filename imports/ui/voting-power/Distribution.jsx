@@ -4,6 +4,9 @@ import TwentyEighty from './TwentyEightyContainer.js';
 import ThirtyFour from './ThirtyFourContainer.js';
 import VotingPower from './VotingPowerContainer.js';
 import ChainStates from '../components/ChainStatesContainer.js'
+import i18n from 'meteor/universe:i18n';
+
+const T = i18n.createComponent();
 
 export default class Distribution extends Component{
     constructor(props){
@@ -13,7 +16,7 @@ export default class Distribution extends Component{
     render(){
         return <div id="voting-power-dist">    
             <Row>
-                <Col md={3} xs={12}><h1 className="d-none d-lg-block">Voting Power Distribution</h1></Col>
+                <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>votingPower.distribution</T></h1></Col>
                 <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
             </Row>
             <Row>

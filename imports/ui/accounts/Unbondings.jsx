@@ -4,7 +4,9 @@ import numbro from 'numbro';
 import Account from '../components/Account.jsx';
 import { Mongo } from 'meteor/mongo';
 import moment from 'moment';
+import i18n from 'meteor/universe:i18n';
 
+const T = i18n.createComponent();
 
 export default class AccountUnbondings extends Component{
     constructor(props){
@@ -56,15 +58,15 @@ export default class AccountUnbondings extends Component{
         }
         else{
             return <Card>
-                <CardHeader>{(this.state.numUnbondings > 0)?this.state.numUnbondings:'No'} unbonding{(this.state.numUnbondings>1)?'s':''}</CardHeader>
+                <CardHeader>{(this.state.numUnbondings > 0)?this.state.numUnbondings:<T>accounts.no</T>}<T>accounts.unbonding</T>{(this.state.numUnbondings>1)?<T>accounts.plural</T>:''}</CardHeader>
                 {(this.state.numUnbondings > 0)?<CardBody className="list overflow-auto">
                     <Container fluid>
                         <Row className="header text-nowrap d-none d-lg-flex">
-                            <Col md={5}><i className="fas fa-at"></i> <span>Validators</span></Col>
+                            <Col md={5}><i className="fas fa-at"></i> <span><T>accounts.validators</T></span></Col>
                             <Col md={7}>
                                 <Row>
-                                    <Col md={6}><i className="fas fa-piggy-bank"></i> <span>Shares</span></Col>
-                                    <Col md={6}><i className="fas fa-clock"></i> <span>Mature</span></Col>
+                                    <Col md={6}><i className="fas fa-piggy-bank"></i> <span><T>accounts.shares</T></span></Col>
+                                    <Col md={6}><i className="fas fa-clock"></i> <span><T>accounts.mature</T></span></Col>
                                 </Row>
                             </Col>
                         </Row>

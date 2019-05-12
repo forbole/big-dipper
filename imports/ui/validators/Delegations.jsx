@@ -3,7 +3,9 @@ import { Card, CardHeader, CardBody, Container, Row, Col, Spinner } from 'reacts
 import numbro from 'numbro';
 import Account from '../components/Account.jsx';
 import { Mongo } from 'meteor/mongo';
+import i18n from 'meteor/universe:i18n';
 
+const T = i18n.createComponent();
 
 export default class ValidatorDelegations extends Component{
     constructor(props){
@@ -49,12 +51,12 @@ export default class ValidatorDelegations extends Component{
         }
         else{
             return <Card>
-                <CardHeader>{(this.state.numDelegatiors > 0)?this.state.numDelegatiors:'No'} delegators {(this.state.numDelegatiors > 0)?<small className="text-secondary">({numbro(this.props.tokens/this.state.numDelegatiors/Meteor.settings.public.stakingFraction).format('0,0.00')} {Meteor.settings.public.stakingDenom}s / delegator)</small>:''}</CardHeader>
+                <CardHeader>{(this.state.numDelegatiors > 0)?this.state.numDelegatiors:'No'} <T>common.delegators</T> {(this.state.numDelegatiors > 0)?<small className="text-secondary">({numbro(this.props.tokens/this.state.numDelegatiors/Meteor.settings.public.stakingFraction).format('0,0.00')} {Meteor.settings.public.stakingDenom}s / delegator)</small>:''}</CardHeader>
                 <CardBody className="list">
                     <Container fluid>
                         <Row className="header text-nowrap d-none d-lg-flex">
-                            <Col md={8}><i className="fas fa-at"></i> <span>Addresses</span></Col>
-                            <Col md={4}><i className="fas fa-piggy-bank"></i> <span>Amounts</span></Col>
+                            <Col md={8}><i className="fas fa-at"></i> <span><T>common.addresses</T></span></Col>
+                            <Col md={4}><i className="fas fa-piggy-bank"></i> <span><T>common.amounts</T></span></Col>
                         </Row>
                         {this.state.delegations}
                     </Container>

@@ -5,6 +5,9 @@ import numbro from 'numbro';
 import moment from 'moment';
 import Avatar from '../components/Avatar.jsx';
 import TranactionTabs from '../transactions/TransactionTabs.jsx';
+import i18n from 'meteor/universe:i18n';
+
+const T = i18n.createComponent();
 export default class Block extends Component{
     constructor(props){
         super(props);
@@ -48,18 +51,18 @@ export default class Block extends Component{
                 let identity = proposer?proposer.description.identity:'';
 
                 return <Container id="block">
-                    <h4>Block {numbro(block.height).format("0,0")}</h4>
+                    <h4><T>blocks.block</T> {numbro(block.height).format("0,0")}</h4>
                     <Card>
-                        <div className="card-header">Information</div>
+                        <div className="card-header"><T>common.information</T></div>
                         <CardBody>
                             <Row>
-                                <Col md={4} className="label">Hash</Col>
+                                <Col md={4} className="label"><T>common.hash</T></Col>
                                 <Col md={8} className="value text-nowrap address">{block.hash}</Col>
-                                <Col md={4} className="label">Proposer</Col>
+                                <Col md={4} className="label"><T>blocks.proposer</T></Col>
                                 <Col md={8} className="value"><Link to={"/validator/"+((proposer)?proposer.operator_address:'')}><Avatar moniker={moniker} identity={identity} address={block.proposerAddress} list={true} /> {moniker}</Link></Col>
-                                <Col md={4} className="label">No. of Transactions</Col>
+                                <Col md={4} className="label"><T>blocks.numOfTransactions</T></Col>
                                 <Col md={8} className="value">{numbro(block.transNum).format("0,0")}</Col>
-                                <Col md={4} className="label">Time</Col>
+                                <Col md={4} className="label"><T>common.time</T></Col>
                                 <Col md={8} className="value">{moment.utc(block.time).format("D MMM YYYY, h:mm:ssa z")} ({moment(block.time).fromNow()})</Col>
                             </Row>
                         </CardBody>
@@ -74,7 +77,7 @@ export default class Block extends Component{
                 </Container>
             }
             else{
-                return <Container id="block"><div>No such block found.</div></Container>
+                return <Container id="block"><div><T>block.notFound</T></div></Container>
             }
         }
     }

@@ -27,6 +27,16 @@ import 'react-toastify/dist/ReactToastify.min.css';
 const RouteHeader = withRouter( ({history}) => <Header history={history}/>)
 const MobileSearchBar = withRouter( ({history}) => <SearchBar history={history} id="mobile-searchbar" mobile />)
 
+function getLang () {
+    return (
+        navigator.languages && navigator.languages[0] ||
+        navigator.language ||
+        navigator.browserLanguage ||
+        navigator.userLanguage ||
+        'en-US'
+    );
+}
+
 class App extends Component {
     constructor(props){
         super(props);
@@ -38,6 +48,19 @@ class App extends Component {
         if (now.diff(lastDay) < 0 ){
             toast.error("🐷 Gung Hei Fat Choi! 恭喜發財！");
         }
+
+        let lang = getLang();
+
+        if ((lang.toLowerCase() == 'zh-tw') || (lang.toLowerCase() == 'zh-hk')){
+            i18n.setLocale('zh-Hant');
+        }
+        else if ((lang.toLowerCase() == 'zh-cn') || (lang.toLowerCase() == 'zh-hans-cn') || (lang.toLowerCase() == 'zh')){
+            i18n.setLocale('zh-Hans');
+        }
+        else{
+            i18n.setLocale(lang);  
+        }
+
     }
 
     render() {
