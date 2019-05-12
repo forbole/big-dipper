@@ -4,7 +4,9 @@ import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col, Card, CardHeader,
 import classnames from 'classnames';
 import numbro from 'numbro';
 import { TransactionRow } from './TransactionRow.jsx';
+import i18n from 'meteor/universe:i18n';
 
+const T = i18n.createComponent();
 export default class TransactionTabs extends Component{
     constructor(props){
         super(props);
@@ -40,7 +42,7 @@ export default class TransactionTabs extends Component{
 
     render(){
         return <Card>
-            <CardHeader>Transactions <small>(last 100)</small></CardHeader>
+            <CardHeader><T>transactions.transactions</T> <small>(<T>common.last</T> 100)</small></CardHeader>
             <CardBody>
                 <Nav tabs className="tx-types">
                     <NavItem>
@@ -48,7 +50,7 @@ export default class TransactionTabs extends Component{
                         className={classnames({ active: this.state.activeTab === 'tx-transfer' })}
                         onClick={() => { this.toggle('tx-transfer'); }}
                         >
-                        Transfer ({numbro(this.state.transferTxs.length).format("0,0")})
+                        <T>transactions.transfer</T> ({numbro(this.state.transferTxs.length).format("0,0")})
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -56,7 +58,7 @@ export default class TransactionTabs extends Component{
                         className={classnames({ active: this.state.activeTab === 'tx-staking' })}
                         onClick={() => { this.toggle('tx-staking'); }}
                         >
-                        Staking ({numbro(this.state.stakingTxs.length).format("0,0")})
+                        <T>transactions.staking</T> ({numbro(this.state.stakingTxs.length).format("0,0")})
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -64,7 +66,7 @@ export default class TransactionTabs extends Component{
                         className={classnames({ active: this.state.activeTab === 'tx-distr' })}
                         onClick={() => { this.toggle('tx-distr'); }}
                         >
-                        Distribution ({numbro(this.state.distributionTxs.length).format("0,0")})
+                        <T>transactions.distribution</T> ({numbro(this.state.distributionTxs.length).format("0,0")})
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -72,7 +74,7 @@ export default class TransactionTabs extends Component{
                         className={classnames({ active: this.state.activeTab === 'tx-gov' })}
                         onClick={() => { this.toggle('tx-gov'); }}
                         >
-                        Governance ({numbro(this.state.governanceTxs.length).format("0,0")})
+                        <T>transactions.governance</T> ({numbro(this.state.governanceTxs.length).format("0,0")})
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -80,7 +82,7 @@ export default class TransactionTabs extends Component{
                         className={classnames({ active: this.state.activeTab === 'tx-slashing' })}
                         onClick={() => { this.toggle('tx-slashing'); }}
                         >
-                        Slashing ({numbro(this.state.slashingTxs.length).format("0,0")})
+                        <T>transactions.slashing</T> ({numbro(this.state.slashingTxs.length).format("0,0")})
                         </NavLink>
                     </NavItem>
                 </Nav>
