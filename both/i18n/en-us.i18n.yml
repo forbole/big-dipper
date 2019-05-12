@@ -31,6 +31,7 @@ navbar:
     lang: "ENG"
     english: "English"
     chinese: "中文（繁）"
+    simChinese: "中文（简）"
     license: 'LICENSE'
     forkMe: 'Fork me!'
 consensus:

@@ -1,4 +1,4 @@
-_locale: 'zh-Hant'
+_locale: 'zh-Hans'
 _namespace: ''
 
 common:
@@ -28,7 +28,7 @@ navbar:
     transactions: '交易'
     proposals: '治理提案'
     votingPower: '投票權分佈'
-    lang: "中文（繁）"
+    lang: "中文（简）"
     english: "English"
     chinese: "中文（繁）"
     simChinese: "中文（简）"
