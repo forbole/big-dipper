@@ -73,6 +73,8 @@ validators:
     lastSeen: '最后投票时间'
     status: '状态'
     jailed: '被禁制'
+    navActive: '有效'
+    navInactive: '无效'
     active: '有效验证人'
     inactive: '无效验证人'
     listOfActive: '这名单显示所有有效验证人'

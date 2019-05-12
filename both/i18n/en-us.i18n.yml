@@ -73,6 +73,8 @@ validators:
     lastSeen: 'Last Seen'
     status: 'Status'
     jailed: 'Jailed'
+    navActive: 'Active'
+    navInactive: 'Inactive'
     active: 'Active Validators'
     inactive: 'Inactive Validators'
     listOfActive: 'Here is a list of active validators.'

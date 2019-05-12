@@ -73,6 +73,8 @@ validators:
     lastSeen: '最後投票時間'
     status: '狀態'
     jailed: '被禁制'
+    navActive: '有效'
+    navInactive: '無效'
     active: '有效驗證人'
     inactive: '無效驗證人'
     listOfActive: '這名單顯示所有有效驗證人'

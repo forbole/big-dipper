@@ -81,12 +81,12 @@ export default class Validators extends Component{
             </Row>
             <Nav pills className="status-switch">
                 <NavItem>
-                    <NavLink tag={Link} to="/validators" active={(this.props.match.url == "/validators")}>Active</NavLink>
+                    <NavLink tag={Link} to="/validators" active={(this.props.match.url == "/validators")}><T>validators.navActive</T></NavLink>
                 </NavItem>
                 <NavItem>
                     <NavLink tag={Link} to="/validators/inactive"
                              active={(this.props.match.url.indexOf("inactive")>0)}>
-                        Inactive
+                        <T>validators.navInactive</T>
                     </NavLink>
                 </NavItem>
             </Nav>
