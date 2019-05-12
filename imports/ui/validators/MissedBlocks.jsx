@@ -60,18 +60,18 @@ export default class MissedBlocks extends Component{
                     </Nav>
                     {(this.props.missedBlocks&&this.props.missedBlocks.length>0)?
                     <div className="mt-3">
-                    <p className="lead">Total missed {(this.props.match.path.indexOf("/missed/blocks")>0)?'blocks':'precommits'}: {this.state.totalMissed}</p>
+                    <p className="lead"><T>validators.totalMissed</T> {(this.props.match.path.indexOf("/missed/blocks")>0)?<T>validators.blocks</T>:<T>validators.precommits</T>}: {this.state.totalMissed}</p>
                     <Table striped className="missed-table">
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>Block {(this.props.match.path.indexOf("/missed/blocks")>0)?'Proposer':'Voter'}</th>
-                                <th>Miss Count</th>
+                                <th><T>validators.block</T> {(this.props.match.path.indexOf("/missed/blocks")>0)?<T>common.proposer</T>:<T>common.voter</T>}</th>
+                                <th><T>validators.missedCount</T></th>
                             </tr>
                         </thead>
                         <tbody>{this.state.missedBlocksList}</tbody>
-                    </Table></div>:<div>I don't miss {(this.props.match.path.indexOf("/missed/blocks")>0)?'block':'precommit'}.</div>}
-                    {this.props.statusExist?<div><em>Last sync time: {moment.utc(this.props.status.lastMissedBlockTime).format("D MMM YYYY, h:mm:ssa")}</em></div>:''}
+                    </Table></div>:<div><T>validators.iDontMiss</T>{(this.props.match.path.indexOf("/missed/blocks")>0)?<T>common.block</T>:<T>common.precommit</T>}.</div>}
+                    {this.props.statusExist?<div><em><T>validators.lastSyncTime</T>: {moment.utc(this.props.status.lastMissedBlockTime).format("D MMM YYYY, h:mm:ssa")}</em></div>:''}
                 </div>
             }
             else return <div><T>validators.validatorNotExists</T></div>
