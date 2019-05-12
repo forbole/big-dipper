@@ -99,6 +99,8 @@ validators:
     missedCount: 'Miss Count'
     iDontMiss: 'I do not miss '
     lastSyncTime: 'Last sync time'
+    delegator: 'Delegator'
+    amount: 'Amount'
 blocks:
     block: 'Block'
     latestBlocks: 'Latest blocks'
