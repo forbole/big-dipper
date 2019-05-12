@@ -100,6 +100,17 @@ export default class Header extends Component {
               <NavItem>
                 <NavLink tag={Link} to="/voting-power-distribution"><T>navbar.votingPower</T></NavLink>
               </NavItem>
+              <NavItem>
+              <UncontrolledDropdown nav inNavbar>
+                <DropdownToggle nav caret>
+                  <T>navbar.lang</T>
+                </DropdownToggle>
+                <DropdownMenu right>
+                  <DropdownItem><T>navbar.enUS</T></DropdownItem>
+                  <DropdownItem><T>navbar.zhHK</T></DropdownItem>
+                </DropdownMenu>
+              </UncontrolledDropdown>
+              </NavItem>
             </Nav>
           </Collapse>
         </Navbar>

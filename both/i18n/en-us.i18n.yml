@@ -29,7 +29,7 @@ navbar:
     transactions: 'Transactions'
     proposals: 'Proposals'
     votingPower: 'Voting Power'
-    language: "ENG"
+    lang: "ENG"
     enUS: "English"
     zhHK: "Chinese"
     license: 'LICENSE'
