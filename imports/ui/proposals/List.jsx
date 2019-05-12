@@ -35,7 +35,6 @@ export default class List extends Component{
             if (this.props.proposals.length > 0){
                 this.setState({
                     proposals: this.props.proposals.map((proposal, i) => {
-                        console.log(proposal);
                         return <ProposalRow key={i} index={i} proposal={proposal} />
                     })
                 })    
