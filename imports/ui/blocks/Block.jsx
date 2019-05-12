@@ -53,7 +53,7 @@ export default class Block extends Component{
                 return <Container id="block">
                     <h4><T>block.block</T> {numbro(block.height).format("0,0")}</h4>
                     <Card>
-                        <div className="card-header"><T>block.information</T></div>
+                        <div className="card-header"><T>common.information</T></div>
                         <CardBody>
                             <Row>
                                 <Col md={4} className="label"><T>common.hash</T></Col>
