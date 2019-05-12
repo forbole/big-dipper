@@ -98,6 +98,10 @@ validators:
     iDontMiss: 'I do not miss '
     lastSyncTime: 'Last sync time'
 blocks:
+    block: 'Block'
+    information: 'Information'
     latestBlocks: 'Latest blocks'
     noBlock: 'No block.'
     numOfTxs: 'No. of Txs'
+    numOfTransactions: 'No. of Transactions'
+    notFound: 'No such block found.'
