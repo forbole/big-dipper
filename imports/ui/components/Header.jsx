@@ -42,6 +42,10 @@ export default class Header extends Component {
     });
   }
 
+  handleLanguageSwitch = (lang, e) => {
+    i18n.setLocale(lang)
+  }
+
   componentDidMount(){
     let url = Meteor.settings.public.networks
     try{
@@ -106,8 +110,8 @@ export default class Header extends Component {
                   <T>navbar.lang</T>
                 </DropdownToggle>
                 <DropdownMenu right>
-                  <DropdownItem><T>navbar.enUS</T></DropdownItem>
-                  <DropdownItem><T>navbar.zhHK</T></DropdownItem>
+                  <DropdownItem onClick={(e) => this.handleLanguageSwitch('en-US', e)}><T>navbar.english</T></DropdownItem>
+                  <DropdownItem onClick={(e) => this.handleLanguageSwitch('zh-Hant', e)}><T>navbar.chinese</T></DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>
               </NavItem>
