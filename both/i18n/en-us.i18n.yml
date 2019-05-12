@@ -19,6 +19,7 @@ common:
     hash: 'Hash'
     more: 'More'
     fullStop: '.'
+    searchPlaceholder: 'Search with tx hash / block height / address'
 navbar:
     siteName: 'The Big Dipper'
     version: 'beta'
