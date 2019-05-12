@@ -18,6 +18,7 @@ common:
     time: 'Time'
     hash: 'Hash'
     more: 'More'
+    fullStop: '.'
 navbar:
     siteName: 'The Big Dipper'
     version: 'beta'
@@ -119,6 +120,7 @@ transactions:
 proposals:
     notFound: 'No proposal found.'
     listOfProposals: 'Here is a list of governance proposals.'
+    proposal: 'proposal'
     proposals: 'Proposals'
     proposalID: 'Proposal ID'
     title: 'Title'
@@ -161,3 +163,17 @@ accounts:
     no: 'No '
     delegation: 'Delegation'
     plural: 's'
+activities:
+    single: 'A'
+    happened: 'happened.'
+    senders: 'The following sender(s)'
+    sent: 'sent'
+    receivers: 'to the following receipient(s)'
+    received: 'received'
+    failedTo: 'failed to '
+    to: 'to'
+    from: 'from'
+    operatingAt: 'operating at'
+    withMoniker: 'with moniker'
+    withTitle: 'with title'
+    withA: 'with a'
