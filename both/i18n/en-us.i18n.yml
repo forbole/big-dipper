@@ -30,7 +30,7 @@ navbar:
     votingPower: 'Voting Power'
     lang: "ENG"
     english: "English"
-    chinese: "中文"
+    chinese: "中文（繁）"
     license: 'LICENSE'
     forkMe: 'Fork me!'
 consensus:
@@ -68,7 +68,7 @@ validators:
     moniker: 'Moniker'
     uptime: 'Uptime'
     selfPercentage: 'Self%'
-    commission: 'Comission'
+    commission: 'Commission'
     lastSeen: 'Last Seen'
     status: 'Status'
     jailed: 'Jailed'
