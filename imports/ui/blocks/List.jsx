@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 // another small block render
 import Block from './block.js';
 import { Spinner } from 'reactstrap';
+import i18n from 'meteor/universe:i18n';
+
+const T = i18n.createComponent();
 export default class Blocks extends Component {
     constructor(props) {
         super(props);
