@@ -131,6 +131,8 @@ proposals:
     description: 'Description'
     proposalType: 'Proposal Type'
     proposalStatus: 'Proposal Status'
+    notStarted: 'not started'
+    final: 'final'
     deposit: 'Deposit'
     tallyResult: 'Tally Result'
     yes: 'Yes'

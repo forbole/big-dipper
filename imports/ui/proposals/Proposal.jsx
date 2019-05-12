@@ -24,7 +24,7 @@ export default class Proposal extends Component{
         this.state = {
             proposal: '',
             deposit: '',
-            tallyDate: 'not started',
+            tallyDate: <T>proposals.notStarted</T>,
             voteStarted: false,
             totalVotes: 0,
             open: false,
@@ -79,7 +79,7 @@ export default class Proposal extends Component{
 
                         this.setState({
                             tally: this.props.proposal.final_tally_result,
-                            tallyDate: 'final',
+                            tallyDate: <T>proposals.final</T>,
                             voteStarted: true,
                             voteEnded: true,
                             totalVotes: totalVotes,
