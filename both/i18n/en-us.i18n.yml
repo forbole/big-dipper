@@ -116,3 +116,10 @@ transactions:
     gasUsedWanted: 'Gas (used / wanted)'
     noTxFound: 'No such transaction found.'
     memo: 'Memo'
+proposals:
+    proposalID: 'Proposal ID'
+    title: 'Title'
+    status: 'Status'
+    submitTime: 'Submit Time'
+    votingStartTime: 'Voting Start Time'
+    totalDeposit: 'Total Deposit'
