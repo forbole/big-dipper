@@ -51,7 +51,7 @@ export default class Block extends Component{
                 let identity = proposer?proposer.description.identity:'';
 
                 return <Container id="block">
-                    <h4><T>block.block</T> {numbro(block.height).format("0,0")}</h4>
+                    <h4><T>blocks.block</T> {numbro(block.height).format("0,0")}</h4>
                     <Card>
                         <div className="card-header"><T>common.information</T></div>
                         <CardBody>
