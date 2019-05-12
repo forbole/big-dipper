@@ -51,8 +51,6 @@ class App extends Component {
 
         let lang = getLang();
 
-        console.log(lang.toLowerCase());
-
         if ((lang.toLowerCase() == 'zh-tw') || (lang.toLowerCase() == 'zh-hk')){
             i18n.setLocale('zh-Hant');
         }
@@ -62,7 +60,6 @@ class App extends Component {
         else{
             i18n.setLocale(lang);  
         }
-        // i18n.setLocale();
 
     }
 
