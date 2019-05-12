@@ -97,7 +97,7 @@ validators:
     validatorNotExists: '驗證人不存在。'
     backToValidator: '回到驗證人頁面'
     missedBlocks: '錯過了的區塊'
-    missedPrecommits: '錯過了的建塊前保證'
+    missedPrecommits: '遺留了的建塊前保證'
     missedBlocksTitle: '錯過了 {$moniker} 的區塊'
     totalMissed: '一共錯過了'
     block: '區塊'
@@ -190,7 +190,7 @@ activities:
     from: '從'
     operatingAt: '操作地止為'
     withMoniker: '而驗證人代號為'
-    withTitle: '治理主題為'
+    withTitle: '治理提案主題為'
     withA: '投了'
 messageTypes:
     send: '發送'
