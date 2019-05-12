@@ -65,7 +65,7 @@ export default class MissedBlocks extends Component{
                         <thead>
                             <tr>
                                 <th></th>
-                                <th><T>validators.block</T> {(this.props.match.path.indexOf("/missed/blocks")>0)?<T>common.proposer</T>:<T>common.voter</T>}</th>
+                                <th><T>validators.block</T> {(this.props.match.path.indexOf("/missed/blocks")>0)?<T>blocks.proposer</T>:<T>common.voter</T>}</th>
                                 <th><T>validators.missedCount</T></th>
                             </tr>
                         </thead>

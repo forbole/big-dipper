@@ -167,7 +167,7 @@ export default class Proposal extends Component{
                             <Col md={9} className="value">{this.props.proposal.proposal_id}</Col>
                         </Row>
                         <Row className="mb-2 border-top">
-                            <Col md={3} className="label"><T>common.proposer</T></Col>
+                            <Col md={3} className="label"><T>proposals.proposer</T></Col>
                             <Col md={9} className="value"><Account address={this.props.proposal.proposer} /></Col>
                         </Row>
                         <Row className="mb-2 border-top">

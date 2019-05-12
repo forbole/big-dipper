@@ -3,7 +3,6 @@ _namespace: ''
 
 common:
     height: 'Height'
-    proposer: 'Proposer'
     voter: 'Voter'
     votingPower: 'Voting Power'
     addresses: 'Addresses'
@@ -30,8 +29,8 @@ navbar:
     proposals: 'Proposals'
     votingPower: 'Voting Power'
     lang: "ENG"
-    enUS: "English"
-    zhHK: "Chinese"
+    english: "English"
+    chinese: "中文"
     license: 'LICENSE'
     forkMe: 'Fork me!'
 consensus:
@@ -108,6 +107,7 @@ validators:
     amount: 'Amount'
 blocks:
     block: 'Block'
+    proposer: 'Proposer'
     latestBlocks: 'Latest blocks'
     noBlock: 'No block.'
     numOfTxs: 'No. of Txs'
@@ -133,6 +133,7 @@ transactions:
 proposals:
     notFound: 'No proposal found.'
     listOfProposals: 'Here is a list of governance proposals.'
+    proposer: 'Proposer'
     proposal: 'proposal'
     proposals: 'Proposals'
     proposalID: 'Proposal ID'
