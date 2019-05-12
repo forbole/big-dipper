@@ -29,6 +29,9 @@ navbar:
     transactions: 'Transactions'
     proposals: 'Proposals'
     votingPower: 'Voting Power'
+    language: "ENG"
+    enUS: "English"
+    zhHK: "Chinese"
     license: 'LICENSE'
     forkMe: 'Fork me!'
 consensus:
