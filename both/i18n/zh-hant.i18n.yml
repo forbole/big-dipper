@@ -36,7 +36,7 @@ navbar:
     forkMe: 'Fork me!'
 consensus:
     consensusState: '共識狀態'
-    round: '輸數'
+    round: '輪數'
     step: '階數'
 chainStates:
     price: '價格'
