@@ -9,7 +9,6 @@ import i18n from 'meteor/universe:i18n';
 const T = i18n.createComponent();
 
 const ProposalRow = (props) => {
-    console.log(props.proposal);
     return <tr>
     <th className="d-none d-sm-table-cell counter">{props.proposal.proposalId}</th>
     <td className="title"><Link to={"/proposals/"+props.proposal.proposalId}>{props.proposal.proposal_content.value.title}</Link></td>
