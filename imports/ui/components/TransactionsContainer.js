@@ -4,10 +4,26 @@ import { Transactions } from '/imports/api/transactions/transactions.js';
 import ValidatorTransactions from './Transactions.jsx';
 
 export default TransactionsContainer = withTracker((props) => {
-    const transactionsHandle = Meteor.subscribe('transactions.validator', props.validator, props.delegator, props.limit);
-    const loading = !transactionsHandle.ready();
-    const transactions = Transactions.find({}, {sort:{height:-1}});
-    const transactionsExist = !loading && !!transactions;
+    let transactionsHandle, transactions, transactionsExist;
+    let loading = true;
+
+    if (Meteor.isClient){
+        transactionsHandle = Meteor.subscribe('transactions.validator', props.validator, props.delegator, props.limit);
+        loading = !transactionsHandle.ready();
+    }
+
+    if (Meteor.isServer || !loading){
+        transactions = Transactions.find({}, {sort:{height:-1}});
+
+        if (Meteor.isServer){
+            loading = false;
+            transactionsExist = !!transactions;
+        }
+        else{
+            transactionsExist = !loading && !!transactions;
+        }
+    }
+
     return {
         loading,
         transactionsExist,

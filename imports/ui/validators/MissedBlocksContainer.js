@@ -6,28 +6,56 @@ import { MissedBlocksStats } from '../../api/records/records.js';
 import MissedBlocks from './MissedBlocks.jsx';
 
 export default MissedBlocksContainer = withTracker((props) => {
-    const statusHandle = Meteor.subscribe('status.status');
-    const validatorsHandle = Meteor.subscribe('validator.details', props.match.params.address);
+    let statusHandle;
+    let validatorsHandle;
     let missedBlockHandle;
-    if (props.type == 'voter'){
-        missedBlockHandle = Meteor.subscribe('missedblocks.validator', props.match.params.address, 'voter');
-    }    
-    else{
-        missedBlockHandle = Meteor.subscribe('missedblocks.validator', props.match.params.address, 'proposer');
+    let loading = true;
+
+    if (Meteor.isClient){
+        statusHandle = Meteor.subscribe('status.status');
+        validatorsHandle = Meteor.subscribe('validator.details', props.match.params.address);
+        
+        if (props.type == 'voter'){
+            missedBlockHandle = Meteor.subscribe('missedblocks.validator', props.match.params.address, 'voter');
+        }    
+        else{
+            missedBlockHandle = Meteor.subscribe('missedblocks.validator', props.match.params.address, 'proposer');
+        }
+
+        loading = !validatorsHandle.ready() && !statusHandle.ready() && !missedBlockHandle.ready();
     }
-    const loading = !validatorsHandle.ready() && !statusHandle.ready() && !missedBlockHandle.ready();
-    const validator = Validators.findOne({address:props.match.params.address});
-    const status = Status.findOne({chainId:Meteor.settings.public.chainId});
+    
+    
+    let validator;
+    let status;
     let missedBlocks;
-    if (props.type == 'voter'){
-        missedBlocks = MissedBlocksStats.find({voter:props.match.params.address}, {sort:{count:-1}}).fetch();
+    let validatorExist;
+    let statusExist;
+    let missedBlocksExist;
+
+    if (Meteor.isServer || !loading){
+        validator = Validators.findOne({address:props.match.params.address});
+        status = Status.findOne({chainId:Meteor.settings.public.chainId});
+        if (props.type == 'voter'){
+            missedBlocks = MissedBlocksStats.find({voter:props.match.params.address}, {sort:{count:-1}}).fetch();
+        }
+        else {
+            missedBlocks = MissedBlocksStats.find({proposer:props.match.params.address}, {sort:{count:-1}}).fetch();
+        }
+
+        if (Meteor.isServer){
+            loading = false;
+            validatorExist = !!validator;
+            statusExist = !!status;
+            missedBlocksExist = !!missedBlocks;
+        }
+        else{
+            validatorExist = !loading && !!validator;
+            statusExist = !loading && !!status;
+            missedBlocksExist = !loading && !!missedBlocks;
+        }
     }
-    else {
-        missedBlocks = MissedBlocksStats.find({proposer:props.match.params.address}, {sort:{count:-1}}).fetch();
-    }
-    const validatorExist = !loading && !!validator;
-    const statusExist = !loading && !!status;
-    const missedBlocksExist = !loading && !!missedBlocks;
+    
     return {
         loading,
         validatorExist,

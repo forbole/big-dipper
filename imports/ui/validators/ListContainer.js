@@ -5,9 +5,15 @@ import { Chain } from '/imports/api/chain/chain.js';
 import List from './List.jsx';
 
 export default ValidatorListContainer = withTracker((props) => {
-    const validatorsHandle = Meteor.subscribe('validators.all');
-    const chainHandle = Meteor.subscribe('chain.status');
-    const loading = !validatorsHandle.ready() && !chainHandle.ready();
+    let validatorsHandle;
+    let chainHandle;
+    let loading = true;
+
+    if (Meteor.isClient){
+        validatorsHandle = Meteor.subscribe('validators.all');
+        chainHandle = Meteor.subscribe('chain.status');
+        loading = !validatorsHandle.ready() && !chainHandle.ready();    
+    }
     let validatorsCond = {};
     // console.log(props);
     if (props.inactive){
@@ -103,10 +109,25 @@ export default ValidatorListContainer = withTracker((props) => {
             }
             break;
     }
-    const validators = Validators.find(validatorsCond,options).fetch();
-    const chainStatus = Chain.findOne({chainId:Meteor.settings.public.chainId});
-    const validatorsExist = !loading && !!validators && !!chainStatus;
-    // console.log(props.state.limit);
+
+    let validators;
+    let chainStatus;
+    let validatorsExist;
+
+    if (Meteor.isServer || !loading){
+        validators = Validators.find(validatorsCond,options).fetch();
+        chainStatus = Chain.findOne({chainId:Meteor.settings.public.chainId});
+
+        if (Meteor.isServer){
+            loading = false;
+            validatorsExist = !!validators && !!chainStatus;
+        }
+        else{
+            validatorsExist = !loading && !!validators && !!chainStatus;
+        }
+        
+    }
+     // console.log(props.state.limit);
     return {
         loading,
         validatorsExist,

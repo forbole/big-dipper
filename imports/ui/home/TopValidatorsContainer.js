@@ -5,13 +5,34 @@ import { Validators } from '/imports/api/validators/validators.js';
 import TopValidators from './TopValidators.jsx';
 
 export default TopValidatorsContainer = withTracker(() => {
-    const chainHandle = Meteor.subscribe('chain.status');
-    const validatorsHandle = Meteor.subscribe('validators.all');
-    const loading = (!validatorsHandle.ready() && !chainHandle.ready());
-    const status = Chain.findOne({chainId:Meteor.settings.public.chainId});
-    const validators = Validators.find({status: 2, jailed:false}).fetch();
-    const validatorsExist = !loading && !!validators && !!status;
-    // console.log(props.state.limit);
+    let chainHandle;
+    let validatorsHandle;
+    let loading = true;
+
+    if (Meteor.isClient){
+        chainHandle = Meteor.subscribe('chain.status');
+        validatorsHandle = Meteor.subscribe('validators.all');
+        loading = (!validatorsHandle.ready() && !chainHandle.ready());    
+    }
+
+    let status;
+    let validators;
+    let validatorsExist;
+    
+    if (Meteor.isServer || !loading){
+        status = Chain.findOne({chainId:Meteor.settings.public.chainId});
+        validators = Validators.find({status: 2, jailed:false}).fetch();
+
+        if (Meteor.isServer){
+            loading = false;
+            validatorsExist = !!validators && !!status;
+        }
+        else{
+            validatorsExist = !loading && !!validators && !!status;
+        }
+        
+    }
+
     return {
         loading,
         validatorsExist,

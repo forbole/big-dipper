@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Row, Col, Nav, NavItem, NavLink, Card } from 'reactstrap';
 import List from './ListContainer.js';
 import ChainStates from '../components/ChainStatesContainer.js'
+import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
 
 const T = i18n.createComponent();
@@ -75,6 +76,10 @@ export default class Validators extends Component{
         }
 
         return <div id="validator-list">
+            <Helmet>
+                <title>Cosmos Validator List | The Big Dipper</title>
+                <meta name="description" content="Here is a list of Cosmos Validators" />
+            </Helmet>
             <Row>
                 <Col lg={3} xs={12}><h1 className="d-none d-lg-block">{title}</h1></Col>
                 <Col lg={9} xs={12} className="text-lg-right"><ChainStates /></Col>

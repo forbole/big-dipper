@@ -4,12 +4,28 @@ import { Transactions } from '/imports/api/transactions/transactions.js';
 import Transaction from './Transaction.jsx';
 
 export default TransactionContainer = withTracker((props) => {
-    // console.log(props);
     let txId = props.match.params.txId.toUpperCase();
-    const transactionsHandle = Meteor.subscribe('transactions.findOne', txId);
-    const loading = !transactionsHandle.ready();
-    const transaction = Transactions.findOne({txhash: txId});
-    const transactionExist = !loading && !!transaction;
+
+    let transactionsHandle, transaction, transactionExist;
+    let loading = false;
+
+    if (Meteor.isClient){
+        transactionsHandle = Meteor.subscribe('transactions.findOne', txId);
+        loading = !transactionsHandle.ready();
+    }
+
+    if (Meteor.isServer || !loading){
+        transaction = Transactions.findOne({txhash: txId});
+
+        if (Meteor.isServer){
+            loading = false;
+            transactionExist = !!transaction;
+        }
+        else{
+            transactionExist = !loading && !!transaction;
+        }
+    }
+    
     return {
         loading,
         transactionExist,

@@ -4,12 +4,27 @@ import { Analytics } from '/imports/api/records/records.js';
 import Chart from './Chart.jsx';
 
 export default ChartContainer = withTracker((curr) => {
-    const chartHandle = Meteor.subscribe('analytics.history');
-    const loading = !chartHandle.ready();
-    const history = Analytics.find({}, {sort:{height:1}}).fetch();
-    // const consensus = Analytics.findOne({chainId:Meteor.settings.public.chainId});
-    const historyExist = !loading && !!history;
-    // console.log(props.state.limit);
+    let chartHandle
+    let loading = true;
+    let history;
+    let historyExist;
+    
+    if (Meteor.isClient){
+        chartHandle = Meteor.subscribe('analytics.history');
+        loading = !chartHandle.ready();    
+    }
+    
+    if (Meteor.isServer || !loading){
+        history = Analytics.find({}, {sort:{height:1}}).fetch();
+        if (Meteor.isServer){
+            loading = false;
+            historyExist = !!history;
+        }
+        else{
+            historyExist = !loading && !!history;
+        }
+    }
+
     return {
         loading,
         historyExist,

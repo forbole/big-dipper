@@ -4,10 +4,27 @@ import { VPDistributions } from '/imports/api/records/records.js';
 import ThirtyFour from './ThirtyFour.jsx';
 
 export default ThirtyFourContainer = withTracker((props) => {
-    const chartHandle = Meteor.subscribe('vpDistribution.latest');
-    const loading = !chartHandle.ready();
-    const stats = VPDistributions.findOne({});
-    const statsExist = !loading && !!stats;
+    let chartHandle, stats, statsExist;
+    let loading = true;
+
+    if (Meteor.isClient){
+        chartHandle = Meteor.subscribe('vpDistribution.latest');
+        loading = !chartHandle.ready();
+    }
+
+    if (Meteor.isServer || !loading){
+        stats = VPDistributions.findOne({});
+
+        if (Meteor.isServer){
+            loading = false;
+            statsExist = !!stats;
+        }
+        else{
+            statsExist = !loading && !!stats;
+        }
+
+    }
+
     return {
         loading,
         statsExist,
