@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { Markdown } from 'react-showdown';
 import numbro from 'numbro';
 import moment from 'moment';
+import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
 
 const T = i18n.createComponent();
@@ -28,6 +29,10 @@ export default class Transaction extends Component{
                 // console.log(this.props.transaction);
                 let tx = this.props.transaction;
                 return <Container id="transaction">
+                    <Helmet>
+                        <title>Transaction {tx.txhash} on Cosmos Hub | The Big Dipper</title>
+                        <meta name="description" content={"Details of transaction "+tx.txhash} />
+                    </Helmet>
                     <h4><T>transactions.transaction</T> {(!tx.code)?<TxIcon valid />:<TxIcon />}</h4>
                     {(tx.code)?<Row><Col xs={{size:12, order:"last"}} className="error">
                         <Alert color="danger">

@@ -6,8 +6,10 @@ import { ProposalStatusIcon, VoteIcon } from '../components/Icons';
 import Account from '../components/Account.jsx';
 import numbro from 'numbro';
 import { Markdown } from 'react-showdown';
+import { Helmet } from 'react-helmet';
 import posed from 'react-pose';
 import i18n from 'meteor/universe:i18n';
+import { Meteor } from 'meteor/meteor';
 
 const T = i18n.createComponent();
 
@@ -34,6 +36,10 @@ export default class Proposal extends Component{
             noWithVetoPercent: 0,
             proposalValid: false,
             orderDir: -1
+        }
+
+        if (Meteor.isServer){
+            this.state.proposal = this.props.proposal;
         }
     }
 
@@ -161,6 +167,10 @@ export default class Proposal extends Component{
             if (this.props.proposalExist && this.state.proposal != ''){
                 // console.log(this.state.proposal);
                 return <div>
+                    <Helmet>
+                        <title>{this.props.proposal.proposal_content.value.title} | The Big Dipper</title>
+                        <meta name="description" content={this.props.proposal.proposal_content.value.description} />
+                    </Helmet>
                     <div className="proposal bg-light">
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposalID</T></Col>

@@ -8,6 +8,7 @@ import { Route, Switch } from 'react-router-dom';
 import Sidebar from "react-sidebar";
 import Block from './BlockContainer.js';
 import ChainStates from '../components/ChainStatesContainer.js'
+import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
 
 const T = i18n.createComponent();
@@ -75,6 +76,10 @@ export default class BlocksTable extends Component {
 
     render(){
         return <div>
+            <Helmet>
+                <title>Latest Blocks on Cosmos Hub | The Big Dipper</title>
+                <meta name="description" content="Latest blocks committed by validators on Cosmos Hub" />
+            </Helmet>
             <Row>
                 <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>blocks.latestBlocks</T></h1></Col>
                 <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>

@@ -5,6 +5,7 @@ import numbro from 'numbro';
 import moment from 'moment';
 import Avatar from '../components/Avatar.jsx';
 import TranactionTabs from '../transactions/TransactionTabs.jsx';
+import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
 
 const T = i18n.createComponent();
@@ -51,6 +52,10 @@ export default class Block extends Component{
                 let identity = proposer?proposer.description.identity:'';
 
                 return <Container id="block">
+                    <Helmet>
+                        <title>Block {numbro(block.height).format("0,0")} on Cosmos Hub | The Big Dipper</title>
+                        <meta name="description" content={"Block details of height "+numbro(block.height).format("0,0")} />
+                    </Helmet>
                     <h4><T>blocks.block</T> {numbro(block.height).format("0,0")}</h4>
                     <Card>
                         <div className="card-header"><T>common.information</T></div>

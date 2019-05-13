@@ -11,6 +11,7 @@ import { Badge, Row, Col, Card,
 import KeybaseCheck from '../components/KeybaseCheck.jsx';
 import ValidatorDelegations from './Delegations.jsx';
 import ValidatorTransactions from '../components/TransactionsContainer.js';
+import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
 
 const T = i18n.createComponent();
@@ -124,13 +125,16 @@ export default class Validator extends Component{
         }
         else{
             if (this.props.validatorExist){
-                // console.log(this.props);
                 let moniker = (this.props.validator.description&&this.props.validator.description.moniker)?this.props.validator.description.moniker:this.props.validator.address;
                 let identity = (this.props.validator.description&&this.props.validator.description.identity)?this.props.validator.description.identity:"";
                 let website = (this.props.validator.description&&this.props.validator.description.website)?this.props.validator.description.website:undefined;
                 let details = (this.props.validator.description&&this.props.validator.description.details)?this.props.validator.description.details:"";
 
                 return <Row className="validator-details">
+                    <Helmet>
+                        <title>{ moniker } - Cosmos Validator | The Big Dipper</title>
+                        <meta name="description" content={details} />
+                    </Helmet>
                     <Col xs={12}>
                         <Link to="/validators" className="btn btn-link"><i className="fas fa-caret-left"></i> <T>common.backToList</T></Link>
                     </Col>

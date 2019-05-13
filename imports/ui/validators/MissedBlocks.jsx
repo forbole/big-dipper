@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Table, Row, Col, Nav, NavItem, NavLink, Spinner } from 'reactstrap';
 import moment from 'moment';
 import { Meteor } from 'meteor/meteor';
+import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
 
 const T = i18n.createComponent();
@@ -48,6 +49,10 @@ export default class MissedBlocks extends Component{
         else{
             if (this.props.validatorExist){
                 return <div>
+                    <Helmet>
+                        <title>{ this.props.validator.description.moniker } - Missed Blocks | The Big Dipper</title>
+                        <meta name="description" content={"The missed blocks and precommits of "+this.props.validator.description.moniker} />
+                    </Helmet>
                     <Link to={"/validator/"+this.props.validator.address} className="btn btn-link"><i className="fas fa-caret-left"></i> <T>validators.backToValidator</T></Link>
                     <h2><T moniker={this.props.validator.description.moniker}>validators.missedBlocksTitle</T></h2>
                     <Nav pills>

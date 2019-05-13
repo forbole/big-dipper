@@ -6,6 +6,7 @@ import Delegations from './Delegations.jsx';
 import Unbondings from './Unbondings.jsx';
 import AccountTransactions from '../components/TransactionsContainer.js';
 import ChainStates from '../components/ChainStatesContainer.js'
+import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
 
 const T = i18n.createComponent();
@@ -118,6 +119,10 @@ export default class AccountDetails extends Component{
         }
         else if (this.state.accountExists){
             return <div id="account">
+                <Helmet>
+                    <title>Account Details of {this.state.address} on Cosmos Hub | The Big Dipper</title>
+                    <meta name="description" content={"Account Details of "+this.state.address+" on Cosmos Hub"} />
+                </Helmet>
                 <Row>
                     <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>accounts.accountDetails</T></h1></Col>
                     <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
