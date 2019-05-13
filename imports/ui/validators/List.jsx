@@ -34,7 +34,7 @@ export default class List extends Component{
 
     componentDidUpdate(prevState){
         if (this.props.validators != prevState.validators){
-            if (this.props.validators.length > 0){
+            if (this.props.validators.length > 0 && this.props.chainStatus){
                 this.setState({
                     validators: this.props.validators.map((validator, i) => {
                         return <ValidatorRow

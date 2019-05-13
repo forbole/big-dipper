@@ -14,6 +14,7 @@ export default ChartContainer = withTracker((curr) => {
     
     if (Meteor.isServer || !loading){
         history = Analytics.find({}, {sort:{height:1}});
+        loading = false;
     }
 
     const historyExist = !loading && !!history;

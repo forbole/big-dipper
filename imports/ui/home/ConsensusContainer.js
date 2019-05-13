@@ -14,6 +14,7 @@ export default ConsensusContainer = withTracker((curr) => {
     
     if (Meteor.isServer || !loading){
         consensus = Chain.find({chainId:Meteor.settings.public.chainId});
+        loading = false;
     }
 
     consensusExist = !loading && !!consensus;

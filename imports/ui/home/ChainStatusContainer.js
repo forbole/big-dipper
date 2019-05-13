@@ -19,6 +19,7 @@ export default ChainStatusContainer = withTracker((curr) => {
     if (Meteor.isServer || (!loading)) {
         status = Chain.find({chainId:Meteor.settings.public.chainId});
         states = ChainStates.find({}, {sort:{height:-1}, limit: 1});
+        loading = false;
     }
     const statusExist = !loading && !!status && !!states;
     return {
