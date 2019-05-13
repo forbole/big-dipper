@@ -115,10 +115,17 @@ export default ValidatorListContainer = withTracker((props) => {
     let validatorsExist;
 
     if (Meteor.isServer || !loading){
-        loading = false;
         validators = Validators.find(validatorsCond,options).fetch();
         chainStatus = Chain.findOne({chainId:Meteor.settings.public.chainId});
-        validatorsExist = !loading && !!validators && !!chainStatus;
+
+        if (Meteor.isServer){
+            loading = false;
+            validatorsExist = !!validators && !!chainStatus;
+        }
+        else{
+            validatorsExist = !loading && !!validators && !!chainStatus;
+        }
+        
     }
      // console.log(props.state.limit);
     return {

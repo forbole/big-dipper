@@ -32,8 +32,8 @@ export default class List extends Component{
         }
     }
 
-    componentDidUpdate(prevState){
-        if (this.props.validators != prevState.validators){
+    componentDidUpdate(prevProps){
+        if (this.props.validators != prevProps.validators){
             if (this.props.validators.length > 0 && this.props.chainStatus){
                 this.setState({
                     validators: this.props.validators.map((validator, i) => {
@@ -61,7 +61,6 @@ export default class List extends Component{
             return <Spinner type="grow" color="primary" />
         }
         else{
-            // console.log(this.props);
             return (
                 this.state.validators
             )
