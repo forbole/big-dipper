@@ -5,16 +5,27 @@ import Chain from './ChainStates.jsx';
 import { CoinStats } from '../../api/coin-stats/coin-stats.js';
 
 export default ChainStatesContainer = withTracker((props) => {
-    const chainStatesHandle = Meteor.subscribe('chainStates.latest');
-    const loading = !chainStatesHandle.ready();
-    const chainStates = ChainStates.findOne({});
-    const coinStats = CoinStats.findOne({});
+    let chainStatesHandle;
+    let loading = true;
+    let chainStates;
+    let coinStats;
+
+    if (Meteor.isClient){
+        chainStatesHandle = Meteor.subscribe('chainStates.latest');
+        loading = !chainStatesHandle.ready();
+    }
+
+    if (Meteor.isServer || !loading){
+        chainStates = ChainStates.find({}, {sort:{height:-1}, limit:1});
+        coinStats = CoinStats.find({}, {sort:{last_updated_at:-1}, limit:1});
+    }
+    
     const chainStatesExist = !loading && !!chainStates;
     const coinStatsExist = !loading && !!coinStats;
     return {
         loading,
         chainStatesExist,
-        chainStates: chainStatesExist ? chainStates : {},
-        coinStats: coinStatsExist ? coinStats : {}
+        chainStates: chainStatesExist ? chainStates.fetch()[0] : {},
+        coinStats: coinStatsExist ? coinStats.fetch()[0] : {}
     };
 })(Chain);

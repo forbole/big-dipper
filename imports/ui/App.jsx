@@ -1,7 +1,8 @@
 
 import React, { Component } from 'react';
 import GoogleTagManager from '/imports/ui/components/GoogleTagManager.jsx';
-import { BrowserRouter as Router, Route, Switch, withRouter } from 'react-router-dom'
+import { Router, Route, Switch, withRouter } from 'react-router-dom'
+import { createMemoryHistory } from 'history';
 import { Container } from 'reactstrap';
 import Header from '/imports/ui/components/Header.jsx';
 import Footer from '/imports/ui/components/Footer.jsx';
@@ -20,7 +21,9 @@ import SentryBoundary from '/imports/ui/components/SentryBoundary.jsx';
 import NotFound from '/imports/ui/pages/NotFound.jsx';
 
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.min.css';
+
+if (Meteor.isClient)
+    import 'react-toastify/dist/ReactToastify.min.css';
 
 // import './App.js'
 
@@ -64,8 +67,10 @@ class App extends Component {
     }
 
     render() {
+        const history = createMemoryHistory();
+
         return(
-            <Router>
+            <Router history={history}>
                 <div>
                     {(Meteor.settings.public.gtm)?<GoogleTagManager gtmId={Meteor.settings.public.gtm} />:''}
                     <RouteHeader />

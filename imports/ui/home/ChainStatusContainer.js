@@ -4,18 +4,28 @@ import { Chain, ChainStates } from '/imports/api/chain/chain.js';
 import ChainStatus from './ChainStatus.jsx';
 
 export default ChainStatusContainer = withTracker((curr) => {
-    const statusHandle = Meteor.subscribe('chain.status');
-    const chainStatesHandle = Meteor.subscribe('chainStates.latest');
-    const loading = !statusHandle.ready() && !chainStatesHandle.ready();
-    const status = Chain.findOne({chainId:Meteor.settings.public.chainId});
-    const states = ChainStates.findOne({});
+    let statusHandle;
+    let chainStatesHandle;
+    let loading = true;
+
+    if (Meteor.isClient) {
+        statusHandle = Meteor.subscribe('chain.status');
+        chainStatesHandle = Meteor.subscribe('chainStates.latest');
+        loading = !statusHandle.ready() && !chainStatesHandle.ready();
+    }
+
+    let status;
+    let states;
+    if (Meteor.isServer || (!loading)) {
+        status = Chain.find({chainId:Meteor.settings.public.chainId});
+        states = ChainStates.find({}, {sort:{height:-1}, limit: 1});
+    }
     const statusExist = !loading && !!status && !!states;
-    // console.log(props.state.limit);
     return {
         loading,
         statusExist,
-        status: statusExist ? status : {},
-        states: statusExist ? states : {}
+        status: statusExist ? status.fetch()[0] : {},
+        states: statusExist ? states.fetch()[0] : {}
     };
 })(ChainStatus);
 
