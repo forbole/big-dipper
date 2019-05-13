@@ -10,11 +10,30 @@ const T = i18n.createComponent();
 export default class ChainStates extends Component{
     constructor(props){
         super(props);
-        this.state ={
-            price: "$-",
-            marketCap: "$-",
-            inflation: 0,
-            communityPool: 0
+        
+        if (Meteor.isServer){
+            let data = {}
+            if (this.props.chainStates.communityPool){
+                data.communityPool = this.props.chainStates.communityPool.map((pool,i) => {
+                    return <span key={i}>{numbro(pool.amount/Meteor.settings.public.stakingFraction).format("0,0.00")} {Meteor.settings.public.stakingDenom}</span>
+                })
+                data.inflation = numbro(this.props.chainStates.inflation).format("0.00%")
+            }
+    
+            if (this.props.coinStats.usd){
+                data.price = numbro(this.props.coinStats.usd).format("$0,0.00"),
+                data.marketCap = numbro(this.props.coinStats.usd_market_cap).format("$0,0.00")
+            }    
+
+            this.state = data;
+        }
+        else{
+            this.state = {
+                price: "$-",
+                marketCap: "$-",
+                inflation: 0,
+                communityPool: 0
+            }
         }
     }
 

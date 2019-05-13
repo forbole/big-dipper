@@ -10,6 +10,9 @@ export default ChainStatesContainer = withTracker((props) => {
     let chainStates;
     let coinStats;
 
+    let chainStatesExist
+    let coinStatsExist
+
     if (Meteor.isClient){
         chainStatesHandle = Meteor.subscribe('chainStates.latest');
         loading = !chainStatesHandle.ready();
@@ -18,10 +21,17 @@ export default ChainStatesContainer = withTracker((props) => {
     if (Meteor.isServer || !loading){
         chainStates = ChainStates.findOne({}, {sort:{height:-1}, limit:1});
         coinStats = CoinStats.findOne({}, {sort:{last_updated_at:-1}, limit:1});
+        if (Meteor.isServer){
+            loading = false;
+            chainStatesExist = !!chainStates;
+            coinStatsExist = !!coinStats;
+        }
+        else{
+            chainStatesExist = !loading && !!chainStates;
+            coinStatsExist = !loading && !!coinStats;
+        }
     }
     
-    const chainStatesExist = !loading && !!chainStates;
-    const coinStatsExist = !loading && !!coinStats;
     return {
         loading,
         chainStatesExist,

@@ -7,17 +7,27 @@ export default ConsensusContainer = withTracker((curr) => {
     let consensusHandle;
     let loading = true;
     let consensus;
+
     if (Meteor.isClient){
         consensusHandle = Meteor.subscribe('chain.status');
         loading = !consensusHandle.ready();    
     }
     
+    let consensusExist;
+
     if (Meteor.isServer || !loading){
         consensus = Chain.findOne({chainId:Meteor.settings.public.chainId});
-        loading = false;
+
+        if (Meteor.isServer){
+            loading = false;
+            consensusExist = !!consensus;
+        }   
+        else{
+            consensusExist = !loading && !!consensus;
+        }
     }
 
-    consensusExist = !loading && !!consensus;
+    
     // console.log(props.state.limit);
     return {
         loading,

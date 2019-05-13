@@ -16,12 +16,21 @@ export default ChainStatusContainer = withTracker((curr) => {
 
     let status;
     let states;
+    let statusExist;
+    
     if (Meteor.isServer || (!loading)) {
         status = Chain.findOne({chainId:Meteor.settings.public.chainId});
         states = ChainStates.findOne({}, {sort:{height:-1}, limit: 1});
-        loading = false;
+
+        if (Meteor.isServer){
+            loading = false;
+            statusExist = !!status && !!states;
+        }
+        else{
+            statusExist = !loading && !!status && !!states;
+        }
     }
-    const statusExist = !loading && !!status && !!states;
+
     return {
         loading,
         statusExist,
