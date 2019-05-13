@@ -17,16 +17,16 @@ export default ChainStatusContainer = withTracker((curr) => {
     let status;
     let states;
     if (Meteor.isServer || (!loading)) {
-        status = Chain.find({chainId:Meteor.settings.public.chainId});
-        states = ChainStates.find({}, {sort:{height:-1}, limit: 1});
+        status = Chain.findOne({chainId:Meteor.settings.public.chainId});
+        states = ChainStates.findOne({}, {sort:{height:-1}, limit: 1});
         loading = false;
     }
     const statusExist = !loading && !!status && !!states;
     return {
         loading,
         statusExist,
-        status: statusExist ? status.fetch()[0] : {},
-        states: statusExist ? states.fetch()[0] : {}
+        status: statusExist ? status : {},
+        states: statusExist ? states : {}
     };
 })(ChainStatus);
 

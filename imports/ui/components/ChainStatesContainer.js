@@ -16,8 +16,8 @@ export default ChainStatesContainer = withTracker((props) => {
     }
 
     if (Meteor.isServer || !loading){
-        chainStates = ChainStates.find({}, {sort:{height:-1}, limit:1});
-        coinStats = CoinStats.find({}, {sort:{last_updated_at:-1}, limit:1});
+        chainStates = ChainStates.findOne({}, {sort:{height:-1}, limit:1});
+        coinStats = CoinStats.findOne({}, {sort:{last_updated_at:-1}, limit:1});
     }
     
     const chainStatesExist = !loading && !!chainStates;
@@ -25,7 +25,7 @@ export default ChainStatesContainer = withTracker((props) => {
     return {
         loading,
         chainStatesExist,
-        chainStates: chainStatesExist ? chainStates.fetch()[0] : {},
-        coinStats: coinStatsExist ? coinStats.fetch()[0] : {}
+        chainStates: chainStatesExist ? chainStates : {},
+        coinStats: coinStatsExist ? coinStats : {}
     };
 })(Chain);

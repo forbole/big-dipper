@@ -13,7 +13,7 @@ export default ChartContainer = withTracker((curr) => {
     }
     
     if (Meteor.isServer || !loading){
-        history = Analytics.find({}, {sort:{height:1}});
+        history = Analytics.find({}, {sort:{height:1}}).fetch();
         loading = false;
     }
 
@@ -22,7 +22,7 @@ export default ChartContainer = withTracker((curr) => {
     return {
         loading,
         historyExist,
-        history: historyExist ? history.fetch() : {}
+        history: historyExist ? history : {}
     };
 })(Chart);
 

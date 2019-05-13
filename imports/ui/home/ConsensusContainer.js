@@ -13,7 +13,7 @@ export default ConsensusContainer = withTracker((curr) => {
     }
     
     if (Meteor.isServer || !loading){
-        consensus = Chain.find({chainId:Meteor.settings.public.chainId});
+        consensus = Chain.findOne({chainId:Meteor.settings.public.chainId});
         loading = false;
     }
 
@@ -22,7 +22,7 @@ export default ConsensusContainer = withTracker((curr) => {
     return {
         loading,
         consensusExist,
-        consensus: consensusExist ? consensus.fetch()[0] : {}
+        consensus: consensusExist ? consensus : {}
     };
 })(Consensus);
 

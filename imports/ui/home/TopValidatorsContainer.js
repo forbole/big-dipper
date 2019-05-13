@@ -19,8 +19,8 @@ export default TopValidatorsContainer = withTracker(() => {
     let validators;
 
     if (Meteor.isServer || !loading){
-        status = Chain.find({chainId:Meteor.settings.public.chainId});
-        validators = Validators.find({status: 2, jailed:false});
+        status = Chain.findOne({chainId:Meteor.settings.public.chainId});
+        validators = Validators.find({status: 2, jailed:false}).fetch();
         loading = false;
     }
 
@@ -29,8 +29,8 @@ export default TopValidatorsContainer = withTracker(() => {
     return {
         loading,
         validatorsExist,
-        status: validatorsExist ? status.fetch()[0] : {},
-        validators: validatorsExist ? validators.fetch() : {}
+        status: validatorsExist ? status : {},
+        validators: validatorsExist ? validators : {}
     };
 })(TopValidators);
 
