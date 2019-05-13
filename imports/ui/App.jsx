@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 import GoogleTagManager from '/imports/ui/components/GoogleTagManager.jsx';
-import { Router, Route, Switch, withRouter } from 'react-router-dom'
+import { Route, Switch, withRouter } from 'react-router-dom'
 import { createMemoryHistory } from 'history';
 import { Container } from 'reactstrap';
 import Header from '/imports/ui/components/Header.jsx';
@@ -70,7 +70,7 @@ class App extends Component {
         const history = createMemoryHistory();
 
         return(
-            <Router history={history}>
+            // <Router history={history}>
                 <div>
                     {(Meteor.settings.public.gtm)?<GoogleTagManager gtmId={Meteor.settings.public.gtm} />:''}
                     <RouteHeader />
@@ -95,7 +95,7 @@ class App extends Component {
                     </Container>
                     <Footer />
                 </div>
-            </Router>
+            // </Router>
         );
     }
 }

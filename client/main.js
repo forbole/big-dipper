@@ -5,6 +5,7 @@ import '/imports/ui/stylesheets/flipclock.css';
 import './styles.css';
 // import App from '/imports/ui/App.jsx';
 import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom'
 import ReactDOM from 'react-dom';
 
 import { Meteor } from 'meteor/meteor';
@@ -19,7 +20,9 @@ Meteor.startup(() => {
     onPageLoad(async sink => {
         const App = (await import('/imports/ui/App.jsx')).default;
         ReactDOM.hydrate(
-            <App />, document.getElementById('app')
+            <Router>
+                <App />
+            </Router>, document.getElementById('app')
         );
     });
 });
