@@ -22,18 +22,19 @@ export default ValidatorDetailsContainer = withTracker((props) => {
     let chainStatus;
     let validatorExist;
     let validator;
-
+    let validatorRecords;
+    
     if (Meteor.isServer || !loading){
         if (props.address.indexOf(Meteor.settings.public.bech32PrefixValAddr) != -1){
             options = {operator_address:props.address}
         }
-        validator = Validators.find(options);
-        let validatorRecords;
+        validator = Validators.findOne(options);
+        
         if (validator){
-            validatorRecords = ValidatorRecords.find({address:validator.address}, {sort:{height:-1}});
+            validatorRecords = ValidatorRecords.find({address:validator.address}, {sort:{height:-1}}).fetch();
         }
     
-        chainStatus = Chain.find({chainId:Meteor.settings.public.chainId});
+        chainStatus = Chain.findOne({chainId:Meteor.settings.public.chainId});
         validatorExist = !loading && !!validator && !!validatorRecords && !!chainStatus;
         loading = false;
     }
@@ -41,8 +42,8 @@ export default ValidatorDetailsContainer = withTracker((props) => {
     return {
         loading,
         validatorExist,
-        validator: validatorExist ? validator.fetch()[0] : {},
-        records: validatorExist ? validatorRecords.fetch() : {},
-        chainStatus: validatorExist ? chainStatus.fetch()[0] : {}
+        validator: validatorExist ? validator : {},
+        records: validatorExist ? validatorRecords : {},
+        chainStatus: validatorExist ? chainStatus : {}
     };
 })(Validator);

@@ -123,7 +123,7 @@ export default class Validator extends Component{
             return <Spinner type="grow" color="primary" />
         }
         else{
-            if (this.props.validatorExist){
+            if (this.props.validatorExist || Meteor.isServer){
                 // console.log(this.props);
                 let moniker = (this.props.validator.description&&this.props.validator.description.moniker)?this.props.validator.description.moniker:this.props.validator.address;
                 let identity = (this.props.validator.description&&this.props.validator.description.identity)?this.props.validator.description.identity:"";
