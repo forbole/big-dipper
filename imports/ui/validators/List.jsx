@@ -27,8 +27,27 @@ const ValidatorRow = (props) => {
 export default class List extends Component{
     constructor(props){
         super(props);
-        this.state = {
-            validators: ""
+
+        if (Meteor.isServer){
+            if (this.props.validators.length > 0 && this.props.chainStatus){
+                this.state = {
+                    validators: this.props.validators.map((validator, i) => {
+                        return <ValidatorRow
+                            key={validator.address}
+                            index={i}
+                            validator={validator}
+                            address={validator.address}
+                            totalPower={this.props.chainStatus.activeVotingPower}
+                            inactive={this.props.inactive}
+                        />
+                    })
+                }
+            }
+        }
+        else{
+            this.state = {
+                validators: ""
+            }    
         }
     }
 
