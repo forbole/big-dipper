@@ -24,8 +24,19 @@ const ProposalRow = (props) => {
 export default class List extends Component{
     constructor(props){
         super(props);
-        this.state = {
-            proposals: ""
+        if (Meteor.isServer){
+            if (this.props.proposals.length > 0){
+                this.state = {
+                    proposals: this.props.proposals.map((proposal, i) => {
+                        return <ProposalRow key={i} index={i} proposal={proposal} />
+                    })
+                }  
+            }
+        }
+        else{
+            this.state = {
+                proposals: ""
+            }    
         }
     }
 

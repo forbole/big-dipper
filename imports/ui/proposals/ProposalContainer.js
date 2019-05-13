@@ -5,18 +5,33 @@ import { Chain } from '/imports/api/chain/chain.js';
 import Proposal from './Proposal.jsx';
 
 export default ProposalContainer = withTracker((props) => {
-    // console.log(props);
     let proposalId = 0;
     if (props.match.params.id){
         proposalId = parseInt(props.match.params.id);
     }
-    const chainHandle = Meteor.subscribe('chain.status');
-    const proposalHandle = Meteor.subscribe('proposals.one', proposalId);
-    const loading = !proposalHandle.ready() || !chainHandle.ready();
-    const proposal = Proposals.findOne({proposalId:proposalId});
-    const chain = Chain.findOne({chainId:Meteor.settings.public.chainId});
-    const proposalExist = !loading && !!proposal;
-    // console.log(props.state.limit);
+
+    let chainHandle, proposalHandle, proposal, chain, proposalExist;
+    let loading = true;
+
+    if (Meteor.isClient){
+        chainHandle = Meteor.subscribe('chain.status');
+        proposalHandle = Meteor.subscribe('proposals.one', proposalId);
+        loading = !proposalHandle.ready() || !chainHandle.ready();
+    }
+
+    if (Meteor.isServer || !loading){
+        proposal = Proposals.findOne({proposalId:proposalId});
+        chain = Chain.findOne({chainId:Meteor.settings.public.chainId});
+
+        if (Meteor.isServer){
+            loading = false;
+            proposalExist = !!proposal;
+        }
+        else{
+            proposalExist = !loading && !!proposal;
+        }
+    }
+
     return {
         loading,
         proposalExist,
