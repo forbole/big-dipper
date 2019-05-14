@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { Meteor } from 'meteor/meteor';
-import { Container } from 'reactstrap';
+import { Container, Row, Col } from 'reactstrap';
 import HeaderRecord from './HeaderRecord.jsx';
 import Blocks from '/imports/ui/blocks/ListContainer.js'
 import { LoadMore } from '../components/LoadMore.jsx';
 import { Route, Switch } from 'react-router-dom';
 import Sidebar from "react-sidebar";
 import Block from './BlockContainer.js';
+import ChainStates from '../components/ChainStatesContainer.js'
 
 export default class BlocksTable extends Component {
     constructor(props){
@@ -72,7 +73,10 @@ export default class BlocksTable extends Component {
 
     render(){
         return <div>
-            <h1 className="d-none d-lg-block">Latest blocks</h1>
+            <Row>
+                <Col md={3} xs={12}><h1 className="d-none d-lg-block">Latest blocks</h1></Col>
+                <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
+            </Row>
             <Switch>
                 <Route path="/blocks/:blockId" render={(props)=> <Sidebar 
                     sidebar={<Block {...props} />}

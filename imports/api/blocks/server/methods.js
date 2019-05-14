@@ -10,6 +10,7 @@ import { VotingPowerHistory } from '/imports/api/voting-power/history.js';
 import { Transactions } from '../../transactions/transactions.js';
 import { Evidences } from '../../evidences/evidences.js';
 import { sha256 } from 'js-sha256';
+import { getAddress } from 'tendermint/lib/pubkey'
 
 // import Block from '../../../ui/components/Block';
 
@@ -329,57 +330,65 @@ Meteor.methods({
                                 let valExist = Validators.findOne({"pub_key.value":validator.pub_key.value});
                                 if (!valExist){
                                     console.log("validator pub_key not in db");
-                                    let command = Meteor.settings.bin.gaiadebug+" pubkey "+validator.pub_key.value;
+                                    // let command = Meteor.settings.bin.gaiadebug+" pubkey "+validator.pub_key.value;
                                     // console.log(command);
                                     // let tempVal = validator;
-                                    Meteor.call('runCode', command, function(error, result){
-                                        validator.address = result.match(/\s[0-9A-F]{40}$/igm);
-                                        validator.address = validator.address[0].trim();
-                                        validator.hex = result.match(/\s[0-9A-F]{64}$/igm);
-                                        validator.hex = validator.hex[0].trim();
-                                        validator.cosmosaccpub = result.match(/cosmospub.*$/igm);
-                                        validator.cosmosaccpub = validator.cosmosaccpub[0].trim();
-                                        validator.operator_pubkey = result.match(/cosmosvaloperpub.*$/igm);
-                                        validator.operator_pubkey = validator.operator_pubkey[0].trim();
-                                        validator.consensus_pubkey = result.match(/cosmosvalconspub.*$/igm);
-                                        validator.consensus_pubkey = validator.consensus_pubkey[0].trim();
 
-                                        for (val in validatorSet){
-                                            if (validatorSet[val].consensus_pubkey == validator.consensus_pubkey){
-                                                validator.operator_address = validatorSet[val].operator_address;
-                                                validator.delegator_address = Meteor.call('getDelegator', validatorSet[val].operator_address);
-                                                validator.jailed = validatorSet[val].jailed;
-                                                validator.status = validatorSet[val].status;
-                                                validator.min_self_delegation = validatorSet[val].min_self_delegation;
-                                                validator.tokens = validatorSet[val].tokens;
-                                                validator.delegator_shares = validatorSet[val].delegator_shares;
-                                                validator.description = validatorSet[val].description;
-                                                validator.bond_height = validatorSet[val].bond_height;
-                                                validator.bond_intra_tx_counter = validatorSet[val].bond_intra_tx_counter;
-                                                validator.unbonding_height = validatorSet[val].unbonding_height;
-                                                validator.unbonding_time = validatorSet[val].unbonding_time;
-                                                validator.commission = validatorSet[val].commission;
-                                                validator.self_delegation = validator.delegator_shares;
-                                                // validator.removed = false,
-                                                // validator.removedAt = 0
-                                                // validatorSet.splice(val, 1);
-                                                break;
-                                            }
+                                    validator.address = getAddress(validator.pub_key);
+                                    validator.accpub = Meteor.call('pubkeyToBech32', validator.pub_key, Meteor.settings.public.bech32PrefixAccPub);
+                                    validator.operator_pubkey = Meteor.call('pubkeyToBech32', validator.pub_key, Meteor.settings.public.bech32PrefixValPub);
+                                    validator.consensus_pubkey = Meteor.call('pubkeyToBech32', validator.pub_key, Meteor.settings.public.bech32PrefixConsPub);
+
+                                    for (val in validatorSet){
+                                        if (validatorSet[val].consensus_pubkey == validator.consensus_pubkey){
+                                            validator.operator_address = validatorSet[val].operator_address;
+                                            validator.delegator_address = Meteor.call('getDelegator', validatorSet[val].operator_address);
+                                            validator.jailed = validatorSet[val].jailed;
+                                            validator.status = validatorSet[val].status;
+                                            validator.min_self_delegation = validatorSet[val].min_self_delegation;
+                                            validator.tokens = validatorSet[val].tokens;
+                                            validator.delegator_shares = validatorSet[val].delegator_shares;
+                                            validator.description = validatorSet[val].description;
+                                            validator.bond_height = validatorSet[val].bond_height;
+                                            validator.bond_intra_tx_counter = validatorSet[val].bond_intra_tx_counter;
+                                            validator.unbonding_height = validatorSet[val].unbonding_height;
+                                            validator.unbonding_time = validatorSet[val].unbonding_time;
+                                            validator.commission = validatorSet[val].commission;
+                                            validator.self_delegation = validator.delegator_shares;
+                                            // validator.removed = false,
+                                            // validator.removedAt = 0
+                                            // validatorSet.splice(val, 1);
+                                            break;
                                         }
+                                    }
 
-                                        // bulkValidators.insert(validator);
-                                        bulkValidators.find({consensus_pubkey: validator.consensus_pubkey}).upsert().updateOne({$set:validator});
-                                        // console.log("validator first appears: "+bulkValidators.length);
-                                        bulkVPHistory.insert({
-                                            address: validator.address,
-                                            prev_voting_power: 0,
-                                            voting_power: validator.voting_power,
-                                            type: 'add',
-                                            height: blockData.height,
-                                            block_time: blockData.time
-                                        });
-
+                                    // bulkValidators.insert(validator);
+                                    bulkValidators.find({consensus_pubkey: validator.consensus_pubkey}).upsert().updateOne({$set:validator});
+                                    // console.log("validator first appears: "+bulkValidators.length);
+                                    bulkVPHistory.insert({
+                                        address: validator.address,
+                                        prev_voting_power: 0,
+                                        voting_power: validator.voting_power,
+                                        type: 'add',
+                                        height: blockData.height,
+                                        block_time: blockData.time
                                     });
+
+                                    // Meteor.call('runCode', command, function(error, result){
+                                        // validator.address = result.match(/\s[0-9A-F]{40}$/igm);
+                                        // validator.address = validator.address[0].trim();
+                                        // validator.hex = result.match(/\s[0-9A-F]{64}$/igm);
+                                        // validator.hex = validator.hex[0].trim();
+                                        // validator.cosmosaccpub = result.match(/cosmospub.*$/igm);
+                                        // validator.cosmosaccpub = validator.cosmosaccpub[0].trim();
+                                        // validator.operator_pubkey = result.match(/cosmosvaloperpub.*$/igm);
+                                        // validator.operator_pubkey = validator.operator_pubkey[0].trim();
+                                        // validator.consensus_pubkey = result.match(/cosmosvalconspub.*$/igm);
+                                        // validator.consensus_pubkey = validator.consensus_pubkey[0].trim();
+
+                                        
+
+                                    // });
                                 }
                                 else{
                                     for (val in validatorSet){

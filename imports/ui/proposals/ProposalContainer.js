@@ -11,9 +11,11 @@ export default ProposalContainer = withTracker((props) => {
         proposalId = parseInt(props.match.params.id);
     }
     const chainHandle = Meteor.subscribe('chain.status');
+    const proposalListHandle = Meteor.subscribe('proposals.list', proposalId);
     const proposalHandle = Meteor.subscribe('proposals.one', proposalId);
-    const loading = !proposalHandle.ready() || !chainHandle.ready();
+    const loading = !proposalHandle.ready() || !chainHandle.ready() || !proposalListHandle.ready();
     const proposal = Proposals.findOne({proposalId:proposalId});
+    const proposalCount = Proposals.find({}).count();
     const chain = Chain.findOne({chainId:Meteor.settings.public.chainId});
     const proposalExist = !loading && !!proposal;
     // console.log(props.state.limit);
@@ -21,6 +23,7 @@ export default ProposalContainer = withTracker((props) => {
         loading,
         proposalExist,
         proposal: proposalExist ? proposal : {},
-        chain: proposalExist ? chain : {}
+        chain: proposalExist ? chain : {},
+        proposalCount: proposalExist? proposalCount: 0
     };
 })(Proposal);

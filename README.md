@@ -6,6 +6,8 @@ Forbole Block Explorer for Cosmos
 
 [Explore IRISnet (irishub) with The Big Dipper](https://iris.bigdipper.live)
 
+[Explore Terra (columbus-1) with The Big Dipper](https://terra.bigdipper.live)
+
 ## Projects with testnets
 
 [Sentinel testnet](https://explorer.sentinel.co/)
@@ -13,10 +15,9 @@ Forbole Block Explorer for Cosmos
 ## How to run The Big Dipper
 
 1. Copy `settings.json.default` to `settings.json`.
-2. Update path to `gaiadebug`.
-3. Update the RPC and LCD URLs.
-4. Update Bech32 address prefixes.
-5. Update genesis file location.
+2. Update the RPC and LCD URLs.
+3. Update Bech32 address prefixes.
+4. Update genesis file location.
 
 ### Run in local
 

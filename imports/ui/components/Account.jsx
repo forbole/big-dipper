@@ -7,7 +7,7 @@ export default class Account extends Component{
         super(props);
 
         this.state = {
-            address: this.props.address,
+            address: `/account/${this.props.address}`,
             moniker: this.props.address
         }
     }
@@ -18,9 +18,9 @@ export default class Account extends Component{
             if (result){
                 // console.log(result);
                 this.setState({
-                    address: result.address,
+                    address: `/validator/${result.address}`,
                     moniker: result.description.moniker
-                })
+                });
             }
 
         })
@@ -33,16 +33,16 @@ export default class Account extends Component{
     componentDidUpdate(prevProps){
         if (this.props.address != prevProps.address){
             this.setState({
-                address: this.props.address,
+                address: `/account/${this.props.address}`,
                 moniker: this.props.address
-            })
+            });
             this.updateAccount();
         }
     }
 
     render(){
         return <span className={(this.props.copy)?"address overflow-auto d-inline-block copy":"address overflow-auto d-inline"} >
-            <Link to={"/validator/"+this.state.address}>{this.state.moniker}</Link>
+            <Link to={this.state.address}>{this.state.moniker}</Link>
         </span>
     }
 }

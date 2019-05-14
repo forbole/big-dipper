@@ -6,7 +6,7 @@ import { DenomSymbol, ProposalStatusIcon } from '../components/Icons.jsx';
 import numbro from 'numbro';
 
 const ProposalRow = (props) => {
-    console.log(props.proposal);
+    //console.log(props.proposal);
     return <tr>
     <th className="d-none d-sm-table-cell counter">{props.proposal.proposalId}</th>
     <td className="title"><Link to={"/proposals/"+props.proposal.proposalId}>{props.proposal.proposal_content.value.title}</Link></td>
@@ -32,10 +32,10 @@ export default class List extends Component{
             if (this.props.proposals.length > 0){
                 this.setState({
                     proposals: this.props.proposals.map((proposal, i) => {
-                        console.log(proposal);
+                        //console.log(proposal);
                         return <ProposalRow key={i} index={i} proposal={proposal} />
                     })
-                })    
+                })
             }
         }
     }
@@ -59,7 +59,7 @@ export default class List extends Component{
                     </thead>
                     <tbody>{this.state.proposals}</tbody>
                 </Table>
-            )    
+            )
         }
     }
 }

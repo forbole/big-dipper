@@ -2,6 +2,15 @@ body {
     font-size: inherit !important;
 }
 
+.no-select {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 .not-found{
     position: absolute;
     text-align: center;
@@ -110,6 +119,11 @@ div.validator-list div.header div.last-seen span.d-md-none{
     transform: translateY(-1px);;
 }
 
+div#block-table,
+#transactions div.transactions-list{
+    margin-top: 0.5em;
+}
+
 table#block-table,
 table.random-validators,
 table.validator-list,
@@ -118,6 +132,7 @@ table.proposal-list {
     width: 100%;
     white-space: nowrap;
 }
+
 table#block-table td,
 table.random-validators td,
 table.validator-list td,
@@ -267,6 +282,30 @@ div#countdown {
 
 .proposal .tally-result i.fas{
     min-width: 1.5em;
+}
+
+.proposal .card-header-tabs .nav-link {
+    margin: -0.5em 0.5em 0 0.5em;
+    padding: 0.5rem 1.5rem;
+    box-shadow: initial;
+    color: #bd081c;
+    cursor: pointer;
+}
+
+.proposal .card-header-tabs .nav-link.active:not(:hover), .nav-link.active:focus:not(:hover) {
+    border: none;
+    -webkit-box-shadow: initial;
+    box-shadow: initial;
+    color: #bd081c;
+}
+.proposal .card-header-tabs .nav-link.active:hover {
+    border: none;
+    background: #fff;
+    color: #bd081c;
+}
+
+.proposal .plottable .label-area text {
+    font-size: 1.5em;
 }
 
 .validator-details .moniker{
@@ -601,7 +640,10 @@ div#voting-power-dist .card{
         /* padding-bottom: 4.8rem; */
     }
 
-    #validator-list ul.status-switch {
+    #validator-list ul.status-switch{
+        margin-top: 0.5em;
+    }
+    /* #validator-list ul.status-switch {
         position: fixed;
         background-color: #fff;
         width: 100%;
@@ -612,7 +654,7 @@ div#voting-power-dist .card{
 
     #validator-list .lead{
         padding-top: 2.5rem;
-    }
+    } */
 
     .card-body.list{
         padding: 0;
