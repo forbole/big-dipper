@@ -15,7 +15,7 @@ import * as d3 from "d3";
 let Axes, Components, Dataset, Interactions, Plots, Scales;
 
 if (Meteor.isClient) {
-    const plottable = require('plottable');
+    const plottable = require('/client/libs/plottable.js');
     ({ Axes, Components, Dataset, Interactions, Plots, Scales } = plottable);
 }
 
