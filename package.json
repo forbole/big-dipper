@@ -20,7 +20,6 @@
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.23",
     "numbro": "^2.1.2",
-    "package.json": "^2.0.1",
     "plottable": "^3.8.6",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
