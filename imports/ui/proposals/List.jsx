@@ -4,9 +4,11 @@ import { Table, Spinner } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { DenomSymbol, ProposalStatusIcon } from '../components/Icons.jsx';
 import numbro from 'numbro';
+import i18n from 'meteor/universe:i18n';
+
+const T = i18n.createComponent();
 
 const ProposalRow = (props) => {
-    //console.log(props.proposal);
     return <tr>
     <th className="d-none d-sm-table-cell counter">{props.proposal.proposalId}</th>
     <td className="title"><Link to={"/proposals/"+props.proposal.proposalId}>{props.proposal.proposal_content.value.title}</Link></td>
@@ -22,8 +24,19 @@ const ProposalRow = (props) => {
 export default class List extends Component{
     constructor(props){
         super(props);
-        this.state = {
-            proposals: ""
+        if (Meteor.isServer){
+            if (this.props.proposals.length > 0){
+                this.state = {
+                    proposals: this.props.proposals.map((proposal, i) => {
+                        return <ProposalRow key={i} index={i} proposal={proposal} />
+                    })
+                }  
+            }
+        }
+        else{
+            this.state = {
+                proposals: ""
+            }    
         }
     }
 
@@ -32,7 +45,6 @@ export default class List extends Component{
             if (this.props.proposals.length > 0){
                 this.setState({
                     proposals: this.props.proposals.map((proposal, i) => {
-                        //console.log(proposal);
                         return <ProposalRow key={i} index={i} proposal={proposal} />
                     })
                 })
@@ -49,12 +61,12 @@ export default class List extends Component{
                 <Table striped className="proposal-list">
                     <thead>
                         <tr>
-                            <th className="d-none d-sm-table-cell counter"><i className="fas fa-hashtag"></i> Proposal ID</th>
-                            <th className="title"><i className="material-icons">view_headline</i> <span className="d-none d-sm-inline">Title</span></th>
-                            <th className="status"><i className="fas fa-toggle-on"></i> <span className="d-none d-sm-inline">Status</span></th>
-                            <th className="submit-block"><i className="fas fa-box"></i> <span className="d-none d-sm-inline">Submit Time (UTC)</span></th>
-                            <th className="voting-start"><i className="fas fa-box-open"></i> <span className="d-none d-sm-inline">Voting Start Time (UTC)</span></th>
-                            <th className="deposit text-right"><i className="material-icons">attach_money</i> <span className="d-none d-sm-inline">Total Deposit</span></th>
+                            <th className="d-none d-sm-table-cell counter"><i className="fas fa-hashtag"></i> <T>proposals.proposalID</T></th>
+                            <th className="title"><i className="material-icons">view_headline</i> <span className="d-none d-sm-inline"><T>proposals.title</T></span></th>
+                            <th className="status"><i className="fas fa-toggle-on"></i> <span className="d-none d-sm-inline"><T>proposals.status</T></span></th>
+                            <th className="submit-block"><i className="fas fa-box"></i> <span className="d-none d-sm-inline"><T>proposals.submitTime</T> (UTC)</span></th>
+                            <th className="voting-start"><i className="fas fa-box-open"></i> <span className="d-none d-sm-inline"><T>proposals.votingStartTime</T> (UTC)</span></th>
+                            <th className="deposit text-right"><i className="material-icons">attach_money</i> <span className="d-none d-sm-inline"><T>proposals.totalDeposit</T></span></th>
                         </tr>
                     </thead>
                     <tbody>{this.state.proposals}</tbody>

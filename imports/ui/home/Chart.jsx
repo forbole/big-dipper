@@ -3,7 +3,9 @@ import {Line} from 'react-chartjs-2';
 import { Row, Col, Card, CardImg, CardText, CardBody,
     CardTitle, CardSubtitle, Button, Progress, Spinner } from 'reactstrap';
 import moment from 'moment';
+import i18n from 'meteor/universe:i18n';
 
+const T = i18n.createComponent();
 export default class Chart extends Component{
     constructor(props){
         super(props);
@@ -187,7 +189,7 @@ export default class Chart extends Component{
                 return (
                     <div>
                     <Card>
-                        <div className="card-header">Block Time History</div>
+                        <div className="card-header"><T>analytics.blockTimeHistory</T></div>
                         <CardBody>
                         <Line data={this.state.timeData} options={this.state.optionsTime}/>
                         </CardBody>

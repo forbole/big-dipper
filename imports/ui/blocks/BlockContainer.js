@@ -5,13 +5,33 @@ import { Transactions } from '/imports/api/transactions/transactions.js';
 import Block from './Block.jsx';
 
 export default BlockContainer = withTracker((props) => {
-    const blockHandle = Meteor.subscribe('blocks.findOne', parseInt(props.match.params.blockId));
-    const transactionHandle = Meteor.subscribe('transactions.height', parseInt(props.match.params.blockId));
-    const loading = !blockHandle.ready() && !transactionHandle.ready();
-    const block = Blockscon.findOne({height: parseInt(props.match.params.blockId)});
-    const txs = Transactions.find({height:parseInt(props.match.params.blockId)});
-    const transactionsExist = !loading && !!txs;
-    const blockExist = !loading && !!block;
+    let blockHandle, transactionHandle;
+    let loading = true;
+
+    if (Meteor.isClient){
+        blockHandle = Meteor.subscribe('blocks.findOne', parseInt(props.match.params.blockId));
+        transactionHandle = Meteor.subscribe('transactions.height', parseInt(props.match.params.blockId));
+        loading = !blockHandle.ready() && !transactionHandle.ready();    
+    }
+
+    let block, txs, transactionsExist, blockExist;
+
+    if (Meteor.isServer || !loading){
+        block = Blockscon.findOne({height: parseInt(props.match.params.blockId)});
+        txs = Transactions.find({height:parseInt(props.match.params.blockId)});
+
+        if (Meteor.isServer){
+            loading = false;
+            transactionsExist = !!txs;
+            blockExist = !!block;
+        }
+        else{
+            transactionsExist = !loading && !!txs;
+            blockExist = !loading && !!block;
+        }
+        
+    }
+
     return {
         loading,
         blockExist,

@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { Card, CardHeader, CardBody, Container, Row, Col, Spinner } from 'reactstrap';
 import TransactionTabs from '../transactions/TransactionTabs.jsx';
+import i18n from 'meteor/universe:i18n';
+
+const T = i18n.createComponent();
 
 export default class ValidatorTransactions extends Component{
     constructor(props){
@@ -44,7 +47,7 @@ export default class ValidatorTransactions extends Component{
         }
         else {
             return <Card body>
-                No transaction related to this validator was found.
+                <T>transactions.noValidatorTxsFound</T>
             </Card>
         }
     }

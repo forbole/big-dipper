@@ -3,6 +3,9 @@ import { Row, Col, Card, CardText,
     CardTitle, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Spinner } from 'reactstrap';
 import moment from 'moment';
 import numbro from 'numbro';
+import i18n from 'meteor/universe:i18n';
+
+const T = i18n.createComponent();
 
 export default class ChainStatus extends React.Component {
     constructor(props) {
@@ -16,8 +19,8 @@ export default class ChainStatus extends React.Component {
           totalNumValidators: 0,
           avgBlockTimeType: "",
           avgVotingPowerType: "",
-          blockTimeText: "All",
-          votingPowerText: "Now"
+          blockTimeText: <T>chainStatus.all</T>,
+          votingPowerText: <T>chainStatus.now</T>
       }
     }
 
@@ -83,7 +86,7 @@ export default class ChainStatus extends React.Component {
         switch (type){
             case "":
                 this.setState({
-                    blockTimeText: "All",
+                    blockTimeText: <T>chainStatus.all</T>,
                     avgBlockTimeType: "",
                     averageBlockTime: numbro(this.props.status.blockTime/1000).format('0,0.00')
                 })
@@ -118,7 +121,7 @@ export default class ChainStatus extends React.Component {
         switch (type){
             case "":
                 this.setState({
-                    votingPowerText: "Now",
+                    votingPowerText: <T>chainStatus.now</T>,
                     avgVotingPowerType: "",
                     votingPower: numbro(this.props.status.activeVotingPower).format('0,0.00a')
                 })
@@ -151,7 +154,7 @@ export default class ChainStatus extends React.Component {
                     <Row className="status text-center">
                         <Col lg={3} md={6}>
                             <Card body>
-                                <CardTitle>Latest Block Height</CardTitle>
+                                <CardTitle><T>chainStatus.latestHeight</T></CardTitle>
                                 <CardText>
                                     <span className="display-4 value text-primary">{this.state.blockHeight}</span>
                                     {this.state.blockTime}
@@ -165,22 +168,22 @@ export default class ChainStatus extends React.Component {
                                         <i className="material-icons">more_vert</i>
                                     </DropdownToggle>
                                     <DropdownMenu>
-                                        <DropdownItem onClick={(e) => this.handleSwitchBlockTime("", e)}>All Time</DropdownItem>
-                                        {this.props.status.lastMinuteBlockTime?<DropdownItem onClick={(e) => this.handleSwitchBlockTime("m", e)}>Last Minute</DropdownItem>:''}
-                                        {this.props.status.lastHourBlockTime?<DropdownItem onClick={(e) => this.handleSwitchBlockTime("h", e)}>Last Hour</DropdownItem>:''}
-                                        {this.props.status.lastDayBlockTime?<DropdownItem onClick={(e) => this.handleSwitchBlockTime("d", e)}>Last Day</DropdownItem>:''}
+                                        <DropdownItem onClick={(e) => this.handleSwitchBlockTime("", e)}><T>chainStatus.allTime</T></DropdownItem>
+                                        {this.props.status.lastMinuteBlockTime?<DropdownItem onClick={(e) => this.handleSwitchBlockTime("m", e)}><T>chainStatus.lastMinute</T></DropdownItem>:''}
+                                        {this.props.status.lastHourBlockTime?<DropdownItem onClick={(e) => this.handleSwitchBlockTime("h", e)}><T>chainStatus.lastHour</T></DropdownItem>:''}
+                                        {this.props.status.lastDayBlockTime?<DropdownItem onClick={(e) => this.handleSwitchBlockTime("d", e)}><T>chainStatus.lastDay</T> </DropdownItem>:''}
                                     </DropdownMenu>
                                 </UncontrolledDropdown>
-                                <CardTitle>Average Block Time ({this.state.blockTimeText})</CardTitle>
+                                <CardTitle><T>chainStatus.averageBlockTime</T> ({this.state.blockTimeText})</CardTitle>
                                 <CardText>
-                                    <span className="display-4 value text-primary">{this.state.averageBlockTime}</span>seconds
+                                    <span className="display-4 value text-primary">{this.state.averageBlockTime}</span><T>chainStatus.seconds</T>
                                 </CardText>   
                             </Card>
                         </Col>
                         <Col lg={3} md={6}>
                             <Card body>
-                                <CardTitle>Active Validators</CardTitle>
-                                <CardText><span className="display-4 value text-primary">{this.state.numValidators}</span>out of {this.state.totalNumValidators} validators</CardText>   
+                                <CardTitle><T>chainStatus.activeValidators</T></CardTitle>
+                                <CardText><span className="display-4 value text-primary">{this.state.numValidators}</span><T totalValidators={this.state.totalNumValidators}>chainStatus.outOfValidators</T></CardText>   
                             </Card>
                         </Col>
                         <Col lg={3} md={6}>
@@ -190,13 +193,13 @@ export default class ChainStatus extends React.Component {
                                         <i className="material-icons">more_vert</i>
                                     </DropdownToggle>
                                     <DropdownMenu>
-                                        <DropdownItem onClick={(e) => this.handleSwitchVotingPower("", e)}>Now</DropdownItem>
-                                        {this.props.status.lastHourVotingPower?<DropdownItem onClick={(e) => this.handleSwitchVotingPower("h", e)}>Last Hour</DropdownItem>:''}
-                                        {this.props.status.lastDayVotingPower?<DropdownItem onClick={(e) => this.handleSwitchVotingPower("d", e)}>Last Day</DropdownItem>:''}
+                                        <DropdownItem onClick={(e) => this.handleSwitchVotingPower("", e)}><T>chainStatus.now</T></DropdownItem>
+                                        {this.props.status.lastHourVotingPower?<DropdownItem onClick={(e) => this.handleSwitchVotingPower("h", e)}><T>chainStatus.lastHour</T></DropdownItem>:''}
+                                        {this.props.status.lastDayVotingPower?<DropdownItem onClick={(e) => this.handleSwitchVotingPower("d", e)}><T>chainStatus.lastDay</T></DropdownItem>:''}
                                     </DropdownMenu>
                                 </UncontrolledDropdown>
-                                <CardTitle>Online Voting Power ({this.state.votingPowerText})</CardTitle>
-                                <CardText><span className="display-4 value text-primary">{this.state.votingPower}</span>{numbro(this.state.bondedTokens/(this.state.bondedTokens+this.state.notBondedTokens)).format("0.00%")} from {numbro((this.state.bondedTokens+this.state.notBondedTokens)/Meteor.settings.public.stakingFraction).format("0.00a")} {Meteor.settings.public.stakingDenom}s</CardText>   
+                                <CardTitle><T>chainStatus.onlineVotingPower</T> ({this.state.votingPowerText})</CardTitle>
+                                <CardText><span className="display-4 value text-primary">{this.state.votingPower}</span><T percent={numbro(this.state.bondedTokens/(this.state.bondedTokens+this.state.notBondedTokens)).format("0.00%")} totalStakes={numbro((this.state.bondedTokens+this.state.notBondedTokens)/Meteor.settings.public.stakingFraction).format("0.00a")} denom={Meteor.settings.public.stakingDenom}>chainStatus.fromTotalStakes</T></CardText>   
                             </Card>
                         </Col>
                     </Row>

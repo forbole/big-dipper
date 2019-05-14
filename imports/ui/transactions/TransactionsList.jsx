@@ -7,6 +7,10 @@ import { Route, Switch } from 'react-router-dom';
 import Transaction from './TransactionContainer.js';
 import Sidebar from "react-sidebar";
 import ChainStates from '../components/ChainStatesContainer.js'
+import { Helmet } from 'react-helmet';
+import i18n from 'meteor/universe:i18n';
+
+const T = i18n.createComponent();
 
 export default class Transactions extends Component{
     constructor(props){
@@ -80,8 +84,12 @@ export default class Transactions extends Component{
 
     render(){
         return <div id="transactions">
+            <Helmet>
+                <title>Latest Transactions on Cosmos Hub | The Big Dipper</title>
+                <meta name="description" content="See what is happening on Cosmos Hub" />
+            </Helmet>
             <Row>
-                <Col md={3} xs={12}><h1 className="d-none d-lg-block">Transactions</h1></Col>
+                <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>transactions.transactions</T></h1></Col>
                 <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
             </Row>
             <Switch>

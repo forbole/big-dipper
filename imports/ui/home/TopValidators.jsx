@@ -4,7 +4,9 @@ import { Table, Row, Col, Card, CardImg, CardText, CardBody,
     CardTitle, CardSubtitle, Button, Progress, Spinner } from 'reactstrap';
 import numbro from 'numbro';
 import Avatar from '../components/Avatar.jsx';
+import i18n from 'meteor/universe:i18n';
 
+const T = i18n.createComponent();
 export default class TopValidators extends Component{
     constructor(props){
         super(props);
@@ -58,14 +60,14 @@ export default class TopValidators extends Component{
         else{
             if (this.props.validatorsExist && this.props.status.prevotes){
                 return <Card>
-                    <div className="card-header">Random Validators</div>
+                    <div className="card-header"><T>validators.randomValidators</T></div>
                     <CardBody>
                         <Table striped className="random-validators">
                             <thead>
                                 <tr>
-                                    <th className="moniker"><i className="material-icons">perm_contact_calendar</i> <span className="d-none d-sm-inline">Moniker</span></th>
-                                    <th className="voting-power"><i className="material-icons">power</i> <span className="d-none d-sm-inline">Voting Power</span></th>
-                                    <th className="uptime"><i className="material-icons">flash_on</i> <span className="d-none d-sm-inline">Uptime</span></th>
+                                    <th className="moniker"><i className="material-icons">perm_contact_calendar</i> <span className="d-none d-sm-inline"><T>validators.moniker</T></span></th>
+                                    <th className="voting-power"><i className="material-icons">power</i> <span className="d-none d-sm-inline"><T>common.votingPower</T></span></th>
+                                    <th className="uptime"><i className="material-icons">flash_on</i> <span className="d-none d-sm-inline"><T>validators.uptime</T></span></th>
                                 </tr>
                             </thead>
                             <tbody>{this.state.validators}</tbody>

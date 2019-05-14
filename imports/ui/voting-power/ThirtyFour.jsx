@@ -3,7 +3,9 @@ import {Pie} from 'react-chartjs-2';
 import { Row, Col, Card, CardImg, CardText, CardBody,
     CardTitle, CardSubtitle, Button, Progress, Spinner } from 'reactstrap';
 import numbro from 'numbro';
+import i18n from 'meteor/universe:i18n';
 
+const T = i18n.createComponent();
 export default class ThirtyFour extends Component{
     constructor(props){
         super(props);
@@ -70,7 +72,7 @@ export default class ThirtyFour extends Component{
             if (this.props.statsExist && this.props.stats){
                 return (                    
                     <Card>
-                        <div className="card-header">Min no. of validators hold 34%+ power</div>
+                        <div className="card-header"><T>votingPower.minValidators34</T></div>
                         <CardBody>
                             <Pie data={this.state.data} options={this.state.options} />
                         </CardBody>

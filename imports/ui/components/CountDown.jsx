@@ -8,8 +8,6 @@ export default class CountDown extends Component {
     }
 
     componentDidMount(){
-        console.log("compoinent did mount.");
-        console.log(this.props);
         $('#countdown').FlipClock(this.props.genesisTime,{
             clockFace: 'DailyCounter',
             countdown: true

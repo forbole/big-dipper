@@ -12,7 +12,7 @@ const ValidatorRow = (props) => {
     return <Card body>
         <Row className="validator-info">
             <Col className="d-none d-md-block counter data" xs={2} md={1}>{props.index+1}</Col>
-            <Col xs={12} md={2} className="data"><Link to={"/validator/"+props.validator.address}><Avatar moniker={moniker} identity={identity} address={props.validator.address} list={true} /><span className="moniker">{moniker}</span></Link></Col>
+            <Col xs={12} md={2} className="data"><Link to={"/validator/"+props.validator.operator_address}><Avatar moniker={moniker} identity={identity} address={props.validator.address} list={true} /><span className="moniker">{moniker}</span></Link></Col>
             <Col className="voting-power data" xs={{size:8, offset:2}} md={{size:3, offset:0}} lg={2}><i className="material-icons d-md-none">power</i>  <span>{props.validator.voting_power?numbro(props.validator.voting_power).format('0,0'):0} ({props.validator.voting_power?numbro(props.validator.voting_power/props.totalPower).format('0.00%'):"0.00%"})</span></Col>
             <Col className="self-delegation data" xs={{size:4,offset:2}} md={{size:1,offset:0}}><i className="material-icons d-sm-none">equalizer</i> <span>{props.validator.self_delegation?numbro(props.validator.self_delegation).format('0.00%'):'N/A'}</span></Col>
             {(!props.inactive)?<Col className="commission data" xs={{size:4}} md={{size:1,offset:0}} lg={2}><i className="material-icons d-sm-none">call_split</i> <span>{numbro(props.validator.commission.rate).format('0.00%')}</span></Col>:''}
@@ -27,14 +27,33 @@ const ValidatorRow = (props) => {
 export default class List extends Component{
     constructor(props){
         super(props);
-        this.state = {
-            validators: ""
+
+        if (Meteor.isServer){
+            if (this.props.validators.length > 0 && this.props.chainStatus){
+                this.state = {
+                    validators: this.props.validators.map((validator, i) => {
+                        return <ValidatorRow
+                            key={validator.address}
+                            index={i}
+                            validator={validator}
+                            address={validator.address}
+                            totalPower={this.props.chainStatus.activeVotingPower}
+                            inactive={this.props.inactive}
+                        />
+                    })
+                }
+            }
+        }
+        else{
+            this.state = {
+                validators: ""
+            }    
         }
     }
 
-    componentDidUpdate(prevState){
-        if (this.props.validators != prevState.validators){
-            if (this.props.validators.length > 0){
+    componentDidUpdate(prevProps){
+        if (this.props.validators != prevProps.validators){
+            if (this.props.validators.length > 0 && this.props.chainStatus){
                 this.setState({
                     validators: this.props.validators.map((validator, i) => {
                         return <ValidatorRow
@@ -61,7 +80,6 @@ export default class List extends Component{
             return <Spinner type="grow" color="primary" />
         }
         else{
-            // console.log(this.props);
             return (
                 this.state.validators
             )

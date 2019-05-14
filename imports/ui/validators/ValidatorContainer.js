@@ -6,21 +6,46 @@ import { Chain } from '/imports/api/chain/chain.js';
 import Validator from './Validator.jsx';
 
 export default ValidatorDetailsContainer = withTracker((props) => {
-    const chainHandle = Meteor.subscribe('chain.status');
-    const validatorsHandle = Meteor.subscribe('validator.details', props.address);
-    // const validatorRecordsHandle = Meteor.subscribe('validator_records.uptime', props.address, Meteor.settings.public.uptimeWindow);
-    const loading = !validatorsHandle.ready() && !chainHandle.ready();
+    let chainHandle;
+    let validatorsHandle;
+    let loading = true;
+
+    if (Meteor.isClient){
+        chainHandle = Meteor.subscribe('chain.status');
+        validatorsHandle = Meteor.subscribe('validator.details', props.address);
+        loading = !validatorsHandle.ready() && !chainHandle.ready();
+    
+    }
+
     let options = {address:props.address};
-    if (props.address.indexOf(Meteor.settings.public.bech32PrefixValAddr) != -1){
-        options = {operator_address:props.address}
-    }
-    const validator = Validators.findOne(options);
+
+    let chainStatus;
+    let validatorExist;
+    let validator;
     let validatorRecords;
-    if (validator){
-        validatorRecords = ValidatorRecords.find({address:validator.address}, {sort:{height:-1}}).fetch();
+
+    if (Meteor.isServer || !loading){
+        if (props.address.indexOf(Meteor.settings.public.bech32PrefixValAddr) != -1){
+            options = {operator_address:props.address}
+        }
+        validator = Validators.findOne(options);
+        
+        if (validator){
+            validatorRecords = ValidatorRecords.find({address:validator.address}, {sort:{height:-1}}).fetch();
+        }
+    
+        chainStatus = Chain.findOne({chainId:Meteor.settings.public.chainId});
+        
+        if (Meteor.isServer){
+            loading = false;
+            validatorExist = !!validator && !!validatorRecords && !!chainStatus;
+        }
+        else{
+            validatorExist = !loading && !!validator && !!validatorRecords && !!chainStatus;
+        }
+        
+        // loading = false;
     }
-    const chainStatus = Chain.findOne({chainId:Meteor.settings.public.chainId});
-    const validatorExist = !loading && !!validator && !!validatorRecords && !!chainStatus;
     // console.log(props.state.limit);
     return {
         loading,

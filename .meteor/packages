@@ -28,3 +28,5 @@ dburles:collection-helpers
 http@1.4.2
 reywood:publish-composite
 jquery
+universe:i18n
+server-render
