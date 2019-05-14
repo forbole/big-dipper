@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Tooltip } from 'reactstrap';
 import _ from 'lodash';
-import { Axes, Components, Dataset, Interactions, Plots, Scales } from 'plottable';
 import * as d3 from "d3";
 /*
     TODO:
@@ -13,6 +12,13 @@ import * as d3 from "d3";
     4) publish forked plottable to npm and use that instead
     5) decide to check if new value is null or just let it be no-op
  */
+let Axes, Components, Dataset, Interactions, Plots, Scales;
+
+if (Meteor.isClient) {
+    const plottable = require('plottable');
+    ({ Axes, Components, Dataset, Interactions, Plots, Scales } = plottable);
+}
+
 const getCombinedMap = (newArray, curArray, id) => {
     let combinedMap = {}
     newArray.forEach((entry, i) => combinedMap[entry[id]] = {'newId': i});
@@ -652,7 +658,7 @@ export default class PChart extends Component{
                     let dataset = this.datasets[datasetId];
                     let datasetData = newDatasets[newId];
                     dataset.data(datasetData.data);
-                    dataset.metadata(_.omit(datasetData, data));
+                    dataset.metadata(_.omit(datasetData, 'data'));
                 }
             }
         }
