@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { Row, Col, Progress, Card, Spinner } from 'reactstrap';
+import { Row, Col, Progress, Card, CardHeader, CardBody, Spinner,
+    TabContent, TabPane, Nav, NavLink, NavItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { ProposalStatusIcon, VoteIcon } from '../components/Icons';
 import Account from '../components/Account.jsx';
+import PChart from '../components/Chart.jsx';
 import numbro from 'numbro';
 import { Markdown } from 'react-showdown';
 import { Helmet } from 'react-helmet';
@@ -35,7 +37,8 @@ export default class Proposal extends Component{
             noPercent: 0,
             noWithVetoPercent: 0,
             proposalValid: false,
-            orderDir: -1
+            orderDir: -1,
+            breakDownSelection: 'Bar'
         }
 
         if (Meteor.isServer){
@@ -116,6 +119,79 @@ export default class Proposal extends Component{
         });
     }
 
+    populateChartData() {
+        const optionOrder = {'Yes': 0, 'Abstain': 1, 'No': 2, 'NoWithVeto': 3};
+        let votes = this.props.proposal.votes.sort(
+            (vote1, vote2) => vote2['votingPower'] - vote1['votingPower']
+        ).sort(
+            (vote1, vote2) => optionOrder[vote1.option] - optionOrder[vote2.option]);
+        let maxVotingPower = {'N/A': 1};
+        let votesByOptions = {'All': votes, 'Yes': [], 'Abstain': [], 'No': [], 'NoWithVeto': []};
+
+        let emtpyData = [{'votingPower': 1, option: 'N/A'}];
+        votes.forEach((vote) => votesByOptions[vote.option].push(vote));
+
+        let datasets = [];
+        for (let option in votesByOptions) {
+            let data = votesByOptions[option];
+            maxVotingPower[option] = Math.max.apply(null, data.map((vote) => vote.votingPower));
+            datasets.push({
+                datasetId: option,
+                data: data.length == 0?emtpyData:data,
+                sum: data.reduce((s, x) => x.votingPower + s, 0),
+                maxVotingPower: maxVotingPower
+        })};
+
+        let layout = [['piePlot']];
+        let scales = [{
+            scaleId: 'colorScale',
+            type: 'Color',
+            domain: ['Yes', 'Abstain', 'No', 'NoWithVeto', 'N/A'],
+            range: ['#4CAF50', '#ff9800', '#e51c23', '#9C27B0', '#BDBDBD']
+        }];
+        let isDataEmtpy = votesByOptions[this.state.breakDownSelection].length==0;
+        let components = {
+            plots: [{
+                plotId: 'piePlot',
+                type: 'Pie',
+                sectorValue: {
+                    value: (d, i, ds) => d.votingPower
+                },
+                labelsEnabled: isDataEmtpy,
+                labelFormatter: isDataEmtpy?((value)=>'N/A'):null,
+                attrs: [{
+                    attr: 'fill',
+                    value: (d) => d.option,
+                    scale: 'colorScale'
+                }, {
+                    attr: 'fill-opacity',
+                    value: (d, i, ds) => Math.max(0.1, d.votingPower/ds.metadata().maxVotingPower[d.option])
+                }, {
+                    attr: 'stroke',
+                    value: 'white'
+                }, {
+                    attr: 'stroke-width',
+                    value: '0.5'
+                }],
+                datasets: [this.state.breakDownSelection],
+                // tooltip: (component, point, data) => data.votingPower
+            }]
+        };
+        let config = {
+            height:'300px',
+            width: '300px',
+            margin: 'auto'
+        }
+        return {layout, datasets, scales, components, config};
+    }
+
+    renderPieChart() {
+        if (this.state.breakDownSelection == 'Bar') {
+            return;
+        };
+        return <PChart {...this.populateChartData()}/>
+    }
+
     renderTallyResultDetail(openState, option) {
         let votes = this.props.proposal.votes?this.props.proposal.votes.filter((vote) => vote.option == option):[];
         let orderDir = this.state.orderDir;
@@ -166,6 +242,7 @@ export default class Proposal extends Component{
         else{
             if (this.props.proposalExist && this.state.proposal != ''){
                 // console.log(this.state.proposal);
+                const proposalId = Number(this.props.proposal.proposalId), maxProposalId = Number(this.props.proposalCount);
                 return <div>
                     <Helmet>
                         <title>{this.props.proposal.proposal_content.value.title} | The Big Dipper</title>
@@ -251,14 +328,34 @@ export default class Proposal extends Component{
                                     </Col>
                                 </Row>
                                 {this.state.voteStarted?<Row>
-                                    <Col xs={12}>
-                                        <Progress multi>
-                                            <Progress bar animated color="success" value={this.state.yesPercent}><T>proposals.yes</T> {numbro(this.state.yesPercent).format("0.00")}%</Progress>
-                                            <Progress bar animated color="warning" value={this.state.abstainPercent}><T>proposals.abstain</T> {numbro(this.state.abstainPercent).format("0.00")}%</Progress>
-                                            <Progress bar animated color="danger" value={this.state.noPercent}><T>proposals.no</T> {numbro(this.state.noPercent).format("0.00")}%</Progress>
-                                            <Progress bar animated color="info" value={this.state.noWithVetoPercent}><T>proposals.noWithVeto</T> {numbro(this.state.noWithVetoPercent).format("0.00")}%</Progress>
-                                        </Progress>
-                                    </Col>
+                                    <Col xs={12}><Card>
+                                        <CardHeader>
+                                            <Nav tabs className='card-header-tabs'>
+                                                {['Bar', 'All', 'Yes', 'Abstain', 'No', 'NoWithVeto'].map((option)=>
+                                                    <NavItem key={option}><NavLink className='no-select' active={this.state.breakDownSelection==option}
+                                                        onClick={() => this.setState({breakDownSelection: option})}>
+                                                            {option=='Bar'?'All(Bar)':option}
+                                                    </NavLink></NavItem>
+                                                )}
+                                            </Nav>
+                                        </CardHeader>
+                                        <CardBody>
+                                            <TabContent activeTab={this.state.breakDownSelection=='Bar'?'bar':'pie'}>
+                                                <TabPane tabId="bar">
+                                                    <Progress multi>
+                                                        <Progress bar animated color="success" value={this.state.yesPercent}>><T>proposals.yes</T> {numbro(this.state.yesPercent).format("0.00")}%</Progress>
+                                                        <Progress bar animated color="warning" value={this.state.abstainPercent}><T>proposals.abstain</T> {numbro(this.state.abstainPercent).format("0.00")}%</Progress>
+                                                        <Progress bar animated color="danger" value={this.state.noPercent}><T>proposals.no</T> {numbro(this.state.noPercent).format("0.00")}%</Progress>
+                                                        <Progress bar animated color="info" value={this.state.noWithVetoPercent}><T>proposals.noWithVeto</T> {numbro(this.state.noWithVetoPercent).format("0.00")}%</Progress>
+                                                    </Progress>
+                                                </TabPane>
+                                                <TabPane tabId="pie">
+                                                    {this.renderPieChart()}
+                                                </TabPane>
+
+                                            </TabContent>
+                                        </CardBody>
+                                    </Card></Col>
                                     <Col xs={12}>
                                         <Card body className="tally-info">
                                             <em>
@@ -287,7 +384,11 @@ export default class Proposal extends Component{
                             <Col md={9} className="value">{(this.state.proposal.voting_start_time != '0001-01-01T00:00:00Z')?moment.utc(this.state.proposal.voting_end_time).format("D MMM YYYY, h:mm:ssa z"):'-'}</Col>
                         </Row>
                     </div>
-                    <Link to="/proposals" className="btn btn-primary"><i className="fas fa-caret-left"></i> <T>common.backToList</T></Link>
+                    <Row className='clearfix'>
+                        <Link to={`/proposals/${proposalId-1}`} className={`btn btn-outline-danger float-left ${proposalId-1<=0?"disabled":""}`}><i className="fas fa-caret-left"></i> Prev Proposal </Link>
+                        <Link to="/proposals" className="btn btn-primary" style={{margin: 'auto'}}><i className="fas fa-caret-up"></i> <T>common.backToList</T></Link>
+                        <Link to={`/proposals/${proposalId+1}`} className={`btn btn-outline-danger float-right ${proposalId>=maxProposalId?"disabled":""}`}><i className="fas fa-caret-right"></i> Next Proposal</Link>
+                    </Row>
                 </div>
             }
             else{

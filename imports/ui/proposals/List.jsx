@@ -47,7 +47,7 @@ export default class List extends Component{
                     proposals: this.props.proposals.map((proposal, i) => {
                         return <ProposalRow key={i} index={i} proposal={proposal} />
                     })
-                })    
+                })
             }
         }
     }
@@ -71,7 +71,7 @@ export default class List extends Component{
                     </thead>
                     <tbody>{this.state.proposals}</tbody>
                 </Table>
-            )    
+            )
         }
     }
 }
