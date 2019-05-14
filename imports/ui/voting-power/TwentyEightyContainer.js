@@ -16,7 +16,7 @@ export default TwentyEightyContainer = withTracker((props) => {
         stats = VPDistributions.findOne({});
 
         if (Meteor.isServer){
-            loading = false;
+            // loading = false;
             statsExist = !!stats;
         }
         else{

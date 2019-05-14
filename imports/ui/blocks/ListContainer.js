@@ -21,7 +21,7 @@ export default BlocksContainer = withTracker((props) => {
         blocks = Blockscon.find({}, {sort: {height:-1}}).fetch();
         
         if (Meteor.isServer){
-            loading = false;
+            // loading = false;
             blocksExist = !!blocks;
         }
         else{

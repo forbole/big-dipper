@@ -16,7 +16,7 @@ export default class Home extends Component{
         return <div id="home">
             <Helmet>
                 <title>The Big Dipper | Cosmos Explorer by Forbole</title>
-                <meta name="description" content="The Big Dipper is always free and open. Anyone can use to monitor available Cosmos hub or zones, or port to your own chain built with Cosmos SDK. We welcome any supports to help us improve this project. (ATOM: cosmos1n67vdlaejpj3uzswr9qapeg76zlkusj5k875ma) (BTC: 1HrTuvS83VoUVA79wTifko69ziWTjEXzQS) (ETH: 0xec3AaC5023E0C9E2a76A223E4e312f275c76Cd77)" />
+                <meta name="description" content="Cosmos is a decentralized network of independent parallel blockchains, each powered by BFT consensus algorithms like Tendermint consensus." />
             </Helmet>
             <Row>
                 <Col md={3} xs={12}><h1>{Meteor.settings.public.chainName}</h1></Col>

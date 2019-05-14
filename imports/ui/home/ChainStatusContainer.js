@@ -23,7 +23,7 @@ export default ChainStatusContainer = withTracker((curr) => {
         states = ChainStates.findOne({}, {sort:{height:-1}, limit: 1});
 
         if (Meteor.isServer){
-            loading = false;
+            // loading = false;
             statusExist = !!status && !!states;
         }
         else{
