@@ -126,6 +126,7 @@ export default class Proposal extends Component{
         ).sort(
             (vote1, vote2) => optionOrder[vote1.option] - optionOrder[vote2.option]);
         let maxVotingPower = {'N/A': 1};
+        let totalVotingPower = {'N/A': 0};
         let votesByOptions = {'All': votes, 'Yes': [], 'Abstain': [], 'No': [], 'NoWithVeto': []};
 
         let emtpyData = [{'votingPower': 1, option: 'N/A'}];
@@ -135,10 +136,11 @@ export default class Proposal extends Component{
         for (let option in votesByOptions) {
             let data = votesByOptions[option];
             maxVotingPower[option] = Math.max.apply(null, data.map((vote) => vote.votingPower));
+            totalVotingPower[option] = data.reduce((s, x) => x.votingPower + s, 0);
             datasets.push({
                 datasetId: option,
                 data: data.length == 0?emtpyData:data,
-                sum: data.reduce((s, x) => x.votingPower + s, 0),
+                totalVotingPower: totalVotingPower,
                 maxVotingPower: maxVotingPower
         })};
 
@@ -150,6 +152,15 @@ export default class Proposal extends Component{
             range: ['#4CAF50', '#ff9800', '#e51c23', '#9C27B0', '#BDBDBD']
         }];
         let isDataEmtpy = votesByOptions[this.state.breakDownSelection].length==0;
+        let tooltip = (component, point, data, ds) => {
+            let total = ds.metadata().totalVotingPower['All'];
+            let optionTotal = ds.metadata().totalVotingPower[data.option];
+            let percentage = numbro(data.votingPower/total).format('0.00%');
+            let optionPercentage = numbro(data.votingPower/optionTotal).format('0.00%');
+            return `<p>votingPower: ${data.votingPower}</p>
+                    <p>${percentage} out of all votes</p>
+                    <p>${optionPercentage} out of all ${data.option} votes</p>`;
+        }
         let components = {
             plots: [{
                 plotId: 'piePlot',
@@ -174,7 +185,7 @@ export default class Proposal extends Component{
                     value: '0.5'
                 }],
                 datasets: [this.state.breakDownSelection],
-                // tooltip: (component, point, data) => data.votingPower
+                tooltip: isDataEmtpy?null:tooltip
             }]
         };
         let config = {
