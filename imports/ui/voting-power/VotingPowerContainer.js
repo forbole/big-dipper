@@ -16,7 +16,7 @@ export default VotingPowerContainer = withTracker((props) => {
         stats = Validators.find({},{sort:{voting_power:-1}}).fetch();
 
         if (Meteor.isServer){
-            loading = false;
+            // loading = false;
             statsExist = !!stats;
         }
         else{

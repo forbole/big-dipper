@@ -24,7 +24,7 @@ export default TopValidatorsContainer = withTracker(() => {
         validators = Validators.find({status: 2, jailed:false}).fetch();
 
         if (Meteor.isServer){
-            loading = false;
+            // loading = false;
             validatorsExist = !!validators && !!status;
         }
         else{

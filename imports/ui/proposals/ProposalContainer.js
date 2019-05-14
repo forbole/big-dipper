@@ -26,7 +26,7 @@ export default ProposalContainer = withTracker((props) => {
         chain = Chain.findOne({chainId:Meteor.settings.public.chainId});
 
         if (Meteor.isServer){
-            loading = false;
+            // loading = false;
             proposalExist = !!proposal;
         }
         else{

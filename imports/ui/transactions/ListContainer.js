@@ -16,7 +16,7 @@ export default ValidatorDetailsContainer = withTracker((props) => {
         transactions = Transactions.find({}, {sort:{height:-1}}).fetch();
 
         if (Meteor.isServer){
-            loading = false;
+            // loading = false;
             transactionsExist = !!transactions;
         }
         else{
