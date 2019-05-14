@@ -126,55 +126,55 @@ export default class Chart extends Component{
                     ]
                 },
                 optionsVP: {
-                  scales: {
-                    xAxes: [
-                        {
-                          display: false,
-                        }
-                      ],
-                    yAxes: [{
-                      id: 'VotingPower',
-                      type: 'linear',
-                      position: 'left',
-                      ticks: {
-                        stepSize: 1
-                      }
-                    }, {
-                      id: 'Validators',
-                      type: 'linear',
-                      position: 'right',
-                      ticks: {
-                        stepSize: 1
-                      }
-                    }]
-                  }
+                    scales: {
+                        xAxes: [
+                            {
+                                display: false,
+                            }
+                        ],
+                        yAxes: [{
+                            id: 'VotingPower',
+                            type: 'linear',
+                            position: 'left',
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }, {
+                            id: 'Validators',
+                            type: 'linear',
+                            position: 'right',
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }]
+                    }
                 },
                 optionsTime: {
-                  scales: {
-                    xAxes: [
-                        {
-                          display: false,
-                        }
-                      ],
-                    yAxes: [{
-                      id: 'Validators',
-                      type: 'linear',
-                      position: 'right',
-                      ticks: {
-                        stepSize: 1
-                      }
-                    }, {
-                        id: 'Time',
-                        type: 'linear',
-                        position: 'left',
-                        ticks: {
-                            // Include a dollar sign in the ticks
-                            callback: function(value, index, values) {
-                                return value+'s';
+                    scales: {
+                        xAxes: [
+                            {
+                                display: false,
                             }
-                        }
-                    }]
-                  }
+                        ],
+                        yAxes: [{
+                            id: 'Validators',
+                            type: 'linear',
+                            position: 'right',
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }, {
+                            id: 'Time',
+                            type: 'linear',
+                            position: 'left',
+                            ticks: {
+                            // Include a dollar sign in the ticks
+                                callback: function(value, index, values) {
+                                    return value+'s';
+                                }
+                            }
+                        }]
+                    }
                 }
             })
         }
@@ -188,13 +188,13 @@ export default class Chart extends Component{
             if (this.props.historyExist && (this.props.history.length > 0)){
                 return (
                     <div>
-                    <Card>
-                        <div className="card-header"><T>analytics.blockTimeHistory</T></div>
-                        <CardBody>
-                        <Line data={this.state.timeData} options={this.state.optionsTime}/>
-                        </CardBody>
-                    </Card>
-                    {/* <Card>
+                        <Card>
+                            <div className="card-header"><T>analytics.blockTimeHistory</T></div>
+                            <CardBody>
+                                <Line data={this.state.timeData} options={this.state.optionsTime}/>
+                            </CardBody>
+                        </Card>
+                        {/* <Card>
                         <div className="card-header">Voting Power History</div>
                         <CardBody>
                         <Line data={this.state.vpData}  options={this.state.optionsVP}/>

@@ -9,19 +9,19 @@ const T = i18n.createComponent();
 
 export default class ChainStatus extends React.Component {
     constructor(props) {
-      super(props);
-      this.state = {
-          blockHeight: 0,
-          blockTime: 0,
-          averageBlockTime: 0,
-          votingPower: 0,
-          numValidators: 0,
-          totalNumValidators: 0,
-          avgBlockTimeType: "",
-          avgVotingPowerType: "",
-          blockTimeText: <T>chainStatus.all</T>,
-          votingPowerText: <T>chainStatus.now</T>
-      }
+        super(props);
+        this.state = {
+            blockHeight: 0,
+            blockTime: 0,
+            averageBlockTime: 0,
+            votingPower: 0,
+            numValidators: 0,
+            totalNumValidators: 0,
+            avgBlockTimeType: "",
+            avgVotingPowerType: "",
+            blockTimeText: <T>chainStatus.all</T>,
+            votingPowerText: <T>chainStatus.now</T>
+        }
     }
 
     componentDidUpdate(prevProps){
@@ -37,44 +37,44 @@ export default class ChainStatus extends React.Component {
             })
 
             switch (this.state.avgBlockTimeType){
-                case "":
-                    this.setState({
-                        averageBlockTime: numbro(this.props.status.blockTime/1000).format('0,0.00')
-                    })
-                    break;
-                case "m":
-                    this.setState({
-                        averageBlockTime: numbro(this.props.status.lastMinuteBlockTime/1000).format('0,0.00')
-                    })
-                    break;
-                case "h":
-                    this.setState({
-                        averageBlockTime: numbro(this.props.status.lastHourBlockTime/1000).format('0,0.00')
-                    })
-                    break;
-                case "d":
-                    this.setState({
-                        averageBlockTime: numbro(this.props.status.lastDayBlockTime/1000).format('0,0.00')
-                    })
-                    break;
+            case "":
+                this.setState({
+                    averageBlockTime: numbro(this.props.status.blockTime/1000).format('0,0.00')
+                })
+                break;
+            case "m":
+                this.setState({
+                    averageBlockTime: numbro(this.props.status.lastMinuteBlockTime/1000).format('0,0.00')
+                })
+                break;
+            case "h":
+                this.setState({
+                    averageBlockTime: numbro(this.props.status.lastHourBlockTime/1000).format('0,0.00')
+                })
+                break;
+            case "d":
+                this.setState({
+                    averageBlockTime: numbro(this.props.status.lastDayBlockTime/1000).format('0,0.00')
+                })
+                break;
             }
 
             switch (this.state.avgVotingPowerType){
-                case "":
-                    this.setState({
-                        votingPower: numbro(this.props.status.activeVotingPower).format('0,0.00a'),
-                    });
-                    break;
-                case "h":
-                    this.setState({
-                        votingPower: numbro(this.props.status.lastHourVotingPower).format('0,0.00a'),
-                    });
-                    break;
-                case "d":
-                    this.setState({
-                        votingPower: numbro(this.props.status.lastDayVotingPower).format('0,0.00a'),
-                    });
-                    break;
+            case "":
+                this.setState({
+                    votingPower: numbro(this.props.status.activeVotingPower).format('0,0.00a'),
+                });
+                break;
+            case "h":
+                this.setState({
+                    votingPower: numbro(this.props.status.lastHourVotingPower).format('0,0.00a'),
+                });
+                break;
+            case "d":
+                this.setState({
+                    votingPower: numbro(this.props.status.lastDayVotingPower).format('0,0.00a'),
+                });
+                break;
 
             }
 
@@ -84,34 +84,34 @@ export default class ChainStatus extends React.Component {
     handleSwitchBlockTime = (type,e) => {
         e.preventDefault();
         switch (type){
-            case "":
-                this.setState({
-                    blockTimeText: <T>chainStatus.all</T>,
-                    avgBlockTimeType: "",
-                    averageBlockTime: numbro(this.props.status.blockTime/1000).format('0,0.00')
-                })
-                break;
-            case "m":
-                this.setState({
-                    blockTimeText: "1m",
-                    avgBlockTimeType: "m",
-                    averageBlockTime: numbro(this.props.status.lastMinuteBlockTime/1000).format('0,0.00')
-                })
-                break;
-            case "h":
-                this.setState({
-                    blockTimeText: "1h",
-                    avgBlockTimeType: "h",
-                    averageBlockTime: numbro(this.props.status.lastHourBlockTime/1000).format('0,0.00')
-                })
-                break;
-            case "d":
-                this.setState({
-                    blockTimeText: "1d",
-                    avgBlockTimeType: "d",
-                    averageBlockTime: numbro(this.props.status.lastDayBlockTime/1000).format('0,0.00')
-                })
-                break;
+        case "":
+            this.setState({
+                blockTimeText: <T>chainStatus.all</T>,
+                avgBlockTimeType: "",
+                averageBlockTime: numbro(this.props.status.blockTime/1000).format('0,0.00')
+            })
+            break;
+        case "m":
+            this.setState({
+                blockTimeText: "1m",
+                avgBlockTimeType: "m",
+                averageBlockTime: numbro(this.props.status.lastMinuteBlockTime/1000).format('0,0.00')
+            })
+            break;
+        case "h":
+            this.setState({
+                blockTimeText: "1h",
+                avgBlockTimeType: "h",
+                averageBlockTime: numbro(this.props.status.lastHourBlockTime/1000).format('0,0.00')
+            })
+            break;
+        case "d":
+            this.setState({
+                blockTimeText: "1d",
+                avgBlockTimeType: "d",
+                averageBlockTime: numbro(this.props.status.lastDayBlockTime/1000).format('0,0.00')
+            })
+            break;
 
         }
     }
@@ -119,27 +119,27 @@ export default class ChainStatus extends React.Component {
     handleSwitchVotingPower = (type,e) => {
         e.preventDefault();
         switch (type){
-            case "":
-                this.setState({
-                    votingPowerText: <T>chainStatus.now</T>,
-                    avgVotingPowerType: "",
-                    votingPower: numbro(this.props.status.activeVotingPower).format('0,0.00a')
-                })
-                break;
-            case "h":
-                this.setState({
-                    votingPowerText: "1h",
-                    avgVotingPowerType: "h",
-                    votingPower: numbro(this.props.status.lastHourVotingPower).format('0,0.00a')
-                })
-                break;
-            case "d":
-                this.setState({
-                    votingPowerText: "1d",
-                    avgVotingPowerType: "d",
-                    votingPower: numbro(this.props.status.lastDayVotingPower).format('0,0.00a')
-                })
-                break;
+        case "":
+            this.setState({
+                votingPowerText: <T>chainStatus.now</T>,
+                avgVotingPowerType: "",
+                votingPower: numbro(this.props.status.activeVotingPower).format('0,0.00a')
+            })
+            break;
+        case "h":
+            this.setState({
+                votingPowerText: "1h",
+                avgVotingPowerType: "h",
+                votingPower: numbro(this.props.status.lastHourVotingPower).format('0,0.00a')
+            })
+            break;
+        case "d":
+            this.setState({
+                votingPowerText: "1d",
+                avgVotingPowerType: "d",
+                votingPower: numbro(this.props.status.lastDayVotingPower).format('0,0.00a')
+            })
+            break;
 
         }
     }

@@ -35,79 +35,79 @@ export default ValidatorListContainer = withTracker((props) => {
 
     // console.log(validatorsCond);
     switch(props.priority){
-        case 0:
-            options = {
-                sort:{
-                    "description.moniker": props.monikerDir,
-                    "commission.rate": props.commissionDir,
-                    uptime: props.uptimeDir,
-                    voting_power: props.votingPowerDir,
-                    self_delegation: props.selfDelDir
-                }
+    case 0:
+        options = {
+            sort:{
+                "description.moniker": props.monikerDir,
+                "commission.rate": props.commissionDir,
+                uptime: props.uptimeDir,
+                voting_power: props.votingPowerDir,
+                self_delegation: props.selfDelDir
             }
-            break;
-        case 1:
-            options = {
-                sort:{
-                    voting_power: props.votingPowerDir,
-                    "description.moniker": props.monikerDir,
-                    uptime: props.uptimeDir,
-                    "commission.rate": props.commissionDir,
-                    self_delegation: props.selfDelDir
-                }
+        }
+        break;
+    case 1:
+        options = {
+            sort:{
+                voting_power: props.votingPowerDir,
+                "description.moniker": props.monikerDir,
+                uptime: props.uptimeDir,
+                "commission.rate": props.commissionDir,
+                self_delegation: props.selfDelDir
             }
-            break;
-        case 2:
-            options = {
-                sort:{
-                    uptime: props.uptimeDir,
-                    "description.moniker": props.monikerDir,
-                    voting_power: props.votingPowerDir,
-                    "commission.rate": props.commissionDir,
-                    self_delegation: props.selfDelDir,
-                }
+        }
+        break;
+    case 2:
+        options = {
+            sort:{
+                uptime: props.uptimeDir,
+                "description.moniker": props.monikerDir,
+                voting_power: props.votingPowerDir,
+                "commission.rate": props.commissionDir,
+                self_delegation: props.selfDelDir,
             }
-            break;
-        case 3:
-            options = {
-                sort:{
-                    "commission.rate": props.commissionDir,
-                    "description.moniker": props.monikerDir,
-                    voting_power: props.votingPowerDir,
-                    uptime: props.uptimeDir,
-                    self_delegation: props.selfDelDir
-                }
+        }
+        break;
+    case 3:
+        options = {
+            sort:{
+                "commission.rate": props.commissionDir,
+                "description.moniker": props.monikerDir,
+                voting_power: props.votingPowerDir,
+                uptime: props.uptimeDir,
+                self_delegation: props.selfDelDir
             }
-            break;
-        case 4:
-            options = {
-                sort:{
-                    self_delegation: props.selfDelDir,
-                    "description.moniker": props.monikerDir,
-                    "commission.rate": props.commissionDir,
-                    voting_power: props.votingPowerDir,
-                    uptime: props.uptimeDir,
-                }
+        }
+        break;
+    case 4:
+        options = {
+            sort:{
+                self_delegation: props.selfDelDir,
+                "description.moniker": props.monikerDir,
+                "commission.rate": props.commissionDir,
+                voting_power: props.votingPowerDir,
+                uptime: props.uptimeDir,
             }
-            break;
-        case 5:
-            options = {
-                sort:{
-                    status: props.statusDir,
-                    jailed: props.jailedDir,
-                    "description.moniker": props.monikerDir,
-                }
+        }
+        break;
+    case 5:
+        options = {
+            sort:{
+                status: props.statusDir,
+                jailed: props.jailedDir,
+                "description.moniker": props.monikerDir,
             }
-            break;
-        case 6:
-            options = {
-                sort:{
-                    jailed: props.jailedDir,
-                    status: props.statusDir,
-                    "description.moniker": props.monikerDir,
-                }
+        }
+        break;
+    case 6:
+        options = {
+            sort:{
+                jailed: props.jailedDir,
+                status: props.statusDir,
+                "description.moniker": props.monikerDir,
             }
-            break;
+        }
+        break;
     }
 
     let validators;
@@ -127,7 +127,7 @@ export default ValidatorListContainer = withTracker((props) => {
         }
         
     }
-     // console.log(props.state.limit);
+    // console.log(props.state.limit);
     return {
         loading,
         validatorsExist,

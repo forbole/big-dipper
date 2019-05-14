@@ -103,7 +103,7 @@ export default class Transactions extends Component{
                         width: '85%',
                         zIndex: 4
                     },overlay: {
-                            zIndex: 3
+                        zIndex: 3
                     } }}
                 >
                 </Sidebar>} />

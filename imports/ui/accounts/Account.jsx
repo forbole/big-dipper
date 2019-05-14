@@ -36,7 +36,7 @@ export default class AccountDetails extends Component{
         });
         Meteor.call('accounts.getBalance', this.props.match.params.address, (error, result) => {
             if (error){
-                console.log(error);
+                console.warn(error);
                 this.setState({
                     loading:false
                 })
@@ -67,7 +67,7 @@ export default class AccountDetails extends Component{
                                 unbonding: this.state.unbonding+parseFloat(entry.balance),
                                 total: this.state.total+parseFloat(entry.balance)
                             })
-                        , this})
+                            , this})
                     }, this)
                 }
 

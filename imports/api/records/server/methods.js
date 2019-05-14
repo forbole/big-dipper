@@ -26,42 +26,42 @@ Meteor.methods({
             const bulkMissedStats = MissedBlocksStats.rawCollection().initializeUnorderedBulkOp();
             for (i in validators){
                 // if ((validators[i].address == "B8552EAC0D123A6BF609123047A5181D45EE90B5") || (validators[i].address == "69D99B2C66043ACBEAA8447525C356AFC6408E0C") || (validators[i].address == "35AD7A2CD2FC71711A675830EC1158082273D457")){
-                    let voterAddress = validators[i].address;
-                    let missedRecords = ValidatorRecords.find({
-                        address:voterAddress, 
-                        exists:false, 
-                        $and: [ { height: { $gt: startHeight } }, { height: { $lte: latestHeight } } ] 
-                    }).fetch();
+                let voterAddress = validators[i].address;
+                let missedRecords = ValidatorRecords.find({
+                    address:voterAddress, 
+                    exists:false, 
+                    $and: [ { height: { $gt: startHeight } }, { height: { $lte: latestHeight } } ] 
+                }).fetch();
 
-                    let counts = {};
+                let counts = {};
 
-                    // console.log("missedRecords to process: "+missedRecords.length);
-                    for (b in missedRecords){
-                        let block = Blockscon.findOne({height:missedRecords[b].height});
-                        let existingRecord = MissedBlocksStats.findOne({voter:voterAddress, proposer:block.proposerAddress});
+                // console.log("missedRecords to process: "+missedRecords.length);
+                for (b in missedRecords){
+                    let block = Blockscon.findOne({height:missedRecords[b].height});
+                    let existingRecord = MissedBlocksStats.findOne({voter:voterAddress, proposer:block.proposerAddress});
 
-                        if (typeof counts[block.proposerAddress] === 'undefined'){
-                            if (existingRecord){
-                                counts[block.proposerAddress] = existingRecord.count+1;
-                            }
-                            else{
-                                counts[block.proposerAddress] = 1;
-                            }
+                    if (typeof counts[block.proposerAddress] === 'undefined'){
+                        if (existingRecord){
+                            counts[block.proposerAddress] = existingRecord.count+1;
                         }
                         else{
-                            counts[block.proposerAddress]++;
+                            counts[block.proposerAddress] = 1;
                         }
                     }
-
-                    for (address in counts){
-                        let data = {
-                            voter: voterAddress,
-                            proposer:address,
-                            count: counts[address]
-                        }
-
-                        bulkMissedStats.find({voter:voterAddress, proposer:address}).upsert().updateOne({$set:data});
+                    else{
+                        counts[block.proposerAddress]++;
                     }
+                }
+
+                for (address in counts){
+                    let data = {
+                        voter: voterAddress,
+                        proposer:address,
+                        count: counts[address]
+                    }
+
+                    bulkMissedStats.find({voter:voterAddress, proposer:address}).upsert().updateOne({$set:data});
+                }
                 // }
 
             }
