@@ -343,7 +343,7 @@ export default class Proposal extends Component{
                                             <TabContent activeTab={this.state.breakDownSelection=='Bar'?'bar':'pie'}>
                                                 <TabPane tabId="bar">
                                                     <Progress multi>
-                                                        <Progress bar animated color="success" value={this.state.yesPercent}>><T>proposals.yes</T> {numbro(this.state.yesPercent).format("0.00")}%</Progress>
+                                                        <Progress bar animated color="success" value={this.state.yesPercent}><T>proposals.yes</T> {numbro(this.state.yesPercent).format("0.00")}%</Progress>
                                                         <Progress bar animated color="warning" value={this.state.abstainPercent}><T>proposals.abstain</T> {numbro(this.state.abstainPercent).format("0.00")}%</Progress>
                                                         <Progress bar animated color="danger" value={this.state.noPercent}><T>proposals.no</T> {numbro(this.state.noPercent).format("0.00")}%</Progress>
                                                         <Progress bar animated color="info" value={this.state.noWithVetoPercent}><T>proposals.noWithVeto</T> {numbro(this.state.noWithVetoPercent).format("0.00")}%</Progress>
