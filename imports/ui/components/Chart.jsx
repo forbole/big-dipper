@@ -51,29 +51,29 @@ export default class PChart extends Component{
 
         let scale;
         switch (scaleData.type) {
-            case 'Linear':
-                scale = new Scales.Linear();
-                break;
-            case 'Log':
-                scale = new Scales.Log();
-                break;
-            case 'ModifiedLog':
-                scale = new Scales.ModifiedLog();
-                break;
-            case 'Time':
-                scale = new Scales.Time();
-                break;
-            case 'Category':
-                scale = new Scales.Category();
-                break;
-            case 'Color':
-                scale = new Scales.Color();
-                break;
-            case 'InterpolatedColor':
-                scale = new Scales.InterpolatedColor(scaleData.colorScale);
-                break;
-            default:
-                throw `${scaleData.type} is not a valid type for Scale.`;
+        case 'Linear':
+            scale = new Scales.Linear();
+            break;
+        case 'Log':
+            scale = new Scales.Log();
+            break;
+        case 'ModifiedLog':
+            scale = new Scales.ModifiedLog();
+            break;
+        case 'Time':
+            scale = new Scales.Time();
+            break;
+        case 'Category':
+            scale = new Scales.Category();
+            break;
+        case 'Color':
+            scale = new Scales.Color();
+            break;
+        case 'InterpolatedColor':
+            scale = new Scales.InterpolatedColor(scaleData.colorScale);
+            break;
+        default:
+            throw `${scaleData.type} is not a valid type for Scale.`;
         }
         if (scaleData.domain)
             scale.domain(scaleData.domain);
@@ -140,45 +140,45 @@ export default class PChart extends Component{
 
         let plot;
         switch (plotData.type) {
-            case 'Area':
-                plot = new Plots.Area();
-                break;
-            case 'Bar':
-                plot = new Plots.Bar();
-                break;
-            case 'ClusteredBar':
-                plot = new Plots.ClusteredBar();
-                break;
-            case 'Line':
-                plot = new Plots.Line();
-                break;
-            case 'Pie':
-                plot = new Plots.Pie();
-                break;
-            case 'Rectangle':
-                plot = new Plots.Rectangle();
-                break;
-            case 'Scatter':
-                plot = new Plots.Scatter();
-                break;
-            case 'Segment':
-                plot = new Plots.Segment();
-                break;
-            case 'StackedArea':
-                plot = new Plots.StackedArea();
-                break;
-            case 'StackedBar':
-                plot = new Plots.StackedBar();
-                break;
-            case 'Waterfall':
-                plot = new Plots.Waterfall();
-                break;
-            default:
-                throw `${plotData.type} is not a valid type for Scale.`
+        case 'Area':
+            plot = new Plots.Area();
+            break;
+        case 'Bar':
+            plot = new Plots.Bar();
+            break;
+        case 'ClusteredBar':
+            plot = new Plots.ClusteredBar();
+            break;
+        case 'Line':
+            plot = new Plots.Line();
+            break;
+        case 'Pie':
+            plot = new Plots.Pie();
+            break;
+        case 'Rectangle':
+            plot = new Plots.Rectangle();
+            break;
+        case 'Scatter':
+            plot = new Plots.Scatter();
+            break;
+        case 'Segment':
+            plot = new Plots.Segment();
+            break;
+        case 'StackedArea':
+            plot = new Plots.StackedArea();
+            break;
+        case 'StackedBar':
+            plot = new Plots.StackedBar();
+            break;
+        case 'Waterfall':
+            plot = new Plots.Waterfall();
+            break;
+        default:
+            throw `${plotData.type} is not a valid type for Scale.`
         }
         if (plotData.type === 'Pie' && plotData.sectorValue)
             plot.sectorValue(plotData.sectorValue.value,
-                             this.getScale(plotData.sectorValue.scale));
+                this.getScale(plotData.sectorValue.scale));
         if (plotData.type !== 'Pie' && plotData.x)
             plot.x(plotData.x.value, this.getScale(plotData.x.scale));
         if (plotData.type !== 'Pie' && plotData.y)
@@ -189,7 +189,7 @@ export default class PChart extends Component{
         if (plotData.attrs)
             plotData.attrs.forEach((attrData) => {
                 plot.attr(attrData.attr, attrData.value,
-                          this.getScale(attrData.scale))
+                    this.getScale(attrData.scale))
                 hasFill = hasFill || attrData.attr == 'fill';
                 hasStroke = hasStroke || attrData.attr == 'stroke';
             });
@@ -231,20 +231,20 @@ export default class PChart extends Component{
 
         let axis;
         switch (axisData.type) {
-            case 'Category':
-                axis = new Axes.Category(
-                    this.getScale(axisData.scale), axisData.orientation);
-                break;
-            case 'Numeric':
-                axis = new Axes.Numeric(
-                    this.getScale(axisData.scale), axisData.orientation);
-                break;
-            case 'Time':
-                axis = new Axes.Time(
-                    this.getScale(axisData.scale), axisData.orientation);
-                break;
-            default:
-                throw `${axisData.type} is not a valid type for Axis.`
+        case 'Category':
+            axis = new Axes.Category(
+                this.getScale(axisData.scale), axisData.orientation);
+            break;
+        case 'Numeric':
+            axis = new Axes.Numeric(
+                this.getScale(axisData.scale), axisData.orientation);
+            break;
+        case 'Time':
+            axis = new Axes.Time(
+                this.getScale(axisData.scale), axisData.orientation);
+            break;
+        default:
+            throw `${axisData.type} is not a valid type for Axis.`
         }
         if (axisData.xAlignment)
             axis.xAlignment(axisData.xAlignment);
@@ -266,14 +266,14 @@ export default class PChart extends Component{
 
         let label;
         switch (labelData.type) {
-            case 'Axis':
-                label = new Label.Axis(labelData.text, labelData.angel);
-            case 'Regular':
-                label = new Label.Regular(labelData.text, labelData.angel);
-            case 'Title':
-                label = new Label.Title(labelData.text, labelData.angel);
-            default:
-                throw `${labelData.type} is not a valid type for Label.`;
+        case 'Axis':
+            label = new Label.Axis(labelData.text, labelData.angel);
+        case 'Regular':
+            label = new Label.Regular(labelData.text, labelData.angel);
+        case 'Title':
+            label = new Label.Title(labelData.text, labelData.angel);
+        default:
+            throw `${labelData.type} is not a valid type for Label.`;
         }
         if (labelData.xAlignment)
             label.xAlignment(labelData.xAlignment);
@@ -330,24 +330,24 @@ export default class PChart extends Component{
 
         let legend;
         switch (legendData.type) {
-            case 'Regular':
-                let domain = [];
-                let range = [];
-                if (legendData.domain && legendData.range) {
-                    domain = legendData.domain;
-                    range = legendData.range;
-                } else {
-                    ({domain, range} = getColorDomainRangeFromPlots(legendData.plotIds));
-                }
-                let colorScale = new Scales.Color().domain(domain).range(range);
-                legend = new Components.Legend(colorScale);
-                break;
+        case 'Regular':
+            let domain = [];
+            let range = [];
+            if (legendData.domain && legendData.range) {
+                domain = legendData.domain;
+                range = legendData.range;
+            } else {
+                ({domain, range} = getColorDomainRangeFromPlots(legendData.plotIds));
+            }
+            let colorScale = new Scales.Color().domain(domain).range(range);
+            legend = new Components.Legend(colorScale);
+            break;
 
-            case 'InterpolatedColor':
-                legend = new Components.InterpolatedColorLegend(
-                    this.getScale(legendData.colorScaleId));
-            default:
-                throw `${legendData.type} is not a valid type for Legend.`
+        case 'InterpolatedColor':
+            legend = new Components.InterpolatedColorLegend(
+                this.getScale(legendData.colorScaleId));
+        default:
+            throw `${legendData.type} is not a valid type for Legend.`
         }
 
         if (legendData.xAlignment)
@@ -370,14 +370,14 @@ export default class PChart extends Component{
 
         let group;
         switch (groupData.type) {
-            case 'Regular':
-                group = new Components.Group();
-                break;
-            case 'Plot':
-                group = new Components.PlotGroup();
-                break;
-            default:
-                throw `${groupData.type} is not a valid type for Group.`
+        case 'Regular':
+            group = new Components.Group();
+            break;
+        case 'Plot':
+            group = new Components.PlotGroup();
+            break;
+        default:
+            throw `${groupData.type} is not a valid type for Group.`
         }
         groupData.components.forEach((componentId) =>
             group.append(this.getComponent(componentId)));
@@ -414,14 +414,14 @@ export default class PChart extends Component{
         let interaction = new Interactions.Click();
         for (let action in interactionData) {
             switch (action) {
-                case 'onClick':
-                    interaction.onClick(interactionData[action].bind(null, component, this));
-                    break;
-                case 'onDoubleClick':
-                    interaction.onDoubleClick(interactionData[action].bind(null, component, this));
-                    break;
-                default:
-                    throw `invalid event ${action} for Click Interaction.`;
+            case 'onClick':
+                interaction.onClick(interactionData[action].bind(null, component, this));
+                break;
+            case 'onDoubleClick':
+                interaction.onDoubleClick(interactionData[action].bind(null, component, this));
+                break;
+            default:
+                throw `invalid event ${action} for Click Interaction.`;
             }
         }
         interaction.attachTo(component);
@@ -434,17 +434,17 @@ export default class PChart extends Component{
         let interaction = new Interactions.Drag();
         for (let action in interactionData) {
             switch (action) {
-                case 'onDragStart':
-                    interaction.onDragStart(interactionData[action].bind(null, component, this));
-                    break;
-                case 'onDrag':
-                    interaction.onDrag(interactionData[action].bind(null, component, this));
-                    break;
-                case 'onDragEnd':
-                    interaction.onDragEnd(interactionData[action].bind(null, component, this));
-                    break;
-                default:
-                    throw `invalid event ${action} for Drag Interaction.`;
+            case 'onDragStart':
+                interaction.onDragStart(interactionData[action].bind(null, component, this));
+                break;
+            case 'onDrag':
+                interaction.onDrag(interactionData[action].bind(null, component, this));
+                break;
+            case 'onDragEnd':
+                interaction.onDragEnd(interactionData[action].bind(null, component, this));
+                break;
+            default:
+                throw `invalid event ${action} for Drag Interaction.`;
             }
         }
         interaction.attachTo(component);
@@ -457,14 +457,14 @@ export default class PChart extends Component{
         let interaction = new Interactions.Key();
         for (let action in interactionData) {
             switch (action) {
-                case 'onKeyPress':
-                    interaction.onKeyPress(interactionData[action].bind(null, component, this));
-                    break;
-                case 'onKeyRelease':
-                    interaction.onKeyRelease(interactionData[action].bind(null, component, this));
-                    break;
-                default:
-                    throw `invalid event ${action} for Key Interaction.`;
+            case 'onKeyPress':
+                interaction.onKeyPress(interactionData[action].bind(null, component, this));
+                break;
+            case 'onKeyRelease':
+                interaction.onKeyRelease(interactionData[action].bind(null, component, this));
+                break;
+            default:
+                throw `invalid event ${action} for Key Interaction.`;
             }
         }
         interaction.attachTo(component);
@@ -477,16 +477,16 @@ export default class PChart extends Component{
         let interaction = new Interactions.PanZoom();
         for (let action in interactionData) {
             switch (action) {
-                case 'xScales':
-                    interactionData[action].forEach((scaleId) =>
-                        interaction.addXScale(this.getScale(scaleId)));
-                    break;
-                case 'yScales':
-                    interactionData[action].forEach((scaleId) =>
-                        interaction.addYScale(this.getScale(scaleId)));
-                    break;
-                default:
-                    throw `invalid event ${action} for PanZoom Interaction.`;
+            case 'xScales':
+                interactionData[action].forEach((scaleId) =>
+                    interaction.addXScale(this.getScale(scaleId)));
+                break;
+            case 'yScales':
+                interactionData[action].forEach((scaleId) =>
+                    interaction.addYScale(this.getScale(scaleId)));
+                break;
+            default:
+                throw `invalid event ${action} for PanZoom Interaction.`;
             }
         }
         interaction.attachTo(component);
@@ -499,17 +499,17 @@ export default class PChart extends Component{
         let interaction = new Interactions.Pointer();
         for (let action in interactionData) {
             switch (action) {
-                case 'onPointerEnter':
-                    interaction.onPointerEnter(interactionData[action].bind(null, component, this));
-                    break;
-                case 'onPointerExit':
-                    interaction.onPointerExit(interactionData[action].bind(null, component, this));
-                    break;
-                case 'onPointerMove':
-                    interaction.onPointerMove(interactionData[action].bind(null, component, this));
-                    break;
-                default:
-                    throw `invalid event ${action} for Pointer Interaction.`;
+            case 'onPointerEnter':
+                interaction.onPointerEnter(interactionData[action].bind(null, component, this));
+                break;
+            case 'onPointerExit':
+                interaction.onPointerExit(interactionData[action].bind(null, component, this));
+                break;
+            case 'onPointerMove':
+                interaction.onPointerMove(interactionData[action].bind(null, component, this));
+                break;
+            default:
+                throw `invalid event ${action} for Pointer Interaction.`;
             }
         }
         interaction.attachTo(component);
@@ -521,23 +521,23 @@ export default class PChart extends Component{
     loadInteractions(interactions, component, componentId) {
         for (let interaction in interactions) {
             switch (interaction) {
-                case 'Click':
-                    this.attachClickInteraction(interactions[interaction], component);
-                    break;
-                case 'Drag':
-                    this.attachDragInteraction(interactions[interaction], component);
-                    break;
-                case 'Key':
-                    this.attachKeyInteraction(interactions[interaction], component);
-                    break;
-                case 'PanZoom':
-                    this.attachPanZoomInteraction(interactions[interaction], component);
-                    break;
-                case 'Pointer':
-                    this.attachPointerInteraction(interactions[interaction], component);
-                    break;
-                default:
-                    throw `unrecognized interaction ${interaction}.`
+            case 'Click':
+                this.attachClickInteraction(interactions[interaction], component);
+                break;
+            case 'Drag':
+                this.attachDragInteraction(interactions[interaction], component);
+                break;
+            case 'Key':
+                this.attachKeyInteraction(interactions[interaction], component);
+                break;
+            case 'PanZoom':
+                this.attachPanZoomInteraction(interactions[interaction], component);
+                break;
+            case 'Pointer':
+                this.attachPointerInteraction(interactions[interaction], component);
+                break;
+            default:
+                throw `unrecognized interaction ${interaction}.`
             }
 
         };

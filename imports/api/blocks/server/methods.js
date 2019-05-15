@@ -70,7 +70,7 @@ Meteor.methods({
                     }
                 }
             }
-        }];
+            }];
         // let result = aggregateQuery(pipeline, { cursor: {} });
 
         return Promise.await(collection.aggregate(pipeline).toArray());
@@ -375,16 +375,16 @@ Meteor.methods({
                                     });
 
                                     // Meteor.call('runCode', command, function(error, result){
-                                        // validator.address = result.match(/\s[0-9A-F]{40}$/igm);
-                                        // validator.address = validator.address[0].trim();
-                                        // validator.hex = result.match(/\s[0-9A-F]{64}$/igm);
-                                        // validator.hex = validator.hex[0].trim();
-                                        // validator.cosmosaccpub = result.match(/cosmospub.*$/igm);
-                                        // validator.cosmosaccpub = validator.cosmosaccpub[0].trim();
-                                        // validator.operator_pubkey = result.match(/cosmosvaloperpub.*$/igm);
-                                        // validator.operator_pubkey = validator.operator_pubkey[0].trim();
-                                        // validator.consensus_pubkey = result.match(/cosmosvalconspub.*$/igm);
-                                        // validator.consensus_pubkey = validator.consensus_pubkey[0].trim();
+                                    // validator.address = result.match(/\s[0-9A-F]{40}$/igm);
+                                    // validator.address = validator.address[0].trim();
+                                    // validator.hex = result.match(/\s[0-9A-F]{64}$/igm);
+                                    // validator.hex = validator.hex[0].trim();
+                                    // validator.cosmosaccpub = result.match(/cosmospub.*$/igm);
+                                    // validator.cosmosaccpub = validator.cosmosaccpub[0].trim();
+                                    // validator.operator_pubkey = result.match(/cosmosvaloperpub.*$/igm);
+                                    // validator.operator_pubkey = validator.operator_pubkey[0].trim();
+                                    // validator.consensus_pubkey = result.match(/cosmosvalconspub.*$/igm);
+                                    // validator.consensus_pubkey = validator.consensus_pubkey[0].trim();
 
                                         
 

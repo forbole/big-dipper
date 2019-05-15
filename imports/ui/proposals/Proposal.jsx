@@ -140,7 +140,7 @@ export default class Proposal extends Component{
                 data: data.length == 0?emtpyData:data,
                 sum: data.reduce((s, x) => x.votingPower + s, 0),
                 maxVotingPower: maxVotingPower
-        })};
+            })};
 
         let layout = [['piePlot']];
         let scales = [{
@@ -198,41 +198,41 @@ export default class Proposal extends Component{
         votes = votes.sort((vote1, vote2) => (vote1['votingPower'] - vote2['votingPower']) * orderDir);
 
         return <Result className="tally-result-detail" pose={this.state.open === openState ? 'open' : 'closed'}>
-                <Card className='tally-result-table'>
-                    {(votes.length)?<Card body><Row className="header text-nowrap">
-                        <Col className="d-none d-md-block counter" md={1}>&nbsp;</Col>
-                        <Col className="moniker" md={4}>
-                            <i className="material-icons">perm_contact_calendar</i>
-                            <span className="d-inline-block d-md-none d-lg-inline-block"><T>common.voter</T></span>
+            <Card className='tally-result-table'>
+                {(votes.length)?<Card body><Row className="header text-nowrap">
+                    <Col className="d-none d-md-block counter" md={1}>&nbsp;</Col>
+                    <Col className="moniker" md={4}>
+                        <i className="material-icons">perm_contact_calendar</i>
+                        <span className="d-inline-block d-md-none d-lg-inline-block"><T>common.voter</T></span>
+                    </Col>
+                    <Col className="voting-power" md={4} onClick={(e) => this.toggleDir(e)}>
+                        <i className="material-icons">power</i>
+                        <span className="d-inline-block d-md-none d-lg-inline-block"><T>common.votingPower</T></span>
+                        <i className="material-icons"> {(this.state.orderDir == 1)?'arrow_drop_up':'arrow_drop_down'}</i>
+                    </Col>
+                    <Col className="voting-power-percent" md={3}>
+                        <i className="material-icons">equalizer</i>
+                        <span className="d-inline-block d-md-none d-lg-inline-block"><T>common.votingPower</T> %</span>
+                    </Col>
+                </Row></Card>:""}
+                {votes.map((vote, i) =>
+                    <Card body key={i}><Row className='voter-info'>
+                        <Col className="d-none d-md-block counter data" md={1}>{i+1}</Col>
+                        <Col className="moniker data" md={4}>
+                            <Account address={vote.voter} />
                         </Col>
-                        <Col className="voting-power" md={4} onClick={(e) => this.toggleDir(e)}>
-                            <i className="material-icons">power</i>
-                            <span className="d-inline-block d-md-none d-lg-inline-block"><T>common.votingPower</T></span>
-                            <i className="material-icons"> {(this.state.orderDir == 1)?'arrow_drop_up':'arrow_drop_down'}</i>
+                        <Col className="voting-power data" md={4}>
+                            <i className="material-icons d-md-none">power</i>
+                            {(vote.votingPower!==undefined)?numbro(vote.votingPower).format('0,0.00'):""}
                         </Col>
-                        <Col className="voting-power-percent" md={3}>
-                            <i className="material-icons">equalizer</i>
-                            <span className="d-inline-block d-md-none d-lg-inline-block"><T>common.votingPower</T> %</span>
+                        <Col className="voting-power-percent data" md={3}>
+                            <i className="material-icons d-md-none">equalizer</i>
+                            {(vote.votingPower!==undefined)?numbro(vote.votingPower/this.state.totalVotes).format('0,0.00%'):""}
                         </Col>
-                    </Row></Card>:""}
-                    {votes.map((vote, i) =>
-                        <Card body key={i}><Row className='voter-info'>
-                            <Col className="d-none d-md-block counter data" md={1}>{i+1}</Col>
-                            <Col className="moniker data" md={4}>
-                                <Account address={vote.voter} />
-                            </Col>
-                            <Col className="voting-power data" md={4}>
-                                <i className="material-icons d-md-none">power</i>
-                                {(vote.votingPower!==undefined)?numbro(vote.votingPower).format('0,0.00'):""}
-                            </Col>
-                            <Col className="voting-power-percent data" md={3}>
-                                <i className="material-icons d-md-none">equalizer</i>
-                                {(vote.votingPower!==undefined)?numbro(vote.votingPower/this.state.totalVotes).format('0,0.00%'):""}
-                            </Col>
-                        </Row></Card>
-                    )}
-                </Card>
-            </Result>
+                    </Row></Card>
+                )}
+            </Card>
+        </Result>
     }
 
     render(){
@@ -334,7 +334,7 @@ export default class Proposal extends Component{
                                                 {['Bar', 'All', 'Yes', 'Abstain', 'No', 'NoWithVeto'].map((option)=>
                                                     <NavItem key={option}><NavLink className='no-select' active={this.state.breakDownSelection==option}
                                                         onClick={() => this.setState({breakDownSelection: option})}>
-                                                            {option=='Bar'?'All(Bar)':option}
+                                                        {option=='Bar'?'All(Bar)':option}
                                                     </NavLink></NavItem>
                                                 )}
                                             </Nav>

@@ -7,7 +7,7 @@ import Block from '../components/Block.jsx';
 import Avatar from '../components/Avatar.jsx';
 import PowerHistory from '../components/PowerHistory.jsx';
 import { Badge, Row, Col, Card,
-     CardBody, Spinner, Nav, NavItem, NavLink } from 'reactstrap';
+    CardBody, Spinner, Nav, NavItem, NavLink } from 'reactstrap';
 import KeybaseCheck from '../components/KeybaseCheck.jsx';
 import ValidatorDelegations from './Delegations.jsx';
 import ValidatorTransactions from '../components/TransactionsContainer.js';
@@ -18,7 +18,7 @@ const T = i18n.createComponent();
 
 addhttp = (url) => {
     if (!/^(f|ht)tps?:\/\//i.test(url)) {
-       url = "http://" + url;
+        url = "http://" + url;
     }
     return url;
 }
@@ -64,7 +64,7 @@ export default class Validator extends Component{
                 else{
                     Meteor.call('Validators.findCreateValidatorTime', this.props.validator.delegator_address, (error, result) => {
                         if (error){
-                            console.log(error);
+                            console.warn(error);
                         }
                         else{
                             if (result){
@@ -101,7 +101,7 @@ export default class Validator extends Component{
                                 time={history.block_time}
                                 height={history.height}
                                 address={this.props.validator.operator_address}
-                                />
+                            />
                         })
                     })
                 }
@@ -191,9 +191,9 @@ export default class Validator extends Component{
                                     <Col sm={8} className="value">{numbro(this.props.validator.tokens).format('0,0.00')}</Col>
                                     {(this.props.validator.jailed)?<Col xs={12} >
                                         <Row><Col md={4} className="label"><T>validators.unbondingHeight</T></Col>
-                                        <Col md={8} className="value">{numbro(this.props.validator.unbonding_height).format('0,0')}</Col>
-                                        <Col md={4} className="label"><T>validators.unbondingTime</T></Col>
-                                        <Col md={8} className="value">{moment.utc(this.props.validator.unbonding_time).format("D MMM YYYY, h:mm:ssa z")}</Col>
+                                            <Col md={8} className="value">{numbro(this.props.validator.unbonding_height).format('0,0')}</Col>
+                                            <Col md={4} className="label"><T>validators.unbondingTime</T></Col>
+                                            <Col md={8} className="value">{moment.utc(this.props.validator.unbonding_time).format("D MMM YYYY, h:mm:ssa z")}</Col>
                                         </Row></Col>:''}
                                 </Row>
                             </CardBody>
@@ -214,7 +214,7 @@ export default class Validator extends Component{
                             <Route path="/(validator|validators)/:address/delegations" render={() => <ValidatorDelegations address={this.props.validator.operator_address} tokens={this.props.validator.tokens} shares={this.props.validator.delegator_shares} />} />
                             <Route path="/(validator|validators)/:address/transactions" render={() => <ValidatorTransactions validator={this.props.validator.operator_address} delegator={this.props.validator.delegator_address} limit={100}/>} />
                         </Switch>
-                        
+
                         <Link to="/validators" className="btn btn-link"><i className="fas fa-caret-left"></i> <T>common.backToList</T></Link>
                     </Col>
                 </Row>

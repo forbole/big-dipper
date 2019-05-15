@@ -10,15 +10,15 @@ const T = i18n.createComponent();
 
 const ProposalRow = (props) => {
     return <tr>
-    <th className="d-none d-sm-table-cell counter">{props.proposal.proposalId}</th>
-    <td className="title"><Link to={"/proposals/"+props.proposal.proposalId}>{props.proposal.proposal_content.value.title}</Link></td>
-    <td className="status"><ProposalStatusIcon status={props.proposal.proposal_status}/><span className="d-none d-sm-inline"> {props.proposal.proposal_status.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</span></td>
-    <td className="submit-block">{moment.utc(props.proposal.submit_time).format("D MMM YYYY, h:mm:ssa")}</td>
-    <td className="voting-start">{(props.proposal.voting_start_time != "0001-01-01T00:00:00Z")?moment.utc(props.proposal.voting_start_time).format("D MMM YYYY, h:mm:ssa"):'Not started'}</td>
-    <td className="deposit text-right">{props.proposal.total_deposit?props.proposal.total_deposit.map((deposit, i) => {
-        return <div key={i}>{numbro(deposit.amount).format('0,0')} {deposit.denom}</div>
-    }):'0'} </td>
-</tr>
+        <th className="d-none d-sm-table-cell counter">{props.proposal.proposalId}</th>
+        <td className="title"><Link to={"/proposals/"+props.proposal.proposalId}>{props.proposal.proposal_content.value.title}</Link></td>
+        <td className="status"><ProposalStatusIcon status={props.proposal.proposal_status}/><span className="d-none d-sm-inline"> {props.proposal.proposal_status.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</span></td>
+        <td className="submit-block">{moment.utc(props.proposal.submit_time).format("D MMM YYYY, h:mm:ssa")}</td>
+        <td className="voting-start">{(props.proposal.voting_start_time != "0001-01-01T00:00:00Z")?moment.utc(props.proposal.voting_start_time).format("D MMM YYYY, h:mm:ssa"):'Not started'}</td>
+        <td className="deposit text-right">{props.proposal.total_deposit?props.proposal.total_deposit.map((deposit, i) => {
+            return <div key={i}>{numbro(deposit.amount).format('0,0')} {deposit.denom}</div>
+        }):'0'} </td>
+    </tr>
 }
 
 export default class List extends Component{

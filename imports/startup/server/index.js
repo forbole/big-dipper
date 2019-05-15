@@ -22,7 +22,7 @@ onPageLoad(sink => {
         <StaticRouter location={sink.request.url} context={context}>
             <App />
         </StaticRouter>
-      ));
+    ));
 
     sink.renderIntoElementById('app', html);
 
