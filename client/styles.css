@@ -316,7 +316,7 @@ div#countdown {
     cursor: pointer;
 }
 
-.proposal .card-header-tabs .nav-link.active:not(:hover), .nav-link.active:focus:not(:hover) {
+.proposal .card-header-tabs .nav-link.active:not(:hover), .proposal .card-header-tabs .nav-link.active:focus:not(:hover) {
     border: none;
     -webkit-box-shadow: initial;
     box-shadow: initial;
