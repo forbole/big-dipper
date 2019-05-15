@@ -54,8 +54,8 @@ export default class Transaction extends Component{
                                 <Col md={8} className="value"><Link to={"/blocks/"+tx.height}>{numbro(tx.height).format("0,0")}</Link> ({moment.utc(tx.block().time).format("D MMM YYYY, h:mm:ssa z")})</Col>
                                 <Col md={4} className="label"><T>transactions.fee</T></Col>
                                 <Col md={8} className="value">{tx.tx.value.fee.amount?tx.tx.value.fee.amount.map((fee,i) => {
-                                        return <span className="text-nowrap" key={i}>{numbro(fee.amount).format(0,0)} {fee.denom}</span>
-                                    }):<span>No fee</span>}</Col>
+                                    return <span className="text-nowrap" key={i}>{numbro(fee.amount).format(0,0)} {fee.denom}</span>
+                                }):<span>No fee</span>}</Col>
                                 <Col md={4} className="label"><T>transactions.gasUsedWanted</T></Col>
                                 <Col md={8} className="value">{numbro(tx.gas_used).format("0,0")} / {numbro(tx.gas_wanted).format("0,0")}</Col>
                                 <Col md={4} className="label"><T>transactions.memo</T></Col>
@@ -65,10 +65,10 @@ export default class Transaction extends Component{
                     </Card>
                     <Card>
                         <div className="card-header"><T>transactions.activities</T></div>
-                        </Card>
-                        {(tx.tx.value.msg && tx.tx.value.msg.length >0)?tx.tx.value.msg.map((msg,i) => {
-            return <Card body key={i}><Activities msg={msg} invalid={(!!tx.code)} tags={tx.tags} /></Card>
-        }):''}
+                    </Card>
+                    {(tx.tx.value.msg && tx.tx.value.msg.length >0)?tx.tx.value.msg.map((msg,i) => {
+                        return <Card body key={i}><Activities msg={msg} invalid={(!!tx.code)} tags={tx.tags} /></Card>
+                    }):''}
                 </Container>
             }
             else{

@@ -20,7 +20,7 @@ export default class AccountDelegations extends Component{
     updateDelegations = () =>{
         Meteor.call('accounts.getAllDelegations', this.props.address, (error, result) => {
             if (error){
-                console.log(error);
+                console.warn(error);
             }
             else{
                 this.setState({
@@ -37,9 +37,9 @@ export default class AccountDelegations extends Component{
                         numDelegations:delegations.length,
                         delegations: delegations.map((d, i) => {
                             return <Row key={i} className="delegation-info">
-                                    <Col xs={6} md={8} className="text-nowrap overflow-auto"><Account address={d.validator_address} /></Col>
-                                    <Col xs={6} md={4}>{numbro(d.shares).format("0,0")}</Col>
-                                </Row>
+                                <Col xs={6} md={8} className="text-nowrap overflow-auto"><Account address={d.validator_address} /></Col>
+                                <Col xs={6} md={4}>{numbro(d.shares).format("0,0")}</Col>
+                            </Row>
                         })
                     })
                 }

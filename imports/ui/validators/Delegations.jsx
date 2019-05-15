@@ -20,7 +20,7 @@ export default class ValidatorDelegations extends Component{
     componentDidMount(){
         Meteor.call('Validators.getAllDelegations', this.props.address, (error, result) => {
             if (error){
-                console.log(error);
+                console.warn(error);
             }
 
             if (result){
@@ -36,9 +36,9 @@ export default class ValidatorDelegations extends Component{
                     numDelegatiors:delegations.length,
                     delegations: delegations.map((d, i) => {
                         return <Row key={i} className="delegation-info">
-                                <Col md={8} className="text-nowrap overflow-auto"><Account address={d.delegator_address} /></Col>
-                                <Col md={4}>{numbro(d.shares/this.props.shares*this.props.tokens/Meteor.settings.public.stakingFraction).format("0,0.00")} {Meteor.settings.public.stakingDenom}s</Col>
-                            </Row>
+                            <Col md={8} className="text-nowrap overflow-auto"><Account address={d.delegator_address} /></Col>
+                            <Col md={4}>{numbro(d.shares/this.props.shares*this.props.tokens/Meteor.settings.public.stakingFraction).format("0,0.00")} {Meteor.settings.public.stakingDenom}s</Col>
+                        </Row>
                     })
                 })
             }

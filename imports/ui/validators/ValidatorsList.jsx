@@ -90,7 +90,7 @@ export default class Validators extends Component{
                 </NavItem>
                 <NavItem>
                     <NavLink tag={Link} to="/validators/inactive"
-                             active={(this.props.match.url.indexOf("inactive")>0)}>
+                        active={(this.props.match.url.indexOf("inactive")>0)}>
                         <T>validators.navInactive</T>
                     </NavLink>
                 </NavItem>
@@ -112,24 +112,24 @@ export default class Validators extends Component{
                         </Row>
                     </Card>
                     {(this.props.inactive)?<List
-                            inactive={this.props.inactive}
-                            monikerDir={this.state.monikerDir}
-                            votingPowerDir={this.state.votingPowerDir}
-                            uptimeDir={this.state.uptimeDir}
-                            commissionDir={this.state.commissionDir}
-                            selfDelDir={this.state.selfDelDir}
-                            statusDir={this.state.statusDir}
-                            jailedDir={this.state.jailedDir}
-                            priority={this.state.priority}
-                            status={this.props.status}
-                        />:<List
-                            monikerDir={this.state.monikerDir}
-                            votingPowerDir={this.state.votingPowerDir}
-                            uptimeDir={this.state.uptimeDir}
-                            commissionDir={this.state.commissionDir}
-                            selfDelDir={this.state.selfDelDir}
-                            priority={this.state.priority}
-                        />}
+                        inactive={this.props.inactive}
+                        monikerDir={this.state.monikerDir}
+                        votingPowerDir={this.state.votingPowerDir}
+                        uptimeDir={this.state.uptimeDir}
+                        commissionDir={this.state.commissionDir}
+                        selfDelDir={this.state.selfDelDir}
+                        statusDir={this.state.statusDir}
+                        jailedDir={this.state.jailedDir}
+                        priority={this.state.priority}
+                        status={this.props.status}
+                    />:<List
+                        monikerDir={this.state.monikerDir}
+                        votingPowerDir={this.state.votingPowerDir}
+                        uptimeDir={this.state.uptimeDir}
+                        commissionDir={this.state.commissionDir}
+                        selfDelDir={this.state.selfDelDir}
+                        priority={this.state.priority}
+                    />}
                 </Col>
             </Row>
         </div>

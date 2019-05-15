@@ -54,7 +54,7 @@ span#network-nav{
     font-size: 1rem !important;
 }
 
-.dropdown-item.disabled a, 
+.dropdown-item.disabled a,
 .dropdown-item:disabled a{
     color: #666;
 }
@@ -316,7 +316,7 @@ div#countdown {
     cursor: pointer;
 }
 
-.proposal .card-header-tabs .nav-link.active:not(:hover), .nav-link.active:focus:not(:hover) {
+.proposal .card-header-tabs .nav-link.active:not(:hover), .proposal .card-header-tabs .nav-link.active:focus:not(:hover) {
     border: none;
     -webkit-box-shadow: initial;
     box-shadow: initial;
@@ -682,4 +682,86 @@ div#voting-power-dist .card{
         margin-left: 2.5em;
     }
 
+}
+
+.plottable .tooltip {
+  opacity: 0.9;
+}
+
+.plottable .tooltip .tooltip-inner p{
+  margin: 0;
+}
+
+.tooltip .tooltip-arrow {
+  position: absolute;
+  display: block;
+  width: 0.8rem;
+  height: 0.4rem;
+}
+
+.tooltip .tooltip-arrow::before {
+  position: absolute;
+  content: "";
+  border-color: transparent;
+  border-style: solid;
+}
+
+.bs-tooltip-top, .bs-tooltip-auto[x-placement^="top"] {
+  padding: 0.4rem 0;
+}
+
+.bs-tooltip-top .tooltip-arrow, .bs-tooltip-auto[x-placement^="top"] .tooltip-arrow {
+  bottom: 0;
+}
+
+.bs-tooltip-top .tooltip-arrow::before, .bs-tooltip-auto[x-placement^="top"] .tooltip-arrow::before {
+  top: 0;
+  border-width: 0.4rem 0.4rem 0;
+  border-top-color: #444;
+}
+
+.bs-tooltip-right, .bs-tooltip-auto[x-placement^="right"] {
+  padding: 0 0.4rem;
+}
+
+.bs-tooltip-right .tooltip-arrow, .bs-tooltip-auto[x-placement^="right"] .tooltip-arrow {
+  left: 0;
+  width: 0.4rem;
+  height: 0.8rem;
+}
+
+.bs-tooltip-right .tooltip-arrow::before, .bs-tooltip-auto[x-placement^="right"] .tooltip-arrow::before {
+  right: 0;
+  border-width: 0.4rem 0.4rem 0.4rem 0;
+  border-right-color: #444;
+}
+
+.bs-tooltip-bottom, .bs-tooltip-auto[x-placement^="bottom"] {
+  padding: 0.4rem 0;
+}
+
+.bs-tooltip-bottom .tooltip-arrow, .bs-tooltip-auto[x-placement^="bottom"] .tooltip-arrow {
+  top: 0;
+}
+
+.bs-tooltip-bottom .tooltip-arrow::before, .bs-tooltip-auto[x-placement^="bottom"] .tooltip-arrow::before {
+  bottom: 0;
+  border-width: 0 0.4rem 0.4rem;
+  border-bottom-color: #444;
+}
+
+.bs-tooltip-left, .bs-tooltip-auto[x-placement^="left"] {
+  padding: 0 0.4rem;
+}
+
+.bs-tooltip-left .tooltip-arrow, .bs-tooltip-auto[x-placement^="left"] .tooltip-arrow {
+  right: 0;
+  width: 0.4rem;
+  height: 0.8rem;
+}
+
+.bs-tooltip-left .tooltip-arrow::before, .bs-tooltip-auto[x-placement^="left"] .tooltip-arrow::before {
+  left: 0;
+  border-width: 0.4rem 0 0.4rem 0.4rem;
+  border-left-color: #444;
 }

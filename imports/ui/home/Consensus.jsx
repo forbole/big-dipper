@@ -50,42 +50,42 @@ export default class Consensus extends Component{
                 return (
                     <div>
                         {(this.state.chainStopped)?<Card body inverse color="danger">
-                                <span><T _purify={false} time={moment(this.props.consensus.latestBlockTime).fromNow(true)}>chainStatus.stopWarning</T></span>             
+                            <span><T _purify={false} time={moment(this.props.consensus.latestBlockTime).fromNow(true)}>chainStatus.stopWarning</T></span>             
                         </Card>:''}
                         <Card className="status consensus-state">
                             <div className="card-header"><T>consensus.consensusState</T></div>
                             <CardBody>
-                            <Row>
-                                <Col md={8} lg={6}>
-                                    <Row>
-                                        <Col md={2}>
-                                            <Row>
-                                                <Col md={12} xs={4}><CardSubtitle><T>common.height</T></CardSubtitle></Col>
-                                                <Col md={12} xs={8}><span className="value">{numbro(this.props.consensus.votingHeight).format('0,0')}</span></Col>
-                                            </Row>
-                                        </Col>
-                                        <Col md={2}>
-                                            <Row>
-                                                <Col md={12} xs={4}><CardSubtitle><T>consensus.round</T></CardSubtitle></Col>
-                                                <Col md={12} xs={8}><span className="value">{this.props.consensus.votingRound}</span></Col>
-                                            </Row>
-                                        </Col>
-                                        <Col md={2}>
-                                            <Row>
-                                                <Col md={12} xs={4}><CardSubtitle><T>consensus.step</T></CardSubtitle></Col>
-                                                <Col md={12} xs={8}><span className="value">{this.props.consensus.votingStep}</span></Col>
-                                            </Row>
-                                        </Col>
-                                        <Col md={6}>
-                                            <Row>
-                                                <Col md={12} xs={4}><CardSubtitle><T>blocks.proposer</T></CardSubtitle></Col>
-                                                <Col md={12} xs={8}><span className="value"><Link to={"/validator/"+this.props.consensus.proposerAddress} ><Avatar moniker={moniker} identity={identity} address={this.props.consensus.proposerAddress} list={true} />{moniker}</Link></span></Col>
-                                            </Row>
-                                        </Col>
-                                    </Row>                            
-                                </Col>
-                                <Col md={4} lg={6}><CardSubtitle><T>common.votingPower</T></CardSubtitle><Progress animated value={this.props.consensus.votedPower} className="value">{this.props.consensus.votedPower}%</Progress></Col>
-                            </Row>
+                                <Row>
+                                    <Col md={8} lg={6}>
+                                        <Row>
+                                            <Col md={2}>
+                                                <Row>
+                                                    <Col md={12} xs={4}><CardSubtitle><T>common.height</T></CardSubtitle></Col>
+                                                    <Col md={12} xs={8}><span className="value">{numbro(this.props.consensus.votingHeight).format('0,0')}</span></Col>
+                                                </Row>
+                                            </Col>
+                                            <Col md={2}>
+                                                <Row>
+                                                    <Col md={12} xs={4}><CardSubtitle><T>consensus.round</T></CardSubtitle></Col>
+                                                    <Col md={12} xs={8}><span className="value">{this.props.consensus.votingRound}</span></Col>
+                                                </Row>
+                                            </Col>
+                                            <Col md={2}>
+                                                <Row>
+                                                    <Col md={12} xs={4}><CardSubtitle><T>consensus.step</T></CardSubtitle></Col>
+                                                    <Col md={12} xs={8}><span className="value">{this.props.consensus.votingStep}</span></Col>
+                                                </Row>
+                                            </Col>
+                                            <Col md={6}>
+                                                <Row>
+                                                    <Col md={12} xs={4}><CardSubtitle><T>blocks.proposer</T></CardSubtitle></Col>
+                                                    <Col md={12} xs={8}><span className="value"><Link to={"/validator/"+this.props.consensus.proposerAddress} ><Avatar moniker={moniker} identity={identity} address={this.props.consensus.proposerAddress} list={true} />{moniker}</Link></span></Col>
+                                                </Row>
+                                            </Col>
+                                        </Row>                            
+                                    </Col>
+                                    <Col md={4} lg={6}><CardSubtitle><T>common.votingPower</T></CardSubtitle><Progress animated value={this.props.consensus.votedPower} className="value">{this.props.consensus.votedPower}%</Progress></Col>
+                                </Row>
                             </CardBody>
                         </Card>
                     </div>);
