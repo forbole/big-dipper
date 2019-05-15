@@ -113,7 +113,7 @@ Meteor.methods({
 
             let validatorSet;
             // get latest validator candidate information
-            url = LCD+'/stake/validators';
+            url = LCD+'/stake/validators?page=1&size=300';
 
             try{
                 response = HTTP.get(url);
@@ -123,15 +123,15 @@ Meteor.methods({
                 console.log(e);
             }
 
-            // url = LCD+'/stake/validators?status=unbonding';
+            url = LCD+'/stake/validators?page=2&size=300';
 
-            // try{
-            //     response = HTTP.get(url);
-            //     [...validatorSet] = [...validatorSet, ...JSON.parse(response.content)];
-            // }
-            // catch(e){
-            //     console.log(e);
-            // }
+            try{
+                response = HTTP.get(url);
+                [...validatorSet] = [...validatorSet, ...JSON.parse(response.content)];
+            }
+            catch(e){
+                console.log(e);
+            }
 
             // url = LCD+'/stake/validators?status=unbonded';
 
