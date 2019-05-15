@@ -1,17 +1,8 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Tooltip } from 'reactstrap';
 import _ from 'lodash';
 import * as d3 from "d3";
-/*
-    TODO:
-    1) validate props
-    2) add tests
-    2.5) add a simple end-end test by creating a dev only page that shows various charts
-    3) break it down, modularize, and refactor
-    4) publish forked plottable to npm and use that instead
-    5) decide to check if new value is null or just let it be no-op
- */
+import Tooltip from 'tooltip.js';
 let Axes, Components, Dataset, Interactions, Plots, Scales;
 
 if (Meteor.isClient) {
@@ -35,13 +26,6 @@ export default class PChart extends Component{
     constructor(props){
         super(props);
         this.targetRef = React.createRef();
-        // this.tooltipRef = React.createRef();
-        // this.state = {
-        //     tooltipTarget: '.chart_warpper',
-        //     tooltipOpen: false,
-        //     tooltipContent: null,
-        //     tooltipPosition: null
-        // }
     }
 
     createScale(scaleData) {
@@ -214,8 +198,8 @@ export default class PChart extends Component{
 
         if (plotData.interactions)
             this.loadInteractions(plotData.interactions, plot, plotId);
-        // if (plotData.tooltip)
-        //     this.addTooltipQueue.push([plotData.tooltip, plot, plotId]);
+        if (plotData.tooltip)
+            this.addTooltipQueue.push([plotData.tooltip, plot, plotId]);
 
         if (plotData.labelsEnabled != null)
             plot.labelsEnabled(plotData.labelsEnabled);
@@ -253,8 +237,8 @@ export default class PChart extends Component{
 
         if (axisData.interactions)
             this.loadInteractions(axisData.interactions, axis, axisId);
-        // if (axisData.tooltip)
-        //     this.addTooltipQueue.push([axisData.tooltip, axis, axisId]);
+        if (axisData.tooltip)
+            this.addTooltipQueue.push([axisData.tooltip, axis, axisId]);
 
         return axis;
     }
@@ -285,8 +269,8 @@ export default class PChart extends Component{
 
         if (labelData.interactions)
             this.loadInteractions(labelData.interactions, label, labelId);
-        // if (labelData.tooltip)
-        //     this.addTooltipQueue.push([labelData.tooltip, label, labelId]);
+        if (labelData.tooltip)
+            this.addTooltipQueue.push([labelData.tooltip, label, labelId]);
 
         return label;
     }
@@ -302,8 +286,8 @@ export default class PChart extends Component{
 
         if (gridData.interactions)
             this.loadInteractions(gridData.interactions, grid, gridId);
-        // if (gridData.tooltip)
-        //     this.addTooltipQueue.push([gridData.tooltip, grid, gridId]);
+        if (gridData.tooltip)
+            this.addTooltipQueue.push([gridData.tooltip, grid, gridId]);
 
         return grid;
     }
@@ -357,8 +341,8 @@ export default class PChart extends Component{
 
         if (legendData.interactions)
             this.loadInteractions(legendData.interactions, legend, legendId);
-        // if (legendData.tooltip)
-        //     this.addTooltipQueue.push([legendData.tooltip, legend, legendId]);
+        if (legendData.tooltip)
+            this.addTooltipQueue.push([legendData.tooltip, legend, legendId]);
 
         return legend;
     }
@@ -384,8 +368,8 @@ export default class PChart extends Component{
 
         if (groupData.interactions)
             this.loadInteractions(groupData.interactions, group, groupId);
-        // if (groupData.tooltip)
-        //     this.addTooltipQueue.push([groupData.tooltip, group, groupId]);
+        if (groupData.tooltip)
+            this.addTooltipQueue.push([groupData.tooltip, group, groupId]);
 
         return group;
     }
@@ -543,43 +527,43 @@ export default class PChart extends Component{
         };
     }
 
-    // addTooltip(tooltip, component, componentId) {
-    //     /* TODO: user popper.js */
-    //     /* TODO: calculate pie chart postion differently */
-    //     let selection = component.foreground().append("circle").attrs({
-    //         r:3,
-    //         opacity:0,
-    //         id: `${componentId}_tooltip`});
-    //     let interaction = new Interactions.Pointer();
-    //     interaction.onPointerMove((point) => {
-    //         let closest = component.entityNearest(point);
-    //         if (closest) {
-    //             if (!this.state.tooltipPosition || this.state.tooltipPosition[0] != closest.position.x
-    //                 || this.state.tooltipPosition[1] != closest.position.x) {
-    //                 // workaround for tooltip updateTarget only does shallow comparison
-    //                 let newSelection = selection.clone();
-    //                 newSelection.attrs({
-    //                     cx: closest.position.x,
-    //                     cy: closest.position.y
-    //                 });
-    //                 selection.remove();
-    //                 selection = newSelection;
-    //                 this.setState({
-    //                     tooltipTarget: newSelection.node(),
-    //                     tooltipOpen: true,
-    //                     tooltipContent: tooltip(component, point, closest),
-    //                     tooltipContainer: component.foreground().node(),
-    //                     tooltipPosition: [closest.position.x, closest.position.y]
-    //                 })
-    //             }
-    //         } else {
-    //             this.setState({
-    //                 tooltipOpen: false,
-    //             })
-    //         }
-    //     });
-    //     interaction.attachTo(component);
-    // }
+    addTooltip(tooltipValue, component, componentId) {
+        let selection = component.foreground().append("circle").attrs({
+            r:3,
+            opacity:0,
+            id: `${componentId}_tooltip`});
+
+        let tooltip = new Tooltip(selection.node(), {
+            container: this.targetRef.current,
+            placement: 'auto',
+            html: true,
+            template: '<div class="tooltip bs-tooltip-auto" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+        });
+
+        let interaction = new Interactions.Pointer();
+        interaction.onPointerMove((point) => {
+            let selection = tooltip.reference;
+            let closest;
+            if (component instanceof Plots.Pie)
+                closest = _.get(component.entitiesAt(point), 0);
+            else
+                closest = component.entityNearest(point);
+            if (closest) {
+                selection.setAttribute('cx', closest.position.x);
+                selection.setAttribute('cy', closest.position.y);
+                tooltip.updateTitleContent(tooltipValue(component, point, closest.datum, closest.dataset));
+                tooltip.show();
+            } else {
+                tooltip.hide();
+            }
+        });
+        interaction.onPointerExit((point) => {
+            if(tooltip)
+                tooltip.hide();
+        });
+        interaction.attachTo(component);
+        this.tooltips[componentId] = { tooltip, interaction };
+    }
 
     createLayout() {
         let layout = this.props.layout;
@@ -591,13 +575,14 @@ export default class PChart extends Component{
     }
 
     componentDidMount(){
-        // this.addTooltipQueue = [];
+        this.addTooltipQueue = [];
+        this.tooltips = {};
         this.loadScales();
         this.loadDatasets();
         this.loadComponents();
         this.createLayout();
         this.table.renderTo(this.targetRef.current);
-        // this.addTooltipQueue.forEach((args) => this.addTooltip.bind(this).apply(null, args));
+        this.addTooltipQueue.forEach((args) => this.addTooltip.bind(this).apply(null, args));
     }
 
     updateScales(newScales, curScales) {
@@ -661,6 +646,17 @@ export default class PChart extends Component{
                     dataset.metadata(_.omit(datasetData, 'data'));
                 }
             }
+        }
+    }
+
+    reloadTooltip(tooltipData=null, component, componentId) {
+        let {tooltip, interaction} = _.get(this.tooltips, componentId, {});
+        if (tooltip) {
+            tooltip.dispose();
+            interaction.detach();
+        }
+        if (tooltipData) {
+            this.addTooltipQueue.push([tooltipData, component, componentId]);
         }
     }
 
@@ -729,6 +725,8 @@ export default class PChart extends Component{
             } if (!_.isEqual(newPlot.interactions, curPlot.interactions)) {
                 // TODO: need to deep compare functions
                 this.reloadInteractions(newPlot.interactions, plot, plotId);
+            } if (!_.isEqual(newPlot.tooltip, curPlot.tooltip)) {
+                this.reloadTooltip(newPlot.tooltip, plot, plotId);
             }
         }
         return componentsDiff;
@@ -763,6 +761,8 @@ export default class PChart extends Component{
             } if (!_.isEqual(newAxis.interactions, curAxis.interactions)) {
                 // TODO: need to deep compare functions
                 this.reloadInteractions(newAxis.interactions, axis, axisId);
+            } if (!_.isEqual(newAxis.tooltip, curAxis.tooltip)) {
+                this.reloadTooltip(newAxis.tooltip, axis, axisId);
             }
         }
         return componentsDiff;
@@ -802,6 +802,8 @@ export default class PChart extends Component{
             }  if (!_.isEqual(newLegend.interactions, curLegend.interactions)) {
                 // TODO<perf>: need to deep compare functions
                 this.reloadInteractions(newLegend.interactions, legend, legendId);
+            } if (!_.isEqual(newLegend.tooltip, curLegend.tooltip)) {
+                this.reloadTooltip(newLegend.tooltip, legend, legendId);
             }
         }
         return componentsDiff;
@@ -831,6 +833,8 @@ export default class PChart extends Component{
             } if (!_.isEqual(newLabel.interactions, curLabel.interactions)) {
                 // TODO: need to deep compare functions
                 this.reloadInteractions(newLabel.interactions, label, labelId);
+            } if (!_.isEqual(newLabel.tooltip, curLabel.tooltip)) {
+                this.reloadTooltip(newLabel.tooltip, label, labelId);
             }
         }
         return componentsDiff;
@@ -858,6 +862,8 @@ export default class PChart extends Component{
             } if (!_.isEqual(newGridline.interactions, curGridline.interactions)) {
                 // TODO: need to deep compare functions
                 this.reloadInteractions(newGridline.interactions, gridline, gridlineId);
+            } if (!_.isEqual(newGridline.tooltip, curGridline.tooltip)) {
+                this.reloadTooltip(newGridline.tooltip, gridline, gridlineId);
             }
         }
         return componentsDiff;
@@ -890,6 +896,8 @@ export default class PChart extends Component{
             if (!_.isEqual(newGroup.interactions, curGroup.interactions)) {
                 // TODO: need to deep compare functions
                 this.reloadInteractions(newGroup.interactions, group, groupId);
+            } if (!_.isEqual(newGroup.tooltip, curGroup.tooltip)) {
+                this.reloadTooltip(newGroup.tooltip, group, groupId);
             }
         }
         return componentsDiff;
@@ -926,12 +934,14 @@ export default class PChart extends Component{
     componentDidUpdate(prevProps, prevState){
         if (this.props !== prevProps) {
             this.table.detach();
+            this.addTooltipQueue = [];
             let scalesDiff = this.updateScales(this.props.scales, prevProps.scales);
             this.updateDatasets(this.props.datasets, prevProps.datasets);
             let componentsDiff = this.updateComponents(
                 this.props.components, prevProps.components, scalesDiff);
             this.updateLayout(this.props.layout, prevProps.layout, componentsDiff);
             this.table.renderTo(this.targetRef.current);
+            this.addTooltipQueue.forEach((args) => this.addTooltip.bind(this).apply(null, args));
         }
     }
 
@@ -953,7 +963,6 @@ export default class PChart extends Component{
     render(){
         return <div className='chart_warpper'>
             <div ref={this.targetRef} style={this.props.config}/>
-            {/*<Tooltip target={this.state.tooltipTarget} isOpen={this.state.tooltipOpen} innerRef={this.tooltipRef}>{this.state.tooltipContent}</Tooltip>*/}
         </div>;
     }
 }

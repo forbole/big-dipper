@@ -37,6 +37,7 @@
     "reactstrap": "^8.0.0",
     "styled-components": "^4.2.0",
     "tendermint": "^4.0.2",
+    "tooltip.js": "^1.3.2",
     "velocity-react": "^1.4.1",
     "ws": "^6.2.1"
   },
