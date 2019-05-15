@@ -21,7 +21,7 @@ export default class AccountUnbondings extends Component{
     componentDidMount(){
         Meteor.call('accounts.getAllUnbondings', this.props.address, (error, result) => {
             if (error){
-                console.log(error);
+                console.warn(error);
             }
             else{
                 this.setState({
@@ -32,21 +32,21 @@ export default class AccountUnbondings extends Component{
                         numUnbondings:result.length,
                         unbondings: result.map((u, i) => {
                             return <Row key={i} className="delegation-info">
-                                    <Col md={5} className="text-nowrap overflow-auto"><Account address={u.validator_address} /></Col>
-                                    <Col md={7}>{u.entries.map((entry,j) => {
-                                        return <Row key={j}>
-                                            <Col md={6}>
-                                                {numbro(entry.balance).format("0,0")}
-                                            </Col>
-                                            <Col md={6}>
-                                                {moment.utc(entry.completion_time).fromNow()}
-                                            </Col>
-                                        </Row>
-                                    })}</Col>
-                                </Row>
+                                <Col md={5} className="text-nowrap overflow-auto"><Account address={u.validator_address} /></Col>
+                                <Col md={7}>{u.entries.map((entry,j) => {
+                                    return <Row key={j}>
+                                        <Col md={6}>
+                                            {numbro(entry.balance).format("0,0")}
+                                        </Col>
+                                        <Col md={6}>
+                                            {moment.utc(entry.completion_time).fromNow()}
+                                        </Col>
+                                    </Row>
+                                })}</Col>
+                            </Row>
                         })
                     })
-    
+
                 }
             }
         })

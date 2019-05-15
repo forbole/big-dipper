@@ -22,9 +22,9 @@ export default class TransactionTabs extends Component{
 
     toggle = (tab) => {
         if (this.state.activeTab !== tab) {
-          this.setState({
-            activeTab: tab
-          });
+            this.setState({
+                activeTab: tab
+            });
         }
     }
 
@@ -47,42 +47,42 @@ export default class TransactionTabs extends Component{
                 <Nav tabs className="tx-types">
                     <NavItem>
                         <NavLink
-                        className={classnames({ active: this.state.activeTab === 'tx-transfer' })}
-                        onClick={() => { this.toggle('tx-transfer'); }}
+                            className={classnames({ active: this.state.activeTab === 'tx-transfer' })}
+                            onClick={() => { this.toggle('tx-transfer'); }}
                         >
-                        <T>transactions.transfer</T> ({numbro(this.state.transferTxs.length).format("0,0")})
+                            <T>transactions.transfer</T> ({numbro(this.state.transferTxs.length).format("0,0")})
                         </NavLink>
                     </NavItem>
                     <NavItem>
                         <NavLink
-                        className={classnames({ active: this.state.activeTab === 'tx-staking' })}
-                        onClick={() => { this.toggle('tx-staking'); }}
+                            className={classnames({ active: this.state.activeTab === 'tx-staking' })}
+                            onClick={() => { this.toggle('tx-staking'); }}
                         >
-                        <T>transactions.staking</T> ({numbro(this.state.stakingTxs.length).format("0,0")})
+                            <T>transactions.staking</T> ({numbro(this.state.stakingTxs.length).format("0,0")})
                         </NavLink>
                     </NavItem>
                     <NavItem>
                         <NavLink
-                        className={classnames({ active: this.state.activeTab === 'tx-distr' })}
-                        onClick={() => { this.toggle('tx-distr'); }}
+                            className={classnames({ active: this.state.activeTab === 'tx-distr' })}
+                            onClick={() => { this.toggle('tx-distr'); }}
                         >
-                        <T>transactions.distribution</T> ({numbro(this.state.distributionTxs.length).format("0,0")})
+                            <T>transactions.distribution</T> ({numbro(this.state.distributionTxs.length).format("0,0")})
                         </NavLink>
                     </NavItem>
                     <NavItem>
                         <NavLink
-                        className={classnames({ active: this.state.activeTab === 'tx-gov' })}
-                        onClick={() => { this.toggle('tx-gov'); }}
+                            className={classnames({ active: this.state.activeTab === 'tx-gov' })}
+                            onClick={() => { this.toggle('tx-gov'); }}
                         >
-                        <T>transactions.governance</T> ({numbro(this.state.governanceTxs.length).format("0,0")})
+                            <T>transactions.governance</T> ({numbro(this.state.governanceTxs.length).format("0,0")})
                         </NavLink>
                     </NavItem>
                     <NavItem>
                         <NavLink
-                        className={classnames({ active: this.state.activeTab === 'tx-slashing' })}
-                        onClick={() => { this.toggle('tx-slashing'); }}
+                            className={classnames({ active: this.state.activeTab === 'tx-slashing' })}
+                            onClick={() => { this.toggle('tx-slashing'); }}
                         >
-                        <T>transactions.slashing</T> ({numbro(this.state.slashingTxs.length).format("0,0")})
+                            <T>transactions.slashing</T> ({numbro(this.state.slashingTxs.length).format("0,0")})
                         </NavLink>
                     </NavItem>
                 </Nav>

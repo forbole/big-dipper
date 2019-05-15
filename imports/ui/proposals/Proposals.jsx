@@ -12,11 +12,11 @@ const T = i18n.createComponent();
 const ProposalList = () => {
     return <div>
         <p className="lead"><T>proposals.listOfProposals</T></p>
-            <Row>
-                <Col md={12}>
-                    <List />
-                </Col>
-            </Row>
+        <Row>
+            <Col md={12}>
+                <List />
+            </Col>
+        </Row>
     </div>
 }
 export default class Proposals extends Component{

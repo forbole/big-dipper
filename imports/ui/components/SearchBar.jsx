@@ -3,10 +3,10 @@ import { Input, InputGroup, InputGroupAddon, Button } from 'reactstrap';
 
 export default class SearchBar extends Component {
     constructor(props) {
-      super(props);
-      this.state = {
-          queryString: ""
-      }
+        super(props);
+        this.state = {
+            queryString: ""
+        }
     }
 
     redirectSearchResult = (query) => {

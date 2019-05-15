@@ -64,18 +64,18 @@ export default class MissedBlocks extends Component{
                         </NavItem>
                     </Nav>
                     {(this.props.missedBlocks&&this.props.missedBlocks.length>0)?
-                    <div className="mt-3">
-                    <p className="lead"><T>validators.totalMissed</T> {(this.props.match.path.indexOf("/missed/blocks")>0)?<T>validators.blocks</T>:<T>validators.precommits</T>}: {this.state.totalMissed}</p>
-                    <Table striped className="missed-table">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th><T>validators.block</T> {(this.props.match.path.indexOf("/missed/blocks")>0)?<T>blocks.proposer</T>:<T>common.voter</T>}</th>
-                                <th><T>validators.missedCount</T></th>
-                            </tr>
-                        </thead>
-                        <tbody>{this.state.missedBlocksList}</tbody>
-                    </Table></div>:<div><T>validators.iDontMiss</T>{(this.props.match.path.indexOf("/missed/blocks")>0)?<T>common.block</T>:<T>common.precommit</T>}.</div>}
+                        <div className="mt-3">
+                            <p className="lead"><T>validators.totalMissed</T> {(this.props.match.path.indexOf("/missed/blocks")>0)?<T>validators.blocks</T>:<T>validators.precommits</T>}: {this.state.totalMissed}</p>
+                            <Table striped className="missed-table">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th><T>validators.block</T> {(this.props.match.path.indexOf("/missed/blocks")>0)?<T>blocks.proposer</T>:<T>common.voter</T>}</th>
+                                        <th><T>validators.missedCount</T></th>
+                                    </tr>
+                                </thead>
+                                <tbody>{this.state.missedBlocksList}</tbody>
+                            </Table></div>:<div><T>validators.iDontMiss</T>{(this.props.match.path.indexOf("/missed/blocks")>0)?<T>common.block</T>:<T>common.precommit</T>}.</div>}
                     {this.props.statusExist?<div><em><T>validators.lastSyncTime</T>: {moment.utc(this.props.status.lastMissedBlockTime).format("D MMM YYYY, h:mm:ssa")}</em></div>:''}
                 </div>
             }
