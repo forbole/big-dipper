@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Badge } from 'reactstrap';
-import numeral from 'numeral';
+import numbro from 'numbro';
 
 let errors = {
     "sdk": {
@@ -18,11 +18,17 @@ let errors = {
         12: "Out Of Gas",
         13: "Memo Too Large",
         14: "Insufficient Fee",
-        15: "Too Many Signatures",
-        16: "Gas Overflow",
-        17: "No Signatures"
+        15: "Out Of Service",
+        16: "Too Many Signatures",
+        17: "Gas Price Too Low",
+        18: "Invalid Gas",
+        19: "Invalid Tx Fee",
+        20: "Invalid Fee Denom",
+        21: "Exceeds Tx Size",
+        22: "Service Tx Limit",
+        23: "Pagination Params"
     },
-    "staking":{
+    "stake":{
         101: "Invalid Validator",
         102: "Invalid Delegation",
         103: "Invalid Input",
@@ -84,7 +90,7 @@ export default class CosmosErrors extends Component {
             if (props.code == 12){
                 this.state = {
                     error: errors.sdk[12],
-                    message: "gas uses ("+numeral(props.gasUses).format("0,0")+") > gas wanted ("+numeral(props.gasWanted).format("0,0")+")"
+                    message: "gas uses ("+numbro(props.gasUses).format("0,0")+") > gas wanted ("+numbro(props.gasWanted).format("0,0")+")"
                 }
             }
         }

@@ -98,7 +98,7 @@ Meteor.methods({
             ]}], 
             "code": {$exists: false}, 
             height:{$lt:height}},
-            {sort:{height:-1},
+        {sort:{height:-1},
             limit: 1}
         ).fetch();
     },

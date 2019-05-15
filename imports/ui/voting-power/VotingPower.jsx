@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import {HorizontalBar} from 'react-chartjs-2';
 import { Row, Col, Card, CardImg, CardText, CardBody,
-    CardTitle, CardSubtitle, Button, Progress } from 'reactstrap';
-import numeral from 'numeral';
+    CardTitle, CardSubtitle, Button, Progress, Spinner } from 'reactstrap';
+import numbro from 'numbro';
+import i18n from 'meteor/universe:i18n';
+
+const T = i18n.createComponent();
 
 export default class VotingPower extends Component{
     constructor(props){
@@ -19,9 +22,22 @@ export default class VotingPower extends Component{
 
             let labels = [];
             let data = [];
+            let totalVotingPower = 0;
+            let accumulatePower = [];
             let backgroundColors = [];
+            
+            for (let i in this.props.stats){
+                totalVotingPower += this.props.stats[i].voting_power;
+                if (i > 0){
+                    accumulatePower[i] = accumulatePower[i-1] + this.props.stats[i].voting_power;
+                }
+                else{
+                    accumulatePower[i] = this.props.stats[i].voting_power;
+                }
+            }
+
             for (let v in this.props.stats){
-                labels.push(this.props.stats[v].description.moniker);
+                labels.push(this.props.stats[v].description?this.props.stats[v].description.moniker:'');
                 data.push(this.props.stats[v].voting_power);
                 let alpha = (this.props.stats.length+1-v)/this.props.stats.length*0.8+0.2;
                 backgroundColors.push('rgba(18, 123, 163,'+alpha+')');
@@ -41,7 +57,7 @@ export default class VotingPower extends Component{
                     tooltips: {
                         callbacks: {
                             label: function(tooltipItem, data) {
-                                return numeral(data.datasets[0].data[tooltipItem.index]).format("0,00");
+                                return numbro(data.datasets[0].data[tooltipItem.index]).format("0,0")+" ("+(numbro(data.datasets[0].data[tooltipItem.index]/totalVotingPower).format("0.00%")+", "+numbro(accumulatePower[tooltipItem.index]/totalVotingPower).format("0.00%"))+")";
                             }
                         }
                     },
@@ -52,7 +68,7 @@ export default class VotingPower extends Component{
                                 beginAtZero:true,
                                 userCallback: function(value, index, values) {
                                     // Convert the number to a string and splite the string every 3 charaters from the end
-                                    return numeral(value).format("0,0");
+                                    return numbro(value).format("0,0");
                                 }
                             }
                         }]
@@ -66,13 +82,13 @@ export default class VotingPower extends Component{
 
     render(){
         if (this.props.loading){
-            return <div>Loading</div>
+            return <Spinner type="grow" color="primary" />
         }
         else{
             if (this.props.statsExist && this.props.stats){
                 return (                    
                     <Card>
-                        <div className="card-header">Voting Power</div>
+                        <div className="card-header"><T>common.votingPower</T></div>
                         <CardBody id="voting-power-chart">
                             <HorizontalBar data={this.state.data} options={this.state.options} />
                         </CardBody>

@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import {Pie} from 'react-chartjs-2';
 import { Row, Col, Card, CardImg, CardText, CardBody,
-    CardTitle, CardSubtitle, Button, Progress } from 'reactstrap';
-import numeral from 'numeral';
+    CardTitle, CardSubtitle, Button, Progress, Spinner } from 'reactstrap';
+import numbro from 'numbro';
+import i18n from 'meteor/universe:i18n';
 
+const T = i18n.createComponent();
 export default class ThirtyFour extends Component{
     constructor(props){
         super(props);
@@ -49,11 +51,11 @@ export default class ThirtyFour extends Component{
                         callbacks: {
                             label: function(tooltipItem, data) {
                                 // var label = data.datasets[0].data[tooltipItem.index] + " validators hold ";
-                                // label += numeral(data.datasets[0].data[tooltipItem.index]).format("0.00%");
+                                // label += numbro(data.datasets[0].data[tooltipItem.index]).format("0.00%");
                                 if (tooltipItem.index == 0)
-                                    return data.datasets[0].data[tooltipItem.index] + " validators hold "+numeral(self.props.stats.topThirtyFourPercent).format("0.00%")+" voting power";
+                                    return data.datasets[0].data[tooltipItem.index] + " validators hold "+numbro(self.props.stats.topThirtyFourPercent).format("0.00%")+" voting power";
                                 else 
-                                    return data.datasets[0].data[tooltipItem.index] + " validators hold "+numeral(self.props.stats.bottomSixtySixPercent).format("0.00%")+" voting power";
+                                    return data.datasets[0].data[tooltipItem.index] + " validators hold "+numbro(self.props.stats.bottomSixtySixPercent).format("0.00%")+" voting power";
                             }
                         }
                     }
@@ -64,13 +66,13 @@ export default class ThirtyFour extends Component{
 
     render(){
         if (this.props.loading){
-            return <div>Loading</div>
+            return <Spinner type="grow" color="primary" />
         }
         else{
             if (this.props.statsExist && this.props.stats){
                 return (                    
                     <Card>
-                        <div className="card-header">Min no. of validators hold 34%+ power</div>
+                        <div className="card-header"><T>votingPower.minValidators34</T></div>
                         <CardBody>
                             <Pie data={this.state.data} options={this.state.options} />
                         </CardBody>

@@ -1,10 +1,14 @@
 import { Meteor } from 'meteor/meteor';
-import { Chain } from '../chain.js';
+import { Chain, ChainStates } from '../chain.js';
+import { CoinStats } from '../../coin-stats/coin-stats.js';
 import { Validators } from '../../validators/validators.js';
 
-// Meteor.publish('chain.status', function () {
-//     return Chain.find({chainId:Meteor.settings.public.chainId});
-// });
+Meteor.publish('chainStates.latest', function () {
+    return [
+        ChainStates.find({},{sort:{height:-1},limit:1}),
+        CoinStats.find({},{sort:{last_updated_at:-1},limit:1})
+    ];
+});
 
 publishComposite('chain.status', function(){
     return {

@@ -1,53 +1,56 @@
 import React from 'react';
 import { Badge } from 'reactstrap';
+import i18n from 'meteor/universe:i18n';
+
+const T = i18n.createComponent();
 
 export const MsgType = (props) => {
     switch (props.type){
-        // bank
-        case "irishub/bank/Send":
-            return <Badge color="success">Send</Badge>
-        case "irishub/bank/Issue":
-            return <Badge color="success">Issue</Badge>
-        case "irishub/bank/Burn":
-            return <Badge color="success">Burn</Badge>
+    // bank
+    case "irishub/bank/Send":
+        return <Badge color="success"><T>messageTypes.send</T></Badge>
+    case "irishub/bank/Issue":
+        return <Badge color="success"><T>messageTypes.issue</T></Badge>
+    case "irishub/bank/Burn":
+        return <Badge color="success"><T>messageTypes.burn</T></Badge>
         
         // staking
-        case "irishub/stake/MsgCreateValidator":
-            return <Badge color="warning">Create Validator</Badge>;
-        case "irishub/stake/MsgEditValidator":
-            return <Badge color="warning">Edit Validator</Badge>;
-        case "irishub/stake/MsgDelegate":
-            return <Badge color="warning">Delegate</Badge>;
-        case "irishub/stake/Undelegate":
-            return <Badge color="warning">Undelegate</Badge>;
-        case "irishub/stake/BeginRedelegate":
-            return <Badge color="warning">Redelegate</Badge>;
+    case "irishub/stake/MsgCreateValidator":
+        return <Badge color="warning"><T>messageTypes.createValidator</T></Badge>;
+    case "irishub/stake/MsgEditValidator":
+        return <Badge color="warning"><T>messageTypes.editValidator</T></Badge>;
+    case "irishub/stake/MsgDelegate":
+        return <Badge color="warning"><T>messageTypes.delegate</T></Badge>;
+    case "irishub/stake/Undelegate":
+        return <Badge color="warning"><T>messageTypes.undelegate</T></Badge>;
+    case "irishub/stake/BeginRedelegate":
+        return <Badge color="warning"><T>messageTypes.redelegate</T></Badge>;
         
         // gov
-        case "irishub/gov/MsgSubmitProposal":
-            return <Badge color="info">Submit Proposal</Badge>
-        case "irishub/gov/MsgSubmitTxTaxUsageProposal":
-            return <Badge color="info">Submit Tax Usage Proposal</Badge>
-        case "irishub/gov/MsgSubmitSoftwareUpgradeProposal":
-            return <Badge color="info">Submit Upgrade Proposal</Badge>
-        case "irishub/gov/MsgDeposit":
-            return <Badge color="info">Deposit</Badge>
-        case "irishub/gov/MsgVote":
-            return <Badge color="info">Vote</Badge>;
+    case "irishub/gov/MsgSubmitProposal":
+        return <Badge color="info"><T>messageTypes.submitProposal</T></Badge>
+    case "irishub/gov/MsgSubmitTxTaxUsageProposal":
+        return <Badge color="info"><T>messageTypes.submitTextUsageProposal</T></Badge>
+    case "irishub/gov/MsgSubmitSoftwareUpgradeProposal":
+        return <Badge color="info"><T>messageTypes.submitUpgradeProposal</T></Badge>
+    case "irishub/gov/MsgDeposit":
+        return <Badge color="info"><T>messageTypes.deposit</T></Badge>
+    case "irishub/gov/MsgVote":
+        return <Badge color="info"><T>messageTypes.vote</T></Badge>;
         
         // distribution
-        case "irishub/distr/MsgWithdrawDelegationRewardsAll":
-            return <Badge color="secondary">Withdraw All Delegation Rewards</Badge>;
-        case "irishub/distr/MsgWithdrawDelegationReward":
-            return <Badge color="secondary">Withdraw Rewards</Badge>;
-        case "irishub/distr/MsgWithdrawValidatorRewardsAll":
-            return <Badge color="secondary">Withdraw Validator Rewards</Badge>;
-        case "irishub/distr/MsgModifyWithdrawAddress":
-            return <Badge color="secondary">Modify Withdraw Address</Badge>;
+    case "irishub/distr/MsgWithdrawDelegationRewardsAll":
+        return <Badge color="secondary"><T>messageTypes.withdrawComission</T></Badge>;
+    case "irishub/distr/MsgWithdrawDelegationReward":
+        return <Badge color="secondary"><T>messageTypes.withdrawReward</T></Badge>;
+    case "irishub/distr/MsgWithdrawValidatorRewardsAll":
+        return <Badge color="secondary"><T>messageTypes.withdrawValidatorReward</T></Badge>;
+    case "irishub/distr/MsgModifyWithdrawAddress":
+        return <Badge color="secondary"><T>messgeTypes.modifyWithdrawAddress</T></Badge>;
 
         // slashing
-        case "irishub/slashing/MsgUnjail":
-            return <Badge color="danger">Unjail</Badge>;
+    case "irishub/slashing/MsgUnjail":
+        return <Badge color="danger"><T>messageTypes.unjail</T></Badge>;
         
         // guardian
         case "irishub/guardian/MsgAddProfiler":
@@ -83,13 +86,8 @@ export const MsgType = (props) => {
         case "irishub/service/MsgSvcWithdrawTax":
             return <Badge color="light">Withdraw Service Tax</Badge>;
 
-        // ibc
-        // case "cosmos-sdk/IBCTransferMsg":
-        //     return <Badge color="dark">IBC Transfer</Badge>;
-        // case "cosmos-sdk/IBCReceiveMsg":
-        //     return <Badge color="dark">IBC Receive</Badge>;
 
-        default:
-            return <Badge color="primary">{props.type}</Badge>;
+    default:
+        return <Badge color="primary">{props.type}</Badge>;
     }
 }

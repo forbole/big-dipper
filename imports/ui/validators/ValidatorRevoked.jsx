@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Badge, Row, Col } from 'reactstrap';
+import { Row, Col } from 'reactstrap';
 import List from './ListContainer.js';
 
 export default class ValidatorRevoked extends Component{

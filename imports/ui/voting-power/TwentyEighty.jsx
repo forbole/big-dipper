@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import {Pie} from 'react-chartjs-2';
 import { Row, Col, Card, CardImg, CardText, CardBody,
-    CardTitle, CardSubtitle, Button, Progress } from 'reactstrap';
-import numeral from 'numeral';
+    CardTitle, CardSubtitle, Button, Progress, Spinner } from 'reactstrap';
+import numbro from 'numbro';
+import i18n from 'meteor/universe:i18n';
 
+const T = i18n.createComponent();
 export default class TwentyEighty extends Component{
     constructor(props){
         super(props);
@@ -52,7 +54,7 @@ export default class TwentyEighty extends Component{
                                 if (label) {
                                     label += ' hold ';
                                 }
-                                label += numeral(data.datasets[0].data[tooltipItem.index]).format("0.00%");
+                                label += numbro(data.datasets[0].data[tooltipItem.index]).format("0.00%");
                                 label += " voting power";
                                 return label;
                             }
@@ -65,13 +67,13 @@ export default class TwentyEighty extends Component{
 
     render(){
         if (this.props.loading){
-            return <div>Loading</div>
+            return <Spinner type="grow" color="primary" />
         }
         else{
             if (this.props.statsExist && this.props.stats){
                 return (                    
                     <Card>
-                        <div className="card-header">Pareto Principle (20/80 rule)</div>
+                        <div className="card-header"><T>votingPower.pareto</T></div>
                         <CardBody>
                             <Pie data={this.state.data} options={this.state.options} />
                         </CardBody>

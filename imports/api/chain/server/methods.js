@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
-import { Chain } from '../chain.js';
+import { getAddress } from 'tendermint/lib/pubkey.js';
+import { Chain, ChainStates } from '../chain.js';
 import { Validators } from '../../validators/validators.js';
 import { VotingPowerHistory } from '../../voting-power/history.js';
 
@@ -62,21 +63,71 @@ Meteor.methods({
             }
             chain.activeVotingPower = activeVP;
 
-            let totalVP = 0;
-
+            // Get chain states
             if (parseInt(chain.latestBlockHeight) > 0){
-                url = LCD+'/stake/validators';
-                response = HTTP.get(url);
-                let validatorSet = JSON.parse(response.content);
-                chain.totalValidators = validatorSet.length;
-    
-                for (v in validatorSet){
-                    let vp = Math.round(parseFloat(eval(validatorSet[v].tokens)));
-                    totalVP += parseInt(vp);
-                }    
+                let chainStates = {};
+                chainStates.height = parseInt(status.sync_info.latest_block_height);
+                chainStates.time = new Date(status.sync_info.latest_block_time);
+
+                url = LCD + '/stake/pool';
+                try{
+                    response = HTTP.get(url);
+                    let bonding = JSON.parse(response.content);
+                    // chain.bondedTokens = bonding.bonded_tokens;
+                    // chain.notBondedTokens = bonding.not_bonded_tokens;
+                    chainStates.bondedTokens = parseInt(bonding.bonded_tokens);
+                    chainStates.notBondedTokens = parseInt(bonding.not_bonded_tokens);
+                }
+                catch(e){
+                    console.log(e);
+                }
+
+                // url = LCD + '/distribution/community_pool';
+                // try {
+                //     response = HTTP.get(url);
+                //     let pool = JSON.parse(response.content);
+                //     if (pool && pool.length > 0){
+                //         chainStates.communityPool = [];
+                //         pool.forEach((amount, i) => {
+                //             chainStates.communityPool.push({
+                //                 denom: amount.denom,
+                //                 amount: parseFloat(amount.amount)
+                //             })
+                //         })
+                //     }
+                // }
+                // catch (e){
+                //     console.log(e)
+                // }
+
+                // url = LCD + '/minting/inflation';
+                // try{
+                //     response = HTTP.get(url);
+                //     let inflation = JSON.parse(response.content);
+                //     if (inflation){
+                //         chainStates.inflation = parseFloat(inflation)
+                //     }
+                // }
+                // catch(e){
+                //     console.log(e);
+                // }
+
+                // url = LCD + '/minting/annual-provisions';
+                // try{
+                //     response = HTTP.get(url);
+                //     let provisions = JSON.parse(response.content);
+                //     if (provisions){
+                //         chainStates.annualProvisions = parseFloat(provisions)
+                //     }
+                // }
+                // catch(e){
+                //     console.log(e);
+                // }
+
+                ChainStates.insert(chainStates);
             }
 
-            chain.totalVotingPower = totalVP;
+            // chain.totalVotingPower = totalVP;
 
             Chain.update({chainId:chain.chainId}, {$set:chain}, {upsert: true});
 
@@ -136,9 +187,6 @@ Meteor.methods({
                 guardian: genesis.app_state.guardian
             }
 
-            // console.log(chainParams);
-            // console.log(genesis);
-
             let totalVotingPower = 0;
 
             // read gentx
@@ -149,7 +197,7 @@ Meteor.methods({
                     for (m in msg){
                         if (msg[m].type == "irishub/stake/MsgCreateValidator"){
                             console.log(msg[m].value);
-                            let command = Meteor.settings.bin.gaiadebug+" pubkey "+msg[m].value.pubkey.value;
+                            // let command = Meteor.settings.bin.gaiadebug+" pubkey "+msg[m].value.pubkey;
                             let validator = {
                                 pub_key: msg[m].value.pubkey,
                                 description: msg[m].value.Description,
@@ -157,79 +205,23 @@ Meteor.methods({
                                 min_self_delegation: msg[m].value.min_self_delegation,
                                 operator_address: msg[m].value.validator_address,
                                 delegator_address: msg[m].value.delegator_address,
-                                voting_power: Math.ceil(parseInt(msg[m].value.delegation.amount) / 1000000000000000000),
+                                voting_power: Math.floor(parseInt(msg[m].value.delegation.amount) / Meteor.settings.public.stakingFraction),
                                 jailed: false,
                                 status: 2
                             }
 
                             totalVotingPower += validator.voting_power;
 
+                            // let pubkeyValue = Meteor.call('bech32ToPubkey', msg[m].value.pubkey);
                             // Validators.upsert({consensus_pubkey:msg[m].value.pubkey},validator);
-                            Meteor.call('runCode', command, function(error, result){
-                                validator.address = result.match(/\s[0-9A-F]{40}$/igm);
-                                validator.address = validator.address[0].trim();
-                                validator.hex = result.match(/\s[0-9A-F]{64}$/igm);
-                                validator.hex = validator.hex[0].trim();
-                                let re = new RegExp(Meteor.settings.public.bech32PrefixAccPub+".*$","igm");
-                                validator.account_pubkey = result.match(re);
-                                validator.account_pubkey = validator.account_pubkey[0].trim();
-                                re = new RegExp(Meteor.settings.public.bech32PrefixValPub+".*$","igm");
-                                validator.operator_pubkey = result.match(re);
-                                validator.operator_pubkey = validator.operator_pubkey[0].trim();
-                                re = new RegExp(Meteor.settings.public.bech32PrefixConsPub+".*$","igm");
-                                validator.consensus_pubkey = result.match(re);
-                                validator.consensus_pubkey = validator.consensus_pubkey[0].trim();
-        
-                                Validators.upsert({pubkey:msg[m].value.pubkey},validator);
+                            
+                            let consensusPubkey = Meteor.call('pubkeyToBech32', validator.pub_key, Meteor.settings.public.bech32PrefixConsPub);
+                            validator.consensus_pubkey = consensusPubkey
+                            validator.pub_key = msg[m].value.pubkey
 
-                                VotingPowerHistory.insert({
-                                    address: validator.address,
-                                    prev_voting_power: 0,
-                                    voting_power: validator.voting_power,
-                                    type: 'add',
-                                    height: 0,
-                                    block_time: genesis.genesis_time
-                                });
-                            })
-                        }
-                    }
-                }
-
-                
-            }
-
-            // read validators from previous chain
-            if (genesis.app_state.stake.validators && genesis.app_state.stake.validators.length > 0){
-                console.log(genesis.app_state.stake.validators.length);
-                let genValidatorsSet = genesis.app_state.stake.validators;
-                let genValidators = genesis.validators;
-                for (let v in genValidatorsSet){
-                    // console.log(genValidators[v]);
-                    let validator = genValidatorsSet[v];
-                    validator.delegator_address = Meteor.call('getDelegator', genValidatorsSet[v].operator_address);
-                    let command = Meteor.settings.bin.gaiadebug+" pubkey "+validator.consensus_pubkey;
-                    Meteor.call('runCode', command, (err, result) => {
-                        if (err){
-                            console.log(err);
-                        }
-                        if (result){
-                            validator.address = result.match(/\s[0-9A-F]{40}$/igm);
-                            validator.address = validator.address[0].trim();
-                            validator.hex = result.match(/\s[0-9A-F]{64}$/igm);
-                            validator.hex = validator.hex[0].trim();
-                            validator.pub_key = result.match(/{".*"}/igm);
-                            validator.pub_key = JSON.parse(validator.pub_key[0].trim());
-                            let re = new RegExp(Meteor.settings.public.bech32PrefixAccPub+".*$","igm");
-                            validator.account_pubkey = result.match(re);
-                            validator.account_pubkey = validator.account_pubkey[0].trim();
-                            re = new RegExp(Meteor.settings.public.bech32PrefixValPub+".*$","igm");
-                            validator.operator_pubkey = result.match(re);
-                            validator.operator_pubkey = validator.operator_pubkey[0].trim();
-
-                            validator.voting_power = findVotingPower(validator, genValidators);
-                            totalVotingPower += validator.voting_power;
-
-                            Validators.upsert({consensus_pubkey:validator.consensus_pubkey},validator);
+                            validator.address = getAddress(validator.pub_key);
+                            validator.accpub = Meteor.call('pubkeyToBech32', validator.pub_key, Meteor.settings.public.bech32PrefixAccPub);
+                            validator.operator_pubkey = Meteor.call('pubkeyToBech32', validator.pub_key, Meteor.settings.public.bech32PrefixValPub);
                             VotingPowerHistory.insert({
                                 address: validator.address,
                                 prev_voting_power: 0,
@@ -238,17 +230,55 @@ Meteor.methods({
                                 height: 0,
                                 block_time: genesis.genesis_time
                             });
+
+                            Validators.insert(validator);
                         }
+                    }
+                }
+            }
+
+            // read validators from previous chain
+            console.log('read validators from previous chain');
+            if (genesis.app_state.stake.validators && genesis.app_state.stake.validators.length > 0){
+                console.log(genesis.app_state.stake.validators.length);
+                let genValidatorsSet = genesis.app_state.stake.validators;
+                let genValidators = genesis.validators;
+                for (let v in genValidatorsSet){
+                    // console.log(genValidators[v]);
+                    let validator = genValidatorsSet[v];
+                    validator.delegator_address = Meteor.call('getDelegator', genValidatorsSet[v].operator_address);
+
+                    let pubkeyValue = Meteor.call('bech32ToPubkey', validator.consensus_pubkey);
+                            
+                    validator.pub_key = {
+                        "type":"tendermint/PubKeyEd25519",
+                        "value":pubkeyValue
+                    }
+
+                    validator.address = getAddress(validator.pub_key);
+                    validator.pub_key = validator.pub_key;
+                    validator.accpub = Meteor.call('pubkeyToBech32', validator.pub_key, Meteor.settings.public.bech32PrefixAccPub);
+                    validator.operator_pubkey = Meteor.call('pubkeyToBech32', validator.pub_key, Meteor.settings.public.bech32PrefixValPub);
+
+                    validator.voting_power = findVotingPower(validator, genValidators);
+                    totalVotingPower += validator.voting_power;
+
+                    Validators.upsert({consensus_pubkey:validator.consensus_pubkey},validator);
+                    VotingPowerHistory.insert({
+                        address: validator.address,
+                        prev_voting_power: 0,
+                        voting_power: validator.voting_power,
+                        type: 'add',
+                        height: 0,
+                        block_time: genesis.genesis_time
                     });
                 }
-                // Meteor.call('getDelegator', "cosmosvaloper10505nl7yftsme9jk2glhjhta7w0475uvl4k8ju")
             }
                 
             chainParams.readGenesis = true;
             chainParams.activeVotingPower = totalVotingPower;
             let result = Chain.upsert({chainId:chainParams.chainId}, {$set:chainParams});
 
-            // console.log(result);
 
             console.log('=== Finished processing genesis file ===');
 
