@@ -408,7 +408,7 @@ Meteor.methods({
 
                                             if (height % 30 == 1){
                                                 try{
-                                                    let response = HTTP.get(LCD + '/staking/delegators/'+valExist.delegator_address+'/delegations/'+valExist.operator_address);
+                                                    let response = HTTP.get(LCD + '/stake/delegators/'+valExist.delegator_address+'/delegations/'+valExist.operator_address);
                                                     if (response.statusCode == 200){
                                                         let selfDelegation = JSON.parse(response.content);
                                                         if (selfDelegation.shares){

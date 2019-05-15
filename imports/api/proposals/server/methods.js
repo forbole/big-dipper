@@ -113,7 +113,7 @@ const getVoteDetail = (votes) => {
     voters.forEach((voter) => {
         if (!votingPowerMap[voter]) {
             // voter is not a validator
-            let url = `${LCD}/staking/delegators/${voter}/delegations`;
+            let url = `${LCD}/stake/delegators/${voter}/delegations`;
             let delegations;
             let votingPower = 0;
             try{

@@ -21,7 +21,7 @@ Meteor.methods({
         }
 
         // get delegated amnounts
-        url = LCD + '/staking/delegators/'+address+'/delegations';
+        url = LCD + '/stake/delegators/'+address+'/delegations';
         try{
             let delegations = HTTP.get(url);
             if (delegations.statusCode == 200){
@@ -32,7 +32,7 @@ Meteor.methods({
             console.log(e);
         }
         // get unbonding
-        url = LCD + '/staking/delegators/'+address+'/unbonding_delegations';
+        url = LCD + '/stake/delegators/'+address+'/unbonding_delegations';
         try{
             let unbonding = HTTP.get(url);
             if (unbonding.statusCode == 200){
@@ -58,7 +58,7 @@ Meteor.methods({
         return balance;
     },
     'accounts.getAllDelegations'(address){
-        let url = LCD + '/staking/delegators/'+address+'/delegations';
+        let url = LCD + '/stake/delegators/'+address+'/delegations';
 
         try{
             let delegations = HTTP.get(url);
@@ -79,7 +79,7 @@ Meteor.methods({
         }
     },
     'accounts.getAllUnbondings'(address){
-        let url = LCD + '/staking/delegators/'+address+'/unbonding_delegations';
+        let url = LCD + '/stake/delegators/'+address+'/unbonding_delegations';
 
         try{
             let unbondings = HTTP.get(url);
