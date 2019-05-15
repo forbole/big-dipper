@@ -157,7 +157,7 @@ export default class Proposal extends Component{
             let optionTotal = ds.metadata().totalVotingPower[data.option];
             let percentage = numbro(data.votingPower/total).format('0.00%');
             let optionPercentage = numbro(data.votingPower/optionTotal).format('0.00%');
-            return `<p>votingPower: ${data.votingPower}</p>
+            return `<p>Voting Power: ${data.votingPower}</p>
                     <p>${percentage} out of all votes</p>
                     <p>${optionPercentage} out of all ${data.option} votes</p>`;
         }
