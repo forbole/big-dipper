@@ -75,8 +75,10 @@ Meteor.methods({
                     let bonding = JSON.parse(response.content);
                     // chain.bondedTokens = bonding.bonded_tokens;
                     // chain.notBondedTokens = bonding.not_bonded_tokens;
-                    chainStates.bondedTokens = parseInt(bonding.bonded_tokens);
-                    chainStates.notBondedTokens = parseInt(bonding.not_bonded_tokens);
+                    chainStates.bondedTokens = parseFloat(bonding.bonded_tokens);
+                    chainStates.notBondedTokens = parseFloat(bonding.loose_tokens);
+                    chainStates.totalSupply = parseFloat(bonding.total_supply);
+                    chainStates.bondedRatio = parseFloat(bonding.bonded_ratio);
                 }
                 catch(e){
                     console.log(e);
