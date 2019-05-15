@@ -24,11 +24,11 @@ publishComposite('transactions.list', function(limit = 30){
 publishComposite('transactions.validator', function(validatorAddress, delegatorAddress, limit=100){
     let query = {};
     if (validatorAddress && delegatorAddress){
-        query = {$or:[{"tags.value":validatorAddress}, {"tags.value":delegatorAddress}]}
+        query = {$or:[{"result.Tags.value":validatorAddress}, {"result.Tags.value":delegatorAddress}]}
     }
 
     if (!validatorAddress && delegatorAddress){
-        query = {"tags.value":delegatorAddress}
+        query = {"result.Tags.value":delegatorAddress}
     }
 
     return {
@@ -51,7 +51,7 @@ publishComposite('transactions.validator', function(validatorAddress, delegatorA
 publishComposite('transactions.findOne', function(hash){
     return {
         find(){
-            return Transactions.find({txhash:hash})
+            return Transactions.find({hash:hash})
         },
         children: [
             {

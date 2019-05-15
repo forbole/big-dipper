@@ -15,7 +15,7 @@ export default TransactionContainer = withTracker((props) => {
     }
 
     if (Meteor.isServer || !loading){
-        transaction = Transactions.findOne({txhash: txId});
+        transaction = Transactions.findOne({hash: txId});
 
         if (Meteor.isServer){
             loading = false;
