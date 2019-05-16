@@ -29,36 +29,36 @@ export default TransactionsContainer = withTracker((props) => {
         transactionsExist,
         transferTxs: transactionsExist ? Transactions.find({
             $or: [
-                {"tx.value.msg.type":"cosmos-sdk/MsgSend"},
-                {"tx.value.msg.type":"cosmos-sdk/MsgMultiSend"}
+                {"tx.value.msg.type":"irishub/bank/Send"},
             ]
         }).fetch() : {},
         stakingTxs: transactionsExist ? Transactions.find({
             $or: [
-                {"tx.value.msg.type":"cosmos-sdk/MsgCreateValidator"},
-                {"tx.value.msg.type":"cosmos-sdk/MsgEditValidator"},
-                {"tx.value.msg.type":"cosmos-sdk/MsgDelegate"},
-                {"tx.value.msg.type":"cosmos-sdk/MsgUndelegate"},
-                {"tx.value.msg.type":"cosmos-sdk/MsgBeginRedelegate"}
+                {"tx.value.msg.type":"irishub/stake/MsgCreateValidator"},
+                {"tx.value.msg.type":"irishub/stake/MsgEditValidator"},
+                {"tx.value.msg.type":"irishub/stake/MsgDelegate"},
+                {"tx.value.msg.type":"irishub/stake/BeginUnbonding"},
+                {"tx.value.msg.type":"irishub/stake/BeginRedelegate"}
             ]
         }).fetch() : {},
         distributionTxs: transactionsExist ? Transactions.find({
             $or: [
-                {"tx.value.msg.type":"cosmos-sdk/MsgWithdrawValidatorCommission"},
-                {"tx.value.msg.type":"cosmos-sdk/MsgWithdrawDelegationReward"},
-                {"tx.value.msg.type":"cosmos-sdk/MsgModifyWithdrawAddress"}
+                {"tx.value.msg.type":"irishub/distr/MsgWithdrawDelegationRewardsAll"},
+                {"tx.value.msg.type":"irishub/distr/MsgWithdrawValidatorRewardsAll"},
+                {"tx.value.msg.type":"irishub/distr/MsgWithdrawDelegationReward"},
+                {"tx.value.msg.type":"irishub/distr/MsgModifyWithdrawAddress"}
             ]
         }).fetch() : {},
         governanceTxs: transactionsExist ? Transactions.find({
             $or: [
-                {"tx.value.msg.type":"cosmos-sdk/MsgSubmitProposal"},
-                {"tx.value.msg.type":"cosmos-sdk/MsgDeposit"},
-                {"tx.value.msg.type":"cosmos-sdk/MsgVote"}
+                {"tx.value.msg.type":"irishub/gov/MsgSubmitProposal"},
+                {"tx.value.msg.type":"irishub/gov/MsgDeposit"},
+                {"tx.value.msg.type":"irishub/gov/MsgVote"}
             ]
         }).fetch() : {},
         slashingTxs: transactionsExist ? Transactions.find({
             $or: [
-                {"tx.value.msg.type":"cosmos-sdk/MsgUnjail"}
+                {"tx.value.msg.type":"irishub/slashing/MsgUnjail"}
             ]
         }).fetch() : {},
         IBCTxs: transactionsExist ? Transactions.find({
