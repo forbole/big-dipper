@@ -5,6 +5,7 @@
     "start": "meteor run",
     "test": "meteor test --once --driver-package meteortesting:mocha",
     "lint": "eslint --ext .jsx,.js --ignore-pattern imports/ui/App.jsx imports/",
+    "lintdiff": "LIST=`git diff-index --name-only master | grep .*\\.js | grep -v json`; if [ \"$LIST\" ]; then eslint --ext .jsx,.js --ignore-pattern imports/ui/App.jsx $LIST; fi",
     "pretest": "npm run lint --silent"
   },
   "dependencies": {
