@@ -5,6 +5,7 @@ import { Row, Col, Card, Alert, Spinner } from 'reactstrap';
 import { TxIcon } from '../components/Icons.jsx';
 import Activities from '../components/Activities.jsx';
 import CosmosErrors from '../components/CosmosErrors.jsx';
+import { Denom } from '../components/Denom.jsx';
 import TimeAgo from '../components/TimeAgo.jsx';
 import numbro from 'numbro';
 
@@ -20,7 +21,7 @@ export const TransactionRow = (props) => {
         {(!props.blockList)?<Col xs={4} md={2} lg={1}><i className="fas fa-database d-lg-none"></i> <Link to={"/blocks/"+tx.height}>{numbro(tx.height).format("0,0")}</Link></Col>:''}
         <Col xs={(!props.blockList)?2:4} md={1}>{(!tx.result.Code)?<TxIcon valid />:<TxIcon />}</Col>
         <Col xs={(!props.blockList)?6:8} md={(!props.blockList)?9:4} lg={2} className="fee"><i className="material-icons d-lg-none">monetization_on</i> {tx.tx.value.fee.amount?tx.tx.value.fee.amount.map((fee,i) => {
-            return <span className="text-nowrap" key={i}>{numbro(fee.amount*tx.result.GasUsed/tx.result.GasWanted/Meteor.settings.public.stakingFraction).format("0,0.0000")} {Meteor.settings.public.stakingDenom}</span>
+            return <span className="text-nowrap" key={i}><Denom amount={fee.amount*tx.result.GasUsed/tx.result.GasWanted} denom={fee.denom} /></span>
         }):<span><T>transactions.noFee</T></span>}</Col>
         {(tx.result.Code)?<Col xs={{size:12, order:"last"}} className="error">
             <Alert color="danger">
