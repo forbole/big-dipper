@@ -21,7 +21,7 @@ export const MsgType = (props) => {
         return <Badge color="warning"><T>messageTypes.editValidator</T></Badge>;
     case "irishub/stake/MsgDelegate":
         return <Badge color="warning"><T>messageTypes.delegate</T></Badge>;
-    case "irishub/stake/Undelegate":
+    case "irishub/stake/BeginUnbonding":
         return <Badge color="warning"><T>messageTypes.undelegate</T></Badge>;
     case "irishub/stake/BeginRedelegate":
         return <Badge color="warning"><T>messageTypes.redelegate</T></Badge>;

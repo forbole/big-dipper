@@ -65,8 +65,8 @@ export default class Activites extends Component {
             </div></p>
         case "irishub/stake/MsgDelegate":
             return <p><Account address={msg.value.delegator_addr}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <em className="text-warning">{numbro(msg.value.delegation.amount).format("0,0")} {msg.value.delegation.denom}</em> <T>activities.to</T> <Account address={msg.value.validator_addr} /><T>common.fullStop</T></p>
-        case "irishub/stake/Undelegate":
-            return <p><Account address={msg.value.delegator_addr} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <em className="text-warning">{numbro(msg.value.delegation.amount).format("0,0")} {msg.value.delegation.denom}</em> <T>activities.from</T> <Account address={msg.value.validator_addr} /><T>common.fullStop</T></p>
+        case "irishub/stake/BeginUnbonding":
+            return <p><Account address={msg.value.delegator_addr} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <em className="text-warning">{numbro(msg.value.shares_amount).format("0,0")} <T>accounts.shares</T></em> <T>activities.from</T> <Account address={msg.value.validator_addr} /><T>common.fullStop</T></p>
         case "irishub/stake/BeginRedelegate":
             return <p><Account address={msg.value.delegator_addr} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <em className="text-warning">{numbro(msg.value.delegation.amount).format("0,0")} {msg.value.delegation.denom}</em> <T>activities.from</T> <Account address={msg.value.validator_src_addr} /> <T>activities.to</T> <Account address={msg.value.validator_dst_addr} /><T>common.fullStop</T></p>
             
