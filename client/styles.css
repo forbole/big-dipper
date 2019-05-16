@@ -42,6 +42,8 @@ i.material-icons + span {
     position: absolute;
     right: -1.74em;
     top: -0.35em;
+    border: none;
+    background: none;
 }
 
 span#network-nav{
