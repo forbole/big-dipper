@@ -31,19 +31,19 @@ export default class PowerHistory extends React.Component {
                                         <Col xs={12}>
                                             <Row>
                                                 <Col xs={4}><T>validators.delegator</T></Col>
-                                                <Col xs={8} className="address" data-delegator-address={m.value.delegator_address}><Account address={m.value.delegator_address} /></Col>
+                                                <Col xs={8} className="address" data-delegator-address={m.value.delegator_addr}><Account address={m.value.delegator_addr} /></Col>
                                             </Row>
                                         </Col>
                                         <Col xs={12}>
                                             <Row>
-                                                <Col xs={4}>{(this.props.address == m.value.validator_dst_address)?<T>activities.from</T>:<T>activities.to</T>}</Col>
-                                                <Col xs={8} className="address" data-validator-address={(this.props.address == m.value.validator_dst_address)?m.value.validator_src_address:m.value.validator_dst_address}><Account address={(this.props.address == m.value.validator_dst_address)?m.value.validator_src_address:m.value.validator_dst_address} /></Col>
+                                                <Col xs={4}>{(this.props.address == m.value.validator_dst_addr)?<T>activities.from</T>:<T>activities.to</T>}</Col>
+                                                <Col xs={8} className="address" data-validator-address={(this.props.address == m.value.validator_dst_addr)?m.value.validator_src_addr:m.value.validator_dst_addr}><Account address={(this.props.address == m.value.validator_dst_addr)?m.value.validator_src_addr:m.value.validator_dst_addr} /></Col>
                                             </Row>
                                         </Col>
                                         <Col xs={12}>
                                             <Row>
                                                 <Col xs={4}><T>validators.amount</T></Col>
-                                                <Col xs={8}>{numbro(m.value.amount.amount).format('0,0')} {m.value.amount.denom}</Col>
+                                                <Col xs={8}>{numbro(m.value.shares_amount).format('0,0')} <T>accounts.shares</T></Col>
                                             </Row>
                                         </Col>
                                     </Row>
@@ -78,7 +78,7 @@ export default class PowerHistory extends React.Component {
                                         <Col xs={12}>
                                             <Row>
                                                 <Col xs={4}><T>validators.amount</T></Col>
-                                                <Col xs={8}>{numbro(m.value.value.amount).format('0,0')} {m.value.value.denom}</Col>
+                                                <Col xs={8}>{numbro(m.value.delegation.amount).format('0,0')} {m.value.delegation.denom}</Col>
                                             </Row>
                                         </Col>
                                     </Row>
@@ -87,13 +87,13 @@ export default class PowerHistory extends React.Component {
                                         <Col xs={12}>
                                             <Row>
                                                 <Col xs={4}><T>validators.delegator</T></Col>
-                                                <Col xs={8} className="address" data-delegator-address={m.value.delegator_address}><Account address={m.value.delegator_address} /></Col>
+                                                <Col xs={8} className="address" data-delegator-address={m.value.delegator_addr}><Account address={m.value.delegator_addr} /></Col>
                                             </Row>
                                         </Col>
                                         <Col xs={12}>
                                             <Row>
                                                 <Col xs={4}><T>validators.amount</T></Col>
-                                                <Col xs={8}>{numbro(m.value.amount.amount).format('0,0')} {m.value.amount.denom}</Col>
+                                                <Col xs={8}>{numbro(m.value.shares_amount).format('0,0')} <T>accounts.shares</T></Col>
                                             </Row>
                                         </Col>
                                     </Row>
