@@ -29,7 +29,7 @@ export default class Transaction extends Component{
                 let tx = this.props.transaction;
                 return <Container id="transaction">
                     <Helmet>
-                        <title>Transaction {tx.hash} on Cosmos Hub | The Big Dipper</title>  
+                        <title>Transaction {tx.hash} on IRISHub | The Big Dipper</title>  
                         <meta name="description" content={"Details of transaction "+tx.hash} />
                     </Helmet>
                     <h4><T>transactions.transaction</T> {(!tx.result.Code)?<TxIcon valid />:<TxIcon />}</h4>

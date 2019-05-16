@@ -113,7 +113,7 @@ Meteor.methods({
 
             let validatorSet;
             // get latest validator candidate information
-            url = LCD+'/stake/validators?page=1&size=300';
+            url = LCD+'/stake/validators?page=1&size=100';
 
             try{
                 response = HTTP.get(url);
@@ -123,7 +123,7 @@ Meteor.methods({
                 console.log(e);
             }
 
-            url = LCD+'/stake/validators?page=2&size=300';
+            url = LCD+'/stake/validators?page=2&size=100';
 
             try{
                 response = HTTP.get(url);
@@ -133,6 +133,7 @@ Meteor.methods({
                 console.log(e);
             }
 
+            // console.log(validatorSet);
             // url = LCD+'/stake/validators?status=unbonded';
 
             // try{
@@ -144,7 +145,6 @@ Meteor.methods({
             // }
 
             console.log("all validators: "+validatorSet.length);
-
             for (let height = curr+1 ; height <= until ; height++) {
                 let startBlockTime = new Date();
                 // add timeout here? and outside this loop (for catched up and keep fetching)?
@@ -423,7 +423,7 @@ Meteor.methods({
 
                                             bulkValidators.find({consensus_pubkey: valExist.consensus_pubkey}).updateOne({$set:validator});
                                             // console.log("validator exisits: "+bulkValidators.length);
-                                            validatorSet.splice(val, 1);
+                                            // validatorSet.splice(val, 1);
                                             break;
                                         }
                                     }
