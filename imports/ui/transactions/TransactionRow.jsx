@@ -21,12 +21,12 @@ export const TransactionRow = (props) => {
         <Col xs={(!props.blockList)?2:4} md={1}>{(!tx.result.Code)?<TxIcon valid />:<TxIcon />}</Col>
         <Col xs={(!props.blockList)?6:8} md={(!props.blockList)?9:4} lg={2} className="fee"><i className="material-icons d-lg-none">monetization_on</i> {tx.tx.value.fee.amount?tx.tx.value.fee.amount.map((fee,i) => {
             return <span className="text-nowrap" key={i}>{numbro(fee.amount*tx.result.GasUsed/tx.result.GasWanted/Meteor.settings.public.stakingFraction).format("0,0.0000")} {Meteor.settings.public.stakingDenom}</span>
-        }):<span>No fee</span>}</Col>
-        {(tx.code)?<Col xs={{size:12, order:"last"}} className="error">
+        }):<span><T>transactions.noFee</T></span>}</Col>
+        {(tx.result.Code)?<Col xs={{size:12, order:"last"}} className="error">
             <Alert color="danger">
                 <CosmosErrors 
                     code={tx.result.Code}
-                    logs={tx.result.Logs}
+                    logs={tx.result.Log}
                     gasWanted={tx.GasWanted}
                     gasUses={tx.GasUsed}
                 />
