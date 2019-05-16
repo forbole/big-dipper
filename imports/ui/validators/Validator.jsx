@@ -56,7 +56,7 @@ export default class Validator extends Component{
             }
 
             if (this.props.validator.commission){
-                if (this.props.validator.commission.update_time == Meteor.settings.public.genesisTime){
+                if (this.props.validator.commission.update_time == '0001-01-01T00:00:00Z'){
                     this.setState({
                         updateTime: "Never changed"
                     });
