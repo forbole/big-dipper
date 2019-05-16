@@ -1,5 +1,6 @@
 import React, {Component } from 'react';
 import { MsgType } from './MsgType.jsx';
+import { Denom } from './Denom.jsx';
 import { Link } from 'react-router-dom';
 import numbro from 'numbro';
 import Account from '../components/Account.jsx';
@@ -14,7 +15,7 @@ MultiSend = (props) => {
             <ul>
                 {props.msg.value.inputs.map((data,i) =>{
                     return <li key={i}><Account address={data.address}/> <T>activities.sent</T> {data.coins.map((coin, j) =>{
-                        return <em key={j} className="text-success">{numbro(coin.amount).format("0,0")} {coin.denom}</em>
+                        return <em key={j} className="text-success"><Denom amount={coin.amount} denom={coin.denom} /></em>
                     })}
                     </li>
                 })}
@@ -23,7 +24,7 @@ MultiSend = (props) => {
             <ul>
                 {props.msg.value.outputs.map((data,i) =>{
                     return <li key={i}><Account address={data.address}/> <T>activities.received</T> {data.coins.map((coin,j) =>{
-                        return <em key={j} className="text-success">{numbro(coin.amount).format("0,0")} {coin.denom}</em>
+                        return <em key={j} className="text-success"><Denom amount={coin.amount} denom={coin.denom} /></em>
                     })}</li>
                 })}
             </ul>
@@ -43,14 +44,14 @@ export default class Activites extends Component {
         // bank
         case "irishub/bank/Send":
             let amount = '';
-            for (let a in msg.value.inputs[0].coins){
+            amount = msg.value.inputs[0].coins.map((coin, a) => {
                 if (a > 0){
-                    amount += ', '+numbro(msg.value.inputs[0].coins[a].amount).format("0,0a")+" "+msg.value.inputs[0].coins[a].denom;
+                    return <span key={a}> , <Denom amount={msg.value.inputs[0].coins[a].amount} denom={msg.value.inputs[0].coins[a].denom} /></span>
+                }    
+                else {
+                    return <span key={a}><Denom amount={msg.value.inputs[0].coins[a].amount} denom={msg.value.inputs[0].coins[a].denom} /></span>
                 }
-                else{
-                    amount += numbro(msg.value.inputs[0].coins[a].amount).format("0,0a")+" "+msg.value.inputs[0].coins[a].denom;
-                }
-            }
+            })
             return <p><Account address={msg.value.inputs[0].address} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <em className="text-success">{amount}</em> <T>activities.to</T> <Account address={msg.value.outputs[0].address} /><T>common.fullStop</T></p>
             // staking
         case "irishub/stake/MsgCreateValidator":
@@ -64,7 +65,7 @@ export default class Activites extends Component {
                 <div><span className="label"><T>validators.commissionRate</T></span>: {(msg.value.commission_rate)?numbro(msg.value.commission_rate).format("0.00%"):<T>common.notAvailable</T>}</div>
             </div></p>
         case "irishub/stake/MsgDelegate":
-            return <p><Account address={msg.value.delegator_addr}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <em className="text-warning">{numbro(msg.value.delegation.amount).format("0,0")} {msg.value.delegation.denom}</em> <T>activities.to</T> <Account address={msg.value.validator_addr} /><T>common.fullStop</T></p>
+            return <p><Account address={msg.value.delegator_addr}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <em className="text-warning"><Denom amount={msg.value.delegation.amount} denom={msg.value.delegation.denom} /></em> <T>activities.to</T> <Account address={msg.value.validator_addr} /><T>common.fullStop</T></p>
         case "irishub/stake/BeginUnbonding":
             return <p><Account address={msg.value.delegator_addr} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <em className="text-warning">{numbro(msg.value.shares_amount).format("0,0")} <T>accounts.shares</T></em> <T>activities.from</T> <Account address={msg.value.validator_addr} /><T>common.fullStop</T></p>
         case "irishub/stake/BeginRedelegate":
@@ -76,10 +77,10 @@ export default class Activites extends Component {
         case "irishub/gov/MsgDeposit":
             return <p><Account address={msg.value.depositor} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <em className="text-info">{msg.value.amount.map((amount,i) =>{
                 if (i>0){
-                    return " ,"+numbro(amount.amount).format("0,0")+" "+amount.denom;
+                    return <span key={i}> ,<Denom amount={amount.amount} denom={amount.denom} /></span>;
                 }
                 else{
-                    return numbro(amount.amount).format("0,0")+" "+amount.denom;
+                    return <span key={i}><Denom amount={amount.amount} denom={amount.denom} /></span>;
                 }
             })}</em> <T>activities.to</T> <Link to={"/proposals/"+msg.value.proposal_id}><T>proposals.proposal</T> {msg.value.proposal_id}</Link><T>common.fullStop</T></p>
         case "irishub/gov/MsgVote":
