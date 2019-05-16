@@ -55,7 +55,7 @@ export default class Activites extends Component {
             return <p><Account address={msg.value.inputs[0].address} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <em className="text-success">{amount}</em> <T>activities.to</T> <Account address={msg.value.outputs[0].address} /><T>common.fullStop</T></p>
             // staking
         case "irishub/stake/MsgCreateValidator":
-            return <p><Account address={msg.value.delegator_addr}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <T>activities.operatingAt</T> <span className="address"><Account address={msg.value.validator_addr}/></span> <T>activities.withMoniker</T> <Link to="#">{msg.value.description.moniker}</Link><T>common.fullStop</T></p>
+            return <p><Account address={msg.value.delegator_addr}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <T>activities.operatingAt</T> <span className="address"><Account address={msg.value.validator_addr}/></span> <T>activities.withMoniker</T> <Link to="#">{msg.value.Description.moniker}</Link><T>common.fullStop</T></p>
         case "irishub/stake/MsgEditValidator":
             return <p><Account address={msg.value.address}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <T>activities.withValues</T> <div>
                 <div><span className="label"><T>validators.moniker</T></span>: {msg.value.Description.moniker}</div>
