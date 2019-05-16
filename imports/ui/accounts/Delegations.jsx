@@ -37,7 +37,7 @@ export default class AccountDelegations extends Component{
                         numDelegations:delegations.length,
                         delegations: delegations.map((d, i) => {
                             return <Row key={i} className="delegation-info">
-                                <Col xs={6} md={8} className="text-nowrap overflow-auto"><Account address={d.validator_address} /></Col>
+                                <Col xs={6} md={8} className="text-nowrap overflow-auto"><Account address={d.validator_addr} /></Col>
                                 <Col xs={6} md={4}>{numbro(d.shares).format("0,0")}</Col>
                             </Row>
                         })
@@ -68,7 +68,7 @@ export default class AccountDelegations extends Component{
                     <Container fluid>
                         <Row className="header text-nowrap d-none d-lg-flex">
                             <Col md={8}><i className="fas fa-at"></i> <span><T>accounts.validators</T></span></Col>
-                            <Col md={4}><i className="fas fa-piggy-bank"></i> <span>accounts.shares</span></Col>
+                            <Col md={4}><i className="fas fa-piggy-bank"></i> <span><T>accounts.shares</T></span></Col>
                         </Row>
                         {this.state.delegations}
                     </Container>

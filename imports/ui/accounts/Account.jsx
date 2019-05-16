@@ -43,7 +43,6 @@ export default class AccountDetails extends Component{
             }
 
             if (result){
-                // console.log(result);
                 if (result.available){
                     this.setState({
                         available: parseFloat(result.available.amount),
@@ -54,25 +53,23 @@ export default class AccountDetails extends Component{
                 if (result.delegations && result.delegations.length > 0){
                     result.delegations.forEach((delegation, i) => {
                         this.setState({
-                            delegated: this.state.delegated+parseFloat(delegation.shares),
-                            total: this.state.total+parseFloat(delegation.shares)
+                            delegated: this.state.delegated+parseFloat(delegation.shares*Meteor.settings.public.stakingFraction),
+                            total: this.state.total+parseFloat(delegation.shares*Meteor.settings.public.stakingFraction)
                         })
                     }, this)
                 }
 
                 if (result.unbonding && result.unbonding.length > 0){
                     result.unbonding.forEach((unbond, i) => {
-                        unbond.entries.forEach((entry, j) => {
-                            this.setState({
-                                unbonding: this.state.unbonding+parseFloat(entry.balance),
-                                total: this.state.total+parseFloat(entry.balance)
-                            })
-                            , this})
-                    }, this)
+                        this.setState({
+                            unbonding: this.state.unbonding+parseFloat(unbond.balance)*Meteor.settings.public.stakingFraction,
+                            total: this.state.total+parseFloat(unbond.balance)*Meteor.settings.public.stakingFraction
+                        })
+                        , this})
                 }
 
-                if (result.rewards && result.rewards.length > 0){
-                    result.rewards.forEach((reward, i) => {
+                if (result.rewards.total && result.rewards.total.length > 0){
+                    result.rewards.total.forEach((reward, i) => {
                         this.setState({
                             rewards: this.state.rewards+parseFloat(reward.amount),
                             total: this.state.total+parseFloat(reward.amount)
@@ -165,7 +162,7 @@ export default class AccountDetails extends Component{
                                     <Row>
                                         <Col xs={4} className="label d-flex align-self-end"><div className="infinity" /><T>accounts.total</T></Col>
                                         <Col xs={8} className="value text-right">{numbro(this.state.total/Meteor.settings.public.stakingFraction).format("0,0.0000a")} {Meteor.settings.public.stakingDenom}s</Col>
-                                        <Col xs={12} className="dollar-value text-right text-secondary">~{numbro(this.state.total/Meteor.settings.public.stakingFraction*this.state.price).format("$0,0.0000a")} ({numbro(this.state.price).format("$0,0.00")}/ATOM)</Col>
+                                        <Col xs={12} className="dollar-value text-right text-secondary">~{numbro(this.state.total/Meteor.settings.public.stakingFraction*this.state.price).format("$0,0.0000a")} ({numbro(this.state.price).format("$0,0.000000")}/{Meteor.settings.public.stakingDenom})</Col>
                                     </Row>
                                 </Col>
                             </Row>

@@ -44,7 +44,7 @@ Meteor.methods({
         }
 
         // get rewards
-        url = LCD + '/distribution/delegators/'+address+'/rewards';
+        url = LCD + '/distribution/'+address+'/rewards';
         try{
             let rewards = HTTP.get(url);
             if (rewards.statusCode == 200){
