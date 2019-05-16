@@ -41,28 +41,33 @@ export default class Activites extends Component {
         let msg = this.props.msg;
         switch (msg.type){
         // bank
-        case "irishub/bank/MsgSend":
+        case "irishub/bank/Send":
             let amount = '';
-            for (let a in msg.value.amount){
+            for (let a in msg.value.inputs[0].coins){
                 if (a > 0){
-                    amount += ', '+numbro(msg.value.amount[a].amount).format("0,0")+" "+msg.value.amount[a].denom;
+                    amount += ', '+numbro(msg.value.inputs[0].coins[a].amount).format("0,0a")+" "+msg.value.inputs[0].coins[a].denom;
                 }
                 else{
-                    amount += numbro(msg.value.amount[a].amount).format("0,0")+" "+msg.value.amount[a].denom;
+                    amount += numbro(msg.value.inputs[0].coins[a].amount).format("0,0a")+" "+msg.value.inputs[0].coins[a].denom;
                 }
             }
-            return <p><Account address={msg.value.from_address} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <em className="text-success">{amount}</em> <T>activities.to</T> <span className="address"><Account address={msg.value.to_address} /></span><T>common.fullStop</T></p>
+            return <p><Account address={msg.value.inputs[0].address} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <em className="text-success">{amount}</em> <T>activities.to</T> <Account address={msg.value.outputs[0].address} /><T>common.fullStop</T></p>
             // staking
         case "irishub/stake/MsgCreateValidator":
-            return <p><Account address={msg.value.delegator_address}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <T>activities.operatingAt</T> <span className="address"><Account address={msg.value.validator_address}/></span> <T>activities.withMoniker</T> <Link to="#">{msg.value.description.moniker}</Link><T>common.fullStop</T></p>
+            return <p><Account address={msg.value.delegator_addr}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <T>activities.operatingAt</T> <span className="address"><Account address={msg.value.validator_addr}/></span> <T>activities.withMoniker</T> <Link to="#">{msg.value.description.moniker}</Link><T>common.fullStop</T></p>
         case "irishub/stake/MsgEditValidator":
-            return <p><Account address={msg.value.address}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /></p>
+            return <p><Account address={msg.value.address}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <T>activities.withValues</T> <div>
+                <div><span className="label"><T>validators.moniker</T></span>: {msg.value.Description.moniker}</div>
+                <div><span className="label"><T>validators.identity</T></span>: {msg.value.Description.identity}</div>
+                <div><span className="label"><T>validators.website</T></span>: {msg.value.Description.website}</div>
+                <div><span className="label"><T>validators.commissionRate</T></span>: {(msg.value.commission_rate)?numbro(msg.value.commission_rate).format("0.00%"):<T>common.notAvailable</T>}</div>
+            </div></p>
         case "irishub/stake/MsgDelegate":
-            return <p><Account address={msg.value.delegator_address}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <em className="text-warning">{numbro(msg.value.delegation.amount).format("0,0")} {msg.value.delegation.denom}</em> <T>activities.to</T> <Account address={msg.value.validator_address} /><T>common.fullStop</T></p>
+            return <p><Account address={msg.value.delegator_addr}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <em className="text-warning">{numbro(msg.value.delegation.amount).format("0,0")} {msg.value.delegation.denom}</em> <T>activities.to</T> <Account address={msg.value.validator_addr} /><T>common.fullStop</T></p>
         case "irishub/stake/Undelegate":
-            return <p><Account address={msg.value.delegator_address} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <em className="text-warning">{numbro(msg.value.delegation.amount).format("0,0")} {msg.value.delegation.denom}</em> <T>activities.from</T> <Account address={msg.value.validator_address} /><T>common.fullStop</T></p>
+            return <p><Account address={msg.value.delegator_addr} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <em className="text-warning">{numbro(msg.value.delegation.amount).format("0,0")} {msg.value.delegation.denom}</em> <T>activities.from</T> <Account address={msg.value.validator_addr} /><T>common.fullStop</T></p>
         case "irishub/stake/BeginRedelegate":
-            return <p><Account address={msg.value.delegator_address} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <em className="text-warning">{numbro(msg.value.delegation.amount).format("0,0")} {msg.value.delegation.denom}</em> <T>activities.from</T> <Account address={msg.value.validator_src_address} /> <T>activities.to</T> <Account address={msg.value.validator_dst_address} /><T>common.fullStop</T></p>
+            return <p><Account address={msg.value.delegator_addr} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <em className="text-warning">{numbro(msg.value.delegation.amount).format("0,0")} {msg.value.delegation.denom}</em> <T>activities.from</T> <Account address={msg.value.validator_src_addr} /> <T>activities.to</T> <Account address={msg.value.validator_dst_addr} /><T>common.fullStop</T></p>
             
             // gov
         case "irishub/gov/MsgSubmitProposal":
@@ -83,15 +88,15 @@ export default class Activites extends Component {
         case "irishub/distr/MsgWithdrawDelegationRewardsAll":
             return <p><Account address={msg.value.delegator_addr} /> <MsgType type={msg.type} />.</p>    
         case "irishub/distr/MsgWithdrawValidatorRewardsAll":
-            return <p><Account address={msg.value.validator_address} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /><T>common.fullStop</T></p>
+            return <p><Account address={msg.value.validator_addr} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /><T>common.fullStop</T></p>
         case "irishub/distr/MsgWithdrawDelegationReward":
-            return <p><Account address={msg.value.delegator_address}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <T>activities.from</T> <Account address={msg.value.validator_address} /><T>common.fullStop</T></p>
+            return <p><Account address={msg.value.delegator_addr}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <T>activities.from</T> <Account address={msg.value.validator_addr} /><T>common.fullStop</T></p>
         case "irishub/distr/MsgModifyWithdrawAddress":
-            return <p><Account address={msg.value.delegator_address}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /></p>
+            return <p><Account address={msg.value.delegator_addr}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /></p>
     
             // slashing
         case "irishub/slashing/MsgUnjail":
-            return <p><Account address={msg.value.delegator_address}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /><T>common.fullStop</T></p>
+            return <p><Account address={msg.value.delegator_addr}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /><T>common.fullStop</T></p>
             
     
         default:

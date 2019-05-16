@@ -40,11 +40,11 @@ export const MsgType = (props) => {
         
         // distribution
     case "irishub/distr/MsgWithdrawDelegationRewardsAll":
-        return <Badge color="secondary"><T>messageTypes.withdrawComission</T></Badge>;
+        return <Badge color="secondary"><T>messageTypes.withdrawDelegationRewardsAll</T></Badge>;
     case "irishub/distr/MsgWithdrawDelegationReward":
-        return <Badge color="secondary"><T>messageTypes.withdrawReward</T></Badge>;
+        return <Badge color="secondary"><T>messageTypes.withdrawDelegationReward</T></Badge>;
     case "irishub/distr/MsgWithdrawValidatorRewardsAll":
-        return <Badge color="secondary"><T>messageTypes.withdrawValidatorReward</T></Badge>;
+        return <Badge color="secondary"><T>messageTypes.withdrawValidatorRewardsAll</T></Badge>;
     case "irishub/distr/MsgModifyWithdrawAddress":
         return <Badge color="secondary"><T>messgeTypes.modifyWithdrawAddress</T></Badge>;
 
@@ -53,38 +53,38 @@ export const MsgType = (props) => {
         return <Badge color="danger"><T>messageTypes.unjail</T></Badge>;
         
         // guardian
-        case "irishub/guardian/MsgAddProfiler":
-            return <Badge color="light">Add Profiler</Badge>;
-        case "irishub/guardian/MsgAddTrustee":
-            return <Badge color="light">Add Trustee</Badge>;
-        case "irishub/guardian/MsgDeleteProfiler":
-            return <Badge color="light">Delete Profiler</Badge>;
-        case "irishub/guardian/MsgDeleteTrustee":
-            return <Badge color="light">Delete Trustee</Badge>;
- 
-        // services
-        case "irishub/service/MsgSvcDef":
-            return <Badge color="light">Define Service</Badge>;
-        case "irishub/service/MsgSvcBinding":
-            return <Badge color="light">Bind Service</Badge>;
-        case "irishub/service/MsgSvcBindingUpdate":
-            return <Badge color="light">Update Service Binding</Badge>;
-        case "irishub/service/MsgSvcDisable":
-            return <Badge color="light">Disable Service</Badge>;
-        case "irishub/service/MsgSvcEnable":
-            return <Badge color="light">Enable Service</Badge>;
-        case "irishub/service/MsgSvcRefundDeposit":
-            return <Badge color="light">Deposit Refund</Badge>;
-        case "irishub/service/MsgSvcRequest":
-            return <Badge color="light">Request Service</Badge>;
-        case "irishub/service/MsgSvcResponse":
-            return <Badge color="light">Response Service</Badge>;
-        case "irishub/service/MsgSvcRefundFees":
-            return <Badge color="light">Refund Service Fees</Badge>;
-        case "irishub/service/MsgSvcWithdrawFees":
-            return <Badge color="light">Widthdraw Service Fees</Badge>;
-        case "irishub/service/MsgSvcWithdrawTax":
-            return <Badge color="light">Withdraw Service Tax</Badge>;
+    case "irishub/guardian/MsgAddProfiler":
+        return <Badge color="light">Add Profiler</Badge>;
+    case "irishub/guardian/MsgAddTrustee":
+        return <Badge color="light">Add Trustee</Badge>;
+    case "irishub/guardian/MsgDeleteProfiler":
+        return <Badge color="light">Delete Profiler</Badge>;
+    case "irishub/guardian/MsgDeleteTrustee":
+        return <Badge color="light">Delete Trustee</Badge>;
+
+    // services
+    case "irishub/service/MsgSvcDef":
+        return <Badge color="light">Define Service</Badge>;
+    case "irishub/service/MsgSvcBinding":
+        return <Badge color="light">Bind Service</Badge>;
+    case "irishub/service/MsgSvcBindingUpdate":
+        return <Badge color="light">Update Service Binding</Badge>;
+    case "irishub/service/MsgSvcDisable":
+        return <Badge color="light">Disable Service</Badge>;
+    case "irishub/service/MsgSvcEnable":
+        return <Badge color="light">Enable Service</Badge>;
+    case "irishub/service/MsgSvcRefundDeposit":
+        return <Badge color="light">Deposit Refund</Badge>;
+    case "irishub/service/MsgSvcRequest":
+        return <Badge color="light">Request Service</Badge>;
+    case "irishub/service/MsgSvcResponse":
+        return <Badge color="light">Response Service</Badge>;
+    case "irishub/service/MsgSvcRefundFees":
+        return <Badge color="light">Refund Service Fees</Badge>;
+    case "irishub/service/MsgSvcWithdrawFees":
+        return <Badge color="light">Widthdraw Service Fees</Badge>;
+    case "irishub/service/MsgSvcWithdrawTax":
+        return <Badge color="light">Withdraw Service Tax</Badge>;
 
 
     default:
