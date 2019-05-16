@@ -14,18 +14,18 @@ export default MissedBlocksContainer = withTracker((props) => {
     if (Meteor.isClient){
         statusHandle = Meteor.subscribe('status.status');
         validatorsHandle = Meteor.subscribe('validator.details', props.match.params.address);
-        
+
         if (props.type == 'voter'){
             missedBlockHandle = Meteor.subscribe('missedblocks.validator', props.match.params.address, 'voter');
-        }    
+        }
         else{
             missedBlockHandle = Meteor.subscribe('missedblocks.validator', props.match.params.address, 'proposer');
         }
 
         loading = !validatorsHandle.ready() && !statusHandle.ready() && !missedBlockHandle.ready();
     }
-    
-    
+
+
     let validator;
     let status;
     let missedBlocks;
@@ -55,7 +55,7 @@ export default MissedBlocksContainer = withTracker((props) => {
             missedBlocksExist = !loading && !!missedBlocks;
         }
     }
-    
+
     return {
         loading,
         validatorExist,
