@@ -60,6 +60,7 @@ export default class Activites extends Component {
                 <div><span className="label"><T>validators.moniker</T></span>: {msg.value.Description.moniker}</div>
                 <div><span className="label"><T>validators.identity</T></span>: {msg.value.Description.identity}</div>
                 <div><span className="label"><T>validators.website</T></span>: {msg.value.Description.website}</div>
+                <div><span className="label"><T>validators.details</T></span>: {msg.value.Description.details}</div>
                 <div><span className="label"><T>validators.commissionRate</T></span>: {(msg.value.commission_rate)?numbro(msg.value.commission_rate).format("0.00%"):<T>common.notAvailable</T>}</div>
             </div></p>
         case "irishub/stake/MsgDelegate":
