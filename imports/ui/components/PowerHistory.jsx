@@ -3,6 +3,7 @@ import { Card, CardFooter, CardBody, Col, Row, Badge } from 'reactstrap';
 import momemt from 'moment';
 import numbro from 'numbro';
 import Account from './Account.jsx';
+import { Denom } from './Denom.jsx';
 import i18n from 'meteor/universe:i18n';
 
 const T = i18n.createComponent();
@@ -59,7 +60,7 @@ export default class PowerHistory extends React.Component {
                                             <Col xs={12}>
                                                 <Row>
                                                     <Col xs={4}><T>validators.amount</T></Col>
-                                                    <Col xs={8}>{numbro(m.value.delegation.amount).format('0,0')} {m.value.delegation.denom}</Col>
+                                                    <Col xs={8}><Denom amount={m.value.delegation.amount} denom={m.value.delegation.denom} /></Col>
                                                 </Row>
                                             </Col>
                                         </Row>
@@ -78,7 +79,7 @@ export default class PowerHistory extends React.Component {
                                         <Col xs={12}>
                                             <Row>
                                                 <Col xs={4}><T>validators.amount</T></Col>
-                                                <Col xs={8}>{numbro(m.value.delegation.amount).format('0,0')} {m.value.delegation.denom}</Col>
+                                                <Col xs={8}><Denom amount={m.value.delegation.amount} denom={m.value.delegation.denom} /></Col>
                                             </Row>
                                         </Col>
                                     </Row>
@@ -127,10 +128,10 @@ export default class PowerHistory extends React.Component {
                                         <Col xs={4} sm={6}><T>transactions.fee</T></Col>
                                         <Col xs={8} sm={6}>{(msg.tx.value.fee.amount&& msg.tx.value.fee.amount.length>0)?msg.tx.value.fee.amount.map((amount,i)=>{
                                             if (i > 0){
-                                                return <span key={i}> ,{numbro(amount.amount).format('0,0')} {amount.denom}</span>
+                                                return <span key={i}> ,<Denom amount={amount.amount} denom={amount.denom} /></span>
                                             }
                                             else{
-                                                return <span key={i}>{numbro(amount.amount).format('0,0')} {amount.denom}</span>
+                                                return <span key={i}><Denom amount={amount.amount} denom={amount.denom} /></span>
                                             }
                                         }):'0'}</Col>
                                     </Row>
