@@ -48,18 +48,18 @@ export default class PowerHistory extends React.Component {
                                         </Col>
                                     </Row>
                                 case "irishub/stake/MsgDelegate":
-                                    if (m.value.validator_address == self.props.address){      
+                                    if (m.value.validator_addr == self.props.address){      
                                         return <Row key={j}>
                                             <Col xs={12}>
                                                 <Row>
                                                     <Col xs={4}><T>validators.delegator</T></Col>
-                                                    <Col xs={8} className="address" data-delegator-address={m.value.delegator_address}><Account address={m.value.delegator_address} /></Col>
+                                                    <Col xs={8} className="address" data-delegator-address={m.value.delegator_addr}><Account address={m.value.delegator_addr} /></Col>
                                                 </Row>
                                             </Col>
                                             <Col xs={12}>
                                                 <Row>
                                                     <Col xs={4}><T>validators.amount</T></Col>
-                                                    <Col xs={8}>{numbro(m.value.amount.amount).format('0,0')} {m.value.amount.denom}</Col>
+                                                    <Col xs={8}>{numbro(m.value.delegation.amount).format('0,0')} {m.value.delegation.denom}</Col>
                                                 </Row>
                                             </Col>
                                         </Row>
@@ -109,14 +109,14 @@ export default class PowerHistory extends React.Component {
                                             case "irishub/stake/BeginRedelegate":
                                                 return <Col key={j}><Badge color="success"><T>messageTypes.redelegate</T></Badge></Col>;
                                             case "irishub/stake/MsgDelegate":
-                                                if (m.value.validator_address == self.props.address){
+                                                if (m.value.validator_addr == self.props.address){
                                                     return <Col key={j}><Badge color="success"><T>messageTypes.delegate</T></Badge></Col>;
                                                 }
                                                 else
                                                     return;    
                                             case "irishub/stake/MsgCreateValidator":
                                                 return <Col key={j}><Badge color="warning"><T>messageTypes.createValidator</T></Badge></Col>;
-                                            case "irishub/stake/MsgCreateValidator/Unjail":
+                                            case "irishub/stake/Unjail":
                                                 return <Col key={j}><Badge color="info"><T>messageTypes.unjail</T></Badge></Col>;
                                             case "irishub/stake/BeginUnbonding":
                                                 return <Col key={j}><Badge color="danger"><T>messageTypes.undelegate</T></Badge></Col>;
