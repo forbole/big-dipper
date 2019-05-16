@@ -7,22 +7,42 @@ export default class Account extends Component{
         super(props);
 
         this.state = {
-            address: this.props.address
+            address: `/account/${this.props.address}`,
+            moniker: this.props.address
         }
     }
 
-    componentDidMount(){
+    updateAccount = () => {
+        let address = this.props.address;
         Meteor.call('Transactions.findUser', this.props.address, (error, result) => {
             if (result){
                 // console.log(result);
                 this.setState({
-                    address: <Link to={"/validator/"+result.address}>{result.description.moniker}</Link>
-                })
+                    address: `/validator/${result.address}`,
+                    moniker: result.description.moniker
+                });
             }
+
         })
     }
 
+    componentDidMount(){
+        this.updateAccount();
+    }
+
+    componentDidUpdate(prevProps){
+        if (this.props.address != prevProps.address){
+            this.setState({
+                address: `/account/${this.props.address}`,
+                moniker: this.props.address
+            });
+            this.updateAccount();
+        }
+    }
+
     render(){
-        return <span>{this.state.address}</span>
+        return <span className={(this.props.copy)?"address overflow-auto d-inline-block copy":"address overflow-auto d-inline"} >
+            <Link to={this.state.address}>{this.state.moniker}</Link>
+        </span>
     }
 }

@@ -25,18 +25,18 @@ publishComposite('validators.firstSeen',{
 
 Meteor.publish('validators.voting_power', function(){
     return Validators.find({
-            status: 2,
-            jailed:false
-        },{
-            sort:{
-                voting_power:-1
-            },
-            fields:{
-                address: 1,
-                description:1,
-                voting_power:1
-            }
+        status: 2,
+        jailed:false
+    },{
+        sort:{
+            voting_power:-1
+        },
+        fields:{
+            address: 1,
+            description:1,
+            voting_power:1
         }
+    }
     );
 });
 

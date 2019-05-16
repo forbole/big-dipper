@@ -1,29 +1,14 @@
-@font-face {
-    font-family: 'averta-thin';
-    src: url('/fonts/averta_thin-webfont.woff2') format('woff2'),
-         url('/fonts/averta_thin-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'averta';
-    src: url('/fonts/averta-webfont.woff2') format('woff2'),
-         url('/fonts/averta-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'averta-bold';
-    src: url('/fonts/averta_bold-webfont.woff2') format('woff2'),
-         url('/fonts/averta_bold-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-
 body {
     font-size: inherit !important;
+}
+
+.no-select {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .not-found{
@@ -42,27 +27,49 @@ body {
 
 i.material-icons + span {
     transform: translateY(-7px);
-    display: inline-block;
+    display: inline-block !important;
 }
 
-div#loading {
-    display: none;
-    border: 8px solid #f3f3f3; /* Light grey */
-    border-top: 8px solid #158CBA; /* Iris */
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 2s linear infinite;
+.copy-button{
+    cursor: pointer;
+}
+
+.more.dropdown .btn, .more.dropdown.btn:focus{
+    box-shadow: none;
+}
+
+.more.dropdown .btn{
+    position: absolute;
+    right: -1.74em;
+    top: -0.35em;
+}
+
+span#network-nav{
+    font-size: 1rem;
+    color: #fff;
+    font-weight: bold;
+}
+
+#header .dropdown-header{
+    font-size: 1rem !important;
+}
+
+.dropdown-item.disabled a,
+.dropdown-item:disabled a{
+    color: #666;
+}
+
+#header .dropdown-header img{
+    height: 2em;
+    margin-right: 0.25em;
+}
+
+#header .dropdown-item a span.badge{
+    transform: translateY(-1px);
+}
+
+div#loadmore {
     margin: 0.5rem auto;
-    /* align-self: center; */
-    /* position: fixed; */
-    /* z-index: 9999; */
-    /* top: 35%;
-    left: 45%; */
-}
-
-div#loading.show{
-    display: block;
 }
 
 a.navbar-brand .logo {
@@ -70,9 +77,19 @@ a.navbar-brand .logo {
     max-width: 40px;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+#header-search{
+    margin-left: 1rem;
+    margin-right: 0.5rem;
+}
+
+#header-search .form-control,
+#mobile-searchbar .form-control{
+    height: auto;
+    /* padding: 0.5rem 0; */
+}
+
+#mobile-searchbar {
+    margin-bottom: 0.5em;
 }
 
 #footer{
@@ -81,15 +98,22 @@ a.navbar-brand .logo {
     line-height: 1;
 }
 
-div#main{
+div#main, div#transaction, div#block{
     padding-top: 6rem;
     padding-bottom: 3.85rem;
+}
+
+div#transaction .card.card-body{
+    overflow-x: auto;
+}
+
+div#transaction .card.card-body p {
+    margin-bottom: 0;
 }
 
 img.moniker-avatar-list{
     height: 24px;
     margin-right: 5px;
-    /* box-shadow: rgba(0,0,0,0.8) 0px 0px 1px; */
     border: 1px solid rgba(0,0,0,0.3);
 }
 
@@ -119,19 +143,21 @@ div.validator-list div.header div.last-seen span.d-md-none{
     transform: translateY(-1px);;
 }
 
-div.validator-list div.header .voting-power{
-    font-family: inherit !important;
+div#block-table,
+#transactions div.transactions-list{
+    margin-top: 0.5em;
 }
 
-table#block-table, 
-table.random-validators, 
+table#block-table,
+table.random-validators,
 table.validator-list,
 table.proposal-list {
     table-layout: fixed;
     width: 100%;
-    white-space: nowrap;    
+    white-space: nowrap;
 }
-table#block-table td, 
+
+table#block-table td,
 table.random-validators td,
 table.validator-list td,
 table.proposal-list td{
@@ -142,28 +168,6 @@ table.proposal-list td{
 table th.voting-power,
 table td.voting-power{
     text-align:right;
-}
-
-.data.commission,
-.data.self-delegation,
-.voting-power:not(th){
-    font-family: 'Inconsolata', monospace !important;
-}
-
-table#block-table th.height{
-    width: 15%;
-}
-
-table#block-table th.hash{
-    max-width: 35%;
-}
-
-table#block-table th.no-of-txs{
-    width: 20%;
-}
-
-table#block-table th.time{
-    width: 30%;
 }
 
 table.random-validators th.moniker{
@@ -214,13 +218,9 @@ table.proposal-list th.status{
     width: 15%;
 }
 
-
-th i.material-icons{
-    vertical-align: middle;
-}
 .status .value{
     display: block;
-    font-family: "averta-thin", sans-serif;
+    font-weight: 100;
     -webkit-transition: all 2s ease-out;
     -moz-transition: all 2s ease-out;
     -o-transition: all 2s ease-out;
@@ -251,8 +251,12 @@ div#countdown {
     text-overflow: ellipsis;
 }
 
-#home .card{
-    margin: 0.75em 0;
+#home .card,
+#transaction .card,
+#block .card,
+#account .card{
+    /* margin: 0 0 0.75em 0; */
+    margin-bottom: 0.75em;
 }
 
 .progress{
@@ -261,12 +265,16 @@ div#countdown {
     border: 1px solid #ddd !important;
 }
 
+.tally-result .progress-bar {
+    height: 4em;
+}
+
 .proposal{
     padding: 1em;
     margin-bottom: 1em;
 }
 
-.proposal .label, 
+.proposal .label,
 .proposal .value {
     padding: 0.3em;
     word-wrap: break-word;
@@ -281,13 +289,11 @@ div#countdown {
     width: 100%;
 }
 
-.proposal .tally-result-detail ol{
-    border-radius: 0.3em;
-    padding-top: 1em;
-    padding-bottom: 1em;
-    background-color: #fff9fa;
+
+.proposal .tally-result-table .moniker.data{
     white-space: nowrap;
-    overflow: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .proposal .tally-info{
@@ -300,6 +306,30 @@ div#countdown {
 
 .proposal .tally-result i.fas{
     min-width: 1.5em;
+}
+
+.proposal .card-header-tabs .nav-link {
+    margin: -0.5em 0.5em 0 0.5em;
+    padding: 0.5rem 1.5rem;
+    box-shadow: initial;
+    color: #bd081c;
+    cursor: pointer;
+}
+
+.proposal .card-header-tabs .nav-link.active:not(:hover), .proposal .card-header-tabs .nav-link.active:focus:not(:hover) {
+    border: none;
+    -webkit-box-shadow: initial;
+    box-shadow: initial;
+    color: #bd081c;
+}
+.proposal .card-header-tabs .nav-link.active:hover {
+    border: none;
+    background: #fff;
+    color: #bd081c;
+}
+
+.proposal .plottable .label-area text {
+    font-size: 1.5em;
 }
 
 .validator-details .moniker{
@@ -316,9 +346,60 @@ div#countdown {
     margin-bottom: 1em;
 }
 
-.address{
-    white-space: nowrap;
-    overflow-y: auto;
+.validator-details .card-body h3 .badge.badge-danger{
+    margin-right: 0.5em;
+}
+
+.validator-details  ul.nav{
+    margin-bottom: 0.8em;
+}
+
+.address.copy{
+    max-width: calc(100% - 1.2em);
+}
+
+.account-distributions .progress {
+    height: 1.5em !important;
+    border-radius: 0.2em;
+    margin-bottom: 0.8em;
+}
+
+.account-distributions .progress .row{
+    padding-bottom: 0.2em;
+}
+
+#account .infinity{
+    display: inline-block;
+    margin-right: 0.5em;
+    height: 1em;
+    width: 1em;
+    transform: translateY(2px);
+    border-radius: 0.2em;
+}
+
+#account .available{
+    background-color: #9C27B0
+}
+
+#account .delegated{
+    background-color: #6610f2
+}
+
+#account .unbonding{
+    background-color: #2196F3
+}
+
+#account .rewards{
+    background-color: #20c997
+}
+
+#account .total{
+    margin-top: 0.8em;
+}
+
+#account .total .value{
+    font-size: 1.5em;
+    transform: translateY(3px);
 }
 
 .vp-diff{
@@ -326,7 +407,9 @@ div#countdown {
     transform: translateY(-5px);
 }
 
-div.transactions-list div.tx-info{
+div.block-info,
+div.tx-info,
+div.delegation-info{
     padding-top: 0.4rem;
     padding-bottom: 0.4rem;
     border-bottom: 1px solid #dee2e6;
@@ -336,7 +419,17 @@ div.transactions-list div.tx-info{
     background-color: rgba(237, 20, 61, 0.2) !important;
 }
 
-div.transactions-list div.tx-info:nth-child(2n){
+#transaction .error .alert-danger {
+    margin-bottom: 0.5em;
+}
+
+.error .alert-danger {
+    margin-bottom: 0;
+}
+
+div#block-table div.block-info:nth-child(2n),
+div.transactions-list div.tx-info:nth-child(2n),
+div.delegation-info:nth-child(2n){
     background-color: rgba(0,0,0,0.05);
 }
 
@@ -350,7 +443,7 @@ div.transactions-list div.tx-info .activity .card-body{
     margin-bottom: 0.5rem;
 }
 
-div.transactions-list div.tx-info .activity .card-body p{
+.activity .card-body p{
     margin-bottom: 0;
 }
 
@@ -359,13 +452,8 @@ div.transactions-list div.tx-info .activity .card-body ul {
     padding-left: 1em;
 }
 
-/* div.transactions-list div.tx-info .badge{
-    margin-right: 0.2rem;
-} */
-
-div.transactions-list .error .alert .badge {
+.error .alert .badge {
     white-space: inherit;
-    /* display: block; */
     text-align: left;
 }
 
@@ -373,6 +461,7 @@ div.transactions-list div.tx-info .badge:not(:last-child) {
     margin-bottom: 0.2rem;
 }
 
+div#block-table div.header,
 div.transactions-list div.header{
     padding-top: 0.3rem;
     border-top: 1px solid #dee2e6;
@@ -433,8 +522,24 @@ div#voting-power-dist .card{
     margin-top: 0.5em;
 }
 
-@media only screen and (max-width: 768px){
-    div#main{
+#block ul.tx-types{
+    height: 3.5em;
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+#block ul.tx-types li {
+    display: inline-block;
+    margin: 0 0.75em 0.5em 0 !important;
+}
+
+#block ul.tx-types .nav-link{
+    cursor: pointer;
+}
+
+@media only screen and (max-width: 767px){
+    div#main, div#transaction, div#block{
         padding-bottom: 4.85rem;
     }
 
@@ -448,6 +553,11 @@ div#voting-power-dist .card{
         margin-bottom: 0.8rem;
     }
 
+
+    .proposal .tally-result-table .card.card-body{
+        margin: 0.4rem 0.8rem;
+    }
+
     .mobile-menu li{
         width: 16.66%;
     }
@@ -455,7 +565,7 @@ div#voting-power-dist .card{
     .mobile-menu li a{
         text-align: center;
     }
-        
+
     div.validator-list div.validator-info img.moniker-avatar-list{
         height: 48px;
         float: left;
@@ -471,6 +581,10 @@ div#voting-power-dist .card{
     div.validator-list div.validator-info div.data.status{
         margin-top: -25px;
     }
+
+    #block ul.tx-types .nav-link{
+        padding: 0.5em 0;
+    }
 }
 
 @media only screen and (min-width: 768px){
@@ -485,17 +599,20 @@ div#voting-power-dist .card{
         text-align: right;
     }
 
-    #validator-list div.validator-list .card.card-body{
+    #validator-list div.validator-list .card.card-body,
+    .proposal .tally-result-table .card.card-body{
         padding: 0;
     }
 
-    #validator-list div.validator-list .card{
+    #validator-list div.validator-list .card,
+    .proposal .tally-result-table .card{
         -webkit-box-shadow: none;
         box-shadow: none;
         border: none;
     }
 
-    #validator-list div.validator-list div.header{
+    #validator-list div.validator-list div.header,
+    .proposal .tally-result-table div.header{
         padding-top: 0.3rem;
         border-top: 1px solid #dee2e6;
         border-bottom: 2px solid #dee2e6;
@@ -507,24 +624,34 @@ div#voting-power-dist .card{
         padding-right: 5px;
     }
 
-    div.validator-list div.validator-info{
+    div.validator-list div.validator-info,
+    .tally-result-table .voter-info{
         padding-top: 0.4rem;
         padding-bottom: 0.4rem;
         border-bottom: 1px solid #dee2e6;
     }
 
-    div.validator-list div.card-body:nth-child(2n) div.validator-info{
+    .voter-info .data.counter{
+        padding-left: 1.5em;
+    }
+
+    div.validator-list div.card-body:nth-child(2n) div.validator-info,
+    .proposal .tally-result-table div.card-body:nth-child(2n) .voter-info{
         background-color: rgba(0,0,0,0.05);
     }
 
     div.transactions-list div.header,
-    div.transactions-list div.tx-info{ 
+    div.transactions-list div.tx-info{
         margin-left:0;
         margin-right:0;
     }
 
     .validator-info.row i.material-icons + span{
         transform: inherit;
+    }
+
+    #account .card-body.list{
+        height: 15em;
     }
 }
 
@@ -533,22 +660,16 @@ div#voting-power-dist .card{
         padding: 0 1rem;
     }
 
-    div#main {
+    div#main, div#transaction, div#block {
         padding-top: 3.5rem;
         /* padding-bottom: 4.8rem; */
     }
 
-    #validator-list ul.status-switch {
-        position: fixed;
-        background-color: #fff;
-        width: 100%;
-        z-index: 1;
-        padding: 5px 0;
-        margin-top: -5px
+    #validator-list ul.status-switch{
+        margin-top: 0.5em;
     }
-
-    #validator-list .lead{
-        padding-top: 2.5rem;
+    .card-body.list{
+        padding: 0;
     }
 }
 
@@ -557,4 +678,91 @@ div#voting-power-dist .card{
     .tx-info .fee i.material-icons + span {
         transform: inherit;
     }
+
+    span#network-nav{
+        margin-left: 2.5em;
+    }
+
+}
+
+.plottable .tooltip {
+  opacity: 0.9;
+}
+
+.plottable .tooltip .tooltip-inner p{
+  margin: 0;
+}
+
+.tooltip .tooltip-arrow {
+  position: absolute;
+  display: block;
+  width: 0.8rem;
+  height: 0.4rem;
+}
+
+.tooltip .tooltip-arrow::before {
+  position: absolute;
+  content: "";
+  border-color: transparent;
+  border-style: solid;
+}
+
+.bs-tooltip-top, .bs-tooltip-auto[x-placement^="top"] {
+  padding: 0.4rem 0;
+}
+
+.bs-tooltip-top .tooltip-arrow, .bs-tooltip-auto[x-placement^="top"] .tooltip-arrow {
+  bottom: 0;
+}
+
+.bs-tooltip-top .tooltip-arrow::before, .bs-tooltip-auto[x-placement^="top"] .tooltip-arrow::before {
+  top: 0;
+  border-width: 0.4rem 0.4rem 0;
+  border-top-color: #444;
+}
+
+.bs-tooltip-right, .bs-tooltip-auto[x-placement^="right"] {
+  padding: 0 0.4rem;
+}
+
+.bs-tooltip-right .tooltip-arrow, .bs-tooltip-auto[x-placement^="right"] .tooltip-arrow {
+  left: 0;
+  width: 0.4rem;
+  height: 0.8rem;
+}
+
+.bs-tooltip-right .tooltip-arrow::before, .bs-tooltip-auto[x-placement^="right"] .tooltip-arrow::before {
+  right: 0;
+  border-width: 0.4rem 0.4rem 0.4rem 0;
+  border-right-color: #444;
+}
+
+.bs-tooltip-bottom, .bs-tooltip-auto[x-placement^="bottom"] {
+  padding: 0.4rem 0;
+}
+
+.bs-tooltip-bottom .tooltip-arrow, .bs-tooltip-auto[x-placement^="bottom"] .tooltip-arrow {
+  top: 0;
+}
+
+.bs-tooltip-bottom .tooltip-arrow::before, .bs-tooltip-auto[x-placement^="bottom"] .tooltip-arrow::before {
+  bottom: 0;
+  border-width: 0 0.4rem 0.4rem;
+  border-bottom-color: #444;
+}
+
+.bs-tooltip-left, .bs-tooltip-auto[x-placement^="left"] {
+  padding: 0 0.4rem;
+}
+
+.bs-tooltip-left .tooltip-arrow, .bs-tooltip-auto[x-placement^="left"] .tooltip-arrow {
+  right: 0;
+  width: 0.4rem;
+  height: 0.8rem;
+}
+
+.bs-tooltip-left .tooltip-arrow::before, .bs-tooltip-auto[x-placement^="left"] .tooltip-arrow::before {
+  left: 0;
+  border-width: 0.4rem 0 0.4rem 0.4rem;
+  border-left-color: #444;
 }

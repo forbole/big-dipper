@@ -1,12 +1,16 @@
 import { Blockscon } from '../../api/blocks/blocks.js';
 import { Proposals } from '../../api/proposals/proposals.js';
-import { ValidatorRecords, Analytics, MissedBlocksStats } from '../../api/records/records.js';
+import { ValidatorRecords, Analytics, MissedBlocksStats, AverageData, AverageValidatorData } from '../../api/records/records.js';
 // import { Status } from '../../api/status/status.js';
 import { Transactions } from '../../api/transactions/transactions.js';
 import { ValidatorSets } from '../../api/validator-sets/validator-sets.js';
 import { Validators } from '../../api/validators/validators.js';
 import { VotingPowerHistory } from '../../api/voting-power/history.js';
 import { Evidences } from '../../api/evidences/evidences.js';
+import { CoinStats } from '../../api/coin-stats/coin-stats.js';
+import { ChainStates } from '../../api/chain/chain.js';
+
+ChainStates.rawCollection().createIndex({height: -1},{unique:true});
 
 Blockscon.rawCollection().createIndex({height: -1},{unique:true});
 Blockscon.rawCollection().createIndex({proposerAddress:1});
@@ -23,6 +27,8 @@ MissedBlocksStats.rawCollection().createIndex({proposer:1});
 MissedBlocksStats.rawCollection().createIndex({voter:1});
 MissedBlocksStats.rawCollection().createIndex({proposer:1, voter:1},{unique:true});
 
+AverageData.rawCollection().createIndex({type:1, createdAt:-1},{unique:true});
+AverageValidatorData.rawCollection().createIndex({proposerAddress:1,createdAt:-1},{unique:true});
 // Status.rawCollection.createIndex({})
 
 Transactions.rawCollection().createIndex({hash:1},{unique:true});
@@ -40,4 +46,4 @@ Validators.rawCollection().createIndex({"pubkey.value":1},{unique:true, partialF
 VotingPowerHistory.rawCollection().createIndex({address:1,height:-1});
 VotingPowerHistory.rawCollection().createIndex({type:1});
 
-
+CoinStats.rawCollection().createIndex({last_updated_at:-1},{unique:true});

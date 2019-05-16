@@ -15,6 +15,7 @@ timerConsensus = 0;
 timerProposal = 0;
 timerProposalsResults = 0;
 timerMissedBlock = 0;
+timerDelegation = 0;
 timerAggregate = 0;
 
 
@@ -81,12 +82,69 @@ updateMissedBlockStats = () => {
     });
 }
 
+getDelegations = () => {
+    Meteor.call('delegations.getDelegations', (error, result) => {
+        if (error){
+            console.log("get delegation error: "+ error)
+        }
+        else{
+            console.log("get delegtaions ok: "+ result)
+        }
+    });
+}
+
+aggregateMinutely = () =>{
+    // doing something every min
+    Meteor.call('Analytics.aggregateBlockTimeAndVotingPower', "m", (error, result) => {
+        if (error){
+            console.log("aggregate minutely block time error: "+error)
+        }
+        else{
+            console.log("aggregate minutely block time ok: "+result)
+        }
+    });
+
+    Meteor.call('coinStats.getCoinStats', (error, result) => {
+        if (error){
+            console.log("get coin stats: "+error);
+        }
+        else{
+            console.log("get coin stats ok: "+result)
+        }
+    });
+}
+
 aggregateHourly = () =>{
     // doing something every hour
+    Meteor.call('Analytics.aggregateBlockTimeAndVotingPower', "h", (error, result) => {
+        if (error){
+            console.log("aggregate hourly block time error: "+error)
+        }
+        else{
+            console.log("aggregate hourly block time ok: "+result)
+        }
+    });
 }
 
 aggregateDaily = () =>{
     // doing somthing every day
+    Meteor.call('Analytics.aggregateBlockTimeAndVotingPower', "d", (error, result) => {
+        if (error){
+            console.log("aggregate daily block time error: "+error)
+        }
+        else{
+            console.log("aggregate daily block time ok: "+result)
+        }
+    });
+
+    Meteor.call('Analytics.aggregateValidatorDailyBlockTime', (error, result) => {
+        if (error){
+            console.log("aggregate validators block time error:"+ error)
+        }
+        else {
+            console.log("aggregate validators block time ok:"+ result);
+        }
+    })
 }
 
 
@@ -105,24 +163,37 @@ Meteor.startup(function(){
                 timerConsensus = Meteor.setInterval(function(){
                     getConsensusState();
                 }, Meteor.settings.params.consensusInterval);
+
                 timerBlocks = Meteor.setInterval(function(){
                     updateBlock();
                 }, Meteor.settings.params.blockInterval);
+
                 timerChain = Meteor.setInterval(function(){
                     updateChainStatus();
                 }, Meteor.settings.params.statusInterval);
+
                 timerProposal = Meteor.setInterval(function(){
                     getProposals();
                 }, Meteor.settings.params.proposalInterval);
+
                 timerProposalsResults = Meteor.setInterval(function(){
                     getProposalsResults();
                 }, Meteor.settings.params.proposalInterval);
+                
                 timerMissedBlock = Meteor.setInterval(function(){
                     updateMissedBlockStats();
                 }, Meteor.settings.params.missedBlocksInterval);
             
+                timerDelegation = Meteor.setInterval(function(){
+                    getDelegations();
+                }, Meteor.settings.params.delegationInterval);
+
                 timerAggregate = Meteor.setInterval(function(){
                     let now = new Date();
+                    if ((now.getUTCSeconds() == 0)){
+                        aggregateMinutely();
+                    }
+            
                     if ((now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)){
                         aggregateHourly();
                     }
