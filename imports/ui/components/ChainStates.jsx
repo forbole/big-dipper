@@ -42,8 +42,8 @@ export default class ChainStates extends Component{
         return <Card className="d-lg-inline-block">
             <CardHeader>
                 <Row className="text-nowrap">
-                    {/* <Col xs={4} md="auto"><small><span>Price:</span> <strong>{this.state.price}</strong></small></Col>
-                    <Col xs={8} md="auto"><small><span>Market Cap:</span> <strong>{this.state.marketCap}</strong></small></Col> */}
+                    <Col xs={4} md="auto"><small><span>Price:</span> <strong>{this.state.price}</strong></small></Col>
+                    <Col xs={8} md="auto"><small><span>Market Cap:</span> <strong>{this.state.marketCap}</strong></small></Col>
                     <Col xs={12} md="auto"><small><span>Community Pool:</span> <strong>{this.state.communityPool}</strong></small></Col>
                 </Row>
             </CardHeader>
