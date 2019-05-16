@@ -33,9 +33,6 @@ export default class ValidatorDelegations extends Component{
                     loading: false,
                     numDelegatiors:delegations.length,
                     delegations: delegations.map((d, i) => {
-                        console.log(d.shares);
-                        console.log(this.props.shares);
-                        console.log(this.props.tokens);
                         return <Row key={i} className="delegation-info">
                             <Col md={8} className="text-nowrap overflow-auto"><Account address={d.delegator_addr} /></Col>
                             <Col md={4}>{numbro(d.shares/this.props.shares*this.props.tokens).format("0,0.00")} {Meteor.settings.public.stakingDenom}s</Col>
