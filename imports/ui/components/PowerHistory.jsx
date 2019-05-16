@@ -128,10 +128,10 @@ export default class PowerHistory extends React.Component {
                                         <Col xs={4} sm={6}><T>transactions.fee</T></Col>
                                         <Col xs={8} sm={6}>{(msg.tx.value.fee.amount&& msg.tx.value.fee.amount.length>0)?msg.tx.value.fee.amount.map((amount,i)=>{
                                             if (i > 0){
-                                                return <span key={i}> ,<Denom amount={amount.amount} denom={amount.denom} /></span>
+                                                return <span key={i}> ,<Denom amount={parseInt(msg.result.GasUsed)/parseInt(msg.result.GasWanted)*parseInt(amount.amount)} denom={amount.denom} /></span>
                                             }
                                             else{
-                                                return <span key={i}><Denom amount={amount.amount} denom={amount.denom} /></span>
+                                                return <span key={i}><Denom amount={parseInt(msg.result.GasUsed)/parseInt(msg.result.GasWanted)*parseInt(amount.amount)} denom={amount.denom} /></span>
                                             }
                                         }):'0'}</Col>
                                     </Row>
