@@ -85,7 +85,7 @@ a.navbar-brand .logo {
 #header-search .form-control,
 #mobile-searchbar .form-control{
     height: auto;
-    padding: 0.5rem 0;
+    /* padding: 0.5rem 0; */
 }
 
 #mobile-searchbar {
