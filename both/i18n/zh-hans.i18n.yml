@@ -86,7 +86,7 @@ validators:
     selfDelegationAddress: '自我委托地址'
     commissionRate: '佣金'
     maxRate: '最大佣金限制'
-    maxChangeRate: '每天最天佣金变化限制'
+    maxChangeRate: '每天最大佣金变化限制'
     selfDelegationRatio: '自我委托比列'
     proposerPriority: '建块优先权'
     delegatorShares: '委托股数'
