@@ -170,7 +170,7 @@ Meteor.startup(function(){
         }
         if (result){
             if (Meteor.settings.debug.startTimer){
-                /*timerConsensus = Meteor.setInterval(function(){
+                timerConsensus = Meteor.setInterval(function(){
                     getConsensusState();
                 }, Meteor.settings.params.consensusInterval);
 
@@ -188,12 +188,12 @@ Meteor.startup(function(){
 
                 timerProposalsResults = Meteor.setInterval(function(){
                     getProposalsResults();
-                }, Meteor.settings.params.proposalInterval);*/
+                }, Meteor.settings.params.proposalInterval);
 
                 timerMissedBlock = Meteor.setInterval(function(){
                     updateMissedBlocks();
                 }, Meteor.settings.params.missedBlocksInterval);
-/*
+
                 timerDelegation = Meteor.setInterval(function(){
                     getDelegations();
                 }, Meteor.settings.params.delegationInterval);
@@ -211,7 +211,7 @@ Meteor.startup(function(){
                     if ((now.getUTCHours() == 5) && (now.getUTCMinutes() == 29) && (now.getUTCSeconds() == 0)){
                         aggregateDaily();
                     }
-                }, 1000)*/
+                }, 1000)
             }
         }
     })
