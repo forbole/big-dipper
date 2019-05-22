@@ -2,6 +2,20 @@ import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 
 Meteor.methods({
+    'accounts.getAccountDetail': function(address){
+        this.unblock();
+        let url = LCD + '/auth/accounts/'+ address;
+        try{
+            let available = HTTP.get(url);
+            if (available.statusCode == 200){
+                let response = JSON.parse(available.content);
+                return response.value;
+            }
+        }
+        catch (e){
+            console.log(e)
+        }
+    },
     'accounts.getBalance': function(address){
         this.unblock();
         let balance = {}
@@ -57,6 +71,22 @@ Meteor.methods({
 
         return balance;
     },
+    'accounts.getDelegation'(address, validator){
+        let url = `${LCD}/staking/delegators/${address}/delegations/${validator}`;
+
+        try{
+            let delegations = HTTP.get(url);
+            if (delegations.statusCode == 200){
+                delegation = JSON.parse(delegations.content);
+                if (delegation.shares)
+                    delegation.shares = parseFloat(delegation.shares);
+                return delegation;
+            };
+        }
+        catch (e){
+            console.log(e);
+        }
+    },
     'accounts.getAllDelegations'(address){
         let url = LCD + '/staking/delegators/'+address+'/delegations';
 
@@ -68,9 +98,9 @@ Meteor.methods({
                     delegations.forEach((delegation, i) => {
                         if (delegations[i] && delegations[i].shares)
                             delegations[i].shares = parseFloat(delegations[i].shares);
-                    })    
+                    })
                 }
-                
+
                 return delegations;
             };
         }

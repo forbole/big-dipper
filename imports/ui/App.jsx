@@ -26,7 +26,7 @@ if (Meteor.isClient)
 
 // import './App.js'
 
-const RouteHeader = withRouter( ({history}) => <Header history={history}/>)
+const RouteHeader = withRouter( (props) => <Header {...props}/>)
 const MobileSearchBar = withRouter( ({history}) => <SearchBar history={history} id="mobile-searchbar" mobile />)
 
 function getLang () {
@@ -60,9 +60,13 @@ class App extends Component {
             i18n.setLocale('zh-Hans');
         }
         else{
-            i18n.setLocale(lang);  
+            i18n.setLocale(lang);
         }
 
+    }
+
+    propagateStateChange() {
+        this.forceUpdate();
     }
 
     render() {
@@ -72,7 +76,7 @@ class App extends Component {
             // <Router history={history}>
                 <div>
                     {(Meteor.settings.public.gtm)?<GoogleTagManager gtmId={Meteor.settings.public.gtm} />:''}
-                    <RouteHeader />
+                    <RouteHeader refreshApp={this.propagateStateChange.bind(this)}/>
                     <Container fluid id="main">
                         <ToastContainer />
                         <SentryBoundary>

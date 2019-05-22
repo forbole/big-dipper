@@ -148,10 +148,16 @@ aggregateDaily = () =>{
 }
 
 
-
 Meteor.startup(function(){
     if (Meteor.isDevelopment){
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+        WebApp.rawConnectHandlers.use(function(req, res, next) {
+            res.setHeader("Access-Control-Allow-Origin", "*");
+            res.setHeader('Access-Control-Allow-Credentials', true);
+            res.setHeader('Access-Control-Allow-Methods', 'POST, GET, PUT, DELTE, OPTIONS');
+            res.setHeader("Access-Control-Allow-Headers", "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept");
+            return next();
+        });
     }
 
     Meteor.call('chain.genesis', (err, result) => {
@@ -179,11 +185,11 @@ Meteor.startup(function(){
                 timerProposalsResults = Meteor.setInterval(function(){
                     getProposalsResults();
                 }, Meteor.settings.params.proposalInterval);
-                
+
                 timerMissedBlock = Meteor.setInterval(function(){
                     updateMissedBlockStats();
                 }, Meteor.settings.params.missedBlocksInterval);
-            
+
                 timerDelegation = Meteor.setInterval(function(){
                     getDelegations();
                 }, Meteor.settings.params.delegationInterval);
@@ -193,11 +199,11 @@ Meteor.startup(function(){
                     if ((now.getUTCSeconds() == 0)){
                         aggregateMinutely();
                     }
-            
+
                     if ((now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)){
                         aggregateHourly();
                     }
-            
+
                     if ((now.getUTCHours() == 0) && (now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)){
                         aggregateDaily();
                     }
