@@ -3,15 +3,11 @@ import Cosmos from "@lunie/cosmos-js"
 import { App, comm_u2f } from "ledger-cosmos-js"
 import { signatureImport } from "secp256k1"
 import semver from "semver"
-import bip39 from "bip39";
-import bip32 from "bip32";
 import bech32 from "bech32";
 import secp256k1 from "secp256k1";
 import sha256 from "crypto-js/sha256"
 import ripemd160 from "crypto-js/ripemd160"
 import CryptoJS from "crypto-js"
-import _ from 'lodash';
-import CosmosDelegateTool from 'cosmos-delegation-js'
 
 // TODO: discuss TIMEOUT value
 const INTERACTION_TIMEOUT = 120000 // seconds to wait for user action on Ledger, currently is always limited to 60

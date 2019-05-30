@@ -58,6 +58,8 @@ export default class Header extends Component {
 
     componentDidMount(){
         let url = Meteor.settings.public.networks
+        if (!url)
+            return
         try{
             HTTP.get(url, null, (error, result) => {
                 if (result.statusCode == 200){
@@ -83,7 +85,7 @@ export default class Header extends Component {
             })
         }
         catch(e){
-            //console.warn(e);
+            console.warn(e);
         }
     }
 

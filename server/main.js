@@ -148,16 +148,10 @@ aggregateDaily = () =>{
 }
 
 
+
 Meteor.startup(function(){
     if (Meteor.isDevelopment){
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
-        WebApp.rawConnectHandlers.use(function(req, res, next) {
-            res.setHeader("Access-Control-Allow-Origin", "*");
-            res.setHeader('Access-Control-Allow-Credentials', true);
-            res.setHeader('Access-Control-Allow-Methods', 'POST, GET, PUT, DELTE, OPTIONS');
-            res.setHeader("Access-Control-Allow-Headers", "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept");
-            return next();
-        });
     }
 
     Meteor.call('chain.genesis', (err, result) => {

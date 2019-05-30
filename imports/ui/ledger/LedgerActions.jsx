@@ -348,7 +348,7 @@ export class LedgerButtons extends Component {
                 </ModalBody>
                 <ModalFooter>
                     {this.getActionButton()}
-                   <Button color="secondary" disabled={this.state.signing} onClick={this.close.bind(this)}>Cancel</Button>
+                   <Button color="secondary" disabled={this.state.signing} onClick={this.close.bind(this)}>Close</Button>
                 </ModalFooter>
             </Modal>
         </span>;

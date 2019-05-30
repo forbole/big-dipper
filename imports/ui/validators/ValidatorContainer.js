@@ -8,7 +8,6 @@ import Validator from './Validator.jsx';
 export default ValidatorDetailsContainer = withTracker((props) => {
     let chainHandle;
     let validatorsHandle;
-    let currentUserDelegation;
     let loading = true;
 
     if (Meteor.isClient){
