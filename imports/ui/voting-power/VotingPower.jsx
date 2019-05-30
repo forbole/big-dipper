@@ -42,7 +42,7 @@ export default class VotingPower extends Component{
                 labels.push(this.props.stats[v].description?this.props.stats[v].description.moniker:'');
                 data.push(this.props.stats[v].voting_power);
                 let alpha = (this.props.stats.length+1-v)/this.props.stats.length*0.8+0.2;
-                backgroundColors.push('rgba(189, 8, 28,'+alpha+')');
+                backgroundColors.push('rgba(40, 100, 110,'+alpha+')');
             }
             this.setState({
                 data:{
