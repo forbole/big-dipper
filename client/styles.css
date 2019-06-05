@@ -765,3 +765,16 @@ div#voting-power-dist .card{
   border-width: 0.4rem 0 0.4rem 0.4rem;
   border-left-color: #444;
 }
+
+.missed-records-table tbody tr.main-row:nth-of-type(odd) {
+    background-color: rgba(0,0,0,0.05);
+}
+
+.missed-records-table tbody tr.sub-row:nth-of-type(odd) {
+    background-color: rgba(0,0,0,0.05);
+}
+
+.missed-records-table td.caret {
+  width: 10px;
+  padding: 0.75rem 0;
+}

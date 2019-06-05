@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Table, Row, Col, Nav, NavItem, NavLink, Spinner } from 'reactstrap';
+import { Table, Row, Col, Nav, NavItem, NavLink, Spinner, Card } from 'reactstrap';
 import moment from 'moment';
 import { Meteor } from 'meteor/meteor';
 import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
+import { MissedBlocksTable } from './MissedRecords.jsx';
 
 const T = i18n.createComponent();
 export default class MissedBlocks extends Component{
@@ -66,6 +67,12 @@ export default class MissedBlocks extends Component{
                     {(this.props.missedBlocks&&this.props.missedBlocks.length>0)?
                         <div className="mt-3">
                             <p className="lead"><T>validators.totalMissed</T> {(this.props.match.path.indexOf("/missed/blocks")>0)?<T>validators.blocks</T>:<T>validators.precommits</T>}: {this.state.totalMissed}</p>
+                            <Card>
+                                <MissedBlocksTable missedRecords={this.props.missedRecords}/>
+                            </Card>
+                            <Card>
+
+                            </Card>
                             <Table striped className="missed-table">
                                 <thead>
                                     <tr>

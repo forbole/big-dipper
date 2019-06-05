@@ -75,6 +75,7 @@ getProposalsResults = () => {
 updateMissedBlocks = () => {
     Meteor.call('ValidatorRecords.calculateMissedBlocks', (error, result) =>{
         if (error){
+            console.log(error.stack);
             console.log("missed blocks error: "+ error)
         }
         if (result){
