@@ -150,10 +150,6 @@ Meteor.methods({
                 let startHeight = (explorerStatus&&explorerStatus.lastProcessedMissedBlockHeight)?explorerStatus.lastProcessedMissedBlockHeight:Meteor.settings.params.startHeight;
                 latestHeight = Math.min(startHeight + BULKUPDATEMAXSIZE, latestHeight);
                 const bulkMissedStats = MissedBlocks.rawCollection().initializeUnorderedBulkOp();
-                const client = MissedBlocks._driver.mongo.client;
-
-                let session = client.startSession();
-                session.startTransaction({readConcern: { level: 'snapshot' }});
 
                 let validatorsMap = {};
                 validators.forEach((validator) => validatorsMap[validator.address] = validator);
@@ -219,6 +215,9 @@ Meteor.methods({
 
                 let message = '';
                 if (bulkMissedStats.length > 0){
+                    const client = MissedBlocks._driver.mongo.client;
+                    let session = client.startSession();
+                    session.startTransaction();
                     let bulkPromise = bulkMissedStats.execute(null, {session}).then(
                         Meteor.bindEnvironment((result, err) => {
                             if (err){
