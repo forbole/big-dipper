@@ -53,7 +53,7 @@ export default class Header extends Component {
     }
 
     handleLanguageSwitch(lang, e) {
-      i18n.setLocale(lang)
+        i18n.setLocale(lang)
     }
 
     componentDidMount(){
@@ -122,27 +122,14 @@ export default class Header extends Component {
                         <NavItem>
                             <NavLink tag={Link} to="/voting-power-distribution"><T>navbar.votingPower</T></NavLink>
                         </NavItem>
-                        <NavItem>
-                            <UncontrolledDropdown nav inNavbar>
-                                <DropdownToggle nav caret>
-                                    <T>navbar.lang</T>
-                                </DropdownToggle>
-                                <DropdownMenu right>
-                                    <DropdownItem onClick={(e) => this.handleLanguageSwitch('en-US', e)}><T>navbar.english</T></DropdownItem>
-                                    <DropdownItem onClick={(e) => this.handleLanguageSwitch('zh-Hant', e)}><T>navbar.chinese</T></DropdownItem>
-                                    <DropdownItem onClick={(e) => this.handleLanguageSwitch('zh-Hans', e)}><T>navbar.simChinese</T></DropdownItem>
-                                </DropdownMenu>
-                            </UncontrolledDropdown>
-                        </NavItem>
-
                         {!signedInAddress? <NavItem>
-                            <Button className="sign-in-btn" color="link" size="lg" onClick={() => {this.setState({isSignInOpen: true})}}> Sign in </Button>
+                            <Button className="sign-in-btn" color="link" size="lg" onClick={() => {this.setState({isSignInOpen: true})}}><i className="material-icons">vpn_key</i></Button>
                             <LedgerModal ledger={this.props.ledger} isOpen={this.state.isSignInOpen} toggle={this.toggleSignIn.bind(this)} refreshApp={this.props.refreshApp}/>
                         </NavItem>:<NavItem id="user-acconut-icon">
                             <span className="d-lg-none">
                                 <i className="material-icons large d-inline">account_circle</i>
                                 <Link to={`/account/${signedInAddress}`}> {signedInAddress}</Link>
-                                <Button className="float-right" color="link" size="sm" onClick={this.signOut.bind(this)}> Sign out </Button>
+                                <Button className="float-right" color="link" size="sm" onClick={this.signOut.bind(this)}><i className="material-icons">exit_to_app</i></Button>
                             </span>
                             <span className="d-none d-lg-block">
                                 <i className="material-icons large">account_circle</i>
@@ -157,6 +144,18 @@ export default class Header extends Component {
                                 </UncontrolledPopover>
                             </span>
                         </NavItem>}
+                        <NavItem>
+                            <UncontrolledDropdown nav inNavbar>
+                                <DropdownToggle nav caret>
+                                    <T>navbar.lang</T>
+                                </DropdownToggle>
+                                <DropdownMenu right>
+                                    <DropdownItem onClick={(e) => this.handleLanguageSwitch('en-US', e)}><T>navbar.english</T></DropdownItem>
+                                    <DropdownItem onClick={(e) => this.handleLanguageSwitch('zh-Hant', e)}><T>navbar.chinese</T></DropdownItem>
+                                    <DropdownItem onClick={(e) => this.handleLanguageSwitch('zh-Hans', e)}><T>navbar.simChinese</T></DropdownItem>
+                                </DropdownMenu>
+                            </UncontrolledDropdown>
+                        </NavItem>
                     </Nav>
                 </Collapse>
             </Navbar>
