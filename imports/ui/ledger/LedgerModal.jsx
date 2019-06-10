@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { Button, Spinner, TabContent, TabPane, Row, Col, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import {Ledger} from './ledger.js';
+import i18n from 'meteor/universe:i18n';
+
+const T = i18n.createComponent();
 
 class LedgerModal extends React.Component {
     constructor(props){
@@ -57,22 +60,22 @@ class LedgerModal extends React.Component {
 
     getActionButton() {
         if (this.state.activeTab === '1' && !this.state.loading)
-            return <Button color="primary"  onClick={this.tryConnect.bind(this)}>Retry</Button>
+            return <Button color="primary"  onClick={this.tryConnect.bind(this)}><T>common.retry</T></Button>
         if (this.state.activeTab === '2' && this.state.errorMessage !== '')
-            return <Button color="primary"  onClick={this.trySignIn.bind(this)}>Retry</Button>
+            return <Button color="primary"  onClick={this.trySignIn.bind(this)}><T>common.retry</T></Button>
     }
 
     render() {
         return (
             <Modal isOpen={this.props.isOpen} toggle={this.props.toggle} className="ledger-sign-in">
-            <ModalHeader toggle={this.props.toggle}>Sign In With Ledger</ModalHeader>
+            <ModalHeader toggle={this.props.toggle}><T>accounts.signInWithLedger</T></ModalHeader>
             <ModalBody>
                 <TabContent activeTab={this.state.activeTab}>
                 <TabPane tabId="1">
-                    Please make sure your Ledger device is connected and Cosmos App is opened.
+                    <T _purify={false}>accounts.signInWarning</T>
                 </TabPane>
                         <TabPane tabId="2">
-                    To log in as {this.state.address} please accept in your Ledger device.
+                    <T>accounts.toLoginAs</T> <strong className="text-primary d-block">{this.state.address}</strong><T>accounts.pleaseAccept</T>
                 </TabPane>
             </TabContent>
             {this.state.loading?<Spinner type="grow" color="primary" />:''}
@@ -80,7 +83,7 @@ class LedgerModal extends React.Component {
         </ModalBody>
             <ModalFooter>
             {this.getActionButton()}
-                <Button color="secondary" onClick={this.props.toggle}>Cancel</Button>
+                <Button color="secondary" onClick={this.props.toggle}><T>common.cancel</T></Button>
             </ModalFooter>
             </Modal>
         );

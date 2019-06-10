@@ -257,8 +257,8 @@ export class LedgerButtons extends Component {
                     if (validator.address!=this.props.validator.address)
                     return <DropdownItem className='validator' key={validator.address} onClick={this.handleTargetValidatorChange.bind(this)} data-moniker={validator.description.moniker} data-address={validator.operator_address}>
                         <Row>
-                            <Col xs={5} className='moniker ellipsis'>{validator.description.moniker}</Col>
-                            <Col xs={7} className='address ellipsis'>{validator.operator_address}</Col>
+                            <div className='moniker'>{validator.description.moniker}</div>
+                            <div className='address overflow-auto'>{validator.operator_address}</div>
                         </Row>
                     </DropdownItem>
                 })}
@@ -348,7 +348,7 @@ export class LedgerButtons extends Component {
                 </ModalBody>
                 <ModalFooter>
                     {this.getActionButton()}
-                   <Button color="secondary" disabled={this.state.signing} onClick={this.close.bind(this)}>Close</Button>
+                    <Button color="secondary" disabled={this.state.signing} onClick={this.close.bind(this)}>Close</Button>
                 </ModalFooter>
             </Modal>
         </span>;

@@ -20,6 +20,8 @@ common:
     more: '更多'
     fullStop: '。'
     searchPlaceholder: '搜尋交易哈希 / 區塊高度 / 地址'
+    cancel: '取消'
+    retry: '重試'
 navbar:
     siteName: '北斗'
     version: 'beta'
@@ -181,6 +183,12 @@ accounts:
     no: '沒有'
     delegation: '委托'
     plural: ''
+    signOut: '登出'
+    signInText: '你已登入以下帳戶'
+    toLoginAs: '登入以下帳戶'
+    signInWithLedger: '透過 Ledger 登入'
+    signInWarning: '請確定你已經連接 Ledger 設備，並已開啓 <strong class="text-primary">Cosmos App 版本 1.5.0 或以上</strong>。'
+    pleaseAccept: '請從你的 Ledger 設備確認。'
 activities:
     single: '一個'
     happened: '發生了'

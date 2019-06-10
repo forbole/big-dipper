@@ -98,16 +98,6 @@ span#network-nav{
     margin-left: 10px;
 }
 
-.ellipsis{
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.popover-body .user-account-link {
-    white-space: nowrap;
-}
-
 div#loadmore {
     margin: 0.5rem auto;
 }

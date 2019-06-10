@@ -135,11 +135,9 @@ export default class Header extends Component {
                                 <i className="material-icons large">account_circle</i>
                                 <UncontrolledPopover className="d-none d-lg-block" trigger="legacy" placement="bottom" target="user-acconut-icon">
                                     <PopoverBody>
-                                        <div className="ellipis">
-                                            <div>You are signed in as </div>
-                                            <Link className="user-account-link" to={`/account/${signedInAddress}`}> {signedInAddress}</Link>
-                                        </div>
-                                        <Button className="float-right" color="link" onClick={this.signOut.bind(this)}> Sign out </Button>
+                                        <div><T>accounts.signInText</T></div>
+                                        <div className="overflow-auto"><Link className="text-nowrap" to={`/account/${signedInAddress}`}>{signedInAddress}</Link></div>
+                                        <Button className="float-right" color="link" onClick={this.signOut.bind(this)}><i className="material-icons">exit_to_app</i><span> <T>accounts.signOut</T></span></Button>
                                     </PopoverBody>
                                 </UncontrolledPopover>
                             </span>
