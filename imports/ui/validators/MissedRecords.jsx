@@ -1,18 +1,50 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, Table, Row, Col, Nav, NavItem, NavLink, Spinner } from 'reactstrap';
+import { CardHeader, CardBody, Card, Table, Row, Col, Nav, NavItem, NavLink, Spinner, Input } from 'reactstrap';
 import moment from 'moment';
 import { Meteor } from 'meteor/meteor';
 import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
 import PChart from '../components/Chart.jsx';
 import Account from '../components/Account.jsx';
+import { InfoIcon } from '../components/Icons.jsx'
 
 const T = i18n.createComponent();
 const displayTime = (time) => {
     return moment.utc(time).format("D MMM YYYY, h:mm:ssa");
 }
+const displayTimeRange = (time) => {
+    let startTime = time.format("h:mm");
+    let endTime = time.clone().add(BATCHSIZE, 'minute').format("h:mm");
+    return `from ${startTime} to ${endTime} on ${time.format("D MMM YYYY")}`;
+}
 let DOWNTIMECHUCK = 4;
+
+const groupData = (missedStats, missedRecords, target) => {
+    let validatorsMap = {};
+    missedRecords.forEach((record) => {
+        let address = record[target];
+        if (!validatorsMap[address]) {
+            validatorsMap[address] = [];
+        }
+        validatorsMap[address].push(record)
+    })
+
+    let statsMap = {}
+    missedStats.forEach((stats) => {
+        let address = stats[target];
+        statsMap[address] = stats;
+    })
+
+    return Object.keys(validatorsMap).map((address) => {
+        return {
+            address: address,
+            records: validatorsMap[address],
+            ...statsMap[address]
+        }
+    }).sort((a, b) => a.missCount - b.missCount);
+}
+
 const aggregateData = (missedRecords) => {
     let aggregatedMissedRecords = [];
     let isChainOngoing = false;
@@ -46,81 +78,135 @@ class MissedBlocksTable extends Component{
         super(props);
 
         this.state = {
-            expandedRow: -1
+            expandedRow: -1,
+            expandedValidator: -1,
+            groupByValidators: false
         }
     }
-    toggleExpansion(e) {
-        let targetIndex = Number(e.target.dataset.index);
-        this.setState({expandedRow: this.state.expandedRow === targetIndex? -1:targetIndex});
+
+    toggleGroupByValidators = (e) => {
+        this.setState({groupByValidators: e.target.checked})
     }
 
-    renderExpandIcon(index) {
-        return <i className="material-icons" onClick={this.toggleExpansion.bind(this)} data-index={index}> {(this.state.expandedRow === index)?'arrow_drop_down':'arrow_right'}</i>
+    toggleExpansion = (selection, e) => {
+        let targetKey = e.target.dataset.key;
+        this.setState({[selection]: this.state[selection] === targetKey? -1:targetKey});
     }
 
-    renderSubRow(record, index) {
+    renderExpandIcon = (selection, key) => {
+        return <i className="material-icons" onClick={(e) => this.toggleExpansion(selection, e)} data-key={key}>
+            {(this.state[selection] === key)?'arrow_drop_down':'arrow_right'}
+        </i>
+    }
+
+    renderSubRow= (record, index) => {
         return this.renderRow(record, 'sub'+index, null, true);
     }
 
-    renderRow(record, index, _, isSub=false) {
+    renderRow = (record, index, isSub=false, grouped=false) => {
         if (record.blocks) {
-            let isExpanded = this.state.expandedRow === index;
+            let isExpanded = Number(this.state.expandedRow) === index;
             let chainSize = record.blocks.length;
             let startBlock = record.blocks[chainSize - 1];
             let lastBlock = record.blocks[0];
             let mainRow = [<tr className='main-row' key={index}>
-                <td className='caret' rowSpan={isExpanded?chainSize + 1:1}>{this.renderExpandIcon(index)}</td>
+                <td className='caret' rowSpan={isExpanded?chainSize + 1:1}>{this.renderExpandIcon('expandedRow', index)}</td>
                 <td colSpan='2'>
                     {`${startBlock.blockHeight} - ${lastBlock.blockHeight}`}
                 </td>
-                <td colSpan='4'>
+                <td colSpan='5'>
                     {`${displayTime(startBlock.time)} - ${displayTime(lastBlock.time)}`}
                 </td>
             </tr>]
-            let subRows = isExpanded?record.blocks.map(this.renderSubRow.bind(this)):[];
+            let subRows = isExpanded?record.blocks.map(this.renderSubRow):[];
             return mainRow.concat(subRows);
         }
         else {
             return <tr key={index} className={isSub?'sub-row':'main-row'}>
                 <td colSpan={isSub?1:2}>{ record.blockHeight }</td>
-                <td><Account address={record[this.props.type=='voter'?'proposer':'voter']}/></td>
+                {grouped?null:<td><Account sync={true} address={record[this.props.type=='voter'?'proposer':'voter']}/></td>}
                 <td>{ displayTime(record.time) }</td>
                 <td>{ record.timeDiff + ' ms'}</td>
                 <td>{ record.missCount }</td>
                 <td>{ numbro(record.missCount / record.totalCount).format('0.0%') }</td>
+                <td>{ `${record.precommitsCount}/${record.validatorsCount}` }</td>
             </tr>
         }
     }
 
-    render() {
+    renderTable = (data, grouped=false) => {
         return <Table className="missed-records-table">
             <thead><tr>
                 <th colSpan='2'>Block Height</th>
-                <th>{this.props.type=='voter'?'Proposer':'Voter'}</th>
+                {grouped?null:<th>{this.props.type=='voter'?'Proposer':'Voter'}</th>}
                 <th>Commit Time</th>
                 <th>Block Time</th>
                 <th>Missed Count</th>
-                <th>Missed Ratio</th>
+                <th>Missed Ratio<InfoIcon tooltipText='Missed ratio at the time of the block'/></th>
+                <th>Signed Ratio<InfoIcon tooltipText='Number of voted validators to active validators'/></th>
             </tr></thead>
             <tbody>
-                {aggregateData(this.props.missedRecords).map(this.renderRow.bind(this))}
+                {aggregateData(data).map((record, index) => this.renderRow(record, index, grouped=grouped))}
             </tbody>
         </Table>
+    }
+
+    renderGroupedTable = () => {
+        let target = this.props.type=='voter'?'proposer':'voter';
+        let groupedData = groupData(this.props.missedStats, this.props.missedRecords, target);
+        return <Table className='missed-records-grouped-table'>
+            <thead><tr>
+                <th></th>
+                <th>{this.props.type=='voter'?'Proposer':'Voter'}</th>
+                <th>Missed Count</th>
+                <th>Total Count<InfoIcon tooltipText='Number of blocks proposed by same proposer where current validator is an active validator'/></th>
+                <th>Missed Ratio</th>
+            </tr></thead>
+            {groupedData.map((validatorData) => {
+                let address = validatorData.address;
+                let isExpanded = this.state.expandedValidator === address;
+
+                let mainRow = [<tr key={address} className={`validator-row ${isExpanded?'expanded':''}`}>
+                    <td className='caret' rowSpan={isExpanded?2:1}>{this.renderExpandIcon('expandedValidator', address)}</td>
+                    <td><Account sync={true} address={address}/></td>
+                    <td>{validatorData.missCount}</td>
+                    <td>{validatorData.totalCount}</td>
+                    <td>{numbro(validatorData.missCount/validatorData.totalCount).format('0.00%')}</td>
+                </tr>];
+                let subRow = isExpanded?(<tr className='validator-row sub-row'><td colSpan={4}>{this.renderTable(validatorData.records, true)}</td></tr>):[];
+                return mainRow.concat(subRow);
+            })}
+        </Table>
+    }
+
+    render() {
+        return <Card className="missed-records-table-card">
+            <CardHeader></CardHeader>
+            <CardBody>
+                <div className="float-right"> <Input type="checkbox" onClick={this.toggleGroupByValidators}/> Group By Validators</div>
+                {this.state.groupByValidators?this.renderGroupedTable():this.renderTable(this.props.missedRecords)}
+            </CardBody>
+        </Card>
 
     }
 }
 const BATCHSIZE = 15;
+const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 class TimeDistubtionChart extends Component{
     populateChartData() {
         let timeline = [];
         let breakdown = [];
         let i;
         for (i = 0;i < (7 * 24); i ++)
-            breakdown.push(0);
+            breakdown.push({
+                hour: i % 24,
+                day: daysOfWeek[Math.floor(i / 24)],
+                count: 0
+            });
         let prevBatch = null;
         this.props.missedRecords.forEach((record) => {
-            let time = moment(record.time)
-            breakdown[time.day() * 24 + time.hour()] += 1;
+            let time = moment.utc(record.time)
+            breakdown[time.day() * 24 + time.hour()].count += 1;
             if (prevBatch && time.diff(prevBatch) >= 0) {
                 timeline[timeline.length - 1].y = timeline[timeline.length - 1].y + 1
             } else {
@@ -170,7 +256,8 @@ class TimeDistubtionChart extends Component{
                         xScales: ['xScale'],
                         yScales: ['yScale']
                     }
-                }
+                },
+                tooltip: (c, p, data, ds) => `missed ${data.y} blocks ${displayTimeRange(data.x)}`
             }],
             axes: [{
                 axisId: 'xAxis',
@@ -196,7 +283,7 @@ class TimeDistubtionChart extends Component{
         };
         let config = {
             height:'300px',
-            width: '600px',
+            width: '100%',
             margin: 'auto'
         }
         return {layout, datasets, scales, components, config};
@@ -222,28 +309,28 @@ class TimeDistubtionChart extends Component{
             datasetId: 'breakdown',
             data: breakdown
         }];
-        const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
         let components = {
             plots: [{
                 plotId: 'heatMap',
                 type: 'Rectangle',
                 x: {
-                    value: (d, i, ds) => i % 24,
+                    value: (d, i, ds) => d.hour,
                     scale: 'xScale'
                 },
                 y: {
-                    value: (d, i, ds) => daysOfWeek[Math.floor(i / 24)],
+                    value: (d, i, ds) => d.day,
                     scale: 'yScale'
                 },
                 attrs: [{
                     attr: 'fill',
-                    value: (d) => d,
+                    value: (d) => d.count,
                     scale: 'colorScale'
                 }, {
                     attr: 'stroke',
-                    value: 'rgba(0,0,0,0.5)'
+                    value: 'rgba(200, 200, 200, 0.3)'
                 }],
-                datasets: ['breakdown']
+                datasets: ['breakdown'],
+                tooltip: (c, p, data, ds) => `missed ${data.count} blocks on ${data.day} at ${data.hour}`
             }],
             axes: [{
                 axisId: 'xAxis',
@@ -266,21 +353,27 @@ class TimeDistubtionChart extends Component{
         };
         let config = {
             height:'300px',
-            width: '600px',
+            width: '100%',
             margin: 'auto'
         }
         return {layout, datasets, scales, components, config};
     }
     render () {
         let data = this.populateChartData();
-        return <Row>
-            <Col md={6}><Card className='timeilne'>
-                <PChart {...this.populateTimelineChart(data.timeline)} />
-            </Card></Col>
-            <Col md={6}><Card className='breakdown'>
-                <PChart {...this.populateBreakDownChart(data.breakdown)} />
-            </Card></Col>
-        </Row>
+        return [
+            <Card key='timeilne'>
+                <CardHeader>History Missed Blocks</CardHeader>
+                <CardBody>
+                    <PChart {...this.populateTimelineChart(data.timeline)} />
+                </CardBody>
+            </Card>,
+            <Card key='breakdown'>
+                <CardHeader>Missed Blocks By Time of Day</CardHeader>
+                <CardBody>
+                    <PChart {...this.populateBreakDownChart(data.breakdown)} />
+                </CardBody>
+            </Card>
+        ]
     }
 }
 
