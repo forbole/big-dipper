@@ -4,6 +4,8 @@ import { Transactions } from '../../transactions/transactions.js';
 import { Validators } from '../../validators/validators.js';
 import { VotingPowerHistory } from '../../voting-power/history.js';
 
+const AddressLength = 40;
+
 Meteor.methods({
     'Transactions.index': function(hash, blockTime){
         this.unblock();
@@ -59,7 +61,7 @@ Meteor.methods({
         //         }
         //     }
         // }
-        
+
 
         let txId = Transactions.insert(tx);
         if (txId){
@@ -70,32 +72,32 @@ Meteor.methods({
     'Transactions.findDelegation': function(address, height){
         return Transactions.find({
             $or: [{$and: [
-                {"tags.key": "action"}, 
-                {"tags.value": "delegate"}, 
-                {"tags.key": "destination-validator"}, 
+                {"tags.key": "action"},
+                {"tags.value": "delegate"},
+                {"tags.key": "destination-validator"},
                 {"tags.value": address}
             ]}, {$and:[
-                {"tags.key": "action"}, 
-                {"tags.value": "unjail"}, 
-                {"tags.key": "validator"}, 
+                {"tags.key": "action"},
+                {"tags.value": "unjail"},
+                {"tags.key": "validator"},
                 {"tags.value": address}
             ]}, {$and:[
-                {"tags.key": "action"}, 
-                {"tags.value": "create_validator"}, 
-                {"tags.key": "destination-validator"}, 
+                {"tags.key": "action"},
+                {"tags.value": "create_validator"},
+                {"tags.key": "destination-validator"},
                 {"tags.value": address}
             ]}, {$and:[
-                {"tags.key": "action"}, 
-                {"tags.value": "begin_unbonding"}, 
-                {"tags.key": "source-validator"}, 
+                {"tags.key": "action"},
+                {"tags.value": "begin_unbonding"},
+                {"tags.key": "source-validator"},
                 {"tags.value": address}
             ]}, {$and:[
-                {"tags.key": "action"}, 
-                {"tags.value": "begin_redelegate"}, 
-                {"tags.key": "destination-validator"}, 
+                {"tags.key": "action"},
+                {"tags.value": "begin_redelegate"},
+                {"tags.key": "destination-validator"},
                 {"tags.value": address}
-            ]}], 
-            "code": {$exists: false}, 
+            ]}],
+            "code": {$exists: false},
             height:{$lt:height}},
         {sort:{height:-1},
             limit: 1}
@@ -110,9 +112,11 @@ Meteor.methods({
         }
         else if (address.includes(Meteor.settings.public.bech32PrefixAccAddr)){
             // delegator address
-            validator = Validators.findOne({delegator_address:address}, {fields:{address:1, description:1, operator_address:1, delegator_address:1}});        
+            validator = Validators.findOne({delegator_address:address}, {fields:{address:1, description:1, operator_address:1, delegator_address:1}});
         }
-
+        else if (address.length === AddressLength) {
+            validator = Validators.findOne({address:address}, {fields:{address:1, description:1, operator_address:1, delegator_address:1}});
+        }
         if (validator){
             return validator;
         }

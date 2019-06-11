@@ -22,7 +22,7 @@ export default MissedBlocksContainer = withTracker((props) => {
         }
         else{
             missedBlockHandle = Meteor.subscribe('missedblocks.validator', address, 'proposer');
-            missedRecordHandle = Meteor.subscribe('missedrecords.validator', address, 'voter');
+            missedRecordHandle = Meteor.subscribe('missedrecords.validator', address, 'proposer');
         }
 
         loading = !validatorsHandle.ready() && !statusHandle.ready() && !missedBlockHandle.ready() &&!missedRecordHandle.ready();
