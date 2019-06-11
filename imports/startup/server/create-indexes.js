@@ -26,6 +26,7 @@ Analytics.rawCollection().createIndex({height: -1}, {unique:true})
 
 MissedBlocks.rawCollection().createIndex({proposer:1, voter:1, updatedAt: -1});
 MissedBlocks.rawCollection().createIndex({proposer:1, blockHeight:-1});
+MissedBlocks.rawCollection().createIndex({voter:1, blockHeight:-1});
 MissedBlocks.rawCollection().createIndex({voter:1, proposer:1, blockHeight:-1}, {unique:true});
 
 MissedBlocksStats.rawCollection().createIndex({proposer:1});

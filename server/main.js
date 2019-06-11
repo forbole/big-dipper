@@ -75,14 +75,13 @@ getProposalsResults = () => {
 updateMissedBlocks = () => {
     Meteor.call('ValidatorRecords.calculateMissedBlocks', (error, result) =>{
         if (error){
-            console.log(error.stack);
             console.log("missed blocks error: "+ error)
         }
         if (result){
             console.log("missed blocks ok:" + result);
         }
     });
-
+/*
     Meteor.call('ValidatorRecords.calculateMissedBlocksStats', (error, result) =>{
         if (error){
             console.log("missed blocks stats error: "+ error)
@@ -91,6 +90,7 @@ updateMissedBlocks = () => {
             console.log("missed blocks stats ok:" + result);
         }
     });
+*/
 }
 
 getDelegations = () => {
@@ -209,7 +209,7 @@ Meteor.startup(function(){
                         aggregateHourly();
                     }
 
-                    if ((now.getUTCHours() == 5) && (now.getUTCMinutes() == 29) && (now.getUTCSeconds() == 0)){
+                    if ((now.getUTCHours() == 0) && (now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)){
                         aggregateDaily();
                     }
                 }, 1000)

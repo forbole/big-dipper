@@ -11,35 +11,13 @@ import { Chain } from '../../chain/chain.js';
 import _ from 'lodash';
 const BULKUPDATEMAXSIZE = 1000;
 
-const getVoterStats = (validators, startHeight, latestHeight) => {
-    let voterAddresses = new Set();
-    let blockHeights = new Set();
-    let voterStats = {};
-
-    validators.forEach((validator) => {
-        let voterAddress = validator.address;
-        let missedRecords = ValidatorRecords.find({
-            address:voterAddress,
-            exists:false,
-            $and: [ { height: { $gt: startHeight } }, { height: { $lte: latestHeight } } ]
-        }).fetch();
-
-        if (missedRecords.length > 0) {
-            voterAddresses.add(voterAddress);
-            voterStats[voterAddress] = new Set();
-        }
-
-        missedRecords.forEach((record) => {
-            blockHeights.add(record.height);
-            voterStats[voterAddress].add(record.height);
-        });
-    });
-    return {blockHeights: Array.from(blockHeights), voterAddresses, voterStats};
-}
-
-const getBlockStats = (blockHeights) => {
+const getBlockStats = (startHeight, latestHeight) => {
     let blockStats = {};
-    Blockscon.find({height: {$in: blockHeights}}).forEach((block) => {
+    const cond = {$and: [
+        { height: { $gt: startHeight } },
+        { height: { $lte: latestHeight } } ]};
+    const options = {sort:{height: 1}};
+    Blockscon.find(cond, options).forEach((block) => {
         blockStats[block.height] = {
             height: block.height,
             proposerAddress: block.proposerAddress,
@@ -50,7 +28,7 @@ const getBlockStats = (blockHeights) => {
         }
     });
 
-    Analytics.find({height: {$in: blockHeights}}).forEach((block) => {
+    Analytics.find(cond, options).forEach((block) => {
         if (!blockStats[block.height]) {
             blockStats[block.height] = { height: block.height };
             console.log(`block ${block.height} does not have an entry`);
@@ -65,75 +43,20 @@ const getBlockStats = (blockHeights) => {
     return blockStats;
 }
 
-const getPreviousRecord = (voterAddress, proposerAddress, defaultStartAt) => {
+const getPreviousRecord = (voterAddress, proposerAddress) => {
     let previousRecord = MissedBlocks.findOne(
-        {voter:voterAddress, proposer:proposerAddress},
-        {sort:{updatedAt: -1}});
+        {voter:voterAddress, proposer:proposerAddress, blockHeight: -1});
     let lastUpdatedHeight = Meteor.settings.params.startHeight;
     let prevStats = {};
     if (previousRecord) {
-        prevStats = _.pick(previousRecord, ['missCount', 'totalCount', 'startedAt']);
-        lastUpdatedHeight = previousRecord.updatedAt;
+        prevStats = _.pick(previousRecord, ['missCount', 'totalCount']);
     } else {
         prevStats = {
             missCount: 0,
-            totalCount: 0,
-            startedAt: defaultStartAt
+            totalCount: 0
         }
     }
-    return {prevStats, lastUpdatedHeight};
-}
-
-const initProposerVoterStats = (voterStats, blockStats) => {
-    let proposerVoterStats = {};
-    _.forEach(voterStats, (blocks, voterAddress) => {
-        blocks.forEach((blockHeight) => {
-            _.set(proposerVoterStats, [blockStats[blockHeight].proposerAddress, voterAddress], {});
-        });
-    });
-    return proposerVoterStats;
-}
-
-const updateVoterStatsCounts = (proposerVoterStats, latestHeight) => {
-    // a proposer-voter map counting numbers of proposed blocks of which voter is an active validator
-    let lastUpdatedMap = {};
-
-    let minLastUpdatedHeight = latestHeight;
-    _.forEach(proposerVoterStats, (voterMap, proposerAddress) => {
-        _.forEach(voterMap, (stats, voterAddress) => {
-            let {prevStats, lastUpdatedHeight} = getPreviousRecord(
-                voterAddress, proposerAddress, undefined);
-            _.assign(stats, prevStats);
-            _.set(lastUpdatedMap, [proposerAddress, voterAddress], lastUpdatedHeight);
-            minLastUpdatedHeight = Math.min(minLastUpdatedHeight, lastUpdatedHeight);
-        });
-    });
-    Blockscon.find({
-        $and: [ { height: { $gt: minLastUpdatedHeight } }, { height: { $lte: latestHeight } } ]
-    }).forEach((block) => {
-        let proposerAddress = block.proposerAddress;
-        let votedValidators = new Set(block.validators);
-        let validatorSets = ValidatorSets.findOne({block_height:block.height});
-        validatorSets.validators.forEach((activeValidator) => {
-            let currentValidator = activeValidator.address
-            if (!_.has(proposerVoterStats, [proposerAddress, currentValidator])) {
-                let {prevStats, lastUpdatedHeight} = getPreviousRecord(
-                    currentValidator, proposerAddress, minLastUpdatedHeight);
-                _.set(proposerVoterStats, [proposerAddress, currentValidator], {
-                    block: -1, ...prevStats});
-                _.set(lastUpdatedMap, [proposerAddress, currentValidator], lastUpdatedHeight);
-            } else if (!_.get(proposerVoterStats, [proposerAddress, currentValidator, 'startedAt'])) {
-                _.set(proposerVoterStats, [proposerAddress, currentValidator, 'startedAt'], minLastUpdatedHeight);
-            }
-
-            if (block.height > _.get(lastUpdatedMap, [proposerAddress, currentValidator], -1)) {
-                _.update(proposerVoterStats, [proposerAddress, currentValidator, 'totalCount'], (n) => n+1);
-                if (!votedValidators.has(currentValidator)) {
-                    _.update(proposerVoterStats, [proposerAddress, currentValidator, 'missCount'], (n) => n+1);
-                }
-            }
-        })
-    });
+    return prevStats;
 }
 
 Meteor.methods({
@@ -149,67 +72,64 @@ Meteor.methods({
                 let explorerStatus = Status.findOne({chainId: Meteor.settings.public.chainId});
                 let startHeight = (explorerStatus&&explorerStatus.lastProcessedMissedBlockHeight)?explorerStatus.lastProcessedMissedBlockHeight:Meteor.settings.params.startHeight;
                 latestHeight = Math.min(startHeight + BULKUPDATEMAXSIZE, latestHeight);
-                const bulkMissedStats = MissedBlocks.rawCollection().initializeUnorderedBulkOp();
+                const bulkMissedStats = MissedBlocks.rawCollection().initializeOrderedBulkOp();
 
                 let validatorsMap = {};
                 validators.forEach((validator) => validatorsMap[validator.address] = validator);
 
-                // blockHeights is a set of block heights that have been missed by some validators in the current interval
-                // voterStats is a map of block heights that a voterAddress missed
-
-                let {voterAddresses, blockHeights, voterStats} = getVoterStats(validators, startHeight, latestHeight);
-
-
                 // a map of block height to block stats
-                let blockStats = getBlockStats(blockHeights);
+                let blockStats = getBlockStats(startHeight, latestHeight);
 
                 // proposerVoterStats is a proposer-voter map counting numbers of proposed blocks of which voter is an active validator
-                let proposerVoterStats = initProposerVoterStats(voterStats, blockStats);
+                let proposerVoterStats = {}
 
-                // updateVoterStatsByBlocks(voterStats, blockStats, proposerVoterStats, latestHeight);
-                updateVoterStatsCounts(proposerVoterStats, latestHeight);
+                _.forEach(blockStats, (block, blockHeight) => {
+                    let proposerAddress = block.proposerAddress;
+                    let votedValidators = new Set(block.validators);
+                    let validatorSets = ValidatorSets.findOne({block_height:block.height});
+                    validatorSets.validators.forEach((activeValidator) => {
+                        let currentValidator = activeValidator.address
+                        if (!_.has(proposerVoterStats, [proposerAddress, currentValidator])) {
+                            let prevStats = getPreviousRecord(currentValidator, proposerAddress);
+                            _.set(proposerVoterStats, [proposerAddress, currentValidator], prevStats);
+                        }
 
-                _.forEach(voterStats, (blocks, voterAddress) => {
-                    blocks.forEach((blockHeight) => {
-                        let curBlockStat = blockStats[blockHeight];
-                        let proposerAddress = curBlockStat.proposerAddress;
-                        let curProposerVoterStats = proposerVoterStats[proposerAddress][voterAddress];
-                        bulkMissedStats.insert({
-                            voter: voterAddress,
-                            blockHeight: blockHeight,
-                            proposer: proposerAddress,
-                            precommitsCount: curBlockStat.precommitsCount,
-                            validatorsCount: curBlockStat.validatorsCount,
-                            time: curBlockStat.time,
-                            precommits: curBlockStat.precommits,
-                            averageBlockTime: curBlockStat.averageBlockTime,
-                            timeDiff: curBlockStat.timeDiff,
-                            votingPower: curBlockStat.voting_power,
-                            updatedAt: latestHeight,
-                            startedAt: curProposerVoterStats.startedAt,
-                            missCount: curProposerVoterStats.missCount,
-                            totalCount: curProposerVoterStats.totalCount
-                        });
-                    });
+                        _.update(proposerVoterStats, [proposerAddress, currentValidator, 'totalCount'], (n) => n+1);
+                        if (!votedValidators.has(currentValidator)) {
+                            _.update(proposerVoterStats, [proposerAddress, currentValidator, 'missCount'], (n) => n+1);
+                            bulkMissedStats.insert({
+                                voter: currentValidator,
+                                blockHeight: block.height,
+                                proposer: proposerAddress,
+                                precommitsCount: block.precommitsCount,
+                                validatorsCount: block.validatorsCount,
+                                time: block.time,
+                                precommits: block.precommits,
+                                averageBlockTime: block.averageBlockTime,
+                                timeDiff: block.timeDiff,
+                                votingPower: block.voting_power,
+                                updatedAt: latestHeight,
+                                missCount: _.get(proposerVoterStats, [proposerAddress, currentValidator, 'missCount']),
+                                totalCount: _.get(proposerVoterStats, [proposerAddress, currentValidator, 'totalCount'])
+                            });
+                        }
+                    })
                 });
 
-                _.forEach(proposerVoterStats, (voterMap, proposerAddress) => {
-                    _.forEach(voterMap, (stats, voterAddress) => {
-                        if (stats.block === -1) {
-                            bulkMissedStats.find({
-                                voter: voterAddress,
-                                proposer: proposerAddress,
-                                blockHeight: -1
-                            }).upsert().updateOne({$set: {
-                                voter: voterAddress,
-                                proposer: proposerAddress,
-                                blockHeight: -1,
-                                updatedAt: latestHeight,
-                                startedAt: stats.startedAt,
-                                missCount: stats.missCount,
-                                totalCount: stats.totalCount
-                            }});
-                        }
+                _.forEach(proposerVoterStats, (voters, proposerAddress) => {
+                    _.forEach(voters, (stats, voterAddress) => {
+                        bulkMissedStats.find({
+                            voter: voterAddress,
+                            proposer: proposerAddress,
+                            blockHeight: -1
+                        }).upsert().updateOne({$set: {
+                            voter: voterAddress,
+                            proposer: proposerAddress,
+                            blockHeight: -1,
+                            updatedAt: latestHeight,
+                            missCount: _.get(stats, 'missCount'),
+                            totalCount: _.get(stats, 'totalCount')
+                        }});
                     });
                 });
 

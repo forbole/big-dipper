@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Meteor } from 'meteor/meteor';
 import { Link } from 'react-router-dom';
-
+import { Validators } from '/imports/api/validators/validators.js';
+const AddressLength = 40;
 export default class Account extends Component{
     constructor(props){
         super(props);
@@ -26,17 +27,42 @@ export default class Account extends Component{
         })
     }
 
+    getAccount = () => {
+        let address = this.props.address;
+        let validator = Validators.findOne(
+            {$or: [{operator_address:address}, {delegator_address:address}, {address:address}]},
+            {fields: {address:1, description:1, operator_address:1, delegator_address:1}});
+        if (validator)
+            this.setState({
+                address: `/validator/${validator.address}`,
+                moniker: validator.description.moniker
+            });
+        else
+            this.setState({
+                address: `/validator/${address}`,
+                moniker: address
+            });
+    }
+
     componentDidMount(){
-        this.updateAccount();
+        if (this.props.sync)
+            this.getAccount();
+        else
+           this.updateAccount();
     }
 
     componentDidUpdate(prevProps){
         if (this.props.address != prevProps.address){
-            this.setState({
-                address: `/account/${this.props.address}`,
-                moniker: this.props.address
-            });
-            this.updateAccount();
+            if (this.props.sync) {
+                this.getAccount();
+            }
+            else {
+                this.setState({
+                    address: `/account/${this.props.address}`,
+                    moniker: this.props.address
+                });
+                this.updateAccount();
+            }
         }
     }
 
