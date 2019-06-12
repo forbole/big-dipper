@@ -48,7 +48,7 @@ export default class Account extends Component{
         if (this.props.sync)
             this.getAccount();
         else
-           this.updateAccount();
+            this.updateAccount();
     }
 
     componentDidUpdate(prevProps){

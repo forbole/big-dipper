@@ -5,7 +5,8 @@ import moment from 'moment';
 import { Meteor } from 'meteor/meteor';
 import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
-import { MissedBlocksTable, TimeDistubtionChart } from './MissedRecords.jsx';
+import MissedBlocksTable from './MissedBlocksTable.jsx';
+import TimeDistubtionChart from './TimeDistubtionChart.jsx';
 
 const T = i18n.createComponent();
 export default class MissedBlocks extends Component{
