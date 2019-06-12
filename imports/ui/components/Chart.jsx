@@ -583,7 +583,7 @@ export default class PChart extends Component{
         this.loadComponents();
         this.createLayout();
         this.table.renderTo(this.targetRef.current);
-        this.addTooltipQueue.forEach((args) => this.addTooltip.bind(this).apply(null, args));
+        this.addTooltipQueue.forEach((args) => this.addTooltip(...args));
     }
 
     updateScales(newScales, curScales) {
@@ -942,7 +942,7 @@ export default class PChart extends Component{
                 this.props.components, prevProps.components, scalesDiff);
             this.updateLayout(this.props.layout, prevProps.layout, componentsDiff);
             this.table.renderTo(this.targetRef.current);
-            this.addTooltipQueue.forEach((args) => this.addTooltip.bind(this).apply(null, args));
+            this.addTooltipQueue.forEach((args) => this.addTooltip(...args));
         }
     }
 

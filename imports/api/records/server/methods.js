@@ -169,7 +169,7 @@ Meteor.methods({
         }
     },
     'ValidatorRecords.calculateMissedBlocksStats': function(){
-        // TODO: deplicate this method and MissedBlocksStats collection
+        // TODO: deprecate this method and MissedBlocksStats collection
         // console.log("ValidatorRecords.calculateMissedBlocks: "+COUNTMISSEDBLOCKS);
         if (!COUNTMISSEDBLOCKSSTATS){
             COUNTMISSEDBLOCKSSTATS = true;
