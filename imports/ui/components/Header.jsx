@@ -143,7 +143,7 @@ export default class Header extends Component {
                             </span>
                         </NavItem>}
                         <NavItem>
-                            <UncontrolledDropdown nav inNavbar>
+                            <UncontrolledDropdown inNavbar>
                                 <DropdownToggle nav caret>
                                     <T>navbar.lang</T>
                                 </DropdownToggle>

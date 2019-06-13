@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 // another small block render
 import Block from './block.js';
-import { Spinner } from 'reactstrap';
+import { Spinner, Row, Col } from 'reactstrap';
 import i18n from 'meteor/universe:i18n';
 
 const T = i18n.createComponent();
@@ -27,16 +27,16 @@ export default class Blocks extends Component {
     render() {
         if (this.props.loading) {
             return (
-                <tr>
-                    <th><Spinner type="grow" color="primary" /></th>
-                </tr>
+                <Row>
+                    <Col><Spinner type="grow" color="primary" /></Col>
+                </Row>
             )
         }
         else if (this.props.blocks.length > 0) {
             return this.state.blocks;
         }
         else{
-            return <tr><td><T>blocks.noBlock</T></td></tr>
+            return <Row><Col><T>blocks.noBlock</T></Col></Row>
         }
     }
 }
