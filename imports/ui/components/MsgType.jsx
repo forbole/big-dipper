@@ -4,9 +4,9 @@ import { Badge } from 'reactstrap';
 export const MsgType = (props) => {
     switch (props.type){
         // bank
-        case "cosmos-sdk/MsgSend":
+        case "pay/MsgSend":
             return <Badge color="success">Send</Badge>
-        case "cosmos-sdk/MsgMultiSend":
+        case "pay/MsgMultiSend":
             return <Badge color="success">Multi Send</Badge>
         
         // staking
@@ -44,9 +44,13 @@ export const MsgType = (props) => {
             return <Badge color="info">Swap</Badge>
         
         // oracle
-        case "oracle/MsgPriceFeed":
-            return <Badge color="dark">Vote Price Feed</Badge>
-        
+        case "oracle/MsgPriceVote":
+            return <Badge color="dark">Vote Price</Badge>
+        case "oracle/MsgPricePrevote":
+            return <Badge color="dark">PreVote Price</Badge>
+        case "oracle/MsgDelegateFeederPermission":
+            return <Badge color="dark">PreVote Price</Badge>
+                    
         // budget
         case "budget/MsgSubmitProgram":
             return <Badge color="primary">Submit Program</Badge>

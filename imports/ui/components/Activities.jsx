@@ -38,7 +38,7 @@ export default class Activites extends Component {
         let msg = this.props.msg;
         switch (msg.type){
             // bank
-            case "cosmos-sdk/MsgSend":
+            case "payMsgSend":
                 let amount = '';
                 for (let a in msg.value.amount){
                     if (a > 0){
@@ -49,7 +49,7 @@ export default class Activites extends Component {
                     }
                 }
                 return <p><Account address={msg.value.from_address} /> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-success">{amount}</em> to <span className="address"><Account address={msg.value.to_address} /></span>.</p>
-            case "cosmos-sdk/MsgMultiSend":
+            case "pay/MsgMultiSend":
                 return <MultiSend msg={msg} />
             
             // staking
@@ -87,9 +87,11 @@ export default class Activites extends Component {
                 return <p><Account address={msg.value.trader}/> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-info">{numbro(msg.value.offer_coin.amount).format("0,0")} {msg.value.offer_coin.denom}</em> to <em className="text-info">{msg.value.ask_denom}</em>.</p>
         
             // oracle
-            case "oracle/MsgPriceFeed":
-                return <p><Account address={msg.value.feeder}/> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-dark">{msg.value.denom}</em> at <em className="text-dark">{numbro(msg.value.price).format("0,0.0000")}</em>.</p>
-            
+            case "oracle/MsgPriceVote":
+                return <p><Account address={msg.value.validator}/> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-dark">{msg.value.denom}</em> at <em className="text-dark">{numbro(msg.value.price).format("0,0.0000")}</em>.</p>
+            case "oracle/MsgPricePrevote":
+                return <p><Account address={msg.value.validator}/> {(this.props.invalid)?"failed to ":''}<MsgType type={msg.type} /> <em className="text-dark">{msg.value.denom}</em>.</p>
+                
             // budget
             case "budget/MsgSubmitProgram":
                 return <p><MsgType type={msg.type} /></p>
