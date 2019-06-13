@@ -90,19 +90,25 @@ export class LedgerButtons extends Component {
             return
         this.setState({loading: this.state.stakingType === Types.DELEGATE, loadingBalance: true});
         Meteor.call('accounts.getAccountDetail', this.state.user, (error, result) => {
-            if(result) {
-                let baseAccount = result.BaseVestingAccount.BaseAccount;
-                let coin = baseAccount.coins[0]
+            if (result) {
+                let coin = result.coins[0]
                 this.setState({
                     loading:false,
                     loadingBalance: false,
                     currentUser: {
-                        accountNumber: baseAccount.account_number,
-                        sequence: baseAccount.sequence,
+                        accountNumber: result.account_number,
+                        sequence: result.sequence,
                         availableAmount:parseFloat(coin.amount),
                         denom: coin.denom,
-                        pubKey: baseAccount.public_key.value
+                        pubKey: result.public_key.value
                 }})
+            }
+            if (!result || error) {
+                this.setState({
+                    loading:false,
+                    loadingBalance: false,
+                    errorMessage: `Failed to get account info for ${this.state.user}`
+                })
             }
         })
     }

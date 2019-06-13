@@ -9,7 +9,14 @@ Meteor.methods({
             let available = HTTP.get(url);
             if (available.statusCode == 200){
                 let response = JSON.parse(available.content);
-                return response.value;
+                let account;
+                if (response.type === 'auth/Account')
+                    account = response.value;
+                else if (response.type === 'auth/DelayedVestingAccount' || response.type === 'auth/ContinuousVestingAccount')
+                    account = response.value.BaseVestingAccount.BaseAccount
+                if (account && account.public_key != null)
+                    return account
+                return null
             }
         }
         catch (e){
