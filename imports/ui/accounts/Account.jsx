@@ -7,6 +7,7 @@ import Unbondings from './Unbondings.jsx';
 import AccountTransactions from '../components/TransactionsContainer.js';
 import ChainStates from '../components/ChainStatesContainer.js'
 import { Helmet } from 'react-helmet';
+import { WithdrawButton } from '../ledger/LedgerActions.jsx';
 import i18n from 'meteor/universe:i18n';
 
 const T = i18n.createComponent();
@@ -22,8 +23,16 @@ export default class AccountDetails extends Component{
             unbonding: 0,
             rewards: 0,
             total: 0,
-            price: 0
+            price: 0,
+            user: localStorage.getItem(CURRENTUSERADDR)
         }
+    }
+
+    static getDerivedStateFromProps(props, state) {
+        if (state.user !== localStorage.getItem(CURRENTUSERADDR)) {
+            return {user: localStorage.getItem(CURRENTUSERADDR)};
+        }
+        return null;
     }
 
     getBalance(){
@@ -162,6 +171,9 @@ export default class AccountDetails extends Component{
                                     </Row>
                                 </Col>
                                 <Col md={6} lg={4} className="total d-flex flex-column justify-content-end">
+                                    <Row>
+                                        <Col>{this.state.user?<WithdrawButton rewards={this.state.rewards}/>:''}</Col>
+                                    </Row>
                                     <Row>
                                         <Col xs={4} className="label d-flex align-self-end"><div className="infinity" /><T>accounts.total</T></Col>
                                         <Col xs={8} className="value text-right">{numbro(this.state.total/Meteor.settings.public.stakingFraction).format("0,0.0000a")} {Meteor.settings.public.stakingDenom}s</Col>

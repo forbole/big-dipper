@@ -40,9 +40,16 @@ export default class Account extends Component{
         }
     }
 
+    userIcon(){
+        let signedInAddress = localStorage.getItem(CURRENTUSERADDR);
+        if (signedInAddress === this.props.address) {
+            return <i className="material-icons account-icon">account_box</i>
+        }
+    }
+
     render(){
         return <span className={(this.props.copy)?"address overflow-auto d-inline-block copy":"address overflow-auto d-inline"} >
-            <Link to={this.state.address}>{this.state.moniker}</Link>
+            <Link to={this.state.address}>{this.userIcon()}{this.state.moniker}</Link>
         </span>
     }
 }

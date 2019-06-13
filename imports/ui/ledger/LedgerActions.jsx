@@ -18,18 +18,21 @@ const maxHeightModifier = {
 const Types = {
     DELEGATE: 'delegate',
     REDELEGATE: 'redelegate',
-    UNDELEGATE: 'undelegate'
+    UNDELEGATE: 'undelegate',
+    WITHDRAW: 'withdraw'
 }
 
 const TypeMeta = {
     [Types.DELEGATE]: {
         button: 'delegate',
-        path: 'delegations',
+        pathPreFix: 'staking/delegators',
+        pathSuffix: 'delegations',
         warning: ''
     },
     [Types.REDELEGATE]: {
         button: 'redelegate',
-        path: 'redelegations',
+        pathPreFix: 'staking/delegators',
+        pathSuffix: 'redelegations',
         warning: 'You are only able to redelegate from Validator A → Validator B up to 7 times in a 21 day period.  '+
                  'Also, There is 21 day cooldown from serial redelegation;  '+
                  'Once you redelegate from Validator A → Validator B, '+
@@ -37,12 +40,19 @@ const TypeMeta = {
     },
     [Types.UNDELEGATE]: {
         button: 'undelegate',
-        path: 'unbonding_delegations',
+        pathPreFix: 'staking/delegators',
+        pathSuffix: 'unbonding_delegations',
         warning: 'There is a 21-day unbonding period.' // TODO: get number from /staking/parameters
+    },
+    [Types.WITHDRAW]: {
+        button: 'withdraw',
+        pathPreFix: 'distribution/delegators',
+        pathSuffix: 'rewards',
+        warning: ''
     }
 }
 
-export class LedgerButtons extends Component {
+class LedgerButton extends Component {
     constructor(props) {
        super(props);
         this.state = {
@@ -53,12 +63,12 @@ export class LedgerButtons extends Component {
         this.ledger = new Ledger({testModeAllowed: false});
     }
 
-    close() {
+    close = () => {
         this.setState({
             activeTab: '2',
             errorMessage: '',
             isOpen: false,
-            stakingType: undefined,
+            actionType: undefined,
             loading: undefined,
             loadingBalance: undefined,
             currentUser: undefined,
@@ -85,20 +95,21 @@ export class LedgerButtons extends Component {
        }
     }
 
-    getBalance() {
+    getBalance = () => {
         if (this.state.loadingBalance)
             return
-        this.setState({loading: this.state.stakingType === Types.DELEGATE, loadingBalance: true});
+        this.setState({loading: this.state.actionType === Types.DELEGATE, loadingBalance: true});
         Meteor.call('accounts.getAccountDetail', this.state.user, (error, result) => {
             if (result) {
-                let coin = result.coins[0]
+                let coin = result.coins?result.coins[0]:
+                    { amount: 0, denom: Meteor.settings.public.stakingDenom }
                 this.setState({
                     loading:false,
                     loadingBalance: false,
                     currentUser: {
                         accountNumber: result.account_number,
                         sequence: result.sequence,
-                        availableAmount:parseFloat(coin.amount),
+                        availableAmount: parseFloat(coin.amount),
                         denom: coin.denom,
                         pubKey: result.public_key.value
                 }})
@@ -113,7 +124,7 @@ export class LedgerButtons extends Component {
         })
     }
 
-    tryConnect() {
+    tryConnect = () => {
         this.ledger.getCosmosAddress().then((res) => this.setState({
             success:true,
         }), (err) => this.setState({
@@ -122,7 +133,7 @@ export class LedgerButtons extends Component {
        }));
     }
 
-    getTxContext() {
+    getTxContext = () => {
         return {
             chainId: Meteor.settings.public.chainId,
             bech32: this.state.user,
@@ -134,37 +145,49 @@ export class LedgerButtons extends Component {
         }
     }
 
-    createMessage() {
-        switch (this.state.stakingType) {
+    createMessage = (callback) => {
+        let txMsg
+        switch (this.state.actionType) {
             case Types.DELEGATE:
-                return Ledger.createDelegate(
+                txMsg = Ledger.createDelegate(
                     this.getTxContext(),
                     this.props.validator.operator_address,
                     this.state.delegateAmount)
                 break;
             case Types.REDELEGATE:
-                return Ledger.createRedelegate(
+                txMsg = Ledger.createRedelegate(
                     this.getTxContext(),
                     this.props.validator.operator_address,
                     this.state.targetValidator.operator_address,
                     this.state.delegateAmount)
                 break;
             case Types.UNDELEGATE:
-                return Ledger.createUndelegate(
+                txMsg = Ledger.createUndelegate(
                     this.getTxContext(),
                     this.props.validator.operator_address,
                     this.state.delegateAmount);
                 break;
         }
+        if (txMsg) {
+            callback(txMsg)
+        }
     }
 
-    simulate() {
+    getPath = () => {
+        let meta = TypeMeta[this.state.actionType];
+        return `${meta.pathPreFix}/${this.state.user}/${meta.pathSuffix}`;
+    }
+
+
+    simulate = () => {
         if (this.state.simulating)
             return
         this.setState({loading: true, simulating: true, errorMessage: ''})
-        let txMsg = this.createMessage();
+        this.createMessage(this.runSimulatation);
+    }
 
-        Meteor.call('staking.simulate', txMsg, TypeMeta[this.state.stakingType].path, (err, res) =>{
+    runSimulatation = (txMsg) => {
+        Meteor.call('transaction.simulate', txMsg, this.state.user, this.getPath(), (err, res) =>{
             if (res){
                 Ledger.applyGas(txMsg, res);
                 this.setState({
@@ -186,7 +209,7 @@ export class LedgerButtons extends Component {
         })
     }
 
-    sign() {
+    sign = () => {
         if (this.state.signing)
             return
         this.setState({loading: true, signing: true, errorMessage: ''})
@@ -214,11 +237,11 @@ export class LedgerButtons extends Component {
         })
     }
 
-    handleInputChange(e) {
+    handleInputChange = (e) => {
         this.setState({[e.target.name]: e.target.value})
     }
 
-    handleTargetValidatorChange(e) {
+    handleTargetValidatorChange = (e) => {
         let dataset = e.currentTarget.dataset;
         this.setState({
             targetValidator: {
@@ -228,27 +251,27 @@ export class LedgerButtons extends Component {
         })
     }
 
-    getActionButton() {
+    getActionButton = () => {
         if (this.state.activeTab === '1')
-            return <Button color="primary"  onClick={this.tryConnect.bind(this)}>Continue</Button>
+            return <Button color="primary"  onClick={this.tryConnect}>Continue</Button>
         if (this.state.activeTab === '2')
-            return <Button color="primary"  disabled={this.state.simulating} onClick={this.simulate.bind(this)}>
+            return <Button color="primary"  disabled={this.state.simulating} onClick={this.simulate}>
                 {(this.state.errorMessage !== '')?'Retry':'Next'}
             </Button>
         if (this.state.activeTab === '3')
-            return <Button color="primary"  disabled={this.state.signing} onClick={this.sign.bind(this)}>
+            return <Button color="primary"  disabled={this.state.signing} onClick={this.sign}>
                 {(this.state.errorMessage !== '')?'Retry':'Sign'}
             </Button>
     }
 
-    openModal(type) {
+    openModal = (type) => {
         this.setState({
-            stakingType: type,
+            actionType: type,
             isOpen: true
         })
     }
 
-    getValidatorOptions() {
+    getValidatorOptions = () => {
         let activeValidators = Validators.find(
             {"jailed": false, "status": 2},
             {"sort":{"description.moniker":1}}
@@ -261,7 +284,7 @@ export class LedgerButtons extends Component {
             <DropdownMenu modifiers={maxHeightModifier}>
                 {activeValidators.map((validator) => {
                     if (validator.address!=this.props.validator.address)
-                    return <DropdownItem className='validator' key={validator.address} onClick={this.handleTargetValidatorChange.bind(this)} data-moniker={validator.description.moniker} data-address={validator.operator_address}>
+                    return <DropdownItem className='validator' key={validator.address} onClick={this.handleTargetValidatorChange} data-moniker={validator.description.moniker} data-address={validator.operator_address}>
                         <Row>
                             <div className='moniker'>{validator.description.moniker}</div>
                             <div className='address overflow-auto'>{validator.operator_address}</div>
@@ -272,7 +295,37 @@ export class LedgerButtons extends Component {
         </UncontrolledDropdown>
     }
 
-    renderActionTab() {
+    renderModal = () => {
+        return  <Modal isOpen={this.state.isOpen}>
+            <ModalHeader>{this.props.title}</ModalHeader>
+            <ModalBody>
+                <TabContent activeTab={this.state.activeTab}>
+                    <TabPane tabId="1">
+                        Please connect your Ledger device and open Cosmos App.
+                    </TabPane>
+                    {this.renderActionTab()}
+                    {this.renderConfirmationTab()}
+                    <TabPane tabId="4">
+                        <div>Transaction is broadcasted.  Verify it at
+                            <Link to={`/transactions/${this.state.txHash}?new`}> transaction page. </Link>
+                        </div>
+                        <div>See your activities at <Link to={`/account/${this.state.user}`}>your account page</Link>.</div>
+                    </TabPane>
+                </TabContent>
+                {this.state.loading?<Spinner type="grow" color="primary" />:''}
+                <p className="error-message">{this.state.errorMessage}</p>
+            </ModalBody>
+            <ModalFooter>
+                {this.getActionButton()}
+                <Button color="secondary" disabled={this.state.signing} onClick={this.close}>Close</Button>
+            </ModalFooter>
+        </Modal>
+    }
+}
+
+class DelegationButtons extends LedgerButton {
+
+    renderActionTab = () => {
         let action;
         let target;
         let maxAmount;
@@ -280,7 +333,7 @@ export class LedgerButtons extends Component {
         let denom = this.state.currentUser?this.state.currentUser.denom:'';
         let moniker = this.props.validator.description && this.props.validator.description.moniker;
         let validatorAddress = <span className='ellipic'>this.props.validator.operator_address</span>;
-        switch (this.state.stakingType) {
+        switch (this.state.actionType) {
             case Types.DELEGATE:
                 action = 'Delegate to';
                 maxAmount = this.state.currentUser?this.state.currentUser.availableAmount:null;
@@ -300,17 +353,18 @@ export class LedgerButtons extends Component {
 
         }
         return <TabPane tabId="2">
-            {action} {moniker?moniker:validatorAddress} {target?'to':''} {target}
+            <h3>{action} {moniker?moniker:validatorAddress} {target?'to':''} {target}</h3>
             <InputGroup>
-               <Input name="delegateAmount" onChange={this.handleInputChange.bind(this)} placeholder="Amount" min={0} max={maxAmount} type="number" step="1" />
+               <Input name="delegateAmount" onChange={this.handleInputChange} placeholder="Amount" min={0} max={maxAmount} type="number" step="1" />
                <InputGroupAddon addonType="append">{Meteor.settings.public.stakingDenom}</InputGroupAddon>
             </InputGroup>
             {availableStatement}
         </TabPane>
     }
-    renderConfirmationTab() {
+
+    renderConfirmationTab = () => {
         let message;
-        switch (this.state.stakingType) {
+        switch (this.state.actionType) {
             case Types.DELEGATE:
                 message = `You are going to delegate ${this.state.delegateAmount} to ${this.props.validator.operator_address} with ${this.state.gasEstimate} as fee.`
                 break;
@@ -323,40 +377,62 @@ export class LedgerButtons extends Component {
         }
         return <TabPane tabId="3">
             <div>{message}</div>
-            <div>{this.state.stakingType && TypeMeta[this.state.stakingType].warning} </div>
+            <div>{this.state.actionType && TypeMeta[this.state.actionType].warning} </div>
             <div>If that's correct, please click next and sign in your ledger device.</div>
         </TabPane>
     }
 
-    render() {
+    render = () => {
         return <span className="ledger-buttons-group float-right">
             <Button color="success" size="sm" onClick={() => this.openModal(Types.DELEGATE)}> {TypeMeta[Types.DELEGATE].button} </Button>
             {this.props.currentDelegation?<Button color="danger" size="sm" onClick={() => this.openModal(Types.REDELEGATE)}> {TypeMeta[Types.REDELEGATE].button} </Button>:''}
             {this.props.currentDelegation?<Button color="warning" size="sm" onClick={() => this.openModal(Types.UNDELEGATE)}> {TypeMeta[Types.UNDELEGATE].button} </Button>:''}
-            <Modal isOpen={this.state.isOpen}>
-                <ModalHeader>{this.props.title}</ModalHeader>
-                <ModalBody>
-                    <TabContent activeTab={this.state.activeTab}>
-                        <TabPane tabId="1">
-                            Please connect your Ledger device and open Cosmos App.
-                        </TabPane>
-                        {this.renderActionTab()}
-                        {this.renderConfirmationTab()}
-                        <TabPane tabId="4">
-                            <div>Transaction is broadcasted.  Verify it at
-                                <Link to={`/transactions/${this.state.txHash}?new`}> transaction page. </Link>
-                            </div>
-                            <div>See your activities at <Link to={`/account/${this.state.user}`}>your account page</Link>.</div>
-                        </TabPane>
-                    </TabContent>
-                    {this.state.loading?<Spinner type="grow" color="primary" />:''}
-                    <p className="error-message">{this.state.errorMessage}</p>
-                </ModalBody>
-                <ModalFooter>
-                    {this.getActionButton()}
-                    <Button color="secondary" disabled={this.state.signing} onClick={this.close.bind(this)}>Close</Button>
-                </ModalFooter>
-            </Modal>
+            {this.renderModal()}
         </span>;
     }
+}
+
+class WithdrawButton extends LedgerButton {
+
+    createMessage = (callback) => {
+        Meteor.call('transaction.execute', {from: this.state.user}, this.getPath(), (err, res) =>{
+            if (res){
+                callback(res)
+            }
+            else {
+                this.setState({
+                    loading: false,
+                    simulating: false,
+                    errorMessage: 'something went wrong'
+                })
+            }
+        })
+    }
+
+    renderActionTab = () => {
+        let denom = this.state.currentUser?this.state.currentUser.denom:'';
+        return <TabPane tabId="2">
+            <h3>Withdraw rewards from all delegations</h3>
+            {`Your current rewards amount: ${this.props.rewards} ${denom}`}
+        </TabPane>
+    }
+
+    renderConfirmationTab = () => {
+        return <TabPane tabId="3">
+            <div>{`You are going to withdraw ${this.props.rewards} with ${this.state.gasEstimate} as fee.`}</div>
+            <div>{this.state.actionType && TypeMeta[this.state.actionType].warning} </div>
+            <div>If that's correct, please click next and sign in your ledger device.</div>
+        </TabPane>
+    }
+    render = () => {
+        return <span className="ledger-buttons-group float-right">
+            <Button color="success" size="sm" onClick={() => this.openModal(Types.WITHDRAW)}> {TypeMeta[Types.WITHDRAW].button} </Button>
+            {this.renderModal()}
+        </span>;
+    }
+}
+
+export {
+    DelegationButtons,
+    WithdrawButton
 }

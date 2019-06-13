@@ -380,6 +380,27 @@ export class Ledger {
         return txSkeleton;
     }
 
+    // Creates a new redelegation tx based on the input parameters
+    // the function expects a complete txContext
+    static createWithdrawAll(
+        txContext,
+        memo
+    ) {
+        const txSkeleton = Ledger.createSkeleton(txContext);
+
+        const txMsg = {
+            type: 'cosmos-sdk/MsgWithdrawDelegationRewardsAll',
+            value: {
+                delegator_address: txContext.bech32,
+            },
+        };
+
+        txSkeleton.value.msg = [txMsg];
+        txSkeleton.value.memo = memo || DEFAULT_MEMO;
+
+        return txSkeleton;
+    }
+
 }
 
 function versionString({ major, minor, patch }) {

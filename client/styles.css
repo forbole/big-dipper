@@ -817,3 +817,7 @@ div#voting-power-dist .card{
     display: inline-block;
     max-width: 100%;
 }
+
+.material-icons.account-icon {
+    vertical-align: bottom;
+}

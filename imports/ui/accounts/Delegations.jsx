@@ -68,7 +68,7 @@ export default class AccountDelegations extends Component{
                     <Container fluid>
                         <Row className="header text-nowrap d-none d-lg-flex">
                             <Col md={8}><i className="fas fa-at"></i> <span><T>accounts.validators</T></span></Col>
-                            <Col md={4}><i className="fas fa-piggy-bank"></i> <span>accounts.shares</span></Col>
+                            <Col md={4}><i className="fas fa-piggy-bank"></i> <span><T>accounts.shares</T></span></Col>
                         </Row>
                         {this.state.delegations}
                     </Container>
