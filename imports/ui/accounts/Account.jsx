@@ -89,6 +89,15 @@ export default class AccountDetails extends Component{
                     }, this)
                 }
 
+                if (result.commission){
+                    this.setState({
+                        operator_address: result.operator_address,
+                        commission: parseFloat(result.commission.amount),
+                        total: parseFloat(this.state.total)+parseFloat(result.commission.amount)
+                    })
+                }
+
+
                 this.setState({
                     loading:false,
                     accountExists: true
@@ -110,6 +119,7 @@ export default class AccountDetails extends Component{
                 available: 0,
                 delegated: 0,
                 unbonding: 0,
+                commission: 0,
                 rewards: 0,
                 total: 0,
                 price: 0
@@ -148,6 +158,7 @@ export default class AccountDetails extends Component{
                                         <Progress bar className="delegated" value={this.state.delegated/this.state.total*100} />
                                         <Progress bar className="unbonding" value={this.state.unbonding/this.state.total*100} />
                                         <Progress bar className="rewards" value={this.state.rewards/this.state.total*100} />
+                                        <Progress bar className="commission" value={this.state.commission/this.state.total*100} />
                                     </Progress>
                                 </Col>
                             </Row>
@@ -169,10 +180,14 @@ export default class AccountDetails extends Component{
                                         <Col xs={4} className="label text-nowrap"><div className="rewards infinity" /><T>accounts.rewards</T></Col>
                                         <Col xs={8} className="value text-right">{numbro(this.state.rewards/Meteor.settings.public.stakingFraction).format("0,0.0000")}</Col>
                                     </Row>
+                                    {this.state.commission?<Row>
+                                        <Col xs={4} className="label text-nowrap"><div className="commission infinity" /><T>validators.commission</T></Col>
+                                        <Col xs={8} className="value text-right">{numbro(this.state.commission/Meteor.settings.public.stakingFraction).format("0,0.0000")}</Col>
+                                    </Row>:null}
                                 </Col>
                                 <Col md={6} lg={4} className="total d-flex flex-column justify-content-end">
                                     <Row>
-                                        <Col>{this.state.user?<WithdrawButton rewards={this.state.rewards}/>:''}</Col>
+                                        <Col>{this.state.user&&this.state.user===this.state.address?<WithdrawButton rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address}/>:''}</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={4} className="label d-flex align-self-end"><div className="infinity" /><T>accounts.total</T></Col>

@@ -71,7 +71,7 @@ span#network-nav{
     color: rgba(255,255,255,0.75);
 }
 
-.ledger-sign-in .error-message {
+.ledger-sign-in .error-message, .ledger-modal .error-message{
     color: red;
 }
 
@@ -421,6 +421,10 @@ div#countdown {
 
 #account .rewards{
     background-color: #20c997
+}
+
+#account .commission{
+    background-color: #ff9800
 }
 
 #account .total{
@@ -796,6 +800,16 @@ div#voting-power-dist .card{
   border-left-color: #444;
 }
 
+.validator-tooltip .tooltip-inner {
+    color: #444;
+    min-width: 200px;
+}
+
+.validator-tooltip-card .avatar img {
+    max-width: 100px;
+    padding-bottom: 10px;
+}
+
 .redelegate-validators {
   display: inline-block;
 }
@@ -820,4 +834,17 @@ div#voting-power-dist .card{
 
 .material-icons.account-icon {
     vertical-align: bottom;
+}
+
+.ledger-modal-tab .tab-pane .amount {
+    color: orangered;
+    font-weight: 500;
+}
+.ledger-modal-tab .tab-pane .gas {
+    color: darkslategray;
+    font-weight: 500;
+}
+.ledger-modal-tab .tab-pane .action {
+    color: green;
+    font-weight: 500;
 }

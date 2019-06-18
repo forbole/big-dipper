@@ -27,17 +27,17 @@ Meteor.methods({
             return JSON.parse(response.content);
         }
     },
-    'transaction.simulate': function(txMsg, from, path) {
-        const msg = (
+    'transaction.simulate': function(txMsg, from, path, adjustment='1.2') {
+        /*const msg = (
             txMsg && txMsg.value && txMsg.value.msg && txMsg.value.msg.length &&
             txMsg.value.msg[0].value || {}
-        );
+        );*/
         const url = `${LCD}/${path}`;
-        data = {...msg,
+        data = {...txMsg,
             "base_req": {
                 "from": from,
                 "chain_id": Meteor.settings.public.chainId,
-                "gas_adjustment": "1.2",
+                "gas_adjustment": adjustment,
                 "simulate": true
             }
         };

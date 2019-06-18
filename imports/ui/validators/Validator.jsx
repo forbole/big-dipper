@@ -51,11 +51,17 @@ export default class Validator extends Component{
     getUserDelegations() {
         if (this.state.user && this.props.validator && this.props.validator.address) {
             Meteor.call('accounts.getDelegation', this.state.user, this.props.validator.operator_address, (err, res) => {
-                if (res) {
+                if (res && res.shares > 0) {
+                    res.tokenPerShare = this.props.validator.tokens/this.props.validator.delegator_shares
                     this.setState({
-                        currentUserDelegation: (res && res.shares > 0)? res : null
+                        currentUserDelegation: res
+                    })
+                } else {
+                    this.setState({
+                        currentUserDelegation: null
                     })
                 }
+
             })
         } else if (this.state.currentUserDelegation != null) {
             this.setState({currentUserDelegation: null})

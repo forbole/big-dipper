@@ -6,12 +6,13 @@ import { Button, Spinner, TabContent, TabPane, Row, Col, Modal, ModalHeader,
     UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
 import { Ledger } from './ledger.js';
 import { Validators } from '/imports/api/validators/validators.js';
+import AccountTooltip from '/imports/ui/components/AccountTooltip.jsx';
 
 const maxHeightModifier = {
     setMaxHeight: {
         enabled: true,
         fn: (data) => {
-            return {...data, styles: {...data.styles, 'overflow-y': 'auto', maxHeight: '80vh'}};
+            return {...data, styles: {...data.styles, 'overflowY': 'auto', maxHeight: '80vh'}};
         }
     }
 }
@@ -48,8 +49,13 @@ const TypeMeta = {
         button: 'withdraw',
         pathPreFix: 'distribution/delegators',
         pathSuffix: 'rewards',
-        warning: ''
+        warning: '',
+        gasAdjustment: '1.4'
     }
+}
+
+const isActiveValidator = (validator) => {
+    return !validator.jailed && validator.status == 2;
 }
 
 class LedgerButton extends Component {
@@ -87,6 +93,32 @@ class LedgerButton extends Component {
         return null;
     }
 
+    initStateOnLoad = (action, state) => {
+        this.setState({
+            loading: true,
+            [action]: true,
+            ...state,
+        })
+    }
+
+    setStateOnSuccess = (action, state) => {
+        this.setState({
+            loading: false,
+            [action]: false,
+            errorMessage: '',
+            ...state,
+        });
+    }
+
+    setStateOnError = (action, errorMsg, state={}) => {
+        this.setState({
+            loading: false,
+            [action]: false,
+            errorMessage: errorMsg,
+            ...state,
+        });
+    }
+
     componentDidUpdate(prevProps, prevState) {
         if ((this.state.isOpen && !prevState.isOpen) || (this.state.user && this.state.user != prevState.user)) {
             if (!this.state.success)
@@ -98,35 +130,38 @@ class LedgerButton extends Component {
     getBalance = () => {
         if (this.state.loadingBalance)
             return
-        this.setState({loading: this.state.actionType === Types.DELEGATE, loadingBalance: true});
-        Meteor.call('accounts.getAccountDetail', this.state.user, (error, result) => {
-            if (result) {
-                let coin = result.coins?result.coins[0]:
-                    { amount: 0, denom: Meteor.settings.public.stakingDenom }
-                this.setState({
-                    loading:false,
-                    loadingBalance: false,
-                    currentUser: {
-                        accountNumber: result.account_number,
-                        sequence: result.sequence,
-                        availableAmount: parseFloat(coin.amount),
-                        denom: coin.denom,
-                        pubKey: result.public_key.value
-                }})
-            }
-            if (!result || error) {
-                this.setState({
-                    loading:false,
-                    loadingBalance: false,
-                    errorMessage: `Failed to get account info for ${this.state.user}`
-                })
-            }
-        })
+
+        this.initStateOnLoad('loadingBalance', {loading: this.state.actionType === Types.DELEGATE});
+        try{
+            Meteor.call('accounts.getAccountDetail', this.state.user, (error, result) => {
+                if (result) {
+                    let coin = result.coins?result.coins[0]:
+                        { amount: 0, denom: Meteor.settings.public.stakingDenom }
+                    this.setStateOnSuccess('loadingBalance', {
+                        currentUser: {
+                            accountNumber: result.account_number,
+                            sequence: result.sequence,
+                            availableAmount: parseFloat(coin.amount),
+                            denom: coin.denom,
+                            pubKey: result.public_key.value
+                    }})
+                }
+                if (!result || error) {
+                    this.setStateOnError(
+                        'loadingBalance',
+                        `Failed to get account info for ${this.state.user}`
+                    )
+                }
+            })
+        } catch (e) {
+            this.setStateOnError('loadingBalance', e.message);
+        }
     }
 
     tryConnect = () => {
         this.ledger.getCosmosAddress().then((res) => this.setState({
             success:true,
+            activeTab: this.state.activeTab ==='1' ? '2': this.state.activeTab
         }), (err) => this.setState({
             success:false,
             activeTab: '1'
@@ -168,9 +203,9 @@ class LedgerButton extends Component {
                     this.state.delegateAmount);
                 break;
         }
-        if (txMsg) {
-            callback(txMsg)
-        }
+        let simulateBody = txMsg && txMsg.value && txMsg.value.msg && txMsg.value.msg.length &&
+        txMsg.value.msg[0].value || {}
+        callback(txMsg, simulateBody)
     }
 
     getPath = () => {
@@ -178,33 +213,30 @@ class LedgerButton extends Component {
         return `${meta.pathPreFix}/${this.state.user}/${meta.pathSuffix}`;
     }
 
-
     simulate = () => {
         if (this.state.simulating)
             return
-        this.setState({loading: true, simulating: true, errorMessage: ''})
-        this.createMessage(this.runSimulatation);
+        this.initStateOnLoad('simulating')
+        try {
+            this.createMessage(this.runSimulatation);
+        } catch (e) {
+            this.setStateOnError('simulating', e.message)
+        }
     }
 
-    runSimulatation = (txMsg) => {
-        Meteor.call('transaction.simulate', txMsg, this.state.user, this.getPath(), (err, res) =>{
+    runSimulatation = (txMsg, simulateBody) => {
+        let gasAdjustment = TypeMeta[this.state.actionType].gasAdjustment || '1.2';
+        Meteor.call('transaction.simulate', simulateBody, this.state.user, this.getPath(), gasAdjustment, (err, res) =>{
             if (res){
                 Ledger.applyGas(txMsg, res);
-                this.setState({
+                this.setStateOnSuccess('simulating', {
                     gasEstimate: res,
                     activeTab: '3',
-                    loading: false,
-                    simulating: false,
                     txMsg: txMsg
                 })
-
             }
             else {
-                this.setState({
-                    loading: false,
-                    simulating: false,
-                    errorMessage: 'something went wrong'
-                })
+                this.setStateOnError('simulating', 'something went wrong')
             }
         })
     }
@@ -212,29 +244,27 @@ class LedgerButton extends Component {
     sign = () => {
         if (this.state.signing)
             return
-        this.setState({loading: true, signing: true, errorMessage: ''})
-        let txMsg = this.state.txMsg;
-        const txContext = this.getTxContext();
-        const bytesToSign = Ledger.getBytesToSign(txMsg, txContext);
-        this.ledger.sign(bytesToSign).then((sig) => {
-            Ledger.applySignature(txMsg, txContext, sig);
-            Meteor.call('transaction.submit', txMsg, (err, res) => {
-                if (err) {
-                    this.setState({
-                        loading: false,
-                        signing: false,
-                        errorMessage: 'something went wrong'
-                    })
-                } if (res) {
-                    this.setState({
-                        loading: false,
-                        signing: false,
-                        txHash: res,
-                        activeTab: '4'
-                    })
-                }
+        this.initStateOnLoad('signing')
+        try {
+            let txMsg = this.state.txMsg;
+            const txContext = this.getTxContext();
+            const bytesToSign = Ledger.getBytesToSign(txMsg, txContext);
+            this.ledger.sign(bytesToSign).then((sig) => {
+                Ledger.applySignature(txMsg, txContext, sig);
+                Meteor.call('transaction.submit', txMsg, (err, res) => {
+                    if (err) {
+                        this.setStateOnError('signing', 'something went wrong')
+                    } if (res) {
+                        this.setStateOnSuccess('signing', {
+                            txHash: res,
+                            activeTab: '4'
+                        })
+                    }
+                })
             })
-        })
+        } catch (e) {
+            this.setStateOnError('signing', e.message)
+        }
     }
 
     handleInputChange = (e) => {
@@ -296,10 +326,10 @@ class LedgerButton extends Component {
     }
 
     renderModal = () => {
-        return  <Modal isOpen={this.state.isOpen}>
+        return  <Modal isOpen={this.state.isOpen}  className="ledger-modal">
             <ModalHeader>{this.props.title}</ModalHeader>
             <ModalBody>
-                <TabContent activeTab={this.state.activeTab}>
+                <TabContent className='ledger-modal-tab' activeTab={this.state.activeTab}>
                     <TabPane tabId="1">
                         Please connect your Ledger device and open Cosmos App.
                     </TabPane>
@@ -324,6 +354,12 @@ class LedgerButton extends Component {
 }
 
 class DelegationButtons extends LedgerButton {
+    getDelegatedToken = (currentDelegation) => {
+        if (currentDelegation && currentDelegation.shares && currentDelegation.tokenPerShare) {
+            return currentDelegation.shares * currentDelegation.tokenPerShare;
+        }
+        return null
+    }
 
     renderActionTab = () => {
         let action;
@@ -342,13 +378,13 @@ class DelegationButtons extends LedgerButton {
             case Types.REDELEGATE:
                 action = 'Redelegate from';
                 target = this.getValidatorOptions();
-                maxAmount = this.props.currentDelegation?this.props.currentDelegation.shares:null;
-                availableStatement = `your delegated shares: ${maxAmount} ${denom}`
+                maxAmount = this.getDelegatedToken(this.props.currentDelegation);
+                availableStatement = `your delegated tokens: ${maxAmount} ${denom}`
                 break;
             case Types.UNDELEGATE:
                 action = 'Undelegate from';
-                maxAmount = this.props.currentDelegation?this.props.currentDelegation.shares:null;
-                availableStatement = `your delegated shares: ${maxAmount} ${denom}`
+                maxAmount = this.getDelegatedToken(this.props.currentDelegation);
+                availableStatement = `your delegated tokens: ${maxAmount} ${denom}`
                 break;
 
         }
@@ -366,13 +402,13 @@ class DelegationButtons extends LedgerButton {
         let message;
         switch (this.state.actionType) {
             case Types.DELEGATE:
-                message = `You are going to delegate ${this.state.delegateAmount} to ${this.props.validator.operator_address} with ${this.state.gasEstimate} as fee.`
+                message = <span>You are going to <span className='action'>delegate</span> <span className='amount'>{this.state.delegateAmount}</span> to <AccountTooltip address={this.props.validator.operator_address} sync/> with <span className='gas'>{this.state.gasEstimate}</span> as gas.</span>
                 break;
             case Types.REDELEGATE:
-                message = `You are going to redelegate ${this.state.delegateAmount} from ${this.props.validator.operator_address} to ${this.state.targetValidator && this.state.targetValidator.operator_address} with ${this.state.gasEstimate} as fee.`
+                message = <span>You are going to <span className='action'>redelegate</span> <span className='amount'>{this.state.delegateAmount}</span> from <AccountTooltip address={this.props.validator.operator_address} sync/> to <AccountTooltip address={this.state.targetValidator && this.state.targetValidator.operator_address} sync/> with <span className='gas'>{this.state.gasEstimate}</span> as gas.</span>
                 break;
             case Types.UNDELEGATE:
-                message = `You are going to undelegate ${this.state.delegateAmount} from ${this.props.validator.operator_address} with ${this.state.gasEstimate} as fee.`
+                message = <span>You are going to <span className='action'>undelegate</span> <span className='amount'>{this.state.delegateAmount}</span> from <AccountTooltip address={this.props.validator.operator_address} sync/> with <span className='gas'>{this.state.gasEstimate}</span> as gas.</span>
                 break;
         }
         return <TabPane tabId="3">
@@ -384,9 +420,9 @@ class DelegationButtons extends LedgerButton {
 
     render = () => {
         return <span className="ledger-buttons-group float-right">
-            <Button color="success" size="sm" onClick={() => this.openModal(Types.DELEGATE)}> {TypeMeta[Types.DELEGATE].button} </Button>
-            {this.props.currentDelegation?<Button color="danger" size="sm" onClick={() => this.openModal(Types.REDELEGATE)}> {TypeMeta[Types.REDELEGATE].button} </Button>:''}
-            {this.props.currentDelegation?<Button color="warning" size="sm" onClick={() => this.openModal(Types.UNDELEGATE)}> {TypeMeta[Types.UNDELEGATE].button} </Button>:''}
+            {isActiveValidator(this.props.validator)?<Button color="success" size="sm" onClick={() => this.openModal(Types.DELEGATE)}> {TypeMeta[Types.DELEGATE].button} </Button>:null}
+            {this.props.currentDelegation?<Button color="danger" size="sm" onClick={() => this.openModal(Types.REDELEGATE)}> {TypeMeta[Types.REDELEGATE].button} </Button>:null}
+            {this.props.currentDelegation?<Button color="warning" size="sm" onClick={() => this.openModal(Types.UNDELEGATE)}> {TypeMeta[Types.UNDELEGATE].button} </Button>:null}
             {this.renderModal()}
         </span>;
     }
@@ -397,7 +433,11 @@ class WithdrawButton extends LedgerButton {
     createMessage = (callback) => {
         Meteor.call('transaction.execute', {from: this.state.user}, this.getPath(), (err, res) =>{
             if (res){
-                callback(res)
+                res.value.msg.push({
+                    type: 'cosmos-sdk/MsgWithdrawValidatorCommission',
+                    value: { validator_address: this.props.address }
+                })
+                callback(res, res)
             }
             else {
                 this.setState({
@@ -413,13 +453,16 @@ class WithdrawButton extends LedgerButton {
         let denom = this.state.currentUser?this.state.currentUser.denom:'';
         return <TabPane tabId="2">
             <h3>Withdraw rewards from all delegations</h3>
-            {`Your current rewards amount: ${this.props.rewards} ${denom}`}
+            <div>Your current rewards amount: <span className='amount'>{this.props.rewards}</span> {denom}</div>
+            {this.props.commission?<div>Your current commission amount: <span className='amount'>{this.props.commission}</span> {denom}</div>:''}
         </TabPane>
     }
 
     renderConfirmationTab = () => {
         return <TabPane tabId="3">
-            <div>{`You are going to withdraw ${this.props.rewards} with ${this.state.gasEstimate} as fee.`}</div>
+            <div>You are going to withdraw rewards <span className='amount'>{this.props.rewards}</span>
+                {this.props.commission?<span> and commission <span className='amount'>{this.props.commission}</span></span>:null}
+                with  <span className='gas'>{this.state.gasEstimate}</span> as fee.</div>
             <div>{this.state.actionType && TypeMeta[this.state.actionType].warning} </div>
             <div>If that's correct, please click next and sign in your ledger device.</div>
         </TabPane>
