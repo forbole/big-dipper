@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
+import { Validators } from '/imports/api/validators/validators.js';
 
 Meteor.methods({
     'accounts.getAccountDetail': function(address){
@@ -26,6 +27,7 @@ Meteor.methods({
     'accounts.getBalance': function(address){
         this.unblock();
         let balance = {}
+
         // get available atoms
         let url = LCD + '/bank/balances/'+ address;
         try{
@@ -74,6 +76,26 @@ Meteor.methods({
         }
         catch (e){
             console.log(e);
+        }
+
+        // get commission
+        let validator = Validators.findOne(
+            {$or: [{operator_address:address}, {delegator_address:address}, {address:address}]})
+        if (validator) {
+            let url = LCD + '/distribution/validators/' + validator.operator_address;
+            balance.operator_address = validator.operator_address;
+            try {
+                let rewards = HTTP.get(url);
+                if (rewards.statusCode == 200){
+                    let content = JSON.parse(rewards.content);
+                    if (content.val_commission && content.val_commission.length > 0)
+                        balance.commission = content.val_commission[0];
+                }
+
+            }
+            catch (e){
+                console.log(e)
+            }
         }
 
         return balance;

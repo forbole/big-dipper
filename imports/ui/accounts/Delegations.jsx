@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Card, CardHeader, CardBody, Container, Row, Col, Spinner } from 'reactstrap';
 import numbro from 'numbro';
-import Account from '../components/Account.jsx';
+import AccountTooltip from '../components/AccountTooltip.jsx';
 import { Mongo } from 'meteor/mongo';
 import i18n from 'meteor/universe:i18n';
 
@@ -37,7 +37,7 @@ export default class AccountDelegations extends Component{
                         numDelegations:delegations.length,
                         delegations: delegations.map((d, i) => {
                             return <Row key={i} className="delegation-info">
-                                <Col xs={6} md={8} className="text-nowrap overflow-auto"><Account address={d.validator_address} /></Col>
+                                <Col xs={6} md={8} className="text-nowrap overflow-auto"><AccountTooltip address={d.validator_address} /></Col>
                                 <Col xs={6} md={4}>{numbro(d.shares).format("0,0")}</Col>
                             </Row>
                         })

@@ -7,14 +7,15 @@ import Validator from './Validator.jsx';
 
 export default ValidatorDetailsContainer = withTracker((props) => {
     let chainHandle;
+    let validatorHandle;
     let validatorsHandle;
     let loading = true;
 
     if (Meteor.isClient){
         chainHandle = Meteor.subscribe('chain.status');
-        validatorsHandle = Meteor.subscribe('validator.details', props.address);
-        loading = !validatorsHandle.ready() && !chainHandle.ready();
-
+        validatorsHandle = Meteor.subscribe('validators.all', props.address);
+        validatorHandle = Meteor.subscribe('validator.details', props.address);
+        loading = !validatorHandle.ready() && !validatorsHandle.ready() && !chainHandle.ready();
     }
 
     let options = {address:props.address};
