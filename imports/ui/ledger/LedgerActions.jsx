@@ -20,7 +20,8 @@ const Types = {
     DELEGATE: 'delegate',
     REDELEGATE: 'redelegate',
     UNDELEGATE: 'undelegate',
-    WITHDRAW: 'withdraw'
+    WITHDRAW: 'withdraw',
+    SEND: 'send'
 }
 
 const TypeMeta = {
@@ -51,6 +52,12 @@ const TypeMeta = {
         pathSuffix: 'rewards',
         warning: '',
         gasAdjustment: '1.4'
+    },
+    [Types.SEND]: {
+        button: 'send',
+        pathPreFix: 'bank/accounts',
+        pathSuffix: 'transfers',
+        warning: ''
     }
 }
 
@@ -79,6 +86,8 @@ class LedgerButton extends Component {
             loadingBalance: undefined,
             currentUser: undefined,
             delegateAmount: undefined,
+            transferTarget: undefined,
+            transferAmount: undefined,
             success: undefined,
             targetValidator: undefined,
             simulating: undefined,
@@ -201,6 +210,12 @@ class LedgerButton extends Component {
                     this.getTxContext(),
                     this.props.validator.operator_address,
                     this.state.delegateAmount);
+                break;
+            case Types.SEND:
+                txMsg = Ledger.createTransfer(
+                    this.getTxContext(),
+                    this.state.transferTarget,
+                    this.state.transferAmount);
                 break;
         }
         let simulateBody = txMsg && txMsg.value && txMsg.value.msg && txMsg.value.msg.length &&
@@ -325,6 +340,14 @@ class LedgerButton extends Component {
         </UncontrolledDropdown>
     }
 
+    renderConfirmationTab = () => {
+        return <TabPane tabId="3">
+            <div className='action-summary-message'>{this.getConfirmationMessage()}</div>
+            <div className='warning-message'>{this.state.actionType && TypeMeta[this.state.actionType].warning} </div>
+            <div className='confirmation-message'>If that's correct, please click next and sign in your ledger device.</div>
+        </TabPane>
+    }
+
     renderModal = () => {
         return  <Modal isOpen={this.state.isOpen}  className="ledger-modal">
             <ModalHeader>{this.props.title}</ModalHeader>
@@ -373,49 +396,40 @@ class DelegationButtons extends LedgerButton {
             case Types.DELEGATE:
                 action = 'Delegate to';
                 maxAmount = this.state.currentUser?this.state.currentUser.availableAmount:null;
-                availableStatement = `your available balance: ${maxAmount} ${denom}`
+                availableStatement = 'your available balance:'
                 break;
             case Types.REDELEGATE:
                 action = 'Redelegate from';
                 target = this.getValidatorOptions();
                 maxAmount = this.getDelegatedToken(this.props.currentDelegation);
-                availableStatement = `your delegated tokens: ${maxAmount} ${denom}`
+                availableStatement = 'your delegated tokens:'
                 break;
             case Types.UNDELEGATE:
                 action = 'Undelegate from';
                 maxAmount = this.getDelegatedToken(this.props.currentDelegation);
-                availableStatement = `your delegated tokens: ${maxAmount} ${denom}`
+                availableStatement = 'your delegated tokens:'
                 break;
 
         }
         return <TabPane tabId="2">
             <h3>{action} {moniker?moniker:validatorAddress} {target?'to':''} {target}</h3>
             <InputGroup>
-               <Input name="delegateAmount" onChange={this.handleInputChange} placeholder="Amount" min={0} max={maxAmount} type="number" step="1" />
+               <Input name="delegateAmount" onChange={this.handleInputChange} placeholder="Amount" min={0} max={maxAmount} type="number"/>
                <InputGroupAddon addonType="append">{Meteor.settings.public.stakingDenom}</InputGroupAddon>
             </InputGroup>
-            {availableStatement}
+            <div>{availableStatement} <span className='amount'>{maxAmount}</span> <span className='denom'>{denom}</span></div>
         </TabPane>
     }
 
-    renderConfirmationTab = () => {
-        let message;
+    getConfirmationMessage = () => {
         switch (this.state.actionType) {
             case Types.DELEGATE:
-                message = <span>You are going to <span className='action'>delegate</span> <span className='amount'>{this.state.delegateAmount}</span> to <AccountTooltip address={this.props.validator.operator_address} sync/> with <span className='gas'>{this.state.gasEstimate}</span> as gas.</span>
-                break;
+                return <span>You are going to <span className='action'>delegate</span> <span className='amount'>{this.state.delegateAmount}</span> to <AccountTooltip address={this.props.validator.operator_address} sync/> with <span className='gas'>{this.state.gasEstimate}</span> as gas.</span>
             case Types.REDELEGATE:
-                message = <span>You are going to <span className='action'>redelegate</span> <span className='amount'>{this.state.delegateAmount}</span> from <AccountTooltip address={this.props.validator.operator_address} sync/> to <AccountTooltip address={this.state.targetValidator && this.state.targetValidator.operator_address} sync/> with <span className='gas'>{this.state.gasEstimate}</span> as gas.</span>
-                break;
+                return <span>You are going to <span className='action'>redelegate</span> <span className='amount'>{this.state.delegateAmount}</span> from <AccountTooltip address={this.props.validator.operator_address} sync/> to <AccountTooltip address={this.state.targetValidator && this.state.targetValidator.operator_address} sync/> with <span className='gas'>{this.state.gasEstimate}</span> as gas.</span>
             case Types.UNDELEGATE:
-                message = <span>You are going to <span className='action'>undelegate</span> <span className='amount'>{this.state.delegateAmount}</span> from <AccountTooltip address={this.props.validator.operator_address} sync/> with <span className='gas'>{this.state.gasEstimate}</span> as gas.</span>
-                break;
+                return <span>You are going to <span className='action'>undelegate</span> <span className='amount'>{this.state.delegateAmount}</span> from <AccountTooltip address={this.props.validator.operator_address} sync/> with <span className='gas'>{this.state.gasEstimate}</span> as gas.</span>
         }
-        return <TabPane tabId="3">
-            <div>{message}</div>
-            <div>{this.state.actionType && TypeMeta[this.state.actionType].warning} </div>
-            <div>If that's correct, please click next and sign in your ledger device.</div>
-        </TabPane>
     }
 
     render = () => {
@@ -433,10 +447,12 @@ class WithdrawButton extends LedgerButton {
     createMessage = (callback) => {
         Meteor.call('transaction.execute', {from: this.state.user}, this.getPath(), (err, res) =>{
             if (res){
-                res.value.msg.push({
-                    type: 'cosmos-sdk/MsgWithdrawValidatorCommission',
-                    value: { validator_address: this.props.address }
-                })
+                if (this.props.address) {
+                    res.value.msg.push({
+                        type: 'cosmos-sdk/MsgWithdrawValidatorCommission',
+                        value: { validator_address: this.props.address }
+                    })
+                }
                 callback(res, res)
             }
             else {
@@ -458,15 +474,13 @@ class WithdrawButton extends LedgerButton {
         </TabPane>
     }
 
-    renderConfirmationTab = () => {
-        return <TabPane tabId="3">
-            <div>You are going to withdraw rewards <span className='amount'>{this.props.rewards}</span>
-                {this.props.commission?<span> and commission <span className='amount'>{this.props.commission}</span></span>:null}
-                with  <span className='gas'>{this.state.gasEstimate}</span> as fee.</div>
-            <div>{this.state.actionType && TypeMeta[this.state.actionType].warning} </div>
-            <div>If that's correct, please click next and sign in your ledger device.</div>
-        </TabPane>
+    getConfirmationMessage = () => {
+        return <span>You are going to <span className='action'>withdraw</span> rewards <span className='amount'>{this.props.rewards}</span>
+            {this.props.commission?<span> and commission <span className='amount'>{this.props.commission}</span></span>:null}
+            with  <span className='gas'>{this.state.gasEstimate}</span> as fee.
+        </span>
     }
+
     render = () => {
         return <span className="ledger-buttons-group float-right">
             <Button color="success" size="sm" onClick={() => this.openModal(Types.WITHDRAW)}> {TypeMeta[Types.WITHDRAW].button} </Button>
@@ -475,7 +489,41 @@ class WithdrawButton extends LedgerButton {
     }
 }
 
+class TransferButton extends LedgerButton {
+    renderActionTab = () => {
+        let denom = this.state.currentUser?this.state.currentUser.denom:'';
+        let maxAmount = this.state.currentUser?this.state.currentUser.availableAmount:null;
+
+        return <TabPane tabId="2">
+            <h3>Transfer {Meteor.settings.public.stakingDenom}</h3>
+
+            <InputGroup>
+               <Input name="transferTarget" onChange={this.handleInputChange} placeholder="Send to" type="text"/>
+            </InputGroup>
+            <InputGroup>
+               <Input name="transferAmount" onChange={this.handleInputChange} placeholder="Amount" min={0} max={maxAmount} type="number"/>
+               <InputGroupAddon addonType="append">{Meteor.settings.public.stakingDenom}</InputGroupAddon>
+            </InputGroup>
+            <div>your available balance: <span className='amount'>{maxAmount}</span> <span className='denom'>{denom}</span></div>
+        </TabPane>
+    }
+
+    getConfirmationMessage = () => {
+        return <span>You are going to <span className='action'>send</span> <span className='amount'>{this.state.transferAmount}</span> to {this.state.transferTarget}
+            with <span className='gas'>{this.state.gasEstimate}</span> as fee.
+        </span>
+    }
+
+    render = () => {
+        return <span className="ledger-buttons-group float-right">
+            <Button color="info" size="sm" onClick={() => this.openModal(Types.SEND)}> {TypeMeta[Types.SEND].button} </Button>
+            {this.renderModal()}
+        </span>;
+    }
+}
+
 export {
     DelegationButtons,
-    WithdrawButton
+    WithdrawButton,
+    TransferButton
 }
