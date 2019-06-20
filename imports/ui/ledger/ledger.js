@@ -337,7 +337,7 @@ export class Ledger {
             value: {
                 amount: {
                     amount: uatomAmount.toString(),
-                    denom: DEFAULT_DENOM,
+                    denom: txContext.denom,
                 },
                 delegator_address: txContext.bech32,
                 validator_address: validatorBech32,
@@ -366,7 +366,7 @@ export class Ledger {
             value: {
                 amount: {
                     amount: uatomAmount.toString(),
-                    denom: DEFAULT_DENOM,
+                    denom: txContext.denom,
                 },
                 delegator_address: txContext.bech32,
                 validator_dst_address: validatorDestBech32,
@@ -380,19 +380,26 @@ export class Ledger {
         return txSkeleton;
     }
 
-    // Creates a new redelegation tx based on the input parameters
+    // Creates a new transfer tx based on the input parameters
     // the function expects a complete txContext
-    static createWithdrawAll(
+    static createTransfer(
         txContext,
+        toAddress,
+        amount,
         memo
     ) {
         const txSkeleton = Ledger.createSkeleton(txContext);
 
         const txMsg = {
-            type: 'cosmos-sdk/MsgWithdrawDelegationRewardsAll',
+            type: 'cosmos-sdk/MsgSend',
             value: {
-                delegator_address: txContext.bech32,
-            },
+                amount: [{
+                    amount: amount.toString(),
+                    denom: txContext.denom
+                }],
+                from_address: txContext.bech32,
+                to_address: toAddress
+            }
         };
 
         txSkeleton.value.msg = [txMsg];

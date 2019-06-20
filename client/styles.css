@@ -427,10 +427,6 @@ div#countdown {
     background-color: #ff9800
 }
 
-#account .total{
-    margin-top: 0.8em;
-}
-
 #account .total .value{
     font-size: 1.5em;
     transform: translateY(3px);

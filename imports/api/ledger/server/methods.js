@@ -7,8 +7,11 @@ Meteor.methods({
             "tx": txInfo.value,
             "mode": "sync"
         }
-        console.log(JSON.stringify(data))
+        const timestamp = new Date().getTime();
+        console.log(`submitting transaction${timestamp} ${url} with data ${JSON.stringify(data)}`)
+
         let response = HTTP.post(url, {data});
+        console.log(`response for transaction${timestamp} ${url}: ${JSON.stringify(response)}`)
         if (response.statusCode == 200) {
             return JSON.parse(response.content).txhash;
         }
@@ -28,10 +31,6 @@ Meteor.methods({
         }
     },
     'transaction.simulate': function(txMsg, from, path, adjustment='1.2') {
-        /*const msg = (
-            txMsg && txMsg.value && txMsg.value.msg && txMsg.value.msg.length &&
-            txMsg.value.msg[0].value || {}
-        );*/
         const url = `${LCD}/${path}`;
         data = {...txMsg,
             "base_req": {
