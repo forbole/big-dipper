@@ -13,6 +13,7 @@
         "bech32PrefixConsAddr": "cosmosvalcons",
         "bech32PrefixConsPub": "cosmosvalconspub",
         "stakingDenom": "ATOM",
+        "mintingDenom": "uatom",
         "stakingFraction": 1000000,
         "coingeckoId": "cosmos"
     },
@@ -40,3 +41,4 @@
         "delegationInterval": 900000
     }
 }
+
