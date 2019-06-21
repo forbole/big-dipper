@@ -7,6 +7,7 @@ import { Button, Spinner, TabContent, TabPane, Row, Col, Modal, ModalHeader,
 import { Ledger } from './ledger.js';
 import { Validators } from '/imports/api/validators/validators.js';
 import AccountTooltip from '/imports/ui/components/AccountTooltip.jsx';
+import Coin from '/both/utils/coins.js';
 
 const maxHeightModifier = {
     setMaxHeight: {
@@ -60,6 +61,15 @@ const TypeMeta = {
         warning: ''
     }
 }
+
+const Amount = (props) => {
+    if (!props.coin && !props.amount) return null
+    let coin = props.coin || new Coin(props.amount);
+    let amount = (props.mint)?coin.amount:coin.stakingAmount;
+    let denom = (props.mint)?Coin.MintingDenom:Coin.StakingDenom;
+    return <span><span className='amount'>{amount}</span> <span className='denom'>{denom}</span></span>
+}
+
 
 const isActiveValidator = (validator) => {
     return !validator.jailed && validator.status == 2;
@@ -137,21 +147,19 @@ class LedgerButton extends Component {
     }
 
     getBalance = () => {
-        if (this.state.loadingBalance)
-            return
+        if (this.state.loadingBalance) return
 
         this.initStateOnLoad('loadingBalance', {loading: this.state.actionType === Types.DELEGATE});
-        try{
-            Meteor.call('accounts.getAccountDetail', this.state.user, (error, result) => {
+
+        Meteor.call('accounts.getAccountDetail', this.state.user, (error, result) => {
+            try{
                 if (result) {
-                    let coin = result.coins?result.coins[0]:
-                        { amount: 0, denom: Meteor.settings.public.stakingDenom }
+                    let coin = result.coins?new Coin(result.coins[0]): new Coin(0);
                     this.setStateOnSuccess('loadingBalance', {
                         currentUser: {
                             accountNumber: result.account_number,
                             sequence: result.sequence,
-                            availableAmount: parseFloat(coin.amount),
-                            denom: coin.denom,
+                            availableCoin: coin,
                             pubKey: result.public_key.value
                     }})
                 }
@@ -161,10 +169,10 @@ class LedgerButton extends Component {
                         `Failed to get account info for ${this.state.user}`
                     )
                 }
-            })
-        } catch (e) {
+            } catch (e) {
             this.setStateOnError('loadingBalance', e.message);
-        }
+            }
+        })
     }
 
     tryConnect = () => {
@@ -183,7 +191,7 @@ class LedgerButton extends Component {
             bech32: this.state.user,
             accountNumber: this.state.currentUser.accountNumber,
             sequence: this.state.currentUser.sequence,
-            denom: Meteor.settings.public.stakingDenom,
+            denom: Coin.MintingDenom,
             pk: this.state.currentUser.pubKey,
             path: [44, 118, 0, 0, 0],
         }
@@ -196,26 +204,26 @@ class LedgerButton extends Component {
                 txMsg = Ledger.createDelegate(
                     this.getTxContext(),
                     this.props.validator.operator_address,
-                    this.state.delegateAmount)
+                    this.state.delegateAmount.amount)
                 break;
             case Types.REDELEGATE:
                 txMsg = Ledger.createRedelegate(
                     this.getTxContext(),
                     this.props.validator.operator_address,
                     this.state.targetValidator.operator_address,
-                    this.state.delegateAmount)
+                    this.state.delegateAmount.amount)
                 break;
             case Types.UNDELEGATE:
                 txMsg = Ledger.createUndelegate(
                     this.getTxContext(),
                     this.props.validator.operator_address,
-                    this.state.delegateAmount);
+                    this.state.delegateAmount.amount);
                 break;
             case Types.SEND:
                 txMsg = Ledger.createTransfer(
                     this.getTxContext(),
                     this.state.transferTarget,
-                    this.state.transferAmount);
+                    this.state.transferAmount.amount);
                 break;
         }
         let simulateBody = txMsg && txMsg.value && txMsg.value.msg && txMsg.value.msg.length &&
@@ -229,8 +237,7 @@ class LedgerButton extends Component {
     }
 
     simulate = () => {
-        if (this.state.simulating)
-            return
+        if (this.state.simulating) return
         this.initStateOnLoad('simulating')
         try {
             this.createMessage(this.runSimulatation);
@@ -257,8 +264,7 @@ class LedgerButton extends Component {
     }
 
     sign = () => {
-        if (this.state.signing)
-            return
+        if (this.state.signing) return
         this.initStateOnLoad('signing')
         try {
             let txMsg = this.state.txMsg;
@@ -269,31 +275,34 @@ class LedgerButton extends Component {
                 Meteor.call('transaction.submit', txMsg, (err, res) => {
                     if (err) {
                         this.setStateOnError('signing', 'something went wrong')
-                    } if (res) {
+                    } else if (res) {
                         this.setStateOnSuccess('signing', {
                             txHash: res,
                             activeTab: '4'
                         })
                     }
                 })
-            })
+            }, (err) => this.setStateOnError('signing', err.message))
         } catch (e) {
             this.setStateOnError('signing', e.message)
         }
     }
 
     handleInputChange = (e) => {
-        this.setState({[e.target.name]: e.target.value})
-    }
-
-    handleTargetValidatorChange = (e) => {
-        let dataset = e.currentTarget.dataset;
-        this.setState({
-            targetValidator: {
-                moniker: dataset.moniker,
-                operator_address: dataset.address
-            }
-        })
+        let target = e.currentTarget;
+        let dataset = target.dataset;
+        let value;
+        switch (dataset.type) {
+            case 'validator':
+                value = { moniker: dataset.moniker, operator_address: dataset.address}
+                break;
+            case 'coin':
+                value = new Coin(target.value, target.nextSibling.innerText)
+                break;
+            default:
+                value = target.value;
+        }
+        this.setState({[target.name]: value})
     }
 
     getActionButton = () => {
@@ -329,7 +338,7 @@ class LedgerButton extends Component {
             <DropdownMenu modifiers={maxHeightModifier}>
                 {activeValidators.map((validator) => {
                     if (validator.address!=this.props.validator.address)
-                    return <DropdownItem className='validator' key={validator.address} onClick={this.handleTargetValidatorChange} data-moniker={validator.description.moniker} data-address={validator.operator_address}>
+                    return <DropdownItem className='validator' name='targetValidator' key={validator.address} onClick={this.handleInputChange} data-type='validator' data-moniker={validator.description.moniker} data-address={validator.operator_address}>
                         <Row>
                             <div className='moniker'>{validator.description.moniker}</div>
                             <div className='address overflow-auto'>{validator.operator_address}</div>
@@ -350,7 +359,6 @@ class LedgerButton extends Component {
 
     renderModal = () => {
         return  <Modal isOpen={this.state.isOpen}  className="ledger-modal">
-            <ModalHeader>{this.props.title}</ModalHeader>
             <ModalBody>
                 <TabContent className='ledger-modal-tab' activeTab={this.state.activeTab}>
                     <TabPane tabId="1">
@@ -379,23 +387,24 @@ class LedgerButton extends Component {
 class DelegationButtons extends LedgerButton {
     getDelegatedToken = (currentDelegation) => {
         if (currentDelegation && currentDelegation.shares && currentDelegation.tokenPerShare) {
-            return currentDelegation.shares * currentDelegation.tokenPerShare;
+            return new Coin(currentDelegation.shares * currentDelegation.tokenPerShare);
         }
         return null
     }
 
     renderActionTab = () => {
+        if (!this.state.currentUser) return null
         let action;
         let target;
         let maxAmount;
         let availableStatement;
-        let denom = this.state.currentUser?this.state.currentUser.denom:'';
+
         let moniker = this.props.validator.description && this.props.validator.description.moniker;
         let validatorAddress = <span className='ellipic'>this.props.validator.operator_address</span>;
         switch (this.state.actionType) {
             case Types.DELEGATE:
                 action = 'Delegate to';
-                maxAmount = this.state.currentUser?this.state.currentUser.availableAmount:null;
+                maxAmount = this.state.currentUser.availableCoin;
                 availableStatement = 'your available balance:'
                 break;
             case Types.REDELEGATE:
@@ -414,21 +423,21 @@ class DelegationButtons extends LedgerButton {
         return <TabPane tabId="2">
             <h3>{action} {moniker?moniker:validatorAddress} {target?'to':''} {target}</h3>
             <InputGroup>
-               <Input name="delegateAmount" onChange={this.handleInputChange} placeholder="Amount" min={0} max={maxAmount} type="number"/>
-               <InputGroupAddon addonType="append">{Meteor.settings.public.stakingDenom}</InputGroupAddon>
+               <Input name="delegateAmount" onChange={this.handleInputChange} data-type='coin' placeholder="Amount" min={0} max={maxAmount.stakingAmount} type="number" />
+               <InputGroupAddon addonType="append">{Coin.StakingDenom}</InputGroupAddon>
             </InputGroup>
-            <div>{availableStatement} <span className='amount'>{maxAmount}</span> <span className='denom'>{denom}</span></div>
+            <div>{availableStatement} <Amount coin={maxAmount}/> </div>
         </TabPane>
     }
 
     getConfirmationMessage = () => {
         switch (this.state.actionType) {
             case Types.DELEGATE:
-                return <span>You are going to <span className='action'>delegate</span> <span className='amount'>{this.state.delegateAmount}</span> to <AccountTooltip address={this.props.validator.operator_address} sync/> with <span className='gas'>{this.state.gasEstimate}</span> as gas.</span>
+                return <span>You are going to <span className='action'>delegate</span> <Amount coin={this.state.delegateAmount}/> to <AccountTooltip address={this.props.validator.operator_address} sync/> with <span className='gas'>{this.state.gasEstimate}</span> as gas.</span>
             case Types.REDELEGATE:
-                return <span>You are going to <span className='action'>redelegate</span> <span className='amount'>{this.state.delegateAmount}</span> from <AccountTooltip address={this.props.validator.operator_address} sync/> to <AccountTooltip address={this.state.targetValidator && this.state.targetValidator.operator_address} sync/> with <span className='gas'>{this.state.gasEstimate}</span> as gas.</span>
+                return <span>You are going to <span className='action'>redelegate</span> <Amount coin={this.state.delegateAmount}/> from <AccountTooltip address={this.props.validator.operator_address} sync/> to <AccountTooltip address={this.state.targetValidator && this.state.targetValidator.operator_address} sync/> with <span className='gas'>{this.state.gasEstimate}</span> as gas.</span>
             case Types.UNDELEGATE:
-                return <span>You are going to <span className='action'>undelegate</span> <span className='amount'>{this.state.delegateAmount}</span> from <AccountTooltip address={this.props.validator.operator_address} sync/> with <span className='gas'>{this.state.gasEstimate}</span> as gas.</span>
+                return <span>You are going to <span className='action'>undelegate</span> <Amount coin={this.state.delegateAmount}/> from <AccountTooltip address={this.props.validator.operator_address} sync/> with <span className='gas'>{this.state.gasEstimate}</span> as gas.</span>
         }
     }
 
@@ -466,18 +475,17 @@ class WithdrawButton extends LedgerButton {
     }
 
     renderActionTab = () => {
-        let denom = this.state.currentUser?this.state.currentUser.denom:'';
         return <TabPane tabId="2">
             <h3>Withdraw rewards from all delegations</h3>
-            <div>Your current rewards amount: <span className='amount'>{this.props.rewards}</span> {denom}</div>
-            {this.props.commission?<div>Your current commission amount: <span className='amount'>{this.props.commission}</span> {denom}</div>:''}
+            <div>Your current rewards amount: <Amount amount={this.props.rewards}/></div>
+            {this.props.commission?<div>Your current commission amount: <Amount amount={this.props.commission}/></div>:''}
         </TabPane>
     }
 
     getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>withdraw</span> rewards <span className='amount'>{this.props.rewards}</span>
-            {this.props.commission?<span> and commission <span className='amount'>{this.props.commission}</span></span>:null}
-            with  <span className='gas'>{this.state.gasEstimate}</span> as fee.
+        return <span>You are going to <span className='action'>withdraw</span> rewards <Amount amount={this.props.rewards}/>
+            {this.props.commission?<span> and commission <Amount amount={this.props.commission}/></span>:null}
+             with  <span className='gas'>{this.state.gasEstimate}</span> as fee.
         </span>
     }
 
@@ -491,25 +499,24 @@ class WithdrawButton extends LedgerButton {
 
 class TransferButton extends LedgerButton {
     renderActionTab = () => {
-        let denom = this.state.currentUser?this.state.currentUser.denom:'';
-        let maxAmount = this.state.currentUser?this.state.currentUser.availableAmount:null;
-
+        if (!this.state.currentUser) return null;
+        let maxAmount = this.state.currentUser.availableCoin;
         return <TabPane tabId="2">
-            <h3>Transfer {Meteor.settings.public.stakingDenom}</h3>
+            <h3>Transfer {Coin.StakingDenom.toUpperCase()}</h3>
 
             <InputGroup>
                <Input name="transferTarget" onChange={this.handleInputChange} placeholder="Send to" type="text"/>
             </InputGroup>
             <InputGroup>
-               <Input name="transferAmount" onChange={this.handleInputChange} placeholder="Amount" min={0} max={maxAmount} type="number"/>
-               <InputGroupAddon addonType="append">{Meteor.settings.public.stakingDenom}</InputGroupAddon>
+               <Input name="transferAmount" onChange={this.handleInputChange} data-type='coin' placeholder="Amount" min={0} max={maxAmount.stakingAmount} type="number"/>
+               <InputGroupAddon addonType="append">{Coin.StakingDenom}</InputGroupAddon>
             </InputGroup>
-            <div>your available balance: <span className='amount'>{maxAmount}</span> <span className='denom'>{denom}</span></div>
+            <div>your available balance: <Amount coin={maxAmount}/></div>
         </TabPane>
     }
 
     getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>send</span> <span className='amount'>{this.state.transferAmount}</span> to {this.state.transferTarget}
+        return <span>You are going to <span className='action'>send</span> <Amount coin={this.state.transferAmount}/> to {this.state.transferTarget}
             with <span className='gas'>{this.state.gasEstimate}</span> as fee.
         </span>
     }
