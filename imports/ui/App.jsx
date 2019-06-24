@@ -1,6 +1,5 @@
 
 import React, { Component } from 'react';
-import GoogleTagManager from '/imports/ui/components/GoogleTagManager.jsx';
 import { Route, Switch, withRouter } from 'react-router-dom'
 import { createMemoryHistory } from 'history';
 import { Container } from 'reactstrap';
@@ -71,7 +70,6 @@ class App extends Component {
         return(
             // <Router history={history}>
                 <div>
-                    {(Meteor.settings.public.gtm)?<GoogleTagManager gtmId={Meteor.settings.public.gtm} />:''}
                     <RouteHeader />
                     <Container fluid id="main">
                         <ToastContainer />

@@ -3,6 +3,7 @@ import { MsgType } from './MsgType.jsx';
 import { Link } from 'react-router-dom';
 import numbro from 'numbro';
 import Account from '../components/Account.jsx';
+import Cid from '../components/Cid.jsx';
 import i18n from 'meteor/universe:i18n';
 
 const T = i18n.createComponent();
@@ -31,6 +32,15 @@ MultiSend = (props) => {
     </div>
 }
 
+MsgLink = (props) => {
+    return <div>
+        <p><Account address={props.msg.value.address} /> <MsgType type={props.msg.type} /></p>
+        <p><T>activities.from</T><Cid cid={props.msg.value.links[0].from}/><T>activities.to</T><Cid cid={props.msg.value.links[0].to}/>
+
+        </p>
+    </div>
+}
+
 export default class Activites extends Component {
     constructor(props){
         super(props);
@@ -40,6 +50,11 @@ export default class Activites extends Component {
         // console.log(this.props);
         let msg = this.props.msg;
         switch (msg.type){
+        
+        // cyberd
+        case "cyberd/Link":
+            return <MsgLink msg={msg} />
+        
         // bank
         case "cosmos-sdk/MsgSend":
             let amount = '';

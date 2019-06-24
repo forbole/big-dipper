@@ -27,6 +27,11 @@ export default TransactionsContainer = withTracker((props) => {
     return {
         loading,
         transactionsExist,
+        linksTxs: transactionsExist ? Transactions.find({
+            $or: [
+                {"tx.value.msg.type":"cyberd/Link"}
+            ]
+        }).fetch() : {},
         transferTxs: transactionsExist ? Transactions.find({
             $or: [
                 {"tx.value.msg.type":"cosmos-sdk/MsgSend"},

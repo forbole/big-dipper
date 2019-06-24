@@ -6,6 +6,11 @@ const T = i18n.createComponent();
 
 export const MsgType = (props) => {
     switch (props.type){
+
+    // cyberd
+    case "cyberd/Link":
+        return <Badge color="success"><T>messageTypes.link</T></Badge>    
+        
     // bank
     case "cosmos-sdk/MsgSend":
         return <Badge color="success"><T>messageTypes.send</T></Badge>
