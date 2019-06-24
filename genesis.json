@@ -1,0 +1,165 @@
+{
+  "genesis_time": "2019-05-22T15:22:02.099215Z",
+  "chain_id": "euler-5-dev",
+  "consensus_params": {
+    "block": {
+      "max_bytes": "22020096",
+      "max_gas": "-1",
+      "time_iota_ms": "1000"
+    },
+    "evidence": {
+      "max_age": "100000"
+    },
+    "validator": {
+      "pub_key_types": [
+        "ed25519"
+      ]
+    }
+  },
+  "app_hash": "",
+  "app_state": {
+    "accounts": [
+      {
+        "addr": "cyber1rtw9kjjwv6sy77kcugckdxzdzwxtjp09phm96g",
+        "amt": "40000000000000000",
+        "nmb": "0"
+      }
+    ],
+    "auth": {
+      "collected_fees": null,
+      "params": {
+        "max_memo_characters": "256",
+        "tx_sig_limit": "0",
+        "tx_size_cost_per_byte": "0",
+        "sig_verify_cost_ed25519": "0",
+        "sig_verify_cost_secp256k1": "0"
+      }
+    },
+    "bank": {
+      "send_enabled": true
+    },
+    "distr": {
+      "fee_pool": {
+        "community_pool": null
+      },
+      "community_tax": "0.000000000000000000",
+      "base_proposer_reward": "0.010000000000000000",
+      "bonus_proposer_reward": "0.040000000000000000",
+      "withdraw_addr_enabled": true,
+      "delegator_withdraw_infos": null,
+      "previous_proposer": "",
+      "outstanding_rewards": null,
+      "validator_accumulated_commissions": null,
+      "validator_historical_rewards": null,
+      "validator_current_rewards": null,
+      "delegator_starting_infos": null,
+      "validator_slash_events": null
+    },
+    "mint": {
+      "params": {
+        "tokens_per_block": "634195840"
+      }
+    },
+    "staking": {
+      "pool": {
+        "not_bonded_tokens": "40000000000000000",
+        "bonded_tokens": "0"
+      },
+      "params": {
+        "unbonding_time": "1800000000000",
+        "max_validators": 4,
+        "max_entries": 7,
+        "bond_denom": "cyb"
+      },
+      "last_total_power": "0",
+      "last_validator_powers": null,
+      "validators": null,
+      "delegations": null,
+      "unbonding_delegations": null,
+      "redelegations": null,
+      "exported": false
+    },
+    "slashing": {
+      "params": {
+        "max_evidence_age": "1814400000000000",
+        "signed_blocks_window": "300",
+        "min_signed_per_window": "0.700000000000000000",
+        "downtime_jail_duration": "0",
+        "slash_fraction_double_sign": "0.200000000000000000",
+        "slash_fraction_downtime": "0.001000000000000000"
+      },
+      "signing_infos": {},
+      "missed_blocks": {}
+    },
+    "gov": {
+      "starting_proposal_id": "1",
+      "deposits": null,
+      "votes": null,
+      "proposals": null,
+      "deposit_params": {
+        "min_deposit": [
+          {
+            "denom": "cyb",
+            "amount": "500000000000"
+          }
+        ],
+        "max_deposit_period": "180000000000"
+      },
+      "voting_params": {
+        "voting_period": "1800000000000"
+      },
+      "tally_params": {
+        "quorum": "0.334000000000000000",
+        "threshold": "0.500000000000000000",
+        "veto": "0.334000000000000000"
+      }
+    },
+    "gentxs": [
+      {
+        "type": "auth/StdTx",
+        "value": {
+          "msg": [
+            {
+              "type": "cosmos-sdk/MsgCreateValidator",
+              "value": {
+                "description": {
+                  "moniker": "litvintech",
+                  "identity": "",
+                  "website": "",
+                  "details": ""
+                },
+                "commission": {
+                  "rate": "0.100000000000000000",
+                  "max_rate": "0.200000000000000000",
+                  "max_change_rate": "0.010000000000000000"
+                },
+                "min_self_delegation": "1",
+                "delegator_address": "cyber1rtw9kjjwv6sy77kcugckdxzdzwxtjp09phm96g",
+                "validator_address": "cybervaloper1rtw9kjjwv6sy77kcugckdxzdzwxtjp09pkf45w",
+                "pubkey": "cybervalconspub1zcjduepqa5jgfk2nzg76n5qws69h2d3cnjccpg09kq22h37qq5ew4zqxj4dshel70n",
+                "value": {
+                  "denom": "cyb",
+                  "amount": "11000000000000000"
+                }
+              }
+            }
+          ],
+          "fee": {
+            "amount": null,
+            "gas": "200000"
+          },
+          "signatures": [
+            {
+              "pub_key": {
+                "type": "tendermint/PubKeySecp256k1",
+                "value": "AqwJyxtPKSIKvcQ7qCx4kMj+SLxCVwxb+k1w63HZPad+"
+              },
+              "signature": "yqh5lkMZ3lydt9C/sQPCrGpQQWOKsYluIB/SbXOIULwinrX1DoKOmcXsuh8Lxr0clLUjGEO2NosFEqGxzZaHWA=="
+            }
+          ],
+          "memo": ""
+        }
+      }
+    ]
+  }
+}
