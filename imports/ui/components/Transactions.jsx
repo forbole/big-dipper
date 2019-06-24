@@ -9,6 +9,7 @@ export default class ValidatorTransactions extends Component{
     constructor(props){
         super(props);
         this.state = {
+            linksTxs: {},
             transferTxs: {},
             stakingTxs: {},
             distributionTxs: {},
@@ -22,6 +23,7 @@ export default class ValidatorTransactions extends Component{
             if (this.props.transactionsExist){
                 // console.log("have txs.");
                 this.setState({
+                    linksTxs: this.props.linksTxs,
                     transferTxs: this.props.transferTxs,
                     stakingTxs: this.props.stakingTxs,
                     distributionTxs: this.props.distributionTxs,
@@ -37,7 +39,8 @@ export default class ValidatorTransactions extends Component{
             return <Spinner color="primary" type="glow" />
         }
         else if (this.props.transactionsExist){
-            return <TransactionTabs 
+            return <TransactionTabs
+                linksTxs={this.state.linksTxs}
                 transferTxs={this.state.transferTxs}
                 stakingTxs={this.state.stakingTxs}
                 distributionTxs={this.state.distributionTxs}

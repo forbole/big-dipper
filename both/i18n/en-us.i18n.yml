@@ -133,6 +133,7 @@ transactions:
     memo: 'Memo'
     transfer: 'Transfer'
     staking: 'Staking'
+    link: 'Linking'
     distribution: 'Distribution'
     governance: 'Governance'
     slashing: 'Slashing'
@@ -204,6 +205,7 @@ activities:
     withTitle: 'with title'
     withA: 'with a'
 messageTypes:
+    link: 'Link'
     send: 'Send'
     multiSend: 'Multi Send'
     createValidator: 'Create Validator'

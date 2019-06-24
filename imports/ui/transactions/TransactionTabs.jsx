@@ -1,17 +1,17 @@
-
 import React, { Component } from 'react';
 import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col, Card, CardHeader, CardBody } from 'reactstrap';
 import classnames from 'classnames';
 import numbro from 'numbro';
 import { TransactionRow } from './TransactionRow.jsx';
 import i18n from 'meteor/universe:i18n';
-
 const T = i18n.createComponent();
+
 export default class TransactionTabs extends Component{
     constructor(props){
         super(props);
         this.state ={
-            activeTab: 'tx-transfer',
+            activeTab: 'tx-link',
+            linksTxs: {},
             transferTxs: {},
             stakingTxs: {},
             distributionTxs: {},
@@ -31,6 +31,7 @@ export default class TransactionTabs extends Component{
     componentDidUpdate(prevProps){
         if (this.props != prevProps){
             this.setState({
+                linksTxs: this.props.linksTxs,
                 transferTxs: this.props.transferTxs,
                 stakingTxs: this.props.stakingTxs,
                 distributionTxs: this.props.distributionTxs,
@@ -45,6 +46,14 @@ export default class TransactionTabs extends Component{
             <CardHeader><T>transactions.transactions</T> <small>(<T>common.last</T> 100)</small></CardHeader>
             <CardBody>
                 <Nav tabs className="tx-types">
+                    <NavItem>
+                        <NavLink
+                            className={classnames({ active: this.state.activeTab === 'tx-link' })}
+                            onClick={() => { this.toggle('tx-link'); }}
+                        >
+                            <T>transactions.link</T> ({numbro(this.state.linksTxs.length).format("0,0")})
+                        </NavLink>
+                    </NavItem>
                     <NavItem>
                         <NavLink
                             className={classnames({ active: this.state.activeTab === 'tx-transfer' })}
@@ -87,6 +96,20 @@ export default class TransactionTabs extends Component{
                     </NavItem>
                 </Nav>
                 <TabContent activeTab={this.state.activeTab}>
+                    <TabPane tabId="tx-link">
+                        <Row>
+                            <Col>
+                                {(this.state.linksTxs.length > 0)?this.state.linksTxs.map((tx, i) => {
+                                    return <TransactionRow
+                                        key={i}
+                                        index={i}
+                                        tx={tx}
+                                        blockList
+                                    />
+                                }):''}
+                            </Col>
+                        </Row>
+                    </TabPane>
                     <TabPane tabId="tx-transfer">
                         <Row>
                             <Col>

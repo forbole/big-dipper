@@ -4,7 +4,7 @@ import { Link,  } from 'react-router-dom';
 import numbro from 'numbro';
 import moment from 'moment';
 import Avatar from '../components/Avatar.jsx';
-import TranactionTabs from '../transactions/TransactionTabs.jsx';
+import TransactionTabs from '../transactions/TransactionTabs.jsx';
 import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
 
@@ -14,6 +14,7 @@ export default class Block extends Component{
         super(props);
 
         this.state = {
+            linksTxs: {},
             transferTxs: {},
             stakingTxs: {},
             distributionTxs: {},
@@ -27,6 +28,7 @@ export default class Block extends Component{
             if (this.props.transactionsExist){
                 // console.log("have txs.");
                 this.setState({
+                    linksTxs: this.props.linksTxs,
                     transferTxs: this.props.transferTxs,
                     stakingTxs: this.props.stakingTxs,
                     distributionTxs: this.props.distributionTxs,
@@ -72,7 +74,8 @@ export default class Block extends Component{
                             </Row>
                         </CardBody>
                     </Card>
-                    <TranactionTabs
+                    <TransactionTabs
+                        linksTxs={this.state.linksTxs}
                         transferTxs={this.state.transferTxs}
                         stakingTxs={this.state.stakingTxs}
                         distributionTxs={this.state.distributionTxs}
