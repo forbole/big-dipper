@@ -1,5 +1,6 @@
 body {
     font-size: inherit !important;
+    background-color: #000 !important;
 }
 
 .no-select {
@@ -46,8 +47,7 @@ i.material-icons + span {
 
 span#network-nav{
     font-size: 1rem;
-    color: #fff;
-    font-weight: bold;
+    color: #3ab793;
 }
 
 #header .dropdown-header{
@@ -256,7 +256,7 @@ div#countdown {
 #block .card,
 #account .card{
     /* margin: 0 0 0.75em 0; */
-    margin-bottom: 0.75em;
+    margin-bottom: 1.5em;
 }
 
 .progress{
@@ -764,4 +764,8 @@ div#voting-power-dist .card{
   left: 0;
   border-width: 0.4rem 0 0.4rem 0.4rem;
   border-left-color: #444;
+}
+
+.color-gravity{
+    color: #3ab793;
 }
