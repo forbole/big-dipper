@@ -24,7 +24,7 @@ common:
     retry: '重試'
 navbar:
     siteName: '北斗'
-    version: 'beta'
+    version: 'cyberd'
     validators: '驗證人'
     blocks: '區塊'
     transactions: '交易'

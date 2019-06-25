@@ -24,7 +24,7 @@ common:
     retry: 'Retry'
 navbar:
     siteName: 'The Big Dipper'
-    version: 'beta'
+    version: 'cyberd'
     validators: 'Validators'
     blocks: 'Blocks'
     transactions: 'Transactions'

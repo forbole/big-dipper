@@ -33,30 +33,43 @@ MultiSend = (props) => {
     </div>
 }
 
-MsgLink = (props) => {
-    return <div>
-        <p><Account address={props.msg.value.address} /> <MsgType type={props.msg.type} /></p>
-        <p><T>activities.from</T><Cid cid={props.msg.value.links[0].from}/><T>activities.to</T><Cid cid={props.msg.value.links[0].to}/>
+MsgLink = props => {
+    return (
+        <div className="msgLink">
+            <p>
+                <Account address={props.msg.value.address} />{" "}
+                <MsgType type={props.msg.type} />
+            </p>
+            {/* <p><T>activities.from</T><Cid cid={props.msg.value.links[0].from}/><T>activities.to</T><Cid cid={props.msg.value.links[0].to}/> */}
+            <div className="grid align-items-center overflow-hidden">
+                <Cid cid={props.msg.value.links[0].from} />
 
-        </p>
-    </div>
-}
+                <div className="justify-self">
+                    <div className="position-relative btn-size btn-soft-success rounded-circle">
+                        <i className="fas fa-long-arrow-alt-right btn-icon__inner" />
+                    </div>
+                </div>
+
+                <Cid cid={props.msg.value.links[0].to} />
+            </div>
+        </div>
+    );
+};
 
 export default class Activites extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
     }
 
-    render(){
+    render() {
         // console.log(this.props);
         let msg = this.props.msg;
-        switch (msg.type){
-        
+        switch (msg.type) {
         // cyberd
         case "cyberd/Link":
-            return <MsgLink msg={msg} />
-        
-        // bank
+            return <MsgLink msg={msg} />;
+
+            // bank
         case "cosmos-sdk/MsgSend":
             let amount = '';
             amount = msg.value.amount.map((coin) => new Coin(coin.amount).toString()).join(', ')
@@ -66,9 +79,28 @@ export default class Activites extends Component {
 
             // staking
         case "cosmos-sdk/MsgCreateValidator":
-            return <p><Account address={msg.value.delegator_address}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <T>activities.operatingAt</T> <span className="address"><Account address={msg.value.validator_address}/></span> <T>activities.withMoniker</T> <Link to="#">{msg.value.description.moniker}</Link><T>common.fullStop</T></p>
+            return (
+                <p>
+                    <Account address={msg.value.delegator_address} />{" "}
+                    {this.props.invalid ? <T>activities.failedTo</T> : ""}
+                    <MsgType type={msg.type} />{" "}
+                    <T>activities.operatingAt</T>{" "}
+                    <span className="address">
+                        <Account address={msg.value.validator_address} />
+                    </span>{" "}
+                    <T>activities.withMoniker</T>{" "}
+                    <Link to="#">{msg.value.description.moniker}</Link>
+                    <T>common.fullStop</T>
+                </p>
+            );
         case "cosmos-sdk/MsgEditValidator":
-            return <p><Account address={msg.value.address}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /></p>
+            return (
+                <p>
+                    <Account address={msg.value.address} />{" "}
+                    {this.props.invalid ? <T>activities.failedTo</T> : ""}
+                    <MsgType type={msg.type} />
+                </p>
+            );
         case "cosmos-sdk/MsgDelegate":
             return <p><Account address={msg.value.delegator_address}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <em className="text-warning">{new Coin(msg.value.amount.amount).toString()}</em> <T>activities.to</T> <Account address={msg.value.validator_address} /><T>common.fullStop</T></p>
         case "cosmos-sdk/MsgUndelegate":
@@ -86,9 +118,24 @@ export default class Activites extends Component {
 
             // distribution
         case "cosmos-sdk/MsgWithdrawValidatorCommission":
-            return <p><Account address={msg.value.validator_address} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /><T>common.fullStop</T></p>
+            return (
+                <p>
+                    <Account address={msg.value.validator_address} />{" "}
+                    {this.props.invalid ? <T>activities.failedTo</T> : ""}
+                    <MsgType type={msg.type} />
+                    <T>common.fullStop</T>
+                </p>
+            );
         case "cosmos-sdk/MsgWithdrawDelegationReward":
-            return <p><Account address={msg.value.delegator_address}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <T>activities.from</T> <Account address={msg.value.validator_address} /><T>common.fullStop</T></p>
+            return (
+                <p>
+                    <Account address={msg.value.delegator_address} />{" "}
+                    {this.props.invalid ? <T>activities.failedTo</T> : ""}
+                    <MsgType type={msg.type} /> <T>activities.from</T>{" "}
+                    <Account address={msg.value.validator_address} />
+                    <T>common.fullStop</T>
+                </p>
+            );
         case "cosmos-sdk/MsgModifyWithdrawAddress":
             return <p><Account address={msg.value.delegator_address}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /></p>
 
@@ -98,12 +145,12 @@ export default class Activites extends Component {
 
             // ibc
         case "cosmos-sdk/IBCTransferMsg":
-            return <MsgType type={msg.type} />
+            return <MsgType type={msg.type} />;
         case "cosmos-sdk/IBCReceiveMsg":
             return <MsgType type={msg.type} />
 
         default:
-            return <div>{JSON.stringify(msg.value)}</div>
+            return <div>{JSON.stringify(msg.value)}</div>;
         }
     }
 }

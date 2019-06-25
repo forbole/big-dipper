@@ -14,7 +14,7 @@ export default class Cid extends Component{
 
     render(){
         return <span className={(this.props.copy)?"address overflow-auto d-inline-block copy":"address overflow-auto d-inline"} >
-            <NavLink href={this.state.link}>{this.state.cid}</NavLink>
+            <NavLink className='hash-dots' href={this.state.link}>{this.state.cid}</NavLink>
         </span>
     }
 }
