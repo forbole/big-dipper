@@ -58,7 +58,7 @@ export default class Block extends Component{
                         <title>Block {numbro(block.height).format("0,0")} on Cosmos Hub | The Big Dipper</title>
                         <meta name="description" content={"Block details of height "+numbro(block.height).format("0,0")} />
                     </Helmet>
-                    <h4><T>blocks.block</T> {numbro(block.height).format("0,0")}</h4>
+                    <h4 className='color-white'><T>blocks.block</T> {numbro(block.height).format("0,0")}</h4>
                     <Card>
                         <div className="card-header"><T>common.information</T></div>
                         <CardBody>

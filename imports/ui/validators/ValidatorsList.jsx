@@ -82,7 +82,7 @@ export default class Validators extends Component{
             </Helmet>
             <Row>
                 <Col lg={3} xs={12}><h1 className="d-none d-lg-block">{title}</h1></Col>
-                <Col lg={9} xs={12} className="text-lg-right"><ChainStates /></Col>
+                {/* <Col lg={9} xs={12} className="text-lg-right"><ChainStates /></Col> */}
             </Row>
             <Nav pills className="status-switch">
                 <NavItem>

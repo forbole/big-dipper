@@ -22,7 +22,7 @@ common:
     searchPlaceholder: 'Search with tx hash / block height / address'
 navbar:
     siteName: 'The Big Dipper'
-    version: 'beta'
+    version: 'cyberd'
     validators: 'Validators'
     blocks: 'Blocks'
     transactions: 'Transactions'

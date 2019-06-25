@@ -89,7 +89,7 @@ class App extends Component {
                             </Switch>
                         </SentryBoundary>
                     </Container>
-                    <Footer />
+                    {/* <Footer /> */}
                 </div>
             // </Router>
         );

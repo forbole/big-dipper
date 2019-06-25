@@ -254,13 +254,14 @@ export default class Proposal extends Component{
             if (this.props.proposalExist && this.state.proposal != ''){
                 // console.log(this.state.proposal);
                 const proposalId = Number(this.props.proposal.proposalId), maxProposalId = Number(this.props.proposalCount);
-                return <div>
+                return <div id='proposals'>
                     <Helmet>
                         <title>{this.props.proposal.proposal_content.value.title} | The Big Dipper</title>
                         <meta name="description" content={this.props.proposal.proposal_content.value.description} />
                     </Helmet>
-                    <div className="proposal bg-light">
-                        <Row className="mb-2 border-top">
+                    <Card body>
+                    <div className="proposal">
+                        <Row className="mb-2">
                             <Col md={3} className="label"><T>proposals.proposalID</T></Col>
                             <Col md={9} className="value">{this.props.proposal.proposal_id}</Col>
                         </Row>
@@ -395,12 +396,15 @@ export default class Proposal extends Component{
                             <Col md={9} className="value">{(this.state.proposal.voting_start_time != '0001-01-01T00:00:00Z')?moment.utc(this.state.proposal.voting_end_time).format("D MMM YYYY, h:mm:ssa z"):'-'}</Col>
                         </Row>
                     </div>
+                </Card>
+
                     <Row className='clearfix'>
-                        <Link to={`/proposals/${proposalId-1}`} className={`btn btn-outline-danger float-left ${proposalId-1<=0?"disabled":""}`}><i className="fas fa-caret-left"></i> Prev Proposal </Link>
+                        <Link to={`/proposals/${proposalId-1}`} className={`btn btn-outline-green float-left ${proposalId-1<=0?"disabled":""}`}><i className="fas fa-caret-left"></i> Prev Proposal </Link>
                         <Link to="/proposals" className="btn btn-primary" style={{margin: 'auto'}}><i className="fas fa-caret-up"></i> <T>common.backToList</T></Link>
-                        <Link to={`/proposals/${proposalId+1}`} className={`btn btn-outline-danger float-right ${proposalId>=maxProposalId?"disabled":""}`}><i className="fas fa-caret-right"></i> Next Proposal</Link>
+                        <Link to={`/proposals/${proposalId+1}`} className={`btn btn-outline-green float-right ${proposalId>=maxProposalId?"disabled":""}`}><i className="fas fa-caret-right"></i> Next Proposal</Link>
                     </Row>
                 </div>
+
             }
             else{
                 return <div><T>proposals.notFound</T></div>

@@ -22,7 +22,7 @@ common:
     searchPlaceholder: '搜寻交易哈希 / 区块高度 / 地址'
 navbar:
     siteName: '北斗'
-    version: 'beta'
+    version: 'cyberd'
     validators: '验证人'
     blocks: '区块'
     transactions: '交易'

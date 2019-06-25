@@ -90,7 +90,7 @@ export default class Transactions extends Component{
             </Helmet>
             <Row>
                 <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>transactions.transactions</T></h1></Col>
-                <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
+                {/* <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col> */}
             </Row>
             <Switch>
                 <Route path="/transactions/:txId" render={(props)=> <Sidebar 
