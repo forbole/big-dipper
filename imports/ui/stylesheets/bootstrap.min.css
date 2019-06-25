@@ -2573,8 +2573,8 @@ fieldset:disabled a.btn {
     border-color: transparent;
 }
 .btn-secondary:hover {
-    color: #212121;
-    background: #ececec -webkit-gradient(
+    color: #3ab793;
+    /* background: #ececec -webkit-gradient(
             linear,
             left top,
             left bottom,
@@ -2582,12 +2582,13 @@ fieldset:disabled a.btn {
             to(#ececec)
         ) repeat-x;
     background: #ececec linear-gradient(180deg, #efefef, #ececec) repeat-x;
-    border-color: #e6e5e5;
+    border-color: #e6e5e5; */
+    box-shadow: 0 0 2px 0px #3ab793 !important;
 }
 .btn-secondary:focus,
 .btn-secondary.focus {
-    -webkit-box-shadow: 0 0 0 0.2rem rgba(222, 222, 222, 0.5);
-    box-shadow: 0 0 0 0.2rem rgba(222, 222, 222, 0.5);
+    -webkit-box-shadow: 0 0 2px 0px #3ab793 ;
+    box-shadow: 0 0 2px 0px #3ab793 ;
 }
 .btn-secondary.disabled,
 .btn-secondary:disabled {
@@ -3195,10 +3196,13 @@ fieldset:disabled a.btn {
 }
 .btn-sm,
 .btn-group-sm > .btn {
-    padding: 0.25rem 0.5rem;
+    padding: 0.3rem 0.4rem;
     font-size: 0.7109375rem;
     line-height: 1.5;
     border-radius: 0.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .btn-block {
     display: block;
@@ -3274,10 +3278,10 @@ input[type="button"].btn-block {
     padding: 0.5rem 0;
     margin: 0.125rem 0 0;
     font-size: 0.8125rem;
-    color: #444;
+    color: #fff;
     text-align: left;
     list-style: none;
-    background-color: #fff;
+    background-color: #000;
     background-clip: padding-box;
     border: 1px solid rgba(0, 0, 0, 0.15);
     border-radius: 0.25rem;
@@ -3421,8 +3425,8 @@ input[type="button"].btn-block {
     width: 100%;
     padding: 0.25rem 1.5rem;
     clear: both;
-    font-weight: 400;
-    color: #212121;
+    font-weight: 500;
+    color: #fff;
     text-align: inherit;
     white-space: nowrap;
     background-color: transparent;
@@ -3430,29 +3434,30 @@ input[type="button"].btn-block {
 }
 .dropdown-item:hover,
 .dropdown-item:focus {
-    color: #141414;
+    color: #3ab793;
     text-decoration: none;
-    background: #f8f9fa -webkit-gradient(
+    outline: none;
+    /* background: #ffffffb7 -webkit-gradient(
             linear,
             left top,
             left bottom,
             from(#f9fafb),
             to(#f8f9fa)
         ) repeat-x;
-    background: #f8f9fa linear-gradient(180deg, #f9fafb, #f8f9fa) repeat-x;
+    background: #ffffffb7 linear-gradient(180deg, #f9fafb, #f8f9fa) repeat-x; */
 }
 .dropdown-item.active,
 .dropdown-item:active {
     color: #fff;
     text-decoration: none;
-    background: #bd081c -webkit-gradient(
+    /* background: #bd081c -webkit-gradient(
             linear,
             left top,
             left bottom,
             from(#c72d3e),
             to(#bd081c)
-        ) repeat-x;
-    background: #bd081c linear-gradient(180deg, #c72d3e, #bd081c) repeat-x;
+        ) repeat-x; */
+    background-color: #3ab793;
 }
 .dropdown-item.disabled,
 .dropdown-item:disabled {
@@ -4316,13 +4321,22 @@ input[type="button"].btn-block {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }
+.nav-pills {
+ margin: 0 -3px;
+ margin-bottom: 5px;
+}
+
 .nav-pills .nav-link {
     border-radius: 0.25rem;
+    box-shadow: 0px 0px 10px #3ab793;
+    margin: 0 3px;
+    padding: 8px 30px;
 }
 .nav-pills .nav-link.active,
 .nav-pills .show > .nav-link {
     color: #fff;
-    background-color: #bd081c;
+    background-color: #3ab793;
+    box-shadow: 0px 0px 20px #3ab793;
 }
 .nav-fill .nav-item {
     -webkit-box-flex: 1;
@@ -5094,7 +5108,7 @@ input[type="button"].btn-block {
     display: inline-block;
     padding: 0.25em 0.4em;
     font-size: 75%;
-    font-weight: 700;
+    font-weight: 500;
     line-height: 1;
     text-align: center;
     white-space: nowrap;
@@ -5149,8 +5163,8 @@ a.badge-primary.focus {
     box-shadow: 0 0 0 0.2rem rgba(189, 8, 28, 0.5);
 }
 .badge-secondary {
-    color: #212121;
-    background-color: #fff;
+    color: #fff;
+    background-color: #3ab793;
 }
 a.badge-secondary:hover,
 a.badge-secondary:focus {
@@ -10246,13 +10260,13 @@ a.text-dark:focus {
     position: relative;
 }
 .btn-secondary:focus {
-    background-color: #fff;
-    -webkit-box-shadow: 0 0 0 2px rgba(204, 204, 204, 0.5);
-    box-shadow: 0 0 0 2px rgba(204, 204, 204, 0.5);
+    background-color: transparent;
+    -webkit-box-shadow: 0 0 2px rgba(204, 204, 204, 0.5);
+    box-shadow: 0 0 2px rgba(204, 204, 204, 0.5);
 }
 .btn-secondary:hover,
 .btn-secondary:active:hover {
-    background-color: #f0f0f0;
+    background-color: transparent;
 }
 .btn-secondary:active {
     -webkit-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
@@ -11357,8 +11371,8 @@ select.form-control[multiple] {
 .dropdown-menu {
     margin-top: 0;
     border: none;
-    -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0px 0px 2px #3ab793;
+    box-shadow: 0px 0px 2px #3ab793;
 }
 .alert {
     padding-right: 2.5rem;
@@ -11470,7 +11484,7 @@ select.form-control[multiple] {
     color: #444;
 }
 .badge-secondary {
-    background-color: #bbb;
+    background-color: #3ab793;
     color: #fff;
 }
 .badge-light {
