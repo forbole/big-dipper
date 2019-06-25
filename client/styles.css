@@ -41,7 +41,7 @@ i.material-icons + span {
 
 .more.dropdown .btn{
     position: absolute;
-    right: -1.74em;
+    right: -1.44em;
     top: -0.35em;
 }
 
@@ -136,7 +136,7 @@ div.validator-list div.validator-info div.data.proposer-priority{
 }
 
 div.header span{
-    font-weight: bold;
+    font-weight: normal;
 }
 
 div.validator-list div.header div.last-seen span.d-md-none{
@@ -168,6 +168,7 @@ table.proposal-list td{
 table th.voting-power,
 table td.voting-power{
     text-align:right;
+    color: #fff;
 }
 
 table.random-validators th.moniker{
@@ -613,8 +614,8 @@ div#voting-power-dist .card{
     #validator-list div.validator-list div.header,
     .proposal .tally-result-table div.header{
         padding-top: 0.3rem;
-        border-top: 1px solid #dee2e6;
-        border-bottom: 2px solid #dee2e6;
+        /* border-top: 1px solid #dee2e6; */
+        border-bottom: 1px solid #ffffff80;
     }
 
     div.validator-list div.header div,
@@ -627,7 +628,7 @@ div#voting-power-dist .card{
     .tally-result-table .voter-info{
         padding-top: 0.4rem;
         padding-bottom: 0.4rem;
-        border-bottom: 1px solid #dee2e6;
+        border-bottom: 1px solid #ffffff80;
     }
 
     .voter-info .data.counter{
@@ -768,4 +769,16 @@ div#voting-power-dist .card{
 
 .color-gravity{
     color: #3ab793;
+}
+
+.color-white {
+    color: #fff;
+}
+
+.d-none.d-lg-block {
+    color: #fff;
+}
+
+.lead {
+    color: #fff;
 }
