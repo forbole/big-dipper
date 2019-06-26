@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Spinner, UncontrolledTooltip, Row, Col, Card, CardHeader, CardBody, Progress } from 'reactstrap';
 import numbro from 'numbro';
 import AccountCopy from '../components/AccountCopy.jsx';
+import LinkIcon from '../components/LinkIcon.jsx';
 import Delegations from './Delegations.jsx';
 import Unbondings from './Unbondings.jsx';
 import AccountTransactions from '../components/TransactionsContainer.js';
@@ -129,6 +130,14 @@ export default class AccountDetails extends Component{
         }
     }
 
+    renderShareLink() {
+        let primaryLink = `/account/${this.state.address}`
+        let otherLinks = [
+            {label: 'Transfer', url: `${primaryLink}/send`}
+        ]
+        return <LinkIcon link={primaryLink} otherLinks={otherLinks} />
+    }
+
     render(){
         if (this.state.loading){
             return <div id="account">
@@ -146,10 +155,15 @@ export default class AccountDetails extends Component{
                     <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>accounts.accountDetails</T></h1></Col>
                     <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
                 </Row>
-                <h3 className="text-primary"><AccountCopy address={this.state.address} /></h3>
+                <Row>
+                    <h3 className="text-primary"><AccountCopy address={this.state.address} /></h3>
+                </Row>
                 <Row>
                     <Col><Card>
-                        <CardHeader>Balance</CardHeader>
+                        <CardHeader>
+                            Balance
+                            <div className="shareLink float-right">{this.renderShareLink()}</div>
+                        </CardHeader>
                         <CardBody>
                             <Row className="account-distributions">
                                 <Col xs={12}>

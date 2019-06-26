@@ -13,6 +13,7 @@ import ValidatorDelegations from './Delegations.jsx';
 import ValidatorTransactions from '../components/TransactionsContainer.js';
 import { DelegationButtons } from '../ledger/LedgerActions.jsx';
 import { Helmet } from 'react-helmet';
+import LinkIcon from '../components/LinkIcon.jsx';
 import i18n from 'meteor/universe:i18n';
 
 const T = i18n.createComponent();
@@ -159,6 +160,17 @@ export default class Validator extends Component{
         }
     }
 
+    renderShareLink() {
+        let validator = this.props.validator;
+        let primaryLink = `/validator/${validator.operator_address}`
+        let otherLinks = [
+            {label: 'Delegate', url: `${primaryLink}/delegate`},
+            {label: 'Transfer', url: `/account/${validator.delegator_address}/send`}
+        ]
+
+        return <LinkIcon link={primaryLink} otherLinks={otherLinks} />
+    }
+
     render() {
         if (this.props.loading){
             return <Spinner type="grow" color="primary" />
@@ -177,12 +189,13 @@ export default class Validator extends Component{
                   </Helmet>
                     <Col xs={12}>
                         <Link to="/validators" className="btn btn-link"><i className="fas fa-caret-left"></i> <T>common.backToList</T></Link>
-                  </Col>
+                    </Col>
                     <Col md={4}>
                     <Card body className="text-center">
-                            <div className="validator-avatar"><Avatar moniker={moniker} identity={identity} address={this.props.validator.address} list={false}/></div>
-                            <div className="moniker text-primary">{website?<a href={addhttp(this.props.validator.description.website)} target="_blank">{moniker} <i className="fas fa-link"></i></a>:moniker}</div>
-                            <div className="identity"><KeybaseCheck identity={identity} showKey /></div>
+                        <div className="shareLink d-flex align-self-end">{this.renderShareLink()}</div>
+                        <div className="validator-avatar"><Avatar moniker={moniker} identity={identity} address={this.props.validator.address} list={false}/></div>
+                        <div className="moniker text-primary">{website?<a href={addhttp(this.props.validator.description.website)} target="_blank">{moniker} <i className="fas fa-link"></i></a>:moniker}</div>
+                        <div className="identity"><KeybaseCheck identity={identity} showKey /></div>
                         <div className="details"><Markdown markup={ details } /></div>
                         <div className="website"></div>
                       </Card>

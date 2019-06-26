@@ -94,7 +94,7 @@ class LedgerModal extends React.Component {
 
     render() {
         return (
-            <Modal isOpen={this.props.isOpen} className="ledger-sign-in">
+            <Modal isOpen={this.props.isOpen} toggle={this.closeModal} className="ledger-sign-in">
             <ModalHeader><T>accounts.signInWithLedger</T></ModalHeader>
             <ModalBody>
                 <TabContent activeTab={this.state.activeTab}>

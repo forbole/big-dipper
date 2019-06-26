@@ -418,7 +418,7 @@ class LedgerButton extends Component {
     }
 
     renderModal = () => {
-        return  <Modal isOpen={this.state.isOpen}  className="ledger-modal">
+        return  <Modal isOpen={this.state.isOpen} toggle={this.close} className="ledger-modal">
             <ModalBody>
                 <TabContent className='ledger-modal-tab' activeTab={this.state.activeTab}>
                     <TabPane tabId="0"></TabPane>
