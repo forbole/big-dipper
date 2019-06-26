@@ -111,7 +111,7 @@ export default class AccountDetails extends Component{
     }
 
     componentDidUpdate(prevProps){
-        if (this.props != prevProps){
+        if (this.props.match.params.address !== prevProps.match.params.address){
             this.setState({
                 address: this.props.match.params.address,
                 loading: true,
@@ -186,9 +186,9 @@ export default class AccountDetails extends Component{
                                     </Row>:null}
                                 </Col>
                                 <Col md={6} lg={4} className="total d-flex flex-column justify-content-end">
-                                    {this.state.user&&this.state.user===this.state.address?<Row>
-                                        <Col xs={12}><TransferButton/></Col>
-                                        <Col xs={12}><WithdrawButton rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address}/></Col>
+                                    {this.state.user?<Row>
+                                        <Col xs={12}><TransferButton history={this.props.history} address={this.state.address}/></Col>
+                                        {this.state.user===this.state.address?<Col xs={12}><WithdrawButton  history={this.props.history} rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address}/></Col>:null}
                                     </Row>:null}
                                     <Row>
                                         <Col xs={4} className="label d-flex align-self-end"><div className="infinity" /><T>accounts.total</T></Col>

@@ -1,3 +1,4 @@
+import qs from 'querystring';
 import React,{ Component } from 'react';
 import { HTTP } from 'meteor/http'
 import {
@@ -28,6 +29,13 @@ import LedgerModal from '../ledger/LedgerModal.jsx';
 import Account from './Account.jsx';
 
 const T = i18n.createComponent();
+
+const SendPath = new RegExp('/account/(?<address>\\w+)/(?<action>send)')
+const DelegatePath = new RegExp('/validators?/(?<address>\\w+)/(?<action>delegate)')
+const WithdrawPath = new RegExp('/account/(?<action>withdraw)')
+
+const getUser = () => localStorage.getItem(CURRENTUSERADDR)
+
 export default class Header extends Component {
     constructor(props) {
         super(props);
@@ -46,9 +54,10 @@ export default class Header extends Component {
             // console.log(this.state.isOpen);
         });
     }
-    toggleSignIn() {
+
+    toggleSignIn = (value) => {
         this.setState(( prevState) => {
-            return {isSignInOpen: !prevState.isSignInOpen}
+            return {isSignInOpen: value!=undefined?value:!prevState.isSignInOpen}
         })
     }
 
@@ -94,8 +103,47 @@ export default class Header extends Component {
         this.props.refreshApp();
     }
 
+    shouldLogin = () => {
+        let pathname = this.props.location.pathname
+        let match = pathname.match(SendPath) || pathname.match(DelegatePath)|| pathname.match(WithdrawPath);
+        let params = qs.parse(this.props.location.search.substr(1))
+        return match || params.signin != undefined
+    }
+
+    handleLoginConfirmed = (success) => {
+        let match = this.shouldLogin()
+        if (!match) return
+        let redirectUrl;
+        let params;
+        if (match.groups) {
+            let { action, address } = match.groups;
+            params = {action}
+            switch (match.groups.action) {
+                case 'send':
+                    params.transferTarget = address
+                    redirectUrl = `/account/${success?getUser():address}`
+                    break
+                case 'withdraw':
+                    redirectUrl = `/account/${getUser()}`
+                    break;
+                case 'delegate':
+                    redirectUrl = `/validators/${address}`
+                    break;
+            }
+        } else {
+            let location = this.props.location;
+            params = qs.parse(location.search.substr(1))
+            redirectUrl = params.redirect?params.redirect:location.pathname;
+            delete params['redirectUrl']
+            delete params['signin']
+        }
+
+        let query = success?`?${qs.stringify(params)}`:'';
+        this.props.history.push(redirectUrl + query)
+    }
+
     render() {
-        let signedInAddress = localStorage.getItem(CURRENTUSERADDR);
+        let signedInAddress = getUser();
         return (
             <Navbar color="primary" dark expand="lg" fixed="top" id="header">
                 <NavbarBrand tag={Link} to="/"><img src="/img/big-dipper.svg" className="img-fluid logo"/> <span className="d-none d-xl-inline-block"><T>navbar.siteName</T>&nbsp;</span><Badge color="secondary"><T>navbar.version</T></Badge> </NavbarBrand>
@@ -122,26 +170,27 @@ export default class Header extends Component {
                         <NavItem>
                             <NavLink tag={Link} to="/voting-power-distribution"><T>navbar.votingPower</T></NavLink>
                         </NavItem>
-                        {!signedInAddress? <NavItem>
-                            <Button className="sign-in-btn" color="link" size="lg" onClick={() => {this.setState({isSignInOpen: true})}}><i className="material-icons">vpn_key</i></Button>
-                            <LedgerModal ledger={this.props.ledger} isOpen={this.state.isSignInOpen} toggle={this.toggleSignIn.bind(this)} refreshApp={this.props.refreshApp}/>
-                        </NavItem>:<NavItem id="user-acconut-icon">
-                            <span className="d-lg-none">
-                                <i className="material-icons large d-inline">account_circle</i>
-                                <Link to={`/account/${signedInAddress}`}> {signedInAddress}</Link>
-                                <Button className="float-right" color="link" size="sm" onClick={this.signOut.bind(this)}><i className="material-icons">exit_to_app</i></Button>
-                            </span>
-                            <span className="d-none d-lg-block">
-                                <i className="material-icons large">account_circle</i>
-                                <UncontrolledPopover className="d-none d-lg-block" trigger="legacy" placement="bottom" target="user-acconut-icon">
-                                    <PopoverBody>
-                                        <div><T>accounts.signInText</T></div>
-                                        <div><Link className="text-nowrap" to={`/account/${signedInAddress}`}>{signedInAddress}</Link></div>
-                                        <Button className="float-right" color="link" onClick={this.signOut.bind(this)}><i className="material-icons">exit_to_app</i><span> <T>accounts.signOut</T></span></Button>
-                                    </PopoverBody>
-                                </UncontrolledPopover>
-                            </span>
-                        </NavItem>}
+                        <NavItem id="user-acconut-icon">
+                            {!signedInAddress?<Button className="sign-in-btn" color="link" size="lg" onClick={() => {this.setState({isSignInOpen: true})}}><i className="material-icons">vpn_key</i></Button>:
+                                <span>
+                                    <span className="d-lg-none">
+                                        <i className="material-icons large d-inline">account_circle</i>
+                                        <Link to={`/account/${signedInAddress}`}> {signedInAddress}</Link>
+                                        <Button className="float-right" color="link" size="sm" onClick={this.signOut.bind(this)}><i className="material-icons">exit_to_app</i></Button>
+                                    </span>
+                                    <span className="d-none d-lg-block">
+                                        <i className="material-icons large">account_circle</i>
+                                        <UncontrolledPopover className="d-none d-lg-block" trigger="legacy" placement="bottom" target="user-acconut-icon">
+                                            <PopoverBody>
+                                                <div><T>accounts.signInText</T></div>
+                                                <div><Link className="text-nowrap" to={`/account/${signedInAddress}`}>{signedInAddress}</Link></div>
+                                                <Button className="float-right" color="link" onClick={this.signOut.bind(this)}><i className="material-icons">exit_to_app</i><span> <T>accounts.signOut</T></span></Button>
+                                            </PopoverBody>
+                                        </UncontrolledPopover>
+                                    </span>
+                                </span>}
+                            <LedgerModal isOpen={this.state.isSignInOpen} toggle={this.toggleSignIn} refreshApp={this.props.refreshApp} handleLoginConfirmed={this.shouldLogin()?this.handleLoginConfirmed:null}/>
+                        </NavItem>
                         <NavItem>
                             <UncontrolledDropdown inNavbar>
                                 <DropdownToggle nav caret>

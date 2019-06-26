@@ -65,7 +65,7 @@ class App extends Component {
 
     }
 
-    propagateStateChange() {
+    propagateStateChange = () => {
         this.forceUpdate();
     }
 
@@ -76,7 +76,7 @@ class App extends Component {
             // <Router history={history}>
                 <div>
                     {(Meteor.settings.public.gtm)?<GoogleTagManager gtmId={Meteor.settings.public.gtm} />:''}
-                    <RouteHeader refreshApp={this.propagateStateChange.bind(this)}/>
+                    <RouteHeader refreshApp={this.propagateStateChange}/>
                     <Container fluid id="main">
                         <ToastContainer />
                         <SentryBoundary>

@@ -1,3 +1,4 @@
+import qs from 'querystring';
 import Cosmos from "@lunie/cosmos-js"
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
@@ -103,6 +104,7 @@ class LedgerButton extends Component {
             simulating: undefined,
             gasEstimate: undefined,
             txMsg: undefined,
+            params: undefined
         });
     }
     static getDerivedStateFromProps(props, state) {
@@ -139,11 +141,36 @@ class LedgerButton extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
+
+        this.autoOpenModal();
         if ((this.state.isOpen && !prevState.isOpen) || (this.state.user && this.state.user != prevState.user)) {
             if (!this.state.success)
                 this.tryConnect();
             this.getBalance();
        }
+    }
+
+    componentDidMount() {
+        this.autoOpenModal()
+    }
+
+    autoOpenModal = () => {
+        let query = this.props.history.location.search.substr(1)
+        if (query && !this.state.isOpen) {
+            let params = qs.parse(query)
+            if (params.signin == undefined && params.action && this.supportAction(params.action)) {
+                this.props.history.push(this.props.history.location.pathname)
+                this.openModal(params.action, this.filterParams(params))
+            }
+        }
+    }
+
+    supportAction() {
+        return false
+    }
+
+    filterParams() {
+        return {}
     }
 
     getBalance = () => {
@@ -166,7 +193,8 @@ class LedgerButton extends Component {
                 if (!result || error) {
                     this.setStateOnError(
                         'loadingBalance',
-                        `Failed to get account info for ${this.state.user}`
+                        `Failed to get account info for ${this.state.user}`,
+                        { activeTab: '0' }
                     )
                 }
             } catch (e) {
@@ -176,11 +204,23 @@ class LedgerButton extends Component {
     }
 
     tryConnect = () => {
-        this.ledger.getCosmosAddress().then((res) => this.setState({
-            success:true,
-            activeTab: this.state.activeTab ==='1' ? '2': this.state.activeTab
-        }), (err) => this.setState({
-            success:false,
+        this.ledger.getCosmosAddress().then((res) => {
+            if (res.address == this.state.user)
+                this.setState({
+                    success: true,
+                    activeTab: this.state.activeTab ==='1' ? '2': this.state.activeTab
+                })
+            else {
+                if (this.state.isOpen) {
+                    this.setState({
+                        success: false,
+                        activeTab: '0',
+                        errorMessage: `Currently logged in as another user ${this.state.user}`
+                    })
+                }
+            }
+        }, (err) => this.setState({
+            success: false,
             activeTab: '1'
        }));
     }
@@ -305,7 +345,21 @@ class LedgerButton extends Component {
         this.setState({[target.name]: value})
     }
 
+    redirectToSignin = () => {
+        let params = {...this.state.params,
+            ...this.populateRedirectParams(),
+        };
+        this.close()
+        this.props.history.push(this.props.history.location.pathname + '?signin&' + qs.stringify(params))
+    }
+
+    populateRedirectParams = () => {
+        return { action: this.state.actionType }
+    }
+
     getActionButton = () => {
+        if (this.state.activeTab === '0')
+            return <Button color="primary"  onClick={this.redirectToSignin}>Sign in With Ledger</Button>
         if (this.state.activeTab === '1')
             return <Button color="primary"  onClick={this.tryConnect}>Continue</Button>
         if (this.state.activeTab === '2')
@@ -318,10 +372,16 @@ class LedgerButton extends Component {
             </Button>
     }
 
-    openModal = (type) => {
+    openModal = (type, params={}) => {
+        if (!TypeMeta[type]) {
+            console.warn(`action type ${type} not supported`)
+            return;
+        }
         this.setState({
+            ...params,
             actionType: type,
-            isOpen: true
+            isOpen: true,
+            params: params
         })
     }
 
@@ -361,6 +421,7 @@ class LedgerButton extends Component {
         return  <Modal isOpen={this.state.isOpen}  className="ledger-modal">
             <ModalBody>
                 <TabContent className='ledger-modal-tab' activeTab={this.state.activeTab}>
+                    <TabPane tabId="0"></TabPane>
                     <TabPane tabId="1">
                         Please connect your Ledger device and open Cosmos App.
                     </TabPane>
@@ -390,6 +451,10 @@ class DelegationButtons extends LedgerButton {
             return new Coin(currentDelegation.shares * currentDelegation.tokenPerShare);
         }
         return null
+    }
+
+    supportAction(action) {
+        return action === Types.DELEGATE || action === Types.REDELEGATE || action === Types.UNDELEGATE;
     }
 
     renderActionTab = () => {
@@ -474,6 +539,10 @@ class WithdrawButton extends LedgerButton {
         })
     }
 
+    supportAction(action) {
+        return action === Types.WITHDRAW;
+    }
+
     renderActionTab = () => {
         return <TabPane tabId="2">
             <h3>Withdraw rewards from all delegations</h3>
@@ -505,7 +574,7 @@ class TransferButton extends LedgerButton {
             <h3>Transfer {Coin.StakingDenom.toUpperCase()}</h3>
 
             <InputGroup>
-               <Input name="transferTarget" onChange={this.handleInputChange} placeholder="Send to" type="text"/>
+               <Input name="transferTarget" onChange={this.handleInputChange} placeholder="Send to" type="text" value={this.state.transferTarget}/>
             </InputGroup>
             <InputGroup>
                <Input name="transferAmount" onChange={this.handleInputChange} data-type='coin' placeholder="Amount" min={0} max={maxAmount.stakingAmount} type="number"/>
@@ -515,6 +584,16 @@ class TransferButton extends LedgerButton {
         </TabPane>
     }
 
+    supportAction(action) {
+        return action === Types.SEND;
+    }
+
+    filterParams(params) {
+        return {
+            transferTarget: params.transferTarget
+        }
+    }
+
     getConfirmationMessage = () => {
         return <span>You are going to <span className='action'>send</span> <Amount coin={this.state.transferAmount}/> to {this.state.transferTarget}
             with <span className='gas'>{this.state.gasEstimate}</span> as fee.
@@ -522,8 +601,9 @@ class TransferButton extends LedgerButton {
     }
 
     render = () => {
+        let params = this.props.address !== this.state.user?{transferTarget: this.props.address}: {};
         return <span className="ledger-buttons-group float-right">
-            <Button color="info" size="sm" onClick={() => this.openModal(Types.SEND)}> {TypeMeta[Types.SEND].button} </Button>
+            <Button color="info" size="sm" onClick={() => this.openModal(Types.SEND, params)}> {TypeMeta[Types.SEND].button} </Button>
             {this.renderModal()}
         </span>;
     }
