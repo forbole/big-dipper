@@ -3153,11 +3153,11 @@ fieldset:disabled a.btn {
 }
 .btn-link {
     font-weight: 400;
-    color: #bd081c;
+    color: #3ab793;
     text-decoration: none;
 }
 .btn-link:hover {
-    color: #740511;
+    color: #3ab793;
     text-decoration: underline;
 }
 .btn-link:focus,
@@ -5133,12 +5133,12 @@ a.badge:focus {
 }
 .badge-primary {
     color: #fff;
-    background-color: #bd081c;
+    background-color: #3ab793;
 }
 a.badge-primary:hover,
 a.badge-primary:focus {
     color: #fff;
-    background-color: #8c0615;
+    background-color: #3ab794d0;
 }
 a.badge-primary:focus,
 a.badge-primary.focus {
@@ -10792,13 +10792,13 @@ a.text-dark:focus {
 .btn-link {
     -webkit-box-shadow: none;
     box-shadow: none;
-    color: #bd081c;
+    color: #3ab793;
 }
 .btn-link:hover,
 .btn-link:focus {
     -webkit-box-shadow: none;
     box-shadow: none;
-    color: #740511;
+    color: #3ab793;
     text-decoration: underline;
 }
 .btn-link.disabled:hover,
