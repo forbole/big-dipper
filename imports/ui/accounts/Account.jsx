@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Spinner, UncontrolledTooltip, Row, Col, Card, CardHeader, CardBody, Progress } from 'reactstrap';
 import numbro from 'numbro';
 import AccountCopy from '../components/AccountCopy.jsx';
+import LinkIcon from '../components/LinkIcon.jsx';
 import Delegations from './Delegations.jsx';
 import Unbondings from './Unbondings.jsx';
 import AccountTransactions from '../components/TransactionsContainer.js';
@@ -111,7 +112,7 @@ export default class AccountDetails extends Component{
     }
 
     componentDidUpdate(prevProps){
-        if (this.props != prevProps){
+        if (this.props.match.params.address !== prevProps.match.params.address){
             this.setState({
                 address: this.props.match.params.address,
                 loading: true,
@@ -127,6 +128,14 @@ export default class AccountDetails extends Component{
                 this.getBalance();
             })
         }
+    }
+
+    renderShareLink() {
+        let primaryLink = `/account/${this.state.address}`
+        let otherLinks = [
+            {label: 'Transfer', url: `${primaryLink}/send`}
+        ]
+        return <LinkIcon link={primaryLink} otherLinks={otherLinks} />
     }
 
     render(){
@@ -146,10 +155,15 @@ export default class AccountDetails extends Component{
                     <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>accounts.accountDetails</T></h1></Col>
                     <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
                 </Row>
-                <h3 className="text-primary"><AccountCopy address={this.state.address} /></h3>
+                <Row>
+                    <h3 className="text-primary"><AccountCopy address={this.state.address} /></h3>
+                </Row>
                 <Row>
                     <Col><Card>
-                        <CardHeader>Balance</CardHeader>
+                        <CardHeader>
+                            Balance
+                            <div className="shareLink float-right">{this.renderShareLink()}</div>
+                        </CardHeader>
                         <CardBody>
                             <Row className="account-distributions">
                                 <Col xs={12}>
@@ -186,14 +200,14 @@ export default class AccountDetails extends Component{
                                     </Row>:null}
                                 </Col>
                                 <Col md={6} lg={4} className="total d-flex flex-column justify-content-end">
-                                    {this.state.user&&this.state.user===this.state.address?<Row>
-                                        <Col xs={12}><TransferButton/></Col>
-                                        <Col xs={12}><WithdrawButton rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address}/></Col>
+                                    {this.state.user?<Row>
+                                        <Col xs={12}><TransferButton history={this.props.history} address={this.state.address}/></Col>
+                                        {this.state.user===this.state.address?<Col xs={12}><WithdrawButton  history={this.props.history} rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address}/></Col>:null}
                                     </Row>:null}
                                     <Row>
                                         <Col xs={4} className="label d-flex align-self-end"><div className="infinity" /><T>accounts.total</T></Col>
                                         <Col xs={8} className="value text-right">{numbro(this.state.total/Meteor.settings.public.stakingFraction).format("0,0.0000a")} {Meteor.settings.public.stakingDenom}s</Col>
-                                        <Col xs={12} className="dollar-value text-right text-secondary">~{numbro(this.state.total/Meteor.settings.public.stakingFraction*this.state.price).format("$0,0.0000a")} ({numbro(this.state.price).format("$0,0.00")}/ATOM)</Col>
+                                        <Col xs={12} className="dollar-value text-right text-secondary">~{numbro(this.state.total/Meteor.settings.public.stakingFraction*this.state.price).format("$0,0.0000a")} ({numbro(this.state.price).format("$0,0.00")}/{Meteor.settings.public.stakingDenom})</Col>
                                     </Row>
                                 </Col>
                             </Row>

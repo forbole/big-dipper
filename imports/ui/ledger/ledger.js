@@ -10,7 +10,7 @@ import ripemd160 from "crypto-js/ripemd160"
 import CryptoJS from "crypto-js"
 
 // TODO: discuss TIMEOUT value
-const INTERACTION_TIMEOUT = 120000 // seconds to wait for user action on Ledger, currently is always limited to 60
+const INTERACTION_TIMEOUT = 10000
 const REQUIRED_COSMOS_APP_VERSION = "1.5.0"
 const DEFAULT_MEMO = 'Sent via Big Dipper'
 const DEFAULT_DENOM = 'uatom';
@@ -57,7 +57,7 @@ export class Ledger {
         // check if the device is connected or on screensaver mode
         const response = await this.cosmosApp.publicKey(HDPATH)
         this.checkLedgerErrors(response, {
-        timeoutMessag: "Could not find a connected and unlocked Ledger device"
+            timeoutMessag: "Could not find a connected and unlocked Ledger device"
         })
     }
     async isReady() {

@@ -240,16 +240,17 @@ Meteor.methods({
                             // record precommits and calculate uptime
                             // only record from block 2
                             for (i in validators.result.validators){
+                                let address = validators.result.validators[i].address;
                                 let record = {
                                     height: height,
-                                    address: validators.result.validators[i].address,
+                                    address: address,
                                     exists: false,
-                                    voting_power: parseInt(validators.result.validators[i].voting_power)//getValidatorVotingPower(existingValidators, validators.result.validators[i].address)
+                                    voting_power: parseInt(validators.result.validators[i].voting_power)//getValidatorVotingPower(existingValidators, address)
                                 }
 
                                 for (j in precommits){
                                     if (precommits[j] != null){
-                                        if (validators.result.validators[i].address == precommits[j].validator_address){
+                                        if (address == precommits[j].validator_address){
                                             record.exists = true;
                                             precommits.splice(j,1);
                                             break;
@@ -262,7 +263,7 @@ Meteor.methods({
 
                                 if ((height % 15) == 0){
                                     // let startAggTime = new Date();
-                                    let numBlocks = Meteor.call('blocks.findUpTime', validators.result.validators[i].address);
+                                    let numBlocks = Meteor.call('blocks.findUpTime', address);
                                     let uptime = 0;
                                     // let endAggTime = new Date();
                                     // console.log("Get aggregated uptime for "+existingValidators[i].address+": "+((endAggTime-startAggTime)/1000)+"seconds.");
@@ -280,11 +281,11 @@ Meteor.methods({
                                             uptime++;
                                         }
                                         uptime = (uptime / base)*100;
-                                        bulkValidators.find({address:validators.result.validators[i].address}).upsert().updateOne({$set:{uptime:uptime, lastSeen:blockData.time}});
+                                        bulkValidators.find({address:address}).upsert().updateOne({$set:{uptime:uptime, lastSeen:blockData.time}});
                                     }
                                     else{
                                         uptime = (uptime / base)*100;
-                                        bulkValidators.find({address:validators.result.validators[i].address}).upsert().updateOne({$set:{uptime:uptime}});
+                                        bulkValidators.find({address:address}).upsert().updateOne({$set:{uptime:uptime}});
                                     }
                                 }
 
