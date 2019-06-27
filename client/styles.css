@@ -1,5 +1,6 @@
 body {
     font-size: inherit !important;
+    background-color: #000 !important;
 }
 
 .no-select {
@@ -40,14 +41,13 @@ i.material-icons + span {
 
 .more.dropdown .btn{
     position: absolute;
-    right: -1.74em;
+    right: -1.44em;
     top: -0.35em;
 }
 
 span#network-nav{
     font-size: 1rem;
-    color: #fff;
-    font-weight: bold;
+    color: #3ab793;
 }
 
 #header .dropdown-header{
@@ -136,7 +136,7 @@ div.validator-list div.validator-info div.data.proposer-priority{
 }
 
 div.header span{
-    font-weight: bold;
+    font-weight: normal;
 }
 
 div.validator-list div.header div.last-seen span.d-md-none{
@@ -165,9 +165,15 @@ table.proposal-list td{
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+table.proposal-list {
+ color: #fff;
+}
+
 table th.voting-power,
 table td.voting-power{
     text-align:right;
+    color: #fff;
 }
 
 table.random-validators th.moniker{
@@ -256,7 +262,7 @@ div#countdown {
 #block .card,
 #account .card{
     /* margin: 0 0 0.75em 0; */
-    margin-bottom: 0.75em;
+    margin-bottom: 1.5em;
 }
 
 .progress{
@@ -412,7 +418,12 @@ div.tx-info,
 div.delegation-info{
     padding-top: 0.4rem;
     padding-bottom: 0.4rem;
-    border-bottom: 1px solid #dee2e6;
+    border-bottom: 1px solid #ffffff60;
+    color: #fff;
+}
+
+div.block-info:hover {
+    background-color: #ffffff1a;
 }
 
 .tx-info.invalid {
@@ -430,11 +441,12 @@ div.delegation-info{
 div#block-table div.block-info:nth-child(2n),
 div.transactions-list div.tx-info:nth-child(2n),
 div.delegation-info:nth-child(2n){
-    background-color: rgba(0,0,0,0.05);
+    /* background-color: rgba(0,0,0,0.05); */
 }
 
 div.transactions-list div.tx-info .activity{
     overflow-x: auto;
+    padding-top: 0.1em;
 }
 
 div.transactions-list div.tx-info .activity .card-body{
@@ -464,8 +476,9 @@ div.transactions-list div.tx-info .badge:not(:last-child) {
 div#block-table div.header,
 div.transactions-list div.header{
     padding-top: 0.3rem;
-    border-top: 1px solid #dee2e6;
-    border-bottom: 2px solid #dee2e6;
+    /* border-top: 1px solid #dee2e6; */
+    border-bottom: 1px solid #ffffff80;
+    color: #fff;
 }
 
 .blocks-list{
@@ -477,7 +490,7 @@ div.transactions-list div.header{
     height: 1.5em;
     display: inline-block;
     margin-right: 0.2em;
-    border: 0.1em solid #bd081c;
+    border: 0.1em solid #3ab794dc;
     -webkit-box-shadow: 1px 1px 3px 0px rgba(163,163,163,1);
     -moz-box-shadow: 1px 1px 3px 0px rgba(163,163,163,1);
     box-shadow: 1px 1px 3px 0px rgba(163,163,163,1);
@@ -485,7 +498,7 @@ div.transactions-list div.header{
 }
 
 .blocks-list .block .full{
-    background-color: #bd081c;
+    background-color: #3ab793;
 }
 
 .blocks-list .block .full,
@@ -613,8 +626,8 @@ div#voting-power-dist .card{
     #validator-list div.validator-list div.header,
     .proposal .tally-result-table div.header{
         padding-top: 0.3rem;
-        border-top: 1px solid #dee2e6;
-        border-bottom: 2px solid #dee2e6;
+        /* border-top: 1px solid #dee2e6; */
+        border-bottom: 1px solid #ffffff80;
     }
 
     div.validator-list div.header div,
@@ -627,7 +640,7 @@ div#voting-power-dist .card{
     .tally-result-table .voter-info{
         padding-top: 0.4rem;
         padding-bottom: 0.4rem;
-        border-bottom: 1px solid #dee2e6;
+        border-bottom: 1px solid #ffffff80;
     }
 
     .voter-info .data.counter{
@@ -643,6 +656,7 @@ div#voting-power-dist .card{
     div.transactions-list div.tx-info{
         margin-left:0;
         margin-right:0;
+        margin-bottom: 10px;
     }
 
     .validator-info.row i.material-icons + span{
@@ -764,4 +778,104 @@ div#voting-power-dist .card{
   left: 0;
   border-width: 0.4rem 0 0.4rem 0.4rem;
   border-left-color: #444;
+}
+
+.color-gravity{
+    color: #3ab793;
+}
+
+.color-white {
+    color: #fff;
+}
+
+.d-none.d-lg-block {
+    color: #fff;
+}
+
+.lead {
+    color: #fff;
+}
+
+.btn-icon__inner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+
+.flex {
+    display: flex;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.position-relative {
+    position: relative;
+}
+
+.msgLink .hash-dots {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.btn-size {
+    font-size: .60938rem;
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.btn-soft-success {
+    color: #3ab793;
+    background: rgba(0,201,167,.1);
+    border-color: transparent;
+}
+
+.btn-soft-success:hover {
+    color: #fff;
+    box-shadow: 0 0 4px #3ab793;
+}
+
+.rounded-circle {
+    border-radius: 50%;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 0.9fr 0.1fr 1fr;
+    /* grid-gap: 5px; */
+}
+
+.justify-self {
+    justify-self: center;
+}
+
+#proposals .card {
+    margin-bottom: 1.5em;
+}
+
+.btn-outline-green {
+    color: #3ab793 !important;
+    box-shadow: 0 0 4px #3ab793 !important;
+}
+
+.btn-outline-green.disabled {
+    box-shadow: none !important;
+}
+
+.btn-outline-green:hover {
+    color: #fff !important;
+    background-color: #3ab793;
+}
+
+#queryString {
+    color: #3ab793;
+    caret-color: #3ab793;
+    font-size: 1em;
 }

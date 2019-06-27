@@ -17,7 +17,7 @@ export default class ValidatorDetails extends Component{
         return <div>
             <Row>
                 <Col lg={3} xs={12}><h1 className="d-none d-lg-block"><h1 className="d-none d-lg-block"></h1><T>validators.validatorDetails</T></h1></Col>
-                <Col lg={9} xs={12} className="text-lg-right"><ChainStates /></Col>
+                {/* <Col lg={9} xs={12} className="text-lg-right"><ChainStates /></Col> */}
             </Row>
             <Row>
                 <Col md={12}>
