@@ -3,12 +3,14 @@ import Cosmos from "@lunie/cosmos-js"
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Spinner, TabContent, TabPane, Row, Col, Modal, ModalHeader,
-    Form, ModalBody, ModalFooter, InputGroup, InputGroupAddon, Input,
-    UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
+    Form, ModalBody, ModalFooter, InputGroup, InputGroupAddon, Input, Progress,
+    UncontrolledTooltip, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
 import { Ledger } from './ledger.js';
 import { Validators } from '/imports/api/validators/validators.js';
 import AccountTooltip from '/imports/ui/components/AccountTooltip.jsx';
 import Coin from '/both/utils/coins.js';
+import moment from 'moment';
+import numbro from 'numbro';
 
 const maxHeightModifier = {
     setMaxHeight: {
@@ -18,6 +20,7 @@ const maxHeightModifier = {
         }
     }
 }
+
 const Types = {
     DELEGATE: 'delegate',
     REDELEGATE: 'redelegate',
@@ -37,16 +40,16 @@ const TypeMeta = {
         button: 'redelegate',
         pathPreFix: 'staking/delegators',
         pathSuffix: 'redelegations',
-        warning: 'You are only able to redelegate from Validator A → Validator B up to 7 times in a 21 day period.  '+
-                 'Also, There is 21 day cooldown from serial redelegation;  '+
-                 'Once you redelegate from Validator A → Validator B, '+
-                 'you will not be able to redelegate from Validator B to another validator for the next 21 days.'
+        warning: (duration, maxEntries) => `You are only able to redelegate from Validator A → Validator B up to ${maxEntries} times in a ${duration} day period.
+                  Also, There is ${duration} day cooldown from serial redelegation;
+                  Once you redelegate from Validator A to Validator B,
+                  you will not be able to redelegate from Validator B to another validator for the next ${duration} days.`
     },
     [Types.UNDELEGATE]: {
         button: 'undelegate',
         pathPreFix: 'staking/delegators',
         pathSuffix: 'unbonding_delegations',
-        warning: 'There is a 21-day unbonding period.' // TODO: get number from /staking/parameters
+        warning: (duration) => `There is a ${duration} day unbonding period.`
     },
     [Types.WITHDRAW]: {
         button: 'withdraw',
@@ -76,9 +79,28 @@ const isActiveValidator = (validator) => {
     return !validator.jailed && validator.status == 2;
 }
 
+const isBetween = (value, min, max) => {
+    if (value instanceof Coin) value = value.amount;
+    if (min instanceof Coin) min = min.amount;
+    if (max instanceof Coin) max = max.amount;
+    return value >= min && value <= max;
+}
+
+const startsWith = (str, prefix) => {
+    return str.substr(0, prefix.length) === prefix
+}
+
+const isAddress = (address) => {
+    return address && startsWith(address, Meteor.settings.public.bech32PrefixAccAddr)
+}
+
+const isValidatorAddress = (address) => {
+    return address && startsWith(address, Meteor.settings.public.bech32PrefixValAddr)
+}
+
 class LedgerButton extends Component {
     constructor(props) {
-       super(props);
+        super(props);
         this.state = {
             activeTab: '2',
             errorMessage: '',
@@ -176,7 +198,24 @@ class LedgerButton extends Component {
     getBalance = () => {
         if (this.state.loadingBalance) return
 
-        this.initStateOnLoad('loadingBalance', {loading: this.state.actionType === Types.DELEGATE});
+        this.initStateOnLoad('loadingBalance', {
+            loading: this.state.actionType === Types.DELEGATE,
+            loadingRedelegations: this.state.actionType === Types.REDELEGATE
+        });
+
+        if (this.state.actionType === Types.REDELEGATE) {
+            Meteor.call('accounts.getAllRedelegations', this.state.user, this.props.validator.operator_address, (error, result) => {
+                try{
+                    if (result)
+                        this.setStateOnSuccess('loadingRedelegations', {redelegations: result})
+                    if (!result || error) {
+                        this.setStateOnError('loadingRedelegations')
+                    }
+                } catch (e) {
+                    this.setStateOnError('loadingRedelegations', e.message);
+                }
+            })
+        }
 
         Meteor.call('accounts.getAccountDetail', this.state.user, (error, result) => {
             try{
@@ -357,13 +396,17 @@ class LedgerButton extends Component {
         return { action: this.state.actionType }
     }
 
+    isDataValid = () => {
+        return this.state.currentUser != undefined;
+    }
+
     getActionButton = () => {
         if (this.state.activeTab === '0')
             return <Button color="primary"  onClick={this.redirectToSignin}>Sign in With Ledger</Button>
         if (this.state.activeTab === '1')
             return <Button color="primary"  onClick={this.tryConnect}>Continue</Button>
         if (this.state.activeTab === '2')
-            return <Button color="primary"  disabled={this.state.simulating} onClick={this.simulate}>
+            return <Button color="primary"  disabled={this.state.simulating || !this.isDataValid()} onClick={this.simulate}>
                 {(this.state.errorMessage !== '')?'Retry':'Next'}
             </Button>
         if (this.state.activeTab === '3')
@@ -390,29 +433,62 @@ class LedgerButton extends Component {
             {"jailed": false, "status": 2},
             {"sort":{"description.moniker":1}}
         );
-
+        let redelegations = this.state.redelegations || {};
+        let maxEntries = this.props.stakingParams.max_entries;
         return <UncontrolledDropdown direction='down' size='sm' className='redelegate-validators'>
             <DropdownToggle caret={true}>
                 {this.state.targetValidator?this.state.targetValidator.moniker:'Select a Validator'}
             </DropdownToggle>
             <DropdownMenu modifiers={maxHeightModifier}>
-                {activeValidators.map((validator) => {
-                    if (validator.address!=this.props.validator.address)
-                    return <DropdownItem className='validator' name='targetValidator' key={validator.address} onClick={this.handleInputChange} data-type='validator' data-moniker={validator.description.moniker} data-address={validator.operator_address}>
-                        <Row>
-                            <div className='moniker'>{validator.description.moniker}</div>
-                            <div className='address overflow-auto'>{validator.operator_address}</div>
-                        </Row>
-                    </DropdownItem>
+                {activeValidators.map((validator, i) => {
+                    if (validator.address === this.props.validator.address) return null
+
+                    let redelegation = redelegations[validator.operator_address]
+                    let disabled = redelegation && (redelegation.count >= maxEntries);
+                    let completionTime = disabled?moment.utc(redelegation.completionTime).format("D MMM YYYY, h:mm:ssa z"):null;
+                    let id = `validator-option${i}`
+                    return <div id={id} className={`validator disabled-btn-wrapper${disabled?' disabled':''}`}  key={i}>
+                        <DropdownItem name='targetValidator'
+                            onClick={this.handleInputChange} data-type='validator' disabled={disabled}
+                            data-moniker={validator.description.moniker} data-address={validator.operator_address}>
+                            <Row>
+                                <Col xs='12' className='moniker'>{validator.description.moniker}</Col>
+                                <Col xs='3' className="voting-power data">
+                                    <i className="material-icons">power</i>
+                                    {validator.voting_power?numbro(validator.voting_power).format('0,0'):0}
+                                </Col>
+
+                                <Col xs='4' className="commission data">
+                                    <i className="material-icons">call_split</i>
+                                    {numbro(validator.commission.rate).format('0.00%')}
+                                </Col>
+                                <Col xs='5' className="uptime data">
+                                    <Progress value={validator.uptime} style={{width:'80%'}}>
+                                       {validator.uptime?numbro(validator.uptime/100).format('0%'):0}
+                                    </Progress>
+                                </Col>
+                            </Row>
+                        </DropdownItem>
+                        {disabled?<UncontrolledTooltip placement='bottom' target={id}>
+                            <span>You have {maxEntries} regelegations from {this.props.validator.description.moniker}
+                                 to {validator.description.moniker},
+                                you cannot redelegate until {completionTime}</span>
+                        </UncontrolledTooltip>:null}
+                    </div>
                 })}
             </DropdownMenu>
         </UncontrolledDropdown>
     }
 
+    getWarningMessage = () => {
+        return null
+    }
+
     renderConfirmationTab = () => {
+        if (!this.state.actionType) return;
         return <TabPane tabId="3">
             <div className='action-summary-message'>{this.getConfirmationMessage()}</div>
-            <div className='warning-message'>{this.state.actionType && TypeMeta[this.state.actionType].warning} </div>
+            <div className='warning-message'>{this.getWarningMessage()}</div>
             <div className='confirmation-message'>If that's correct, please click next and sign in your ledger device.</div>
         </TabPane>
     }
@@ -446,6 +522,10 @@ class LedgerButton extends Component {
 }
 
 class DelegationButtons extends LedgerButton {
+    constructor(props) {
+        super(props);
+    }
+
     getDelegatedToken = (currentDelegation) => {
         if (currentDelegation && currentDelegation.shares && currentDelegation.tokenPerShare) {
             return new Coin(currentDelegation.shares * currentDelegation.tokenPerShare);
@@ -455,6 +535,24 @@ class DelegationButtons extends LedgerButton {
 
     supportAction(action) {
         return action === Types.DELEGATE || action === Types.REDELEGATE || action === Types.UNDELEGATE;
+    }
+
+    isDataValid = () => {
+        if (!this.state.currentUser) return false;
+
+        let maxAmount;
+        if (this.state.actionType === Types.DELEGATE) {
+            maxAmount = this.state.currentUser.availableCoin;
+        } else{
+            maxAmount = this.getDelegatedToken(this.props.currentDelegation);
+        }
+        let isValid = isBetween(this.state.delegateAmount, 1, maxAmount)
+
+        if (this.state.actionType === Types.REDELEGATE)
+            isValid = isValid || (this.state.targetValidator &&
+                this.state.targetValidator.operator_address &&
+                isValidatorAddress(this.state.targetValidator.operator_address))
+        return isValid
     }
 
     renderActionTab = () => {
@@ -483,16 +581,24 @@ class DelegationButtons extends LedgerButton {
                 maxAmount = this.getDelegatedToken(this.props.currentDelegation);
                 availableStatement = 'your delegated tokens:'
                 break;
-
         }
         return <TabPane tabId="2">
             <h3>{action} {moniker?moniker:validatorAddress} {target?'to':''} {target}</h3>
             <InputGroup>
-               <Input name="delegateAmount" onChange={this.handleInputChange} data-type='coin' placeholder="Amount" min={0} max={maxAmount.stakingAmount} type="number" />
-               <InputGroupAddon addonType="append">{Coin.StakingDenom}</InputGroupAddon>
+                <Input name="delegateAmount" onChange={this.handleInputChange} data-type='coin'
+                    placeholder="Amount" min={Coin.minStake} max={maxAmount.stakingAmount} type="number"
+                    invalid={this.state.delegateAmount != null && !isBetween(this.state.delegateAmount, 1, maxAmount)} />
+                <InputGroupAddon addonType="append">{Coin.StakingDenom}</InputGroupAddon>
             </InputGroup>
             <div>{availableStatement} <Amount coin={maxAmount}/> </div>
         </TabPane>
+    }
+
+    getWarningMessage = () => {
+        let duration = this.props.stakingParams.unbonding_time;
+        let maxEntries = this.props.stakingParams.max_entries;
+        let warning = TypeMeta[this.state.actionType].warning;
+        return warning && warning(duration, maxEntries);
     }
 
     getConfirmationMessage = () => {
@@ -506,11 +612,46 @@ class DelegationButtons extends LedgerButton {
         }
     }
 
+    renderRedelegateButtons = () => {
+        let delegation = this.props.currentDelegation;
+        if (!delegation) return null;
+        let completionTime = delegation.redelegationCompletionTime;
+        let isCompleted = !completionTime || new Date() >= completionTime;
+        let maxEntries = this.props.stakingParams.max_entries;
+        let canUnbond = !delegation.unbonding || maxEntries > delegation.unbonding;
+        return <span>
+            <div id='redelegate-button' className={`disabled-btn-wrapper${isCompleted?'':' disabled'}`}>
+                <Button color="danger" size="sm" disabled={!isCompleted}
+                    onClick={() => this.openModal(Types.REDELEGATE)}>
+                    {TypeMeta[Types.REDELEGATE].button}
+                </Button>
+                {isCompleted?null:<UncontrolledTooltip placement='bottom' target='redelegate-button'>
+                    <span>You have incompleted regelegation to this validator,
+                        you can't redelegate until {moment.utc(completionTime).format("D MMM YYYY, h:mm:ssa z")}
+                    </span>
+                </UncontrolledTooltip>}
+            </div>
+            <div id='undelegate-button' className={`disabled-btn-wrapper${canUnbond?'':' disabled'}`}>
+                <Button color="warning" size="sm" disabled={!canUnbond}
+                    onClick={() => this.openModal(Types.UNDELEGATE)}>
+                    {TypeMeta[Types.UNDELEGATE].button}
+                </Button>
+                {canUnbond?null:<UncontrolledTooltip placement='bottom' target='undelegate-button'>
+                    <span>You reached maximum {maxEntries} unbonding delegation entries,
+                        you can't delegate until the first one matures at {moment.utc(delegation.unbondingCompletionTime).format("D MMM YYYY, h:mm:ssa z")}
+                    </span>
+                </UncontrolledTooltip>}
+            </div>
+        </span>
+    }
+
     render = () => {
         return <span className="ledger-buttons-group float-right">
-            {isActiveValidator(this.props.validator)?<Button color="success" size="sm" onClick={() => this.openModal(Types.DELEGATE)}> {TypeMeta[Types.DELEGATE].button} </Button>:null}
-            {this.props.currentDelegation?<Button color="danger" size="sm" onClick={() => this.openModal(Types.REDELEGATE)}> {TypeMeta[Types.REDELEGATE].button} </Button>:null}
-            {this.props.currentDelegation?<Button color="warning" size="sm" onClick={() => this.openModal(Types.UNDELEGATE)}> {TypeMeta[Types.UNDELEGATE].button} </Button>:null}
+            {isActiveValidator(this.props.validator)?<Button color="success"
+                size="sm" onClick={() => this.openModal(Types.DELEGATE)}>
+                {TypeMeta[Types.DELEGATE].button}
+            </Button>:null}
+            {this.renderRedelegateButtons()}
             {this.renderModal()}
         </span>;
     }
@@ -572,13 +713,18 @@ class TransferButton extends LedgerButton {
         let maxAmount = this.state.currentUser.availableCoin;
         return <TabPane tabId="2">
             <h3>Transfer {Coin.StakingDenom.toUpperCase()}</h3>
-
             <InputGroup>
-               <Input name="transferTarget" onChange={this.handleInputChange} placeholder="Send to" type="text" value={this.state.transferTarget}/>
+                <Input name="transferTarget" onChange={this.handleInputChange}
+                    placeholder="Send to" type="text"
+                    value={this.state.transferTarget}
+                    invalid={this.state.transferTarget != null && !isAddress(this.state.transferTarget)}/>
             </InputGroup>
             <InputGroup>
-               <Input name="transferAmount" onChange={this.handleInputChange} data-type='coin' placeholder="Amount" min={0} max={maxAmount.stakingAmount} type="number"/>
-               <InputGroupAddon addonType="append">{Coin.StakingDenom}</InputGroupAddon>
+                <Input name="transferAmount" onChange={this.handleInputChange}
+                    data-type='coin' placeholder="Amount"
+                    min={Coin.minStake} max={maxAmount.stakingAmount} type="number"
+                    invalid={this.state.transferAmount != null && !isBetween(this.state.transferAmount, 1, maxAmount)}/>
+                <InputGroupAddon addonType="append">{Coin.StakingDenom}</InputGroupAddon>
             </InputGroup>
             <div>your available balance: <Amount coin={maxAmount}/></div>
         </TabPane>
@@ -592,6 +738,11 @@ class TransferButton extends LedgerButton {
         return {
             transferTarget: params.transferTarget
         }
+    }
+
+    isDataValid = () => {
+        if (!this.state.currentUser) return false
+        return isBetween(this.state.transferAmount, 1, this.state.currentUser.availableCoin)
     }
 
     getConfirmationMessage = () => {

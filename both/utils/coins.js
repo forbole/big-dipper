@@ -6,6 +6,7 @@ export default class Coin {
 	static StakingDenom = Meteor.settings.public.stakingDenom.toLowerCase();
 	static MintingDenom = Meteor.settings.public.mintingDenom.toLowerCase();
 	static StakingFraction = Number(Meteor.settings.public.stakingFraction);
+	static MinStake = 1 / Number(Meteor.settings.public.stakingFraction);
 
 	constructor(amount, denom=null) {
 		if (typeof amount === 'object')

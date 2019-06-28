@@ -810,7 +810,7 @@ div#voting-power-dist .card{
   display: inline-block;
 }
 .redelegate-validators .validator:nth-child(even) {
-  background-color: rgba(200,200,200,0.2);
+  background-color: rgba(100,100,100,0.2);
 }
 .redelegate-validators .validator .moniker {
   font-weight: 500;
@@ -843,4 +843,11 @@ div#voting-power-dist .card{
 .ledger-modal-tab .tab-pane .action {
     color: green;
     font-weight: 500;
+}
+
+ .disabled-btn-wrapper > [disabled] {
+    pointer-events: none;
+}
+.disabled-btn-wrapper.disabled {
+    cursor: not-allowed;
 }

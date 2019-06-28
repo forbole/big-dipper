@@ -1,6 +1,17 @@
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 import { Validators } from '/imports/api/validators/validators.js';
+const fetchFromUrl = (url) => {
+    try{
+        let res = HTTP.get(LCD + url);
+        if (res.statusCode == 200){
+            return res
+        };
+    }
+    catch (e){
+        console.log(e);
+    }
+}
 
 Meteor.methods({
     'accounts.getAccountDetail': function(address){
@@ -101,20 +112,34 @@ Meteor.methods({
         return balance;
     },
     'accounts.getDelegation'(address, validator){
-        let url = `${LCD}/staking/delegators/${address}/delegations/${validator}`;
+        let url = `/staking/delegators/${address}/delegations/${validator}`;
+        let delegations = fetchFromUrl(url);
+        delegations = delegations && delegations.data;
+        if (delegations && delegations.shares)
+            delegations.shares = parseFloat(delegations.shares);
 
-        try{
-            let delegations = HTTP.get(url);
-            if (delegations.statusCode == 200){
-                delegation = JSON.parse(delegations.content);
-                if (delegation.shares)
-                    delegation.shares = parseFloat(delegation.shares);
-                return delegation;
-            };
+        url = `/staking/redelegations?delegator=${address}&validator_to=${validator}`;
+        let relegations = fetchFromUrl(url).data;
+        relegations = relegations && relegations.data;
+        let completionTime;
+        if (relegations) {
+            relegations.forEach((relegation) => {
+                let entries = relegation.entries
+                let time = new Date(entries[entries.length-1].completion_time)
+                if (!completionTime || time > completionTime)
+                    completionTime = time
+            })
+            delegations.redelegationCompletionTime = completionTime;
         }
-        catch (e){
-            console.log(e);
+
+        url = `/staking/delegators/${address}/unbonding_delegations/${validator}`;
+        let undelegations = fetchFromUrl(url);
+        undelegations = undelegations && undelegations.data;
+        if (undelegations) {
+            delegations.unbonding = undelegations.entries.length;
+            delegations.unbondingCompletionTime = undelegations.entries[0].completion_time;
         }
+        return delegations;
     },
     'accounts.getAllDelegations'(address){
         let url = LCD + '/staking/delegators/'+address+'/delegations';
@@ -149,6 +174,21 @@ Meteor.methods({
         }
         catch (e){
             console.log(e);
+        }
+    },
+    'accounts.getAllRedelegations'(address, validator){
+        let url = `/staking/redelegations?delegator=${address}&validator_from=${validator}`;
+        let result = fetchFromUrl(url);
+        if (result && result.data) {
+            let redelegations = {}
+            result.data.forEach((redelegation) => {
+                let entries = redelegation.entries;
+                redelegations[redelegation.validator_dst_address] = {
+                    count: entries.length,
+                    completionTime: entries[0].completion_time
+                }
+            })
+            return redelegations
         }
     }
 })
