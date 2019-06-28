@@ -1,5 +1,7 @@
 // Register your apis here
 
+import '../../api/ledger/server/methods.js';
+
 import '../../api/chain/server/methods.js';
 import '../../api/chain/server/publications.js';
 

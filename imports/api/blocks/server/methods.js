@@ -92,9 +92,13 @@ Meteor.methods({
         this.unblock();
         let currHeight = Blockscon.find({},{sort:{height:-1},limit:1}).fetch();
         // console.log("currentHeight:"+currHeight);
-        if (currHeight && currHeight.length == 1)
-            return currHeight[0].height;
-        else return Meteor.settings.params.startHeight;
+        let startHeight = Meteor.settings.params.startHeight;
+        if (currHeight && currHeight.length == 1) {
+            let height = currHeight[0].height;
+            if (height > startHeight)
+                return height
+        }
+        return startHeight
     },
     'blocks.blocksUpdate': function() {
         if (SYNCING)
