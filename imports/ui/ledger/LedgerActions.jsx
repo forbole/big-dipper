@@ -18,6 +18,7 @@ const maxHeightModifier = {
         }
     }
 }
+
 const Types = {
     DELEGATE: 'delegate',
     REDELEGATE: 'redelegate',
@@ -74,6 +75,25 @@ const Amount = (props) => {
 
 const isActiveValidator = (validator) => {
     return !validator.jailed && validator.status == 2;
+}
+
+const isBetween = (value, min, max) => {
+    if (value instanceof Coin) value = value.amount;
+    if (min instanceof Coin) min = min.amount;
+    if (max instanceof Coin) max = max.amount;
+    return value >= min && value <= max;
+}
+
+const startsWith = (str, prefix) => {
+    return str.substr(0, prefix.length) === prefix
+}
+
+const isAddress = (address) => {
+    return address && startsWith(address, Meteor.settings.public.bech32PrefixAccAddr)
+}
+
+const isValidatorAddress = (address) => {
+    return address && startsWith(address, Meteor.settings.public.bech32PrefixValAddr)
 }
 
 class LedgerButton extends Component {
@@ -357,13 +377,17 @@ class LedgerButton extends Component {
         return { action: this.state.actionType }
     }
 
+    isDataValid = () => {
+        return this.state.currentUser != undefined;
+    }
+
     getActionButton = () => {
         if (this.state.activeTab === '0')
             return <Button color="primary"  onClick={this.redirectToSignin}>Sign in With Ledger</Button>
         if (this.state.activeTab === '1')
             return <Button color="primary"  onClick={this.tryConnect}>Continue</Button>
         if (this.state.activeTab === '2')
-            return <Button color="primary"  disabled={this.state.simulating} onClick={this.simulate}>
+            return <Button color="primary"  disabled={this.state.simulating || !this.isDataValid()} onClick={this.simulate}>
                 {(this.state.errorMessage !== '')?'Retry':'Next'}
             </Button>
         if (this.state.activeTab === '3')
@@ -457,6 +481,22 @@ class DelegationButtons extends LedgerButton {
         return action === Types.DELEGATE || action === Types.REDELEGATE || action === Types.UNDELEGATE;
     }
 
+    isDataValid = () => {
+        if (!this.state.currentUser) return false;
+
+        let maxAmount;
+        if (this.state.actionType === Types.DELEGATE) {
+            maxAmount = this.state.currentUser.availableCoin;
+        } else{
+            maxAmount = this.getDelegatedToken(this.props.currentDelegation);
+        }
+        let isValid = isBetween(this.state.delegateAmount, 1, maxAmount)
+
+        if (this.state.actionType === Types.REDELEGATE)
+            isValid = isValid || isValidatorAddress(this.targetValidator.operator_address)
+        return isValid
+    }
+
     renderActionTab = () => {
         if (!this.state.currentUser) return null
         let action;
@@ -483,13 +523,14 @@ class DelegationButtons extends LedgerButton {
                 maxAmount = this.getDelegatedToken(this.props.currentDelegation);
                 availableStatement = 'your delegated tokens:'
                 break;
-
         }
         return <TabPane tabId="2">
             <h3>{action} {moniker?moniker:validatorAddress} {target?'to':''} {target}</h3>
             <InputGroup>
-               <Input name="delegateAmount" onChange={this.handleInputChange} data-type='coin' placeholder="Amount" min={0} max={maxAmount.stakingAmount} type="number" />
-               <InputGroupAddon addonType="append">{Coin.StakingDenom}</InputGroupAddon>
+                <Input name="delegateAmount" onChange={this.handleInputChange} data-type='coin'
+                    placeholder="Amount" min={Coin.minStake} max={maxAmount.stakingAmount} type="number"
+                    invalid={this.state.delegateAmount != null && !isBetween(this.state.delegateAmount, 1, maxAmount)} />
+                <InputGroupAddon addonType="append">{Coin.StakingDenom}</InputGroupAddon>
             </InputGroup>
             <div>{availableStatement} <Amount coin={maxAmount}/> </div>
         </TabPane>
@@ -572,13 +613,18 @@ class TransferButton extends LedgerButton {
         let maxAmount = this.state.currentUser.availableCoin;
         return <TabPane tabId="2">
             <h3>Transfer {Coin.StakingDenom.toUpperCase()}</h3>
-
             <InputGroup>
-               <Input name="transferTarget" onChange={this.handleInputChange} placeholder="Send to" type="text" value={this.state.transferTarget}/>
+                <Input name="transferTarget" onChange={this.handleInputChange}
+                    placeholder="Send to" type="text"
+                    value={this.state.transferTarget}
+                    invalid={this.state.transferTarget != null && !isAddress(this.state.transferTarget)}/>
             </InputGroup>
             <InputGroup>
-               <Input name="transferAmount" onChange={this.handleInputChange} data-type='coin' placeholder="Amount" min={0} max={maxAmount.stakingAmount} type="number"/>
-               <InputGroupAddon addonType="append">{Coin.StakingDenom}</InputGroupAddon>
+                <Input name="transferAmount" onChange={this.handleInputChange}
+                    data-type='coin' placeholder="Amount"
+                    min={Coin.minStake} max={maxAmount.stakingAmount} type="number"
+                    invalid={this.state.transferAmount != null && !isBetween(this.state.transferAmount, 1, maxAmount)}/>
+                <InputGroupAddon addonType="append">{Coin.StakingDenom}</InputGroupAddon>
             </InputGroup>
             <div>your available balance: <Amount coin={maxAmount}/></div>
         </TabPane>
@@ -592,6 +638,11 @@ class TransferButton extends LedgerButton {
         return {
             transferTarget: params.transferTarget
         }
+    }
+
+    isDataValid = () => {
+        if (!this.state.currentUser) return false
+        return isBetween(this.state.transferAmount, 1, this.state.currentUser.availableCoin)
     }
 
     getConfirmationMessage = () => {
