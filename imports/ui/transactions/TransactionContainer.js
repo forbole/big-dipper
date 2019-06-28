@@ -24,11 +24,8 @@ export default TransactionContainer = withTracker((props) => {
         else{
             transactionExist = !loading && !!transaction;
         }
-        if (props.location.search === '?new' && !transactionExist) {
-            loading = true;
-        }
     }
-
+    
     return {
         loading,
         transactionExist,

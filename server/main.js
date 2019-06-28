@@ -18,7 +18,6 @@ timerMissedBlock = 0;
 timerDelegation = 0;
 timerAggregate = 0;
 
-const DEFAULTSETTINGS = '/default_settings.json';
 
 updateChainStatus = () => {
     Meteor.call('chain.updateStatus', (error, result) => {
@@ -153,15 +152,6 @@ aggregateDaily = () =>{
 Meteor.startup(function(){
     if (Meteor.isDevelopment){
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
-        import DEFAULTSETTINGSJSON from '../default_settings.json'
-        Object.keys(DEFAULTSETTINGSJSON).forEach((key) => {
-            if (Meteor.settings[key] == undefined)
-                throw Error(`${key} is missing from settings`);
-            Object.keys(DEFAULTSETTINGSJSON[key]).forEach((param) => {
-                if (Meteor.settings[key][param] == undefined)
-                    throw Error(`${key}.${param} is missing from settings`);
-            })
-        })
     }
 
     Meteor.call('chain.genesis', (err, result) => {
@@ -189,11 +179,11 @@ Meteor.startup(function(){
                 timerProposalsResults = Meteor.setInterval(function(){
                     getProposalsResults();
                 }, Meteor.settings.params.proposalInterval);
-
+                
                 timerMissedBlock = Meteor.setInterval(function(){
                     updateMissedBlockStats();
                 }, Meteor.settings.params.missedBlocksInterval);
-
+            
                 timerDelegation = Meteor.setInterval(function(){
                     getDelegations();
                 }, Meteor.settings.params.delegationInterval);
@@ -203,11 +193,11 @@ Meteor.startup(function(){
                     if ((now.getUTCSeconds() == 0)){
                         aggregateMinutely();
                     }
-
+            
                     if ((now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)){
                         aggregateHourly();
                     }
-
+            
                     if ((now.getUTCHours() == 0) && (now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)){
                         aggregateDaily();
                     }
