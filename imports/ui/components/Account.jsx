@@ -29,7 +29,7 @@ export default class Account extends Component{
         if (validator)
             this.setState({
                 address: `/validator/${validator.address}`,
-                moniker: validator.description.moniker,
+                moniker: validator.description?validator.description.moniker:validator.operator_address,
                 validator: validator
             });
         else
@@ -47,7 +47,7 @@ export default class Account extends Component{
                 // console.log(result);
                 this.setState({
                     address: `/validator/${result.address}`,
-                    moniker: result.description.moniker,
+                    moniker: result.description?result.description.moniker:result.operator_address,
                     validator: result
                 });
             }
