@@ -215,24 +215,26 @@ export default class Validator extends Component{
                         <div className="card-header"><T>validators.validatorInfo</T></div>
                         <CardBody>
                             <Row>
-                                  <Col xs={12}><StatusBadge bondingStatus={this.props.validator.status} jailed={this.props.validator.jailed} /></Col>
-                                  <Col sm={4} className="label"><T>validators.operatorAddress</T></Col>
-                                    <Col sm={8} className="value address" data-operator-address={this.props.validator.operator_address}>{this.props.validator.operator_address}</Col>
-                                  <Col sm={4} className="label"><T>validators.selfDelegationAddress</T></Col>
-                                  <Col sm={8} className="value address" data-delegator-address={this.props.validator.delegator_address}><Link to={"/account/"+this.props.validator.delegator_address}>{this.props.validator.delegator_address}</Link></Col>
-                                  <Col sm={4} className="label"><T>validators.commissionRate</T></Col>
-                                  <Col sm={8} className="value">{this.props.validator.commission?numbro(this.props.validator.commission.rate*100).format('0.00')+"%":''} <small className="text-secondary">({this.state.updateTime})</small></Col>
-                                  <Col sm={4} className="label"><T>validators.maxRate</T></Col>
-                                  <Col sm={8} className="value">{this.props.validator.commission?numbro(this.props.validator.commission.max_rate*100).format('0.00')+"%":''}</Col>
-                                  <Col sm={4} className="label"><T>validators.maxChangeRate</T></Col>
-                                  <Col sm={8} className="value">{this.props.validator.commission?numbro(this.props.validator.commission.max_change_rate*100).format('0.00')+"%":''}</Col>
-                                </Row>
+                                <Col xs={12}><StatusBadge bondingStatus={this.props.validator.status} jailed={this.props.validator.jailed} /></Col>
+                                <Col sm={4} className="label"><T>validators.operatorAddress</T></Col>
+                                <Col sm={8} className="value address" data-operator-address={this.props.validator.operator_address}>{this.props.validator.operator_address}</Col>
+                                <Col sm={4} className="label"><T>validators.selfDelegationAddress</T></Col>
+                                <Col sm={8} className="value address" data-delegator-address={this.props.validator.delegator_address}><Link to={"/account/"+this.props.validator.delegator_address}>{this.props.validator.delegator_address}</Link></Col>
+                                <Col sm={4} className="label"><T>validators.commissionRate</T></Col>
+                                <Col sm={8} className="value">{this.props.validator.commission?numbro(this.props.validator.commission.rate*100).format('0.00')+"%":''} <small className="text-secondary">({this.state.updateTime})</small></Col>
+                                <Col sm={4} className="label"><T>validators.maxRate</T></Col>
+                                <Col sm={8} className="value">{this.props.validator.commission?numbro(this.props.validator.commission.max_rate*100).format('0.00')+"%":''}</Col>
+                                <Col sm={4} className="label"><T>validators.maxChangeRate</T></Col>
+                                <Col sm={8} className="value">{this.props.validator.commission?numbro(this.props.validator.commission.max_change_rate*100).format('0.00')+"%":''}</Col>
+                            </Row>
                           </CardBody>
                       </Card>
                         <Card>
                         <div className="card-header"><T>common.votingPower</T></div>
                             <CardBody className="voting-power-card">
-                            {this.state.user?<DelegationButtons validator={this.props.validator} currentDelegation={this.state.currentUserDelegation} history={this.props.history}/>:''}
+                            {this.state.user?<DelegationButtons validator={this.props.validator}
+                                currentDelegation={this.state.currentUserDelegation}
+                                history={this.props.history} stakingParams={this.props.chainStatus.staking.params}/>:''}
                             <Row>
                                 {this.props.validator.voting_power?<Col xs={12}><h1 className="display-4 voting-power"><Badge color="primary" >{numbro(this.props.validator.voting_power).format('0,0')}</Badge></h1><span>(~{numbro(this.props.validator.voting_power/this.props.chainStatus.activeVotingPower).format('0.00%')})</span></Col>:''}
                                 <Col sm={4} className="label"><T>validators.selfDelegationRatio</T></Col>

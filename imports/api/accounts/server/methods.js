@@ -1,6 +1,17 @@
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 import { Validators } from '/imports/api/validators/validators.js';
+const fetchFromUrl = (url) => {
+    try{
+        let res = HTTP.get(LCD + url);
+        if (res.statusCode == 200){
+            return res
+        };
+    }
+    catch (e){
+        console.log(e);
+    }
+}
 
 Meteor.methods({
     'accounts.getAccountDetail': function(address){
@@ -101,16 +112,40 @@ Meteor.methods({
         return balance;
     },
     'accounts.getDelegation'(address, validator){
-        let url = `${LCD}/staking/delegators/${address}/delegations/${validator}`;
-
         try{
+            let url = `${LCD}/staking/delegators/${address}/delegations/${validator}`;
             let delegations = HTTP.get(url);
+            let delegation;
             if (delegations.statusCode == 200){
                 delegation = JSON.parse(delegations.content);
                 if (delegation.shares)
                     delegation.shares = parseFloat(delegation.shares);
-                return delegation;
-            };
+            }
+
+            url = `${LCD}/staking/redelegations?delegator=${address}&validator_to=${validator}`;
+            let relegations = HTTP.get(url);
+            if (relegations.statusCode == 200){
+                relegations = relegations.data;
+                let completionTime;
+                if (relegations) {
+                    relegations.forEach((relegation) => {
+                        let entries = relegation.entries
+                        let time = new Date(entries[entries.length-1].completion_time)
+                        if (!completionTime || time > completionTime)
+                            completionTime = time
+                    })
+                }
+                delegation.completionTime = completionTime;
+            }
+
+            url = `${LCD}/staking/delegators/${address}/unbonding_delegations/${validator}`;
+            let undelegations = HTTP.get(url);
+            if (undelegations.statusCode == 200){
+                undelegations = undelegations.data;
+                delegation.unbonding = undelegations.entries.length;
+            }
+            return delegation;
+
         }
         catch (e){
             console.log(e);
@@ -150,5 +185,23 @@ Meteor.methods({
         catch (e){
             console.log(e);
         }
+    },
+    'accounts.getAllRedelegations'(address){
+        // TODO (store this in db and recheck every few blocks instead of querying LCD everytime)
+        let params = fetchFromUrl('/staking/parameters')
+        if (!params) return;
+        params = params.data;
+
+        let result = fetchFromUrl(`/staking/redelegations?${address}`);
+        if (!result) return;
+        result = result.data;
+        if (result) {
+            return result.map((redelegation) => {
+
+            })
+        }
+
+
+
     }
 })
