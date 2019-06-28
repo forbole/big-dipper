@@ -112,44 +112,34 @@ Meteor.methods({
         return balance;
     },
     'accounts.getDelegation'(address, validator){
-        try{
-            let url = `${LCD}/staking/delegators/${address}/delegations/${validator}`;
-            let delegations = HTTP.get(url);
-            let delegation;
-            if (delegations.statusCode == 200){
-                delegation = JSON.parse(delegations.content);
-                if (delegation.shares)
-                    delegation.shares = parseFloat(delegation.shares);
-            }
+        let url = `/staking/delegators/${address}/delegations/${validator}`;
+        let delegations = fetchFromUrl(url);
+        delegations = delegations && delegations.data;
+        if (delegations && delegations.shares)
+            delegations.shares = parseFloat(delegations.shares);
 
-            url = `${LCD}/staking/redelegations?delegator=${address}&validator_to=${validator}`;
-            let relegations = HTTP.get(url);
-            if (relegations.statusCode == 200){
-                relegations = relegations.data;
-                let completionTime;
-                if (relegations) {
-                    relegations.forEach((relegation) => {
-                        let entries = relegation.entries
-                        let time = new Date(entries[entries.length-1].completion_time)
-                        if (!completionTime || time > completionTime)
-                            completionTime = time
-                    })
-                }
-                delegation.completionTime = completionTime;
-            }
-
-            url = `${LCD}/staking/delegators/${address}/unbonding_delegations/${validator}`;
-            let undelegations = HTTP.get(url);
-            if (undelegations.statusCode == 200){
-                undelegations = undelegations.data;
-                delegation.unbonding = undelegations.entries.length;
-            }
-            return delegation;
-
+        url = `/staking/redelegations?delegator=${address}&validator_to=${validator}`;
+        let relegations = fetchFromUrl(url).data;
+        relegations = relegations && relegations.data;
+        let completionTime;
+        if (relegations) {
+            relegations.forEach((relegation) => {
+                let entries = relegation.entries
+                let time = new Date(entries[entries.length-1].completion_time)
+                if (!completionTime || time > completionTime)
+                    completionTime = time
+            })
+            delegations.redelegationCompletionTime = completionTime;
         }
-        catch (e){
-            console.log(e);
+
+        url = `/staking/delegators/${address}/unbonding_delegations/${validator}`;
+        let undelegations = fetchFromUrl(url);
+        undelegations = undelegations && undelegations.data;
+        if (undelegations) {
+            delegations.unbonding = undelegations.entries.length;
+            delegations.unbondingCompletionTime = undelegations.entries[0].completion_time;
         }
+        return delegations;
     },
     'accounts.getAllDelegations'(address){
         let url = LCD + '/staking/delegators/'+address+'/delegations';
@@ -186,22 +176,19 @@ Meteor.methods({
             console.log(e);
         }
     },
-    'accounts.getAllRedelegations'(address){
-        // TODO (store this in db and recheck every few blocks instead of querying LCD everytime)
-        let params = fetchFromUrl('/staking/parameters')
-        if (!params) return;
-        params = params.data;
-
-        let result = fetchFromUrl(`/staking/redelegations?${address}`);
-        if (!result) return;
-        result = result.data;
-        if (result) {
-            return result.map((redelegation) => {
-
+    'accounts.getAllRedelegations'(address, validator){
+        let url = `/staking/redelegations?delegator=${address}&validator_from=${validator}`;
+        let result = fetchFromUrl(url);
+        if (result && result.data) {
+            let redelegations = {}
+            result.data.forEach((redelegation) => {
+                let entries = redelegation.entries;
+                redelegations[redelegation.validator_dst_address] = {
+                    count: entries.length,
+                    completionTime: entries[0].completion_time
+                }
             })
+            return redelegations
         }
-
-
-
     }
 })
