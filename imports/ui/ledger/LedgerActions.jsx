@@ -29,6 +29,8 @@ const Types = {
     SEND: 'send'
 }
 
+const durationToDay = 1/60/60/24/10e8;
+
 const TypeMeta = {
     [Types.DELEGATE]: {
         button: 'delegate',
@@ -40,16 +42,21 @@ const TypeMeta = {
         button: 'redelegate',
         pathPreFix: 'staking/delegators',
         pathSuffix: 'redelegations',
-        warning: (duration, maxEntries) => `You are only able to redelegate from Validator A → Validator B up to ${maxEntries} times in a ${duration} day period.
-                  Also, There is ${duration} day cooldown from serial redelegation;
+        warning: (duration, maxEntries) => {
+                let day = duration*durationToDay;
+                return `You are only able to redelegate from Validator A to Validator B
+                  up to ${maxEntries} times in a ${day} day period.
+                  Also, There is ${day} day cooldown from serial redelegation;
                   Once you redelegate from Validator A to Validator B,
-                  you will not be able to redelegate from Validator B to another validator for the next ${duration} days.`
+                  you will not be able to redelegate from Validator B to another
+                  validator for the next ${day} days.`
+              }
     },
     [Types.UNDELEGATE]: {
         button: 'undelegate',
         pathPreFix: 'staking/delegators',
         pathSuffix: 'unbonding_delegations',
-        warning: (duration) => `There is a ${duration} day unbonding period.`
+        warning: (duration) => `There is a ${duration*durationToDay}-day unbonding period.`
     },
     [Types.WITHDRAW]: {
         button: 'withdraw',
