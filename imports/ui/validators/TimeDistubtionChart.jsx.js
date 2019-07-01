@@ -77,7 +77,7 @@ export default class TimeDistubtionChart extends Component{
                         yScales: ['yScale']
                     }
                 },
-                tooltip: (c, p, data, ds) => `missed ${data.y} blocks ${displayTimeRange(data.x)}`
+                tooltip: (c, p, data, ds) => `missed ${data.y} ${this.props.type} ${displayTimeRange(data.x)}`
             }],
             axes: [{
                 axisId: 'xAxis',
@@ -150,7 +150,7 @@ export default class TimeDistubtionChart extends Component{
                     value: 'rgba(200, 200, 200, 0.3)'
                 }],
                 datasets: ['breakdown'],
-                tooltip: (c, p, data, ds) => `missed ${data.count} blocks on ${data.day} at ${data.hour}`
+                tooltip: (c, p, data, ds) => `missed ${data.count} ${this.props.type} on ${data.day} at ${data.hour}`
             }],
             axes: [{
                 axisId: 'xAxis',
@@ -182,13 +182,13 @@ export default class TimeDistubtionChart extends Component{
         let data = this.populateChartData();
         return [
             <Card key='timeilne'>
-                <CardHeader>History Missed Blocks</CardHeader>
+                <CardHeader>History Missed <span className='capitalize'>{this.props.type}</span></CardHeader>
                 <CardBody>
                     <PChart {...this.populateTimelineChart(data.timeline)} />
                 </CardBody>
             </Card>,
             <Card key='breakdown'>
-                <CardHeader>Missed Blocks By Time of Day</CardHeader>
+                <CardHeader>Missed <span className='capitalize'>{this.props.type}</span> By Time of Day</CardHeader>
                 <CardBody>
                     <PChart {...this.populateBreakDownChart(data.breakdown)} />
                 </CardBody>

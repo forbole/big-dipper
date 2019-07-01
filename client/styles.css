@@ -797,3 +797,6 @@ div#voting-power-dist .card{
     cursor: help;
     opacity: 0.7;
 }
+.capitalize {
+    text-transform: capitalize
+}
