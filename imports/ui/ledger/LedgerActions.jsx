@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Button, Spinner, TabContent, TabPane, Row, Col, Modal, ModalHeader,
     Form, ModalBody, ModalFooter, InputGroup, InputGroupAddon, Input, Progress,
     UncontrolledTooltip, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
-import { Ledger } from './ledger.js';
+import { Ledger, DEFAULT_GAS_PRICE} from './ledger.js';
 import { Validators } from '/imports/api/validators/validators.js';
 import AccountTooltip from '/imports/ui/components/AccountTooltip.jsx';
 import Coin from '/both/utils/coins.js';
@@ -77,11 +77,14 @@ const TypeMeta = {
 const Amount = (props) => {
     if (!props.coin && !props.amount) return null
     let coin = props.coin || new Coin(props.amount);
-    let amount = (props.mint)?coin.amount:coin.stakingAmount;
+    let amount = (props.mint)?Math.round(coin.amount):coin.stakingAmount;
     let denom = (props.mint)?Coin.MintingDenom:Coin.StakingDenom;
-    return <span><span className='amount'>{amount}</span> <span className='denom'>{denom}</span></span>
+    return <span><span className={props.className || 'amount'}>{amount}</span> <span className='denom'>{denom}</span></span>
 }
 
+const Fee = (props) => {
+    return <span><Amount mint className='gas' amount={props.gas * DEFAULT_GAS_PRICE}/> as fee</span>
+}
 
 const isActiveValidator = (validator) => {
     return !validator.jailed && validator.status == 2;
@@ -612,11 +615,11 @@ class DelegationButtons extends LedgerButton {
     getConfirmationMessage = () => {
         switch (this.state.actionType) {
             case Types.DELEGATE:
-                return <span>You are going to <span className='action'>delegate</span> <Amount coin={this.state.delegateAmount}/> to <AccountTooltip address={this.props.validator.operator_address} sync/> with <span className='gas'>{this.state.gasEstimate}</span> as gas.</span>
+                return <span>You are going to <span className='action'>delegate</span> <Amount coin={this.state.delegateAmount}/> to <AccountTooltip address={this.props.validator.operator_address} sync/> with <Fee gas={this.state.gasEstimate}/>.</span>
             case Types.REDELEGATE:
-                return <span>You are going to <span className='action'>redelegate</span> <Amount coin={this.state.delegateAmount}/> from <AccountTooltip address={this.props.validator.operator_address} sync/> to <AccountTooltip address={this.state.targetValidator && this.state.targetValidator.operator_address} sync/> with <span className='gas'>{this.state.gasEstimate}</span> as gas.</span>
+                return <span>You are going to <span className='action'>redelegate</span> <Amount coin={this.state.delegateAmount}/> from <AccountTooltip address={this.props.validator.operator_address} sync/> to <AccountTooltip address={this.state.targetValidator && this.state.targetValidator.operator_address} sync/> with <Fee gas={this.state.gasEstimate}/>.</span>
             case Types.UNDELEGATE:
-                return <span>You are going to <span className='action'>undelegate</span> <Amount coin={this.state.delegateAmount}/> from <AccountTooltip address={this.props.validator.operator_address} sync/> with <span className='gas'>{this.state.gasEstimate}</span> as gas.</span>
+                return <span>You are going to <span className='action'>undelegate</span> <Amount coin={this.state.delegateAmount}/> from <AccountTooltip address={this.props.validator.operator_address} sync/> with <Fee gas={this.state.gasEstimate}/>.</span>
         }
     }
 
@@ -702,9 +705,9 @@ class WithdrawButton extends LedgerButton {
 
     getConfirmationMessage = () => {
         return <span>You are going to <span className='action'>withdraw</span> rewards <Amount amount={this.props.rewards}/>
-            {this.props.commission?<span> and commission <Amount amount={this.props.commission}/></span>:null}
-             with  <span className='gas'>{this.state.gasEstimate}</span> as fee.
-        </span>
+             {this.props.commission?<span> and commission <Amount amount={this.props.commission}/></span>:null}
+            <span> with  <Fee gas={this.state.gasEstimate}/>.</span>
+         </span>
     }
 
     render = () => {
@@ -758,7 +761,7 @@ class TransferButton extends LedgerButton {
 
     getConfirmationMessage = () => {
         return <span>You are going to <span className='action'>send</span> <Amount coin={this.state.transferAmount}/> to {this.state.transferTarget}
-            with <span className='gas'>{this.state.gasEstimate}</span> as fee.
+            with <Fee gas={this.state.gasEstimate}/>.
         </span>
     }
 
