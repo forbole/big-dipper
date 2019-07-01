@@ -39,7 +39,7 @@ export default class MissedBlocks extends Component{
                         <div className="mt-3">
                             <p className="lead"><T>validators.totalMissed</T> {this.isVoter()?<T>common.blocks</T>:<T>common.precommits</T>}: {this.props.missedRecords.length}</p>
                             <CardDeck>
-                                <TimeDistubtionChart missedRecords={this.props.missedRecords}/>
+                                <TimeDistubtionChart missedRecords={this.props.missedRecords} type={this.isVoter()?'blocks':'precommits'}/>
                             </CardDeck>
                             <MissedBlocksTable missedStats={this.props.missedRecordsStats} missedRecords={this.props.missedRecords} type={this.isVoter()?'voter':'proposer'}/>
 

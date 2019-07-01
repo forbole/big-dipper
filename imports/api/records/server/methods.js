@@ -87,6 +87,13 @@ Meteor.methods({
                     let proposerAddress = block.proposerAddress;
                     let votedValidators = new Set(block.validators);
                     let validatorSets = ValidatorSets.findOne({block_height:block.height});
+                    let votedVotingPower = 0;
+
+                    validatorSets.validators.forEach((activeValidator) => {
+                        if (votedValidators.has(activeValidator.address))
+                            votedVotingPower += parseFloat(activeValidator.voting_power)
+                    })
+
                     validatorSets.validators.forEach((activeValidator) => {
                         let currentValidator = activeValidator.address
                         if (!_.has(proposerVoterStats, [proposerAddress, currentValidator])) {
@@ -108,6 +115,7 @@ Meteor.methods({
                                 averageBlockTime: block.averageBlockTime,
                                 timeDiff: block.timeDiff,
                                 votingPower: block.voting_power,
+                                votedVotingPower,
                                 updatedAt: latestHeight,
                                 missCount: _.get(proposerVoterStats, [proposerAddress, currentValidator, 'missCount']),
                                 totalCount: _.get(proposerVoterStats, [proposerAddress, currentValidator, 'totalCount'])
