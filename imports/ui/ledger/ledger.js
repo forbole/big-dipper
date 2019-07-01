@@ -15,7 +15,7 @@ const REQUIRED_COSMOS_APP_VERSION = "1.5.0"
 const DEFAULT_MEMO = 'Sent via Big Dipper'
 const DEFAULT_DENOM = 'uatom';
 const DEFAULT_GAS = 200000;
-const DEFAULT_GAS_PRICE = 0.025;
+export const DEFAULT_GAS_PRICE = 0.025;
 
 /*
 HD wallet derivation path (BIP44)
