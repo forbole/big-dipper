@@ -26,7 +26,7 @@ Meteor.methods({
                     account = response.value;
                 else if (response.type === 'auth/DelayedVestingAccount' || response.type === 'auth/ContinuousVestingAccount')
                     account = response.value.BaseVestingAccount.BaseAccount
-                if (account && account.public_key != null)
+                if (account && account.account_number != null)
                     return account
                 return null
             }

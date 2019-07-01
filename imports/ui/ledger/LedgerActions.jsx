@@ -29,6 +29,8 @@ const Types = {
     SEND: 'send'
 }
 
+const durationToDay = 1/60/60/24/10e8;
+
 const TypeMeta = {
     [Types.DELEGATE]: {
         button: 'delegate',
@@ -40,16 +42,21 @@ const TypeMeta = {
         button: 'redelegate',
         pathPreFix: 'staking/delegators',
         pathSuffix: 'redelegations',
-        warning: (duration, maxEntries) => `You are only able to redelegate from Validator A → Validator B up to ${maxEntries} times in a ${duration} day period.
-                  Also, There is ${duration} day cooldown from serial redelegation;
+        warning: (duration, maxEntries) => {
+                let day = duration*durationToDay;
+                return `You are only able to redelegate from Validator A to Validator B
+                  up to ${maxEntries} times in a ${day} day period.
+                  Also, There is ${day} day cooldown from serial redelegation;
                   Once you redelegate from Validator A to Validator B,
-                  you will not be able to redelegate from Validator B to another validator for the next ${duration} days.`
+                  you will not be able to redelegate from Validator B to another
+                  validator for the next ${day} days.`
+              }
     },
     [Types.UNDELEGATE]: {
         button: 'undelegate',
         pathPreFix: 'staking/delegators',
         pathSuffix: 'unbonding_delegations',
-        warning: (duration) => `There is a ${duration} day unbonding period.`
+        warning: (duration) => `There is a ${duration*durationToDay}-day unbonding period.`
     },
     [Types.WITHDRAW]: {
         button: 'withdraw',
@@ -59,7 +66,8 @@ const TypeMeta = {
         gasAdjustment: '1.4'
     },
     [Types.SEND]: {
-        button: 'send',
+        button: 'transfer',
+        button_other: 'send',
         pathPreFix: 'bank/accounts',
         pathSuffix: 'transfers',
         warning: ''
@@ -224,9 +232,8 @@ class LedgerButton extends Component {
                     this.setStateOnSuccess('loadingBalance', {
                         currentUser: {
                             accountNumber: result.account_number,
-                            sequence: result.sequence,
-                            availableCoin: coin,
-                            pubKey: result.public_key.value
+                            sequence: result.sequence || 0,
+                            availableCoin: coin
                     }})
                 }
                 if (!result || error) {
@@ -247,7 +254,8 @@ class LedgerButton extends Component {
             if (res.address == this.state.user)
                 this.setState({
                     success: true,
-                    activeTab: this.state.activeTab ==='1' ? '2': this.state.activeTab
+                    activeTab: this.state.activeTab ==='1' ? '2': this.state.activeTab,
+                    pubKey: Buffer.from(res.pubKey).toString('base64')
                 })
             else {
                 if (this.state.isOpen) {
@@ -271,7 +279,7 @@ class LedgerButton extends Component {
             accountNumber: this.state.currentUser.accountNumber,
             sequence: this.state.currentUser.sequence,
             denom: Coin.MintingDenom,
-            pk: this.state.currentUser.pubKey,
+            pk: this.state.pubKey,
             path: [44, 118, 0, 0, 0],
         }
     }
@@ -701,7 +709,10 @@ class WithdrawButton extends LedgerButton {
 
     render = () => {
         return <span className="ledger-buttons-group float-right">
-            <Button color="success" size="sm" onClick={() => this.openModal(Types.WITHDRAW)}> {TypeMeta[Types.WITHDRAW].button} </Button>
+            <Button color="success" size="sm" disabled={!this.props.rewards}
+                onClick={() => this.openModal(Types.WITHDRAW)}>
+                {TypeMeta[Types.WITHDRAW].button}
+            </Button>
             {this.renderModal()}
         </span>;
     }
@@ -752,9 +763,14 @@ class TransferButton extends LedgerButton {
     }
 
     render = () => {
-        let params = this.props.address !== this.state.user?{transferTarget: this.props.address}: {};
+        let params = {};
+        let button = TypeMeta[Types.SEND].button;
+        if (this.props.address !== this.state.user) {
+            params = {transferTarget: this.props.address}
+            button = TypeMeta[Types.SEND].button_other
+        }
         return <span className="ledger-buttons-group float-right">
-            <Button color="info" size="sm" onClick={() => this.openModal(Types.SEND, params)}> {TypeMeta[Types.SEND].button} </Button>
+            <Button color="info" size="sm" onClick={() => this.openModal(Types.SEND, params)}> {button} </Button>
             {this.renderModal()}
         </span>;
     }
