@@ -4,6 +4,8 @@ import { Transactions } from '../../transactions/transactions.js';
 import { Validators } from '../../validators/validators.js';
 import { VotingPowerHistory } from '../../voting-power/history.js';
 
+const AddressLength = 40;
+
 Meteor.methods({
     'Transactions.index': function(hash, blockTime){
         this.unblock();
@@ -114,7 +116,9 @@ Meteor.methods({
             // delegator address
             validator = Validators.findOne({delegator_address:address}, {fields});
         }
-
+        else if (address.length === AddressLength) {
+            validator = Validators.findOne({address:address}, {fields});
+        }
         if (validator){
             return validator;
         }

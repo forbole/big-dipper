@@ -7,6 +7,7 @@ import '/imports/startup/both';
 
 SYNCING = false;
 COUNTMISSEDBLOCKS = false;
+COUNTMISSEDBLOCKSSTATS = false;
 RPC = Meteor.settings.remote.rpc;
 LCD = Meteor.settings.remote.lcd;
 timerBlocks = 0;
@@ -72,15 +73,25 @@ getProposalsResults = () => {
     });
 }
 
-updateMissedBlockStats = () => {
+updateMissedBlocks = () => {
     Meteor.call('ValidatorRecords.calculateMissedBlocks', (error, result) =>{
         if (error){
-            console.log("missblocks error: "+ error)
+            console.log("missed blocks error: "+ error)
         }
         if (result){
             console.log("missed blocks ok:" + result);
         }
     });
+/*
+    Meteor.call('ValidatorRecords.calculateMissedBlocksStats', (error, result) =>{
+        if (error){
+            console.log("missed blocks stats error: "+ error)
+        }
+        if (result){
+            console.log("missed blocks stats ok:" + result);
+        }
+    });
+*/
 }
 
 getDelegations = () => {
@@ -191,7 +202,7 @@ Meteor.startup(function(){
                 }, Meteor.settings.params.proposalInterval);
 
                 timerMissedBlock = Meteor.setInterval(function(){
-                    updateMissedBlockStats();
+                    updateMissedBlocks();
                 }, Meteor.settings.params.missedBlocksInterval);
 
                 timerDelegation = Meteor.setInterval(function(){

@@ -796,6 +796,7 @@ div#voting-power-dist .card{
   border-left-color: #444;
 }
 
+
 .validator-tooltip .tooltip-inner {
     color: #444;
     min-width: 200px;
@@ -845,9 +846,41 @@ div#voting-power-dist .card{
     font-weight: 500;
 }
 
- .disabled-btn-wrapper > [disabled] {
+.disabled-btn-wrapper > [disabled] {
     pointer-events: none;
 }
 .disabled-btn-wrapper.disabled {
     cursor: not-allowed;
+}
+
+.missed-records-table tbody tr.main-row:nth-of-type(odd) {
+    background-color: rgba(0,0,0,0.05);
+}
+
+.missed-records-table tbody tr.sub-row:nth-of-type(odd) {
+    background-color: rgba(0,0,0,0.05);
+}
+
+.missed-records-table td.caret {
+  width: 10px;
+  padding: 0.75rem 0;
+}
+
+.missed-records-grouped-table .validator-row.sub-row > td,
+.missed-records-grouped-table .sub-row th {
+    border-top: none;
+}
+
+.missed-records-grouped-table .validator-row.expanded {
+    background-color: rgba(200,200,200,0.2);
+}
+
+.missed-records-table-card {
+    margin-top: 10px;
+}
+
+.material-icons.info-icon {
+    font-size: 18px;
+    cursor: help;
+    opacity: 0.7;
 }
