@@ -80,20 +80,13 @@ export default class MissedBlocksTable extends Component{
         this.state = {
             expandedRow: -1,
             expandedValidator: -1,
-            groupByValidators: this.props.type !== 'voter'
+            groupByValidators: this.props.type === 'voter'
         }
     }
 
     componentDidUpdate(prevProps) {
         if (prevProps.type !== this.props.type)
-            this.setState({groupByValidators: this.props.type !== 'voter'})
-    }
-
-    getType = (cap=false) => {
-        if (this.props.type === 'voter')
-            return cap?'Proposer':'proposer'
-        else
-            return cap?'Voter':'voter'
+            this.setState({groupByValidators: this.props.type === 'voter'})
     }
 
     toggleGroupByValidators = (e) => {
@@ -136,7 +129,7 @@ export default class MissedBlocksTable extends Component{
         else {
             return <tr key={index} className={isSub?'sub-row':'main-row'}>
                 <td colSpan={isSub?1:2}><BlockLink height={record.blockHeight}/></td>
-                {grouped?null:<td><Account sync={true} address={record[this.getType()]}/></td>}
+                {grouped?null:<td><Account sync={true} address={record[this.props.type]}/></td>}
                 <td>{ displayTime(record.time) }</td>
                 <td>{ numbro(parseFloat(record.timeDiff)/1000).format('0.00')+'s'}</td>
                 <td>{ record.missCount }</td>
@@ -154,7 +147,7 @@ export default class MissedBlocksTable extends Component{
         return <Table className="missed-records-table">
             <thead><tr>
                 <th colSpan='2'>Block Height</th>
-                {grouped?null:<th>{this.getType(true)}</th>}
+                {grouped?null:<th className='text-capitalize'>{this.props.type}</th>}
                 <th>Commit Time</th>
                 <th>Block Time</th>
                 <th>Missed Count</th>
@@ -169,12 +162,12 @@ export default class MissedBlocksTable extends Component{
     }
 
     renderGroupedTable = () => {
-        let target = this.getType();
+        let target = this.props.type;
         let groupedData = groupData(this.props.missedStats, this.props.missedRecords, target);
         return <Table className='missed-records-grouped-table'>
             <thead><tr>
                 <th></th>
-                <th>{this.getType(true)}</th>
+                <th className='text-capitalize'>{this.props.type}</th>
                 <th>Missed Count</th>
                 <th>Total Count<InfoIcon tooltipText='Number of blocks proposed by same proposer where current validator is an active validator'/></th>
                 <th>Missed Ratio</th>

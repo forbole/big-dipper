@@ -182,13 +182,13 @@ export default class TimeDistubtionChart extends Component{
         let data = this.populateChartData();
         return [
             <Card key='timeilne'>
-                <CardHeader>History Missed <span className='capitalize'>{this.props.type}</span></CardHeader>
+                <CardHeader className='text-capitalize'>History Missed {this.props.type}</CardHeader>
                 <CardBody>
                     <PChart {...this.populateTimelineChart(data.timeline)} />
                 </CardBody>
             </Card>,
             <Card key='breakdown'>
-                <CardHeader>Missed <span className='capitalize'>{this.props.type}</span> By Time of Day</CardHeader>
+                <CardHeader className='text-capitalize'>Missed {this.props.type} By Time of Day</CardHeader>
                 <CardBody>
                     <PChart {...this.populateBreakDownChart(data.breakdown)} />
                 </CardBody>
