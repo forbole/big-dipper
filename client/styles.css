@@ -67,6 +67,36 @@ span#network-nav{
 #header .dropdown-item a span.badge{
     transform: translateY(-1px);
 }
+#header #user-acconut-icon a, #header #user-acconut-icon i, #header #user-acconut-icon .btn-link, #header .sign-in-btn {
+    color: rgba(255,255,255,0.75);
+}
+
+.ledger-sign-in .error-message, .ledger-modal .error-message{
+    color: red;
+}
+
+#header .sign-in-btn {
+    margin-top: 5px;
+}
+#header #user-acconut-icon a {
+    position: relative;
+    bottom: 7px;
+}
+
+#header #user-acconut-icon i {
+    cursor: pointer;
+}
+
+#header #user-acconut-icon .d-lg-block {
+    height: 100%;
+}
+
+#header #user-acconut-icon .d-lg-block i{
+    align-items: center;
+    display: flex;
+    height: 100%;
+    margin-left: 10px;
+}
 
 div#loadmore {
     margin: 0.5rem auto;
@@ -393,8 +423,8 @@ div#countdown {
     background-color: #20c997
 }
 
-#account .total{
-    margin-top: 0.8em;
+#account .commission{
+    background-color: #ff9800
 }
 
 #account .total .value{
@@ -764,6 +794,63 @@ div#voting-power-dist .card{
   left: 0;
   border-width: 0.4rem 0 0.4rem 0.4rem;
   border-left-color: #444;
+}
+
+
+.validator-tooltip .tooltip-inner {
+    color: #444;
+    min-width: 200px;
+}
+
+.validator-tooltip-card .avatar img {
+    max-width: 100px;
+    padding-bottom: 10px;
+}
+
+.redelegate-validators {
+  display: inline-block;
+}
+.redelegate-validators .validator:nth-child(even) {
+  background-color: rgba(100,100,100,0.2);
+}
+.redelegate-validators .validator .moniker {
+  font-weight: 500;
+  display: inline-block;
+  font-size: 1.2em;
+}
+.ledger-buttons-group button {
+  display: block;
+  margin: 5px 0;
+  width: 100%;
+}
+
+.redelegate-validators .ellipsis {
+    display: inline-block;
+    max-width: 100%;
+}
+
+.material-icons.account-icon {
+    vertical-align: bottom;
+}
+
+.ledger-modal-tab .tab-pane .amount {
+    color: orangered;
+    font-weight: 500;
+}
+.ledger-modal-tab .tab-pane .gas {
+    color: darkslategray;
+    font-weight: 500;
+}
+.ledger-modal-tab .tab-pane .action {
+    color: green;
+    font-weight: 500;
+}
+
+.disabled-btn-wrapper > [disabled] {
+    pointer-events: none;
+}
+.disabled-btn-wrapper.disabled {
+    cursor: not-allowed;
 }
 
 .missed-records-table tbody tr.main-row:nth-of-type(odd) {

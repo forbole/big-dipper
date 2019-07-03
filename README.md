@@ -14,7 +14,7 @@ Forbole Block Explorer for Cosmos
 
 ## How to run The Big Dipper
 
-1. Copy `settings.json.default` to `settings.json`.
+1. Copy `default_settings.json` to `settings.json`.
 2. Update the RPC and LCD URLs.
 3. Update Bech32 address prefixes.
 4. Update genesis file location.

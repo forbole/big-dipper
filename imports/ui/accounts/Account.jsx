@@ -2,11 +2,13 @@ import React, { Component } from 'react';
 import { Spinner, UncontrolledTooltip, Row, Col, Card, CardHeader, CardBody, Progress } from 'reactstrap';
 import numbro from 'numbro';
 import AccountCopy from '../components/AccountCopy.jsx';
+import LinkIcon from '../components/LinkIcon.jsx';
 import Delegations from './Delegations.jsx';
 import Unbondings from './Unbondings.jsx';
 import AccountTransactions from '../components/TransactionsContainer.js';
 import ChainStates from '../components/ChainStatesContainer.js'
 import { Helmet } from 'react-helmet';
+import { WithdrawButton, TransferButton } from '../ledger/LedgerActions.jsx';
 import i18n from 'meteor/universe:i18n';
 
 const T = i18n.createComponent();
@@ -22,8 +24,16 @@ export default class AccountDetails extends Component{
             unbonding: 0,
             rewards: 0,
             total: 0,
-            price: 0
+            price: 0,
+            user: localStorage.getItem(CURRENTUSERADDR)
         }
+    }
+
+    static getDerivedStateFromProps(props, state) {
+        if (state.user !== localStorage.getItem(CURRENTUSERADDR)) {
+            return {user: localStorage.getItem(CURRENTUSERADDR)};
+        }
+        return null;
     }
 
     getBalance(){
@@ -80,6 +90,15 @@ export default class AccountDetails extends Component{
                     }, this)
                 }
 
+                if (result.commission){
+                    this.setState({
+                        operator_address: result.operator_address,
+                        commission: parseFloat(result.commission.amount),
+                        total: parseFloat(this.state.total)+parseFloat(result.commission.amount)
+                    })
+                }
+
+
                 this.setState({
                     loading:false,
                     accountExists: true
@@ -93,7 +112,7 @@ export default class AccountDetails extends Component{
     }
 
     componentDidUpdate(prevProps){
-        if (this.props != prevProps){
+        if (this.props.match.params.address !== prevProps.match.params.address){
             this.setState({
                 address: this.props.match.params.address,
                 loading: true,
@@ -101,6 +120,7 @@ export default class AccountDetails extends Component{
                 available: 0,
                 delegated: 0,
                 unbonding: 0,
+                commission: 0,
                 rewards: 0,
                 total: 0,
                 price: 0
@@ -108,6 +128,14 @@ export default class AccountDetails extends Component{
                 this.getBalance();
             })
         }
+    }
+
+    renderShareLink() {
+        let primaryLink = `/account/${this.state.address}`
+        let otherLinks = [
+            {label: 'Transfer', url: `${primaryLink}/send`}
+        ]
+        return <LinkIcon link={primaryLink} otherLinks={otherLinks} />
     }
 
     render(){
@@ -127,10 +155,15 @@ export default class AccountDetails extends Component{
                     <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>accounts.accountDetails</T></h1></Col>
                     <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
                 </Row>
-                <h3 className="text-primary"><AccountCopy address={this.state.address} /></h3>
+                <Row>
+                    <h3 className="text-primary"><AccountCopy address={this.state.address} /></h3>
+                </Row>
                 <Row>
                     <Col><Card>
-                        <CardHeader>Balance</CardHeader>
+                        <CardHeader>
+                            Balance
+                            <div className="shareLink float-right">{this.renderShareLink()}</div>
+                        </CardHeader>
                         <CardBody>
                             <Row className="account-distributions">
                                 <Col xs={12}>
@@ -139,6 +172,7 @@ export default class AccountDetails extends Component{
                                         <Progress bar className="delegated" value={this.state.delegated/this.state.total*100} />
                                         <Progress bar className="unbonding" value={this.state.unbonding/this.state.total*100} />
                                         <Progress bar className="rewards" value={this.state.rewards/this.state.total*100} />
+                                        <Progress bar className="commission" value={this.state.commission/this.state.total*100} />
                                     </Progress>
                                 </Col>
                             </Row>
@@ -160,8 +194,16 @@ export default class AccountDetails extends Component{
                                         <Col xs={4} className="label text-nowrap"><div className="rewards infinity" /><T>accounts.rewards</T></Col>
                                         <Col xs={8} className="value text-right">{numbro(this.state.rewards/Meteor.settings.public.stakingFraction).format("0,0.0000")}</Col>
                                     </Row>
+                                    {this.state.commission?<Row>
+                                        <Col xs={4} className="label text-nowrap"><div className="commission infinity" /><T>validators.commission</T></Col>
+                                        <Col xs={8} className="value text-right">{numbro(this.state.commission/Meteor.settings.public.stakingFraction).format("0,0.0000")}</Col>
+                                    </Row>:null}
                                 </Col>
                                 <Col md={6} lg={4} className="total d-flex flex-column justify-content-end">
+                                    {this.state.user?<Row>
+                                        <Col xs={12}><TransferButton history={this.props.history} address={this.state.address}/></Col>
+                                        {this.state.user===this.state.address?<Col xs={12}><WithdrawButton  history={this.props.history} rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address}/></Col>:null}
+                                    </Row>:null}
                                     <Row>
                                         <Col xs={4} className="label d-flex align-self-end"><div className="infinity" /><T>accounts.total</T></Col>
                                         <Col xs={8} className="value text-right">{numbro(this.state.total/Meteor.settings.public.stakingFraction).format("0,0.0000a")} {Meteor.settings.public.stakingDenom}s</Col>

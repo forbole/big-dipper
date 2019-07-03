@@ -7,14 +7,15 @@ import Validator from './Validator.jsx';
 
 export default ValidatorDetailsContainer = withTracker((props) => {
     let chainHandle;
+    let validatorHandle;
     let validatorsHandle;
     let loading = true;
 
     if (Meteor.isClient){
         chainHandle = Meteor.subscribe('chain.status');
-        validatorsHandle = Meteor.subscribe('validator.details', props.address);
-        loading = !validatorsHandle.ready() && !chainHandle.ready();
-    
+        validatorsHandle = Meteor.subscribe('validators.all', props.address);
+        validatorHandle = Meteor.subscribe('validator.details', props.address);
+        loading = !validatorHandle.ready() && !validatorsHandle.ready() && !chainHandle.ready();
     }
 
     let options = {address:props.address};
@@ -29,13 +30,13 @@ export default ValidatorDetailsContainer = withTracker((props) => {
             options = {operator_address:props.address}
         }
         validator = Validators.findOne(options);
-        
+
         if (validator){
             validatorRecords = ValidatorRecords.find({address:validator.address}, {sort:{height:-1}}).fetch();
         }
-    
+
         chainStatus = Chain.findOne({chainId:Meteor.settings.public.chainId});
-        
+
         if (Meteor.isServer){
             loading = false;
             validatorExist = !!validator && !!validatorRecords && !!chainStatus;
@@ -43,7 +44,7 @@ export default ValidatorDetailsContainer = withTracker((props) => {
         else{
             validatorExist = !loading && !!validator && !!validatorRecords && !!chainStatus;
         }
-        
+
         // loading = false;
     }
     // console.log(props.state.limit);
