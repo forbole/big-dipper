@@ -37,7 +37,7 @@ const groupData = (missedStats, missedRecords, target) => {
             records: validatorsMap[address],
             ...statsMap[address]
         }
-    }).sort((a, b) => a.missCount - b.missCount);
+    }).sort((a, b) => b.missCount - a.missCount);
 }
 
 const aggregateData = (missedRecords) => {
