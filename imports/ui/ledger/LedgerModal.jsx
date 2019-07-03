@@ -43,7 +43,8 @@ class LedgerModal extends React.Component {
             } else {
                 this.setState({
                     currentUser: currentUser,
-                    address:res.address,
+                    address: res.address,
+                    pubKey: Buffer.from(res.pubKey).toString('base64'),
                     errorMessage: '',
                     loading: false,
                     activeTab: '2'});
@@ -58,10 +59,11 @@ class LedgerModal extends React.Component {
         });
     }
 
-    trySignIn = (currentUser) => {
+    trySignIn = () => {
         this.setState({ loading: true, errorMessage: '' })
         this.ledger.confirmLedgerAddress().then((res) => {
             localStorage.setItem(CURRENTUSERADDR, this.state.address);
+            localStorage.setItem(CURRENTUSERPUBKEY, this.state.pubKey);
             this.props.refreshApp();
             this.closeModal(true);
         }, (err) => {
