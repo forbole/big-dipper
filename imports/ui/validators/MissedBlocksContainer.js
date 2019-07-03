@@ -43,13 +43,13 @@ export default MissedBlocksContainer = withTracker((props) => {
         status = Status.findOne({chainId:Meteor.settings.public.chainId});
         if (props.type == 'voter'){
             // missedBlocks = MissedBlocksStats.find({voter:address}, {sort:{count:-1}}).fetch();
-            missedRecords = MissedBlocks.find({voter:address, blockHeight: {'$gt': 0}}, {sort:{blockHeight:-1}}).fetch();
             missedRecordsStats = MissedBlocks.find({voter:address, blockHeight: -1}).fetch();
+            missedRecords = MissedBlocks.find({voter:address, blockHeight: {'$gt': 0}}, {sort:{blockHeight:-1}}).fetch();
         }
         else {
             // missedBlocks = MissedBlocksStats.find({proposer:address}, {sort:{count:-1}}).fetch();
-            missedRecords = MissedBlocks.find({proposer:address, blockHeight: {'$gt': 0}}, {sort:{blockHeight:-1}}).fetch();
             missedRecordsStats = MissedBlocks.find({proposer:address, blockHeight: -1}).fetch();
+            missedRecords = MissedBlocks.find({proposer:address, blockHeight: {'$gt': 0}}, {sort:{blockHeight:-1}}).fetch();
         }
 
         if (Meteor.isServer){
