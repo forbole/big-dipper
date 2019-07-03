@@ -299,8 +299,7 @@ export class Ledger {
     static createDelegate(
         txContext,
         validatorBech32,
-        uatomAmount,
-        memo,
+        uatomAmount
     ) {
         const txSkeleton = Ledger.createSkeleton(txContext);
 
@@ -317,7 +316,6 @@ export class Ledger {
         };
 
         txSkeleton.value.msg = [txMsg];
-        txSkeleton.value.memo = memo || DEFAULT_MEMO;
 
         return txSkeleton;
     }
@@ -327,8 +325,7 @@ export class Ledger {
     static createUndelegate(
         txContext,
         validatorBech32,
-        uatomAmount,
-        memo,
+        uatomAmount
     ) {
         const txSkeleton = Ledger.createSkeleton(txContext);
 
@@ -345,7 +342,6 @@ export class Ledger {
         };
 
         txSkeleton.value.msg = [txMsg];
-        txSkeleton.value.memo = memo || DEFAULT_MEMO;
 
         return txSkeleton;
     }
@@ -356,8 +352,7 @@ export class Ledger {
         txContext,
         validatorSourceBech32,
         validatorDestBech32,
-        uatomAmount,
-        memo,
+        uatomAmount
     ) {
         const txSkeleton = Ledger.createSkeleton(txContext);
 
@@ -375,7 +370,6 @@ export class Ledger {
         };
 
         txSkeleton.value.msg = [txMsg];
-        txSkeleton.value.memo = memo || DEFAULT_MEMO;
 
         return txSkeleton;
     }
@@ -385,8 +379,7 @@ export class Ledger {
     static createTransfer(
         txContext,
         toAddress,
-        amount,
-        memo
+        amount
     ) {
         const txSkeleton = Ledger.createSkeleton(txContext);
 
@@ -403,7 +396,6 @@ export class Ledger {
         };
 
         txSkeleton.value.msg = [txMsg];
-        txSkeleton.value.memo = memo || DEFAULT_MEMO;
 
         return txSkeleton;
     }

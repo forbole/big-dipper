@@ -115,7 +115,8 @@ class LedgerButton extends Component {
         this.state = {
             activeTab: '2',
             errorMessage: '',
-            user: localStorage.getItem(CURRENTUSERADDR)
+            user: localStorage.getItem(CURRENTUSERADDR),
+            pubKey: localStorage.getItem(CURRENTUSERPUBKEY),
         };
         this.ledger = new Ledger({testModeAllowed: false});
     }
@@ -137,12 +138,17 @@ class LedgerButton extends Component {
             simulating: undefined,
             gasEstimate: undefined,
             txMsg: undefined,
-            params: undefined
+            params: undefined,
+            pubKey: undefined,
+            memo: undefined
         });
     }
     static getDerivedStateFromProps(props, state) {
         if (state.user !== localStorage.getItem(CURRENTUSERADDR)) {
-            return {user: localStorage.getItem(CURRENTUSERADDR)};
+            return {
+                user: localStorage.getItem(CURRENTUSERADDR),
+                pubKey: localStorage.getItem(CURRENTUSERPUBKEY)
+            };
         }
         return null;
     }
@@ -210,7 +216,7 @@ class LedgerButton extends Component {
         if (this.state.loadingBalance) return
 
         this.initStateOnLoad('loadingBalance', {
-            loading: this.state.actionType === Types.DELEGATE,
+            loading: this.state.actionType === Types.DELEGATE || this.state.actionType === Types.WITHDRAW ,
             loadingRedelegations: this.state.actionType === Types.REDELEGATE
         });
 
@@ -257,8 +263,7 @@ class LedgerButton extends Component {
             if (res.address == this.state.user)
                 this.setState({
                     success: true,
-                    activeTab: this.state.activeTab ==='1' ? '2': this.state.activeTab,
-                    pubKey: Buffer.from(res.pubKey).toString('base64')
+                    activeTab: this.state.activeTab ==='1' ? '2': this.state.activeTab
                 })
             else {
                 if (this.state.isOpen) {
@@ -284,6 +289,7 @@ class LedgerButton extends Component {
             denom: Coin.MintingDenom,
             pk: this.state.pubKey,
             path: [44, 118, 0, 0, 0],
+            memo: this.state.memo
         }
     }
 
@@ -361,17 +367,21 @@ class LedgerButton extends Component {
             const txContext = this.getTxContext();
             const bytesToSign = Ledger.getBytesToSign(txMsg, txContext);
             this.ledger.sign(bytesToSign).then((sig) => {
-                Ledger.applySignature(txMsg, txContext, sig);
-                Meteor.call('transaction.submit', txMsg, (err, res) => {
-                    if (err) {
-                        this.setStateOnError('signing', 'something went wrong')
-                    } else if (res) {
-                        this.setStateOnSuccess('signing', {
-                            txHash: res,
-                            activeTab: '4'
-                        })
-                    }
-                })
+                try {
+                    Ledger.applySignature(txMsg, txContext, sig);
+                    Meteor.call('transaction.submit', txMsg, (err, res) => {
+                        if (err) {
+                            this.setStateOnError('signing', 'something went wrong')
+                        } else if (res) {
+                            this.setStateOnSuccess('signing', {
+                                txHash: res,
+                                activeTab: '4'
+                            })
+                        }
+                    })
+                } catch (e) {
+                    this.setStateOnError('signing', e.message)
+                }
             }, (err) => this.setStateOnError('signing', err.message))
         } catch (e) {
             this.setStateOnError('signing', e.message)
@@ -601,6 +611,8 @@ class DelegationButtons extends LedgerButton {
                     invalid={this.state.delegateAmount != null && !isBetween(this.state.delegateAmount, 1, maxAmount)} />
                 <InputGroupAddon addonType="append">{Coin.StakingDenom}</InputGroupAddon>
             </InputGroup>
+            <Input name="memo" onChange={this.handleInputChange}
+                placeholder="Memo(optional)" type="textarea" value={this.state.memo}/>
             <div>{availableStatement} <Amount coin={maxAmount}/> </div>
         </TabPane>
     }
@@ -740,6 +752,8 @@ class TransferButton extends LedgerButton {
                     invalid={this.state.transferAmount != null && !isBetween(this.state.transferAmount, 1, maxAmount)}/>
                 <InputGroupAddon addonType="append">{Coin.StakingDenom}</InputGroupAddon>
             </InputGroup>
+            <Input name="memo" onChange={this.handleInputChange}
+                placeholder="Memo(optional)" type="textarea" value={this.state.memo}/>
             <div>your available balance: <Amount coin={maxAmount}/></div>
         </TabPane>
     }
