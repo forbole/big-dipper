@@ -139,7 +139,6 @@ class LedgerButton extends Component {
             gasEstimate: undefined,
             txMsg: undefined,
             params: undefined,
-            pubKey: undefined,
             memo: undefined
         });
     }

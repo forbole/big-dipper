@@ -100,6 +100,7 @@ export default class Header extends Component {
 
     signOut () {
         localStorage.removeItem(CURRENTUSERADDR);
+        localStorage.removeItem(CURRENTUSERPUBKEY);
         this.props.refreshApp();
     }
 
