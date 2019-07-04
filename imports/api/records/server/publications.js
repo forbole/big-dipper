@@ -48,12 +48,20 @@ publishComposite('missedblocks.validator', function(address, type){
 });
 
 publishComposite('missedrecords.validator', function(address, type){
+    let conditions = {};
+    if (type == 'voter'){
+        conditions = {
+            voter: address
+        }
+    }
+    else{
+        conditions = {
+            proposer: address
+        }
+    }
     return {
         find(){
-            return MissedBlocks.find(
-                {[type]: address},
-                {sort: {updatedAt: -1}}
-            )
+            return MissedBlocks.find(conditions)
         },
         children: [
             {
