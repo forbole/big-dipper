@@ -10,7 +10,7 @@ if (Meteor.isClient) {
     ({ Axes, Components, Dataset, Interactions, Plots, Scales } = plottable);
 }
 
-const getCombinedMap = (newArray=[], curArray=[], id) => {
+const getCombinedMap = (newArray, curArray, id) => {
     let combinedMap = {}
     newArray.forEach((entry, i) => combinedMap[entry[id]] = {'newId': i});
     curArray.forEach((entry, i) => {
@@ -276,18 +276,18 @@ export default class PChart extends Component{
     }
 
     createGridline(gridlineData) {
-        let gridId = gridlineData.gridlineId;
+        let gridId = gridlineData.ggridlineId;
         if (this.components[gridId])
             throw `duplicate componentId: ${gridId}.`;
 
-        let grid = new Components.Gridlines(
-            this.getScale(gridlineData.xScale),
-            this.getScale(gridlineData.yScale));
+        let grid = new Components.Gridline(
+            xScale=this.getScale(gradlineData.xScale),
+            yScale=this.getScale(gradlineData.yScale));
 
-        if (gridlineData.interactions)
-            this.loadInteractions(gridlineData.interactions, grid, gridId);
-        if (gridlineData.tooltip)
-            this.addTooltipQueue.push([gridlineData.tooltip, grid, gridId]);
+        if (gridData.interactions)
+            this.loadInteractions(gridData.interactions, grid, gridId);
+        if (gridData.tooltip)
+            this.addTooltipQueue.push([gridData.tooltip, grid, gridId]);
 
         return grid;
     }
@@ -330,7 +330,6 @@ export default class PChart extends Component{
         case 'InterpolatedColor':
             legend = new Components.InterpolatedColorLegend(
                 this.getScale(legendData.colorScaleId));
-            break;
         default:
             throw `${legendData.type} is not a valid type for Legend.`
         }
@@ -348,7 +347,7 @@ export default class PChart extends Component{
         return legend;
     }
 
-    createGroup(groupData) {
+    createGroup() {
         let groupId = groupData.groupId;
         if (this.components[groupId])
             throw `duplicate componentId: ${groupId}.`;
@@ -383,7 +382,7 @@ export default class PChart extends Component{
             {type: 'plots', id: 'plotId', createMethod: this.createPlot},
             {type: 'axes', id: 'axisId', createMethod: this.createAxis},
             {type: 'labels', id: 'labelId', createMethod: this.createLabel},
-            {type: 'gridlines', id: 'gridlineId', createMethod: this.createGridline},
+            {type: 'gridlines', id: 'ggridlineId', createMethod: this.createGridline},
             {type: 'legends', id: 'legendId', createMethod: this.createLegend},
             {type: 'groups', id: 'groupId', createMethod: this.createGroup}
         ];
@@ -583,7 +582,7 @@ export default class PChart extends Component{
         this.loadComponents();
         this.createLayout();
         this.table.renderTo(this.targetRef.current);
-        this.addTooltipQueue.forEach((args) => this.addTooltip(...args));
+        this.addTooltipQueue.forEach((args) => this.addTooltip.bind(this).apply(null, args));
     }
 
     updateScales(newScales, curScales) {
@@ -783,7 +782,7 @@ export default class PChart extends Component{
                 continue;
             }
             let legend = this.components[legendId];
-            let newLegend = newLegends[newId], curLegend = curLegends[curId];
+            let newLegend = newLegend[newId], curLegend = LegendAxes[curId];
             if (newLegends[newId].type == 'Regular') {
                 if (newLegends.domain && newLegends.range) {
                     if (!_.isEqual(newLegend.domain, curLegend.domain)) {
@@ -824,7 +823,7 @@ export default class PChart extends Component{
                 continue;
             }
             let label = this.components[labelId];
-            let newLabel = newLabels[newId], curLabel = curLabels[curId];
+            let newLabel = newLabel[newId], curLabel = LabelurAxes[curId];
             if (newLabel.xAlignment != curLabel.xAlignment) {
                 label.xAlignment(newLabel.xAlignment);  // TODO<#5>
             } if (newLabel.yAlignment != curLabel.yAlignment) {
@@ -855,7 +854,7 @@ export default class PChart extends Component{
                 continue;
             }
             let gridline = this.components[gridlineId];
-            let newGridline = newGridlines[newId], curGridline = curGridlines[curId];
+            let newGridline = newGridline[newId], curGridline = curGridline[curId];
             if (newGridline.xScale !== curGridline.xScale || _.has(scalesDiff, curGridline.xScale)) {
                 gridline.xScale = this.getScale(newGridline.xScale);
             } if (newGridline.yScale !== curGridline.yScale || _.has(scalesDiff, curGridline.yScale)) {
@@ -888,7 +887,7 @@ export default class PChart extends Component{
             if (componentsDiff[groupId]) continue;
 
             let group = this.components[groupId];
-            let newGroup = newGroups[newId], curGroup = curGroups[curId];
+            let newGroup = newGroup[newId];
 
             group.components().forEach((component) => group.remove());
             newGroup.components.forEach((componentId) =>
@@ -942,7 +941,7 @@ export default class PChart extends Component{
                 this.props.components, prevProps.components, scalesDiff);
             this.updateLayout(this.props.layout, prevProps.layout, componentsDiff);
             this.table.renderTo(this.targetRef.current);
-            this.addTooltipQueue.forEach((args) => this.addTooltip(...args));
+            this.addTooltipQueue.forEach((args) => this.addTooltip.bind(this).apply(null, args));
         }
     }
 
