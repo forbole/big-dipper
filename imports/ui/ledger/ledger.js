@@ -1,3 +1,5 @@
+// https://github.com/zondax/cosmos-delegation-js/
+// https://github.com/cosmos/ledger-cosmos-js/blob/master/src/index.js
 import 'babel-polyfill';
 import Cosmos from "@lunie/cosmos-js"
 import { App, comm_u2f } from "ledger-cosmos-js"
@@ -209,7 +211,7 @@ export class Ledger {
         return JSON.stringify(canonicalizeJson(txFieldsToSign));
     }
 
-    static applyGas(unsignedTx, gas) {
+    static applyGas(unsignedTx, gas, gasPrice=DEFAULT_GAS_PRICE, denom=DEFAULT_DENOM) {
         if (typeof unsignedTx === 'undefined') {
             throw new Error('undefined unsignedTx');
         }
@@ -219,11 +221,10 @@ export class Ledger {
 
         // eslint-disable-next-line no-param-reassign
         unsignedTx.value.fee = {
-            // amount: [{
-            //     amount: (gas * DEFAULT_GAS_PRICE).toString(),
-            //     denom: DEFAULT_DENOM,
-            // }],
-            amount: [],
+            amount: [{
+                 amount: Math.round(gas * gasPrice).toString(),
+                 denom: denom,
+            }],
             gas: gas.toString(),
         };
 

@@ -30,9 +30,14 @@ import Account from './Account.jsx';
 
 const T = i18n.createComponent();
 
-const SendPath = new RegExp('/account/(?<address>\\w+)/(?<action>send)')
-const DelegatePath = new RegExp('/validators?/(?<address>\\w+)/(?<action>delegate)')
-const WithdrawPath = new RegExp('/account/(?<action>withdraw)')
+// Firefox does not support named group yet
+// const SendPath = new RegExp('/account/(?<address>\\w+)/(?<action>send)')
+// const DelegatePath = new RegExp('/validators?/(?<address>\\w+)/(?<action>delegate)')
+// const WithdrawPath = new RegExp('/account/(?<action>withdraw)')
+
+const SendPath = new RegExp('/account/(\\w+)/(send)')
+const DelegatePath = new RegExp('/validators?/(\\w+)/(delegate)')
+const WithdrawPath = new RegExp('/account/(withdraw)')
 
 const getUser = () => localStorage.getItem(CURRENTUSERADDR)
 
@@ -106,23 +111,31 @@ export default class Header extends Component {
 
     shouldLogin = () => {
         let pathname = this.props.location.pathname
+        let groups;
         let match = pathname.match(SendPath) || pathname.match(DelegatePath)|| pathname.match(WithdrawPath);
+        if (match) {
+            if (match[0] === '/account/withdraw') {
+                groups = {action: 'withdraw'}
+            } else {
+                groups = {address: match[1], action: match[2]}
+            }
+        }
         let params = qs.parse(this.props.location.search.substr(1))
-        return match || params.signin != undefined
+        return groups || params.signin != undefined
     }
 
     handleLoginConfirmed = (success) => {
-        let match = this.shouldLogin()
-        if (!match) return
+        let groups = this.shouldLogin()
+        if (!groups) return
         let redirectUrl;
         let params;
-        if (match.groups) {
-            let { action, address } = match.groups;
+        if (groups) {
+            let { action, address } = groups;
             params = {action}
-            switch (match.groups.action) {
+            switch (groups.action) {
                 case 'send':
                     params.transferTarget = address
-                    redirectUrl = `/account/${success?getUser():address}`
+                    redirectUrl = `/account/${address}`
                     break
                 case 'withdraw':
                     redirectUrl = `/account/${getUser()}`

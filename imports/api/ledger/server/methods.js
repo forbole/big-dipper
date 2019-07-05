@@ -13,7 +13,10 @@ Meteor.methods({
         let response = HTTP.post(url, {data});
         console.log(`response for transaction${timestamp} ${url}: ${JSON.stringify(response)}`)
         if (response.statusCode == 200) {
-            return JSON.parse(response.content).txhash;
+            let data = response.data
+            if (data.code)
+                throw new Meteor.Error(data.code, JSON.parse(data.raw_log).message)
+            return response.data.txhash;
         }
     },
     'transaction.execute': function(body, path) {

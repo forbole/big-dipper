@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Button, Spinner, TabContent, TabPane, Row, Col, Modal, ModalHeader,
     Form, ModalBody, ModalFooter, InputGroup, InputGroupAddon, Input, Progress,
     UncontrolledTooltip, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
-import { Ledger, DEFAULT_GAS_PRICE} from './ledger.js';
+import { Ledger } from './ledger.js';
 import { Validators } from '/imports/api/validators/validators.js';
 import AccountTooltip from '/imports/ui/components/AccountTooltip.jsx';
 import Coin from '/both/utils/coins.js';
@@ -83,7 +83,7 @@ const Amount = (props) => {
 }
 
 const Fee = (props) => {
-    return <span><Amount mint className='gas' amount={props.gas * DEFAULT_GAS_PRICE}/> as fee</span>
+    return <span><Amount mint className='gas' amount={props.gas * Meteor.settings.public.gasPrice}/> as fee</span>
 }
 
 const isActiveValidator = (validator) => {
@@ -345,7 +345,7 @@ class LedgerButton extends Component {
         let gasAdjustment = TypeMeta[this.state.actionType].gasAdjustment || '1.2';
         Meteor.call('transaction.simulate', simulateBody, this.state.user, this.getPath(), gasAdjustment, (err, res) =>{
             if (res){
-                Ledger.applyGas(txMsg, res);
+                Ledger.applyGas(txMsg, res, Meteor.settings.public.gasPrice, Coin.MintingDenom);
                 this.setStateOnSuccess('simulating', {
                     gasEstimate: res,
                     activeTab: '3',
@@ -370,7 +370,7 @@ class LedgerButton extends Component {
                     Ledger.applySignature(txMsg, txContext, sig);
                     Meteor.call('transaction.submit', txMsg, (err, res) => {
                         if (err) {
-                            this.setStateOnError('signing', 'something went wrong')
+                            this.setStateOnError('signing', err.reason)
                         } else if (res) {
                             this.setStateOnSuccess('signing', {
                                 txHash: res,
