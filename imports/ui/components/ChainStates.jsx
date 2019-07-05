@@ -4,26 +4,27 @@ import { Link } from 'react-router-dom';
 import { Card, CardHeader, Row, Col } from 'reactstrap';
 import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
+import Coin from '/both/utils/coins.js'
 
 const T = i18n.createComponent();
 
 export default class ChainStates extends Component{
     constructor(props){
         super(props);
-        
+
         if (Meteor.isServer){
             let data = {}
             if (this.props.chainStates.communityPool){
                 data.communityPool = this.props.chainStates.communityPool.map((pool,i) => {
-                    return <span key={i}>{numbro(pool.amount/Meteor.settings.public.stakingFraction).format("0,0.00")} {Meteor.settings.public.stakingDenom}</span>
+                    return <span key={i}>{new Coin(pool.amount).stakeString('0,0.00')}</span>
                 })
                 data.inflation = numbro(this.props.chainStates.inflation).format("0.00%")
             }
-    
+
             if (this.props.coinStats.usd){
                 data.price = numbro(this.props.coinStats.usd).format("$0,0.00"),
                 data.marketCap = numbro(this.props.coinStats.usd_market_cap).format("$0,0.00")
-            }    
+            }
 
             this.state = data;
         }
@@ -42,7 +43,7 @@ export default class ChainStates extends Component{
             if (this.props.chainStates.communityPool){
                 this.setState({
                     communityPool: this.props.chainStates.communityPool.map((pool,i) => {
-                        return <span key={i}>{numbro(pool.amount/Meteor.settings.public.stakingFraction).format("0,0.00")} {Meteor.settings.public.stakingDenom}</span>
+                        return <span key={i}>{new Coin(pool.amount).stakeString('0,0.00')}</span>
                     }),
                     inflation: numbro(this.props.chainStates.inflation).format("0.00%")
                 })

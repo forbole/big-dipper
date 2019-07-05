@@ -12,6 +12,7 @@ import { Helmet } from 'react-helmet';
 import posed from 'react-pose';
 import i18n from 'meteor/universe:i18n';
 import { Meteor } from 'meteor/meteor';
+import Coin from '/both/utils/coins.js'
 
 const T = i18n.createComponent();
 
@@ -52,7 +53,7 @@ export default class Proposal extends Component{
             this.setState({
                 proposal: this.props.proposal,
                 deposit: <div>{this.props.proposal.total_deposit?this.props.proposal.total_deposit.map((deposit, i) => {
-                    return <div key={i}>{numbro(deposit.amount).format(0,0)} {deposit.denom}</div>
+                    return <div key={i}>{new Coin(deposit.amount).toString()}</div>
                 }):''} </div>
             });
 
@@ -295,7 +296,7 @@ export default class Proposal extends Component{
                                             return <li key={i}>
                                                 <Account address={deposit.depositor} />
                                                 {deposit.amount.map((amount, j) => {
-                                                    return <div key={j}>{numbro(amount.amount).format("0,0")} {amount.denom}</div>
+                                                    return <div key={j}>{new Coin(amount.amount).toString()}</div>
                                                 })}
                                             </li>
                                         }):''}

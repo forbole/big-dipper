@@ -4,6 +4,7 @@ import momemt from 'moment';
 import numbro from 'numbro';
 import Account from './Account.jsx';
 import i18n from 'meteor/universe:i18n';
+import Coin from '/both/utils/coins.js'
 
 const T = i18n.createComponent();
 export default class PowerHistory extends React.Component {
@@ -43,12 +44,12 @@ export default class PowerHistory extends React.Component {
                                         <Col xs={12}>
                                             <Row>
                                                 <Col xs={4}><T>validators.amount</T></Col>
-                                                <Col xs={8}>{numbro(m.value.amount.amount).format('0,0')} {m.value.amount.denom}</Col>
+                                                <Col xs={8}>{new Coin(m.value.amount.amount).toString()}</Col>
                                             </Row>
                                         </Col>
                                     </Row>
                                 case "cosmos-sdk/MsgDelegate":
-                                    if (m.value.validator_address == self.props.address){      
+                                    if (m.value.validator_address == self.props.address){
                                         return <Row key={j}>
                                             <Col xs={12}>
                                                 <Row>
@@ -59,7 +60,7 @@ export default class PowerHistory extends React.Component {
                                             <Col xs={12}>
                                                 <Row>
                                                     <Col xs={4}><T>validators.amount</T></Col>
-                                                    <Col xs={8}>{numbro(m.value.amount.amount).format('0,0')} {m.value.amount.denom}</Col>
+                                                    <Col xs={8}>{new Coin(m.value.amount.amount).toString()}</Col>
                                                 </Row>
                                             </Col>
                                         </Row>
@@ -78,7 +79,7 @@ export default class PowerHistory extends React.Component {
                                         <Col xs={12}>
                                             <Row>
                                                 <Col xs={4}><T>validators.amount</T></Col>
-                                                <Col xs={8}>{numbro(m.value.value.amount).format('0,0')} {m.value.value.denom}</Col>
+                                                <Col xs={8}>{new Coin(m.value.value.amount).toString()}</Col>
                                             </Row>
                                         </Col>
                                     </Row>
@@ -93,7 +94,7 @@ export default class PowerHistory extends React.Component {
                                         <Col xs={12}>
                                             <Row>
                                                 <Col xs={4}><T>validators.amount</T></Col>
-                                                <Col xs={8}>{numbro(m.value.amount.amount).format('0,0')} {m.value.amount.denom}</Col>
+                                                <Col xs={8}>{new Coin(m.value.amount.amount).toString()}</Col>
                                             </Row>
                                         </Col>
                                     </Row>
@@ -113,7 +114,7 @@ export default class PowerHistory extends React.Component {
                                                     return <Col key={j}><Badge color="success"><T>messageTypes.delegate</T></Badge></Col>;
                                                 }
                                                 else
-                                                    return;    
+                                                    return;
                                             case "cosmos-sdk/MsgCreateValidator":
                                                 return <Col key={j}><Badge color="warning"><T>messageTypes.createValidator</T></Badge></Col>;
                                             case "cosmos-sdk/MsgUnjail":
@@ -125,14 +126,7 @@ export default class PowerHistory extends React.Component {
                                     </Row>
                                     <Row>
                                         <Col xs={4} sm={6}><T>transactions.fee</T></Col>
-                                        <Col xs={8} sm={6}>{(msg.tx.value.fee.amount&& msg.tx.value.fee.amount.length>0)?msg.tx.value.fee.amount.map((amount,i)=>{
-                                            if (i > 0){
-                                                return <span key={i}> ,{numbro(amount.amount).format('0,0')} {amount.denom}</span>
-                                            }
-                                            else{
-                                                return <span key={i}>{numbro(amount.amount).format('0,0')} {amount.denom}</span>
-                                            }
-                                        }):'0'}</Col>
+                                        <Col xs={8} sm={6}>{(msg.tx.value.fee.amount&& msg.tx.value.fee.amount.length>0)?msg.tx.value.fee.amount.map((amount,i)=> new Coin(amount.amount).toString()).join(' ,'):'0'}</Col>
                                     </Row>
                                 </Col>
                             </Row>
