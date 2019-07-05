@@ -774,7 +774,7 @@ class TransferButton extends LedgerButton {
 
     getConfirmationMessage = () => {
         return <span>You are going to <span className='action'>send</span> <Amount coin={this.state.transferAmount}/> to {this.state.transferTarget}
-            with <Fee gas={this.state.gasEstimate}/>.
+            <span> with <Fee gas={this.state.gasEstimate}/>.</span>
         </span>
     }
 
