@@ -129,23 +129,24 @@ export default class Validator extends Component{
                     });
                 }
             }
+        }
 
-            if (this.props.validatorExist){
-                if (this.props.validator.history().length > 0){
-                    this.setState({
-                        history: this.props.validator.history().map((history, i) => {
-                            return <PowerHistory
-                                key={i}
-                                type={history.type}
-                                prevVotingPower={history.prev_voting_power}
-                                votingPower={history.voting_power}
-                                time={history.block_time}
-                                height={history.height}
-                                address={this.props.validator.operator_address}
-                            />
-                        })
+        if (this.props.validatorExist && this.props.validator != prevProps.validator){
+            let powerHistory = this.props.validator.history()
+            if (powerHistory.length > 0){
+                this.setState({
+                    history: powerHistory.map((history, i) => {
+                        return <PowerHistory
+                            key={i}
+                            type={history.type}
+                            prevVotingPower={history.prev_voting_power}
+                            votingPower={history.voting_power}
+                            time={history.block_time}
+                            height={history.height}
+                            address={this.props.validator.operator_address}
+                        />
                     })
-                }
+                })
             }
         }
 
