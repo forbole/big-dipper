@@ -36,7 +36,7 @@ export default class Transaction extends Component{
                     <h4><T>transactions.transaction</T> {(!tx.code)?<TxIcon valid />:<TxIcon />}</h4>
                     {(tx.code)?<Row><Col xs={{size:12, order:"last"}} className="error">
                         <Alert color="danger">
-                            <CosmosErrors 
+                            <CosmosErrors
                                 code={tx.code}
                                 logs={tx.logs}
                                 gasWanted={tx.gas_wanted}
@@ -51,7 +51,10 @@ export default class Transaction extends Component{
                                 <Col md={4} className="label"><T>common.hash</T></Col>
                                 <Col md={8} className="value text-nowrap address">{tx.txhash}</Col>
                                 <Col md={4} className="label"><T>common.height</T></Col>
-                                <Col md={8} className="value"><Link to={"/blocks/"+tx.height}>{numbro(tx.height).format("0,0")}</Link> ({moment.utc(tx.block().time).format("D MMM YYYY, h:mm:ssa z")})</Col>
+                                <Col md={8} className="value">
+                                    <Link to={"/blocks/"+tx.height}>{numbro(tx.height).format("0,0")}</Link>
+                                    {tx.block() && `(${moment.utc(tx.block().time).format("D MMM YYYY, h:mm:ssa z")})`}
+                                </Col>
                                 <Col md={4} className="label"><T>transactions.fee</T></Col>
                                 <Col md={8} className="value">{tx.tx.value.fee.amount?tx.tx.value.fee.amount.map((fee,i) => {
                                     return <span className="text-nowrap" key={i}>{numbro(fee.amount).format(0,0)} {fee.denom}</span>

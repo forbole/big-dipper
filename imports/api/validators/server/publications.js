@@ -3,8 +3,8 @@ import { Validators } from '../validators.js';
 import { ValidatorRecords } from '../../records/records.js';
 import { VotingPowerHistory } from '../../voting-power/history.js';
 
-Meteor.publish('validators.all', function (sort = "description.moniker", direction = -1) {
-    return Validators.find({});
+Meteor.publish('validators.all', function (sort = "description.moniker", direction = -1, fields={}) {
+    return Validators.find({}, {sort: {[sort]: direction}, fields: fields});
 });
 
 publishComposite('validators.firstSeen',{

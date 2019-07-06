@@ -18,6 +18,7 @@ timerMissedBlock = 0;
 timerDelegation = 0;
 timerAggregate = 0;
 
+const DEFAULTSETTINGS = '/default_settings.json';
 
 updateChainStatus = () => {
     Meteor.call('chain.updateStatus', (error, result) => {
@@ -152,6 +153,15 @@ aggregateDaily = () =>{
 Meteor.startup(function(){
     if (Meteor.isDevelopment){
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+        import DEFAULTSETTINGSJSON from '../default_settings.json'
+        Object.keys(DEFAULTSETTINGSJSON).forEach((key) => {
+            if (Meteor.settings[key] == undefined)
+                throw Error(`${key} is missing from settings`);
+            Object.keys(DEFAULTSETTINGSJSON[key]).forEach((param) => {
+                if (Meteor.settings[key][param] == undefined)
+                    throw Error(`${key}.${param} is missing from settings`);
+            })
+        })
     }
 
     Meteor.call('chain.genesis', (err, result) => {
