@@ -484,7 +484,7 @@ Meteor.methods({
                         }
 
                         // check if there's any validator not in db 14400 blocks(~1 day)
-                        if (height % 50 == 0){
+                        if (height % 14400 == 0){
                             try {
                                 console.log('Checking all validators against db...')
                                 let exisitingPubKey = new Set(Validators.find({}, {fields: {consensus_pubkey: 1}}).map((v) => v.consensus_pubkey))
@@ -512,7 +512,7 @@ Meteor.methods({
                         }
 
                         // fetching keybase every 14400 blocks(~1 day)
-                        if (height % 50 == 1){
+                        if (height % 14400 == 1){
                             console.log('Fetching keybase...')
                             Validators.find({}).forEach((validator) => {
                                 try {
@@ -561,15 +561,7 @@ Meteor.methods({
                             // console.log(bulkValidators.length);
                             bulkValidators.execute((err, result) => {
                                 if (err){
-                                    console.log('========================================')
-                                    console.log('========================================')
-                                    console.log('========================================')
-                                    console.log('========================================')
                                     console.log(err);
-                                    console.log('========================================')
-                                    console.log('========================================')
-                                    console.log('========================================')
-                                    console.log('========================================')
                                 }
                                 if (result){
                                     // console.log(result);
