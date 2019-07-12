@@ -10,7 +10,8 @@ import { VotingPowerHistory } from '/imports/api/voting-power/history.js';
 import { Transactions } from '../../transactions/transactions.js';
 import { Evidences } from '../../evidences/evidences.js';
 import { sha256 } from 'js-sha256';
-import { getAddress } from 'tendermint/lib/pubkey'
+import { getAddress } from 'tendermint/lib/pubkey';
+import * as cheerio from 'cheerio';
 
 // import Block from '../../../ui/components/Block';
 
@@ -483,7 +484,7 @@ Meteor.methods({
                         }
 
                         // check if there's any validator not in db 14400 blocks(~1 day)
-                        if (height % 14400 == 0){
+                        if (height % 50 == 0){
                             try {
                                 console.log('Checking all validators against db...')
                                 let exisitingPubKey = new Set(Validators.find({}, {fields: {consensus_pubkey: 1}}).map((v) => v.consensus_pubkey))
@@ -511,15 +512,39 @@ Meteor.methods({
                         }
 
                         // fetching keybase every 14400 blocks(~1 day)
-                        if (height % 14400 == 1){
-                            try {
-                                console.log('Fetching keybase...')
-                                Validators.find({}).forEach((validator) => {
+                        if (height % 50 == 1){
+                            console.log('Fetching keybase...')
+                            Validators.find({}).forEach((validator) => {
+                                try {
+                                    let identity = validator.description.identity
+                                    let profileUrl;
+                                    if (identity.length == 16){
+                                        let response = HTTP.get(`https://keybase.io/_/api/1.0/user/lookup.json?key_suffix=${identity}&fields=pictures`)
+                                        if (response.statusCode == 200) {
+                                            let them = response.data.them
+                                            profileUrl = them && them.length && them[0].pictures && them[0].pictures.primary && them[0].pictures.primary.url;
+                                        } else {
+                                            console.log(JSON.stringify(response))
+                                        }
+                                    }
+                                    else if (identity.indexOf("keybase.io/team/")>0){
+                                        let teamPage = HTTP.get(identity);
+                                        if (teamPage.statusCode == 200){
+                                            let page = cheerio.load(teamPage.content);
+                                            profileUrl = page(".kb-main-card img").attr('src');
+                                        } else {
+                                            console.log(JSON.stringify(teamPage))
+                                        }
+                                    }
 
-                                })
-                            } catch (e) {
-                                console.log(e)
-                            }
+                                    if (profileUrl) {
+                                        bulkValidators.find({address: validator.address}
+                                            ).upsert().updateOne({$set:{'profile_url':profileUrl}});
+                                    }
+                                } catch (e) {
+                                    console.log(e)
+                                }
+                            })
                         }
 
                         let endFindValidatorsNameTime = new Date();

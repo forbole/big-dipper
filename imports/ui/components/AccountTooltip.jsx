@@ -38,6 +38,7 @@ export default class AccountTooltip extends Account{
             lastSeen: 1,
             uptime: 1,
             self_delegation: 1,
+            profile_url: 1
         }
     }
 
@@ -46,7 +47,6 @@ export default class AccountTooltip extends Account{
             return
         let validator = this.state.validator;
         let moniker = validator.description && validator.description.moniker || validator.address;
-        let identity = validator.description && validator.description.identity || '';
         let isActive = validator.status == 2 && !validator.jailed;
 
         return <UncontrolledTooltip key='tooltip' className='validator-tooltip' placement='right' flip={false} target={this.ref} autohide={false} fade={false}>
@@ -55,7 +55,7 @@ export default class AccountTooltip extends Account{
                     <h4 className="moniker text-primary">{moniker}</h4>
                 </Row>
                 <Row className='d-flex justify-content-center avatar'>
-                    <Avatar moniker={moniker} identity={identity} address={validator.address}/>
+                    <Avatar moniker={moniker} profileUrl={validator.profile_url} address={validator.address}/>
                 </Row>
                 <Row className="voting-power data">
                     <i className="material-icons">power</i>
