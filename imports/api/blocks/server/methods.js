@@ -147,9 +147,8 @@ Meteor.methods({
             catch(e){
                 console.log(e);
             }
-
-            console.log("all validators: "+Object.keys(validatorSet).length);
-
+            let totalValidators = Object.keys(validatorSet).length;
+            console.log("all validators: "+ totalValidators);
             for (let height = curr+1 ; height <= until ; height++) {
                 let startBlockTime = new Date();
                 // add timeout here? and outside this loop (for catched up and keep fetching)?
@@ -428,7 +427,6 @@ Meteor.methods({
                                             }
                                         }
 
-
                                         bulkValidators.find({consensus_pubkey: valExist.consensus_pubkey}).updateOne({$set:validator});
                                         // console.log("validator exisits: "+bulkValidators.length);
                                         // validatorSet.splice(val, 1);
@@ -483,14 +481,21 @@ Meteor.methods({
 
                         }
 
+
                         // check if there's any validator not in db 14400 blocks(~1 day)
                         if (height % 14400 == 0){
                             try {
                                 console.log('Checking all validators against db...')
-                                let exisitingPubKey = new Set(Validators.find({}, {fields: {consensus_pubkey: 1}}).map((v) => v.consensus_pubkey))
+                                let dbValidators = {}
+                                Validators.find({}, {fields: {consensus_pubkey: 1, status: 1}}
+                                    ).forEach((v) => dbValidators[v.consensus_pubkey] = v.status)
                                 Object.keys(validatorSet).forEach((conPubKey) => {
                                     let validator_data = validatorSet[conPubKey];
-                                    if (!exisitingPubKey.has(conPubKey) && validator_data.status !== 2) {
+                                    // Active validators should have been updated in previous steps
+                                    if (validator_data.status === 2)
+                                        return
+
+                                    if (dbValidators[conPubKey] == undefined) {
                                         console.log(`validator with consensus_pubkey ${conPubKey} not in db`);
 
                                         validator_data.pub_key = {
@@ -502,7 +507,9 @@ Meteor.methods({
 
                                         validator_data.accpub = Meteor.call('pubkeyToBech32', validator_data.pub_key, Meteor.settings.public.bech32PrefixAccPub);
                                         validator_data.operator_pubkey = Meteor.call('pubkeyToBech32', validator_data.pub_key, Meteor.settings.public.bech32PrefixValPub);
-
+                                        console.log(JSON.stringify(validator_data))
+                                        bulkValidators.find({consensus_pubkey: conPubKey}).upsert().updateOne({$set:validator_data});
+                                    } else if (dbValidators[conPubKey] == 2) {
                                         bulkValidators.find({consensus_pubkey: conPubKey}).upsert().updateOne({$set:validator_data});
                                     }
                                 })
@@ -667,7 +674,7 @@ Meteor.methods({
                 console.log("This block used: "+((endBlockTime-startBlockTime)/1000)+"seconds.");
             }
             SYNCING = false;
-            Chain.update({chainId:Meteor.settings.public.chainId}, {$set:{lastBlocksSyncedTime:new Date(), totalValidators:Object.keys(validatorSet).length}});
+            Chain.update({chainId:Meteor.settings.public.chainId}, {$set:{lastBlocksSyncedTime:new Date(), totalValidators:totalValidators}});
         }
 
         return until;
