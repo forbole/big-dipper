@@ -39,7 +39,7 @@ publishComposite('missedblocks.validator', function(address, type){
                 find(stats){
                     return Validators.find(
                         {},
-                        {fields:{address:1, description:1}}
+                        {fields:{address:1, description:1, profile_url:1}}
                     )
                 }
             }
