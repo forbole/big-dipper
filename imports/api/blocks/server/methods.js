@@ -10,7 +10,8 @@ import { VotingPowerHistory } from '/imports/api/voting-power/history.js';
 import { Transactions } from '../../transactions/transactions.js';
 import { Evidences } from '../../evidences/evidences.js';
 import { sha256 } from 'js-sha256';
-import { getAddress } from 'tendermint/lib/pubkey'
+import { getAddress } from 'tendermint/lib/pubkey';
+import * as cheerio from 'cheerio';
 
 // import Block from '../../../ui/components/Block';
 
@@ -33,6 +34,26 @@ getRemovedValidators = (prevValidators, validators) => {
     }
 
     return prevValidators;
+}
+
+getValidatorProfileUrl = (identity) => {
+    if (identity.length == 16){
+        let response = HTTP.get(`https://keybase.io/_/api/1.0/user/lookup.json?key_suffix=${identity}&fields=pictures`)
+        if (response.statusCode == 200) {
+            let them = response.data.them
+            return them && them.length && them[0].pictures && them[0].pictures.primary && them[0].pictures.primary.url;
+        } else {
+            console.log(JSON.stringify(response))
+        }
+    } else if (identity.indexOf("keybase.io/team/")>0){
+        let teamPage = HTTP.get(identity);
+        if (teamPage.statusCode == 200){
+            let page = cheerio.load(teamPage.content);
+            return page(".kb-main-card img").attr('src');
+        } else {
+            console.log(JSON.stringify(teamPage))
+        }
+    }
 }
 
 // var filtered = [1, 2, 3, 4, 5].filter(notContainedIn([1, 2, 3, 5]));
@@ -115,13 +136,13 @@ Meteor.methods({
         if (until > curr) {
             SYNCING = true;
 
-            let validatorSet;
+            let validatorSet = {}
             // get latest validator candidate information
             url = LCD+'/staking/validators';
 
             try{
                 response = HTTP.get(url);
-                validatorSet = JSON.parse(response.content);
+                JSON.parse(response.content).forEach((validator) => validatorSet[validator.consensus_pubkey] = validator);
             }
             catch(e){
                 console.log(e);
@@ -131,7 +152,7 @@ Meteor.methods({
 
             try{
                 response = HTTP.get(url);
-                [...validatorSet] = [...validatorSet, ...JSON.parse(response.content)];
+                JSON.parse(response.content).forEach((validator) => validatorSet[validator.consensus_pubkey] = validator)
             }
             catch(e){
                 console.log(e);
@@ -141,14 +162,13 @@ Meteor.methods({
 
             try{
                 response = HTTP.get(url);
-                [...validatorSet] = [...validatorSet, ...JSON.parse(response.content)];
+                JSON.parse(response.content).forEach((validator) => validatorSet[validator.consensus_pubkey] = validator)
             }
             catch(e){
                 console.log(e);
             }
-
-            console.log("all validators: "+validatorSet.length);
-
+            let totalValidators = Object.keys(validatorSet).length;
+            console.log("all validators: "+ totalValidators);
             for (let height = curr+1 ; height <= until ; height++) {
                 let startBlockTime = new Date();
                 // add timeout here? and outside this loop (for catched up and keep fetching)?
@@ -322,10 +342,10 @@ Meteor.methods({
 
                         analyticsData.voting_power = 0;
 
-                        // validators are all the validators in the current height
-                        console.log("validatorSet.length: "+validatorSet.length);
                         let startFindValidatorsNameTime = new Date();
                         if (validators.result){
+                            // validators are all the validators in the current height
+                            console.log("validatorSet size: "+validators.result.validators.length);
                             for (v in validators.result.validators){
                                 // Validators.insert(validators.result.validators[v]);
                                 let validator = validators.result.validators[v];
@@ -334,7 +354,7 @@ Meteor.methods({
 
                                 let valExist = Validators.findOne({"pub_key.value":validator.pub_key.value});
                                 if (!valExist){
-                                    console.log("validator pub_key not in db");
+                                    console.log(`validator pub_key ${validator.address} ${validator.pub_key.value} not in db`);
                                     // let command = Meteor.settings.bin.gaiadebug+" pubkey "+validator.pub_key.value;
                                     // console.log(command);
                                     // let tempVal = validator;
@@ -344,27 +364,29 @@ Meteor.methods({
                                     validator.operator_pubkey = Meteor.call('pubkeyToBech32', validator.pub_key, Meteor.settings.public.bech32PrefixValPub);
                                     validator.consensus_pubkey = Meteor.call('pubkeyToBech32', validator.pub_key, Meteor.settings.public.bech32PrefixConsPub);
 
-                                    for (val in validatorSet){
-                                        if (validatorSet[val].consensus_pubkey == validator.consensus_pubkey){
-                                            validator.operator_address = validatorSet[val].operator_address;
-                                            validator.delegator_address = Meteor.call('getDelegator', validatorSet[val].operator_address);
-                                            validator.jailed = validatorSet[val].jailed;
-                                            validator.status = validatorSet[val].status;
-                                            validator.min_self_delegation = validatorSet[val].min_self_delegation;
-                                            validator.tokens = validatorSet[val].tokens;
-                                            validator.delegator_shares = validatorSet[val].delegator_shares;
-                                            validator.description = validatorSet[val].description;
-                                            validator.bond_height = validatorSet[val].bond_height;
-                                            validator.bond_intra_tx_counter = validatorSet[val].bond_intra_tx_counter;
-                                            validator.unbonding_height = validatorSet[val].unbonding_height;
-                                            validator.unbonding_time = validatorSet[val].unbonding_time;
-                                            validator.commission = validatorSet[val].commission;
-                                            validator.self_delegation = validator.delegator_shares;
-                                            // validator.removed = false,
-                                            // validator.removedAt = 0
-                                            // validatorSet.splice(val, 1);
-                                            break;
-                                        }
+                                    let validatorData = validatorSet[validator.consensus_pubkey]
+                                    if (validatorData){
+                                        if (validatorData.description.identity)
+                                            validator.profile_url =  getValidatorProfileUrl(validatorData.description.identity)
+                                        validator.operator_address = validatorData.operator_address;
+                                        validator.delegator_address = Meteor.call('getDelegator', validatorData.operator_address);
+                                        validator.jailed = validatorData.jailed;
+                                        validator.status = validatorData.status;
+                                        validator.min_self_delegation = validatorData.min_self_delegation;
+                                        validator.tokens = validatorData.tokens;
+                                        validator.delegator_shares = validatorData.delegator_shares;
+                                        validator.description = validatorData.description;
+                                        validator.bond_height = validatorData.bond_height;
+                                        validator.bond_intra_tx_counter = validatorData.bond_intra_tx_counter;
+                                        validator.unbonding_height = validatorData.unbonding_height;
+                                        validator.unbonding_time = validatorData.unbonding_time;
+                                        validator.commission = validatorData.commission;
+                                        validator.self_delegation = validator.delegator_shares;
+                                        // validator.removed = false,
+                                        // validator.removedAt = 0
+                                        // validatorSet.splice(val, 1);
+                                    } else {
+                                        console.log('no con pub key?')
                                     }
 
                                     // bulkValidators.insert(validator);
@@ -396,43 +418,44 @@ Meteor.methods({
                                     // });
                                 }
                                 else{
-                                    for (val in validatorSet){
-                                        if (validatorSet[val].consensus_pubkey == valExist.consensus_pubkey){
-                                            validator.jailed = validatorSet[val].jailed;
-                                            validator.status = validatorSet[val].status;
-                                            validator.tokens = validatorSet[val].tokens;
-                                            validator.delegator_shares = validatorSet[val].delegator_shares;
-                                            validator.description = validatorSet[val].description;
-                                            validator.bond_height = validatorSet[val].bond_height;
-                                            validator.bond_intra_tx_counter = validatorSet[val].bond_intra_tx_counter;
-                                            validator.unbonding_height = validatorSet[val].unbonding_height;
-                                            validator.unbonding_time = validatorSet[val].unbonding_time;
-                                            validator.commission = validatorSet[val].commission;
+                                    let validatorData = validatorSet[valExist.consensus_pubkey]
+                                    if (validatorData){
+                                        if (validatorData.description && (!valExist.description || validatorData.description.identity !== valExist.description.identity))
+                                            validator.profile_url =  getValidatorProfileUrl(validatorData.description.identity)
+                                        validator.jailed = validatorData.jailed;
+                                        validator.status = validatorData.status;
+                                        validator.tokens = validatorData.tokens;
+                                        validator.delegator_shares = validatorData.delegator_shares;
+                                        validator.description = validatorData.description;
+                                        validator.bond_height = validatorData.bond_height;
+                                        validator.bond_intra_tx_counter = validatorData.bond_intra_tx_counter;
+                                        validator.unbonding_height = validatorData.unbonding_height;
+                                        validator.unbonding_time = validatorData.unbonding_time;
+                                        validator.commission = validatorData.commission;
 
-                                            // calculate self delegation percentage every 30 blocks
+                                        // calculate self delegation percentage every 30 blocks
 
-                                            if (height % 30 == 1){
-                                                try{
-                                                    let response = HTTP.get(LCD + '/staking/delegators/'+valExist.delegator_address+'/delegations/'+valExist.operator_address);
+                                        if (height % 30 == 1){
+                                            try{
+                                                let response = HTTP.get(LCD + '/staking/delegators/'+valExist.delegator_address+'/delegations/'+valExist.operator_address);
 
-                                                    if (response.statusCode == 200){
-                                                        let selfDelegation = JSON.parse(response.content);
-                                                        if (selfDelegation.shares){
-                                                            validator.self_delegation = parseFloat(selfDelegation.shares)/parseFloat(validator.delegator_shares);
-                                                        }
+                                                if (response.statusCode == 200){
+                                                    let selfDelegation = JSON.parse(response.content);
+                                                    if (selfDelegation.shares){
+                                                        validator.self_delegation = parseFloat(selfDelegation.shares)/parseFloat(validator.delegator_shares);
                                                     }
                                                 }
-                                                catch(e){
-                                                    // console.log(e);
-                                                }
                                             }
-
-
-                                            bulkValidators.find({consensus_pubkey: valExist.consensus_pubkey}).updateOne({$set:validator});
-                                            // console.log("validator exisits: "+bulkValidators.length);
-                                            // validatorSet.splice(val, 1);
-                                            break;
+                                            catch(e){
+                                                // console.log(e);
+                                            }
                                         }
+
+                                        bulkValidators.find({consensus_pubkey: valExist.consensus_pubkey}).updateOne({$set:validator});
+                                        // console.log("validator exisits: "+bulkValidators.length);
+                                        // validatorSet.splice(val, 1);
+                                    }  else {
+                                        console.log('no con pub key?')
                                     }
                                     let prevVotingPower = VotingPowerHistory.findOne({address:validator.address}, {height:-1, limit:1});
 
@@ -480,6 +503,59 @@ Meteor.methods({
                                 }
                             }
 
+                        }
+
+
+                        // check if there's any validator not in db 14400 blocks(~1 day)
+                        if (height % 14400 == 0){
+                            try {
+                                console.log('Checking all validators against db...')
+                                let dbValidators = {}
+                                Validators.find({}, {fields: {consensus_pubkey: 1, status: 1}}
+                                    ).forEach((v) => dbValidators[v.consensus_pubkey] = v.status)
+                                Object.keys(validatorSet).forEach((conPubKey) => {
+                                    let validatorData = validatorSet[conPubKey];
+                                    // Active validators should have been updated in previous steps
+                                    if (validatorData.status === 2)
+                                        return
+
+                                    if (dbValidators[conPubKey] == undefined) {
+                                        console.log(`validator with consensus_pubkey ${conPubKey} not in db`);
+
+                                        validatorData.pub_key = {
+                                            "type" : "tendermint/PubKeyEd25519",
+                                            "value": Meteor.call('bech32ToPubkey', conPubKey)
+                                        }
+                                        validatorData.address = getAddress(validatorData.pub_key);
+                                        validatorData.delegator_address = Meteor.call('getDelegator', validatorData.operator_address);
+
+                                        validatorData.accpub = Meteor.call('pubkeyToBech32', validatorData.pub_key, Meteor.settings.public.bech32PrefixAccPub);
+                                        validatorData.operator_pubkey = Meteor.call('pubkeyToBech32', validatorData.pub_key, Meteor.settings.public.bech32PrefixValPub);
+                                        console.log(JSON.stringify(validatorData))
+                                        bulkValidators.find({consensus_pubkey: conPubKey}).upsert().updateOne({$set:validatorData});
+                                    } else if (dbValidators[conPubKey] == 2) {
+                                        bulkValidators.find({consensus_pubkey: conPubKey}).upsert().updateOne({$set:validatorData});
+                                    }
+                                })
+                            } catch (e){
+                                console.log(e)
+                            }
+                        }
+
+                        // fetching keybase every 14400 blocks(~1 day)
+                        if (height % 14400 == 1){
+                            console.log('Fetching keybase...')
+                            Validators.find({}).forEach((validator) => {
+                                try {
+                                    let profileUrl =  getValidatorProfileUrl(validator.description.identity)
+                                    if (profileUrl) {
+                                        bulkValidators.find({address: validator.address}
+                                            ).upsert().updateOne({$set:{'profile_url':profileUrl}});
+                                    }
+                                } catch (e) {
+                                    console.log(e)
+                                }
+                            })
                         }
 
                         let endFindValidatorsNameTime = new Date();
@@ -602,7 +678,7 @@ Meteor.methods({
                 console.log("This block used: "+((endBlockTime-startBlockTime)/1000)+"seconds.");
             }
             SYNCING = false;
-            Chain.update({chainId:Meteor.settings.public.chainId}, {$set:{lastBlocksSyncedTime:new Date(), totalValidators:validatorSet.length}});
+            Chain.update({chainId:Meteor.settings.public.chainId}, {$set:{lastBlocksSyncedTime:new Date(), totalValidators:totalValidators}});
         }
 
         return until;

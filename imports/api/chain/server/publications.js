@@ -20,7 +20,14 @@ publishComposite('chain.status', function(){
                 find(chain){
                     return Validators.find(
                         {},
-                        {fields:{address:1, description:1, operator_address:1, status:-1, jailed:1}}
+                        {fields:{
+                            address:1,
+                            description:1,
+                            operator_address:1,
+                            status:-1,
+                            jailed:1,
+                            profile_url:1
+                        }}
                     )
                 }
             }

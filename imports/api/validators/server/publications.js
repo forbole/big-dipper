@@ -34,7 +34,8 @@ Meteor.publish('validators.voting_power', function(){
         fields:{
             address: 1,
             description:1,
-            voting_power:1
+            voting_power:1,
+            profile_url:1
         }
     }
     );

@@ -194,7 +194,7 @@ export default class Validator extends Component{
                     <Col md={4}>
                     <Card body className="text-center">
                         <div className="shareLink d-flex align-self-end">{this.renderShareLink()}</div>
-                        <div className="validator-avatar"><Avatar moniker={moniker} identity={identity} address={this.props.validator.address} list={false}/></div>
+                        <div className="validator-avatar"><Avatar moniker={moniker} profileUrl={this.props.validator.profile_url} address={this.props.validator.address} list={false}/></div>
                         <div className="moniker text-primary">{website?<a href={addhttp(this.props.validator.description.website)} target="_blank">{moniker} <i className="fas fa-link"></i></a>:moniker}</div>
                         <div className="identity"><KeybaseCheck identity={identity} showKey /></div>
                         <div className="details"><Markdown markup={ details } /></div>

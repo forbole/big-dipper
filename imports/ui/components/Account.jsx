@@ -17,7 +17,7 @@ export default class Account extends Component{
     }
 
     getFields() {
-        return {address:1, description:1, operator_address:1, delegator_address:1};
+        return {address:1, description:1, operator_address:1, delegator_address:1, profile_url:1};
     }
 
     getAccount = () => {

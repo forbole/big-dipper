@@ -8,11 +8,10 @@ import Avatar from '../components/Avatar.jsx';
 
 const ValidatorRow = (props) => {
     let moniker = (props.validator.description&&props.validator.description.moniker)?props.validator.description.moniker:props.validator.address;
-    let identity = (props.validator.description&&props.validator.description.identity)?props.validator.description.identity:'';
     return <Card body>
         <Row className="validator-info">
             <Col className="d-none d-md-block counter data" xs={2} md={1}>{props.index+1}</Col>
-            <Col xs={12} md={2} className="data"><Link to={"/validator/"+props.validator.operator_address}><Avatar moniker={moniker} identity={identity} address={props.validator.address} list={true} /><span className="moniker">{moniker}</span></Link></Col>
+            <Col xs={12} md={2} className="data"><Link to={"/validator/"+props.validator.operator_address}><Avatar moniker={moniker} profileUrl={props.validator.profile_url} address={props.validator.address} list={true} /><span className="moniker">{moniker}</span></Link></Col>
             <Col className="voting-power data" xs={{size:8, offset:2}} md={{size:3, offset:0}} lg={2}><i className="material-icons d-md-none">power</i>  <span>{props.validator.voting_power?numbro(props.validator.voting_power).format('0,0'):0} ({props.validator.voting_power?numbro(props.validator.voting_power/props.totalPower).format('0.00%'):"0.00%"})</span></Col>
             <Col className="self-delegation data" xs={{size:4,offset:2}} md={{size:1,offset:0}}><i className="material-icons d-sm-none">equalizer</i> <span>{props.validator.self_delegation?numbro(props.validator.self_delegation).format('0.00%'):'N/A'}</span></Col>
             {(!props.inactive)?<Col className="commission data" xs={{size:4}} md={{size:1,offset:0}} lg={2}><i className="material-icons d-sm-none">call_split</i> <span>{numbro(props.validator.commission.rate).format('0.00%')}</span></Col>:''}
@@ -47,7 +46,7 @@ export default class List extends Component{
         else{
             this.state = {
                 validators: ""
-            }    
+            }
         }
     }
 
