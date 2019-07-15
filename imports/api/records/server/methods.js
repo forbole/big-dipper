@@ -136,17 +136,18 @@ Meteor.methods({
                 let message = '';
                 if (bulkMissedStats.length > 0){
                     const client = MissedBlocks._driver.mongo.client;
-                    let session = client.startSession();
-                    session.startTransaction();
-                    let bulkPromise = bulkMissedStats.execute(null, {session}).then(
+                    // TODO: add transaction back after replica set(#146) is set up
+                    // let session = client.startSession();
+                    // session.startTransaction();
+                    let bulkPromise = bulkMissedStats.execute(null/*, {session}*/).then(
                         Meteor.bindEnvironment((result, err) => {
                             if (err){
                                 COUNTMISSEDBLOCKS = false;
-                                Promise.await(session.abortTransaction());
+                                // Promise.await(session.abortTransaction());
                                 throw err;
                             }
                             if (result){
-                                Promise.await(session.commitTransaction());
+                                // Promise.await(session.commitTransaction());
                                 message = `(${result.result.nInserted} inserted, ` +
                                            `${result.result.nUpserted} upserted, ` +
                                            `${result.result.nModified} modified)`;
