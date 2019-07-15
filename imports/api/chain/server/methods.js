@@ -27,9 +27,9 @@ Meteor.methods({
             let votedPower = Math.round(parseFloat(consensus.round_state.votes[round].prevotes_bit_array.split(" ")[3])*100);
 
             Chain.update({chainId:Meteor.settings.public.chainId}, {$set:{
-                votingHeight: height, 
-                votingRound: round, 
-                votingStep: step, 
+                votingHeight: height,
+                votingRound: round,
+                votingStep: step,
                 votedPower: votedPower,
                 proposerAddress: consensus.round_state.validators.proposer.address,
                 prevotes: consensus.round_state.votes[round].prevotes,
@@ -52,6 +52,11 @@ Meteor.methods({
             chain.latestBlockHeight = status.sync_info.latest_block_height;
             chain.latestBlockTime = status.sync_info.latest_block_time;
 
+            let lastestState = ChainStates.findOne({}, {sort: {height: -1}})
+            if (lastestState.latest_block_height >= chain.latestBlockHeight) {
+                return `no updates (getting block ${chain.latestBlockHeight} at block ${lastestState.latestBlockHeight})`
+            }
+
             url = RPC+'/validators';
             response = HTTP.get(url);
             let validators = JSON.parse(response.content);
@@ -63,6 +68,8 @@ Meteor.methods({
             }
             chain.activeVotingPower = activeVP;
 
+
+            Chain.update({chainId:chain.chainId}, {$set:chain}, {upsert: true});
             // Get chain states
             if (parseInt(chain.latestBlockHeight) > 0){
                 let chainStates = {};
@@ -129,8 +136,6 @@ Meteor.methods({
 
             // chain.totalVotingPower = totalVP;
 
-            Chain.update({chainId:chain.chainId}, {$set:chain}, {upsert: true});
-
             // validators = Validators.find({}).fetch();
             // console.log(validators);
             return chain.latestBlockHeight;
@@ -145,7 +150,7 @@ Meteor.methods({
     },
     'chain.genesis': function(){
         let chain = Chain.findOne({chainId: Meteor.settings.public.chainId});
-        
+
         if (chain && chain.readGenesis){
             console.log('Genesis file has been processed');
         }
@@ -208,7 +213,7 @@ Meteor.methods({
 
                             let pubkeyValue = Meteor.call('bech32ToPubkey', msg[m].value.pubkey);
                             // Validators.upsert({consensus_pubkey:msg[m].value.pubkey},validator);
-                            
+
                             validator.pub_key = {
                                 "type":"tendermint/PubKeyEd25519",
                                 "value":pubkeyValue
@@ -244,7 +249,7 @@ Meteor.methods({
                     validator.delegator_address = Meteor.call('getDelegator', genValidatorsSet[v].operator_address);
 
                     let pubkeyValue = Meteor.call('bech32ToPubkey', validator.consensus_pubkey);
-                            
+
                     validator.pub_key = {
                         "type":"tendermint/PubKeyEd25519",
                         "value":pubkeyValue
@@ -269,7 +274,7 @@ Meteor.methods({
                     });
                 }
             }
-                
+
             chainParams.readGenesis = true;
             chainParams.activeVotingPower = totalVotingPower;
             let result = Chain.upsert({chainId:chainParams.chainId}, {$set:chainParams});
@@ -278,7 +283,7 @@ Meteor.methods({
             console.log('=== Finished processing genesis file ===');
 
         }
-        
+
         return true;
     }
 })
