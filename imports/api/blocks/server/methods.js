@@ -36,6 +36,26 @@ getRemovedValidators = (prevValidators, validators) => {
     return prevValidators;
 }
 
+getValidatorProfileUrl = (identity) => {
+    if (identity.length == 16){
+        let response = HTTP.get(`https://keybase.io/_/api/1.0/user/lookup.json?key_suffix=${identity}&fields=pictures`)
+        if (response.statusCode == 200) {
+            let them = response.data.them
+            return them && them.length && them[0].pictures && them[0].pictures.primary && them[0].pictures.primary.url;
+        } else {
+            console.log(JSON.stringify(response))
+        }
+    } else if (identity.indexOf("keybase.io/team/")>0){
+        let teamPage = HTTP.get(identity);
+        if (teamPage.statusCode == 200){
+            let page = cheerio.load(teamPage.content);
+            return page(".kb-main-card img").attr('src');
+        } else {
+            console.log(JSON.stringify(teamPage))
+        }
+    }
+}
+
 // var filtered = [1, 2, 3, 4, 5].filter(notContainedIn([1, 2, 3, 5]));
 // console.log(filtered); // [4]
 
@@ -344,21 +364,23 @@ Meteor.methods({
                                     validator.operator_pubkey = Meteor.call('pubkeyToBech32', validator.pub_key, Meteor.settings.public.bech32PrefixValPub);
                                     validator.consensus_pubkey = Meteor.call('pubkeyToBech32', validator.pub_key, Meteor.settings.public.bech32PrefixConsPub);
 
-                                    let validator_data = validatorSet[validator.consensus_pubkey]
-                                    if (validator_data){
-                                        validator.operator_address = validator_data.operator_address;
-                                        validator.delegator_address = Meteor.call('getDelegator', validator_data.operator_address);
-                                        validator.jailed = validator_data.jailed;
-                                        validator.status = validator_data.status;
-                                        validator.min_self_delegation = validator_data.min_self_delegation;
-                                        validator.tokens = validator_data.tokens;
-                                        validator.delegator_shares = validator_data.delegator_shares;
-                                        validator.description = validator_data.description;
-                                        validator.bond_height = validator_data.bond_height;
-                                        validator.bond_intra_tx_counter = validator_data.bond_intra_tx_counter;
-                                        validator.unbonding_height = validator_data.unbonding_height;
-                                        validator.unbonding_time = validator_data.unbonding_time;
-                                        validator.commission = validator_data.commission;
+                                    let validatorData = validatorSet[validator.consensus_pubkey]
+                                    if (validatorData){
+                                        if (validatorData.description.identity)
+                                            validator.profile_url =  getValidatorProfileUrl(validatorData.description.identity)
+                                        validator.operator_address = validatorData.operator_address;
+                                        validator.delegator_address = Meteor.call('getDelegator', validatorData.operator_address);
+                                        validator.jailed = validatorData.jailed;
+                                        validator.status = validatorData.status;
+                                        validator.min_self_delegation = validatorData.min_self_delegation;
+                                        validator.tokens = validatorData.tokens;
+                                        validator.delegator_shares = validatorData.delegator_shares;
+                                        validator.description = validatorData.description;
+                                        validator.bond_height = validatorData.bond_height;
+                                        validator.bond_intra_tx_counter = validatorData.bond_intra_tx_counter;
+                                        validator.unbonding_height = validatorData.unbonding_height;
+                                        validator.unbonding_time = validatorData.unbonding_time;
+                                        validator.commission = validatorData.commission;
                                         validator.self_delegation = validator.delegator_shares;
                                         // validator.removed = false,
                                         // validator.removedAt = 0
@@ -396,18 +418,20 @@ Meteor.methods({
                                     // });
                                 }
                                 else{
-                                    let validator_data = validatorSet[valExist.consensus_pubkey]
-                                    if (validator_data){
-                                        validator.jailed = validator_data.jailed;
-                                        validator.status = validator_data.status;
-                                        validator.tokens = validator_data.tokens;
-                                        validator.delegator_shares = validator_data.delegator_shares;
-                                        validator.description = validator_data.description;
-                                        validator.bond_height = validator_data.bond_height;
-                                        validator.bond_intra_tx_counter = validator_data.bond_intra_tx_counter;
-                                        validator.unbonding_height = validator_data.unbonding_height;
-                                        validator.unbonding_time = validator_data.unbonding_time;
-                                        validator.commission = validator_data.commission;
+                                    let validatorData = validatorSet[valExist.consensus_pubkey]
+                                    if (validatorData){
+                                        if (validatorData.description && (!valExist.description || validatorData.description.identity !== valExist.description.identity))
+                                            validator.profile_url =  getValidatorProfileUrl(validatorData.description.identity)
+                                        validator.jailed = validatorData.jailed;
+                                        validator.status = validatorData.status;
+                                        validator.tokens = validatorData.tokens;
+                                        validator.delegator_shares = validatorData.delegator_shares;
+                                        validator.description = validatorData.description;
+                                        validator.bond_height = validatorData.bond_height;
+                                        validator.bond_intra_tx_counter = validatorData.bond_intra_tx_counter;
+                                        validator.unbonding_height = validatorData.unbonding_height;
+                                        validator.unbonding_time = validatorData.unbonding_time;
+                                        validator.commission = validatorData.commission;
 
                                         // calculate self delegation percentage every 30 blocks
 
@@ -490,27 +514,27 @@ Meteor.methods({
                                 Validators.find({}, {fields: {consensus_pubkey: 1, status: 1}}
                                     ).forEach((v) => dbValidators[v.consensus_pubkey] = v.status)
                                 Object.keys(validatorSet).forEach((conPubKey) => {
-                                    let validator_data = validatorSet[conPubKey];
+                                    let validatorData = validatorSet[conPubKey];
                                     // Active validators should have been updated in previous steps
-                                    if (validator_data.status === 2)
+                                    if (validatorData.status === 2)
                                         return
 
                                     if (dbValidators[conPubKey] == undefined) {
                                         console.log(`validator with consensus_pubkey ${conPubKey} not in db`);
 
-                                        validator_data.pub_key = {
+                                        validatorData.pub_key = {
                                             "type" : "tendermint/PubKeyEd25519",
                                             "value": Meteor.call('bech32ToPubkey', conPubKey)
                                         }
-                                        validator_data.address = getAddress(validator_data.pub_key);
-                                        validator_data.delegator_address = Meteor.call('getDelegator', validator_data.operator_address);
+                                        validatorData.address = getAddress(validatorData.pub_key);
+                                        validatorData.delegator_address = Meteor.call('getDelegator', validatorData.operator_address);
 
-                                        validator_data.accpub = Meteor.call('pubkeyToBech32', validator_data.pub_key, Meteor.settings.public.bech32PrefixAccPub);
-                                        validator_data.operator_pubkey = Meteor.call('pubkeyToBech32', validator_data.pub_key, Meteor.settings.public.bech32PrefixValPub);
-                                        console.log(JSON.stringify(validator_data))
-                                        bulkValidators.find({consensus_pubkey: conPubKey}).upsert().updateOne({$set:validator_data});
+                                        validatorData.accpub = Meteor.call('pubkeyToBech32', validatorData.pub_key, Meteor.settings.public.bech32PrefixAccPub);
+                                        validatorData.operator_pubkey = Meteor.call('pubkeyToBech32', validatorData.pub_key, Meteor.settings.public.bech32PrefixValPub);
+                                        console.log(JSON.stringify(validatorData))
+                                        bulkValidators.find({consensus_pubkey: conPubKey}).upsert().updateOne({$set:validatorData});
                                     } else if (dbValidators[conPubKey] == 2) {
-                                        bulkValidators.find({consensus_pubkey: conPubKey}).upsert().updateOne({$set:validator_data});
+                                        bulkValidators.find({consensus_pubkey: conPubKey}).upsert().updateOne({$set:validatorData});
                                     }
                                 })
                             } catch (e){
@@ -523,27 +547,7 @@ Meteor.methods({
                             console.log('Fetching keybase...')
                             Validators.find({}).forEach((validator) => {
                                 try {
-                                    let identity = validator.description.identity
-                                    let profileUrl;
-                                    if (identity.length == 16){
-                                        let response = HTTP.get(`https://keybase.io/_/api/1.0/user/lookup.json?key_suffix=${identity}&fields=pictures`)
-                                        if (response.statusCode == 200) {
-                                            let them = response.data.them
-                                            profileUrl = them && them.length && them[0].pictures && them[0].pictures.primary && them[0].pictures.primary.url;
-                                        } else {
-                                            console.log(JSON.stringify(response))
-                                        }
-                                    }
-                                    else if (identity.indexOf("keybase.io/team/")>0){
-                                        let teamPage = HTTP.get(identity);
-                                        if (teamPage.statusCode == 200){
-                                            let page = cheerio.load(teamPage.content);
-                                            profileUrl = page(".kb-main-card img").attr('src');
-                                        } else {
-                                            console.log(JSON.stringify(teamPage))
-                                        }
-                                    }
-
+                                    let profileUrl =  getValidatorProfileUrl(validator.description.identity)
                                     if (profileUrl) {
                                         bulkValidators.find({address: validator.address}
                                             ).upsert().updateOne({$set:{'profile_url':profileUrl}});
