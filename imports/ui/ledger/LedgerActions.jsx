@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Button, Spinner, TabContent, TabPane, Row, Col, Modal, ModalHeader,
     Form, ModalBody, ModalFooter, InputGroup, InputGroupAddon, Input, Progress,
     UncontrolledTooltip, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
-import { Ledger } from './ledger.js';
+import { Ledger, DEFAULT_MEMO } from './ledger.js';
 import { Validators } from '/imports/api/validators/validators.js';
 import AccountTooltip from '/imports/ui/components/AccountTooltip.jsx';
 import Coin from '/both/utils/coins.js';
@@ -117,6 +117,7 @@ class LedgerButton extends Component {
             errorMessage: '',
             user: localStorage.getItem(CURRENTUSERADDR),
             pubKey: localStorage.getItem(CURRENTUSERPUBKEY),
+            memo: DEFAULT_MEMO
         };
         this.ledger = new Ledger({testModeAllowed: false});
     }
@@ -139,7 +140,7 @@ class LedgerButton extends Component {
             gasEstimate: undefined,
             txMsg: undefined,
             params: undefined,
-            memo: undefined
+            memo: DEFAULT_MEMO
         });
     }
     static getDerivedStateFromProps(props, state) {
