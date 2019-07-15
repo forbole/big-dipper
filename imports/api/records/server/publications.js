@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { ValidatorRecords, Analytics, MissedBlocksStats, VPDistributions } from '../records.js';
+import { ValidatorRecords, Analytics, MissedBlocks, MissedBlocksStats, VPDistributions } from '../records.js';
 import { Validators } from '../../validators/validators.js';
 
 Meteor.publish('validator_records.all', function () {
@@ -40,6 +40,27 @@ publishComposite('missedblocks.validator', function(address, type){
                     return Validators.find(
                         {},
                         {fields:{address:1, description:1, profile_url:1}}
+                    )
+                }
+            }
+        ]
+    }
+});
+
+publishComposite('missedrecords.validator', function(address, type){
+    return {
+        find(){
+            return MissedBlocks.find(
+                {[type]: address},
+                {sort: {updatedAt: -1}}
+            )
+        },
+        children: [
+            {
+                find(){
+                    return Validators.find(
+                        {},
+                        {fields:{address:1, description:1, operator_address:1}}
                     )
                 }
             }
