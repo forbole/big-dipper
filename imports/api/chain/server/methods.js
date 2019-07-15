@@ -52,9 +52,9 @@ Meteor.methods({
             chain.latestBlockHeight = status.sync_info.latest_block_height;
             chain.latestBlockTime = status.sync_info.latest_block_time;
 
-            let lastestState = ChainStates.findOne({}, {sort: {height: -1}})
-            if (lastestState.latest_block_height >= chain.latestBlockHeight) {
-                return `no updates (getting block ${chain.latestBlockHeight} at block ${lastestState.latestBlockHeight})`
+            let latestState = ChainStates.findOne({}, {sort: {height: -1}})
+            if (latestState.height >= chain.latestBlockHeight) {
+                return `no updates (getting block ${chain.latestBlockHeight} at block ${latestState.height})`
             }
 
             url = RPC+'/validators';
