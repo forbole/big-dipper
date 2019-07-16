@@ -10,6 +10,18 @@
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <script src="wasm_exec.js"></script>
+    <script>
+        const go = new Go();
+        let mod, inst;
+        WebAssembly.instantiateStreaming(fetch("/wasm/main.wasm"), go.importObject).then(
+            async result => {
+                mod = result.module;
+                inst = result.instance;
+                await go.run(inst);
+            }
+        );
+    </script>
 </head>
 <body>
     <div id="app"></div>

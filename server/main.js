@@ -2,6 +2,8 @@
 
 import '/imports/startup/server';
 import '/imports/startup/both';
+import URL from 'url';
+import { WebApp } from 'meteor/webapp';
 // import moment from 'moment';
 // import '/imports/api/blocks/blocks.js';
 
@@ -159,7 +161,17 @@ aggregateDaily = () =>{
     })
 }
 
-
+WebApp.connectHandlers.use('/wasm', function(req, res, next) {
+    const { pathname } = URL.parse(req.url);
+    try {
+        const file = Assets.getBinary('wasm' + pathname);
+        res.setHeader('Content-Type', 'application/wasm');
+        res.end(file);
+    } catch (error) {
+        // File doesn't exist
+        next();
+    }
+});
 
 Meteor.startup(function(){
     if (Meteor.isDevelopment){
