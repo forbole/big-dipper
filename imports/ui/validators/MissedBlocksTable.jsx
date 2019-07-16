@@ -68,6 +68,11 @@ const aggregateData = (missedRecords) => {
     return aggregatedMissedRecords;
 }
 
+const BlockLink = (props) => {
+    let height = props.height;
+    return <Link to={"/blocks/"+height}>{numbro(height).format("0,0")}</Link>
+}
+
 export default class MissedBlocksTable extends Component{
     constructor(props){
         super(props);
@@ -75,8 +80,13 @@ export default class MissedBlocksTable extends Component{
         this.state = {
             expandedRow: -1,
             expandedValidator: -1,
-            groupByValidators: false
+            groupByValidators: this.props.type === 'voter'
         }
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.type !== this.props.type)
+            this.setState({groupByValidators: this.props.type === 'voter'})
     }
 
     toggleGroupByValidators = (e) => {
@@ -107,9 +117,9 @@ export default class MissedBlocksTable extends Component{
             let mainRow = [<tr className='main-row' key={index}>
                 <td className='caret' rowSpan={isExpanded?chainSize + 1:1}>{this.renderExpandIcon('expandedRow', index)}</td>
                 <td colSpan='2'>
-                    {`${startBlock.blockHeight} - ${lastBlock.blockHeight}`}
+                    <BlockLink height={startBlock.blockHeight}/> - <BlockLink height={lastBlock.blockHeight}/>
                 </td>
-                <td colSpan='5'>
+                <td colSpan='6'>
                     {`${displayTime(startBlock.time)} - ${displayTime(lastBlock.time)}`}
                 </td>
             </tr>]
@@ -118,13 +128,17 @@ export default class MissedBlocksTable extends Component{
         }
         else {
             return <tr key={index} className={isSub?'sub-row':'main-row'}>
-                <td colSpan={isSub?1:2}>{ record.blockHeight }</td>
-                {grouped?null:<td><Account sync={true} address={record[this.props.type=='voter'?'proposer':'voter']}/></td>}
+                <td colSpan={isSub?1:2}><BlockLink height={record.blockHeight}/></td>
+                {grouped?null:<td><Account sync={true} address={record[this.props.type]}/></td>}
                 <td>{ displayTime(record.time) }</td>
-                <td>{ record.timeDiff + ' ms'}</td>
+                <td>{ numbro(parseFloat(record.timeDiff)/1000).format('0.00')+'s'}</td>
                 <td>{ record.missCount }</td>
                 <td>{ numbro(record.missCount / record.totalCount).format('0.0%') }</td>
                 <td>{ `${record.precommitsCount}/${record.validatorsCount}` }</td>
+                <td>
+                    { numbro(record.votedVotingPower/record.votingPower).format('0.0%') }
+                    <InfoIcon tooltipText={`${numbro(record.votedVotingPower).format('0,0')}/${numbro(record.votingPower).format('0,0')}`}/>
+                </td>
             </tr>
         }
     }
@@ -133,12 +147,13 @@ export default class MissedBlocksTable extends Component{
         return <Table className="missed-records-table">
             <thead><tr>
                 <th colSpan='2'>Block Height</th>
-                {grouped?null:<th>{this.props.type=='voter'?'Proposer':'Voter'}</th>}
+                {grouped?null:<th className='text-capitalize'>{this.props.type}</th>}
                 <th>Commit Time</th>
                 <th>Block Time</th>
                 <th>Missed Count</th>
                 <th>Missed Ratio<InfoIcon tooltipText='Missed ratio at the time of the block'/></th>
                 <th>Signed Ratio<InfoIcon tooltipText='Number of voted validators out of all active validators'/></th>
+                <th>Voted Ratio<InfoIcon tooltipText='Number of voted voting power out of all active voting power'/></th>
             </tr></thead>
             <tbody>
                 {aggregateData(data).map((record, index) => this.renderRow(record, index, grouped=grouped))}
@@ -147,12 +162,12 @@ export default class MissedBlocksTable extends Component{
     }
 
     renderGroupedTable = () => {
-        let target = this.props.type=='voter'?'proposer':'voter';
+        let target = this.props.type;
         let groupedData = groupData(this.props.missedStats, this.props.missedRecords, target);
         return <Table className='missed-records-grouped-table'>
             <thead><tr>
                 <th></th>
-                <th>{this.props.type=='voter'?'Proposer':'Voter'}</th>
+                <th className='text-capitalize'>{this.props.type}</th>
                 <th>Missed Count</th>
                 <th>Total Count<InfoIcon tooltipText='Number of blocks proposed by same proposer where current validator is an active validator'/></th>
                 <th>Missed Ratio</th>
@@ -166,7 +181,7 @@ export default class MissedBlocksTable extends Component{
                     <td><Account sync={true} address={address}/></td>
                     <td>{validatorData.missCount}</td>
                     <td>{validatorData.totalCount}</td>
-                    <td>{numbro(validatorData.missCount/validatorData.totalCount).format('0.00%')}</td>
+                    <td>{numbro(validatorData.missCount/validatorData.totalCount).format('0.00%')} {`(${validatorData.missCount}/${validatorData.totalCount})`}</td>
                 </tr>];
                 let subRow = isExpanded?(<tr className='validator-row sub-row'><td colSpan={4}>{this.renderTable(validatorData.records, true)}</td></tr>):[];
                 return mainRow.concat(subRow);
@@ -177,7 +192,7 @@ export default class MissedBlocksTable extends Component{
     render() {
         return <Card className="missed-records-table-card">
             <CardBody>
-                <div className="float-right"> <Input type="checkbox" onClick={this.toggleGroupByValidators}/> Group By Validators</div>
+                <div className="float-right"> <Input type="checkbox" onClick={this.toggleGroupByValidators} checked={this.state.groupByValidators}/> Group By Validators</div>
                 {this.state.groupByValidators?this.renderGroupedTable():this.renderTable(this.props.missedRecords)}
             </CardBody>
         </Card>

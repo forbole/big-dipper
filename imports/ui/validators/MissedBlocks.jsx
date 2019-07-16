@@ -39,9 +39,9 @@ export default class MissedBlocks extends Component{
                         <div className="mt-3">
                             <p className="lead"><T>validators.totalMissed</T> {this.isVoter()?<T>common.blocks</T>:<T>common.precommits</T>}: {this.props.missedRecords.length}</p>
                             <CardDeck>
-                                <TimeDistubtionChart missedRecords={this.props.missedRecords}/>
+                                <TimeDistubtionChart missedRecords={this.props.missedRecords} type={this.isVoter()?'blocks':'precommits'}/>
                             </CardDeck>
-                            <MissedBlocksTable missedStats={this.props.missedRecordsStats} missedRecords={this.props.missedRecords} type={this.isVoter()?'voter':'proposer'}/>
+                            <MissedBlocksTable missedStats={this.props.missedRecordsStats} missedRecords={this.props.missedRecords} type={this.isVoter()?'proposer':'voter'}/>
 
                         </div>:<div><T>validators.iDontMiss</T>{this.isVoter()?<T>common.block</T>:<T>common.precommit</T>}.</div>}
                     {this.props.statusExist?<div><em><T>validators.lastSyncTime</T>:{moment.utc(this.props.status.lastMissedBlockTime).format("D MMM YYYY, h:mm:ssa")}</em></div>:''}
