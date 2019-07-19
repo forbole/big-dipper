@@ -36,11 +36,11 @@ export const toPubKey = (address) => {
     return bech32.decode('cosmos', address);
 }
 
-function createCosmosAddress(publicKey) {
+export function createBech32Address(publicKey, prefix='cosmos') {
     const message = CryptoJS.enc.Hex.parse(publicKey.toString(`hex`))
     const hash = ripemd160(sha256(message)).toString()
     const address = Buffer.from(hash, `hex`)
-    const cosmosAddress = bech32ify(address, `cosmos`)
+    const cosmosAddress = bech32ify(address, prefix)
     return cosmosAddress
 }
 
@@ -120,7 +120,7 @@ export class Ledger {
         await this.connect()
 
         const pubKey = await this.getPubKey(this.cosmosApp)
-        return {pubKey, address:createCosmosAddress(pubKey)}
+        return {pubKey, address:createBech32Address(pubKey)}
       }
     async confirmLedgerAddress() {
         await this.connect()
@@ -417,9 +417,12 @@ export class Ledger {
         };
 
         const txSkeleton = {
-            type: 'auth/StdTx',
+            type: 'cosmos-sdk/StdTx',
             value: {
-                fee: '',
+                fee: {
+                    amount:[],
+                    gas:"200000"
+                },
                 memo: '',
                 msg: [txMsg],
                 signatures: null,

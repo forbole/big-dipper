@@ -13,6 +13,7 @@ import ValidatorDelegations from './Delegations.jsx';
 import ValidatorTransactions from '../components/TransactionsContainer.js';
 import { DelegationButtons } from '../ledger/LedgerActions.jsx';
 import { Helmet } from 'react-helmet';
+import MagpiePanel from '../magpie/MagpiePanel.jsx'
 import LinkIcon from '../components/LinkIcon.jsx';
 import i18n from 'meteor/universe:i18n';
 
@@ -192,25 +193,28 @@ export default class Validator extends Component{
                         <Link to="/validators" className="btn btn-link"><i className="fas fa-caret-left"></i> <T>common.backToList</T></Link>
                     </Col>
                     <Col md={4}>
-                    <Card body className="text-center">
-                        <div className="shareLink d-flex align-self-end">{this.renderShareLink()}</div>
-                        <div className="validator-avatar"><Avatar moniker={moniker} profileUrl={this.props.validator.profile_url} address={this.props.validator.address} list={false}/></div>
-                        <div className="moniker text-primary">{website?<a href={addhttp(this.props.validator.description.website)} target="_blank">{moniker} <i className="fas fa-link"></i></a>:moniker}</div>
-                        <div className="identity"><KeybaseCheck identity={identity} showKey /></div>
-                        <div className="details"><Markdown markup={ details } /></div>
-                        <div className="website"></div>
-                      </Card>
-                    <Card>
-                          <div className="card-header"><T>validators.uptime</T> <Link className="float-right" to={"/validator/"+this.props.validator.address+"/missed/blocks"}><T>common.more</T>...</Link></div>
-                          <CardBody>
-                                <Row>
+                        <Card body className="text-center">
+                            <div className="shareLink d-flex align-self-end">{this.renderShareLink()}</div>
+                            <div className="validator-avatar"><Avatar moniker={moniker} profileUrl={this.props.validator.profile_url} address={this.props.validator.address} list={false}/></div>
+                            <div className="moniker text-primary">{website?<a href={addhttp(this.props.validator.description.website)} target="_blank">{moniker} <i className="fas fa-link"></i></a>:moniker}</div>
+                            <div className="identity"><KeybaseCheck identity={identity} showKey /></div>
+                            <div className="details"><Markdown markup={ details } /></div>
+                            <div className="website"></div>
+                        </Card>
+                        <Card>
+                            <div className="card-header"><T>validators.uptime</T> <Link className="float-right" to={"/validator/"+this.props.validator.address+"/missed/blocks"}><T>common.more</T>...</Link></div>
+                            <CardBody>
+                                 <Row>
                                     <Col xs={8} className="label"><T numBlocks={Meteor.settings.public.uptimeWindow}>validators.lastNumBlocks</T></Col>
-                            <Col xs={4} className="value text-right">{this.props.validator.uptime}%</Col>
+                                    <Col xs={4} className="value text-right">{this.props.validator.uptime}%</Col>
                                     <Col md={12} className="blocks-list">{this.state.records}</Col>
                                 </Row>
                             </CardBody>
                         </Card>
-                  </Col>
+                        <MagpiePanel isLogIn={true || this.props.validator && this.props.validator.delegator_address && this.state.user && this.props.validator.delegator_address === this.state.user}
+                            history={this.props.history}/>
+
+                    </Col>
                     <Col md={8}>
                         <Card>
                         <div className="card-header"><T>validators.validatorInfo</T></div>

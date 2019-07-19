@@ -56,7 +56,7 @@ export default class Magpie extends Component{
             new Date().toISOString());
 
 
-        const bytesToSign = Ledger.getBytesToSign(txMsg, txContext);
+        const bytesToSign = Ledger.getBytesToSign(txMsg, {...txContext, accountNumber: 0, sequence: 0});
         this.setState({
             'rawMessage': JSON.stringify(txMsg),
             'bytesToSign': bytesToSign
@@ -137,6 +137,49 @@ export default class Magpie extends Component{
             <div>
                 <span>Verified?</span>
                 <Input type="input" value={this.state.verified}/>
+            </div>
+            <div>
+                <Input type="textarea" value={`
+#### pubKey:
+\`\`\`
+${this.state.pubKey}
+\`\`\`
+
+#### bech32 Address:
+\`\`\`
+${this.getBech32Pubkey(this.state.pubKey)}
+\`\`\`
+
+#### privKey:
+\`\`\`
+${this.state.privKey}
+\`\`\`
+
+#### raw message:
+\`\`\`json
+${this.state.rawMessage}
+\`\`\`
+
+#### Bytes For Ledger To Sign
+\`\`\`json
+${this.state.bytesToSign}
+\`\`\`
+
+#### Ledger Signed Message
+\`\`\`json
+${this.state.ledgerSignedMessage}
+\`\`\`
+
+#### Bytes For WASM to Sign
+\`\`\`json
+${this.state.wasmBytesToSign}
+\`\`\`
+
+#### Final Message
+\`\`\`json
+${this.state.doubleSignedMessage}
+\`\`\`
+                    `}/>
             </div>
             <Row>
                 <Col><Button color="primary" onClick={this.generateKey}>Create Key</Button></Col>

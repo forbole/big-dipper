@@ -127,7 +127,12 @@ class LedgerButton extends Component {
         this.ledger = new Ledger({testModeAllowed: false});
     }
 
+    onClose = () => {
+        return
+    }
+
     close = () => {
+        this.onClose();
         this.setState({
             activeTab: '2',
             errorMessage: '',
@@ -371,6 +376,20 @@ class LedgerButton extends Component {
         })
     }
 
+    signCallback = (txMsg, txContext, sig) => {
+        Ledger.applySignature(txMsg, txContext, sig);
+        Meteor.call('transaction.submit', txMsg, (err, res) => {
+            if (err) {
+                this.setStateOnError('signing', err.reason)
+            } else if (res) {
+                this.setStateOnSuccess('signing', {
+                    txHash: res,
+                    activeTab: '4'
+                })
+            }
+        })
+    }
+
     sign = () => {
         if (this.state.signing) return
         this.initStateOnLoad('signing')
@@ -380,17 +399,7 @@ class LedgerButton extends Component {
             const bytesToSign = Ledger.getBytesToSign(txMsg, txContext);
             this.ledger.sign(bytesToSign).then((sig) => {
                 try {
-                    Ledger.applySignature(txMsg, txContext, sig);
-                    Meteor.call('transaction.submit', txMsg, (err, res) => {
-                        if (err) {
-                            this.setStateOnError('signing', err.reason)
-                        } else if (res) {
-                            this.setStateOnSuccess('signing', {
-                                txHash: res,
-                                activeTab: '4'
-                            })
-                        }
-                    })
+                    this.signCallback(txMsg, txContext, sig)
                 } catch (e) {
                     this.setStateOnError('signing', e.message)
                 }
@@ -806,35 +815,104 @@ class TransferButton extends LedgerButton {
 }
 
 
-class CreateSessionButton extends LedgerButton {
+class CreateSessionModal extends LedgerButton {
     onComponentDidUpdate(prevProps, prevState) {
-        if (prevProps.isOpen !== this.props.isOpen) {
+        if (prevProps.isOpen !== this.props.isOpen && this.props.isOpen) {
             this.openModal(Types.CREATESESSION)
+            let txMsg = Ledger.createCreateSession(
+                this.getTxContext(),
+                localStorage.getItem(CURRENTUSERADDR),
+                new Date().toISOString());
+            this.setState({
+                txMsg,
+                activeTab: '3'
+            })
             return true
         }
         return false
     }
 
-    renderActionTab = () => {
-        if (!this.state.currentUser) return null;
-        return <TabPane tabId="2">
-            <h3>Creating A New Session</h3>
+    onClose = () => {
+        this.props.toggle(false)
+    }
 
-        </TabPane>
+    getBalance = () => {
+        if (this.state.loadingBalance) return
+
+        this.initStateOnLoad('loadingBalance', { loading: true });
+        let address = this.props.bech32PubKey;
+        Meteor.call('desmos.airdrop', address, (err, result) => {
+            if (!result || error) {
+                this.setStateOnError(
+                    'loadingBalance',
+                    `Failed to create session`,
+                    { activeTab: '0' }
+                )
+                return
+            }
+            Meteor.call('desmos.getAccountDetail', address, (error, result) => {
+                try{
+                    if (result) {
+                        this.setStateOnSuccess('loadingBalance', {
+                            currentUser: {
+                                accountNumber: result.account_number,
+                                sequence: result.sequence || 0,
+                                availableCoin: coin
+                        }})
+                    }
+                    if (!result || error) {
+                        this.setStateOnError(
+                            'loadingBalance',
+                            `Failed to create session`,
+                            { activeTab: '0' }
+                        )
+                    }
+                } catch (e) {
+                    this.setStateOnError('loadingBalance', e.message);
+                }
+            })
+        })
     }
 
     getTxContext = () => {
         return {
             chainId: Meteor.settings.public.desmosChainId,
-            bech32: this.state.bech32PubKey,
-            accountNumber: this.state.accountNumber,
-            sequence: this.state.sequence,
+            bech32: this.props.bech32PubKey,
+            accountNumber: 0 /*this.state.accountNumber*/,
+            sequence: 0 /*this.state.sequence*/,
             denom: Meteor.settings.public.desmosDenom,
-            pk: this.state.pubKey,
+            pk: this.props.pubKey,
             path: [44, 118, 0, 0, 0],
             memo: ''
         }
     }
+
+    signCallback = (txMsg, txContext, sig) => {
+        txMsg.value.msg[0].value.signature = sig.toString('base64');
+        txContext = {...txContext,
+            accountNumber: 8/*this.state.accountNumber*/,
+            sequence: 0/*this.state.sequence*/,
+        }
+        const wasmBytesToSign = Ledger.getBytesToSign(txMsg, txContext);
+        signMessageWithKey(wasmBytesToSign, this.props.privKey)
+        let signature = localStorage.getItem('signature')
+        Ledger.applySignature(txMsg, txContext, signature);
+        console.log(txMsg);
+        this.close()
+
+        /* broadcast
+        Meteor.call('desmos.broadcast', txMsg, (err, res) => {
+            if (err) {
+                this.setStateOnError('signing', err.reason)
+            } else if (res) {
+                this.setStateOnSuccess('signing', {
+                    txHash: res,
+                    activeTab: '4'
+                })
+            }
+        })*/
+    }
+
 
     supportAction(action) {
         return action === Types.CREATESESSION;
@@ -852,8 +930,8 @@ class CreateSessionButton extends LedgerButton {
 }
 
 export {
-    LedgerButton,
     DelegationButtons,
     WithdrawButton,
     TransferButton,
+    CreateSessionModal
 }
