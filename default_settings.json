@@ -16,12 +16,18 @@
         "mintingDenom": "uatom",
         "stakingFraction": 1000000,
         "gasPrice": 0.02,
-        "coingeckoId": "cosmos"
+        "coingeckoId": "cosmos",
+        "desmosBech32PrefixAccAddr": "desmos",
+        "desmosChainId": "testnet",
+        "desmosDenom": "desmos"
     },
     "genesisFile": "{Replace the address of the genesis file of the chain}",
     "remote":{
         "rpc":"https://gaia-seeds.interblock.io",
-        "lcd":"https://gaia-seeds.interblock.io:1317"
+        "lcd":"https://gaia-seeds.interblock.io:1317",
+        "desmosRPC":"localhost:26657",
+        "desmosLCD":"localhost:1317",
+        "desmosFaucet":"localhost:3456"
     },
     "debug": {
         "startTimer": true,

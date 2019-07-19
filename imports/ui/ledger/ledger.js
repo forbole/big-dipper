@@ -400,7 +400,34 @@ export class Ledger {
 
         return txSkeleton;
     }
+    static createCreateSession(
+        txContext,
+        externalAddress,
+        createTime,
+    ) {
+        const txMsg = {
+            type: "desmos/MsgCreateSession",
+            value: {
+                created: createTime,
+                external_owner: externalAddress,
+                namespace: "cosmos",
+                owner: txContext.bech32,
+                signature: null
+            }
+        };
 
+        const txSkeleton = {
+            type: 'auth/StdTx',
+            value: {
+                fee: '',
+                memo: '',
+                msg: [txMsg],
+                signatures: null,
+            },
+        };
+
+        return txSkeleton;
+    }
 }
 
 function versionString({ major, minor, patch }) {
