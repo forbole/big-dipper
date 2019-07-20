@@ -821,8 +821,7 @@ class CreateSessionModal extends LedgerButton {
             this.openModal(Types.CREATESESSION)
             let txMsg = Ledger.createCreateSession(
                 this.getTxContext(),
-                localStorage.getItem(CURRENTUSERADDR),
-                new Date().toISOString());
+                localStorage.getItem(CURRENTUSERADDR));
             this.setState({
                 txMsg,
                 activeTab: '3'
@@ -835,6 +834,8 @@ class CreateSessionModal extends LedgerButton {
     onClose = () => {
         this.props.toggle(false)
     }
+
+    renderActionTab = () => {}
 
     getBalance = () => {
         if (this.state.loadingBalance) return

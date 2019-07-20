@@ -400,7 +400,39 @@ export class Ledger {
 
         return txSkeleton;
     }
+    /* TODO: move magpie stuff to magpie */
     static createCreateSession(
+        txContext,
+        externalAddress,
+        createTime,
+    ) {
+        const txMsg = {
+            type: "desmos/MsgCreateSession",
+            value: {
+                created: createTime,
+                external_owner: externalAddress,
+                namespace: "cosmos",
+                owner: txContext.bech32,
+                signature: null
+            }
+        };
+
+        const txSkeleton = {
+            type: 'cosmos-sdk/StdTx',
+            value: {
+                fee: {
+                    amount:[],
+                    gas:"200000"
+                },
+                memo: '',
+                msg: [txMsg],
+                signatures: null,
+            },
+        };
+
+        return txSkeleton;
+    }
+    static createPost(
         txContext,
         externalAddress,
         createTime,

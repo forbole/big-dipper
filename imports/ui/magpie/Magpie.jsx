@@ -7,40 +7,36 @@ import secp256k1 from "secp256k1";
 import sha256 from "crypto-js/sha256"
 import ripemd160 from "crypto-js/ripemd160"
 import CryptoJS from "crypto-js"
-import { Ledger, DEFAULT_MEMO } from '/imports/ui/ledger/ledger.js';
+import { Ledger, DEFAULT_MEMO, createBech32Address } from '/imports/ui/ledger/ledger.js';
+import { getBech32Address } from './magpie.js';
+
+
+bech32Address = (pubkey) =>
+    createBech32Address(Buffer.from(pubkey,'base64'), 'desmos')
 
 export default class Magpie extends Component{
     constructor(props){
         super(props);
-        this.state = {}
+        this.state = {pubKey: ''}
         this.ledger = new Ledger({testModeAllowed: false});
     }
 
     generateKey = () => {
-        // createKey();
+        createKey();
         this.setState({
             pubKey: localStorage.getItem('pubKey'),
+            pubKeyHex: localStorage.getItem('pubKeyHex'),
             privKey: localStorage.getItem('privKey')
         })
-        this.getMessage(localStorage.getItem('pubKey'))
-    }
-
-    getBech32Pubkey = (pk) => {
-        if (!pk) return
-        const message = CryptoJS.enc.Hex.parse(Buffer.from(pk,'base64').toString('hex'))
-        const hash = ripemd160(sha256(message)).toString()
-        const address = Buffer.from(hash, 'hex')
-        const words = bech32.toWords(address)
-        const cosmosAddress = bech32.encode('desmos', words)
-        return cosmosAddress
+        this.getMessage(localStorage.getItem('pubKey'), localStorage.getItem('privKey'))
     }
 
     getTxContext = (pk) => {
         return {
-            chainId: 'tesmos-1'/*Meteor.settings.public.chainId*/,
-            bech32: this.getBech32Pubkey(pk),
+            chainId: 'testnet'/*Meteor.settings.public.chainId*/,
+            bech32: bech32Address(pk, 'desmos'),
             accountNumber: 8/*this.state.currentUser.accountNumber*/,
-            sequence: 0/*this.state.currentUser.sequence*/,
+            sequence: 3/*this.state.currentUser.sequence*/,
             denom: 'desmos'/*Coin.MintingDenom*/,
             pk: pk,
             path: [44, 118, 0, 0, 0],
@@ -48,7 +44,7 @@ export default class Magpie extends Component{
         }
     }
 
-    getMessage = (pk) => {
+    getMessage = (pk, privKey) => {
         const txContext = this.getTxContext(pk);
         let txMsg = Ledger.createCreateSession(
             txContext,
@@ -62,21 +58,27 @@ export default class Magpie extends Component{
             'bytesToSign': bytesToSign
         })
 
-        this.ledger.sign(bytesToSign).then((sig) => {
+        //this.ledger.sign(bytesToSign).then((sig) => {
+            let sig = 'whev'
             txMsg.value.msg[0].value.signature = sig.toString('base64');
-            const wasmBytesToSign = Ledger.getBytesToSign(txMsg, txContext);
+            const wasmBytesToSign = Ledger.getBytesToSign(txMsg, {...txContext/*,accountNumber:0, chainId:""*/});
             this.setState({
                 'ledgerSignedMessage': JSON.stringify(txMsg),
                 wasmBytesToSign
             })
-            signMessageWithKey(wasmBytesToSign, this.state.privKey)
+            let toSign = Buffer.from(wasmBytesToSign).toString('base64');
+            console.log(toSign)
+            console.log(privKey)
+            signMessageWithKey(toSign, privKey)
             let signature = localStorage.getItem('signature')
-            Ledger.applySignature(txMsg, txContext, signature);
+            let buffer = Buffer.from(signature, 'base64')
+            //buffer = buffer.slice(0, buffer.length - 1)
+            Ledger.applySignature(txMsg, txContext, buffer.toString('base64'));
             this.setState({
                 signature,
                 'doubleSignedMessage': JSON.stringify(txMsg)
             })
-        })
+        //})
     }
 
     handleInputChange = (e) => {
@@ -102,7 +104,7 @@ export default class Magpie extends Component{
                 <span>Public Key</span>
                 <Input type="textarea" id="pubKey" value={this.state.pubKey}/>
                 <span>Bech32 Address</span>
-                <Input type="textarea" value={this.getBech32Pubkey(this.state.pubKey)}/>
+                <Input type="textarea" value={bech32Address(this.state.pubKey, 'desmos')}/>
             </div>
             <div>
                 <span>Private Key</span>
@@ -147,7 +149,7 @@ ${this.state.pubKey}
 
 #### bech32 Address:
 \`\`\`
-${this.getBech32Pubkey(this.state.pubKey)}
+${bech32Address(this.state.pubKey, 'desmos')}
 \`\`\`
 
 #### privKey:

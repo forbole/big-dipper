@@ -1,0 +1,1 @@
+{"type":"cosmos-sdk/StdTx","value":{"fee":{"amount":[],"gas":"200000"},"memo":"","msg":[{"type":"desmos/MsgCreateSession","value":{"created":"2019-07-20T07:02:22.671Z","external_owner":"cosmos10505nl7yftsme9jk2glhjhta7w0475uv6pzj70","namespace":"cosmos","owner":"desmos18cw4q07nqlhc422m876gwx6jyaaz92qz4ru6st","signature":"whev"}}],"signatures":null}}
