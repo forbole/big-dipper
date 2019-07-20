@@ -9,6 +9,7 @@ import { VotingPowerHistory } from '../../api/voting-power/history.js';
 import { Evidences } from '../../api/evidences/evidences.js';
 import { CoinStats } from '../../api/coin-stats/coin-stats.js';
 import { ChainStates } from '../../api/chain/chain.js';
+import { PostSessions, Posts, Likes } from '../../api/magpie/collections.js'
 
 ChainStates.rawCollection().createIndex({height: -1},{unique:true});
 
@@ -53,3 +54,19 @@ VotingPowerHistory.rawCollection().createIndex({address:1,height:-1});
 VotingPowerHistory.rawCollection().createIndex({type:1});
 
 CoinStats.rawCollection().createIndex({last_updated_at:-1},{unique:true});
+
+PostSessions.rawCollection().createIndex({session_id:1}, {unique: true});
+PostSessions.rawCollection().createIndex({external_owner:1, owner: 1}, {unique:true})
+PostSessions.rawCollection().createIndex({external_owner:1});
+PostSessions.rawCollection().createIndex({owner:1});
+PostSessions.rawCollection().createIndex({created: -1})
+
+Posts.rawCollection().createIndex({post_id:1}, {unique: true});
+Posts.rawCollection().createIndex({parent_id:1});
+Posts.rawCollection().createIndex({external_owner:1});
+Posts.rawCollection().createIndex({owner:1});
+
+Likes.rawCollection().createIndex({like_id:1}, {unique:1});
+Likes.rawCollection().createIndex({external_owner:1});
+Likes.rawCollection().createIndex({owner:1});
+Likes.rawCollection().createIndex({post_id:1})
