@@ -452,7 +452,7 @@ class LedgerButton extends Component {
                 {(this.state.errorMessage !== '')?'Retry':'Next'}
             </Button>
         if (this.state.activeTab === '3')
-            return <Button color="primary"  disabled={this.state.signing} onClick={this.sign}>
+            return <Button color="primary"  disabled={this.state.signing || this.state.loading} onClick={this.sign}>
                 {(this.state.errorMessage !== '')?'Retry':'Sign'}
             </Button>
     }
@@ -821,7 +821,8 @@ class CreateSessionModal extends LedgerButton {
             this.openModal(Types.CREATESESSION)
             let txMsg = Ledger.createCreateSession(
                 this.getTxContext(),
-                localStorage.getItem(CURRENTUSERADDR));
+                localStorage.getItem(CURRENTUSERADDR),
+                localStorage.getItem(CURRENTUSERPUBKEY));
             this.setState({
                 txMsg,
                 activeTab: '3'
@@ -843,29 +844,30 @@ class CreateSessionModal extends LedgerButton {
         this.initStateOnLoad('loadingBalance', { loading: true });
         let address = this.props.bech32PubKey;
         Meteor.call('desmos.airdrop', address, (err, result) => {
-            if (!result || error) {
+            if (!result || err) {
                 this.setStateOnError(
                     'loadingBalance',
-                    `Failed to create session`,
-                    { activeTab: '0' }
+                    `Failed to create session ${err && err.message}`,
+                    {loading: false}
                 )
                 return
             }
-            Meteor.call('desmos.getAccountDetail', address, (error, result) => {
+            Meteor.call('desmos.getAccount', address, (error, result) => {
                 try{
                     if (result) {
                         this.setStateOnSuccess('loadingBalance', {
                             currentUser: {
                                 accountNumber: result.account_number,
-                                sequence: result.sequence || 0,
-                                availableCoin: coin
-                        }})
+                                sequence: result.sequence || 0
+                            },
+                            loading: false
+                        })
                     }
                     if (!result || error) {
                         this.setStateOnError(
                             'loadingBalance',
-                            `Failed to create session`,
-                            { activeTab: '0' }
+                            `Failed to create session ${error && error.message}`,
+                            {loading: false}
                         )
                     }
                 } catch (e) {
@@ -879,8 +881,8 @@ class CreateSessionModal extends LedgerButton {
         return {
             chainId: Meteor.settings.public.desmosChainId,
             bech32: this.props.bech32PubKey,
-            accountNumber: 0 /*this.state.accountNumber*/,
-            sequence: 0 /*this.state.sequence*/,
+            accountNumber: 0 /* set to 0 as external account don't need this */,
+            sequence: 0 /* set to 0 as external account don't need this  */,
             denom: Meteor.settings.public.desmosDenom,
             pk: this.props.pubKey,
             path: [44, 118, 0, 0, 0],
@@ -891,27 +893,24 @@ class CreateSessionModal extends LedgerButton {
     signCallback = (txMsg, txContext, sig) => {
         txMsg.value.msg[0].value.signature = sig.toString('base64');
         txContext = {...txContext,
-            accountNumber: 8/*this.state.accountNumber*/,
-            sequence: 0/*this.state.sequence*/,
+            accountNumber: this.state.currentUser.accountNumber,
+            sequence: this.state.currentUser.sequence,
         }
         const wasmBytesToSign = Ledger.getBytesToSign(txMsg, txContext);
-        signMessageWithKey(wasmBytesToSign, this.props.privKey)
+        let toSign = Buffer.from(wasmBytesToSign).toString('base64');
+        signMessageWithKey(toSign, this.props.privKey)
         let signature = localStorage.getItem('signature')
         Ledger.applySignature(txMsg, txContext, signature);
-        console.log(txMsg);
-        this.close()
 
-        /* broadcast
+        // broadcast
         Meteor.call('desmos.broadcast', txMsg, (err, res) => {
             if (err) {
                 this.setStateOnError('signing', err.reason)
             } else if (res) {
-                this.setStateOnSuccess('signing', {
-                    txHash: res,
-                    activeTab: '4'
-                })
+                console.log(txMsg);
+                this.close()
             }
-        })*/
+        })
     }
 
 
