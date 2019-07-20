@@ -55,18 +55,18 @@ VotingPowerHistory.rawCollection().createIndex({type:1});
 
 CoinStats.rawCollection().createIndex({last_updated_at:-1},{unique:true});
 
-PostSessions.rawCollection().createIndex({session_id:1}, {unique: true});
+PostSessions.rawCollection().createIndex({id:1}, {unique: true});
 PostSessions.rawCollection().createIndex({external_owner:1, owner: 1}, {unique:true})
 PostSessions.rawCollection().createIndex({external_owner:1});
 PostSessions.rawCollection().createIndex({owner:1});
 PostSessions.rawCollection().createIndex({created: -1})
 
-Posts.rawCollection().createIndex({post_id:1}, {unique: true});
+Posts.rawCollection().createIndex({id:1}, {unique: true});
 Posts.rawCollection().createIndex({parent_id:1});
 Posts.rawCollection().createIndex({external_owner:1});
 Posts.rawCollection().createIndex({owner:1});
 
-Likes.rawCollection().createIndex({like_id:1}, {unique:1});
+Likes.rawCollection().createIndex({id:1}, {unique:1});
 Likes.rawCollection().createIndex({external_owner:1});
 Likes.rawCollection().createIndex({owner:1});
 Likes.rawCollection().createIndex({post_id:1})
