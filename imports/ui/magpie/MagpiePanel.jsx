@@ -53,7 +53,7 @@ export default class MagpiePanel extends Component{
         if (this.props.isLogIn) {
             if (this.state.desmosSession && new Date(this.state.desmosSession) > new Date()) {
                 return <div>
-                    <div>Current Proxy Address {createBech32Address(this.state.desmosPubKey)} expires at {this.state.desmosSession}</div>
+                    <div>Current Proxy Address {createBech32Address(Buffer.from(this.state.desmosPubKey, 'base64'), 'desmos')} expires at {this.state.desmosSession}</div>
 
                     <Input name="newPostMessage" onChange={this.handleInputChange}
                         placeholder="New Post" type="textarea" value={this.state.newPostMessage}/>

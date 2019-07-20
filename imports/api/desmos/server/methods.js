@@ -18,6 +18,27 @@ Meteor.methods({
             return true
         }
     },
+    'desmos.getAccount': function(address) {
+        this.unblock();
+        let url = `${desmosLCD}/auth/accounts/${address}`;
+        try{
+            let available = HTTP.get(url);
+            if (available.statusCode == 200){
+                let response = JSON.parse(available.content);
+                let account;
+                if (response.type === 'cosmos-sdk/Account')
+                    account = response.value;
+                else if (response.type === 'cosmos-sdk/DelayedVestingAccount' || response.type === 'cosmos-sdk/ContinuousVestingAccount')
+                    account = response.value.BaseVestingAccount.BaseAccount
+                if (account && account.account_number != null)
+                    return account
+                return null
+            }
+        }
+        catch (e){
+            console.log(e)
+        }
+    },
     'desmos.broadcast': function(txInfo) {
         const url = `${desmosLCD}/txs`;
         data = {

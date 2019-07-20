@@ -404,15 +404,16 @@ export class Ledger {
     static createCreateSession(
         txContext,
         externalAddress,
-        createTime,
+        externalPubKey,
     ) {
         const txMsg = {
             type: "desmos/MsgCreateSession",
             value: {
-                created: createTime,
+                created: new Date().toISOString(),
                 external_owner: externalAddress,
                 namespace: "cosmos",
                 owner: txContext.bech32,
+                pubkey: externalPubKey,
                 signature: null
             }
         };

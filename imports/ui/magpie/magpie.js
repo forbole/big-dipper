@@ -55,6 +55,7 @@ export class Magpie {
     createCreateSession(
         sequence,
         externalAddress,
+        externalPubKey,
     ) {
         const txSkeleton = this.createSkeleton(sequence)
         txSkeleton.value.msg.push({
@@ -64,6 +65,7 @@ export class Magpie {
                 external_owner: externalAddress,
                 namespace: "cosmos",
                 owner: this.pubAddr,
+                pubkey: externalPubKey,
                 signature: null
             }
         })

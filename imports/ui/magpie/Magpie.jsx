@@ -35,8 +35,8 @@ export default class Magpie extends Component{
         return {
             chainId: 'testnet'/*Meteor.settings.public.chainId*/,
             bech32: bech32Address(pk, 'desmos'),
-            accountNumber: 8/*this.state.currentUser.accountNumber*/,
-            sequence: 3/*this.state.currentUser.sequence*/,
+            accountNumber: 7/*this.state.currentUser.accountNumber*/,
+            sequence: 0/*this.state.currentUser.sequence*/,
             denom: 'desmos'/*Coin.MintingDenom*/,
             pk: pk,
             path: [44, 118, 0, 0, 0],
@@ -49,7 +49,7 @@ export default class Magpie extends Component{
         let txMsg = Ledger.createCreateSession(
             txContext,
             localStorage.getItem(CURRENTUSERADDR),
-            new Date().toISOString());
+            localStorage.getItem(CURRENTUSERPUBKEY));
 
 
         const bytesToSign = Ledger.getBytesToSign(txMsg, {...txContext, accountNumber: 0, sequence: 0});

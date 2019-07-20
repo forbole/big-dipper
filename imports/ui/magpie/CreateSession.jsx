@@ -29,7 +29,7 @@ export default class CreateSessionButton extends Component{
         this.setState({
             pubKey,
             privKey: localStorage.getItem(DESMOSPRIVKEY),
-            bech32PubKey: createBech32Address(pubKey),
+            bech32PubKey: createBech32Address(Buffer.from(pubKey,'base64'), 'desmos'),
             isOpen: true
         })
     }
