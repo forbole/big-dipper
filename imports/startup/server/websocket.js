@@ -1,7 +1,7 @@
 import WebSocket from 'ws';
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
-import { Posts, Likes, PostSessions } from '../../api/magpie/collections';
+import { Posts, Likes, PostSessions } from '../../api/magpie/magpies';
 
 DESMOSRPC = Meteor.settings.remote.desmosRPC;
 DESMOSLCD = Meteor.settings.remote.desmosLCD;
@@ -66,7 +66,7 @@ Meteor.methods({
 })
 
 ws.on('message', Meteor.bindEnvironment((data) => {
-    // console.log(data);
+    console.log(data);
     txData = JSON.parse(data);
     // console.log(data);
     events = txData.result.events;

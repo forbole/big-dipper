@@ -9,7 +9,7 @@ import { VotingPowerHistory } from '../../api/voting-power/history.js';
 import { Evidences } from '../../api/evidences/evidences.js';
 import { CoinStats } from '../../api/coin-stats/coin-stats.js';
 import { ChainStates } from '../../api/chain/chain.js';
-import { PostSessions, Posts, Likes } from '../../api/magpie/collections.js'
+import { PostSessions, Posts, Likes } from '../../api/magpie/magpies.js'
 
 ChainStates.rawCollection().createIndex({height: -1},{unique:true});
 
