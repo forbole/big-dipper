@@ -54,9 +54,11 @@ export default class MagpiePanel extends Component{
     like = (postId) => {
         this.state.magpie.createLike(this.state.user, postId)
     }
-
+    hasActiveSession = () => {
+        return this.state.desmosSessionExpiry && new Date(this.state.desmosSessionExpiry) > new Date()
+    }
     renderDesmosAccount() {
-        if (this.state.desmosSessionExpiry && new Date(this.state.desmosSessionExpiry) > new Date()) {
+        if (this.hasActiveSession()) {
             return <div>
                 <div>Current Proxy Address {this.state.desmosPubAddr} expires at {this.state.desmosSessionExpiry}</div>
                 {this.props.isLogIn?<div>
@@ -77,7 +79,7 @@ export default class MagpiePanel extends Component{
                 {this.renderDesmosAccount()}
             </CardBody>
             <CardBody>
-                <MagpieList address={this.props.address} onLike={this.like} onReply={this.reply}/>
+                <MagpieList hasActiveSession={this.hasActiveSession()} address={this.props.address} onLike={this.like} onReply={this.reply}/>
             </CardBody>
         </Card>
     }

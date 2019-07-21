@@ -12,10 +12,10 @@ Magpie = (props) => {
         </CardBody>
         <CardFooter>
             <Row>
-                <Col><Button onClick={props.onLike} data-postid={props.id} color='outline'>
+                <Col><Button disabled={props.isActive}  onClick={props.onLike} data-postid={props.id} color='outline'>
                     <i className="material-icons">thumb_up</i> <span>{props.likes}</span>
                 </Button></Col>
-                <Col className="text-right"><Button onClick={() => {props.replyto(props.id)}} color='outline'>
+                <Col className="text-right"><Button disabled={props.isActive}  onClick={() => {props.replyto(props.id)}} color='outline'>
                     <i className="material-icons">reply</i>
                 </Button></Col>
 
@@ -71,6 +71,7 @@ export default class MagpieList extends Component{
                 return <div key={i}>
                     <Magpie message={magpie.message} likes={magpie.likes}
                         id={magpie.id} expanded={magpie.id === this.state.expandedID}
+                        isActive={this.props.hasActiveSession}
                         handleInputChange={this.handleInputChange}
                         replyMessage={this.state.replyMessage}
                         onReply={this.onReply} onLike={this.onLike}
