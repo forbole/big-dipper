@@ -1,7 +1,7 @@
 import WebSocket from 'ws';
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
-import { Posts, Likes, PostSessions } from '../../api/magpie/collections';
+import { Posts, Likes, PostSessions } from '../../api/magpie/magpies';
 
 DESMOSRPC = Meteor.settings.remote.desmosRPC;
 DESMOSLCD = Meteor.settings.remote.desmosLCD;
