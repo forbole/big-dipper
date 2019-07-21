@@ -1,8 +1,15 @@
 import React, { Component } from 'react';
-import { Row, Col, Card, CardBody, CardFooter, Spinner, Button, Input } from 'reactstrap';
+import { Row, Col, Card, CardBody, CardHeader, CardFooter, Spinner, Button, Input } from 'reactstrap';
+import Account from '../components/Account.jsx';
 
 Magpie = (props) => {
-    return <Card><CardBody>
+    return <Card className="magpie-item">
+        <CardHeader>
+            <Row>
+                
+            </Row>
+        </CardHeader>
+        <CardBody>
             <div>{props.message}</div>
             {props.expanded?<div>
                 <Input name="replyMessage" onChange={props.handleInputChange}
@@ -12,10 +19,10 @@ Magpie = (props) => {
         </CardBody>
         <CardFooter>
             <Row>
-                <Col><Button disabled={props.isActive}  onClick={props.onLike} data-postid={props.id} color='outline'>
+                <Col><Button disabled={props.isActive}  onClick={props.onLike} data-postid={props.id} color='link' size="sm" >
                     <i className="material-icons">thumb_up</i> <span>{props.likes}</span>
                 </Button></Col>
-                <Col className="text-right"><Button disabled={props.isActive}  onClick={() => {props.replyto(props.id)}} color='outline'>
+                <Col className="text-right"><Button disabled={props.isActive}  onClick={() => {props.replyto(props.id)}} color='link' size="sm">
                     <i className="material-icons">reply</i>
                 </Button></Col>
 

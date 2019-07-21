@@ -568,6 +568,10 @@ div#voting-power-dist .card{
     cursor: pointer;
 }
 
+.magpie-item .card-footer button{
+    text-decoration: none;
+}
+
 @media only screen and (max-width: 767px){
     div#main, div#transaction, div#block{
         padding-bottom: 4.85rem;
