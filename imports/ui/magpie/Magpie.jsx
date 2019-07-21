@@ -24,11 +24,10 @@ export default class Magpie extends Component{
     generateKey = () => {
         createKey();
         this.setState({
-            pubKey: localStorage.getItem('pubKey'),
-            pubKeyHex: localStorage.getItem('pubKeyHex'),
-            privKey: localStorage.getItem('privKey')
+            pubKey: localStorage.getItem(DESMOSPROXYPUBKEY),
+            privKey: localStorage.getItem(DESMOSPROXYPRIVKEY)
         })
-        this.getMessage(localStorage.getItem('pubKey'), localStorage.getItem('privKey'))
+        this.getMessage(localStorage.getItem(DESMOSPROXYPUBKEY), localStorage.getItem(DESMOSPROXYPRIVKEY))
     }
 
     getTxContext = (pk) => {
@@ -70,7 +69,7 @@ export default class Magpie extends Component{
             console.log(toSign)
             console.log(privKey)
             signMessageWithKey(toSign, privKey)
-            let signature = localStorage.getItem('signature')
+            let signature = localStorage.getItem(DESMOSPROXYSIG)
             let buffer = Buffer.from(signature, 'base64')
             //buffer = buffer.slice(0, buffer.length - 1)
             Ledger.applySignature(txMsg, txContext, buffer.toString('base64'));
@@ -88,7 +87,7 @@ export default class Magpie extends Component{
 
     signMessageWithKey = () => {
         signMessageWithKey(this.state.message, this.state.privKey)
-        this.setState({'signature': localStorage.getItem('signature')})
+        this.setState({'signature': localStorage.getItem(DESMOSPROXYSIG)})
     }
 
     verifyMessageWithKey = () => {

@@ -397,6 +397,8 @@ class LedgerButton extends Component {
             let txMsg = this.state.txMsg;
             const txContext = this.getTxContext();
             const bytesToSign = Ledger.getBytesToSign(txMsg, txContext);
+            console.log('ledger msg')
+            console.log(Buffer.from(bytesToSign).toString('base64'))
             this.ledger.sign(bytesToSign).then((sig) => {
                 try {
                     this.signCallback(txMsg, txContext, sig)
@@ -898,16 +900,19 @@ class CreateSessionModal extends LedgerButton {
         }
         const wasmBytesToSign = Ledger.getBytesToSign(txMsg, txContext);
         let toSign = Buffer.from(wasmBytesToSign).toString('base64');
+        console.log('wasm msg')
+        console.log(toSign)
         signMessageWithKey(toSign, this.props.privKey)
-        let signature = localStorage.getItem('signature')
+        let signature = localStorage.getItem(DESMOSPROXYSIG)
         Ledger.applySignature(txMsg, txContext, signature);
 
         // broadcast
-        Meteor.call('desmos.broadcast', txMsg, (err, res) => {
+        Meteor.call('desmos.broadcastCreateSession', txMsg, (err, res) => {
             if (err) {
                 this.setStateOnError('signing', err.reason)
             } else if (res) {
-                console.log(txMsg);
+                localStorage.setItem(DESMOSSESSIONID, res.session_id)
+                localStorage.setItem(DESMOSSESSIONEXPIRY, res.expiry)
                 this.close()
             }
         })

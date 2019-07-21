@@ -14,10 +14,11 @@ import { render } from 'react-dom';
 
 CURRENTUSERADDR = 'ledgerUserAddress';
 CURRENTUSERPUBKEY = 'ledgerUserPubKey';
-DESMOSPUBKEY = 'pubKey'//desmosProxyPubKey';
-DESMOSPRIVKEY = 'privKey'//'desmosProxyPrivKey';
-DESMOSSESSION = 'desmosProxySession';
-DESMOSSIG = 'desmosProxySignature';
+DESMOSPUBKEY = 'desmosProxyPubKey';
+DESMOSPRIVKEY = 'desmosProxyPrivKey';
+DESMOSSESSIONID = 'desmosProxySessionId';
+DESMOSPROXYSIG = 'desmosProxySignature';
+DESMOSSESSIONEXPIRY = 'desmosProxySessionExpiry';
 
 // import { onPageLoad } from 'meteor/server-render';
 

@@ -23,7 +23,7 @@ export class Magpie {
         }
         const wasmBytesToSign = Ledger.getBytesToSign(txMsg, txContext);
         signMessageWithKey(wasmBytesToSign, this.privKey)
-        let signature = localStorage.getItem('signature')
+        let signature = localStorage.getItem(DESMOSPROXYSIG)
         Ledger.applySignature(txMsg, txContext, signature);
         return txMsg
     }
