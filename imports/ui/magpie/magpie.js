@@ -85,7 +85,6 @@ export class Magpie {
         return this.getAccountAndSign(txSkeleton);
     }
     createEditPost(
-        sequence,
         externalAddress,
         message,
         postID,
@@ -130,21 +129,20 @@ export class Magpie {
     }
 
     createLike(
-        sequence,
         externalAddress,
         postID,
     ) {
-        const txSkeleton = this.createSkeleton(sequence)
+        const txSkeleton = this.createSkeleton()
         txSkeleton.value.msg.push({
             type: "desmos/MsgLike",
             value: {
-                external_owner: externalAddress,
-                namespace: "cosmos",
-                liker: this.pubAddr,
-                post_id:postID.toString(),
                 created: new Date().toISOString(),
+                external_owner: externalAddress,
+                liker: this.pubAddr,
+                namespace: "cosmos",
+                post_id:postID.toString(),
             }
         })
-        return txSkeleton;
+        return this.getAccountAndSign(txSkeleton);
     }
 }

@@ -42,12 +42,23 @@ export default class MagpiePanel extends Component{
 
     createPost = () => {
         this.state.magpie.createPost(this.state.user, this.state.newPostMessage, null)
+        this.setState({
+            newPostMessage: ""
+        })
+    }
+
+    reply = (message, parentId) => {
+        this.state.magpie.createPost(this.state.user, message, parentId)
+    }
+
+    like = (postId) => {
+        this.state.magpie.createLike(this.state.user, postId)
     }
 
     renderDesmosAccount() {
         if (this.state.desmosSessionExpiry && new Date(this.state.desmosSessionExpiry) > new Date()) {
             return <div>
-                <div>Current Proxy Address {this.state.desmosPubAddress} expires at {this.state.desmosSessionExpiry}</div>
+                <div>Current Proxy Address {this.state.desmosPubAddr} expires at {this.state.desmosSessionExpiry}</div>
                 {this.props.isLogIn?<div>
                     <Input name="newPostMessage" onChange={this.handleInputChange}
                         placeholder="New Post" type="textarea" value={this.state.newPostMessage}/>
@@ -66,7 +77,7 @@ export default class MagpiePanel extends Component{
                 {this.renderDesmosAccount()}
             </CardBody>
             <CardBody>
-                <MagpieList address={this.props.address} />
+                <MagpieList address={this.props.address} onLike={this.like} onReply={this.reply}/>
             </CardBody>
         </Card>
     }
