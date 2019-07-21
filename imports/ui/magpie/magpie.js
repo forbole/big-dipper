@@ -1,5 +1,5 @@
 import bech32 from "bech32";
-
+import { Ledger } from '/imports/ui/ledger/ledger.js';
 export function getBech32Address(hash, prefix='desmos') {
     if (!hash) return ''
     let address = Buffer.from(hash, `hex`)
@@ -8,46 +8,39 @@ export function getBech32Address(hash, prefix='desmos') {
 }
 
 export class Magpie {
-    constructor({ pubKey, privKey, pubAddr, accountNumber }) {
+    constructor(pubKey, privKey, pubAddr) {
         this.pubKey = pubKey
         this.privKey = privKey
         this.pubAddr = pubAddr
-        this.accountNumber = accountNumber
     }
 
-    sign(txMsg) {
+    sign(txMsg, accountNumber, sequence) {
         const txContext = {
             chainId: Meteor.settings.public.desmosChainId,
-            accountNumber: this.accountNumber,
-            sequence: txMsg.value.signatures[0].sequence
+            accountNumber: accountNumber,
+            sequence: sequence,
+            pk: this.pubKey
         }
         const wasmBytesToSign = Ledger.getBytesToSign(txMsg, txContext);
-        signMessageWithKey(wasmBytesToSign, this.privKey)
+        let toSign = Buffer.from(wasmBytesToSign).toString('base64');
+        signMessageWithKey(toSign, this.privKey)
         let signature = localStorage.getItem(DESMOSPROXYSIG)
         Ledger.applySignature(txMsg, txContext, signature);
         return txMsg
     }
 
     // Creates a new tx skeleton
-    createSkeleton(sequence) {
+    createSkeleton() {
         return {
             type: 'cosmos-sdk/StdTx',
             value: {
-                msg: [],
                 fee: {
                     amount:[],
-                    gas: 200000
+                    gas: "200000"
                 },
                 memo: '',
-                signatures: [{
-                    signature: null,
-                    account_number: this.accountNumber.toString(),
-                    sequence: sequence.toString(),
-                    pub_key: {
-                        type: 'tendermint/PubKeySecp256k1',
-                        value: this.pubKey,
-                    },
-                }],
+                msg: [],
+                signatures: null,
             },
         };
     }
@@ -57,7 +50,7 @@ export class Magpie {
         externalAddress,
         externalPubKey,
     ) {
-        const txSkeleton = this.createSkeleton(sequence)
+        const txSkeleton = this.createSkeleton()
         txSkeleton.value.msg.push({
             type: "desmos/MsgCreateSession",
             value: {
@@ -69,29 +62,27 @@ export class Magpie {
                 signature: null
             }
         })
-        return txSkeleton;
+        return this.getAccountAndSign(txSkeleton);
     }
 
     createPost(
-        sequence,
         externalAddress,
         message,
         parentID,
     ) {
-        const txSkeleton = this.createSkeleton(sequence)
+        const txSkeleton = this.createSkeleton()
         txSkeleton.value.msg.push({
             type: "desmos/MsgCreatePost",
             value: {
+                created: new Date().toISOString(),
                 external_owner: externalAddress,
                 message: message,
                 namespace: "cosmos",
                 owner: this.pubAddr,
-                parentID:parentID.toString(),
-                signature: null,
-                time: new Date().toISOString(),
+                parent_id: parentID || "",
             }
         })
-        return txSkeleton;
+        return this.getAccountAndSign(txSkeleton);
     }
     createEditPost(
         sequence,
@@ -99,7 +90,7 @@ export class Magpie {
         message,
         postID,
     ) {
-        const txSkeleton = this.createSkeleton(sequence)
+        const txSkeleton = this.createSkeleton()
         txSkeleton.value.msg.push({
             type: "desmos/MsgCreatePost",
             value: {
@@ -107,12 +98,35 @@ export class Magpie {
                 message: message,
                 namespace: "cosmos",
                 owner: this.pubAddr,
-                postId:postID.toString(),
+                post_id:postID.toString(),
                 signature: null,
                 time: new Date().toISOString(),
             }
         })
         return txSkeleton;
+    }
+
+    getAccountAndSign(msg, callback) {
+        Meteor.call('desmos.getAccount', this.pubAddr, (error, result) => {
+            try{
+                if (result) {
+                    this.sign(msg, result.account_number, result.sequence || 0)
+
+                    Meteor.call('desmos.broadcast', msg, (err, res) => {
+                        if (err) {
+                            console.log(err)
+                        } else if (res) {
+                            console.log(res)
+                        }
+                    })
+                } else {
+                    console.log(error)
+                }
+
+            } catch (e) {
+                console.log(e.message);
+            }
+        })
     }
 
     createLike(
@@ -126,10 +140,9 @@ export class Magpie {
             value: {
                 external_owner: externalAddress,
                 namespace: "cosmos",
-                owner: this.pubAddr,
-                postID:postID.toString(),
-                signature: null,
-                time: new Date().toISOString(),
+                liker: this.pubAddr,
+                post_id:postID.toString(),
+                created: new Date().toISOString(),
             }
         })
         return txSkeleton;

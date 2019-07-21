@@ -12,7 +12,6 @@ export default class MagpiePanel extends Component{
 
     }
 
-
     static getDerivedStateFromProps(props, state) {
         let newState = {}
         let localStorageKeys = [
@@ -20,6 +19,7 @@ export default class MagpiePanel extends Component{
             ['desmosPrivKey', DESMOSPRIVKEY],
             ['desmosSessionID', DESMOSSESSIONID],
             ['desmosSessionExpiry', DESMOSSESSIONEXPIRY],
+            ['user', CURRENTUSERADDR]
         ]
         localStorageKeys.forEach(([name, key])=> {
             let value = localStorage.getItem(key)
@@ -27,6 +27,10 @@ export default class MagpiePanel extends Component{
                 newState[name] = value
             }
         })
+        if (newState.desmosPubKey) {
+            newState.desmosPubAddr = createBech32Address(Buffer.from(newState.desmosPubKey, 'base64'), 'desmos')
+            newState.magpie = new Magpie(newState.desmosPubKey, newState.desmosPrivKey, newState.desmosPubAddr)
+        }
         return newState;
     }
 
@@ -36,34 +40,21 @@ export default class MagpiePanel extends Component{
     }
 
     createPost = () => {
-        this.magpie.createPost()
-        Meteor.call('desmos.broadcast', txMsg, (err, res) => {
-            if (err) {
-                console.log(err)
-                //this.setStateOnError('signing', err.reason)
-            } else if (res) {
-                console.log(res)
-                /*this.setStateOnSuccess('signing', {
-                    txHash: res,
-                    activeTab: '4'
-                })*/
-            }
-        })
+        this.state.magpie.createPost(this.state.user, this.state.newPostMessage, null)
     }
 
     renderDesmosAccount() {
-        if (this.props.isLogIn) {
-            if (this.state.desmosSessionExpiry && new Date(this.state.desmosSessionExpiry) > new Date()) {
-                return <div>
-                    <div>Current Proxy Address {createBech32Address(Buffer.from(this.state.desmosPubKey, 'base64'), 'desmos')} expires at {this.state.desmosSession}</div>
-
+        if (this.state.desmosSessionExpiry && new Date(this.state.desmosSessionExpiry) > new Date()) {
+            return <div>
+                <div>Current Proxy Address {this.state.desmosPubAddress} expires at {this.state.desmosSessionExpiry}</div>
+                {this.props.isLogIn?<div>
                     <Input name="newPostMessage" onChange={this.handleInputChange}
                         placeholder="New Post" type="textarea" value={this.state.newPostMessage}/>
                     <Button onClick={this.createPost}> Post </Button>
-                </div>
-            } else {
-                return <CreateSessionButton history={this.props.history}/>
-            }
+                </div>:null}
+            </div>
+        } else {
+            return <CreateSessionButton history={this.props.history}/>
         }
     }
 
