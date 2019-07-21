@@ -66,7 +66,7 @@ Meteor.methods({
 })
 
 ws.on('message', Meteor.bindEnvironment((data) => {
-    // console.log(data);
+    console.log(data);
     txData = JSON.parse(data);
     // console.log(data);
     events = txData.result.events;

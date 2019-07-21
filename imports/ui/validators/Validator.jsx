@@ -202,7 +202,9 @@ export default class Validator extends Component{
                             <div className="website"></div>
                         </Card>
                         <MagpiePanel isLogIn={true || this.props.validator && this.props.validator.delegator_address && this.state.user && this.props.validator.delegator_address === this.state.user}
-                            history={this.props.history}/>
+                            history={this.props.history}
+                            address={this.props.validator.delegator_address}    
+                            />
                         <Card>
                             <div className="card-header"><T>validators.uptime</T> <Link className="float-right" to={"/validator/"+this.props.validator.address+"/missed/blocks"}><T>common.more</T>...</Link></div>
                             <CardBody>
