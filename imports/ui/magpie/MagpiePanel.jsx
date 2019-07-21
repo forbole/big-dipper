@@ -3,7 +3,7 @@ import { Button, Input, Row, Col, Card, CardBody} from 'reactstrap';
 import { createBech32Address } from '/imports/ui/ledger/ledger.js';
 
 import CreateSessionButton from './CreateSession.jsx';
-// import { Magpie } from './magpie.js';
+import { Magpie } from './magpie.js';
 import MagpieList from './MagpieListContainer.js';
 
 export default class MagpiePanel extends Component{
