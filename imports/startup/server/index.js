@@ -3,6 +3,7 @@
 import './util.js';
 import './register-api.js';
 import './create-indexes.js';
+import './websocket.js';
 
 // import React from 'react';
 // import { renderToNodeStream } from 'react-dom/server';
