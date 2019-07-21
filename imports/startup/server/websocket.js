@@ -5,7 +5,7 @@ import { Posts, Likes, PostSessions } from '../../api/magpie/collections';
 
 DESMOSRPC = Meteor.settings.remote.desmosRPC;
 DESMOSLCD = Meteor.settings.remote.desmosLCD;
-DESMOSWS = Meteor.settings.public.desmosWS;
+DESMOSWS = Meteor.settings.remote.desmosWS;
 
 let ws = new WebSocket(DESMOSWS);
 
