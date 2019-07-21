@@ -911,9 +911,11 @@ class CreateSessionModal extends LedgerButton {
             if (err) {
                 this.setStateOnError('signing', err.reason)
             } else if (res) {
+                console.log('refreshing')
                 localStorage.setItem(DESMOSSESSIONID, res.session_id)
                 localStorage.setItem(DESMOSSESSIONEXPIRY, res.expiry)
                 this.close()
+                this.props.history.push(this.props.history.location.pathname)
             }
         })
     }

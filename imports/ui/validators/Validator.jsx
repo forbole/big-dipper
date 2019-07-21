@@ -192,7 +192,7 @@ export default class Validator extends Component{
                     <Col xs={12}>
                         <Link to="/validators" className="btn btn-link"><i className="fas fa-caret-left"></i> <T>common.backToList</T></Link>
                     </Col>
-                    <Col md={4}>
+                    <Col md={6}>
                         <Card body className="text-center">
                             <div className="shareLink d-flex align-self-end">{this.renderShareLink()}</div>
                             <div className="validator-avatar"><Avatar moniker={moniker} profileUrl={this.props.validator.profile_url} address={this.props.validator.address} list={false}/></div>
@@ -216,7 +216,7 @@ export default class Validator extends Component{
                             </CardBody>
                         </Card>
                     </Col>
-                    <Col md={8}>
+                    <Col md={6}>
                         <Card>
                         <div className="card-header"><T>validators.validatorInfo</T></div>
                         <CardBody>
