@@ -18,7 +18,8 @@ export default class MagpiePanel extends Component{
         let localStorageKeys = [
             ['desmosPubKey', DESMOSPUBKEY],
             ['desmosPrivKey', DESMOSPRIVKEY],
-            ['desmosSession', DESMOSSESSION],
+            ['desmosSessionID', DESMOSSESSIONID],
+            ['desmosSessionExpiry', DESMOSSESSIONEXPIRY],
         ]
         localStorageKeys.forEach(([name, key])=> {
             let value = localStorage.getItem(key)
@@ -36,22 +37,23 @@ export default class MagpiePanel extends Component{
 
     createPost = () => {
         this.magpie.createPost()
-        /* broadcast
         Meteor.call('desmos.broadcast', txMsg, (err, res) => {
             if (err) {
-                this.setStateOnError('signing', err.reason)
+                console.log(err)
+                //this.setStateOnError('signing', err.reason)
             } else if (res) {
-                this.setStateOnSuccess('signing', {
+                console.log(res)
+                /*this.setStateOnSuccess('signing', {
                     txHash: res,
                     activeTab: '4'
-                })
+                })*/
             }
-        })*/
+        })
     }
 
     renderDesmosAccount() {
         if (this.props.isLogIn) {
-            if (this.state.desmosSession && new Date(this.state.desmosSession) > new Date()) {
+            if (this.state.desmosSessionExpiry && new Date(this.state.desmosSessionExpiry) > new Date()) {
                 return <div>
                     <div>Current Proxy Address {createBech32Address(Buffer.from(this.state.desmosPubKey, 'base64'), 'desmos')} expires at {this.state.desmosSession}</div>
 
