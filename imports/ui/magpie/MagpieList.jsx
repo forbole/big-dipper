@@ -25,12 +25,28 @@ Magpie = (props) => {
                 <Col><Button disabled={!props.isActive}  onClick={props.onLike} data-postid={props.id} color="link" size="sm">
                     <i className="material-icons">thumb_up</i> <span>{props.likes}</span>
                 </Button></Col>
-                <Col className="text-right"><Button disabled={!props.isActive}  onClick={() => {props.replyto(props.row)}} color="link" size="sm">
+                <Col className="text-right"><Button disabled={!props.isActive}  onClick={() => {props.replyto(props.row, props.magpie.id)}} color="link" size="sm">
                     <i className="material-icons">reply</i>
                 </Button></Col>
 
             </Row>
         </CardFooter>
+
+        {props.magpie && props.magpie.replies().length>0?<Row>
+            <Col sm={{size:11, offset:1}}>
+                {props.magpie.replies().map((magChild, j) => {
+                    return <Magpie key={j} row={props.row*10000+j} author={magChild.external_owner}  message={magChild.message} likes={magChild.likes} id={magChild.id}
+                        expanded={props.row*10000+j === props.expandedID}
+                        expandedID={props.expandedID}
+                        isActive={props.isActive}
+                        handleInputChange={props.handleInputChange}
+                        replyMessage={props.replyMessage}
+                        onReply={props.onReply} onLike={props.onLike}
+                        time={magChild.created}
+                        replyto={props.replyto} magpie={magChild}/>
+                })}
+            </Col>
+        </Row>:""}
         {props.expanded?<div>
                 <Input name="replyMessage" onChange={props.handleInputChange}
                     placeholder="Reply..." type="textarea" value={props.replyMessage}/>
@@ -70,13 +86,10 @@ export default class MagpieList extends Component{
 
     }*/
 
-    /*componentDidUpdate(prevState){
-        if (this.props.magpies != prevState.magpies){
-            if (this.props.magpies.length > 0){
-                this.setState({magpies: this.props.magpies})
-            }
-        }
-    }*/
+    componentDidUpdate(prevState){
+        let displayed = {};
+
+    }
 
     render () {
         if (this.props.loading){
@@ -92,21 +105,8 @@ export default class MagpieList extends Component{
                         replyMessage={this.state.replyMessage}
                         onReply={this.onReply} onLike={this.onLike}
                         time={magpie.created}
-                        replyto={(row)=>this.setState({expandedID: row, parentID:magpie.id})}/>
-                        {magpie.replies().length>0?<Row>
-                            <Col sm={{size:11, offset:1}}>
-                                {magpie.replies().map((magChild, j) => {
-                                    return <Magpie key={j} row={10000+j} author={magChild.external_owner}  message={magChild.message} likes={magChild.likes} id={magChild.id}
-                                        expanded={10000+j === this.state.expandedID}
-                                        isActive={this.props.hasActiveSession}
-                                        handleInputChange={this.handleInputChange}
-                                        replyMessage={this.state.replyMessage}
-                                        onReply={this.onReply} onLike={this.onLike}
-                                        time={magChild.created}
-                                        replyto={(row)=>this.setState({expandedID:row, parentID:magChild.id})}/>
-                                })}
-                            </Col>
-                        </Row>:""}
+                        expandedID={this.state.expandedID}
+                        replyto={(row, id)=>this.setState({expandedID: row, parentID:id})} magpie={magpie}/>
                     </div>
                 })
         }

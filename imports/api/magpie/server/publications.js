@@ -4,7 +4,7 @@ import { Posts, Likes } from '../magpies.js';
 publishComposite('magpie.list', function(address){
     return {
         find(){
-            return Posts.find({"external_owner":address, parent_id:""}, {sort:{created:-1}})
+            return Posts.find({"external_owner":address}, {sort:{created:-1}})
         },
         children: [
             {
