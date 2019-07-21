@@ -1,33 +1,41 @@
 import React, { Component } from 'react';
 import { Row, Col, Card, CardBody, CardHeader, CardFooter, Spinner, Button, Input } from 'reactstrap';
 import Account from '../components/Account.jsx';
+import moment from 'moment';
+
+const displayTime = (time) => {
+    return <span className='post-time'> {moment.utc(time).fromNow()}</span>;
+}
 
 Magpie = (props) => {
-    return <Card className="magpie-item">
-        <CardHeader>
-            <Row>
-                
-            </Row>
-        </CardHeader>
+    return <Card>
+            <CardHeader>
+                <Row>
+                    <Col sm={6}><Account address={props.author} /></Col>
+                    <Col sm={6} className="text-right">{displayTime(props.time)}</Col>
+                </Row>
+                </CardHeader>
         <CardBody>
-            <div>{props.message}</div>
-            {props.expanded?<div>
-                <Input name="replyMessage" onChange={props.handleInputChange}
-                    placeholder="Reply..." type="textarea" value={props.replyMessage}/>
-                <Button onClick={props.onReply}> Reply </Button>
-            </div>:null}
+            
+            {props.message}
+
         </CardBody>
         <CardFooter>
             <Row>
-                <Col><Button disabled={props.isActive}  onClick={props.onLike} data-postid={props.id} color='link' size="sm" >
+                <Col><Button disabled={!props.isActive}  onClick={props.onLike} data-postid={props.id} color="link" size="sm">
                     <i className="material-icons">thumb_up</i> <span>{props.likes}</span>
                 </Button></Col>
-                <Col className="text-right"><Button disabled={props.isActive}  onClick={() => {props.replyto(props.id)}} color='link' size="sm">
+                <Col className="text-right"><Button disabled={!props.isActive}  onClick={() => {props.replyto(props.key, props.id)}} color="link" size="sm">
                     <i className="material-icons">reply</i>
                 </Button></Col>
 
             </Row>
         </CardFooter>
+        {props.expanded?<div>
+                <Input name="replyMessage" onChange={props.handleInputChange}
+                    placeholder="Reply..." type="textarea" value={props.replyMessage}/>
+                <Button onClick={props.onReply}> Reply </Button>
+            </div>:null}
         </Card>
 }
 export default class MagpieList extends Component{
@@ -76,17 +84,25 @@ export default class MagpieList extends Component{
         else{
             return this.props.magpies.map((magpie, i) => {
                 return <div key={i}>
-                    <Magpie message={magpie.message} likes={magpie.likes}
-                        id={magpie.id} expanded={magpie.id === this.state.expandedID}
+                    <Magpie author={magpie.external_owner} message={magpie.message} likes={magpie.likes}
+                        id={magpie.id} expanded={`${i}-${magpie.id}` === this.state.expandedID}
                         isActive={this.props.hasActiveSession}
                         handleInputChange={this.handleInputChange}
                         replyMessage={this.state.replyMessage}
                         onReply={this.onReply} onLike={this.onLike}
-                        replyto={(id)=>this.setState({expandedID:id})}/>
+                        time={magpie.created}
+                        replyto={(key, id)=>this.setState({expandedID:`${key}-${id}`})}/>
                         {magpie.replies().length>0?<Row>
-                            <Col sm={{size:10, offset:2}}>
+                            <Col sm={{size:11, offset:1}}>
                                 {magpie.replies().map((magChild, j) => {
-                                    return <Magpie key={j} message={magChild.message} likes={magChild.likes} id={magChild.id}/>
+                                    return <Magpie key={j}  author={magpie.external_owner}  message={magChild.message} likes={magChild.likes} id={magChild.id}
+                                        expanded={`${j}-${magpie.id}` === this.state.expandedID}
+                                        isActive={this.props.hasActiveSession}
+                                        handleInputChange={this.handleInputChange}
+                                        replyMessage={this.state.replyMessage}
+                                        onReply={this.onReply} onLike={this.onLike}
+                                        time={magpie.created}
+                                        replyto={(key, id)=>this.setState({expandedID:`${key}-${id}`})}/>
                                 })}
                             </Col>
                         </Row>:""}
