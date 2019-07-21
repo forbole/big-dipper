@@ -9,9 +9,10 @@ export default MagpieListContainer = withTracker((props) => {
     const magpies = Posts.find({"external_owner":props.address});
 
     const magpieExist = !loading && !!magpies;
-    
+
     // console.log(props.state.limit);
     return {
+        ...props,
         loading,
         magpieExist,
         magpies: magpieExist ? magpies.fetch() : {}
