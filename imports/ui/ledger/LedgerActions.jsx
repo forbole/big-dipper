@@ -854,9 +854,11 @@ class CreateSessionModal extends LedgerButton {
                 )
                 return
             }
-            Meteor.call('desmos.getAccount', address, (error, result) => {
+
+            setTimeout(()=>Meteor.call('desmos.getAccount', address, (error, result) => {
                 try{
                     if (result) {
+                        console.log(JSON.stringify(result))
                         this.setStateOnSuccess('loadingBalance', {
                             currentUser: {
                                 accountNumber: result.account_number,
@@ -875,7 +877,7 @@ class CreateSessionModal extends LedgerButton {
                 } catch (e) {
                     this.setStateOnError('loadingBalance', e.message);
                 }
-            })
+            }), 3000)
         })
     }
 
@@ -894,6 +896,7 @@ class CreateSessionModal extends LedgerButton {
 
     signCallback = (txMsg, txContext, sig) => {
         txMsg.value.msg[0].value.signature = sig.toString('base64');
+
         txContext = {...txContext,
             accountNumber: this.state.currentUser.accountNumber,
             sequence: this.state.currentUser.sequence,
@@ -911,7 +914,6 @@ class CreateSessionModal extends LedgerButton {
             if (err) {
                 this.setStateOnError('signing', err.reason)
             } else if (res) {
-                console.log('refreshing')
                 localStorage.setItem(DESMOSSESSIONID, res.session_id)
                 localStorage.setItem(DESMOSSESSIONEXPIRY, res.expiry)
                 this.close()
