@@ -1,16 +1,26 @@
 # Big Dipper :sparkles:
+
 Forbole Block Explorer for Cosmos
 
 ## Projects running on mainnets
-[Explore Cosmos Hub (cosmoshub-1) with The Big Dipper](https://cosmos.bigdipper.live)
+
+[Explore Cosmos Hub (cosmoshub-2) with The Big Dipper](https://cosmos.bigdipper.live)
 
 [Explore IRISnet (irishub) with The Big Dipper](https://iris.bigdipper.live)
 
-[Explore Terra (columbus-1) with The Big Dipper](https://terra.bigdipper.live)
+[Explore Terra (columbus-2) with The Big Dipper](https://terra.bigdipper.live)
 
 ## Projects with testnets
 
 [Sentinel testnet](https://explorer.sentinel.co/)
+
+[Cyber Congress](https://cyberd.ai/)
+
+[Kava](https://testnet-1.kava.bigdipper.live/)
+
+[BitSong](https://testnet-1.bitsong.bigdipper.live/)
+
+[Regen Network](http://bigdipper.regen.network/)
 
 ## How to run The Big Dipper
 
@@ -21,7 +31,7 @@ Forbole Block Explorer for Cosmos
 
 ### Run in local
 
-```
+```sh
 meteor npm install
 meteor update
 meteor --settings settings.json
@@ -29,7 +39,7 @@ meteor --settings settings.json
 
 ### Run in production
 
-```
+```sh
 ./build.sh
 ```
 
