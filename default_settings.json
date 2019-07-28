@@ -27,9 +27,6 @@
         "startTimer": true,
         "readGenesis": true
     },
-    "bin":{
-        "gaiadebug": "/path/to/gaiadebug"
-    },
     "params":{
         "startHeight": 0,
         "defaultBlockTime": 5000,
