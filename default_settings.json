@@ -3,7 +3,6 @@
         "chainName": "Cosmos Testnet",
         "chainId": "{Chain ID}",
         "gtm": "{Add your Google Tag Manager ID here}",
-        "slashingWindow": 10000,
         "uptimeWindow": 250,
         "initialPageSize": 30,
         "bech32PrefixAccAddr": "cosmos",
