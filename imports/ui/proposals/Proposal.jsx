@@ -257,8 +257,8 @@ export default class Proposal extends Component{
                 const proposalId = Number(this.props.proposal.proposalId), maxProposalId = Number(this.props.proposalCount);
                 return <div>
                     <Helmet>
-                        <title>{this.props.proposal.proposal_content.value.title} | The Big Dipper</title>
-                        <meta name="description" content={this.props.proposal.proposal_content.value.description} />
+                        <title>{this.props.proposal.content.value.title} | The Big Dipper</title>
+                        <meta name="description" content={this.props.proposal.content.value.description} />
                     </Helmet>
                     <div className="proposal bg-light">
                         <Row className="mb-2 border-top">
@@ -271,15 +271,15 @@ export default class Proposal extends Component{
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.title</T></Col>
-                            <Col md={9} className="value">{this.props.proposal.proposal_content.value.title}</Col>
+                            <Col md={9} className="value">{this.props.proposal.content.value.title}</Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.description</T></Col>
-                            <Col md={9} className="value"><Markdown markup={this.props.proposal.proposal_content.value.description} /></Col>
+                            <Col md={9} className="value"><Markdown markup={this.props.proposal.content.value.description} /></Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposalType</T></Col>
-                            <Col md={9} className="value">{this.props.proposal.proposal_content.type.substr(4).match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</Col>
+                            <Col md={9} className="value">{this.props.proposal.content.type.substr(4).match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposalStatus</T></Col>
