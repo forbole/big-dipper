@@ -401,6 +401,37 @@ export class Ledger {
         return txSkeleton;
     }
 
+    static createSubmitProposal(
+        txContext,
+        title,
+        description,
+        deposit
+    ) {
+        const txSkeleton = Ledger.createSkeleton(txContext);
+
+        const txMsg = {
+            type: 'cosmos-sdk/MsgSubmitProposal',
+            value: {
+                "content": {
+                    "type": "cosmos-sdk/TextProposal",
+                    "value": {
+                        "description": description,
+                        "title": title
+                    }
+                },
+                "initial_deposit": [{
+                    amount: deposit.toString(),
+                    denom: txContext.denom
+                }],
+                "proposer": txContext.bech32
+            }
+        };
+
+        txSkeleton.value.msg = [txMsg];
+
+        return txSkeleton;
+    }
+
 }
 
 function versionString({ major, minor, patch }) {

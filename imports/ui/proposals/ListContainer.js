@@ -27,6 +27,7 @@ export default ProposalListContainer = withTracker((props) => {
     return {
         loading,
         proposalsExist,
-        proposals: proposalsExist ? proposals : {}
+        proposals: proposalsExist ? proposals : {},
+        history: props.history
     };
 })(List);

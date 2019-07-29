@@ -26,7 +26,8 @@ const Types = {
     REDELEGATE: 'redelegate',
     UNDELEGATE: 'undelegate',
     WITHDRAW: 'withdraw',
-    SEND: 'send'
+    SEND: 'send',
+    SUBMITPROPOSAL: 'submitProposal'
 }
 
 const durationToDay = 1/60/60/24/10e8;
@@ -71,6 +72,12 @@ const TypeMeta = {
         pathPreFix: 'bank/accounts',
         pathSuffix: 'transfers',
         warning: ''
+    },
+    [Types.SUBMITPROPOSAL]: {
+        button: 'new',
+        path: 'gov/proposals',
+        warning: '',
+        gasAdjustment: '1.4'
     }
 }
 
@@ -140,6 +147,9 @@ class LedgerButton extends Component {
             gasEstimate: undefined,
             txMsg: undefined,
             params: undefined,
+            proposalTitle: undefined,
+            proposalDescription: undefined,
+            depositAmount: undefined,
             memo: DEFAULT_MEMO
         });
     }
@@ -194,7 +204,7 @@ class LedgerButton extends Component {
     }
 
     autoOpenModal = () => {
-        let query = this.props.history.location.search.substr(1)
+        let query = this.props.history && this.props.history.location.search.substr(1)
         if (query && !this.state.isOpen) {
             let params = qs.parse(query)
             if (params.signin == undefined && params.action && this.supportAction(params.action)) {
@@ -321,10 +331,21 @@ class LedgerButton extends Component {
                     this.state.transferTarget,
                     this.state.transferAmount.amount);
                 break;
+            case Types.SUBMITPROPOSAL:
+                txMsg = Ledger.createSubmitProposal(
+                    this.getTxContext(),
+                    this.state.proposalTitle,
+                    this.state.proposalDescription,
+                    this.state.depositAmount.amount);
+                break;
+
         }
-        let simulateBody = txMsg && txMsg.value && txMsg.value.msg && txMsg.value.msg.length &&
-        txMsg.value.msg[0].value || {}
-        callback(txMsg, simulateBody)
+        callback(txMsg, this.getSimulateBody(txMsg))
+    }
+
+    getSimulateBody (txMsg) {
+        return txMsg && txMsg.value && txMsg.value.msg &&
+            txMsg.value.msg.length && txMsg.value.msg[0].value || {}
     }
 
     getPath = () => {
@@ -793,8 +814,83 @@ class TransferButton extends LedgerButton {
     }
 }
 
+class SubmitProposalButton extends LedgerButton {
+    renderActionTab = () => {
+        if (!this.state.currentUser) return null;
+        let maxAmount = this.state.currentUser.availableCoin;
+        return <TabPane tabId="2">
+            <h3>Submit A New Proposal</h3>
+            <InputGroup>
+                <Input name="proposalTitle" onChange={this.handleInputChange}
+                    placeholder="Title" type="text"
+                    value={this.state.proposalTitle}/>
+            </InputGroup>
+            <InputGroup>
+                <Input name="proposalDescription" onChange={this.handleInputChange}
+                    placeholder="Description" type="text"
+                    value={this.state.proposalDescription}/>
+            </InputGroup>
+            <InputGroup>
+                <Input name="depositAmount" onChange={this.handleInputChange}
+                    data-type='coin' placeholder="Amount"
+                    min={Coin.minStake} max={maxAmount.stakingAmount} type="number"
+                    invalid={this.state.depositAmount != null && !isBetween(this.state.depositAmount, 1, maxAmount)}/>
+                <InputGroupAddon addonType="append">{Coin.StakingDenom}</InputGroupAddon>
+            </InputGroup>
+            <Input name="memo" onChange={this.handleInputChange}
+                placeholder="Memo(optional)" type="textarea" value={this.state.memo}/>
+            <div>your available balance: <Amount coin={maxAmount}/></div>
+        </TabPane>
+    }
+
+    getSimulateBody (txMsg) {
+        txMsg = txMsg && txMsg.value && txMsg.value.msg &&
+            txMsg.value.msg.length && txMsg.value.msg[0].value || {}
+        return {...txMsg.content.value,
+            initial_deposit: txMsg.initial_deposit,
+            proposer: txMsg.proposer,
+            proposal_type: "text"
+        }
+    }
+
+    getPath = () => {
+        return TypeMeta[Types.SUBMITPROPOSAL].path
+    }
+
+    supportAction(action) {
+        return action === Types.SUBMITPROPOSAL;
+    }
+
+
+    isDataValid = () => {
+        if (!this.state.currentUser) return false
+        return this.state.proposalTitle != null && this.state.proposalDescription != null && isBetween(this.state.depositAmount, 1, this.state.currentUser.availableCoin)
+    }
+
+    getConfirmationMessage = () => {
+        return <span>You are going to <span className='action'>submit</span> a new proposal.
+            <div>
+                <h3> {this.state.proposalTitle} </h3>
+                <div> {this.state.proposalDescription} </div>
+                <div> Initial Deposit:
+                    <Amount coin={this.state.depositAmount}/>
+                </div>
+                <span> Fee: <Fee gas={this.state.gasEstimate}/>.</span>
+            </div>
+        </span>
+    }
+
+    render = () => {
+        return <span className="ledger-buttons-group float-right">
+            <Button color="info" size="sm" onClick={() => this.openModal(Types.SUBMITPROPOSAL, {})}> {TypeMeta[Types.SUBMITPROPOSAL].button} </Button>
+            {this.renderModal()}
+        </span>;
+    }
+}
+
 export {
     DelegationButtons,
     WithdrawButton,
-    TransferButton
+    TransferButton,
+    SubmitProposalButton
 }

@@ -9,12 +9,12 @@ import i18n from 'meteor/universe:i18n';
 
 const T = i18n.createComponent();
 
-const ProposalList = () => {
+const ProposalList = (props) => {
     return <div>
         <p className="lead"><T>proposals.listOfProposals</T></p>
         <Row>
             <Col md={12}>
-                <List />
+                <List {...props}/>
             </Col>
         </Row>
     </div>
