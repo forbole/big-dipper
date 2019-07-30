@@ -13,6 +13,7 @@ import posed from 'react-pose';
 import i18n from 'meteor/universe:i18n';
 import { Meteor } from 'meteor/meteor';
 import Coin from '/both/utils/coins.js'
+import { ProposalActionButtons } from '../ledger/LedgerActions.jsx';
 
 const T = i18n.createComponent();
 
@@ -45,6 +46,13 @@ export default class Proposal extends Component{
         if (Meteor.isServer){
             this.state.proposal = this.props.proposal;
         }
+    }
+
+    static getDerivedStateFromProps(props, state) {
+        if (state.user !== localStorage.getItem(CURRENTUSERADDR)) {
+            return {user: localStorage.getItem(CURRENTUSERADDR)};
+        }
+        return null;
     }
 
     componentDidUpdate(prevProps){
@@ -266,7 +274,8 @@ export default class Proposal extends Component{
                     <div className="proposal bg-light">
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposalID</T></Col>
-                            <Col md={9} className="value">{this.props.proposal.proposalId}</Col>
+                            <Col md={this.state.user?6:9} className="value">{this.props.proposal.proposalId}</Col>
+                            {this.state.user?<Col md={3}><ProposalActionButtons history={this.props.history} proposalId={proposalId}/></Col>:null}
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposer</T></Col>
