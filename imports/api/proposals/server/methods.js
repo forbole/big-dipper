@@ -20,14 +20,14 @@ Meteor.methods({
                 const bulkProposals = Proposals.rawCollection().initializeUnorderedBulkOp();
                 for (let i in proposals){
                     let proposal = proposals[i];
-                    proposal.proposalId = parseInt(proposal.proposal_id);
+                    proposal.proposalId = parseInt(proposal.id);
                     if (proposal.proposalId > 0){
                         try{
                             let url = LCD + '/gov/proposals/'+proposal.proposalId+'/proposer';
                             let response = HTTP.get(url);
                             if (response.statusCode == 200){
                                 let proposer = JSON.parse(response.content);
-                                if (proposer.proposal_id && (proposer.proposal_id == proposal.proposal_id)){
+                                if (proposer.proposal_id && (proposer.proposal_id == proposal.id)){
                                     proposal.proposer = proposer.proposer;
                                 }
                             }
