@@ -1002,11 +1002,11 @@ class ProposalActionButtons extends LedgerButton {
     render = () => {
         return <span className="ledger-buttons-group float-right">
             <Row>
-                <Col xs='6'><Button color="secondary" size="sm"
+                <Col><Button color="secondary" size="sm"
                     onClick={() => this.openModal(Types.VOTE, {})}>
                     {TypeMeta[Types.VOTE].button}
                 </Button></Col>
-                <Col xs='6'><Button color="success" size="sm"
+                <Col><Button color="success" size="sm"
                     onClick={() => this.openModal(Types.DEPOSIT, {})}>
                     {TypeMeta[Types.DEPOSIT].button}
                 </Button></Col>
