@@ -71,7 +71,7 @@ export default class Transaction extends Component{
                         <div className="card-header"><T>transactions.activities</T></div>
                     </Card>
                     {(tx.tx.value.msg && tx.tx.value.msg.length >0)?tx.tx.value.msg.map((msg,i) => {
-                        return <Card body key={i}><Activities msg={msg} invalid={(!!tx.code)} tags={tx.tags} /></Card>
+                        return <Card body key={i}><Activities msg={msg} invalid={(!!tx.code)} events={tx.events} /></Card>
                     }):''}
                 </Container>
             }
