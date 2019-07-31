@@ -58,6 +58,7 @@ export default class Proposal extends Component{
             });
 
             let now = moment();
+            let totalVotingPower = this.props.chain.activeVotingPower * Meteor.settings.public.stakingFraction;
             if (this.props.proposal.voting_start_time != '0001-01-01T00:00:00Z'){
                 if (now.diff(moment(this.props.proposal.voting_start_time)) > 0){
                     let endVotingTime = moment(this.props.proposal.voting_end_time);
@@ -78,7 +79,7 @@ export default class Proposal extends Component{
                             abstainPercent: (totalVotes>0)?parseInt(this.props.proposal.tally.abstain)/totalVotes*100:0,
                             noPercent: (totalVotes>0)?parseInt(this.props.proposal.tally.no)/totalVotes*100:0,
                             noWithVetoPercent: (totalVotes>0)?parseInt(this.props.proposal.tally.no_with_veto)/totalVotes*100:0,
-                            proposalValid: (this.state.totalVotes/this.props.chain.totalVotingPower > parseFloat(this.props.chain.gov.tallyParams.quorum))?true:false
+                            proposalValid: (this.state.totalVotes/totalVotingPower > parseFloat(this.props.chain.gov.tallyParams.quorum))?true:false
                         })
                     }
                     else{
@@ -97,7 +98,7 @@ export default class Proposal extends Component{
                             abstainPercent: (totalVotes>0)?parseInt(this.props.proposal.final_tally_result.abstain)/totalVotes*100:0,
                             noPercent: (totalVotes>0)?parseInt(this.props.proposal.final_tally_result.no)/totalVotes*100:0,
                             noWithVetoPercent: (totalVotes>0)?parseInt(this.props.proposal.final_tally_result.no_with_veto)/totalVotes*100:0,
-                            proposalValid: (this.state.totalVotes/this.props.chain.totalVotingPower > parseFloat(this.props.chain.gov.tallyParams.quorum))?true:false
+                            proposalValid: (this.state.totalVotes/totalVotingPower > parseFloat(this.props.chain.gov.tallyParams.quorum))?true:false
                         })
                     }
                 }
@@ -255,15 +256,17 @@ export default class Proposal extends Component{
             if (this.props.proposalExist && this.state.proposal != ''){
                 // console.log(this.state.proposal);
                 const proposalId = Number(this.props.proposal.proposalId), maxProposalId = Number(this.props.proposalCount);
+                let totalVotingPower = this.props.chain.activeVotingPower * Meteor.settings.public.stakingFraction;
                 return <div>
                     <Helmet>
                         <title>{this.props.proposal.content.value.title} | The Big Dipper</title>
                         <meta name="description" content={this.props.proposal.content.value.description} />
                     </Helmet>
+
                     <div className="proposal bg-light">
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposalID</T></Col>
-                            <Col md={9} className="value">{this.props.proposal.proposal_id}</Col>
+                            <Col md={9} className="value">{this.props.proposal.proposalId}</Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposer</T></Col>
@@ -279,7 +282,7 @@ export default class Proposal extends Component{
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposalType</T></Col>
-                            <Col md={9} className="value">{this.props.proposal.content.type.substr(4).match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</Col>
+                            <Col md={9} className="value">{this.props.proposal.content.type.substr(11).match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposalStatus</T></Col>
@@ -371,8 +374,8 @@ export default class Proposal extends Component{
                                     <Col xs={12}>
                                         <Card body className="tally-info">
                                             <em>
-                                                <T _purify={false} percent={numbro(this.state.totalVotes/this.props.chain.totalVotingPower).format("0.00%")}>proposals.percentageVoted</T><br/>
-                                                {this.state.proposalValid?<T _props={{className:'text-success'}} tentative={(!this.state.voteEnded)?'(tentatively) ':''}>proposals.validMessage</T>:(this.state.voteEnded)?<T _props={{className:'text-danger'}} quorum={numbro(this.props.chain.gov.tallyParams.quorum).format("0.00%")} _purify={false}>proposals.invalidMessage</T>:<T moreVotes={numbro(this.props.chain.totalVotingPower*this.props.chain.gov.tallyParams.quorum-this.state.totalVotes).format("0,0")} _purify={false}>proposals.moreVoteMessage</T>}
+                                                <T _purify={false} percent={numbro(this.state.totalVotes/totalVotingPower).format("0.00%")}>proposals.percentageVoted</T><br/>
+                                                {this.state.proposalValid?<T _props={{className:'text-success'}} tentative={(!this.state.voteEnded)?'(tentatively) ':''} _purify={false}>proposals.validMessage</T>:(this.state.voteEnded)?<T _props={{className:'text-danger'}} quorum={numbro(this.props.chain.gov.tallyParams.quorum).format("0.00%")} _purify={false}>proposals.invalidMessage</T>:<T moreVotes={numbro(totalVotingPower*this.props.chain.gov.tallyParams.quorum-this.state.totalVotes).format("0,0")} _purify={false}>proposals.moreVoteMessage</T>}
                                             </em>
                                         </Card>
                                     </Col>
