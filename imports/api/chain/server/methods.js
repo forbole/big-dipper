@@ -184,15 +184,17 @@ Meteor.methods({
                 },
                 slashing:{
                     params: genesis.app_state.slashing.params
-                }
+                },
+                supply: genesis.app_state.supply,
+                crisis: genesis.app_state.crisis
             }
 
             let totalVotingPower = 0;
 
             // read gentx
-            if (genesis.app_state.gentxs && (genesis.app_state.gentxs.length > 0)){
-                for (i in genesis.app_state.gentxs){
-                    let msg = genesis.app_state.gentxs[i].value.msg;
+            if (genesis.app_state.genutil.gentxs && (genesis.app_state.genutil.gentxs.length > 0)){
+                for (i in genesis.app_state.genutil.gentxs){
+                    let msg = genesis.app_state.genutil.gentxs[i].value.msg;
                     // console.log(msg.type);
                     for (m in msg){
                         if (msg[m].type == "cosmos-sdk/MsgCreateValidator"){

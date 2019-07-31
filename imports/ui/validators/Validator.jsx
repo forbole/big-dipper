@@ -222,11 +222,11 @@ export default class Validator extends Component{
                                 <Col sm={4} className="label"><T>validators.selfDelegationAddress</T></Col>
                                 <Col sm={8} className="value address" data-delegator-address={this.props.validator.delegator_address}><Link to={"/account/"+this.props.validator.delegator_address}>{this.props.validator.delegator_address}</Link></Col>
                                 <Col sm={4} className="label"><T>validators.commissionRate</T></Col>
-                                <Col sm={8} className="value">{this.props.validator.commission?numbro(this.props.validator.commission.rate*100).format('0.00')+"%":''} <small className="text-secondary">({this.state.updateTime})</small></Col>
+                                <Col sm={8} className="value">{this.props.validator.commission.CommissionRates?numbro(this.props.validator.commission.CommissionRates.rate*100).format('0.00')+"%":''} <small className="text-secondary">({this.state.updateTime})</small></Col>
                                 <Col sm={4} className="label"><T>validators.maxRate</T></Col>
-                                <Col sm={8} className="value">{this.props.validator.commission?numbro(this.props.validator.commission.max_rate*100).format('0.00')+"%":''}</Col>
+                                <Col sm={8} className="value">{this.props.validator.commission.CommissionRates?numbro(this.props.validator.commission.CommissionRates.max_rate*100).format('0.00')+"%":''}</Col>
                                 <Col sm={4} className="label"><T>validators.maxChangeRate</T></Col>
-                                <Col sm={8} className="value">{this.props.validator.commission?numbro(this.props.validator.commission.max_change_rate*100).format('0.00')+"%":''}</Col>
+                                <Col sm={8} className="value">{this.props.validator.commission.CommissionRates?numbro(this.props.validator.commission.CommissionRates.max_change_rate*100).format('0.00')+"%":''}</Col>
                             </Row>
                           </CardBody>
                       </Card>
