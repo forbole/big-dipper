@@ -192,7 +192,7 @@ Meteor.methods({
             let totalVotingPower = 0;
 
             // read gentx
-            if (genesis.app_state.genutil.gentxs && (genesis.app_state.genutil.gentxs.length > 0)){
+            if (genesis.app_state.genutil && genesis.app_state.genutil.gentxs && (genesis.app_state.genutil.gentxs.length > 0)){
                 for (i in genesis.app_state.genutil.gentxs){
                     let msg = genesis.app_state.genutil.gentxs[i].value.msg;
                     // console.log(msg.type);
