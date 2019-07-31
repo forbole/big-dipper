@@ -54,7 +54,7 @@ getConsensusState = () => {
 getProposals = () => {
     Meteor.call('proposals.getProposals', (error, result) => {
         if (error){
-            console.log("get porposal: "+ error);
+            console.log("get proposal: "+ error);
         }
         if (result){
             console.log("get proposal: "+result);

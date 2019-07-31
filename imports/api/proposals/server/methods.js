@@ -11,8 +11,11 @@ Meteor.methods({
             let url = LCD + '/gov/proposals';
             let response = HTTP.get(url);
             let proposals = JSON.parse(response.content);
-
             // console.log(proposals);
+
+            let finishedProposalIds = new Set(Proposals.find(
+                {"proposal_status":{$in:["Passed", "Rejected", "Removed"]}}
+            ).fetch().map((p)=> p.proposalId));
 
             let proposalIds = [];
             if (proposals.length > 0){
@@ -21,7 +24,7 @@ Meteor.methods({
                 for (let i in proposals){
                     let proposal = proposals[i];
                     proposal.proposalId = parseInt(proposal.id);
-                    if (proposal.proposalId > 0){
+                    if (proposal.proposalId > 0 && !finishedProposalIds.has(proposal.proposalId)) {
                         try{
                             let url = LCD + '/gov/proposals/'+proposal.proposalId+'/proposer';
                             let response = HTTP.get(url);
@@ -44,6 +47,7 @@ Meteor.methods({
                 bulkProposals.find({proposalId:{$nin:proposalIds}}).update({$set:{"value.proposal_status":"Removed"}});
                 bulkProposals.execute();
             }
+            return true
         }
         catch (e){
             console.log(e);
@@ -89,6 +93,7 @@ Meteor.methods({
                 }
             }
         }
+        return true
     }
 })
 
