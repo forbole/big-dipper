@@ -7,6 +7,7 @@ import Avatar from '../components/Avatar.jsx';
 import TranactionTabs from '../transactions/TransactionTabs.jsx';
 import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
+import TimeStamp from '../components/TimeStamp.jsx';
 
 const T = i18n.createComponent();
 export default class Block extends Component{
@@ -68,7 +69,7 @@ export default class Block extends Component{
                                 <Col md={4} className="label"><T>blocks.numOfTransactions</T></Col>
                                 <Col md={8} className="value">{numbro(block.transNum).format("0,0")}</Col>
                                 <Col md={4} className="label"><T>common.time</T></Col>
-                                <Col md={8} className="value">{moment.utc(block.time).format("D MMM YYYY, h:mm:ssa z")} ({moment(block.time).fromNow()})</Col>
+                                <Col md={8} className="value"><TimeStamp time={block.time}/> ({moment(block.time).fromNow()})</Col>
                             </Row>
                         </CardBody>
                     </Card>

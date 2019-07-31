@@ -6,10 +6,10 @@ import CosmosErrors from '../components/CosmosErrors.jsx';
 import { Link } from 'react-router-dom';
 import { Markdown } from 'react-showdown';
 import numbro from 'numbro';
-import moment from 'moment';
 import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
-import Coin from '/both/utils/coins.js'
+import Coin from '/both/utils/coins.js';
+import TimeStamp from '../components/TimeStamp.jsx';
 
 const T = i18n.createComponent();
 export default class Transaction extends Component{
@@ -54,7 +54,7 @@ export default class Transaction extends Component{
                                 <Col md={4} className="label"><T>common.height</T></Col>
                                 <Col md={8} className="value">
                                     <Link to={"/blocks/"+tx.height}>{numbro(tx.height).format("0,0")}</Link>
-                                    {tx.block() && `(${moment.utc(tx.block().time).format("D MMM YYYY, h:mm:ssa z")})`}
+                                    {tx.block()?<span> <TimeStamp time={tx.block().time}/></span>:null}
                                 </Col>
                                 <Col md={4} className="label"><T>transactions.fee</T></Col>
                                 <Col md={8} className="value">{tx.tx.value.fee.amount?tx.tx.value.fee.amount.map((fee,i) => {

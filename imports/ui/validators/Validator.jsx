@@ -15,6 +15,7 @@ import { DelegationButtons } from '../ledger/LedgerActions.jsx';
 import { Helmet } from 'react-helmet';
 import LinkIcon from '../components/LinkIcon.jsx';
 import i18n from 'meteor/universe:i18n';
+import TimeStamp from '../components/TimeStamp.jsx';
 
 const T = i18n.createComponent();
 
@@ -252,7 +253,7 @@ export default class Validator extends Component{
                                 <Row><Col md={4} className="label"><T>validators.unbondingHeight</T></Col>
                                             <Col md={8} className="value">{numbro(this.props.validator.unbonding_height).format('0,0')}</Col>
                                             <Col md={4} className="label"><T>validators.unbondingTime</T></Col>
-                                            <Col md={8} className="value">{moment.utc(this.props.validator.unbonding_time).format("D MMM YYYY, h:mm:ssa z")}</Col>
+                                            <Col md={8} className="value"><TimeStamp time={this.props.validator.unbonding_time}/></Col>
                                         </Row></Col>:''}
                                 </Row>
                           </CardBody>

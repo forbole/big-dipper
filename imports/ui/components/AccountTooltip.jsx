@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { Meteor } from 'meteor/meteor';
 import { Link } from 'react-router-dom';
 import { Badge, Progress, Row, Col, Card, Spinner, UncontrolledTooltip } from 'reactstrap';
-import moment from 'moment';
 import numbro from 'numbro';
 import Avatar from '../components/Avatar.jsx';
 import Account from './Account.jsx';
+import TimeStamp from '../components/TimeStamp.jsx';
 
 export default class AccountTooltip extends Account{
     constructor(props){
@@ -70,8 +70,8 @@ export default class AccountTooltip extends Account{
                     {numbro(validator.commission.rate).format('0.00%')}
                 </Row>:null}
                 {(!isActive)?<Row className="last-seen data">
-                    {validator.lastSeen?moment.utc(validator.lastSeen).format("D MMM YYYY, h:mm:ssa"):
-                     (validator.unbonding_time?moment.utc(validator.unbonding_time).format("D MMM YYYY, h:mm:ssa"):null)}
+                    {validator.lastSeen?<TimeStamp time={validator.lastSeen}/>:
+                     (validator.unbonding_time?<TimeStamp time={validator.unbonding_time}/>:null)}
                 </Row>:null}
                 {(!isActive)?<Row className="bond-status data" xs={2}>
                     <Col xs={6}>{(validator.status == 0)?<Badge color="secondary">Unbonded</Badge>:<Badge color="warning">Unbonding</Badge>}</Col>
