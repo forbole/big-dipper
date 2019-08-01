@@ -53,7 +53,7 @@ Meteor.methods({
             chain.latestBlockTime = status.sync_info.latest_block_time;
 
             let latestState = ChainStates.findOne({}, {sort: {height: -1}})
-            if (latestState.height >= chain.latestBlockHeight) {
+            if (latestState && latestState.height >= chain.latestBlockHeight) {
                 return `no updates (getting block ${chain.latestBlockHeight} at block ${latestState.height})`
             }
 
