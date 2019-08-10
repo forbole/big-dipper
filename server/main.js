@@ -97,10 +97,10 @@ updateMissedBlocks = () => {
 getDelegations = () => {
     Meteor.call('delegations.getDelegations', (error, result) => {
         if (error){
-            console.log("get delegation error: "+ error)
+            console.log("get delegations error: "+ error)
         }
         else{
-            console.log("get delegtaions ok: "+ result)
+            console.log("get delegations ok: "+ result)
         }
     });
 }
@@ -118,7 +118,7 @@ aggregateMinutely = () =>{
 
     Meteor.call('coinStats.getCoinStats', (error, result) => {
         if (error){
-            console.log("get coin stats: "+error);
+            console.log("get coin stats error: "+error);
         }
         else{
             console.log("get coin stats ok: "+result)
