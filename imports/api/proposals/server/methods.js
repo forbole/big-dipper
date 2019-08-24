@@ -10,7 +10,7 @@ Meteor.methods({
         try{
             let url = LCD + '/gov/proposals';
             let response = HTTP.get(url);
-            let proposals = JSON.parse(response.content);
+            let proposals = JSON.parse(response.content).result;
             // console.log(proposals);
 
             let finishedProposalIds = new Set(Proposals.find(
@@ -66,21 +66,21 @@ Meteor.methods({
                         let response = HTTP.get(url);
                         let proposal = {proposalId: proposals[i].proposalId};
                         if (response.statusCode == 200){
-                            let deposits = JSON.parse(response.content);
+                            let deposits = JSON.parse(response.content).result;
                             proposal.deposits = deposits;
                         }
 
                         url = LCD + '/gov/proposals/'+proposals[i].proposalId+'/votes';
                         response = HTTP.get(url);
                         if (response.statusCode == 200){
-                            let votes = JSON.parse(response.content);
+                            let votes = JSON.parse(response.content).result;
                             proposal.votes = getVoteDetail(votes);
                         }
 
                         url = LCD + '/gov/proposals/'+proposals[i].proposalId+'/tally';
                         response = HTTP.get(url);
                         if (response.statusCode == 200){
-                            let tally = JSON.parse(response.content);
+                            let tally = JSON.parse(response.content).result;
                             proposal.tally = tally;
                         }
 

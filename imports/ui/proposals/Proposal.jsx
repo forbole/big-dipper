@@ -123,28 +123,33 @@ export default class Proposal extends Component{
 
     populateChartData() {
         const optionOrder = {'Yes': 0, 'Abstain': 1, 'No': 2, 'NoWithVeto': 3};
-        let votes = this.props.proposal.votes.sort(
+        let votes = this.props.proposal.votes?this.props.proposal.votes.sort(
             (vote1, vote2) => vote2['votingPower'] - vote1['votingPower']
         ).sort(
-            (vote1, vote2) => optionOrder[vote1.option] - optionOrder[vote2.option]);
+            (vote1, vote2) => optionOrder[vote1.option] - optionOrder[vote2.option]):null;
         let maxVotingPower = {'N/A': 1};
         let totalVotingPower = {'N/A': 0};
         let votesByOptions = {'All': votes, 'Yes': [], 'Abstain': [], 'No': [], 'NoWithVeto': []};
 
         let emtpyData = [{'votingPower': 1, option: 'N/A'}];
-        votes.forEach((vote) => votesByOptions[vote.option].push(vote));
+
+        if (votes)
+            votes.forEach((vote) => votesByOptions[vote.option].push(vote));
 
         let datasets = [];
         for (let option in votesByOptions) {
             let data = votesByOptions[option];
-            maxVotingPower[option] = Math.max.apply(null, data.map((vote) => vote.votingPower));
-            totalVotingPower[option] = data.reduce((s, x) => x.votingPower + s, 0);
-            datasets.push({
-                datasetId: option,
-                data: data.length == 0?emtpyData:data,
-                totalVotingPower: totalVotingPower,
-                maxVotingPower: maxVotingPower
-            })};
+            if (data){
+                maxVotingPower[option] = Math.max.apply(null, data.map((vote) => vote.votingPower));
+                totalVotingPower[option] = data.reduce((s, x) => x.votingPower + s, 0);
+                datasets.push({
+                    datasetId: option,
+                    data: data.length == 0?emtpyData:data,
+                    totalVotingPower: totalVotingPower,
+                    maxVotingPower: maxVotingPower
+                })    
+            }
+        };
 
         let layout = [['piePlot']];
         let scales = [{
@@ -153,7 +158,7 @@ export default class Proposal extends Component{
             domain: ['Yes', 'Abstain', 'No', 'NoWithVeto', 'N/A'],
             range: ['#4CAF50', '#ff9800', '#e51c23', '#9C27B0', '#BDBDBD']
         }];
-        let isDataEmtpy = votesByOptions[this.state.breakDownSelection].length==0;
+        let isDataEmtpy = votesByOptions[this.state.breakDownSelection] && votesByOptions[this.state.breakDownSelection].length==0;
         let tooltip = (component, point, data, ds) => {
             let total = ds.metadata().totalVotingPower['All'];
             let optionTotal = ds.metadata().totalVotingPower[data.option];
