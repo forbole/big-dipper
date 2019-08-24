@@ -20,7 +20,7 @@ Meteor.methods({
         try{
             let available = HTTP.get(url);
             if (available.statusCode == 200){
-                let response = JSON.parse(available.content);
+                let response = JSON.parse(available.content).result;
                 let account;
                 if (response.type === 'cosmos-sdk/Account')
                     account = response.value;
