@@ -10,7 +10,7 @@ Meteor.methods({
         try{
             let url = LCD + '/gov/proposals';
             let response = HTTP.get(url);
-            let proposals = JSON.parse(response.content);
+            let proposals = JSON.parse(response.content).result;
             // console.log(proposals);
 
             let finishedProposalIds = new Set(Proposals.find(
