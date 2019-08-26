@@ -44,7 +44,8 @@ Meteor.methods({
                         }
                     }
                 }
-                bulkProposals.find({proposalId:{$nin:proposalIds}}).update({$set:{"value.proposal_status":"Removed"}});
+                bulkProposals.find({proposalId:{$nin:proposalIds}, proposal_status:{$nin:["Passed", "Rejected", "Removed"]}})
+                    .update({$set: {"value.proposal_status": "Removed"}});
                 bulkProposals.execute();
             }
             return true
