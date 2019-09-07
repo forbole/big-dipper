@@ -114,13 +114,13 @@ Meteor.methods({
     'accounts.getDelegation'(address, validator){
         let url = `/staking/delegators/${address}/delegations/${validator}`;
         let delegations = fetchFromUrl(url);
-        delegations = delegations && delegations.data;
+        delegations = delegations && delegations.data.result;
         if (delegations && delegations.shares)
             delegations.shares = parseFloat(delegations.shares);
 
         url = `/staking/redelegations?delegator=${address}&validator_to=${validator}`;
-        let relegations = fetchFromUrl(url).data;
-        relegations = relegations && relegations.data;
+        let relegations = fetchFromUrl(url);
+        relegations = relegations && relegations.data.result;
         let completionTime;
         if (relegations) {
             relegations.forEach((relegation) => {
@@ -134,7 +134,7 @@ Meteor.methods({
 
         url = `/staking/delegators/${address}/unbonding_delegations/${validator}`;
         let undelegations = fetchFromUrl(url);
-        undelegations = undelegations && undelegations.data;
+        undelegations = undelegations && undelegations.data.result;
         if (undelegations) {
             delegations.unbonding = undelegations.entries.length;
             delegations.unbondingCompletionTime = undelegations.entries[0].completion_time;
