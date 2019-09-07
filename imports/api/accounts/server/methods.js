@@ -98,7 +98,7 @@ Meteor.methods({
             try {
                 let rewards = HTTP.get(url);
                 if (rewards.statusCode == 200){
-                    let content = JSON.parse(rewards.content);
+                    let content = JSON.parse(rewards.content).result;
                     if (content.val_commission && content.val_commission.length > 0)
                         balance.commission = content.val_commission[0];
                 }
