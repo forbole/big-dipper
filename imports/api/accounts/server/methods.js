@@ -59,7 +59,7 @@ Meteor.methods({
         try{
             let delegations = HTTP.get(url);
             if (delegations.statusCode == 200){
-                balance.delegations = JSON.parse(delegations.content);
+                balance.delegations = JSON.parse(delegations.content).result;
             }
         }
         catch (e){
@@ -70,7 +70,7 @@ Meteor.methods({
         try{
             let unbonding = HTTP.get(url);
             if (unbonding.statusCode == 200){
-                balance.unbonding = JSON.parse(unbonding.content);
+                balance.unbonding = JSON.parse(unbonding.content).result;
             }
         }
         catch (e){
@@ -82,7 +82,7 @@ Meteor.methods({
         try{
             let rewards = HTTP.get(url);
             if (rewards.statusCode == 200){
-                balance.rewards = JSON.parse(rewards.content);
+                balance.rewards = JSON.parse(rewards.content).result.total;
             }
         }
         catch (e){
@@ -147,7 +147,7 @@ Meteor.methods({
         try{
             let delegations = HTTP.get(url);
             if (delegations.statusCode == 200){
-                delegations = JSON.parse(delegations.content);
+                delegations = JSON.parse(delegations.content).result;
                 if (delegations && delegations.length > 0){
                     delegations.forEach((delegation, i) => {
                         if (delegations[i] && delegations[i].shares)
@@ -168,7 +168,7 @@ Meteor.methods({
         try{
             let unbondings = HTTP.get(url);
             if (unbondings.statusCode == 200){
-                unbondings = JSON.parse(unbondings.content);
+                unbondings = JSON.parse(unbondings.content).result;
                 return unbondings;
             };
         }
