@@ -265,7 +265,7 @@ export class Ledger {
     }
 
     // Creates a new tx skeleton
-    static createSkeleton(txContext) {
+    static createSkeleton(txContext, msgs=[]) {
         if (typeof txContext === 'undefined') {
             throw new Error('undefined txContext');
         }
@@ -278,7 +278,7 @@ export class Ledger {
         const txSkeleton = {
             type: 'auth/StdTx',
             value: {
-                msg: [], // messages
+                msg: msgs,
                 fee: '',
                 memo: txContext.memo || DEFAULT_MEMO,
                 signatures: [{
@@ -292,7 +292,8 @@ export class Ledger {
                 }],
             },
         };
-        return Ledger.applyGas(txSkeleton, DEFAULT_GAS);
+        //return Ledger.applyGas(txSkeleton, DEFAULT_GAS);
+        return txSkeleton
     }
 
     // Creates a new delegation tx based on the input parameters
@@ -302,8 +303,6 @@ export class Ledger {
         validatorBech32,
         uatomAmount
     ) {
-        const txSkeleton = Ledger.createSkeleton(txContext);
-
         const txMsg = {
             type: 'cosmos-sdk/MsgDelegate',
             value: {
@@ -316,9 +315,7 @@ export class Ledger {
             },
         };
 
-        txSkeleton.value.msg = [txMsg];
-
-        return txSkeleton;
+        return Ledger.createSkeleton(txContext, [txMsg]);
     }
 
     // Creates a new undelegation tx based on the input parameters
@@ -328,8 +325,6 @@ export class Ledger {
         validatorBech32,
         uatomAmount
     ) {
-        const txSkeleton = Ledger.createSkeleton(txContext);
-
         const txMsg = {
             type: 'cosmos-sdk/MsgUndelegate',
             value: {
@@ -342,9 +337,7 @@ export class Ledger {
             },
         };
 
-        txSkeleton.value.msg = [txMsg];
-
-        return txSkeleton;
+        return Ledger.createSkeleton(txContext, [txMsg]);
     }
 
     // Creates a new redelegation tx based on the input parameters
@@ -355,8 +348,6 @@ export class Ledger {
         validatorDestBech32,
         uatomAmount
     ) {
-        const txSkeleton = Ledger.createSkeleton(txContext);
-
         const txMsg = {
             type: 'cosmos-sdk/MsgBeginRedelegate',
             value: {
@@ -370,9 +361,7 @@ export class Ledger {
             },
         };
 
-        txSkeleton.value.msg = [txMsg];
-
-        return txSkeleton;
+        return Ledger.createSkeleton(txContext, [txMsg]);
     }
 
     // Creates a new transfer tx based on the input parameters
@@ -382,8 +371,6 @@ export class Ledger {
         toAddress,
         amount
     ) {
-        const txSkeleton = Ledger.createSkeleton(txContext);
-
         const txMsg = {
             type: 'cosmos-sdk/MsgSend',
             value: {
@@ -396,9 +383,71 @@ export class Ledger {
             }
         };
 
-        txSkeleton.value.msg = [txMsg];
+        return Ledger.createSkeleton(txContext, [txMsg]);
+    }
 
-        return txSkeleton;
+    static createSubmitProposal(
+        txContext,
+        title,
+        description,
+        deposit
+    ) {
+        const txMsg = {
+            type: 'cosmos-sdk/MsgSubmitProposal',
+            value: {
+                content: {
+                    type: "cosmos-sdk/TextProposal",
+                    value: {
+                        description: description,
+                        title: title
+                    }
+                },
+                initial_deposit: [{
+                    amount: deposit.toString(),
+                    denom: txContext.denom
+                }],
+                proposer: txContext.bech32
+            }
+        };
+
+        return Ledger.createSkeleton(txContext, [txMsg]);
+    }
+
+    static createVote(
+        txContext,
+        proposalId,
+        option,
+    ) {
+        const txMsg = {
+            type: 'cosmos-sdk/MsgVote',
+            value: {
+                option,
+                proposal_id: proposalId.toString(),
+                voter: txContext.bech32
+            }
+        };
+
+        return Ledger.createSkeleton(txContext, [txMsg]);
+    }
+
+    static createDeposit(
+        txContext,
+        proposalId,
+        amount,
+    ) {
+        const txMsg = {
+            type: 'cosmos-sdk/MsgDeposit',
+            value: {
+                amount: [{
+                    amount: amount.toString(),
+                    denom: txContext.denom
+                }],
+                depositor: txContext.bech32,
+                proposal_id: proposalId.toString()
+            }
+        };
+
+        return Ledger.createSkeleton(txContext, [txMsg]);
     }
 
 }
