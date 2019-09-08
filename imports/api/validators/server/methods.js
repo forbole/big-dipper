@@ -30,7 +30,7 @@ Meteor.methods({
         try{
             let delegations = HTTP.get(url);
             if (delegations.statusCode == 200){
-                delegations = JSON.parse(delegations.content);
+                delegations = JSON.parse(delegations.content).result;
                 delegations.forEach((delegation, i) => {
                     if (delegations[i] && delegations[i].shares)
                         delegations[i].shares = parseFloat(delegations[i].shares);

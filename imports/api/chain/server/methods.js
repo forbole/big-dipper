@@ -79,7 +79,7 @@ Meteor.methods({
                 url = LCD + '/staking/pool';
                 try{
                     response = HTTP.get(url);
-                    let bonding = JSON.parse(response.content);
+                    let bonding = JSON.parse(response.content).result;
                     // chain.bondedTokens = bonding.bonded_tokens;
                     // chain.notBondedTokens = bonding.not_bonded_tokens;
                     chainStates.bondedTokens = parseInt(bonding.bonded_tokens);
@@ -92,7 +92,7 @@ Meteor.methods({
                 url = LCD + '/distribution/community_pool';
                 try {
                     response = HTTP.get(url);
-                    let pool = JSON.parse(response.content);
+                    let pool = JSON.parse(response.content).result;
                     if (pool && pool.length > 0){
                         chainStates.communityPool = [];
                         pool.forEach((amount, i) => {
@@ -110,7 +110,7 @@ Meteor.methods({
                 url = LCD + '/minting/inflation';
                 try{
                     response = HTTP.get(url);
-                    let inflation = JSON.parse(response.content);
+                    let inflation = JSON.parse(response.content).result;
                     if (inflation){
                         chainStates.inflation = parseFloat(inflation)
                     }

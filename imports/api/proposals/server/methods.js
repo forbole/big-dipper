@@ -29,7 +29,7 @@ Meteor.methods({
                             let url = LCD + '/gov/proposals/'+proposal.proposalId+'/proposer';
                             let response = HTTP.get(url);
                             if (response.statusCode == 200){
-                                let proposer = JSON.parse(response.content);
+                                let proposer = JSON.parse(response.content).result;
                                 if (proposer.proposal_id && (proposer.proposal_id == proposal.id)){
                                     proposal.proposer = proposer.proposer;
                                 }
@@ -124,8 +124,8 @@ const getVoteDetail = (votes) => {
             try{
                 let response = HTTP.get(url);
                 if (response.statusCode == 200){
-                    delegations = JSON.parse(response.content);
-                    if (delegations) {
+                    delegations = JSON.parse(response.content).result;
+                    if (delegations && delegations.length > 0) {
                         delegations.forEach((delegation) => {
                             let shares = parseFloat(delegation.shares);
                             if (validatorAddressMap[delegation.validator_address]) {
