@@ -190,7 +190,7 @@ export default class Validator extends Component{
 
                 return <Row className="validator-details">
                     <Helmet>
-                        <title>{ moniker } - Cosmos Validator | The Big Dipper</title>
+                        <title>{ moniker } - LikeChain Validator | The Big Dipper</title>
                     <meta name="description" content={details} />
                   </Helmet>
                     <Col xs={12}>
