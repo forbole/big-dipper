@@ -12,6 +12,9 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import { Meteor } from 'meteor/meteor';
 import { render } from 'react-dom';
 
+CURRENTUSERADDR = 'ledgerUserAddress';
+CURRENTUSERPUBKEY = 'ledgerUserPubKey';
+
 // import { onPageLoad } from 'meteor/server-render';
 
 Meteor.startup(() => {

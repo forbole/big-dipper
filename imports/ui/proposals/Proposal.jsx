@@ -12,6 +12,7 @@ import { Helmet } from 'react-helmet';
 import posed from 'react-pose';
 import i18n from 'meteor/universe:i18n';
 import { Meteor } from 'meteor/meteor';
+import Coin from '/both/utils/coins.js'
 
 const T = i18n.createComponent();
 
@@ -52,11 +53,12 @@ export default class Proposal extends Component{
             this.setState({
                 proposal: this.props.proposal,
                 deposit: <div>{this.props.proposal.total_deposit?this.props.proposal.total_deposit.map((deposit, i) => {
-                    return <div key={i}>{numbro(deposit.amount).format(0,0)} {deposit.denom}</div>
+                    return <div key={i}>{new Coin(deposit.amount).toString()}</div>
                 }):''} </div>
             });
 
             let now = moment();
+            let totalVotingPower = this.props.chain.activeVotingPower * Meteor.settings.public.stakingFraction;
             if (this.props.proposal.voting_start_time != '0001-01-01T00:00:00Z'){
                 if (now.diff(moment(this.props.proposal.voting_start_time)) > 0){
                     let endVotingTime = moment(this.props.proposal.voting_end_time);
@@ -77,7 +79,7 @@ export default class Proposal extends Component{
                             abstainPercent: (totalVotes>0)?parseInt(this.props.proposal.tally.abstain)/totalVotes*100:0,
                             noPercent: (totalVotes>0)?parseInt(this.props.proposal.tally.no)/totalVotes*100:0,
                             noWithVetoPercent: (totalVotes>0)?parseInt(this.props.proposal.tally.no_with_veto)/totalVotes*100:0,
-                            proposalValid: (this.state.totalVotes/this.props.chain.totalVotingPower > parseFloat(this.props.chain.gov.tallyParams.quorum))?true:false
+                            proposalValid: (this.state.totalVotes/totalVotingPower > parseFloat(this.props.chain.gov.tallyParams.quorum))?true:false
                         })
                     }
                     else{
@@ -96,7 +98,7 @@ export default class Proposal extends Component{
                             abstainPercent: (totalVotes>0)?parseInt(this.props.proposal.final_tally_result.abstain)/totalVotes*100:0,
                             noPercent: (totalVotes>0)?parseInt(this.props.proposal.final_tally_result.no)/totalVotes*100:0,
                             noWithVetoPercent: (totalVotes>0)?parseInt(this.props.proposal.final_tally_result.no_with_veto)/totalVotes*100:0,
-                            proposalValid: (this.state.totalVotes/this.props.chain.totalVotingPower > parseFloat(this.props.chain.gov.tallyParams.quorum))?true:false
+                            proposalValid: (this.state.totalVotes/totalVotingPower > parseFloat(this.props.chain.gov.tallyParams.quorum))?true:false
                         })
                     }
                 }
@@ -121,28 +123,33 @@ export default class Proposal extends Component{
 
     populateChartData() {
         const optionOrder = {'Yes': 0, 'Abstain': 1, 'No': 2, 'NoWithVeto': 3};
-        let votes = this.props.proposal.votes.sort(
+        let votes = this.props.proposal.votes?this.props.proposal.votes.sort(
             (vote1, vote2) => vote2['votingPower'] - vote1['votingPower']
         ).sort(
-            (vote1, vote2) => optionOrder[vote1.option] - optionOrder[vote2.option]);
+            (vote1, vote2) => optionOrder[vote1.option] - optionOrder[vote2.option]):null;
         let maxVotingPower = {'N/A': 1};
         let totalVotingPower = {'N/A': 0};
         let votesByOptions = {'All': votes, 'Yes': [], 'Abstain': [], 'No': [], 'NoWithVeto': []};
 
         let emtpyData = [{'votingPower': 1, option: 'N/A'}];
-        votes.forEach((vote) => votesByOptions[vote.option].push(vote));
+
+        if (votes)
+            votes.forEach((vote) => votesByOptions[vote.option].push(vote));
 
         let datasets = [];
         for (let option in votesByOptions) {
             let data = votesByOptions[option];
-            maxVotingPower[option] = Math.max.apply(null, data.map((vote) => vote.votingPower));
-            totalVotingPower[option] = data.reduce((s, x) => x.votingPower + s, 0);
-            datasets.push({
-                datasetId: option,
-                data: data.length == 0?emtpyData:data,
-                totalVotingPower: totalVotingPower,
-                maxVotingPower: maxVotingPower
-            })};
+            if (data){
+                maxVotingPower[option] = Math.max.apply(null, data.map((vote) => vote.votingPower));
+                totalVotingPower[option] = data.reduce((s, x) => x.votingPower + s, 0);
+                datasets.push({
+                    datasetId: option,
+                    data: data.length == 0?emtpyData:data,
+                    totalVotingPower: totalVotingPower,
+                    maxVotingPower: maxVotingPower
+                })    
+            }
+        };
 
         let layout = [['piePlot']];
         let scales = [{
@@ -151,7 +158,7 @@ export default class Proposal extends Component{
             domain: ['Yes', 'Abstain', 'No', 'NoWithVeto', 'N/A'],
             range: ['#4CAF50', '#ff9800', '#e51c23', '#9C27B0', '#BDBDBD']
         }];
-        let isDataEmtpy = votesByOptions[this.state.breakDownSelection].length==0;
+        let isDataEmtpy = votesByOptions[this.state.breakDownSelection] && votesByOptions[this.state.breakDownSelection].length==0;
         let tooltip = (component, point, data, ds) => {
             let total = ds.metadata().totalVotingPower['All'];
             let optionTotal = ds.metadata().totalVotingPower[data.option];
@@ -254,16 +261,17 @@ export default class Proposal extends Component{
             if (this.props.proposalExist && this.state.proposal != ''){
                 // console.log(this.state.proposal);
                 const proposalId = Number(this.props.proposal.proposalId), maxProposalId = Number(this.props.proposalCount);
+                let totalVotingPower = this.props.chain.activeVotingPower * Meteor.settings.public.stakingFraction;
                 return <div id='proposals'>
                     <Helmet>
-                        <title>{this.props.proposal.proposal_content.value.title} | The Big Dipper</title>
-                        <meta name="description" content={this.props.proposal.proposal_content.value.description} />
+                        <title>{this.props.proposal.content.value.title} | The Big Dipper</title>
+                        <meta name="description" content={this.props.proposal.content.value.description} />
                     </Helmet>
                     <Card body>
                     <div className="proposal">
                         <Row className="mb-2">
                             <Col md={3} className="label"><T>proposals.proposalID</T></Col>
-                            <Col md={9} className="value">{this.props.proposal.proposal_id}</Col>
+                            <Col md={9} className="value">{this.props.proposal.proposalId}</Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposer</T></Col>
@@ -271,15 +279,15 @@ export default class Proposal extends Component{
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.title</T></Col>
-                            <Col md={9} className="value">{this.props.proposal.proposal_content.value.title}</Col>
+                            <Col md={9} className="value">{this.props.proposal.content.value.title}</Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.description</T></Col>
-                            <Col md={9} className="value"><Markdown markup={this.props.proposal.proposal_content.value.description} /></Col>
+                            <Col md={9} className="value"><Markdown markup={this.props.proposal.content.value.description} /></Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposalType</T></Col>
-                            <Col md={9} className="value">{this.props.proposal.proposal_content.type.substr(4).match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</Col>
+                            <Col md={9} className="value">{this.props.proposal.content.type.substr(11).match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposalStatus</T></Col>
@@ -296,7 +304,7 @@ export default class Proposal extends Component{
                                             return <li key={i}>
                                                 <Account address={deposit.depositor} />
                                                 {deposit.amount.map((amount, j) => {
-                                                    return <div key={j}>{numbro(amount.amount).format("0,0")} {amount.denom}</div>
+                                                    return <div key={j}>{new Coin(amount.amount).toString()}</div>
                                                 })}
                                             </li>
                                         }):''}
@@ -371,8 +379,8 @@ export default class Proposal extends Component{
                                     <Col xs={12}>
                                         <Card body className="tally-info">
                                             <em>
-                                                <T _purify={false} percent={numbro(this.state.totalVotes/this.props.chain.totalVotingPower).format("0.00%")}>proposals.percentageVoted</T><br/>
-                                                {this.state.proposalValid?<T _props={{className:'text-success'}} tentative={(!this.state.voteEnded)?'(tentatively) ':''}>proposals.validMessage</T>:(this.state.voteEnded)?<T _props={{className:'text-danger'}} quorum={numbro(this.props.chain.gov.tallyParams.quorum).format("0.00%")} _purify={false}>proposals.invalidMessage</T>:<T moreVotes={numbro(this.props.chain.totalVotingPower*this.props.chain.gov.tallyParams.quorum-this.state.totalVotes).format("0,0")} _purify={false}>proposals.moreVoteMessage</T>}
+                                                <T _purify={false} percent={numbro(this.state.totalVotes/totalVotingPower).format("0.00%")}>proposals.percentageVoted</T><br/>
+                                                {this.state.proposalValid?<T _props={{className:'text-success'}} tentative={(!this.state.voteEnded)?'(tentatively) ':''} _purify={false}>proposals.validMessage</T>:(this.state.voteEnded)?<T _props={{className:'text-danger'}} quorum={numbro(this.props.chain.gov.tallyParams.quorum).format("0.00%")} _purify={false}>proposals.invalidMessage</T>:<T moreVotes={numbro(totalVotingPower*this.props.chain.gov.tallyParams.quorum-this.state.totalVotes).format("0,0")} _purify={false}>proposals.moreVoteMessage</T>}
                                             </em>
                                         </Card>
                                     </Col>

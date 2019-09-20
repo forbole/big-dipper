@@ -14,7 +14,7 @@ Meteor.methods({
                 try{
                     let response = HTTP.get(url);
                     if (response.statusCode == 200){
-                        let delegation = JSON.parse(response.content);
+                        let delegation = JSON.parse(response.content).result;
                         // console.log(delegation);
                         delegations = delegations.concat(delegation);
                     }

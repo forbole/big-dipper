@@ -25,9 +25,9 @@ export default class ValidatorDetails extends Component{
                         <Route exact path="/(validator|validators)/:address/missed/blocks" render={(props) => <MissedBlocks {...props} type='voter' />} />
                         <Route exact path="/(validator|validators)/:address/missed/precommits" render={(props) => <MissedBlocks {...props} type='proposer' />} />
                         <Route path="/(validator|validators)/:address" render={(props) => <Validator address={props.match.params.address} {...props}/>} />
-                    </Switch>
-                </Col>
-            </Row>
+                  </Switch>
+              </Col>
+          </Row>
         </div>
     }
 

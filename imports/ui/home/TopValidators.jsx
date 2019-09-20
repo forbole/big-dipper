@@ -27,7 +27,7 @@ export default class TopValidators extends Component{
                     validators: validators.map((validator, i ) => {
                         return <tr key={i}>
                             <td><Link to={"/validator/"+validator.address}>
-                                <Avatar moniker={validator.description.moniker} identity={validator.description.identity} address={validator.address} list={true} />
+                                <Avatar moniker={validator.description.moniker} profileUrl={validator.profile_url} address={validator.address} list={true} />
                                 {validator.description.moniker}
                             </Link></td>
                             <td className="voting-power">{numbro(validator.voting_power).format('0,0')}</td>

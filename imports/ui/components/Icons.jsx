@@ -1,4 +1,5 @@
 import React from 'react';
+import { UncontrolledTooltip } from 'reactstrap';
 
 export const DenomSymbol = (props) => {
     switch (props.denom){
@@ -48,5 +49,21 @@ export const TxIcon = (props) => {
     }
     else{
         return <span className="text-danger text-nowrap"><i className="fas fa-times-circle"></i></span>;
+    }
+}
+
+export class InfoIcon extends React.Component {
+    constructor(props) {
+        super(props);
+        this.ref = React.createRef();
+    }
+
+    render() {
+        return [
+            <i key='icon' className='material-icons info-icon' ref={this.ref}>info</i>,
+            <UncontrolledTooltip key='tooltip' placement='right' target={this.ref}>
+                {this.props.children?this.props.children:this.props.tooltipText}
+            </UncontrolledTooltip>
+        ]
     }
 }

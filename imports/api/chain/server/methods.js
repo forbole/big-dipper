@@ -27,9 +27,9 @@ Meteor.methods({
             let votedPower = Math.round(parseFloat(consensus.round_state.votes[round].prevotes_bit_array.split(" ")[3])*100);
 
             Chain.update({chainId:Meteor.settings.public.chainId}, {$set:{
-                votingHeight: height, 
-                votingRound: round, 
-                votingStep: step, 
+                votingHeight: height,
+                votingRound: round,
+                votingStep: step,
                 votedPower: votedPower,
                 proposerAddress: consensus.round_state.validators.proposer.address,
                 prevotes: consensus.round_state.votes[round].prevotes,
@@ -52,6 +52,11 @@ Meteor.methods({
             chain.latestBlockHeight = status.sync_info.latest_block_height;
             chain.latestBlockTime = status.sync_info.latest_block_time;
 
+            let latestState = ChainStates.findOne({}, {sort: {height: -1}})
+            if (latestState && latestState.height >= chain.latestBlockHeight) {
+                return `no updates (getting block ${chain.latestBlockHeight} at block ${latestState.height})`
+            }
+
             url = RPC+'/validators';
             response = HTTP.get(url);
             let validators = JSON.parse(response.content);
@@ -63,6 +68,8 @@ Meteor.methods({
             }
             chain.activeVotingPower = activeVP;
 
+
+            Chain.update({chainId:chain.chainId}, {$set:chain}, {upsert: true});
             // Get chain states
             if (parseInt(chain.latestBlockHeight) > 0){
                 let chainStates = {};
@@ -72,7 +79,7 @@ Meteor.methods({
                 url = LCD + '/staking/pool';
                 try{
                     response = HTTP.get(url);
-                    let bonding = JSON.parse(response.content);
+                    let bonding = JSON.parse(response.content).result;
                     // chain.bondedTokens = bonding.bonded_tokens;
                     // chain.notBondedTokens = bonding.not_bonded_tokens;
                     chainStates.bondedTokens = parseInt(bonding.bonded_tokens);
@@ -85,7 +92,7 @@ Meteor.methods({
                 url = LCD + '/distribution/community_pool';
                 try {
                     response = HTTP.get(url);
-                    let pool = JSON.parse(response.content);
+                    let pool = JSON.parse(response.content).result;
                     if (pool && pool.length > 0){
                         chainStates.communityPool = [];
                         pool.forEach((amount, i) => {
@@ -103,7 +110,7 @@ Meteor.methods({
                 url = LCD + '/minting/inflation';
                 try{
                     response = HTTP.get(url);
-                    let inflation = JSON.parse(response.content);
+                    let inflation = JSON.parse(response.content).result;
                     if (inflation){
                         chainStates.inflation = parseFloat(inflation)
                     }
@@ -129,8 +136,6 @@ Meteor.methods({
 
             // chain.totalVotingPower = totalVP;
 
-            Chain.update({chainId:chain.chainId}, {$set:chain}, {upsert: true});
-
             // validators = Validators.find({}).fetch();
             // console.log(validators);
             return chain.latestBlockHeight;
@@ -145,7 +150,7 @@ Meteor.methods({
     },
     'chain.genesis': function(){
         let chain = Chain.findOne({chainId: Meteor.settings.public.chainId});
-        
+
         if (chain && chain.readGenesis){
             console.log('Genesis file has been processed');
         }
@@ -153,6 +158,7 @@ Meteor.methods({
             console.log('=== Start processing genesis file ===');
             let response = HTTP.get(Meteor.settings.genesisFile);
             let genesis = JSON.parse(response.content);
+            let distr = genesis.app_state.distr || genesis.app_state.distribution
             let chainParams = {
                 chainId: genesis.chain_id,
                 genesisTime: genesis.genesis_time,
@@ -165,10 +171,10 @@ Meteor.methods({
                 },
                 mint: genesis.app_state.mint,
                 distr: {
-                    communityTax: genesis.app_state.distr.community_tax,
-                    baseProposerReward: genesis.app_state.distr.base_proposer_reward,
-                    bonusProposerReward: genesis.app_state.distr.bonus_proposer_reward,
-                    withdrawAddrEnabled: genesis.app_state.distr.withdraw_addr_enabled
+                    communityTax: distr.community_tax,
+                    baseProposerReward: distr.base_proposer_reward,
+                    bonusProposerReward: distr.bonus_proposer_reward,
+                    withdrawAddrEnabled: distr.withdraw_addr_enabled
                 },
                 gov: {
                     startingProposalId: genesis.app_state.gov.starting_proposal_id,
@@ -178,15 +184,17 @@ Meteor.methods({
                 },
                 slashing:{
                     params: genesis.app_state.slashing.params
-                }
+                },
+                supply: genesis.app_state.supply,
+                crisis: genesis.app_state.crisis
             }
 
             let totalVotingPower = 0;
 
             // read gentx
-            if (genesis.app_state.gentxs && (genesis.app_state.gentxs.length > 0)){
-                for (i in genesis.app_state.gentxs){
-                    let msg = genesis.app_state.gentxs[i].value.msg;
+            if (genesis.app_state.genutil && genesis.app_state.genutil.gentxs && (genesis.app_state.genutil.gentxs.length > 0)){
+                for (i in genesis.app_state.genutil.gentxs){
+                    let msg = genesis.app_state.genutil.gentxs[i].value.msg;
                     // console.log(msg.type);
                     for (m in msg){
                         if (msg[m].type == "cosmos-sdk/MsgCreateValidator"){
@@ -208,7 +216,7 @@ Meteor.methods({
 
                             let pubkeyValue = Meteor.call('bech32ToPubkey', msg[m].value.pubkey);
                             // Validators.upsert({consensus_pubkey:msg[m].value.pubkey},validator);
-                            
+
                             validator.pub_key = {
                                 "type":"tendermint/PubKeyEd25519",
                                 "value":pubkeyValue
@@ -244,7 +252,7 @@ Meteor.methods({
                     validator.delegator_address = Meteor.call('getDelegator', genValidatorsSet[v].operator_address);
 
                     let pubkeyValue = Meteor.call('bech32ToPubkey', validator.consensus_pubkey);
-                            
+
                     validator.pub_key = {
                         "type":"tendermint/PubKeyEd25519",
                         "value":pubkeyValue
@@ -269,7 +277,7 @@ Meteor.methods({
                     });
                 }
             }
-                
+
             chainParams.readGenesis = true;
             chainParams.activeVotingPower = totalVotingPower;
             let result = Chain.upsert({chainId:chainParams.chainId}, {$set:chainParams});
@@ -278,7 +286,7 @@ Meteor.methods({
             console.log('=== Finished processing genesis file ===');
 
         }
-        
+
         return true;
     }
 })

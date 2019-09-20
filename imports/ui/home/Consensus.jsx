@@ -46,11 +46,11 @@ export default class Consensus extends Component{
             if (this.props.consensusExist && this.props.consensus.prevotes){
                 let proposer = this.props.consensus.proposer();
                 let moniker = (proposer&&proposer.description&&proposer.description.moniker)?proposer.description.moniker:this.props.consensus.proposerAddress;
-                let identity = (proposer&&proposer.description&&proposer.description.identity)?proposer.description.identity:"";
+                let profileUrl = (proposer&&proposer.profile_url) || '';
                 return (
                     <div>
                         {(this.state.chainStopped)?<Card body inverse color="danger">
-                            <span><T _purify={false} time={moment(this.props.consensus.latestBlockTime).fromNow(true)}>chainStatus.stopWarning</T></span>             
+                            <span><T _purify={false} time={moment(this.props.consensus.latestBlockTime).fromNow(true)}>chainStatus.stopWarning</T></span>
                         </Card>:''}
                         <Card className="status consensus-state">
                             <div className="card-header"><T>consensus.consensusState</T></div>
@@ -79,10 +79,10 @@ export default class Consensus extends Component{
                                             <Col md={6}>
                                                 <Row>
                                                     <Col md={12} xs={4}><CardSubtitle><T>blocks.proposer</T></CardSubtitle></Col>
-                                                    <Col md={12} xs={8}><span className="value"><Link to={"/validator/"+this.props.consensus.proposerAddress} ><Avatar moniker={moniker} identity={identity} address={this.props.consensus.proposerAddress} list={true} />{moniker}</Link></span></Col>
+                                                    <Col md={12} xs={8}><span className="value"><Link to={"/validator/"+this.props.consensus.proposerAddress} ><Avatar moniker={moniker} profileUrl={profileUrl} address={this.props.consensus.proposerAddress} list={true} />{moniker}</Link></span></Col>
                                                 </Row>
                                             </Col>
-                                        </Row>                            
+                                        </Row>
                                     </Col>
                                     <Col md={4} lg={6}><CardSubtitle><T>common.votingPower</T></CardSubtitle><Progress animated value={this.props.consensus.votedPower} className="value">{this.props.consensus.votedPower}%</Progress></Col>
                                 </Row>
@@ -94,13 +94,13 @@ export default class Consensus extends Component{
                 let genesisTime = moment(Meteor.settings.public.genesisTime);
                 let current = moment();
                 let diff = genesisTime.diff(current);
-        
+
                 return <div className="text-center"><Card body inverse color="danger">
-                    <span><T>chainStatus.startMessage</T></span>             
+                    <span><T>chainStatus.startMessage</T></span>
                 </Card>
                 <CountDown genesisTime={diff/1000}/>
                 </div>
-            }   
+            }
         }
     }
 }
