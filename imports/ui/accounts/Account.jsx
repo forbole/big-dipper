@@ -159,7 +159,7 @@ export default class AccountDetails extends Component{
                     <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
                 </Row>
                 <Row>
-                    <h3 className="text-primary"><AccountCopy address={this.state.address} /></h3>
+                    <Col><h3 className="text-primary"><AccountCopy address={this.state.address} /></h3></Col>
                 </Row>
                 <Row>
                     <Col><Card>
