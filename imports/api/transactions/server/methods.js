@@ -70,11 +70,11 @@ Meteor.methods({
         else return false;
     },
     'Transactions.findDelegation': function(address, height){
+        // following cosmos-sdk/x/slashing/spec/06_events.md and cosmos-sdk/x/staking/spec/06_events.md
         return Transactions.find({
             $or: [{$and: [
-                {"events.attributes.key": "action"},
-                {"events.attributes.value": "delegate"},
-                {"events.attributes.key": "destination-validator"},
+                {"events.type": "delegate"},
+                {"events.attributes.key": "validator"},
                 {"events.attributes.value": address}
             ]}, {$and:[
                 {"events.attributes.key": "action"},
@@ -82,19 +82,16 @@ Meteor.methods({
                 {"events.attributes.key": "validator"},
                 {"events.attributes.value": address}
             ]}, {$and:[
-                {"events.attributes.key": "action"},
-                {"events.attributes.value": "create_validator"},
-                {"events.attributes.key": "destination-validator"},
+                {"events.type": "create_validator"},
+                {"events.attributes.key": "validator"},
                 {"events.attributes.value": address}
             ]}, {$and:[
-                {"events.attributes.key": "action"},
-                {"events.attributes.value": "begin_unbonding"},
-                {"events.attributes.key": "source-validator"},
+                {"events.type": "unbond"},
+                {"events.attributes.key": "validator"},
                 {"events.attributes.value": address}
             ]}, {$and:[
-                {"events.attributes.key": "action"},
-                {"events.attributes.value": "begin_redelegate"},
-                {"events.attributes.key": "destination-validator"},
+                {"events.type": "redelegate"},
+                {"events.attributes.key": "destination_validator"},
                 {"events.attributes.value": address}
             ]}],
             "code": {$exists: false},

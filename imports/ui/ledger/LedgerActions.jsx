@@ -32,6 +32,8 @@ const Types = {
     DEPOSIT: 'deposit'
 }
 
+const DEFAULT_GAS_ADJUSTMENT = '1.4';
+
 const durationToDay = 1/60/60/24/10e8;
 
 const TypeMeta = {
@@ -73,7 +75,8 @@ const TypeMeta = {
         button_other: 'send',
         pathPreFix: 'bank/accounts',
         pathSuffix: 'transfers',
-        warning: ''
+        warning: '',
+        gasAdjustment: '1.7'
     },
     [Types.SUBMITPROPOSAL]: {
         button: 'new',
@@ -391,7 +394,7 @@ class LedgerButton extends Component {
     }
 
     runSimulatation = (txMsg, simulateBody) => {
-        let gasAdjustment = TypeMeta[this.state.actionType].gasAdjustment || '1.2';
+        let gasAdjustment = TypeMeta[this.state.actionType].gasAdjustment || DEFAULT_GAS_ADJUSTMENT;
         Meteor.call('transaction.simulate', simulateBody, this.state.user, this.getPath(), gasAdjustment, (err, res) =>{
             if (res){
                 Ledger.applyGas(txMsg, res, Meteor.settings.public.gasPrice, Coin.MintingDenom);
