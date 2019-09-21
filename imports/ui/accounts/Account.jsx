@@ -183,23 +183,23 @@ export default class AccountDetails extends Component{
                                 <Col md={6} lg={8}>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="available infinity" /><T>accounts.available</T></Col>
-                                        <Col xs={8} className="value text-right">{new Coin(this.state.available).toString("0,0.0000")}</Col>
+                                        <Col xs={8} className="value text-right">{new Coin(this.state.available).toString(4)}</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="delegated infinity" /><T>accounts.delegated</T></Col>
-                                        <Col xs={8} className="value text-right">{new Coin(this.state.delegated).toString("0,0.0000")}</Col>
+                                        <Col xs={8} className="value text-right">{new Coin(this.state.delegated).toString(4)}</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="unbonding infinity" /><T>accounts.unbonding</T></Col>
-                                        <Col xs={8} className="value text-right">{new Coin(this.state.unbonding).toString("0,0.0000")}</Col>
+                                        <Col xs={8} className="value text-right">{new Coin(this.state.unbonding).toString(4)}</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="rewards infinity" /><T>accounts.rewards</T></Col>
-                                        <Col xs={8} className="value text-right">{new Coin(this.state.rewards).toString("0,0.0000")}</Col>
+                                        <Col xs={8} className="value text-right">{new Coin(this.state.rewards).toString(4)}</Col>
                                     </Row>
                                     {this.state.commission?<Row>
                                         <Col xs={4} className="label text-nowrap"><div className="commission infinity" /><T>validators.commission</T></Col>
-                                        <Col xs={8} className="value text-right">{new Coin(this.state.commission).toString("0,0.0000")}</Col>
+                                        <Col xs={8} className="value text-right">{new Coin(this.state.commission).toString(4)}</Col>
                                     </Row>:null}
                                 </Col>
                                 <Col md={6} lg={4} className="total d-flex flex-column justify-content-end">
@@ -209,7 +209,7 @@ export default class AccountDetails extends Component{
                                     </Row>:null}
                                     <Row>
                                         <Col xs={4} className="label d-flex align-self-end"><div className="infinity" /><T>accounts.total</T></Col>
-                                        <Col xs={8} className="value text-right">{new Coin(this.state.total).toString("0,0.0000a")}</Col>
+                                        <Col xs={8} className="value text-right">{new Coin(this.state.total).toString(4)}</Col>
                                         <Col xs={12} className="dollar-value text-right text-secondary">~{numbro(this.state.total/Meteor.settings.public.stakingFraction*this.state.price).format("$0,0.0000a")} ({numbro(this.state.price).format("$0,0.00")}/{Meteor.settings.public.stakingDenom})</Col>
                                     </Row>
                                 </Col>
