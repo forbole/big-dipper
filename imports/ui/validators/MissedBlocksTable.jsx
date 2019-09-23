@@ -1,19 +1,16 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { CardBody, Card, Table, Spinner, Input } from 'reactstrap';
-import moment from 'moment';
 import { Meteor } from 'meteor/meteor';
 import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
 import PChart from '../components/Chart.jsx';
 import Account from '../components/Account.jsx';
-import { InfoIcon } from '../components/Icons.jsx'
+import { InfoIcon } from '../components/Icons.jsx';
+import TimeStamp from '../components/TimeStamp.jsx';
 
 const DOWNTIMECHUCK = 4;
 const T = i18n.createComponent();
-const displayTime = (time) => {
-    return moment.utc(time).format("D MMM YYYY, h:mm:ssa");
-}
 
 const groupData = (missedStats, missedRecords, target) => {
     let validatorsMap = {};
@@ -120,7 +117,7 @@ export default class MissedBlocksTable extends Component{
                     <BlockLink height={startBlock.blockHeight}/> - <BlockLink height={lastBlock.blockHeight}/>
                 </td>
                 <td colSpan='6'>
-                    {`${displayTime(startBlock.time)} - ${displayTime(lastBlock.time)}`}
+                    <TimeStamp time={startBlock.time}/> - <TimeStamp time={lastBlock.time}/>
                 </td>
             </tr>]
             let subRows = isExpanded?record.blocks.map(this.renderSubRow):[];
@@ -130,7 +127,7 @@ export default class MissedBlocksTable extends Component{
             return <tr key={index} className={isSub?'sub-row':'main-row'}>
                 <td colSpan={isSub?1:2}><BlockLink height={record.blockHeight}/></td>
                 {grouped?null:<td><Account sync={true} address={record[this.props.type]}/></td>}
-                <td>{ displayTime(record.time) }</td>
+                <td><TimeStamp time={record.time}/></td>
                 <td>{ numbro(parseFloat(record.timeDiff)/1000).format('0.00')+'s'}</td>
                 <td>{ record.missCount }</td>
                 <td>{ numbro(record.missCount / record.totalCount).format('0.0%') }</td>

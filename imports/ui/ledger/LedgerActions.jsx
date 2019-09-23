@@ -9,8 +9,8 @@ import { Ledger, DEFAULT_MEMO } from './ledger.js';
 import { Validators } from '/imports/api/validators/validators.js';
 import AccountTooltip from '/imports/ui/components/AccountTooltip.jsx';
 import Coin from '/both/utils/coins.js';
-import moment from 'moment';
 import numbro from 'numbro';
+import TimeStamp from '../components/TimeStamp.jsx';
 
 const maxHeightModifier = {
     setMaxHeight: {
@@ -517,7 +517,7 @@ class LedgerButton extends Component {
 
                     let redelegation = redelegations[validator.operator_address]
                     let disabled = redelegation && (redelegation.count >= maxEntries);
-                    let completionTime = disabled?moment.utc(redelegation.completionTime).format("D MMM YYYY, h:mm:ssa z"):null;
+                    let completionTime = disabled?<TimeStamp time={redelegation.completionTime}/>:null;
                     let id = `validator-option${i}`
                     return <div id={id} className={`validator disabled-btn-wrapper${disabled?' disabled':''}`}  key={i}>
                         <DropdownItem name='targetValidator'
@@ -701,7 +701,7 @@ class DelegationButtons extends LedgerButton {
                 </Button>
                 {isCompleted?null:<UncontrolledTooltip placement='bottom' target='redelegate-button'>
                     <span>You have incompleted regelegation to this validator,
-                        you can't redelegate until {moment.utc(completionTime).format("D MMM YYYY, h:mm:ssa z")}
+                        you can't redelegate until <TimeStamp time={completionTime}/>
                     </span>
                 </UncontrolledTooltip>}
             </div>
@@ -712,7 +712,7 @@ class DelegationButtons extends LedgerButton {
                 </Button>
                 {canUnbond?null:<UncontrolledTooltip placement='bottom' target='undelegate-button'>
                     <span>You reached maximum {maxEntries} unbonding delegation entries,
-                        you can't delegate until the first one matures at {moment.utc(delegation.unbondingCompletionTime).format("D MMM YYYY, h:mm:ssa z")}
+                        you can't delegate until the first one matures at <TimeStamp time={delegation.unbondingCompletionTime}/>
                     </span>
                 </UncontrolledTooltip>}
             </div>

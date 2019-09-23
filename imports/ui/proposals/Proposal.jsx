@@ -12,7 +12,8 @@ import { Helmet } from 'react-helmet';
 import posed from 'react-pose';
 import i18n from 'meteor/universe:i18n';
 import { Meteor } from 'meteor/meteor';
-import Coin from '/both/utils/coins.js'
+import Coin from '/both/utils/coins.js';
+import TimeStamp from '../components/TimeStamp.jsx';
 import { ProposalActionButtons } from '../ledger/LedgerActions.jsx';
 
 const T = i18n.createComponent();
@@ -79,7 +80,7 @@ export default class Proposal extends Component{
 
                         this.setState({
                             tally: this.props.proposal.tally,
-                            tallyDate: moment.utc(this.props.proposal.updatedAt).format("D MMM YYYY, h:mm:ssa z"),
+                            tallyDate: <TimeStamp time={this.props.proposal.updatedAt}/>,
                             voteStarted: true,
                             voteEnded: false,
                             totalVotes: totalVotes,
@@ -398,19 +399,19 @@ export default class Proposal extends Component{
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.submitTime</T></Col>
-                            <Col md={9} className="value">{moment.utc(this.state.proposal.submit_time).format("D MMM YYYY, h:mm:ssa z")}</Col>
+                            <Col md={9} className="value"><TimeStamp time={this.state.proposal.submit_time}/></Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.depositEndTime</T></Col>
-                            <Col md={9} className="value">{moment.utc(this.state.proposal.deposit_end_time).format("D MMM YYYY, h:mm:ssa z")}</Col>
+                            <Col md={9} className="value"><TimeStamp time={this.state.proposal.deposit_end_time}/></Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.votingStartTime</T></Col>
-                            <Col md={9} className="value">{(this.state.proposal.voting_start_time != '0001-01-01T00:00:00Z')?moment.utc(this.state.proposal.voting_start_time).format("D MMM YYYY, h:mm:ssa z"):'-'}</Col>
+                            <Col md={9} className="value">{(this.state.proposal.voting_start_time != '0001-01-01T00:00:00Z')?<TimeStamp time={this.stat}/>:'-'}</Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.votingEndTime</T></Col>
-                            <Col md={9} className="value">{(this.state.proposal.voting_start_time != '0001-01-01T00:00:00Z')?moment.utc(this.state.proposal.voting_end_time).format("D MMM YYYY, h:mm:ssa z"):'-'}</Col>
+                            <Col md={9} className="value">{(this.state.proposal.voting_start_time != '0001-01-01T00:00:00Z')?<TimeStamp time={this.state.proposal.voting_end_time}/>:'-'}</Col>
                         </Row>
                     </div>
                     <Row className='clearfix'>

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Row, Col, Card, CardText, 
+import { Row, Col, Card, CardText,
     CardTitle, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Spinner } from 'reactstrap';
-import moment from 'moment';
 import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
+import TimeStamp from '../components/TimeStamp.jsx';
 
 const T = i18n.createComponent();
 
@@ -28,7 +28,7 @@ export default class ChainStatus extends React.Component {
         if (prevProps != this.props){
             this.setState({
                 blockHeight: numbro(this.props.status.latestBlockHeight).format({thousandSeparated: true}),
-                blockTime: moment.utc(this.props.status.latestBlockTime).format("D MMM YYYY hh:mm:ssa z"),
+                blockTime: <TimeStamp time={this.props.status.latestBlockTime}/>,
                 delegatedTokens: numbro(this.props.status.totalVotingPower).format('0,0.00a'),
                 numValidators: this.props.status.validators,
                 totalNumValidators: this.props.status.totalValidators,
@@ -158,7 +158,7 @@ export default class ChainStatus extends React.Component {
                                 <CardText>
                                     <span className="display-4 value text-primary">{this.state.blockHeight}</span>
                                     {this.state.blockTime}
-                                </CardText>   
+                                </CardText>
                             </Card>
                         </Col>
                         <Col lg={3} md={6}>
@@ -177,13 +177,13 @@ export default class ChainStatus extends React.Component {
                                 <CardTitle><T>chainStatus.averageBlockTime</T> ({this.state.blockTimeText})</CardTitle>
                                 <CardText>
                                     <span className="display-4 value text-primary">{this.state.averageBlockTime}</span><T>chainStatus.seconds</T>
-                                </CardText>   
+                                </CardText>
                             </Card>
                         </Col>
                         <Col lg={3} md={6}>
                             <Card body>
                                 <CardTitle><T>chainStatus.activeValidators</T></CardTitle>
-                                <CardText><span className="display-4 value text-primary">{this.state.numValidators}</span><T totalValidators={this.state.totalNumValidators}>chainStatus.outOfValidators</T></CardText>   
+                                <CardText><span className="display-4 value text-primary">{this.state.numValidators}</span><T totalValidators={this.state.totalNumValidators}>chainStatus.outOfValidators</T></CardText>
                             </Card>
                         </Col>
                         <Col lg={3} md={6}>
@@ -199,7 +199,7 @@ export default class ChainStatus extends React.Component {
                                     </DropdownMenu>
                                 </UncontrolledDropdown>
                                 <CardTitle><T>chainStatus.onlineVotingPower</T> ({this.state.votingPowerText})</CardTitle>
-                                <CardText><span className="display-4 value text-primary">{this.state.votingPower}</span><T percent={numbro(this.state.bondedTokens/(this.state.bondedTokens+this.state.notBondedTokens)).format("0.00%")} totalStakes={numbro((this.state.bondedTokens+this.state.notBondedTokens)/Meteor.settings.public.stakingFraction).format("0.00a")} denom={Meteor.settings.public.stakingDenom}>chainStatus.fromTotalStakes</T></CardText>   
+                                <CardText><span className="display-4 value text-primary">{this.state.votingPower}</span><T percent={numbro(this.state.bondedTokens/(this.state.bondedTokens+this.state.notBondedTokens)).format("0.00%")} totalStakes={numbro((this.state.bondedTokens+this.state.notBondedTokens)/Meteor.settings.public.stakingFraction).format("0.00a")} denom={Meteor.settings.public.stakingDenom}>chainStatus.fromTotalStakes</T></CardText>
                             </Card>
                         </Col>
                     </Row>
