@@ -14,6 +14,7 @@ import i18n from 'meteor/universe:i18n';
 import { Meteor } from 'meteor/meteor';
 import Coin from '/both/utils/coins.js';
 import TimeStamp from '../components/TimeStamp.jsx';
+import { ProposalActionButtons } from '../ledger/LedgerActions.jsx';
 
 const T = i18n.createComponent();
 
@@ -46,6 +47,13 @@ export default class Proposal extends Component{
         if (Meteor.isServer){
             this.state.proposal = this.props.proposal;
         }
+    }
+
+    static getDerivedStateFromProps(props, state) {
+        if (state.user !== localStorage.getItem(CURRENTUSERADDR)) {
+            return {user: localStorage.getItem(CURRENTUSERADDR)};
+        }
+        return null;
     }
 
     componentDidUpdate(prevProps){
@@ -124,28 +132,33 @@ export default class Proposal extends Component{
 
     populateChartData() {
         const optionOrder = {'Yes': 0, 'Abstain': 1, 'No': 2, 'NoWithVeto': 3};
-        let votes = this.props.proposal.votes.sort(
+        let votes = this.props.proposal.votes?this.props.proposal.votes.sort(
             (vote1, vote2) => vote2['votingPower'] - vote1['votingPower']
         ).sort(
-            (vote1, vote2) => optionOrder[vote1.option] - optionOrder[vote2.option]);
+            (vote1, vote2) => optionOrder[vote1.option] - optionOrder[vote2.option]):null;
         let maxVotingPower = {'N/A': 1};
         let totalVotingPower = {'N/A': 0};
         let votesByOptions = {'All': votes, 'Yes': [], 'Abstain': [], 'No': [], 'NoWithVeto': []};
 
         let emtpyData = [{'votingPower': 1, option: 'N/A'}];
-        votes.forEach((vote) => votesByOptions[vote.option].push(vote));
+
+        if (votes)
+            votes.forEach((vote) => votesByOptions[vote.option].push(vote));
 
         let datasets = [];
         for (let option in votesByOptions) {
             let data = votesByOptions[option];
-            maxVotingPower[option] = Math.max.apply(null, data.map((vote) => vote.votingPower));
-            totalVotingPower[option] = data.reduce((s, x) => x.votingPower + s, 0);
-            datasets.push({
-                datasetId: option,
-                data: data.length == 0?emtpyData:data,
-                totalVotingPower: totalVotingPower,
-                maxVotingPower: maxVotingPower
-            })};
+            if (data){
+                maxVotingPower[option] = Math.max.apply(null, data.map((vote) => vote.votingPower));
+                totalVotingPower[option] = data.reduce((s, x) => x.votingPower + s, 0);
+                datasets.push({
+                    datasetId: option,
+                    data: data.length == 0?emtpyData:data,
+                    totalVotingPower: totalVotingPower,
+                    maxVotingPower: maxVotingPower
+                })    
+            }
+        };
 
         let layout = [['piePlot']];
         let scales = [{
@@ -154,7 +167,7 @@ export default class Proposal extends Component{
             domain: ['Yes', 'Abstain', 'No', 'NoWithVeto', 'N/A'],
             range: ['#4CAF50', '#ff9800', '#e51c23', '#9C27B0', '#BDBDBD']
         }];
-        let isDataEmtpy = votesByOptions[this.state.breakDownSelection].length==0;
+        let isDataEmtpy = votesByOptions[this.state.breakDownSelection] && votesByOptions[this.state.breakDownSelection].length==0;
         let tooltip = (component, point, data, ds) => {
             let total = ds.metadata().totalVotingPower['All'];
             let optionTotal = ds.metadata().totalVotingPower[data.option];
@@ -267,7 +280,8 @@ export default class Proposal extends Component{
                     <div className="proposal bg-light">
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposalID</T></Col>
-                            <Col md={9} className="value">{this.props.proposal.proposalId}</Col>
+                            <Col md={this.state.user?6:9} className="value">{this.props.proposal.proposalId}</Col>
+                            {this.state.user?<Col md={3}><ProposalActionButtons history={this.props.history} proposalId={proposalId}/></Col>:null}
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposer</T></Col>

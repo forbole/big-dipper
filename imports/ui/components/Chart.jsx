@@ -180,9 +180,14 @@ export default class PChart extends Component{
         let allDatasetsHaveColor = true;
         if (plotData.datasets) {
             plotData.datasets.forEach((datasetId) => {
-                let dataset = this.getDataset(datasetId);
-                plot.addDataset(dataset);
-                allDatasetsHaveColor = allDatasetsHaveColor && !!dataset.metadata().color;
+                try{
+                    let dataset = this.getDataset(datasetId);
+                    plot.addDataset(dataset);
+                    allDatasetsHaveColor = allDatasetsHaveColor && !!dataset.metadata().color;
+                }
+                catch (e){
+                    console.error(e)
+                }                    
             });
         }
 

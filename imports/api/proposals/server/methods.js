@@ -10,9 +10,12 @@ Meteor.methods({
         try{
             let url = LCD + '/gov/proposals';
             let response = HTTP.get(url);
-            let proposals = JSON.parse(response.content);
-
+            let proposals = JSON.parse(response.content).result;
             // console.log(proposals);
+
+            let finishedProposalIds = new Set(Proposals.find(
+                {"proposal_status":{$in:["Passed", "Rejected", "Removed"]}}
+            ).fetch().map((p)=> p.proposalId));
 
             let proposalIds = [];
             if (proposals.length > 0){
@@ -21,12 +24,12 @@ Meteor.methods({
                 for (let i in proposals){
                     let proposal = proposals[i];
                     proposal.proposalId = parseInt(proposal.id);
-                    if (proposal.proposalId > 0){
+                    if (proposal.proposalId > 0 && !finishedProposalIds.has(proposal.proposalId)) {
                         try{
                             let url = LCD + '/gov/proposals/'+proposal.proposalId+'/proposer';
                             let response = HTTP.get(url);
                             if (response.statusCode == 200){
-                                let proposer = JSON.parse(response.content);
+                                let proposer = JSON.parse(response.content).result;
                                 if (proposer.proposal_id && (proposer.proposal_id == proposal.id)){
                                     proposal.proposer = proposer.proposer;
                                 }
@@ -41,9 +44,11 @@ Meteor.methods({
                         }
                     }
                 }
-                bulkProposals.find({proposalId:{$nin:proposalIds}}).update({$set:{"value.proposal_status":"Removed"}});
+                bulkProposals.find({proposalId:{$nin:proposalIds}, proposal_status:{$nin:["Passed", "Rejected", "Removed"]}})
+                    .update({$set: {"proposal_status": "Removed"}});
                 bulkProposals.execute();
             }
+            return true
         }
         catch (e){
             console.log(e);
@@ -62,21 +67,21 @@ Meteor.methods({
                         let response = HTTP.get(url);
                         let proposal = {proposalId: proposals[i].proposalId};
                         if (response.statusCode == 200){
-                            let deposits = JSON.parse(response.content);
+                            let deposits = JSON.parse(response.content).result;
                             proposal.deposits = deposits;
                         }
 
                         url = LCD + '/gov/proposals/'+proposals[i].proposalId+'/votes';
                         response = HTTP.get(url);
                         if (response.statusCode == 200){
-                            let votes = JSON.parse(response.content);
+                            let votes = JSON.parse(response.content).result;
                             proposal.votes = getVoteDetail(votes);
                         }
 
                         url = LCD + '/gov/proposals/'+proposals[i].proposalId+'/tally';
                         response = HTTP.get(url);
                         if (response.statusCode == 200){
-                            let tally = JSON.parse(response.content);
+                            let tally = JSON.parse(response.content).result;
                             proposal.tally = tally;
                         }
 
@@ -89,6 +94,7 @@ Meteor.methods({
                 }
             }
         }
+        return true
     }
 })
 
@@ -119,8 +125,8 @@ const getVoteDetail = (votes) => {
             try{
                 let response = HTTP.get(url);
                 if (response.statusCode == 200){
-                    delegations = JSON.parse(response.content);
-                    if (delegations) {
+                    delegations = JSON.parse(response.content).result;
+                    if (delegations && delegations.length > 0) {
                         delegations.forEach((delegation) => {
                             let shares = parseFloat(delegation.shares);
                             if (validatorAddressMap[delegation.validator_address]) {

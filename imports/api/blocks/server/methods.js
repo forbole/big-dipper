@@ -142,7 +142,7 @@ Meteor.methods({
 
             try{
                 response = HTTP.get(url);
-                JSON.parse(response.content).forEach((validator) => validatorSet[validator.consensus_pubkey] = validator);
+                JSON.parse(response.content).result.forEach((validator) => validatorSet[validator.consensus_pubkey] = validator);
             }
             catch(e){
                 console.log(e);
@@ -152,7 +152,7 @@ Meteor.methods({
 
             try{
                 response = HTTP.get(url);
-                JSON.parse(response.content).forEach((validator) => validatorSet[validator.consensus_pubkey] = validator)
+                JSON.parse(response.content).result.forEach((validator) => validatorSet[validator.consensus_pubkey] = validator)
             }
             catch(e){
                 console.log(e);
@@ -162,7 +162,7 @@ Meteor.methods({
 
             try{
                 response = HTTP.get(url);
-                JSON.parse(response.content).forEach((validator) => validatorSet[validator.consensus_pubkey] = validator)
+                JSON.parse(response.content).result.forEach((validator) => validatorSet[validator.consensus_pubkey] = validator)
             }
             catch(e){
                 console.log(e);
@@ -440,7 +440,7 @@ Meteor.methods({
                                                 let response = HTTP.get(LCD + '/staking/delegators/'+valExist.delegator_address+'/delegations/'+valExist.operator_address);
 
                                                 if (response.statusCode == 200){
-                                                    let selfDelegation = JSON.parse(response.content);
+                                                    let selfDelegation = JSON.parse(response.content).result;
                                                     if (selfDelegation.shares){
                                                         validator.self_delegation = parseFloat(selfDelegation.shares)/parseFloat(validator.delegator_shares);
                                                     }

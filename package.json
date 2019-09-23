@@ -9,7 +9,7 @@
     "pretest": "npm run lint --silent"
   },
   "dependencies": {
-    "@babel/runtime": "^7.5.2",
+    "@babel/runtime": "^7.6.0",
     "@lunie/cosmos-js": "0.0.22",
     "@types/meteor-universe-i18n": "^1.14.2",
     "babel-polyfill": "^6.26.0",
@@ -17,7 +17,7 @@
     "chart.js": "^2.8.0",
     "cheerio": "^1.0.0-rc.3",
     "crypto-js": "^3.1.9-1",
-    "d3": "^5.9.7",
+    "d3": "^5.12.0",
     "fibers": "^3.1.1",
     "jquery": "^3.4.1",
     "js-sha256": "^0.9.0",
@@ -28,9 +28,9 @@
     "numbro": "^2.1.2",
     "plottable": "^3.8.6",
     "prop-types": "^15.7.2",
-    "react": "^16.8.6",
-    "react-chartjs-2": "^2.7.6",
-    "react-dom": "^16.8.6",
+    "react": "^16.9.0",
+    "react-chartjs-2": "^2.8.0",
+    "react-dom": "^16.9.0",
     "react-google-tag-manager": "^2.2.1",
     "react-helmet": "^5.2.1",
     "react-pose": "^4.0.8",
@@ -48,14 +48,14 @@
   },
   "devDependencies": {
     "@meteorjs/eslint-config-meteor": "^1.0.5",
-    "babel-eslint": "^10.0.2",
+    "babel-eslint": "^10.0.3",
     "chai": "^4.2.0",
     "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.1",
     "eslint-import-resolver-meteor": "^0.4.0",
-    "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
-    "eslint-plugin-meteor": "^5.1.0",
-    "eslint-plugin-react": "^7.14.2"
+    "eslint-plugin-meteor": "^5.2.0",
+    "eslint-plugin-react": "^7.14.3"
   }
 }

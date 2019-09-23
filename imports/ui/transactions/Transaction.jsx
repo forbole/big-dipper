@@ -57,7 +57,7 @@ export default class Transaction extends Component{
                                     {tx.block()?<span> <TimeStamp time={tx.block().time}/></span>:null}
                                 </Col>
                                 <Col md={4} className="label"><T>transactions.fee</T></Col>
-                                <Col md={8} className="value">{tx.tx.value.fee.amount?tx.tx.value.fee.amount.map((fee,i) => {
+                                <Col md={8} className="value">{(tx.tx.value.fee.amount.length > 0)?tx.tx.value.fee.amount.map((fee,i) => {
                                     return <span className="text-nowrap" key={i}>{new Coin(fee.amount).toString()}</span>
                                 }):<span>No fee</span>}</Col>
                                 <Col md={4} className="label"><T>transactions.gasUsedWanted</T></Col>

@@ -6,6 +6,7 @@ import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js'
 import TimeStamp from '../components/TimeStamp.jsx';
+import { SubmitProposalButton } from '../ledger/LedgerActions.jsx';
 
 const T = i18n.createComponent();
 
@@ -41,6 +42,13 @@ export default class List extends Component{
         }
     }
 
+    static getDerivedStateFromProps(props, state) {
+        if (state.user !== localStorage.getItem(CURRENTUSERADDR)) {
+            return {user: localStorage.getItem(CURRENTUSERADDR)};
+        }
+        return null;
+    }
+
     componentDidUpdate(prevState){
         if (this.props.proposals != prevState.proposals){
             if (this.props.proposals.length > 0){
@@ -59,19 +67,22 @@ export default class List extends Component{
         }
         else{
             return (
-                <Table striped className="proposal-list">
-                    <thead>
-                        <tr>
-                            <th className="d-none d-sm-table-cell counter"><i className="fas fa-hashtag"></i> <T>proposals.proposalID</T></th>
-                            <th className="title"><i className="material-icons">view_headline</i> <span className="d-none d-sm-inline"><T>proposals.title</T></span></th>
-                            <th className="status"><i className="fas fa-toggle-on"></i> <span className="d-none d-sm-inline"><T>proposals.status</T></span></th>
-                            <th className="submit-block"><i className="fas fa-box"></i> <span className="d-none d-sm-inline"><T>proposals.submitTime</T> (UTC)</span></th>
-                            <th className="voting-start"><i className="fas fa-box-open"></i> <span className="d-none d-sm-inline"><T>proposals.votingStartTime</T> (UTC)</span></th>
-                            <th className="deposit text-right"><i className="material-icons">attach_money</i> <span className="d-none d-sm-inline"><T>proposals.totalDeposit</T></span></th>
-                        </tr>
-                    </thead>
-                    <tbody>{this.state.proposals}</tbody>
-                </Table>
+                <div>
+                    {this.state.user?<SubmitProposalButton history={this.props.history}/>:null}
+                    <Table striped className="proposal-list">
+                        <thead>
+                            <tr>
+                                <th className="d-none d-sm-table-cell counter"><i className="fas fa-hashtag"></i> <T>proposals.proposalID</T></th>
+                                <th className="title"><i className="material-icons">view_headline</i> <span className="d-none d-sm-inline"><T>proposals.title</T></span></th>
+                                <th className="status"><i className="fas fa-toggle-on"></i> <span className="d-none d-sm-inline"><T>proposals.status</T></span></th>
+                                <th className="submit-block"><i className="fas fa-box"></i> <span className="d-none d-sm-inline"><T>proposals.submitTime</T> (UTC)</span></th>
+                                <th className="voting-start"><i className="fas fa-box-open"></i> <span className="d-none d-sm-inline"><T>proposals.votingStartTime</T> (UTC)</span></th>
+                                <th className="deposit text-right"><i className="material-icons">attach_money</i> <span className="d-none d-sm-inline"><T>proposals.totalDeposit</T></span></th>
+                            </tr>
+                        </thead>
+                        <tbody>{this.state.proposals}</tbody>
+                    </Table>
+                </div>
             )
         }
     }

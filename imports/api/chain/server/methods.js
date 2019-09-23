@@ -79,7 +79,7 @@ Meteor.methods({
                 url = LCD + '/staking/pool';
                 try{
                     response = HTTP.get(url);
-                    let bonding = JSON.parse(response.content);
+                    let bonding = JSON.parse(response.content).result;
                     // chain.bondedTokens = bonding.bonded_tokens;
                     // chain.notBondedTokens = bonding.not_bonded_tokens;
                     chainStates.bondedTokens = parseInt(bonding.bonded_tokens);
@@ -92,7 +92,7 @@ Meteor.methods({
                 url = LCD + '/distribution/community_pool';
                 try {
                     response = HTTP.get(url);
-                    let pool = JSON.parse(response.content);
+                    let pool = JSON.parse(response.content).result;
                     if (pool && pool.length > 0){
                         chainStates.communityPool = [];
                         pool.forEach((amount, i) => {
@@ -110,7 +110,7 @@ Meteor.methods({
                 url = LCD + '/minting/inflation';
                 try{
                     response = HTTP.get(url);
-                    let inflation = JSON.parse(response.content);
+                    let inflation = JSON.parse(response.content).result;
                     if (inflation){
                         chainStates.inflation = parseFloat(inflation)
                     }
@@ -184,15 +184,17 @@ Meteor.methods({
                 },
                 slashing:{
                     params: genesis.app_state.slashing.params
-                }
+                },
+                supply: genesis.app_state.supply,
+                crisis: genesis.app_state.crisis
             }
 
             let totalVotingPower = 0;
 
             // read gentx
-            if (genesis.app_state.gentxs && (genesis.app_state.gentxs.length > 0)){
-                for (i in genesis.app_state.gentxs){
-                    let msg = genesis.app_state.gentxs[i].value.msg;
+            if (genesis.app_state.genutil && genesis.app_state.genutil.gentxs && (genesis.app_state.genutil.gentxs.length > 0)){
+                for (i in genesis.app_state.genutil.gentxs){
+                    let msg = genesis.app_state.genutil.gentxs[i].value.msg;
                     // console.log(msg.type);
                     for (m in msg){
                         if (msg[m].type == "cosmos-sdk/MsgCreateValidator"){

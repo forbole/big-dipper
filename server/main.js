@@ -54,7 +54,7 @@ getConsensusState = () => {
 getProposals = () => {
     Meteor.call('proposals.getProposals', (error, result) => {
         if (error){
-            console.log("get porposal: "+ error);
+            console.log("get proposal: "+ error);
         }
         if (result){
             console.log("get proposal: "+result);
@@ -97,10 +97,10 @@ updateMissedBlocks = () => {
 getDelegations = () => {
     Meteor.call('delegations.getDelegations', (error, result) => {
         if (error){
-            console.log("get delegation error: "+ error)
+            console.log("get delegations error: "+ error)
         }
         else{
-            console.log("get delegtaions ok: "+ result)
+            console.log("get delegations ok: "+ result)
         }
     });
 }
@@ -118,7 +118,7 @@ aggregateMinutely = () =>{
 
     Meteor.call('coinStats.getCoinStats', (error, result) => {
         if (error){
-            console.log("get coin stats: "+error);
+            console.log("get coin stats error: "+error);
         }
         else{
             console.log("get coin stats ok: "+result)
@@ -166,11 +166,15 @@ Meteor.startup(function(){
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
         import DEFAULTSETTINGSJSON from '../default_settings.json'
         Object.keys(DEFAULTSETTINGSJSON).forEach((key) => {
-            if (Meteor.settings[key] == undefined)
-                throw Error(`${key} is missing from settings`);
+            if (Meteor.settings[key] == undefined) {
+                console.warn(`CHECK SETTINGS JSON: ${key} is missing from settings`)
+                Meteor.settings[key] = {};
+            }
             Object.keys(DEFAULTSETTINGSJSON[key]).forEach((param) => {
-                if (Meteor.settings[key][param] == undefined)
-                    throw Error(`${key}.${param} is missing from settings`);
+                if (Meteor.settings[key][param] == undefined){
+                    console.warn(`CHECK SETTINGS JSON: ${key}.${param} is missing from settings`)
+                    Meteor.settings[key][param] = DEFAULTSETTINGSJSON[key][param]
+                }
             })
         })
     }

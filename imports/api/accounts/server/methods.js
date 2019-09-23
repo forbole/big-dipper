@@ -20,7 +20,7 @@ Meteor.methods({
         try{
             let available = HTTP.get(url);
             if (available.statusCode == 200){
-                let response = JSON.parse(available.content);
+                let response = JSON.parse(available.content).result;
                 let account;
                 if (response.type === 'cosmos-sdk/Account')
                     account = response.value;
@@ -45,7 +45,7 @@ Meteor.methods({
             let available = HTTP.get(url);
             if (available.statusCode == 200){
                 // console.log(JSON.parse(available.content))
-                balance.available = JSON.parse(available.content);
+                balance.available = JSON.parse(available.content).result;
                 if (balance.available && balance.available.length > 0)
                     balance.available = balance.available[0];
             }
@@ -59,7 +59,7 @@ Meteor.methods({
         try{
             let delegations = HTTP.get(url);
             if (delegations.statusCode == 200){
-                balance.delegations = JSON.parse(delegations.content);
+                balance.delegations = JSON.parse(delegations.content).result;
             }
         }
         catch (e){
@@ -70,7 +70,7 @@ Meteor.methods({
         try{
             let unbonding = HTTP.get(url);
             if (unbonding.statusCode == 200){
-                balance.unbonding = JSON.parse(unbonding.content);
+                balance.unbonding = JSON.parse(unbonding.content).result;
             }
         }
         catch (e){
@@ -82,7 +82,7 @@ Meteor.methods({
         try{
             let rewards = HTTP.get(url);
             if (rewards.statusCode == 200){
-                balance.rewards = JSON.parse(rewards.content);
+                balance.rewards = JSON.parse(rewards.content).result.total;
             }
         }
         catch (e){
@@ -98,7 +98,7 @@ Meteor.methods({
             try {
                 let rewards = HTTP.get(url);
                 if (rewards.statusCode == 200){
-                    let content = JSON.parse(rewards.content);
+                    let content = JSON.parse(rewards.content).result;
                     if (content.val_commission && content.val_commission.length > 0)
                         balance.commission = content.val_commission[0];
                 }
@@ -114,13 +114,13 @@ Meteor.methods({
     'accounts.getDelegation'(address, validator){
         let url = `/staking/delegators/${address}/delegations/${validator}`;
         let delegations = fetchFromUrl(url);
-        delegations = delegations && delegations.data;
+        delegations = delegations && delegations.data.result;
         if (delegations && delegations.shares)
             delegations.shares = parseFloat(delegations.shares);
 
         url = `/staking/redelegations?delegator=${address}&validator_to=${validator}`;
-        let relegations = fetchFromUrl(url).data;
-        relegations = relegations && relegations.data;
+        let relegations = fetchFromUrl(url);
+        relegations = relegations && relegations.data.result;
         let completionTime;
         if (relegations) {
             relegations.forEach((relegation) => {
@@ -134,7 +134,7 @@ Meteor.methods({
 
         url = `/staking/delegators/${address}/unbonding_delegations/${validator}`;
         let undelegations = fetchFromUrl(url);
-        undelegations = undelegations && undelegations.data;
+        undelegations = undelegations && undelegations.data.result;
         if (undelegations) {
             delegations.unbonding = undelegations.entries.length;
             delegations.unbondingCompletionTime = undelegations.entries[0].completion_time;
@@ -147,7 +147,7 @@ Meteor.methods({
         try{
             let delegations = HTTP.get(url);
             if (delegations.statusCode == 200){
-                delegations = JSON.parse(delegations.content);
+                delegations = JSON.parse(delegations.content).result;
                 if (delegations && delegations.length > 0){
                     delegations.forEach((delegation, i) => {
                         if (delegations[i] && delegations[i].shares)
@@ -168,7 +168,7 @@ Meteor.methods({
         try{
             let unbondings = HTTP.get(url);
             if (unbondings.statusCode == 200){
-                unbondings = JSON.parse(unbondings.content);
+                unbondings = JSON.parse(unbondings.content).result;
                 return unbondings;
             };
         }

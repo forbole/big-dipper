@@ -10,6 +10,7 @@ import ChainStates from '../components/ChainStatesContainer.js'
 import { Helmet } from 'react-helmet';
 import { WithdrawButton, TransferButton } from '../ledger/LedgerActions.jsx';
 import i18n from 'meteor/universe:i18n';
+import Coin from '/both/utils/coins.js'
 
 const T = i18n.createComponent();
 export default class AccountDetails extends Component{
@@ -61,15 +62,17 @@ export default class AccountDetails extends Component{
                     })
                 }
 
+                this.setState({delegations: result.delegations || []})
                 if (result.delegations && result.delegations.length > 0){
                     result.delegations.forEach((delegation, i) => {
                         this.setState({
-                            delegated: this.state.delegated+parseFloat(delegation.shares),
-                            total: this.state.total+parseFloat(delegation.shares)
+                            delegated: this.state.delegated+parseFloat(delegation.balance),
+                            total: this.state.total+parseFloat(delegation.balance)
                         })
                     }, this)
                 }
 
+                this.setState({unbondingDelegations: result.unbonding || []})
                 if (result.unbonding && result.unbonding.length > 0){
                     result.unbonding.forEach((unbond, i) => {
                         unbond.entries.forEach((entry, j) => {
@@ -156,7 +159,7 @@ export default class AccountDetails extends Component{
                     <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
                 </Row>
                 <Row>
-                    <h3 className="text-primary"><AccountCopy address={this.state.address} /></h3>
+                    <Col><h3 className="text-primary"><AccountCopy address={this.state.address} /></h3></Col>
                 </Row>
                 <Row>
                     <Col><Card>
@@ -180,23 +183,23 @@ export default class AccountDetails extends Component{
                                 <Col md={6} lg={8}>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="available infinity" /><T>accounts.available</T></Col>
-                                        <Col xs={8} className="value text-right">{numbro(this.state.available/Meteor.settings.public.stakingFraction).format("0,0.0000")}</Col>
+                                        <Col xs={8} className="value text-right">{new Coin(this.state.available).toString(4)}</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="delegated infinity" /><T>accounts.delegated</T></Col>
-                                        <Col xs={8} className="value text-right">{numbro(this.state.delegated/Meteor.settings.public.stakingFraction).format("0,0.0000")}</Col>
+                                        <Col xs={8} className="value text-right">{new Coin(this.state.delegated).toString(4)}</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="unbonding infinity" /><T>accounts.unbonding</T></Col>
-                                        <Col xs={8} className="value text-right">{numbro(this.state.unbonding/Meteor.settings.public.stakingFraction).format("0,0.0000")}</Col>
+                                        <Col xs={8} className="value text-right">{new Coin(this.state.unbonding).toString(4)}</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="rewards infinity" /><T>accounts.rewards</T></Col>
-                                        <Col xs={8} className="value text-right">{numbro(this.state.rewards/Meteor.settings.public.stakingFraction).format("0,0.0000")}</Col>
+                                        <Col xs={8} className="value text-right">{new Coin(this.state.rewards).toString(4)}</Col>
                                     </Row>
                                     {this.state.commission?<Row>
                                         <Col xs={4} className="label text-nowrap"><div className="commission infinity" /><T>validators.commission</T></Col>
-                                        <Col xs={8} className="value text-right">{numbro(this.state.commission/Meteor.settings.public.stakingFraction).format("0,0.0000")}</Col>
+                                        <Col xs={8} className="value text-right">{new Coin(this.state.commission).toString(4)}</Col>
                                     </Row>:null}
                                 </Col>
                                 <Col md={6} lg={4} className="total d-flex flex-column justify-content-end">
@@ -206,7 +209,7 @@ export default class AccountDetails extends Component{
                                     </Row>:null}
                                     <Row>
                                         <Col xs={4} className="label d-flex align-self-end"><div className="infinity" /><T>accounts.total</T></Col>
-                                        <Col xs={8} className="value text-right">{numbro(this.state.total/Meteor.settings.public.stakingFraction).format("0,0.0000a")} {Meteor.settings.public.stakingDenom}s</Col>
+                                        <Col xs={8} className="value text-right">{new Coin(this.state.total).toString(4)}</Col>
                                         <Col xs={12} className="dollar-value text-right text-secondary">~{numbro(this.state.total/Meteor.settings.public.stakingFraction*this.state.price).format("$0,0.0000a")} ({numbro(this.state.price).format("$0,0.00")}/{Meteor.settings.public.stakingDenom})</Col>
                                     </Row>
                                 </Col>
@@ -216,10 +219,10 @@ export default class AccountDetails extends Component{
                 </Row>
                 <Row>
                     <Col md={6}>
-                        <Delegations address={this.state.address}/>
+                        <Delegations address={this.state.address} delegations={this.state.delegations}/>
                     </Col>
                     <Col md={6}>
-                        <Unbondings address={this.state.address} />
+                        <Unbondings address={this.state.address} unbonding={this.state.unbondingDelegations}/>
                     </Col>
                 </Row>
                 <Row>
