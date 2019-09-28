@@ -79,7 +79,7 @@ Meteor.methods({
             ]}, {$and:[
                 {"events.attributes.key": "action"},
                 {"events.attributes.value": "unjail"},
-                {"events.attributes.key": "validator"},
+                {"events.attributes.key": "sender"},
                 {"events.attributes.value": address}
             ]}, {$and:[
                 {"events.type": "create_validator"},
