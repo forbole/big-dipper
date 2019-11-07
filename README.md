@@ -1,6 +1,6 @@
 # Big Dipper :sparkles:
 
-Forbole Block Explorer for Cosmos
+Block Explorer for Cosmos
 
 ## Projects running on mainnets
 
@@ -21,6 +21,10 @@ Forbole Block Explorer for Cosmos
 [BitSong](https://testnet-1.bitsong.bigdipper.live/)
 
 [Regen Network](http://bigdipper.regen.network/)
+
+[Sentinel](https://explorer.sentinel.co/)
+
+[e-Money](https://e-money.network/)
 
 ## How to run The Big Dipper
 
