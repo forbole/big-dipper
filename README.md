@@ -16,8 +16,6 @@ Block Explorer for Cosmos
 
 ## Projects with testnets
 
-[Sentinel testnet](https://explorer.sentinel.co/)
-
 [Cyber Congress](https://cyberd.ai/)
 
 [Regen Network](http://bigdipper.regen.network/)
