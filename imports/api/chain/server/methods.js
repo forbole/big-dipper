@@ -134,7 +134,7 @@ Meteor.methods({
                     response = HTTP.get(url);
                     let provisions = JSON.parse(response.content);
                     if (provisions){
-                        chainStates.annualProvisions = parseFloat(provisions)
+                        chainStates.annualProvisions = parseFloat(provisions.result)
                     }
                 }
                 catch(e){
