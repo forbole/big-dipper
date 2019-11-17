@@ -76,7 +76,7 @@ const TypeMeta = {
         pathPreFix: 'bank/accounts',
         pathSuffix: 'transfers',
         warning: '',
-        gasAdjustment: '1.7'
+        gasAdjustment: '2'
     },
     [Types.SUBMITPROPOSAL]: {
         button: 'new',
