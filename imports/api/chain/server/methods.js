@@ -99,24 +99,6 @@ Meteor.methods({
                     console.log(e);
                 }
 
-                url = LCD + '/distribution/community_pool';
-                try {
-                    response = HTTP.get(url);
-                    let pool = JSON.parse(response.content).result;
-                    if (pool && pool.length > 0){
-                        chainStates.communityPool = [];
-                        pool.forEach((amount, i) => {
-                            chainStates.communityPool.push({
-                                denom: amount.denom,
-                                amount: parseFloat(amount.amount)
-                            })
-                        })
-                    }
-                }
-                catch (e){
-                    console.log(e)
-                }
-
                 url = LCD + '/minting/inflation';
                 try{
                     response = HTTP.get(url);
