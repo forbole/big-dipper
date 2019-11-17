@@ -89,6 +89,16 @@ Meteor.methods({
                     console.log(e);
                 }
 
+                url = LCD + '/supply/total/'+Meteor.settings.public.mintingDenom;
+                try{
+                    response = HTTP.get(url);
+                    let supply = JSON.parse(response.content).result;
+                    chainStates.totalSupply = parseInt(supply);
+                }
+                catch(e){
+                    console.log(e);
+                }
+
                 url = LCD + '/distribution/community_pool';
                 try {
                     response = HTTP.get(url);
