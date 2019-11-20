@@ -17,6 +17,7 @@ autoformat = (value) => {
 
 export default class Coin {
 	static StakingDenom = Meteor.settings.public.stakingDenom;
+	static StakingDenomPlural = Meteor.settings.public.stakingDenomPlural || (Coin.StakingDenom + 's');
 	static MintingDenom = Meteor.settings.public.mintingDenom;
 	static StakingFraction = Number(Meteor.settings.public.stakingFraction);
 	static MinStake = 1 / Number(Meteor.settings.public.stakingFraction);
