@@ -68,7 +68,7 @@ const TypeMeta = {
         pathPreFix: 'distribution/delegators',
         pathSuffix: 'rewards',
         warning: '',
-        gasAdjustment: '1.4'
+        gasAdjustment: '1.6'
     },
     [Types.SEND]: {
         button: 'transfer',
@@ -76,7 +76,7 @@ const TypeMeta = {
         pathPreFix: 'bank/accounts',
         pathSuffix: 'transfers',
         warning: '',
-        gasAdjustment: '2'
+        gasAdjustment: '1.8'
     },
     [Types.SUBMITPROPOSAL]: {
         button: 'new',
