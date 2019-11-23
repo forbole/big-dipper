@@ -25,7 +25,7 @@ DerivationPath{44, 118, account, 0, index}
 */
 
 const HDPATH = [44, 118, 0, 0, 0]
-const BECH32PREFIX = `cosmos`
+const BECH32PREFIX = Meteor.settings.public.bech32PrefixAccAddr
 
 function bech32ify(address, prefix) {
     const words = bech32.toWords(address)
@@ -33,14 +33,14 @@ function bech32ify(address, prefix) {
 }
 
 export const toPubKey = (address) => {
-    return bech32.decode('cosmos', address);
+    return bech32.decode(Meteor.settings.public.bech32PrefixAccAddr, address);
 }
 
 function createCosmosAddress(publicKey) {
     const message = CryptoJS.enc.Hex.parse(publicKey.toString(`hex`))
     const hash = ripemd160(sha256(message)).toString()
     const address = Buffer.from(hash, `hex`)
-    const cosmosAddress = bech32ify(address, `cosmos`)
+    const cosmosAddress = bech32ify(address, Meteor.settings.public.bech32PrefixAccAddr)
     return cosmosAddress
 }
 
