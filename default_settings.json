@@ -15,6 +15,7 @@
         "stakingDenom": "ATOM",
         "mintingDenom": "uatom",
         "stakingFraction": 1000000,
+        "powerReduction": null,
         "gasPrice": 0.02,
         "coingeckoId": "cosmos"
     },
