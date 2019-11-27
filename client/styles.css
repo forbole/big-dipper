@@ -266,7 +266,7 @@ div#countdown {
 
 #countdown.flip-clock-wrapper ul li a div div.inn,
 #countdown .flip-clock-dot{
-    background-color: #bd081c;
+    background-color: #7350FF;
 }
 
 .consensus-state.status .card-subtitle{
@@ -342,7 +342,7 @@ div#countdown {
     margin: -0.5em 0.5em 0 0.5em;
     padding: 0.5rem 1.5rem;
     box-shadow: initial;
-    color: #bd081c;
+    color: #7350FF;
     cursor: pointer;
 }
 
@@ -350,12 +350,12 @@ div#countdown {
     border: none;
     -webkit-box-shadow: initial;
     box-shadow: initial;
-    color: #bd081c;
+    color:#7350FF;
 }
 .proposal .card-header-tabs .nav-link.active:hover {
     border: none;
     background: #fff;
-    color: #bd081c;
+    color:#7350FF;
 }
 
 .proposal .plottable .label-area text {
@@ -515,7 +515,7 @@ div.transactions-list div.header{
 }
 
 .blocks-list .block .full{
-    background-color: #bd081c;
+    background-color:#7350FF;
 }
 
 .blocks-list .block .full,
