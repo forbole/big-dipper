@@ -26,6 +26,8 @@ Block Explorer for Cosmos
 
 [Commit](https://explorer.commit.sg/)
 
+[TruStory](https://explorer.testnet.trustory.io)
+
 ## How to run The Big Dipper
 
 1. Copy `default_settings.json` to `settings.json`.
