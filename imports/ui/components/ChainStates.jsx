@@ -30,8 +30,8 @@ export default class ChainStates extends Component{
         }
         else{
             this.state = {
-                price: "$-",
-                marketCap: "$-",
+                price: "-",
+                marketCap: "-",
                 inflation: 0,
                 communityPool: 0
             }
