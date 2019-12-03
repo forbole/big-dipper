@@ -56,9 +56,10 @@ export default class AccountDetails extends Component{
             if (result){
                 // console.log(result);
                 if (result.available){
+                    const amount = result.available.amount || '0';
                     this.setState({
-                        available: parseFloat(result.available.amount),
-                        total: parseFloat(this.state.total)+parseFloat(result.available.amount)
+                        available: parseFloat(amount),
+                        total: parseFloat(this.state.total)+parseFloat(amount)
                     })
                 }
 
