@@ -164,7 +164,7 @@ Meteor.methods({
         if (chain && chain.readGenesis){
             console.log('Genesis file has been processed');
         }
-        else{
+        else if (Meteor.settings.debug.readGenesis) {
             console.log('=== Start processing genesis file ===');
             let response = HTTP.get(Meteor.settings.genesisFile);
             let genesis = JSON.parse(response.content);
