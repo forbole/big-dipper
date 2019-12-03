@@ -22,7 +22,7 @@ export default class AccountDelegations extends Component{
                     <Row className="header text-nowrap d-none d-lg-flex">
                         <Col xs={6} md={4}><i className="fas fa-at"></i> <span><T>accounts.validators</T></span></Col>
                         <Col xs={3} md={4}><i className="fas fa-piggy-bank"></i> <span><T>accounts.shares</T></span></Col>
-                        <Col xs={3} md={4}><i className="fas fa-wallet"></i> <span><T>{Coin.StakingDenom}s</T></span></Col>
+                        <Col xs={3} md={4}><i className="fas fa-wallet"></i> <span><T>{Coin.StakingDenomPlural}</T></span></Col>
                     </Row>
                     {this.props.delegations.sort((b, a) => (a.balance - b.balance)).map((d, i) => {
                         return <Row key={i} className="delegation-info">

@@ -13,8 +13,10 @@
         "bech32PrefixConsAddr": "cosmosvalcons",
         "bech32PrefixConsPub": "cosmosvalconspub",
         "stakingDenom": "ATOM",
+        "stakingDenomPlural": null,
         "mintingDenom": "uatom",
         "stakingFraction": 1000000,
+        "powerReduction": null,
         "gasPrice": 0.02,
         "coingeckoId": "cosmos"
     },

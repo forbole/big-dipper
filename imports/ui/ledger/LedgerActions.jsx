@@ -789,7 +789,7 @@ class TransferButton extends LedgerButton {
         if (!this.state.currentUser) return null;
         let maxAmount = this.state.currentUser.availableCoin;
         return <TabPane tabId="2">
-            <h3>Transfer {Coin.StakingDenom.toUpperCase()}</h3>
+            <h3>Transfer {Coin.StakingDenom}</h3>
             <InputGroup>
                 <Input name="transferTarget" onChange={this.handleInputChange}
                     placeholder="Send to" type="text"

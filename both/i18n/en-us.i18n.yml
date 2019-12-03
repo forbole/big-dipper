@@ -60,7 +60,7 @@ chainStatus:
     activeValidators: 'Active Validators'
     outOfValidators: 'out of {$totalValidators} validators'
     onlineVotingPower: 'Online Voting Power'
-    fromTotalStakes: '{$percent} from {$totalStakes} {$denom}s'
+    fromTotalStakes: '{$percent} from {$totalStakes} {$denomPlural}'
 analytics:
     blockTimeHistory: 'Block Time History'
     averageBlockTime: 'Average Block Time'

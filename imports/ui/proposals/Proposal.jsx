@@ -67,7 +67,8 @@ export default class Proposal extends Component{
             });
 
             let now = moment();
-            let totalVotingPower = this.props.chain.activeVotingPower * Meteor.settings.public.stakingFraction;
+            const powerReduction = Meteor.settings.public.powerReduction || Meteor.settings.public.stakingFraction;
+            let totalVotingPower = this.props.chain.activeVotingPower * powerReduction;
             if (this.props.proposal.voting_start_time != '0001-01-01T00:00:00Z'){
                 if (now.diff(moment(this.props.proposal.voting_start_time)) > 0){
                     let endVotingTime = moment(this.props.proposal.voting_end_time);
@@ -270,7 +271,8 @@ export default class Proposal extends Component{
             if (this.props.proposalExist && this.state.proposal != ''){
                 // console.log(this.state.proposal);
                 const proposalId = Number(this.props.proposal.proposalId), maxProposalId = Number(this.props.proposalCount);
-                let totalVotingPower = this.props.chain.activeVotingPower * Meteor.settings.public.stakingFraction;
+                const powerReduction = Meteor.settings.public.powerReduction || Meteor.settings.public.stakingFraction;
+                let totalVotingPower = this.props.chain.activeVotingPower * powerReduction;
                 return <div>
                     <Helmet>
                         <title>{this.props.proposal.content.value.title} | The Big Dipper</title>
