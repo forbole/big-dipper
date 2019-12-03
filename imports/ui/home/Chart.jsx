@@ -5,6 +5,8 @@ import { Row, Col, Card, CardImg, CardText, CardBody,
 import moment from 'moment';
 import i18n from 'meteor/universe:i18n';
 import TimeStamp from '../components/TimeStamp.jsx';
+import SentryBoundary from '../components/SentryBoundary.jsx';
+
 
 const T = i18n.createComponent();
 export default class Chart extends Component{
@@ -192,7 +194,7 @@ export default class Chart extends Component{
                         <Card>
                             <div className="card-header"><T>analytics.blockTimeHistory</T></div>
                             <CardBody>
-                                <Line data={this.state.timeData} options={this.state.optionsTime}/>
+                                <SentryBoundary><Line data={this.state.timeData} options={this.state.optionsTime}/></SentryBoundary>
                             </CardBody>
                         </Card>
                         {/* <Card>

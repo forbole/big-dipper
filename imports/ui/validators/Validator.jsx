@@ -16,6 +16,7 @@ import { Helmet } from 'react-helmet';
 import LinkIcon from '../components/LinkIcon.jsx';
 import i18n from 'meteor/universe:i18n';
 import TimeStamp from '../components/TimeStamp.jsx';
+import SentryBoundary from '../components/SentryBoundary.jsx';
 
 const T = i18n.createComponent();
 
@@ -203,6 +204,7 @@ export default class Validator extends Component{
                       </Card>
                     <Card>
                           <div className="card-header"><T>validators.uptime</T> <Link className="float-right" to={"/validator/"+this.props.validator.address+"/missed/blocks"}><T>common.more</T>...</Link></div>
+                          <SentryBoundary>
                           <CardBody>
                                 <Row>
                                     <Col xs={8} className="label"><T numBlocks={Meteor.settings.public.uptimeWindow}>validators.lastNumBlocks</T></Col>
@@ -210,6 +212,7 @@ export default class Validator extends Component{
                                     <Col md={12} className="blocks-list">{this.state.records}</Col>
                                 </Row>
                             </CardBody>
+                            </SentryBoundary>
                         </Card>
                   </Col>
                     <Col md={8}>

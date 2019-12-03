@@ -4,6 +4,7 @@ import { Row, Col, Card, CardImg, CardText, CardBody,
     CardTitle, CardSubtitle, Button, Progress, Spinner } from 'reactstrap';
 import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
+import SentryBoundary from '../components/SentryBoundary.jsx';
 
 const T = i18n.createComponent();
 export default class ThirtyFour extends Component{
@@ -74,7 +75,7 @@ export default class ThirtyFour extends Component{
                     <Card>
                         <div className="card-header"><T>votingPower.minValidators34</T></div>
                         <CardBody>
-                            <Pie data={this.state.data} options={this.state.options} />
+                            <SentryBoundary><Pie data={this.state.data} options={this.state.options} /></SentryBoundary>
                         </CardBody>
                     </Card>
                 );   

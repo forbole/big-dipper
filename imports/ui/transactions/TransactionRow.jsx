@@ -8,11 +8,12 @@ import CosmosErrors from '../components/CosmosErrors.jsx';
 import TimeAgo from '../components/TimeAgo.jsx';
 import numbro from 'numbro';
 import Coin from '/both/utils/coins.js'
+import SentryBoundary from '../components/SentryBoundary.jsx';
 
 export const TransactionRow = (props) => {
     let tx = props.tx;
     // console.log(tx);
-    return <Row className={(tx.code)?"tx-info invalid":"tx-info"}>
+    return <SentryBoundary><Row className={(tx.code)?"tx-info invalid":"tx-info"}>
         <Col xs={12} lg={7} className="activity">{(tx.tx.value.msg && tx.tx.value.msg.length >0)?tx.tx.value.msg.map((msg,i) => {
             return <Card body key={i}><Activities msg={msg} invalid={(!!tx.code)} events={tx.events} /></Card>
         }):''}</Col>
@@ -33,5 +34,5 @@ export const TransactionRow = (props) => {
                 />
             </Alert>
         </Col>:''}
-    </Row>
+    </Row></SentryBoundary>
 }
