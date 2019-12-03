@@ -409,7 +409,7 @@ export default class Proposal extends Component{
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.votingStartTime</T></Col>
-                            <Col md={9} className="value">{(this.state.proposal.voting_start_time != '0001-01-01T00:00:00Z')?<TimeStamp time={this.stat}/>:'-'}</Col>
+                            <Col md={9} className="value">{(this.state.proposal.voting_start_time != '0001-01-01T00:00:00Z')?<TimeStamp time={this.state.proposal.voting_start_time}/>:'-'}</Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.votingEndTime</T></Col>
