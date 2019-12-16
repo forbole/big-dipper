@@ -1,0 +1,11 @@
+version: "3"
+services:
+  explorer:
+    hostname: explorer
+    build:
+      context: ..
+      dockerfile: ./Docker/dev/Dockerfile
+    container_name: explorer
+    command: meteor --settings settings.json
+  ports:
+    - 3000:3000

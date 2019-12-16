@@ -1,0 +1,25 @@
+version: "3"
+services:
+  explorer:
+    hostname: explorer
+    build:
+      context: ..
+      dockerfile: ./Docker/standalone/Dockerfile
+    environment:
+      MONGO_URL: "mongodb://root:example@mongo:27017/explorer?authSource=admin"
+      ROOT_URL: "http://example.com"
+      MAIL_URL: "smtp://user:password@mailhost:port/"
+    container_name: explorer
+    command: node main.js
+
+  mongo:
+    hostname: mongo
+    container_name: mongo
+    image: mongo:4.0.2
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: explorer
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - 27017:27017
