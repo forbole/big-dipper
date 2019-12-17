@@ -17,7 +17,7 @@
         "mintingDenom": "nund",
         "stakingFraction": 1000000000,
         "gasPrice": 0.02,
-        "coingeckoId": "und",
+        "coingeckoId": "unification",
         "powerReduction": null
     },
     "genesisFile": "https://raw.githubusercontent.com/unification-com/mainchain-cosmos/master/Docker/assets/node1/config/genesis.json",
