@@ -23,7 +23,7 @@ common:
     cancel: 'Cancel'
     retry: 'Retry'
 navbar:
-    siteName: 'The Big Dipper'
+    siteName: 'Unification Mainchain'
     version: 'beta'
     validators: 'Validators'
     blocks: 'Blocks'
