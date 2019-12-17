@@ -186,12 +186,7 @@ Meteor.methods({
                     bonusProposerReward: distr.bonus_proposer_reward,
                     withdrawAddrEnabled: distr.withdraw_addr_enabled
                 },
-                gov: {
-                    startingProposalId: genesis.app_state.gov.starting_proposal_id,
-                    depositParams: genesis.app_state.gov.deposit_params,
-                    votingParams: genesis.app_state.gov.voting_params,
-                    tallyParams: genesis.app_state.gov.tally_params
-                },
+                gov: null,
                 slashing:{
                     params: genesis.app_state.slashing.params
                 },
