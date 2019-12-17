@@ -1,0 +1,43 @@
+{
+    "public":{
+        "chainName": "UND Devnet",
+        "chainId": "UND-Mainchain-DevNet",
+        "gtm": "{Add your Google Tag Manager ID here}",
+        "slashingWindow": 10000,
+        "uptimeWindow": 250,
+        "initialPageSize": 30,
+        "bech32PrefixAccAddr": "und",
+        "bech32PrefixAccPub": "undpub",
+        "bech32PrefixValAddr": "undvaloper",
+        "bech32PrefixValPub": "undvaloperpub",
+        "bech32PrefixConsAddr": "undvalcons",
+        "bech32PrefixConsPub": "undvalconspub",
+        "stakingDenom": "UND",
+        "stakingDenomPlural": null,
+        "mintingDenom": "nund",
+        "stakingFraction": 1000000000,
+        "gasPrice": 0.02,
+        "coingeckoId": "und",
+        "powerReduction": null
+    },
+    "genesisFile": "https://raw.githubusercontent.com/unification-com/mainchain-cosmos/master/Docker/assets/node1/config/genesis.json",
+    "remote":{
+        "rpc":"http://localhost:26661",
+        "lcd":"http://localhost:1317"
+    },
+    "debug": {
+        "startTimer": true,
+        "readGenesis": true
+    },
+    "params":{
+        "startHeight": 0,
+        "defaultBlockTime": 5000,
+        "blockInterval": 15000,
+        "consensusInterval": 1000,
+        "statusInterval":7500,
+        "signingInfoInterval": 1800000,
+        "proposalInterval": 5000,
+        "missedBlocksInterval": 60000,
+        "delegationInterval": 900000
+    }
+}
