@@ -5,3 +5,5 @@ WORKDIR /mainnet-explorer
 
 RUN meteor npm install
 RUN meteor update
+
+RUN echo "Done updating"
