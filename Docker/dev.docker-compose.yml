@@ -7,5 +7,5 @@ services:
       dockerfile: ./Docker/dev/Dockerfile
     container_name: explorer
     command: meteor --settings settings.json
-  ports:
-    - 3000:3000
+    ports:
+      - 3000:3000
