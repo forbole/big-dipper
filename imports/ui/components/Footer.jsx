@@ -23,7 +23,7 @@ export default class Footer extends React.Component {
                     <span className="text-muted"><a href="https://raw.githubusercontent.com/unification-com/mainnet-explorer/master/LICENSE" target="_blank"><T>navbar.license</T></a> &copy;2019-{moment().format('YYYY')}. </span>
                     <Nav className="ml-auto" navbar>
                         <NavItem>
-                            <NavLink href="https://www.github.com/unification-com/mainnet-explorer" target="_blank"><i className="fab fa-github"></i> <T>navbar.forkMe</T></NavLink>
+                            <NavLink href="https://www.github.com/unification-com/mainchain-explorer" target="_blank"><i className="fab fa-github"></i> <T>navbar.forkMe</T></NavLink>
                         </NavItem>
                     </Nav>
                 </Navbar>
