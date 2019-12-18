@@ -194,10 +194,10 @@ export default class Header extends Component {
                                     </span>
                                     <span className="d-none d-lg-block">
                                         <i className="material-icons large">account_circle</i>
-                                        <UncontrolledPopover className="d-none d-lg-block" trigger="legacy" placement="bottom" target="user-acconut-icon">
+                                        <UncontrolledPopover className="d-none d-lg-block" trigger="hover" placement="bottom" target="user-acconut-icon">
                                             <PopoverBody>
                                                 <div><T>accounts.signInText</T></div>
-                                                <div><Link className="text-nowrap" to={`/account/${signedInAddress}`}>{signedInAddress}</Link></div>
+                                                <div><Link className="text-wrap" to={`/account/${signedInAddress}`}>{signedInAddress}</Link></div>
                                                 <Button className="float-right" color="link" onClick={this.signOut.bind(this)}><i className="material-icons">exit_to_app</i><span> <T>accounts.signOut</T></span></Button>
                                             </PopoverBody>
                                         </UncontrolledPopover>

@@ -883,3 +883,10 @@ div#voting-power-dist .card{
     cursor: help;
     opacity: 0.7;
 }
+
+
+.popover{
+    margin-left: -10%;
+    text-align: center !important;
+    line-height: 1.6 !important;
+}
