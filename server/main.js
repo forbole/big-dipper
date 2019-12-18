@@ -51,27 +51,27 @@ getConsensusState = () => {
     })
 }
 
-getProposals = () => {
-    Meteor.call('proposals.getProposals', (error, result) => {
-        if (error){
-            console.log("get proposal: "+ error);
-        }
-        if (result){
-            console.log("get proposal: "+result);
-        }
-    });
-}
-
-getProposalsResults = () => {
-    Meteor.call('proposals.getProposalResults', (error, result) => {
-        if (error){
-            console.log("get proposals result: "+error);
-        }
-        if (result){
-            console.log("get proposals result: "+result);
-        }
-    });
-}
+//getProposals = () => {
+//    Meteor.call('proposals.getProposals', (error, result) => {
+//        if (error){
+//            console.log("get proposal: "+ error);
+//        }
+//        if (result){
+//            console.log("get proposal: "+result);
+//        }
+//    });
+//}
+//
+//getProposalsResults = () => {
+//    Meteor.call('proposals.getProposalResults', (error, result) => {
+//        if (error){
+//            console.log("get proposals result: "+error);
+//        }
+//        if (result){
+//            console.log("get proposals result: "+result);
+//        }
+//    });
+//}
 
 updateMissedBlocks = () => {
     Meteor.call('ValidatorRecords.calculateMissedBlocks', (error, result) =>{
@@ -197,13 +197,13 @@ Meteor.startup(function(){
                     updateChainStatus();
                 }, Meteor.settings.params.statusInterval);
 
-                timerProposal = Meteor.setInterval(function(){
-                    getProposals();
-                }, Meteor.settings.params.proposalInterval);
-
-                timerProposalsResults = Meteor.setInterval(function(){
-                    getProposalsResults();
-                }, Meteor.settings.params.proposalInterval);
+//                timerProposal = Meteor.setInterval(function(){
+//                    getProposals();
+//                }, Meteor.settings.params.proposalInterval);
+//
+//                timerProposalsResults = Meteor.setInterval(function(){
+//                    getProposalsResults();
+//                }, Meteor.settings.params.proposalInterval);
 
                 timerMissedBlock = Meteor.setInterval(function(){
                     updateMissedBlocks();
