@@ -66,6 +66,24 @@ export default TransactionsContainer = withTracker((props) => {
                 {"tx.value.msg.type":"cosmos-sdk/IBCTransferMsg"},
                 {"tx.value.msg.type":"cosmos-sdk/IBCReceiveMsg"}
             ]
-        }).fetch() : {}
+        }).fetch() : {},
+        enterpriseTxs: transactionsExist ? Transactions.find({
+            $or: [
+                {"tx.value.msg.type":"enterprise/PurchaseUnd"},
+                {"tx.value.msg.type":"enterprise/ProcessUndPurchaseOrder"}
+            ]
+        }).fetch() : {},
+        wrkchainTxs: transactionsExist ? Transactions.find({
+            $or: [
+                {"tx.value.msg.type":"wrkchain/RegisterWrkChain"},
+                {"tx.value.msg.type":"wrkchain/RecordWrkChainBlock"}
+            ]
+        }).fetch() : {},
+        beaconTxs: transactionsExist ? Transactions.find({
+            $or: [
+                {"tx.value.msg.type":"beacon/RegisterBeacon"},
+                {"tx.value.msg.type":"beacon/RecordBeaconTimestamp"}
+            ]
+        }).fetch() : {},
     };
 })(ValidatorTransactions);

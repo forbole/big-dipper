@@ -16,7 +16,10 @@ export default class TransactionTabs extends Component{
             stakingTxs: {},
             distributionTxs: {},
             governanceTxs: {},
-            slashingTxs: {}
+            slashingTxs: {},
+            enterpriseTxs: {},
+            wrkchainTxs: {},
+            beaconTxs: {},
         }
     }
 
@@ -35,7 +38,10 @@ export default class TransactionTabs extends Component{
                 stakingTxs: this.props.stakingTxs,
                 distributionTxs: this.props.distributionTxs,
                 governanceTxs: this.props.governanceTxs,
-                slashingTxs: this.props.slashingTxs
+                slashingTxs: this.props.slashingTxs,
+                enterpriseTxs: this.props.enterpriseTxs,
+                wrkchainTxs: this.props.wrkchainTxs,
+                beaconTxs: this.props.beaconTxs,
             })    
         }
     }
@@ -71,18 +77,34 @@ export default class TransactionTabs extends Component{
                     </NavItem>
                     <NavItem>
                         <NavLink
-                            className={classnames({ active: this.state.activeTab === 'tx-gov' })}
-                            onClick={() => { this.toggle('tx-gov'); }}
-                        >
-                            <T>transactions.governance</T> ({numbro(this.state.governanceTxs.length).format("0,0")})
-                        </NavLink>
-                    </NavItem>
-                    <NavItem>
-                        <NavLink
                             className={classnames({ active: this.state.activeTab === 'tx-slashing' })}
                             onClick={() => { this.toggle('tx-slashing'); }}
                         >
                             <T>transactions.slashing</T> ({numbro(this.state.slashingTxs.length).format("0,0")})
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink
+                            className={classnames({ active: this.state.activeTab === 'tx-enterprise' })}
+                            onClick={() => { this.toggle('tx-enterprise'); }}
+                        >
+                            <T>transactions.enterprise</T> ({numbro(this.state.enterpriseTxs.length).format("0,0")})
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink
+                            className={classnames({ active: this.state.activeTab === 'tx-wrkchain' })}
+                            onClick={() => { this.toggle('tx-wrkchain'); }}
+                        >
+                            <T>transactions.wrkchain</T> ({numbro(this.state.wrkchainTxs.length).format("0,0")})
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink
+                            className={classnames({ active: this.state.activeTab === 'tx-beacon' })}
+                            onClick={() => { this.toggle('tx-beacon'); }}
+                        >
+                            <T>transactions.beacon</T> ({numbro(this.state.beaconTxs.length).format("0,0")})
                         </NavLink>
                     </NavItem>
                 </Nav>
@@ -151,6 +173,48 @@ export default class TransactionTabs extends Component{
                                         key={i} 
                                         index={i} 
                                         tx={tx} 
+                                        blockList
+                                    />
+                                }):''}
+                            </Col>
+                        </Row>
+                    </TabPane>
+                    <TabPane tabId="tx-enterprise">
+                        <Row>
+                            <Col>
+                                {(this.state.enterpriseTxs.length > 0)?this.state.enterpriseTxs.map((tx, i) => {
+                                    return <TransactionRow
+                                        key={i}
+                                        index={i}
+                                        tx={tx}
+                                        blockList
+                                    />
+                                }):''}
+                            </Col>
+                        </Row>
+                    </TabPane>
+                    <TabPane tabId="tx-wrkchain">
+                        <Row>
+                            <Col>
+                                {(this.state.wrkchainTxs.length > 0)?this.state.wrkchainTxs.map((tx, i) => {
+                                    return <TransactionRow
+                                        key={i}
+                                        index={i}
+                                        tx={tx}
+                                        blockList
+                                    />
+                                }):''}
+                            </Col>
+                        </Row>
+                    </TabPane>
+                    <TabPane tabId="tx-beacon">
+                        <Row>
+                            <Col>
+                                {(this.state.beaconTxs.length > 0)?this.state.beaconTxs.map((tx, i) => {
+                                    return <TransactionRow
+                                        key={i}
+                                        index={i}
+                                        tx={tx}
                                         blockList
                                     />
                                 }):''}

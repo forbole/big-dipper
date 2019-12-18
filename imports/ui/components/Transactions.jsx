@@ -14,6 +14,9 @@ export default class ValidatorTransactions extends Component{
             distributionTxs: {},
             governanceTxs: {},
             slashingTxs: {},
+            enterpriseTxs: {},
+            wrkchainTxs: {},
+            beaconTxs: {},
         };  
     }
 
@@ -26,7 +29,10 @@ export default class ValidatorTransactions extends Component{
                     stakingTxs: this.props.stakingTxs,
                     distributionTxs: this.props.distributionTxs,
                     governanceTxs: this.props.governanceTxs,
-                    slashingTxs: this.props.slashingTxs
+                    slashingTxs: this.props.slashingTxs,
+                    enterpriseTxs: this.props.enterpriseTxs,
+                    wrkchainTxs: this.props.wrkchainTxs,
+                    beaconTxs: this.props.beaconTxs,
                 })
             }
         }
@@ -43,6 +49,9 @@ export default class ValidatorTransactions extends Component{
                 distributionTxs={this.state.distributionTxs}
                 governanceTxs={this.state.governanceTxs}
                 slashingTxs={this.state.slashingTxs}
+                enterpriseTxs={this.state.enterpriseTxs}
+                wrkchainTxs={this.state.wrkchainTxs}
+                beaconTxs={this.state.beaconTxs}
             />
         }
         else {

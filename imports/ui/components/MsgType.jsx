@@ -50,6 +50,23 @@ export const MsgType = (props) => {
     case "cosmos-sdk/IBCReceiveMsg":
         return <Badge color="dark"><T>messageTypes.IBCReceive</T></Badge>;
 
+        //enterprise
+    case "enterprise/PurchaseUnd":
+        return <Badge color="info"><T>messageTypes.enterprisePurchase</T></Badge>
+    case "enterprise/ProcessUndPurchaseOrder":
+        return <Badge color="info"><T>messageTypes.enterpriseProcess</T></Badge>
+
+        //wrkchain
+    case "wrkchain/RegisterWrkChain":
+        return <Badge color="success"><T>messageTypes.wrkchainRegister</T></Badge>
+    case "wrkchain/RecordWrkChainBlock":
+        return <Badge color="success"><T>messageTypes.wrkchainRecord</T></Badge>
+
+    //beacon
+    case "beacon/RegisterBeacon":
+        return <Badge color="success"><T>messageTypes.beaconRegister</T></Badge>
+    case "beacon/RecordBeaconTimestamp":
+        return <Badge color="success"><T>messageTypes.beaconRecord</T></Badge>
     default:
         return <Badge color="primary">{props.type}</Badge>;
     }
