@@ -136,6 +136,9 @@ transactions:
     distribution: '收益分配'
     governance: '鏈上治理'
     slashing: '削減'
+    enterprise: '企業'
+    wrkchain: 'WRKChain'
+    beacon: 'BEACON'
 proposals:
     notFound: '沒有治理提案'
     listOfProposals: '這名單顯示所有治理提案'
@@ -203,6 +206,8 @@ activities:
     withMoniker: '而驗證人代號為'
     withTitle: '治理提案主題為'
     withA: '投了'
+    purchased: '已購買'
+    decision: '決定'
 messageTypes:
     send: '發送'
     multiSend: '多重發送'
@@ -220,3 +225,9 @@ messageTypes:
     unjail: '赦免'
     IBCTransfer: 'IBC Transfer'
     IBCReceive: 'IBC Receive'
+    enterprisePurchase: 'Purchase Enterprise UND'
+    enterpriseProcess: 'Process Enterprise Purchase Order'
+    wrkchainRegister: 'Register WRKChain'
+    wrkchainRecord: 'Record WRKChain Hashes'
+    beaconRegister: 'Register BEACON'
+    beaconRecord: 'Record BEACON Timestamp'
