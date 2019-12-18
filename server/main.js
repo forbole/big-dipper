@@ -51,6 +51,17 @@ getConsensusState = () => {
     })
 }
 
+getPurchaseOrders = () => {
+   Meteor.call('enterprise.getPurchaseOrders', (error, result) => {
+       if (error){
+           console.log("get po: "+ error);
+       }
+       if (result){
+           console.log("get po: "+result);
+       }
+   });
+}
+
 //getProposals = () => {
 //    Meteor.call('proposals.getProposals', (error, result) => {
 //        if (error){
@@ -196,6 +207,10 @@ Meteor.startup(function(){
                 timerChain = Meteor.setInterval(function(){
                     updateChainStatus();
                 }, Meteor.settings.params.statusInterval);
+
+                timerPurchaseOrder = Meteor.setInterval( function() {
+                    getPurchaseOrders();
+                }, Meteor.settings.params.proposalInterval);
 
 //                timerProposal = Meteor.setInterval(function(){
 //                    getProposals();

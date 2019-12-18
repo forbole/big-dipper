@@ -136,6 +136,9 @@ transactions:
     distribution: 'Distribution'
     governance: 'Governance'
     slashing: 'Slashing'
+    enterprise: 'Enterprise'
+    wrkchain: 'WRKChain'
+    beacon: 'BEACON'
 proposals:
     notFound: 'No proposal found.'
     listOfProposals: 'Here is a list of governance proposals.'
@@ -203,6 +206,8 @@ activities:
     withMoniker: 'with moniker'
     withTitle: 'with title'
     withA: 'with a'
+    purchased: 'purchased'
+    decision: 'decision'
 messageTypes:
     send: 'Send'
     multiSend: 'Multi Send'
@@ -220,3 +225,9 @@ messageTypes:
     unjail: 'Unjail'
     IBCTransfer: 'IBC Transfer'
     IBCReceive: 'IBC Receive'
+    enterprisePurchase: 'Purchase Enterprise UND'
+    enterpriseProcess: 'Process Enterprise Purchase Order'
+    wrkchainRegister: 'Register WRKChain'
+    wrkchainRecord: 'Record WRKChain Hashes'
+    beaconRegister: 'Register BEACON'
+    beaconRecord: 'Record BEACON Timestamp'

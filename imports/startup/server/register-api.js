@@ -16,6 +16,8 @@ import '../../api/records/server/publications.js';
 
 //import '../../api/proposals/server/methods.js';
 //import '../../api/proposals/server/publications.js';
+import '../../api/enterprise/server/methods.js';
+import '../../api/enterprise/server/publications.js';
 
 import '../../api/voting-power/server/publications.js';
 
