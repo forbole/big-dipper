@@ -1,10 +1,10 @@
 FROM node:8.16.2-alpine3.10
 
-COPY build/mainnet-explorer.tar.gz /src/mainnet-explorer.tar.gz
+COPY build/mainchain-explorer.tar.gz /src/mainchain-explorer.tar.gz
 
 WORKDIR /src
 
-RUN tar -xvf mainnet-explorer.tar.gz
+RUN tar -xvf mainchain-explorer.tar.gz
 
 WORKDIR /src/bundle/programs/server
 
