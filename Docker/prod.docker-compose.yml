@@ -10,7 +10,7 @@ services:
       ROOT_URL: "http://example.com"
       MAIL_URL: "smtp://user:password@mailhost:port/"
     container_name: explorer
-    command: node main.js
+    command: /bin/sh /src/bundle/sleep_wrapper.sh
 
   mongo:
     hostname: mongo
