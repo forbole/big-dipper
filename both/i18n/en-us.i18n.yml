@@ -30,7 +30,8 @@ navbar:
     transactions: 'Transactions'
     proposals: 'Proposals'
     votingPower: 'Voting Power'
-    lang: "ENG"
+    lang: "ES"
+    spanish: "Español"
     english: "English"
     chinese: "中文（繁）"
     simChinese: "中文（简）"
