@@ -17,7 +17,7 @@ dev-down:
 prod:
 	@echo ${PATH_TO_METEOR_SETTINGS}
 	@echo ${METEOR_SETTINGS}
-	#METEOR_SETTINGS='${METEOR_SETTINGS}' docker-compose -f Docker/prod.docker-compose.yml up --build
+	METEOR_SETTINGS='${METEOR_SETTINGS}' docker-compose -f Docker/prod.docker-compose.yml up --build
 
 prod-down:
 	docker-compose -f Docker/prod.docker-compose.yml down
