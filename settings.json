@@ -1,29 +1,29 @@
 {
     "public":{
-        "chainName": "Cosmos Testnet",
+        "chainName": "UND Testnet",
         "chainId": "UND-Mainchain-TestNet",
-        "gtm": "GoogleTagManagerFIXME",
+        "gtm": "{Add your Google Tag Manager ID here}",
         "slashingWindow": 10000,
         "uptimeWindow": 250,
         "initialPageSize": 30,
-        "bech32PrefixAccAddr": "cosmos",
-        "bech32PrefixAccPub": "cosmospub",
-        "bech32PrefixValAddr": "cosmosvaloper",
-        "bech32PrefixValPub": "cosmosvaloperpub",
-        "bech32PrefixConsAddr": "cosmosvalcons",
-        "bech32PrefixConsPub": "cosmosvalconspub",
-        "stakingDenom": "ATOM",
+        "bech32PrefixAccAddr": "und",
+        "bech32PrefixAccPub": "undpub",
+        "bech32PrefixValAddr": "undvaloper",
+        "bech32PrefixValPub": "undvaloperpub",
+        "bech32PrefixConsAddr": "undvalcons",
+        "bech32PrefixConsPub": "undvalconspub",
+        "stakingDenom": "UND",
         "stakingDenomPlural": null,
-        "mintingDenom": "uatom",
-        "stakingFraction": 1000000,
+        "mintingDenom": "nund",
+        "stakingFraction": 1000000000,
         "powerReduction": null,
         "gasPrice": 0.02,
-        "coingeckoId": "cosmos"
+        "coingeckoId": "unification"
     },
-    "genesisFile": "{Replace the address of the genesis file of the chain}",
+    "genesisFile": "https://raw.githubusercontent.com/unification-com/mainchain-cosmos/master/Docker/assets/node1/config/genesis.json",
     "remote":{
-        "rpc":"https://gaia-seeds.interblock.io",
-        "lcd":"https://gaia-seeds.interblock.io:1317"
+        "rpc":"http://localhost:26661",
+        "lcd":"http://localhost:1317"
     },
     "debug": {
         "startTimer": true,
