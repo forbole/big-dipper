@@ -9,6 +9,7 @@ services:
       MONGO_URL: "mongodb://root:example@mongo:27017/explorer?authSource=admin"
       ROOT_URL: "http://example.com"
       MAIL_URL: "smtp://user:password@mailhost:port/"
+      METEOR_SETTINGS: ${METEOR_SETTINGS}
     container_name: explorer
     command: /bin/sh /src/bundle/sleep_wrapper.sh
 
