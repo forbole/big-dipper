@@ -22,7 +22,7 @@
     },
     "genesisFile": "https://raw.githubusercontent.com/unification-com/mainchain-cosmos/master/Docker/assets/node1/config/genesis.json",
     "remote":{
-        "rpc":"http://localhost:26661",
+        "rpc":"http://3.136.43.0:26660",
         "lcd":"http://localhost:1317"
     },
     "debug": {
