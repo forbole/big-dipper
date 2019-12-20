@@ -92,24 +92,24 @@ export default class Activites extends Component {
         case "enterprise/PurchaseUnd":
             let poAmount = '';
             poAmount = new Coin(msg.value.amount).toString();
-            return <p>{(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <Account address={msg.value.purchaser}/> <T>activities.purchased</T> <em className="text-success">{poAmount}</em> <T>common.fullStop</T></p>
+            return <p><Account address={msg.value.purchaser}/> {(this.props.invalid)?<T>activities.failedTo</T>:''} <MsgType type={msg.type} /> <T>activities.purchased</T> <em className="text-success">{poAmount}</em> <T>common.fullStop</T></p>
 
         case "enterprise/ProcessUndPurchaseOrder":
             let decisionClass = 'text-success'
             if(msg.value.decision == 'reject') {
                 decisionClass = 'text-danger'
             }
-            return <p><MsgType type={msg.type} /> PO {msg.value.id} <Account address={msg.value.signer}/> <T>activities.decision</T>: <em className={decisionClass}>{msg.value.decision}</em></p>;
+            return <p><Account address={msg.value.signer}/> {(this.props.invalid)?<T>activities.failedTo</T>:''} <MsgType type={msg.type} /> PO {msg.value.id}  <T>activities.decision</T>: <em className={decisionClass}>{msg.value.decision}</em></p>;
 
         case "wrkchain/RegisterWrkChain":
-            return <p><MsgType type={msg.type} /> {(this.props.invalid)?<T>activities.failedTo</T>:''} <Account address={msg.value.owner}/> {msg.value.moniker}</p>
+            return <p><Account address={msg.value.owner}/> {(this.props.invalid)?<T>activities.failedTo</T>:''} <MsgType type={msg.type} /> {msg.value.moniker}</p>
         case "wrkchain/RecordWrkChainBlock":
-            return <p><MsgType type={msg.type} /> {(this.props.invalid)?<T>activities.failedTo</T>:''} <Account address={msg.value.owner}/> {msg.value.wrkchain_id} <T>common.block</T>: {msg.value.height}</p>
+            return <p><Account address={msg.value.owner}/> {(this.props.invalid)?<T>activities.failedTo</T>:''} <MsgType type={msg.type} /> WRKChain ID: {msg.value.wrkchain_id} <T>common.block</T>: {msg.value.height}</p>
 
         case "beacon/RegisterBeacon":
-            return <p><MsgType type={msg.type} /> {(this.props.invalid)?<T>activities.failedTo</T>:''} <Account address={msg.value.owner}/> {msg.value.moniker}</p>
+            return <p><Account address={msg.value.owner}/> {(this.props.invalid)?<T>activities.failedTo</T>:''} <MsgType type={msg.type} /> {msg.value.moniker}</p>
         case "beacon/RecordBeaconTimestamp":
-            return <p><MsgType type={msg.type} /> {(this.props.invalid)?<T>activities.failedTo</T>:''} <Account address={msg.value.owner}/> {msg.value.beacon_id} {msg.value.hash}</p>
+            return <p><Account address={msg.value.owner}/> {(this.props.invalid)?<T>activities.failedTo</T>:''} <MsgType type={msg.type} /> BEACON ID: {msg.value.beacon_id} Hash: {msg.value.hash}</p>
 
         default:
             return <div>{JSON.stringify(msg.value)}</div>

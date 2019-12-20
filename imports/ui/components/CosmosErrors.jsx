@@ -57,6 +57,38 @@ let errors = {
         103: "Validator Not Jailed",
         104: "Missing Self Delegation",
         105: "Self Delegation Too Low"
+    },
+    "enterprise": {
+        101: "Invalid Genesis",
+        102: "Purchase Order does not exist",
+        103: "Purchase Order already processed",
+        104: "Invalid Decision",
+        105: "Invalid denomination",
+        106: "Invalid status",
+        107: "Purchase Order not raised",
+        108: "Signer already made decision for Purchase Order"
+    },
+    "wrkchain": {
+        101: "Invalid Genesis",
+        201: "WRKChain does not exist",
+        202: "WRKChain already registered",
+        203: "WRKChain hashes already recorded",
+        204: "Not WRKChain owner",
+        301: "Insufficient WRKChain fee",
+        302: "Too much WRKChain fee",
+        303: "Invalid WRKChain fee denomination",
+        401: "Fee Payer not WRKChain Owner"
+    },
+    "beacon": {
+        101: "Invalid Genesis",
+        201: "BEACON does not exist",
+        202: "BEACON already registered",
+        203: "BEACON timestamp already recorded",
+        204: "Not BEACON owner",
+        301: "Insufficient BEACON fee",
+        302: "Too much BEACON fee",
+        303: "Invalid BEACON fee denomination",
+        401: "Fee Payer not BEACON Owner"
     }
 }
 
