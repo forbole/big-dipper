@@ -13,7 +13,7 @@ services:
     container_name: explorer
     command: /bin/sh /src/bundle/sleep_wrapper.sh
     ports:
-      - 80:80
+      - 8000:80
 
   mongo:
     hostname: mongo
