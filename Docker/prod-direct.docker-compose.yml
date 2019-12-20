@@ -12,6 +12,8 @@ services:
       METEOR_SETTINGS: '{"public":{"chainName":"UNDTestnet","chainId":"UND-Mainchain-TestNet","gtm":"{AddyourGoogleTagManagerIDhere}","slashingWindow":10000,"uptimeWindow":250,"initialPageSize":30,"bech32PrefixAccAddr":"und","bech32PrefixAccPub":"undpub","bech32PrefixValAddr":"undvaloper","bech32PrefixValPub":"undvaloperpub","bech32PrefixConsAddr":"undvalcons","bech32PrefixConsPub":"undvalconspub","stakingDenom":"UND","stakingDenomPlural":null,"mintingDenom":"nund","stakingFraction":1000000000,"powerReduction":null,"gasPrice":0.02,"coingeckoId":"unification"},"genesisFile":"https://raw.githubusercontent.com/unification-com/mainchain-cosmos/master/Docker/assets/node1/config/genesis.json","remote":{"rpc":"http://3.136.43.0:26660","lcd":"http://localhost:1317"},"debug":{"startTimer":true,"readGenesis":true},"params":{"startHeight":0,"defaultBlockTime":5000,"blockInterval":15000,"consensusInterval":1000,"statusInterval":7500,"signingInfoInterval":1800000,"proposalInterval":5000,"missedBlocksInterval":60000,"delegationInterval":900000}}'
     container_name: explorer
     command: /bin/sh /src/bundle/sleep_wrapper.sh
+    ports:
+      - 80:80
 
   mongo:
     hostname: mongo
