@@ -156,7 +156,6 @@ export default class Header extends Component {
         this.props.history.push(redirectUrl + query)
     }
 
-
     render() {
         let signedInAddress = getUser();
         return (
@@ -188,17 +187,17 @@ export default class Header extends Component {
                         <NavItem id="user-acconut-icon">
                             {!signedInAddress?<Button className="sign-in-btn" color="link" size="lg" onClick={() => {this.setState({isSignInOpen: true})}}><i className="material-icons">vpn_key</i></Button>:
                                 <span>
-                                    <span className="d-lg-none" >
+                                    <span className="d-lg-none">
                                         <i className="material-icons large d-inline">account_circle</i>
                                         <Link to={`/account/${signedInAddress}`}> {signedInAddress}</Link>
                                         <Button className="float-right" color="link" size="sm" onClick={this.signOut.bind(this)}><i className="material-icons">exit_to_app</i></Button>
                                     </span>
                                     <span className="d-none d-lg-block">
                                         <i className="material-icons large">account_circle</i>
-                                        <UncontrolledPopover className="d-none d-lg-block" trigger="hover" placement="bottom" target="user-acconut-icon">
+                                        <UncontrolledPopover className="d-none d-lg-block" trigger="legacy" placement="bottom" target="user-acconut-icon">
                                             <PopoverBody>
                                                 <div><T>accounts.signInText</T></div>
-                                                <div><Link className="text-wrap" to={`/account/${signedInAddress}`}>{signedInAddress}</Link></div>
+                                                <div><Link className="text-nowrap" to={`/account/${signedInAddress}`}>{signedInAddress}</Link></div>
                                                 <Button className="float-right" color="link" onClick={this.signOut.bind(this)}><i className="material-icons">exit_to_app</i><span> <T>accounts.signOut</T></span></Button>
                                             </PopoverBody>
                                         </UncontrolledPopover>
@@ -224,8 +223,3 @@ export default class Header extends Component {
         );
     }
 }
-<<<<<<< Updated upstream
-=======
-
-
->>>>>>> Stashed changes

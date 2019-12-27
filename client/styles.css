@@ -101,8 +101,7 @@ span#network-nav{
 .d-lg-block .popover{
     max-width: 500px !important;
     text-align: center !important;
-    font-size: 13px !important;
-    
+    font-size: 13px !important;    
 }
 
 div#loadmore {
@@ -889,11 +888,4 @@ div#voting-power-dist .card{
     font-size: 18px;
     cursor: help;
     opacity: 0.7;
-}
-
-
-.popover{
-    margin-left: -10%;
-    text-align: center !important;
-    line-height: 1.6 !important;
 }

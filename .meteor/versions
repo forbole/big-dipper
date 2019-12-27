@@ -1,10 +1,6 @@
 allow-deny@1.1.0
 autoupdate@1.6.0
-<<<<<<< Updated upstream
-babel-compiler@7.4.1
-=======
 babel-compiler@7.4.2
->>>>>>> Stashed changes
 babel-runtime@1.4.0
 base64@1.0.12
 binary-heap@1.0.11
@@ -23,19 +19,11 @@ ddp-server@2.3.0
 deps@1.0.12
 diff-sequence@1.1.1
 dynamic-import@0.5.1
-<<<<<<< Updated upstream
-ecmascript@0.13.1
-ecmascript-runtime@0.7.0
-ecmascript-runtime-client@0.9.0
-ecmascript-runtime-server@0.8.0
-ejson@1.1.0
-=======
 ecmascript@0.13.2
 ecmascript-runtime@0.7.0
 ecmascript-runtime-client@0.9.0
 ecmascript-runtime-server@0.8.0
 ejson@1.1.1
->>>>>>> Stashed changes
 es5-shim@4.8.0
 fetch@0.1.1
 geojson-utils@1.0.10
