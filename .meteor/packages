@@ -28,4 +28,5 @@ http@1.4.2
 reywood:publish-composite
 jquery
 universe:i18n
-server-render@0.3.1
+server-render
+fourseven:scss
