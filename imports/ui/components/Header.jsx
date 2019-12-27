@@ -156,6 +156,7 @@ export default class Header extends Component {
         this.props.history.push(redirectUrl + query)
     }
 
+
     render() {
         let signedInAddress = getUser();
         return (
@@ -187,7 +188,7 @@ export default class Header extends Component {
                         <NavItem id="user-acconut-icon">
                             {!signedInAddress?<Button className="sign-in-btn" color="link" size="lg" onClick={() => {this.setState({isSignInOpen: true})}}><i className="material-icons">vpn_key</i></Button>:
                                 <span>
-                                    <span className="d-lg-none">
+                                    <span className="d-lg-none" >
                                         <i className="material-icons large d-inline">account_circle</i>
                                         <Link to={`/account/${signedInAddress}`}> {signedInAddress}</Link>
                                         <Button className="float-right" color="link" size="sm" onClick={this.signOut.bind(this)}><i className="material-icons">exit_to_app</i></Button>
@@ -223,3 +224,8 @@ export default class Header extends Component {
         );
     }
 }
+<<<<<<< Updated upstream
+=======
+
+
+>>>>>>> Stashed changes
