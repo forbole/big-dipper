@@ -9,7 +9,7 @@
     "pretest": "npm run lint --silent"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.0",
+    "@babel/runtime": "^7.7.6",
     "@ledgerhq/hw-transport-webusb": "^4.78.0",
     "@lunie/cosmos-js": "0.0.22",
     "@types/meteor-universe-i18n": "^1.14.2",

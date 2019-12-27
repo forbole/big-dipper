@@ -22,6 +22,7 @@ common:
     searchPlaceholder: 'Search with tx hash / block height / address'
     cancel: 'Cancel'
     retry: 'Retry'
+    rewards: 'Rewards'
 navbar:
     siteName: 'The Big Dipper'
     version: 'beta'
