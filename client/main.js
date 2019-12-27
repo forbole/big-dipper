@@ -1,9 +1,9 @@
 import '/imports/startup/client';
-import '/imports/ui/stylesheets/bootstrap.min.css';
+// import '/imports/ui/stylesheets/bootstrap.min.css';
 import '/imports/ui/stylesheets/pace-theme.css';
 import '/imports/ui/stylesheets/flipclock.css';
 import '/node_modules/plottable/plottable.css';
-import './styles.css';
+import './styles.scss';
 import App from '/imports/ui/App.jsx';
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom'
