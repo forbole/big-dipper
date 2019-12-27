@@ -31,6 +31,12 @@ body {
       margin-top: 0.5em;
     }
   }
+
+  .popover{
+    max-width: 500px !important;
+    text-align: center !important;
+    font-size: 13px !important;    
+  }
   
   i.material-icons + span {
     transform: translateY(-7px);
