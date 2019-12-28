@@ -126,43 +126,11 @@ Meteor.methods({
                         }
                     }
 
-                    if (Meteor.settings.public.modules.minting){
-                        url = LCD + '/minting/inflation';
-                        try{
-                            response = HTTP.get(url);
-                            let inflation = JSON.parse(response.content).result;
-                            if (inflation){
-                                chainStates.inflation = parseFloat(inflation)
-                            }
-                        }
-                        catch(e){
-                            console.log(url);
-                            console.log(e.response.content);
-                        }
-
-                        url = LCD + '/minting/annual-provisions';
-                        try{
-                            response = HTTP.get(url);
-                            let provisions = JSON.parse(response.content);
-                            if (provisions){
-                                chainStates.annualProvisions = parseFloat(provisions.result)
-                            }
-                        }
-                        catch(e){
-                            console.log(url);
-                            console.log(e.response.content);
-                        }
-                    }
+                    ChainStates.insert(chainStates);
                 }
 
-                ChainStates.insert(chainStates);
+                return chain.latestBlockHeight;
             }
-
-            // chain.totalVotingPower = totalVP;
-
-            // validators = Validators.find({}).fetch();
-            // console.log(validators);
-            return chain.latestBlockHeight;
         }
         catch (e){
             console.log(url);

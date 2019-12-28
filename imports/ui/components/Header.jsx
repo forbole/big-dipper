@@ -188,9 +188,9 @@ export default class Header extends Component {
                         <NavItem>
                             <NavLink tag={Link} to="/transactions"><T>navbar.transactions</T></NavLink>
                         </NavItem>
-                        <NavItem>
+                        {/* <NavItem>
                             <NavLink tag={Link} to="/proposals"><T>navbar.proposals</T></NavLink>
-                        </NavItem>
+                        </NavItem> */}
                         <NavItem>
                             <NavLink tag={Link} to="/voting-power-distribution"><T>navbar.votingPower</T></NavLink>
                         </NavItem>
