@@ -3,7 +3,7 @@ import { Row, Col } from 'reactstrap';
 import { Route, Switch } from 'react-router-dom';
 import Validator from './ValidatorContainer.js';
 import MissedBlocks from './MissedBlocksContainer.js';
-import ChainStates from '../components/ChainStatesContainer.js'
+// import ChainStates from '../components/ChainStatesContainer.js'
 import i18n from 'meteor/universe:i18n';
 
 const T = i18n.createComponent();

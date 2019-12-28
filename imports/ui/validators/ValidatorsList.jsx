@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Row, Col, Nav, NavItem, NavLink, Card } from 'reactstrap';
 import List from './ListContainer.js';
-import ChainStates from '../components/ChainStatesContainer.js'
+// import ChainStates from '../components/ChainStatesContainer.js'
 import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
 import qs from 'querystring';
@@ -82,7 +82,7 @@ export default class Validators extends Component{
             </Helmet>
             <Row>
                 <Col lg={3} xs={12}><h1 className="d-none d-lg-block">{title}</h1></Col>
-                <Col lg={9} xs={12} className="text-lg-right"><ChainStates /></Col>
+                {/* <Col lg={9} xs={12} className="text-lg-right"><ChainStates /></Col> */}
             </Row>
             <Nav pills className="status-switch">
                 <NavItem>

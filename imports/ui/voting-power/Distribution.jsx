@@ -3,7 +3,7 @@ import { Row, Col } from 'reactstrap';
 import TwentyEighty from './TwentyEightyContainer.js';
 import ThirtyFour from './ThirtyFourContainer.js';
 import VotingPower from './VotingPowerContainer.js';
-import ChainStates from '../components/ChainStatesContainer.js'
+// import ChainStates from '../components/ChainStatesContainer.js'
 import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
 
@@ -22,7 +22,7 @@ export default class Distribution extends Component{
             </Helmet>
             <Row>
                 <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>votingPower.distribution</T></h1></Col>
-                <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
+                {/* <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col> */}
             </Row>
             <Row>
                 <Col md={6}><TwentyEighty /></Col>
