@@ -95,6 +95,20 @@ export default class Activites extends Component {
         case "cosmos-sdk/IBCReceiveMsg":
             return <MsgType type={msg.type} />
 
+        case "desmos/MsgCreatePost":
+            if (msg.value.parent_id == 0)
+                return <div>
+                    <p><Account address={msg.value.creator}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <T>desmos.apost</T><T>common.fullStop</T></p>
+                    <p><T message={msg.value.message} _purify={false}>desmos.sayMessage</T></p>
+                </div>
+            else
+                return <div>
+                    <p><Account address={msg.value.creator}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <T>desmos.asAReply</T> {msg.value.parent_id} <T>common.fullStop</T></p>
+                    <p><T message={msg.value.message} _purify={false}>desmos.sayMessage</T></p>
+                </div>
+
+        case "desmos/MsgLikePost":
+            return <p><Account address={msg.value.liker} /> <MsgType type={msg.type} /> <T>desmos.postId</T> <span className="text-info">{msg.value.post_id}</span><T>common.fullStop</T></p>
         default:
             return <div><ReactJson src={msg.value} /></div>
         }

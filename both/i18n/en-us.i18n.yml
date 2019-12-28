@@ -236,3 +236,10 @@ messageTypes:
     unjail: 'Unjail'
     IBCTransfer: 'IBC Transfer'
     IBCReceive: 'IBC Receive'
+    post: 'Post'
+    like: 'Like'
+desmos:
+    apost: 'a Post'
+    asAReply: 'as a reply to Post ID:'
+    sayMessage: 'It says "<em class="text-info">{$message}</em>".'
+    postId: 'Post ID:'

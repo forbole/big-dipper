@@ -50,6 +50,13 @@ export const MsgType = (props) => {
     case "cosmos-sdk/IBCReceiveMsg":
         return <Badge color="dark"><T>messageTypes.IBCReceive</T></Badge>;
 
+        // post
+    
+    case "desmos/MsgCreatePost":
+        return <Badge color="primary"><T>messageTypes.post</T></Badge>
+    case "desmos/MsgLikePost":
+        return <Badge color="primary"><T>messageTypes.like</T></Badge>
+            
     default:
         return <Badge color="primary">{props.type}</Badge>;
     }
