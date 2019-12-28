@@ -390,7 +390,7 @@ Meteor.methods({
                                     }
 
                                     // bulkValidators.insert(validator);
-                                    bulkValidators.find({consensus_pubkey: validator.consensus_pubkey}).upsert().updateOne({$set:validator});
+                                    bulkValidators.find({address: validator.address}).upsert().updateOne({$set:validator});
                                     // console.log("validator first appears: "+bulkValidators.length);
                                     bulkVPHistory.insert({
                                         address: validator.address,
