@@ -194,7 +194,7 @@ export default class Header extends Component {
                         <NavItem>
                             <NavLink tag={Link} to="/voting-power-distribution"><T>navbar.votingPower</T></NavLink>
                         </NavItem>
-                        <NavItem id="user-acconut-icon">
+                        {/* <NavItem id="user-acconut-icon">
                             {!signedInAddress?<Button className="sign-in-btn" color="link" size="lg" onClick={() => {this.setState({isSignInOpen: true})}}><i className="material-icons">vpn_key</i></Button>:
                                 <span>
                                     <span className="d-lg-none">
@@ -216,7 +216,7 @@ export default class Header extends Component {
                                     </span>
                                 </span>}
                             <LedgerModal isOpen={this.state.isSignInOpen} toggle={this.toggleSignIn} refreshApp={this.props.refreshApp} handleLoginConfirmed={this.shouldLogin()?this.handleLoginConfirmed:null}/>
-                        </NavItem>
+                        </NavItem> */}
                         <NavItem>
                             <UncontrolledDropdown inNavbar>
                                 <DropdownToggle nav caret>
