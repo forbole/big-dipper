@@ -16,6 +16,8 @@ Block Explorer for Cosmos
 
 ## Projects with testnets
 
+[Desmos Network](https://morpheus.desmos.network/)
+
 [Cyber Congress](https://cyberd.ai/)
 
 [Regen Network](http://bigdipper.regen.network/)
