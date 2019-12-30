@@ -14,15 +14,17 @@ export default class LatestMessages extends Component {
 
     componentDidUpdate(prevProps){
         if (this.props.messages != prevProps.messages){
-            this.setState({
-                messages: this.props.messages.map((message, i) => <Message 
-                    key={i}
-                    id={message.logs[0].events[1].attributes[0].value}
-                    message={message.tx.value.msg[0].value.message} 
-                    creator={message.tx.value.msg[0].value.creator}
-                    time={message.timestamp} 
-                />)
-            });
+            if (this.props.messages && this.props.messages.length > 0){
+                this.setState({
+                    messages: this.props.messages.map((message, i) => <Message 
+                        key={i}
+                        id={message.logs[0].events[1].attributes[0].value}
+                        message={message.tx.value.msg[0].value.message} 
+                        creator={message.tx.value.msg[0].value.creator}
+                        time={message.timestamp} 
+                    />)
+                });
+            }
         }
     }
 
