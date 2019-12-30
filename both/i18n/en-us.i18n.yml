@@ -243,3 +243,7 @@ desmos:
     asAReply: 'as a reply to Post ID:'
     sayMessage: 'It says "<em class="text-info">{$message}</em>".'
     postId: 'Post ID:'
+    latestMessages: 'Latest Messages'
+    noMessage: 'No message found.'
+    commentNotAllowed: 'Comment not allowed'
+    likesList: 'Likes List'
