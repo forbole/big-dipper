@@ -22,6 +22,18 @@ publishComposite('transactions.list', function(limit = 30){
     }
 });
 
+publishComposite('posts.latest', function(limit = 30){
+    return {
+        find(){
+            return Transactions.find({
+                $and:[
+                    {"tx.value.msg.value.parent_id":"0"},
+                    {"logs.success":true}
+                ]}, {sort:{height:-1}, limit:limit})
+        }
+    }
+});
+
 publishComposite('transactions.validator', function(validatorAddress, delegatorAddress, limit=100){
     let query = {};
     if (validatorAddress && delegatorAddress){
