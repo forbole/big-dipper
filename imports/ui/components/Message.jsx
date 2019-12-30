@@ -46,7 +46,7 @@ export default class Message extends Component {
             <small className="mb-0 text-muted"><span className="mr-2">ID</span>{this.props.id}</small>
             <span className="mb-0"><Markdown markup={this.props.message} /></span>
             <p className="info text-muted mb-0">
-                <span id={"likes-"+this.props.id}><span className="mr-1">{this.state.likes.length}</span><span className={(this.state.likes.length>0)?"text-danger":"text-muted"}><i className={"fa"+(this.state.likes.length>0?"s":"r")+" fa-heart mr-2"}></i></span></span>
+                <span id={"likes-"+this.props.id} className="like-trigger"><span className="mr-1">{this.state.likes.length}</span><span className={(this.state.likes.length>0)?"text-danger":"text-muted"}><i className={"fa"+(this.state.likes.length>0?"s":"r")+" fa-heart mr-2"}></i></span></span>
                 <span className="mr-1">{this.state.allowsComments?<span className="mr-1">{this.state.comments.length}</span>:""}{this.state.allowsComments?<i className="fas fa-comment"></i>:<i className="fas fa-comment-slash" title={i18n.__('desmos','commentNotAllowed')}></i>}</span>
                 {(this.state.likes.length>0)?<UncontrolledPopover trigger="legacy" placement="top" target={"likes-"+this.props.id}>
                     <PopoverHeader><T>desmos.likesList</T></PopoverHeader>
