@@ -36,6 +36,10 @@ body {
     max-width: 500px !important;
     font-size: 13px !important;    
   }
+
+  .memo-button {
+    cursor: pointer;
+  }
   
   i.material-icons + span {
     transform: translateY(-7px);
