@@ -83,8 +83,7 @@ Meteor.methods({
             let rewards = HTTP.get(url);
             if (rewards.statusCode == 200){
                 balance.rewards = JSON.parse(rewards.content).result.total;
-                console.log("I AM CALLIJG YOU JE");
-            }
+                        }
         }
         catch (e){
             console.log(e);

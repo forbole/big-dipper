@@ -790,7 +790,13 @@ body {
       margin: 0;
     }
   }
-  
+
+  .validator-tooltip{
+      .tooltip{
+        left:17% !important;
+          }
+    }
+
   .tooltip .tooltip-arrow {
     position: absolute;
     display: block;

@@ -49,7 +49,7 @@ export default class AccountTooltip extends Account{
         let moniker = validator.description && validator.description.moniker || validator.address;
         let isActive = validator.status == 2 && !validator.jailed;
 
-        return <UncontrolledTooltip key='tooltip' className='validator-tooltip' placement='right' flip={false} target={this.ref} autohide={false} fade={false}>
+        return <UncontrolledTooltip key='tooltip' data-toggle='tooltip' container='body' className='validator-tooltip' placement='right' flip={false} target={this.ref} autohide={false} fade={false} delay={{show: 100, hide: 200}}>
             <Card body className='validator-tooltip-card'>
                 <Row className='d-flex justify-content-center'>
                     <h4 className="moniker text-primary">{moniker}</h4>
