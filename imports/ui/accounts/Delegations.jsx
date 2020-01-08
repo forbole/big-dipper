@@ -1,17 +1,9 @@
 import React, { Component } from 'react';
 import { Card, CardHeader, CardBody, Container, Row, Col, Spinner } from 'reactstrap';
-import numbro from 'numbro';
 import AccountTooltip from '../components/AccountTooltip.jsx';
-import { Mongo } from 'meteor/mongo';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js';
-import Account from '../components/Account.jsx';
-import AccountCopy from '../components/AccountCopy.jsx';
-import Delegations from './Delegations.jsx';
-import Unbondings from './Unbondings.jsx';
-import AccountTransactions from '../components/TransactionsContainer.js';
-import ChainStates from '../components/ChainStatesContainer.js'
-import { Helmet } from 'react-helmet';
+
 
 const T = i18n.createComponent();
 
