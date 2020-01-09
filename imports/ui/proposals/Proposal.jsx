@@ -275,7 +275,7 @@ export default class Proposal extends Component{
                 let totalVotingPower = this.props.chain.activeVotingPower * powerReduction;
                 return <div>
                     <Helmet>
-                        <title>{this.props.proposal.content.value.title} | The Big Dipper</title>
+                        <title>{this.props.proposal.content.value.title} | Unification Mainchain</title>
                         <meta name="description" content={this.props.proposal.content.value.description} />
                     </Helmet>
 
