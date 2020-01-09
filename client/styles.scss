@@ -179,12 +179,19 @@ body {
       }
     }
   }
+
+  #tooltip-avatar{
+    .img-fluid{
+      height: 30px;
+    }
+  }
   
   img.moniker-avatar-list {
     height: 24px;
     margin-right: 5px;
     border: 1px solid rgba(0, 0, 0, 0.3);
   }
+
   
   div {
     &.validator-list div {
@@ -205,6 +212,8 @@ body {
           padding-right: 15px;
         }
       }
+
+      
     }
   
     &.header span {
@@ -869,14 +878,13 @@ body {
   }
   
   .validator-tooltip .tooltip-inner {
-    color: $gray-700;
+    color: $gray-700; 
     min-width: 200px;
+    padding: 0.1rem 0.1rem;
+    background-color: #fff;
+    
   }
   
-  .validator-tooltip-card .avatar img {
-    max-width: 100px;
-    padding-bottom: 10px;
-  }
   
   .redelegate-validators {
     display: inline-block;
