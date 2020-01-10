@@ -24,6 +24,7 @@ export default class AccountDetails extends Component{
             delegated: 0,
             unbonding: 0,
             rewards: 0,
+            reward: [],
             total: 0,
             price: 0,
             user: localStorage.getItem(CURRENTUSERADDR)
@@ -86,13 +87,37 @@ export default class AccountDetails extends Component{
                     }, this)
                 }
 
-                if (result.rewards && result.rewards.length > 0){
-                    result.rewards.forEach((reward, i) => {
+
+                this.setState({delegations: result.delegations || []})
+                if (result.delegations && result.delegations.length > 0){
+                    result.delegations.forEach((delegation, i) => {
+                        const amount = delegation.balance.amount || delegation.balance;
+                        this.setState({
+                            delegated: this.state.delegated+parseFloat(amount),
+                            total: this.state.total+parseFloat(amount)
+                        })
+                    }, this)
+                }
+
+
+                if(result.total_rewards && result.total_rewards.length > 0)
+                {
+                    result.total_rewards.forEach((reward, i) => {
                         this.setState({
                             rewards: this.state.rewards+parseFloat(reward.amount),
                             total: this.state.total+parseFloat(reward.amount)
                         })
                     }, this)
+                }
+
+                if (result.rewards && result.rewards.length > 0){
+                    result.rewards.forEach((k, i) => {
+                        this.setState({
+                                reward: this.state.reward.concat(parseFloat(k.reward[0].amount)),
+                                })
+                        
+                    }, this)
+
                 }
 
                 if (result.commission){
@@ -128,7 +153,8 @@ export default class AccountDetails extends Component{
                 commission: 0,
                 rewards: 0,
                 total: 0,
-                price: 0
+                price: 0,
+                reward: 0,
             }, () => {
                 this.getBalance();
             })
@@ -221,7 +247,11 @@ export default class AccountDetails extends Component{
                 </Row>
                 <Row>
                     <Col md={6}>
-                        <Delegations address={this.state.address} delegations={this.state.delegations}/>
+                        <Delegations 
+                            address={this.state.address} 
+                            delegations={this.state.delegations}
+                            reward={this.state.reward}
+                        />
                     </Col>
                     <Col md={6}>
                         <Unbondings address={this.state.address} unbonding={this.state.unbondingDelegations}/>
