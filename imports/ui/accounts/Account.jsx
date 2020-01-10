@@ -27,7 +27,8 @@ export default class AccountDetails extends Component{
             reward: [],
             total: 0,
             price: 0,
-            user: localStorage.getItem(CURRENTUSERADDR)
+            user: localStorage.getItem(CURRENTUSERADDR),
+            commission: 0,
         }
     }
 
@@ -170,6 +171,7 @@ export default class AccountDetails extends Component{
     }
 
     render(){
+
         if (this.state.loading){
             return <div id="account">
                 <h1 className="d-none d-lg-block"><T>accounts.accountDetails</T></h1>
