@@ -172,7 +172,6 @@ export default class AccountDetails extends Component{
 
     render(){
 
-        console.log(JSON.stringify(this.state.commission))
         if (this.state.loading){
             return <div id="account">
                 <h1 className="d-none d-lg-block"><T>accounts.accountDetails</T></h1>
