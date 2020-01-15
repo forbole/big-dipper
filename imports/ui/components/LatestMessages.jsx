@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Card, CardHeader, CardBody, Spinner } from 'reactstrap';
 import Message from '../components/Message.jsx'
+import SentryBoundary from '../components/SentryBoundary.jsx'
 
 const T = i18n.createComponent();
 
@@ -36,7 +37,9 @@ export default class LatestMessages extends Component {
             return <Card>
                 <CardHeader><T>desmos.latestMessages</T></CardHeader>
                 <CardBody>
-                    {(this.props.messagesExist)?<div>{this.state.messages}</div>:<T>desmos.noMessage</T>}
+                    <SentryBoundary>
+                        {(this.props.messagesExist)?<div>{this.state.messages}</div>:<T>desmos.noMessage</T>}
+                    </SentryBoundary>
                 </CardBody>
             </Card>
         }
