@@ -18,8 +18,6 @@ export default class AccountDelegations extends Component{
     render(){
         let numDelegations = this.props.delegations.length;
         let denomType = this.props.denom;
-        let sadface = new Object();
-        sadface = <i className="far fa-frown"></i>;
          
         return <Card>
             <CardHeader>{(numDelegations > 0)?numDelegations:<T>accounts.no</T>} <T>accounts.delegation</T>{(numDelegations>1)?<T>accounts.plural</T>:''}</CardHeader>
