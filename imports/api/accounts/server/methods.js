@@ -86,7 +86,7 @@ Meteor.methods({
                 balance.rewards = JSON.parse(rewards.content).result.rewards;
                 //get total rewards value
                 balance.total_rewards= JSON.parse(rewards.content).result.total;
-
+                
             }
         }
         catch (e){

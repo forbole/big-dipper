@@ -97,16 +97,25 @@ const TypeMeta = {
     }
 }
 
-const Amount = (props) => {
-    if (!props.coin && !props.amount) return null
-    let coin = props.coin || new Coin(props.amount);
-    let amount = (props.mint)?Math.round(coin.amount):coin.stakingAmount;
-    let denom = (props.mint)?Coin.MintingDenom:Coin.StakingDenom;
-    return <span><span className={props.className || 'amount'}>{amount}</span> <span className='denom'>{denom}</span></span>
+const CoinAmount = (props) => {
+        if (!props.coin && !props.amount) return null;
+        let coin = new Coin(props.amount, props.denom).toString(4);
+        let denom = (props.mint)?Coin.MintingDenom:Coin.StakingDenom;
+        return <span><span className={props.className || 'coin'}>{coin}</span> </span>
+    
 }
 
+const Amount = (props) => {
+    if (!props.coin && !props.amount) return null;
+    let coin = props.coin || new Coin(props.amount, props.denom).toString(4);
+    let amount = (props.mint)?Math.round(coin.amount):coin.stakingAmount;
+    let denom = (props.mint)?Coin.MintingDenom:Coin.StakingDenom;
+    return <span><span className={props.className || 'amount'}>{numbro(amount).format("0,0.0000")}</span> <span className='denom'>{denom}</span></span>
+}
+
+
 const Fee = (props) => {
-    return <span><Amount mint className='gas' amount={props.gas * Meteor.settings.public.gasPrice}/> as fee</span>
+return <span><CoinAmount mint className='gas' amount={props.gas * Meteor.settings.public.gasPrice}/> as fee </span>
 }
 
 const isActiveValidator = (validator) => {
@@ -264,7 +273,7 @@ class LedgerButton extends Component {
         Meteor.call('accounts.getAccountDetail', this.state.user, (error, result) => {
             try{
                 if (result) {
-                    let coin = result.coins?new Coin(result.coins[0]): new Coin(0);
+                    let coin = result.coins?(new Coin(result.coins[0].amount, result.coins[0].denom)): (new Coin(0, result.coins[0].denom));
                     this.setStateOnSuccess('loadingBalance', {
                         currentUser: {
                             accountNumber: result.account_number,
@@ -761,14 +770,14 @@ class WithdrawButton extends LedgerButton {
     renderActionTab = () => {
         return <TabPane tabId="2">
             <h3>Withdraw rewards from all delegations</h3>
-            <div>Your current rewards amount: <Amount amount={this.props.rewards}/></div>
-            {this.props.commission?<div>Your current commission amount: <Amount amount={this.props.commission}/></div>:''}
+            {this.props.rewards?<div>Your current rewards amount is: <CoinAmount amount={this.props.rewards} denom={this.props.denom}/></div>:''}
+            {this.props.commission?<div>Your current commission amount is: <CoinAmount amount={this.props.commission} denom={this.props.denom}/></div>:''}
         </TabPane>
     }
 
     getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>withdraw</span> rewards <Amount amount={this.props.rewards}/>
-             {this.props.commission?<span> and commission <Amount amount={this.props.commission}/></span>:null}
+        return <span>You are going to <span className='action'>withdraw</span> rewards <CoinAmount amount={this.props.rewards} denom={this.props.denom}/>
+             {this.props.commission?<span> and commission <CoinAmount amount={this.props.commission} denom={this.props.denom}/></span>:null}
             <span> with  <Fee gas={this.state.gasEstimate}/>.</span>
          </span>
     }
@@ -805,7 +814,7 @@ class TransferButton extends LedgerButton {
             </InputGroup>
             <Input name="memo" onChange={this.handleInputChange}
                 placeholder="Memo(optional)" type="textarea" value={this.state.memo}/>
-            <div>your available balance: <Amount coin={maxAmount}/></div>
+    <div>your available balance: <Amount coin={maxAmount}/> </div>
         </TabPane>
     }
 
@@ -869,7 +878,7 @@ class SubmitProposalButton extends LedgerButton {
             </InputGroup>
             <Input name="memo" onChange={this.handleInputChange}
                 placeholder="Memo(optional)" type="textarea" value={this.state.memo}/>
-            <div>your available balance: <Amount coin={maxAmount}/></div>
+            <div>your available balance: <Amount coin={maxAmount}/></div> 
         </TabPane>
     }
 

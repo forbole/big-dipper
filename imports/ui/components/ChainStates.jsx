@@ -14,9 +14,11 @@ export default class ChainStates extends Component{
 
         if (Meteor.isServer){
             let data = {}
+             let denomType = this.props.chainStates.communityPool.denom;
+   
             if (this.props.chainStates.communityPool){
                 data.communityPool = this.props.chainStates.communityPool.map((pool,i) => {
-                    return <span key={i}>{new Coin(pool.amount).stakeString('0,0.00')}</span>
+                return <span key={i}>{new Coin(pool.amount, denomType).stakeString('0,0.00')}</span>
                 })
                 data.inflation = numbro(this.props.chainStates.inflation).format("0.00%")
             }
@@ -33,7 +35,8 @@ export default class ChainStates extends Component{
                 price: "-",
                 marketCap: "-",
                 inflation: 0,
-                communityPool: 0
+                communityPool: 0,
+                denomType: '',
             }
         }
     }
@@ -42,8 +45,10 @@ export default class ChainStates extends Component{
         if (this.props.chainStates != prevProps.chainStates){
             if (this.props.chainStates.communityPool){
                 this.setState({
+                    
                     communityPool: this.props.chainStates.communityPool.map((pool,i) => {
-                        return <span key={i}>{new Coin(pool.amount).stakeString('0,0.00')}</span>
+                        let denomType = this.props.chainStates.communityPool[0].denom;
+                        return <span key={i}>{new Coin(pool.amount, denomType).stakeString('0,0.00')}</span>
                     }),
                     inflation: numbro(this.props.chainStates.inflation).format("0.00%")
                 })

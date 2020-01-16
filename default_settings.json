@@ -12,11 +12,45 @@
         "bech32PrefixValPub": "cosmosvaloperpub",
         "bech32PrefixConsAddr": "cosmosvalcons",
         "bech32PrefixConsPub": "cosmosvalconspub",
-        "stakingDenom": "ATOM",
-        "stakingDenomPlural": null,
-        "mintingDenom": "uatom",
-        "stakingFraction": 1000000,
-        "powerReduction": null,
+        "stakingFraction": 1000000, 
+        "powerReduction": null,  
+        "coins": [
+            {
+                "stakingDenom": "MUON",
+                "stakingDenomPlural": "MUONS",
+                "mintingDenom": "umuon",
+                "staking": false,
+                "stakingFraction": 1000000
+            },
+            {
+                "stakingDenom": "ATOM",
+                "stakingDenomPlural": "ATOMS",
+                "mintingDenom": "uatom",
+                "staking": true,
+                "stakingFraction": 1000000
+            },
+            {
+                "stakingDenom": "DARIC",
+                "stakingDenomPlural": "DARICS",
+                "mintingDenom": "udaric",
+                "staking": false,
+                "stakingFraction": 1000000
+            },
+            {
+                "stakingDenom": "POTIN",
+                "stakingDenomPlural": "POTINS",
+                "mintingDenom": "upotin",
+                "staking": false,
+                "stakingFraction": 1000000
+            },
+            {
+                "stakingDenom": "LIKE",
+                "stakingDenomPlural": "LIKES",
+                "mintingDenom": "nanolike",
+                "staking": false,
+                "stakingFraction": 1000000000
+            }
+        ],
         "gasPrice": 0.02,
         "coingeckoId": "cosmos"
     },
@@ -41,4 +75,5 @@
         "delegationInterval": 900000
     }
 }
+
 
