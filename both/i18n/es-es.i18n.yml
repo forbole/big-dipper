@@ -117,7 +117,7 @@ blocks:
     proposer: 'Proposer'
     latestBlocks: 'Últimos bloques'
     noBlock: 'No bloque.'
-    numOfTxs: 'No. de tx's'
+    numOfTxs: 'No. de txs'
     numOfTransactions: 'No. de transacciones'
     notFound: 'No se ha encontrado tal bloque.'
 transactions:
