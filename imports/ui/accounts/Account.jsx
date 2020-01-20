@@ -105,7 +105,7 @@ export default class AccountDetails extends Component{
                         this.setState({
                             delegated: this.state.delegated+parseFloat(amount),
                             total: this.state.total+parseFloat(amount),
-
+                            total: this.state.total+parseFloat(amount)
                         })
                     }, this)
                 }
@@ -122,7 +122,6 @@ export default class AccountDetails extends Component{
                 }
 
                 if (result.rewards && result.rewards.length > 0){
-                    
                     for(let c = 0; c < result.rewards.length; c++){
                         if(result.rewards[c].reward != null)
                         {
@@ -134,7 +133,6 @@ export default class AccountDetails extends Component{
                         })
                 }
                     
-
                 if (result.commission){
                     this.setState({
                         operator_address: result.operator_address,

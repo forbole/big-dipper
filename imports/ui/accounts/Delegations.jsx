@@ -5,7 +5,6 @@ import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js';
 import SentryBoundary from '../components/SentryBoundary.jsx'
 
-
 const T = i18n.createComponent();
 
 export default class AccountDelegations extends Component{
@@ -18,7 +17,6 @@ export default class AccountDelegations extends Component{
     render(){
         let numDelegations = this.props.delegations.length;
         let denomType = this.props.denom;
-         
         return <Card>
             <CardHeader>{(numDelegations > 0)?numDelegations:<T>accounts.no</T>} <T>accounts.delegation</T>{(numDelegations>1)?<T>accounts.plural</T>:''}</CardHeader>
             {(numDelegations > 0)?<CardBody className="list overflow-auto">
