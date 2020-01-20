@@ -92,7 +92,7 @@ export default class Chart extends Component{
                             }
                         },
                         {
-                            label: 'Block Interveral',
+                            label: 'Block Interval',
                             fill: false,
                             lineTension: 0,
                             yAxisID: 'Time',

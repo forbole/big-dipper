@@ -89,6 +89,7 @@ Meteor.methods({
                     console.log(e);
                 }
 
+		if (Meteor.settings.public.mintingDenomination) {
                 url = LCD + '/supply/total/'+Meteor.settings.public.mintingDenom;
                 try{
                     response = HTTP.get(url);
@@ -140,6 +141,7 @@ Meteor.methods({
                 catch(e){
                     console.log(e);
                 }
+		}
 
                 ChainStates.insert(chainStates);
             }
@@ -187,10 +189,10 @@ Meteor.methods({
                     withdrawAddrEnabled: distr.withdraw_addr_enabled
                 },
                 gov: {
-                    startingProposalId: genesis.app_state.gov.starting_proposal_id,
-                    depositParams: genesis.app_state.gov.deposit_params,
-                    votingParams: genesis.app_state.gov.voting_params,
-                    tallyParams: genesis.app_state.gov.tally_params
+                    startingProposalId: 0,
+                    depositParams: {},
+                    votingParams: {},
+                    tallyParams: {}
                 },
                 slashing:{
                     params: genesis.app_state.slashing.params
@@ -199,6 +201,14 @@ Meteor.methods({
                 crisis: genesis.app_state.crisis
             }
 
+	    if (genesis.app_state.gov) {
+                chainParams.gov = {
+                    startingProposalId: genesis.app_state.gov.starting_proposal_id,
+                    depositParams: genesis.app_state.gov.deposit_params,
+                    votingParams: genesis.app_state.gov.voting_params,
+                    tallyParams: genesis.app_state.gov.tally_params
+                };
+	    }
             let totalVotingPower = 0;
 
             // read gentx
