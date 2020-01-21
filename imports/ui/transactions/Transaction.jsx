@@ -17,9 +17,12 @@ export default class Transaction extends Component{
         super(props);
         let showdown  = require('showdown');
         showdown.setFlavor('github');
+        let denom = this.props.denom;
     }
 
     render(){
+        
+        
         if (this.props.loading){
             return <Container id="transaction">
                 <Spinner type="grow" color="primary" />
@@ -27,7 +30,6 @@ export default class Transaction extends Component{
         }
         else{
             if (this.props.transactionExist){
-                // console.log(this.props.transaction);
                 let tx = this.props.transaction;
                 return <Container id="transaction">
                     <Helmet>
@@ -58,12 +60,13 @@ export default class Transaction extends Component{
                                 </Col>
                                 <Col md={4} className="label"><T>transactions.fee</T></Col>
                                 <Col md={8} className="value">{(tx.tx.value.fee.amount.length > 0)?tx.tx.value.fee.amount.map((fee,i) => {
-                                    return <span className="text-nowrap" key={i}>{new Coin(fee.amount).toString()}</span>
-                                }):<span>No fee</span>}</Col>
+                                    return <span className="text-nowrap" key={i}> {(new Coin(parseFloat(fee.amount), fee.denom)).toString()}</span>
+                                }):<span><T>transactions.noFee</T></span>}</Col>
                                 <Col md={4} className="label"><T>transactions.gasUsedWanted</T></Col>
                                 <Col md={8} className="value">{numbro(tx.gas_used).format("0,0")} / {numbro(tx.gas_wanted).format("0,0")}</Col>
                                 <Col md={4} className="label"><T>transactions.memo</T></Col>
                                 <Col md={8} className="value"><Markdown markup={ tx.tx.value.memo } /></Col>
+                              
                             </Row>
                         </CardBody>
                     </Card>
@@ -71,7 +74,7 @@ export default class Transaction extends Component{
                         <div className="card-header"><T>transactions.activities</T></div>
                     </Card>
                     {(tx.tx.value.msg && tx.tx.value.msg.length >0)?tx.tx.value.msg.map((msg,i) => {
-                        return <Card body key={i}><Activities msg={msg} invalid={(!!tx.code)} events={tx.events} /></Card>
+                        return <Card body key={i}><Activities msg={msg} invalid={(!!tx.code)} events={tx.events} denom ={this.denom}/></Card>
                     }):''}
                 </Container>
             }

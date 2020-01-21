@@ -32,6 +32,8 @@ navbar:
     votingPower: '投票權分佈'
     lang: "中文（繁）"
     english: "English"
+    polish: "Polski"
+    spanish: "Español"
     chinese: "中文（繁）"
     simChinese: "中文（简）"
     license: 'LICENSE'
@@ -127,6 +129,7 @@ transactions:
     txHash: '交易哈希'
     valid: '有效'
     fee: '費用'
+    noFee: 'No fee' 
     gasUsedWanted: '瓦斯 (已用 / 要求)'
     noTxFound: '沒有這筆交易。'
     noValidatorTxsFound: '沒有跟這個驗證人有關的交易'
@@ -160,6 +163,7 @@ proposals:
     yes: '贊成'
     abstain: '棄權'
     no: '反對'
+    none: '反對'
     noWithVeto: '強烈反對'
     percentageVoted: '現時在線投票權的投票率是 <span class="text-info">{$percent}</span>。'
     validMessage: '這個提案 {$tentative} <strong>有效</strong>.'
@@ -189,6 +193,7 @@ accounts:
     signInWithLedger: '透過 Ledger 登入'
     signInWarning: '請確定你已經連接 Ledger 設備，並已開啓 <strong class="text-primary">Cosmos App 版本 1.5.0 或以上</strong>。'
     pleaseAccept: '請從你的 Ledger 設備確認。'
+    noRewards: 'No Rewards'
 activities:
     single: '一個'
     happened: '發生了'
