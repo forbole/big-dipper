@@ -29,6 +29,8 @@ export default class AccountDetails extends Component{
             price: 0,
             user: localStorage.getItem(CURRENTUSERADDR),
             commission: 0,
+            denom: '',
+            allRewards: [],
         }
     }
 
@@ -40,6 +42,9 @@ export default class AccountDetails extends Component{
     }
 
     getBalance(){
+
+        let numRewards = new Object();
+        
         Meteor.call('coinStats.getStats', (error, result) => {
             if (result){
                 this.setState({
@@ -59,9 +64,13 @@ export default class AccountDetails extends Component{
                 // console.log(result);
                 if (result.available){
                     const amount = result.available.amount || '0';
+                    const denomType  = result.available.denom;
+
                     this.setState({
                         available: parseFloat(amount),
-                        total: parseFloat(this.state.total)+parseFloat(amount)
+                        total: parseFloat(this.state.total)+parseFloat(amount),
+                        denom: denomType,
+                        
                     })
                 }
 
@@ -89,18 +98,6 @@ export default class AccountDetails extends Component{
                 }
 
 
-                this.setState({delegations: result.delegations || []})
-                if (result.delegations && result.delegations.length > 0){
-                    result.delegations.forEach((delegation, i) => {
-                        const amount = delegation.balance.amount || delegation.balance;
-                        this.setState({
-                            delegated: this.state.delegated+parseFloat(amount),
-                            total: this.state.total+parseFloat(amount)
-                        })
-                    }, this)
-                }
-
-
                 if(result.total_rewards && result.total_rewards.length > 0)
                 {
                     result.total_rewards.forEach((reward, i) => {
@@ -112,14 +109,18 @@ export default class AccountDetails extends Component{
                 }
 
                 if (result.rewards && result.rewards.length > 0){
-                    result.rewards.forEach((k, i) => {
+                    
+                    for(let c = 0; c < result.rewards.length; c++){
+                        if(result.rewards[c].reward != null)
+                        {
+                            numRewards[result.rewards[c]["validator_address"]] = result.rewards[c].reward[0];
+                        }
+                    }
                         this.setState({
-                                reward: this.state.reward.concat(parseFloat(k.reward[0].amount)),
-                                })
-                        
-                    }, this)
-
+                            allRewards: numRewards,
+                        })
                 }
+                    
 
                 if (result.commission){
                     this.setState({
@@ -156,6 +157,8 @@ export default class AccountDetails extends Component{
                 total: 0,
                 price: 0,
                 reward: 0,
+                denom: '',
+                allRewards: {},
             }, () => {
                 this.getBalance();
             })
@@ -186,7 +189,7 @@ export default class AccountDetails extends Component{
                 </Helmet>
                 <Row>
                     <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>accounts.accountDetails</T></h1></Col>
-                    <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
+                    <Col md={9} xs={12} className="text-md-right"><ChainStates denom ={this.state.denom} /></Col>
                 </Row>
                 <Row>
                     <Col><h3 className="text-primary"><AccountCopy address={this.state.address} /></h3></Col>
@@ -213,34 +216,34 @@ export default class AccountDetails extends Component{
                                 <Col md={6} lg={8}>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="available infinity" /><T>accounts.available</T></Col>
-                                        <Col xs={8} className="value text-right">{new Coin(this.state.available).toString(4)}</Col>
+                                        <Col xs={8} className="value text-right">{new Coin(this.state.available, this.state.denom).toString(4)}</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="delegated infinity" /><T>accounts.delegated</T></Col>
-                                        <Col xs={8} className="value text-right">{new Coin(this.state.delegated).toString(4)}</Col>
+                                        <Col xs={8} className="value text-right">{new Coin(this.state.delegated, this.state.denom).toString(4)}</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="unbonding infinity" /><T>accounts.unbonding</T></Col>
-                                        <Col xs={8} className="value text-right">{new Coin(this.state.unbonding).toString(4)}</Col>
+                                        <Col xs={8} className="value text-right">{new Coin(this.state.unbonding, this.state.denom).toString(4)}</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="rewards infinity" /><T>accounts.rewards</T></Col>
-                                        <Col xs={8} className="value text-right">{new Coin(this.state.rewards).toString(4)}</Col>
+                                        <Col xs={8} className="value text-right">{new Coin(this.state.rewards, this.state.denom).toString(4)}</Col>
                                     </Row>
                                     {this.state.commission?<Row>
                                         <Col xs={4} className="label text-nowrap"><div className="commission infinity" /><T>validators.commission</T></Col>
-                                        <Col xs={8} className="value text-right">{new Coin(this.state.commission).toString(4)}</Col>
+                                        <Col xs={8} className="value text-right">{new Coin(this.state.commission, this.state.denom).toString(4)}</Col>
                                     </Row>:null}
                                 </Col>
                                 <Col md={6} lg={4} className="total d-flex flex-column justify-content-end">
                                     {this.state.user?<Row>
-                                        <Col xs={12}><TransferButton history={this.props.history} address={this.state.address}/></Col>
-                                        {this.state.user===this.state.address?<Col xs={12}><WithdrawButton  history={this.props.history} rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address}/></Col>:null}
+                                        <Col xs={12}><TransferButton history={this.props.history} address={this.state.address} denom={this.state.denom}/></Col>
+                                        {this.state.user===this.state.address?<Col xs={12}><WithdrawButton  history={this.props.history} rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address} denom={this.state.denom}/></Col>:null}
                                     </Row>:null}
                                     <Row>
                                         <Col xs={4} className="label d-flex align-self-end"><div className="infinity" /><T>accounts.total</T></Col>
-                                        <Col xs={8} className="value text-right">{new Coin(this.state.total).toString(4)}</Col>
-                                        <Col xs={12} className="dollar-value text-right text-secondary">~{numbro(this.state.total/Meteor.settings.public.stakingFraction*this.state.price).format("$0,0.0000a")} ({numbro(this.state.price).format("$0,0.00")}/{Meteor.settings.public.stakingDenom})</Col>
+                                        <Col xs={8} className="value text-right">{new Coin(this.state.total, this.state.denom).toString(4)}</Col>
+                                        <Col xs={12} className="dollar-value text-right text-secondary">~{numbro(this.state.total/Meteor.settings.public.stakingFraction*this.state.price).format("$0,0.0000a")} ({numbro(this.state.price).format("$0,0.00")}/{this.state.denom})</Col>
                                     </Row>
                                 </Col>
                             </Row>
@@ -253,6 +256,8 @@ export default class AccountDetails extends Component{
                             address={this.state.address} 
                             delegations={this.state.delegations}
                             reward={this.state.reward}
+                            denom ={this.state.denom}
+                            allRewards ={this.state.allRewards}
                         />
                     </Col>
                     <Col md={6}>
@@ -261,7 +266,7 @@ export default class AccountDetails extends Component{
                 </Row>
                 <Row>
                     <Col>
-                        <AccountTransactions delegator={this.state.address} limit={100}/>
+                        <AccountTransactions delegator={this.state.address} denom ={this.state.denom} limit={100}/>
                     </Col>
                 </Row>
             </div>
@@ -274,3 +279,4 @@ export default class AccountDetails extends Component{
         }
     }
 }
+

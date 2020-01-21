@@ -62,7 +62,7 @@ export default class Proposal extends Component{
             this.setState({
                 proposal: this.props.proposal,
                 deposit: <div>{this.props.proposal.total_deposit?this.props.proposal.total_deposit.map((deposit, i) => {
-                    return <div key={i}>{new Coin(deposit.amount).toString()}</div>
+                    return <div key={i}>{new Coin(deposit.amount, deposit.denom).toString()}</div>
                 }):''} </div>
             });
 
@@ -316,7 +316,7 @@ export default class Proposal extends Component{
                                             return <li key={i}>
                                                 <Account address={deposit.depositor} />
                                                 {deposit.amount.map((amount, j) => {
-                                                    return <div key={j}>{new Coin(amount.amount).toString()}</div>
+                                                    return <div key={j}>{new Coin(amount.amount, amount.denom).toString()}</div>
                                                 })}
                                             </li>
                                         }):''}

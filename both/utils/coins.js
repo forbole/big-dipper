@@ -15,24 +15,49 @@ autoformat = (value) => {
 	return numbro(value).format(formatter)
 }
 
-export default class Coin {
-	static StakingDenom = Meteor.settings.public.stakingDenom;
-	static StakingDenomPlural = Meteor.settings.public.stakingDenomPlural || (Coin.StakingDenom + 's');
-	static MintingDenom = Meteor.settings.public.mintingDenom;
-	static StakingFraction = Number(Meteor.settings.public.stakingFraction);
-	static MinStake = 1 / Number(Meteor.settings.public.stakingFraction);
+ let coinList = Meteor.settings.public.coins;
 
+
+export default class Coin {
+
+	
+	static StakingDenom = '';
+	static StakingDenomPlural = '';
+	static MintingDenom = '';
+	static StakingFraction = '';
+	static MinStake = '';
+
+	coinProperties = (amount, denom) => {
+	 
+		for (let i in coinList){
+			let coin = coinList[i] // if match the denom
+	
+			if(coin != null)
+			{
+				let denomType = coin.mintingDenom;
+	
+				if(denom === denomType)
+				{
+					Coin.StakingDenom = coin.stakingDenom;
+					Coin.StakingDenomPlural = coin.stakingDenomPlural;
+					Coin.MintingDenom = coin.mintingDenom;
+					Coin.StakingFraction = Number(coin.stakingFraction);
+					Coin.MinStake = 1 / Number(coin.stakingFraction);
+				}
+				
+			}
+ 
+			if (!denom || denom.toLowerCase() === Coin.MintingDenom.toLowerCase()) {
+				this._amount = Number(amount);
+			} 
+			else if (denom.toLowerCase() === Coin.StakingDenom.toLowerCase()) {
+				this._amount = Number(amount) * Coin.StakingFraction;
+			}
+		}
+	}
+	
 	constructor(amount, denom=null) {
-		if (typeof amount === 'object')
-			({amount, denom} = amount)
-		if (!denom || denom.toLowerCase() === Coin.MintingDenom.toLowerCase()) {
-			this._amount = Number(amount);
-		} else if (denom.toLowerCase() === Coin.StakingDenom.toLowerCase()) {
-			this._amount = Number(amount) * Coin.StakingFraction;
-		}
-		else {
-			throw Error(`unsupported denom ${denom}`);
-		}
+		 this.coinProperties(amount, denom);
 	}
 
 	get amount () {

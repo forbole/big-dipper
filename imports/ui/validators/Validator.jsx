@@ -46,7 +46,8 @@ export default class Validator extends Component{
             records: "",
             history: "",
             updateTime: "",
-            user: localStorage.getItem(CURRENTUSERADDR)
+            user: localStorage.getItem(CURRENTUSERADDR),
+            denom: "",
         }
         this.getUserDelegations();
     }
@@ -180,6 +181,7 @@ export default class Validator extends Component{
         }
         else{
             if (this.props.validatorExist){
+
                 let moniker = (this.props.validator.description&&this.props.validator.description.moniker)?this.props.validator.description.moniker:this.props.validator.address;
                 let identity = (this.props.validator.description&&this.props.validator.description.identity)?this.props.validator.description.identity:"";
                 let website = (this.props.validator.description&&this.props.validator.description.website)?this.props.validator.description.website:undefined;
@@ -274,7 +276,7 @@ export default class Validator extends Component{
                         </Nav>
                         <Switch>
                             <Route exact path="/(validator|validators)/:address" render={() => <div className="power-history">{this.state.history}</div> } />
-                            <Route path="/(validator|validators)/:address/delegations" render={() => <ValidatorDelegations address={this.props.validator.operator_address} tokens={this.props.validator.tokens} shares={this.props.validator.delegator_shares} />} />
+                            <Route path="/(validator|validators)/:address/delegations" render={() => <ValidatorDelegations address={this.props.validator.operator_address} tokens={this.props.validator.tokens} shares={this.props.validator.delegator_shares} denom={this.props.denom} />} />
                             <Route path="/(validator|validators)/:address/transactions" render={() => <ValidatorTransactions validator={this.props.validator.operator_address} delegator={this.props.validator.delegator_address} limit={100}/>} />
                       </Switch>
 
