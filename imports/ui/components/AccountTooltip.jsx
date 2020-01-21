@@ -49,13 +49,10 @@ export default class AccountTooltip extends Account{
         let moniker = validator.description && validator.description.moniker || validator.address;
         let isActive = validator.status == 2 && !validator.jailed;
 
-        return <UncontrolledTooltip key='tooltip' className='validator-tooltip' placement='right' flip={false} target={this.ref} autohide={false} fade={false}>
+        return <UncontrolledTooltip key='tooltip' data-toggle='tooltip' container='body' className='validator-tooltip' placement='right' flip={false} target={this.ref} autohide={false} fade={false}>
             <Card body className='validator-tooltip-card'>
                 <Row className='d-flex justify-content-center'>
                     <h4 className="moniker text-primary">{moniker}</h4>
-                </Row>
-                <Row className='d-flex justify-content-center avatar'>
-                    <Avatar moniker={moniker} profileUrl={validator.profile_url} address={validator.address}/>
                 </Row>
                 <Row className="voting-power data">
                     <i className="material-icons">power</i>
@@ -67,10 +64,10 @@ export default class AccountTooltip extends Account{
                 </Row>
                 {(isActive)?<Row className="commission data">
                     <i className="material-icons">call_split</i>
-                    {numbro(validator.commission.rate).format('0.00%')}
+                    {numbro(validator.commission.commission_rates.rate).format('0.00%')}
                 </Row>:null}
                 {(!isActive)?<Row className="last-seen data">
-                    {validator.lastSeen?<TimeStamp time={validator.lastSeen}/>:
+                {validator.lastSeen?<TimeStamp time={validator.lastSeen}/>:
                      (validator.unbonding_time?<TimeStamp time={validator.unbonding_time}/>:null)}
                 </Row>:null}
                 {(!isActive)?<Row className="bond-status data" xs={2}>
@@ -89,8 +86,10 @@ export default class AccountTooltip extends Account{
 
     render(){
         return [
-            <span ref={this.ref} key='link'>
-                <Link to={this.state.address}>{this.userIcon()}{this.state.moniker}</Link>
+            <span ref={this.ref} key='link' id="tooltip-avatar">
+                
+                <Link to={this.state.address}><Avatar moniker={this.state.moniker} profileUrl={this.state.validator?this.state.validator.profile_url:''} address={this.state.address} /> {this.state.moniker}</Link>
+                
             </span>,
             this.renderDetailTooltip()
         ]

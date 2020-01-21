@@ -4,17 +4,19 @@ Block Explorer for Cosmos
 
 ## Projects running on mainnets
 
-[Explore Cosmos Hub (cosmoshub-2) with Big Dipper](https://cosmos.bigdipper.live)
+[Explore Cosmos Hub (cosmoshub-3) with Big Dipper](https://cosmos.bigdipper.live)
 
 [Explore IRISnet (irishub) with Big Dipper](https://iris.bigdipper.live)
 
-[Explore Terra (columbus-2) with Big Dipper](https://terra.bigdipper.live)
+[Explore Terra (columbus-3) with Big Dipper](https://terra.bigdipper.live)
 
 [Explore LikeCoin Chain (sheungwan) with Big Dipper](http://likecoin.bigdipper.live/)
 
 [Explore Kava (kava-2) with the Big Dipper](https://kava.bigdipper.live/)
 
 ## Projects with testnets
+
+[Desmos Network](https://morpheus.desmos.network/)
 
 [Cyber Congress](https://cyberd.ai/)
 
