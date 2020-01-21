@@ -31,6 +31,7 @@ export default class AccountDetails extends Component{
             commission: 0,
             denom: '',
             allRewards: [],
+
         }
     }
 
@@ -105,6 +106,7 @@ export default class AccountDetails extends Component{
                         this.setState({
                             delegated: this.state.delegated+parseFloat(amount),
                             total: this.state.total+parseFloat(amount),
+                            total: this.state.total+parseFloat(amount)
 
                         })
                     }, this)
@@ -134,6 +136,16 @@ export default class AccountDetails extends Component{
                         })
                 }
                     
+
+                    result.rewards.forEach((k, i) => {
+                        this.setState({
+                                reward: this.state.reward.concat(parseFloat(k.reward[0].amount)),
+                                })
+                        
+                    }, this)
+
+                }
+
 
                 if (result.commission){
                     this.setState({
@@ -172,6 +184,7 @@ export default class AccountDetails extends Component{
                 reward: 0,
                 denom: '',
                 allRewards: {},
+
             }, () => {
                 this.getBalance();
             })
@@ -271,6 +284,7 @@ export default class AccountDetails extends Component{
                             reward={this.state.reward}
                             denom ={this.state.denom}
                             allRewards ={this.state.allRewards}
+
                         />
                     </Col>
                     <Col md={6}>

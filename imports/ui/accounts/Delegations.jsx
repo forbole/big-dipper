@@ -6,6 +6,7 @@ import Coin from '/both/utils/coins.js';
 import SentryBoundary from '../components/SentryBoundary.jsx'
 
 
+
 const T = i18n.createComponent();
 
 export default class AccountDelegations extends Component{
@@ -17,8 +18,9 @@ export default class AccountDelegations extends Component{
 
     render(){
         let numDelegations = this.props.delegations.length;
+
         let denomType = this.props.denom;
-         
+
         return <Card>
             <CardHeader>{(numDelegations > 0)?numDelegations:<T>accounts.no</T>} <T>accounts.delegation</T>{(numDelegations>1)?<T>accounts.plural</T>:''}</CardHeader>
             {(numDelegations > 0)?<CardBody className="list overflow-auto">
@@ -36,6 +38,9 @@ export default class AccountDelegations extends Component{
                             <Col xs={7} md={5} className="text-nowrap overflow-auto"><AccountTooltip address={d.validator_address} /></Col>
                             <Col xs={2} md={3}>{new Coin(d.balance, denomType).stakeString()}</Col>
                             <Col xs={3} md={4}>{reward?new Coin(reward.amount, reward.denom).toString(4):'No rewards '} </Col>
+                            <Col xs={2} md={3}>{new Coin(d.balance).stakeString()}</Col>
+                            <Col xs={3} md={4}>{new Coin(this.props.reward[i]).toString(4)}</Col>                            
+
                         </Row>
                     })}</SentryBoundary>
                 </Container>
