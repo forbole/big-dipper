@@ -46,7 +46,7 @@ export default class Coin {
 				}
 				
 			}
-
+ 
 			if (!denom || denom.toLowerCase() === Coin.MintingDenom.toLowerCase()) {
 				this._amount = Number(amount);
 			} 
