@@ -27,7 +27,7 @@
                 "stakingDenomPlural": "ATOMS",
                 "mintingDenom": "uatom",
                 "staking": true,
-                "stakingFraction": 1000000
+                "stakingFraction": 1000000 
             }
         ],
         "gasPrice": 0.02,
