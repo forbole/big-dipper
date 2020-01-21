@@ -16,17 +16,17 @@
         "powerReduction": null,  
         "coins": [
             {
-                "stakingDenom": "MUON",
-                "stakingDenomPlural": "MUONS",
-                "mintingDenom": "umuon",
-                "staking": false,
-                "stakingFraction": 1000000
-            },
-            {
                 "stakingDenom": "ATOM",
                 "stakingDenomPlural": "ATOMS",
                 "mintingDenom": "uatom",
                 "staking": true,
+                "stakingFraction": 1000000
+            },
+            {
+                "stakingDenom": "MUON",
+                "stakingDenomPlural": "MUONS",
+                "mintingDenom": "umuon",
+                "staking": false,
                 "stakingFraction": 1000000
             }
         ],

@@ -29,7 +29,6 @@ export default class Coin {
 
 	coinProperties = (amount, denom) => {
 	 
-		
 		for (let i in coinList){
 			let coin = coinList[i] // if match the denom
 	
@@ -54,13 +53,7 @@ export default class Coin {
 			else if (denom.toLowerCase() === Coin.StakingDenom.toLowerCase()) {
 				this._amount = Number(amount) * Coin.StakingFraction;
 			}
-			else {
-				throw Error(`unsupported denom ${denom}`);
-			}
-	
 		}
-	 
-
 	}
 	
 	constructor(amount, denom=null) {
