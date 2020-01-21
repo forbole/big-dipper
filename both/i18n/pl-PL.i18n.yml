@@ -24,7 +24,7 @@ common:
     retry: 'Spróbuj ponownie'
     rewards: 'Nagrody'
 navbar:
-    siteName: 'The Big Dipper'
+    siteName: 'Wielki Wóz'
     version: 'beta'
     validators: 'Walidatorzy'
     blocks: 'Bloki'
