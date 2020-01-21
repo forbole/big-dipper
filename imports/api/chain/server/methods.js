@@ -89,59 +89,59 @@ Meteor.methods({
                     console.log(e);
                 }
 
-		if (Meteor.settings.public.mintingDenomination) {
-                url = LCD + '/supply/total/'+Meteor.settings.public.mintingDenom;
-                try{
-                    response = HTTP.get(url);
-                    let supply = JSON.parse(response.content).result;
-                    chainStates.totalSupply = parseInt(supply);
-                }
-                catch(e){
-                    console.log(e);
-                }
+                if (Meteor.settings.public.mintingDenom) {
+                    url = LCD + '/supply/total/'+Meteor.settings.public.mintingDenom;
+                    try{
+                        response = HTTP.get(url);
+                        let supply = JSON.parse(response.content).result;
+                        chainStates.totalSupply = parseInt(supply);
+                    }
+                    catch(e){
+                        console.log(e);
+                    }
 
-                url = LCD + '/distribution/community_pool';
-                try {
-                    response = HTTP.get(url);
-                    let pool = JSON.parse(response.content).result;
-                    if (pool && pool.length > 0){
-                        chainStates.communityPool = [];
-                        pool.forEach((amount, i) => {
-                            chainStates.communityPool.push({
-                                denom: amount.denom,
-                                amount: parseFloat(amount.amount)
+                    url = LCD + '/distribution/community_pool';
+                    try {
+                        response = HTTP.get(url);
+                        let pool = JSON.parse(response.content).result;
+                        if (pool && pool.length > 0){
+                            chainStates.communityPool = [];
+                            pool.forEach((amount, i) => {
+                                chainStates.communityPool.push({
+                                    denom: amount.denom,
+                                    amount: parseFloat(amount.amount)
+                                })
                             })
-                        })
+                        }
                     }
-                }
-                catch (e){
-                    console.log(e)
-                }
+                    catch (e){
+                        console.log(e)
+                    }
 
-                url = LCD + '/minting/inflation';
-                try{
-                    response = HTTP.get(url);
-                    let inflation = JSON.parse(response.content).result;
-                    if (inflation){
-                        chainStates.inflation = parseFloat(inflation)
+                    url = LCD + '/minting/inflation';
+                    try{
+                        response = HTTP.get(url);
+                        let inflation = JSON.parse(response.content).result;
+                        if (inflation){
+                            chainStates.inflation = parseFloat(inflation)
+                        }
                     }
-                }
-                catch(e){
-                    console.log(e);
-                }
+                    catch(e){
+                        console.log(e);
+                    }
 
-                url = LCD + '/minting/annual-provisions';
-                try{
-                    response = HTTP.get(url);
-                    let provisions = JSON.parse(response.content);
-                    if (provisions){
-                        chainStates.annualProvisions = parseFloat(provisions.result)
+                    url = LCD + '/minting/annual-provisions';
+                    try{
+                        response = HTTP.get(url);
+                        let provisions = JSON.parse(response.content);
+                        if (provisions){
+                            chainStates.annualProvisions = parseFloat(provisions.result)
+                        }
                     }
-                }
-                catch(e){
-                    console.log(e);
-                }
-		}
+                    catch(e){
+                        console.log(e);
+                    }
+            		}
 
                 ChainStates.insert(chainStates);
             }
