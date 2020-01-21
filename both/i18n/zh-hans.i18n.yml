@@ -32,6 +32,8 @@ navbar:
     votingPower: '投票权分布'
     lang: "中文（简）"
     english: "English"
+    polish: "Polski"
+    spanish: "Español"
     chinese: "中文（繁）"
     simChinese: "中文（简）"
     license: 'LICENSE'
@@ -127,6 +129,7 @@ transactions:
     txHash: '交易哈希'
     valid: '有效'
     fee: '费用'
+    noFee: 'No fee' 
     gasUsedWanted: '瓦斯 (已用 / 要求)'
     noTxFound: '没有这笔交易。'
     noValidatorTxsFound: '没有跟这个验证人有关的交易'
@@ -181,6 +184,7 @@ accounts:
     shares: '股数'
     mature: '成熟日期'
     no: '没有'
+    none: '没有'
     delegation: '委托'
     plural: ''
     signOut: '登出'
@@ -189,6 +193,7 @@ accounts:
     signInWithLedger: '透过 Ledger 登录'
     signInWarning: '请确定你已经连接 Ledger 设备，并已开启 <strong class="text-primary">Cosmos App 版本 1.5.0 或以上</strong>。'
     pleaseAccept: '请从你的 Ledger 设备确认。'
+    noRewards: 'No Rewards'
 activities:
     single: '一个'
     happened: '发生了'

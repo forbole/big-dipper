@@ -31,8 +31,9 @@ navbar:
     proposals: 'Propuestas'
     votingPower: 'Poder de voto'
     lang: "ES"
-    spanish: "Español"
     english: "English"
+    polish: "Polski"
+    spanish: "Español"
     chinese: "中文（繁）"
     simChinese: "中文（简）"
     license: 'LICENCIA'
@@ -128,6 +129,7 @@ transactions:
     txHash: 'Tx Hash'
     valid: 'Validez'
     fee: 'Comisión'
+    noFee: 'No fee'
     gasUsedWanted: 'Gas (usado / deseado)'
     noTxFound: 'No se encontró ninguna transacción de este tipo.'
     noValidatorTxsFound: 'No se encontró ninguna transaccion relacionada con este validador.'
@@ -161,6 +163,7 @@ proposals:
     yes: 'Si'
     abstain: 'Abstención'
     no: 'No'
+    none: 'None'
     noWithVeto: 'No con Veto'
     percentageVoted: '<span class="text-info">{$percent}</span> del poder de voto online ha votado.'
     validMessage: 'Este proposal es {$tentative}<strong>valido</strong>.'
@@ -190,6 +193,7 @@ accounts:
     signInWithLedger: 'Registrarse con Ledger'
     signInWarning: 'Por favor, asegúrese de que su dispositivo Ledger esté conectado y <strong class="text-primary">la App de Cosmos con la version 1.5.0 o superior</strong> esta abierta.'
     pleaseAccept: 'por favor, acepta en tu dispositivo Ledger.'
+    noRewards: 'No Rewards'
 activities:
     single: 'A'
     happened: 'sucedió.'

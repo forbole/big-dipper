@@ -61,7 +61,7 @@ export default class Transaction extends Component{
                                 <Col md={4} className="label"><T>transactions.fee</T></Col>
                                 <Col md={8} className="value">{(tx.tx.value.fee.amount.length > 0)?tx.tx.value.fee.amount.map((fee,i) => {
                                     return <span className="text-nowrap" key={i}> {(new Coin(parseFloat(fee.amount), fee.denom)).toString()}</span>
-                                }):<span>No fee</span>}</Col>
+                                }):<span><T>transactions.noFee</T></span>}</Col>
                                 <Col md={4} className="label"><T>transactions.gasUsedWanted</T></Col>
                                 <Col md={8} className="value">{numbro(tx.gas_used).format("0,0")} / {numbro(tx.gas_wanted).format("0,0")}</Col>
                                 <Col md={4} className="label"><T>transactions.memo</T></Col>
