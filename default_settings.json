@@ -28,27 +28,6 @@
                 "mintingDenom": "uatom",
                 "staking": true,
                 "stakingFraction": 1000000
-            },
-            {
-                "stakingDenom": "DARIC",
-                "stakingDenomPlural": "DARICS",
-                "mintingDenom": "udaric",
-                "staking": false,
-                "stakingFraction": 1000000
-            },
-            {
-                "stakingDenom": "POTIN",
-                "stakingDenomPlural": "POTINS",
-                "mintingDenom": "upotin",
-                "staking": false,
-                "stakingFraction": 1000000
-            },
-            {
-                "stakingDenom": "LIKE",
-                "stakingDenomPlural": "LIKES",
-                "mintingDenom": "nanolike",
-                "staking": false,
-                "stakingFraction": 1000000000
             }
         ],
         "gasPrice": 0.02,
