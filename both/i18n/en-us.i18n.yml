@@ -34,6 +34,7 @@ navbar:
     lang: "ENG"
     spanish: "Español"
     english: "English"
+    polish: "Polski"
     chinese: "中文（繁）"
     simChinese: "中文（简）"
     license: 'LICENSE'
@@ -129,6 +130,7 @@ transactions:
     txHash: 'Tx Hash'
     valid: 'Valid'
     fee: 'Fee'
+    noFee: 'No fee' 
     gasUsedWanted: 'Gas (used / wanted)'
     noTxFound: 'No such transaction found.'
     noValidatorTxsFound: 'No transaction related to this validator was found.'
@@ -183,6 +185,7 @@ accounts:
     shares: 'Shares'
     mature: 'Mature'
     no: 'No '
+    none: 'No '
     delegation: 'Delegation'
     plural: 's'
     signOut: 'Sign out'
@@ -191,6 +194,7 @@ accounts:
     signInWithLedger: 'Sign In With Ledger'
     signInWarning: 'Please make sure your Ledger device is connected and <strong class="text-primary">Cosmos App 1.5.0 or above</strong> is opened.'
     pleaseAccept: 'please accept in your Ledger device.'
+    noRewards: 'No Rewards'
 activities:
     single: 'A'
     happened: 'happened.'
