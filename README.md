@@ -26,7 +26,7 @@ Block Explorer for Cosmos
 
 [e-Money](https://e-money.network/)
 
-[Commit](https://explorer.commit.sg/)
+[Persistence](https://explorer.persistence.one/)
 
 [TruStory](https://explorer.testnet.trustory.io)
 
