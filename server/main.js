@@ -197,13 +197,15 @@ Meteor.startup(function(){
                     updateChainStatus();
                 }, Meteor.settings.params.statusInterval);
 
-                timerProposal = Meteor.setInterval(function(){
-                    getProposals();
-                }, Meteor.settings.params.proposalInterval);
+                if (Meteor.settings.params.proposalInterval >= 0) {
+                    timerProposal = Meteor.setInterval(function () {
+                      getProposals();
+                    }, Meteor.settings.params.proposalInterval);
 
-                timerProposalsResults = Meteor.setInterval(function(){
-                    getProposalsResults();
-                }, Meteor.settings.params.proposalInterval);
+                    timerProposalsResults = Meteor.setInterval(function () {
+                      getProposalsResults();
+                    }, Meteor.settings.params.proposalInterval);
+                }
 
                 timerMissedBlock = Meteor.setInterval(function(){
                     updateMissedBlocks();

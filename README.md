@@ -4,11 +4,11 @@ Block Explorer for Cosmos
 
 ## Projects running on mainnets
 
-[Explore Cosmos Hub (cosmoshub-2) with Big Dipper](https://cosmos.bigdipper.live)
+[Explore Cosmos Hub (cosmoshub-3) with Big Dipper](https://cosmos.bigdipper.live)
 
 [Explore IRISnet (irishub) with Big Dipper](https://iris.bigdipper.live)
 
-[Explore Terra (columbus-2) with Big Dipper](https://terra.bigdipper.live)
+[Explore Terra (columbus-3) with Big Dipper](https://terra.bigdipper.live)
 
 [Explore LikeCoin Chain (sheungwan) with Big Dipper](http://likecoin.bigdipper.live/)
 
@@ -26,7 +26,7 @@ Block Explorer for Cosmos
 
 [e-Money](https://e-money.network/)
 
-[Commit](https://explorer.commit.sg/)
+[Persistence](https://explorer.persistence.one/)
 
 [TruStory](https://explorer.testnet.trustory.io)
 
