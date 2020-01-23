@@ -32,8 +32,9 @@ navbar:
     votingPower: '投票權分佈'
     lang: "中文（繁）"
     english: "English"
-    polish: "Polski"
     spanish: "Español"
+    italian: "Italiano"
+    polish: "Polski"
     chinese: "中文（繁）"
     simChinese: "中文（简）"
     license: 'LICENSE'
