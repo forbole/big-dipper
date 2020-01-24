@@ -24,7 +24,7 @@ common:
     retry: 'Riprova'
     rewards: 'Reward'
 navbar:
-    siteName: 'Il Grande Carro'
+    siteName: 'The Big Dipper'
     version: 'beta'
     validators: 'Validatori'
     blocks: 'Blocchi'
