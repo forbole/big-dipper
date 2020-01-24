@@ -32,8 +32,9 @@ navbar:
     proposals: 'Proposals'
     votingPower: 'Voting Power'
     lang: "ENG"
-    spanish: "Español"
     english: "English"
+    spanish: "Español"
+    italian: "Italiano"
     polish: "Polski"
     chinese: "中文（繁）"
     simChinese: "中文（简）"
