@@ -17,6 +17,7 @@ import LinkIcon from '../components/LinkIcon.jsx';
 import i18n from 'meteor/universe:i18n';
 import TimeStamp from '../components/TimeStamp.jsx';
 import SentryBoundary from '../components/SentryBoundary.jsx';
+import Coin from '../../../both/utils/coins.js';
 
 const T = i18n.createComponent();
 
@@ -245,7 +246,7 @@ export default class Validator extends Component{
                             <Row>
                                 {this.props.validator.voting_power?<Col xs={12}><h1 className="display-4 voting-power"><Badge color="primary" >{numbro(this.props.validator.voting_power).format('0,0')}</Badge></h1><span>(~{numbro(this.props.validator.voting_power/this.props.chainStatus.activeVotingPower).format('0.00%')})</span></Col>:''}
                                 <Col sm={4} className="label"><T>validators.selfDelegationRatio</T></Col>
-                                    <Col sm={8} className="value">{this.props.validator.self_delegation?<span>{numbro(this.props.validator.self_delegation).format("0,0.00%")} <small className="text-secondary">(~{numbro(this.props.validator.voting_power*this.props.validator.self_delegation).format({thousandSeparated: true,mantissa:0})} {Meteor.settings.public.stakingDenom})</small></span>:'N/A'}</Col>
+                                    <Col sm={8} className="value">{this.props.validator.self_delegation?<span>{numbro(this.props.validator.self_delegation).format("0,0.00%")} <small className="text-secondary">(~{numbro(this.props.validator.voting_power*this.props.validator.self_delegation).format({thousandSeparated: true,mantissa:0})} {Coin.StakingCoin.displayName})</small></span>:'N/A'}</Col>
                                     <Col sm={4} className="label"><T>validators.proposerPriority</T></Col>
                                 <Col sm={8} className="value">{this.props.validator.proposer_priority?numbro(this.props.validator.proposer_priority).format('0,0'):'N/A'}</Col>
                                 <Col sm={4} className="label"><T>validators.delegatorShares</T></Col>

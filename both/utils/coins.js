@@ -15,49 +15,29 @@ autoformat = (value) => {
 	return numbro(value).format(formatter)
 }
 
- let coinList = Meteor.settings.public.coins;
+const coinList = Meteor.settings.public.coins;
+for (let i in coinList) {
+	const coin = coinList[i];
+	if (!coin.displayNamePlural) {
+		coin.displayNamePlural = coin.displayName + 's';
+	}
+}
 
 
 export default class Coin {
-
+	static StakingCoin = coinList.find(coin => coin.denom === Meteor.settings.public.bondDenom);
+	static MinStake = 1 / Number(Coin.StakingCoin.fraction);
 	
-	static StakingDenom = '';
-	static StakingDenomPlural = '';
-	static MintingDenom = '';
-	static StakingFraction = '';
-	static MinStake = '';
-
-	coinProperties = (amount, denom) => {
-	 
-		for (let i in coinList){
-			let coin = coinList[i] // if match the denom
-	
-			if(coin != null)
-			{
-				let denomType = coin.mintingDenom;
-	
-				if(denom === denomType)
-				{
-					Coin.StakingDenom = coin.stakingDenom;
-					Coin.StakingDenomPlural = coin.stakingDenomPlural;
-					Coin.MintingDenom = coin.mintingDenom;
-					Coin.StakingFraction = Number(coin.stakingFraction);
-					Coin.MinStake = 1 / Number(coin.stakingFraction);
-				}
-				
-			}
- 
-			if (!denom || denom.toLowerCase() === Coin.MintingDenom.toLowerCase()) {
-				this._amount = Number(amount);
-			} 
-			else if (denom.toLowerCase() === Coin.StakingDenom.toLowerCase()) {
-				this._amount = Number(amount) * Coin.StakingFraction;
-			}
+	constructor(amount, denom=Meteor.settings.public.bondDenom) {
+		const lowerDenom = denom.toLowerCase();
+		this._coin = coinList.find(coin =>
+			coin.denom.toLowerCase() === lowerDenom || coin.displayName.toLowerCase() === lowerDenom
+		);
+		if (lowerDenom === this._coin.denom.toLowerCase()) {
+			this._amount = Number(amount);
+		} else if (lowerDenom === this._coin.displayName.toLowerCase()) {
+			this._amount = Number(amount) * this._coin.fraction;
 		}
-	}
-	
-	constructor(amount, denom=null) {
-		 this.coinProperties(amount, denom);
 	}
 
 	get amount () {
@@ -65,16 +45,16 @@ export default class Coin {
 	}
 
 	get stakingAmount () {
-		return this._amount / Coin.StakingFraction;
+		return this._amount / this._coin.fraction;
 	}
 
 	toString (precision) {
 		// default to display in mint denom if it has more than 4 decimal places
-		let minStake = Coin.StakingFraction/(precision?Math.pow(10, precision):10000)
+		let minStake = Coin.StakingCoin.fraction/(precision?Math.pow(10, precision):10000)
 		if (this.amount < minStake) {
-			return `${numbro(this.amount).format('0,0.0000' )} ${Coin.MintingDenom}`;
+			return `${numbro(this.amount).format('0,0.0000' )} ${this._coin.denom}`;
 		} else {
-			return `${precision?numbro(this.stakingAmount).format('0,0.' + '0'.repeat(precision)):autoformat(this.stakingAmount)} ${Coin.StakingDenom}`
+			return `${precision?numbro(this.stakingAmount).format('0,0.' + '0'.repeat(precision)):autoformat(this.stakingAmount)} ${this._coin.displayName}`
 		}
 	}
 
@@ -83,7 +63,7 @@ export default class Coin {
 		if (formatter) {
 			amount = numbro(amount).format(formatter)
 		}
-		return `${amount} ${Coin.MintingDenom}`;
+		return `${amount} ${this._coin.denom}`;
 	}
 
 	stakeString (formatter) {
@@ -91,6 +71,6 @@ export default class Coin {
 		if (formatter) {
 			amount = numbro(amount).format(formatter)
 		}
-		return `${amount} ${Coin.StakingDenom}`;
+		return `${amount} ${Coin.StakingCoin.displayName}`;
 	}
 }
