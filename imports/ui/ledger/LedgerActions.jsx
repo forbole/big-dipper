@@ -100,7 +100,7 @@ const TypeMeta = {
 const CoinAmount = (props) => {
         if (!props.coin && !props.amount) return null;
         let coin = new Coin(props.amount, props.denom).toString(4);
-        let denom = (props.mint)?Coin.MintingDenom:Coin.StakingDenom;
+        let denom = (props.mint)?Coin.StakingCoin.denom:Coin.StakingCoin.displayName;
         return <span><span className={props.className || 'coin'}>{coin}</span> </span>
     
 }
@@ -109,7 +109,7 @@ const Amount = (props) => {
     if (!props.coin && !props.amount) return null;
     let coin = props.coin || new Coin(props.amount, props.denom).toString(4);
     let amount = (props.mint)?Math.round(coin.amount):coin.stakingAmount;
-    let denom = (props.mint)?Coin.MintingDenom:Coin.StakingDenom;
+    let denom = (props.mint)?Coin.StakingCoin.denom:Coin.StakingCoin.displayName;
     return <span><span className={props.className || 'amount'}>{numbro(amount).format("0,0.0000")}</span> <span className='denom'>{denom}</span></span>
 }
 
@@ -322,7 +322,7 @@ class LedgerButton extends Component {
             bech32: this.state.user,
             accountNumber: this.state.currentUser.accountNumber,
             sequence: this.state.currentUser.sequence,
-            denom: Coin.MintingDenom,
+            denom: Coin.StakingCoin.denom,
             pk: this.state.pubKey,
             path: [44, 118, 0, 0, 0],
             memo: this.state.memo
@@ -406,7 +406,7 @@ class LedgerButton extends Component {
         let gasAdjustment = TypeMeta[this.state.actionType].gasAdjustment || DEFAULT_GAS_ADJUSTMENT;
         Meteor.call('transaction.simulate', simulateBody, this.state.user, this.getPath(), gasAdjustment, (err, res) =>{
             if (res){
-                Ledger.applyGas(txMsg, res, Meteor.settings.public.gasPrice, Coin.MintingDenom);
+                Ledger.applyGas(txMsg, res, Meteor.settings.public.gasPrice, Coin.StakingCoin.denom);
                 this.setStateOnSuccess('simulating', {
                     gasEstimate: res,
                     activeTab: '3',
@@ -667,9 +667,9 @@ class DelegationButtons extends LedgerButton {
             <h3>{action} {moniker?moniker:validatorAddress} {target?'to':''} {target}</h3>
             <InputGroup>
                 <Input name="delegateAmount" onChange={this.handleInputChange} data-type='coin'
-                    placeholder="Amount" min={Coin.minStake} max={maxAmount.stakingAmount} type="number"
+                    placeholder="Amount" min={Coin.MinStake} max={maxAmount.stakingAmount} type="number"
                     invalid={this.state.delegateAmount != null && !isBetween(this.state.delegateAmount, 1, maxAmount)} />
-                <InputGroupAddon addonType="append">{Coin.StakingDenom}</InputGroupAddon>
+                <InputGroupAddon addonType="append">{Coin.StakingCoin.displayName}</InputGroupAddon>
             </InputGroup>
             <Input name="memo" onChange={this.handleInputChange}
                 placeholder="Memo(optional)" type="textarea" value={this.state.memo}/>
@@ -798,7 +798,7 @@ class TransferButton extends LedgerButton {
         if (!this.state.currentUser) return null;
         let maxAmount = this.state.currentUser.availableCoin;
         return <TabPane tabId="2">
-            <h3>Transfer {Coin.StakingDenom}</h3>
+            <h3>Transfer {Coin.StakingCoin.displayName}</h3>
             <InputGroup>
                 <Input name="transferTarget" onChange={this.handleInputChange}
                     placeholder="Send to" type="text"
@@ -808,9 +808,9 @@ class TransferButton extends LedgerButton {
             <InputGroup>
                 <Input name="transferAmount" onChange={this.handleInputChange}
                     data-type='coin' placeholder="Amount"
-                    min={Coin.minStake} max={maxAmount.stakingAmount} type="number"
+                    min={Coin.MinStake} max={maxAmount.stakingAmount} type="number"
                     invalid={this.state.transferAmount != null && !isBetween(this.state.transferAmount, 1, maxAmount)}/>
-                <InputGroupAddon addonType="append">{Coin.StakingDenom}</InputGroupAddon>
+                <InputGroupAddon addonType="append">{Coin.StakingCoin.displayName}</InputGroupAddon>
             </InputGroup>
             <Input name="memo" onChange={this.handleInputChange}
                 placeholder="Memo(optional)" type="textarea" value={this.state.memo}/>
@@ -872,9 +872,9 @@ class SubmitProposalButton extends LedgerButton {
             <InputGroup>
                 <Input name="depositAmount" onChange={this.handleInputChange}
                     data-type='coin' placeholder="Amount"
-                    min={Coin.minStake} max={maxAmount.stakingAmount} type="number"
+                    min={Coin.MinStake} max={maxAmount.stakingAmount} type="number"
                     invalid={this.state.depositAmount != null && !isBetween(this.state.depositAmount, 1, maxAmount)}/>
-                <InputGroupAddon addonType="append">{Coin.StakingDenom}</InputGroupAddon>
+                <InputGroupAddon addonType="append">{Coin.StakingCoin.displayName}</InputGroupAddon>
             </InputGroup>
             <Input name="memo" onChange={this.handleInputChange}
                 placeholder="Memo(optional)" type="textarea" value={this.state.memo}/>
@@ -951,9 +951,9 @@ class ProposalActionButtons extends LedgerButton {
                 inputs = (<InputGroup>
                     <Input name="depositAmount" onChange={this.handleInputChange}
                         data-type='coin' placeholder="Amount"
-                        min={Coin.minStake} max={maxAmount.stakingAmount} type="number"
+                        min={Coin.MinStake} max={maxAmount.stakingAmount} type="number"
                         invalid={this.state.depositAmount != null && !isBetween(this.state.depositAmount, 1, maxAmount)}/>
-                    <InputGroupAddon addonType="append">{Coin.StakingDenom}</InputGroupAddon>
+                    <InputGroupAddon addonType="append">{Coin.StakingCoin.displayName}</InputGroupAddon>
                     <div>your available balance: <Amount coin={maxAmount}/></div>
                 </InputGroup>)
                 break;
