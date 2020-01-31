@@ -63,7 +63,7 @@ export default class Activites extends Component {
 
             // gov
         case "cosmos-sdk/MsgSubmitProposal":
-            const proposalId = _.get(this.props, 'events[2].attributes[0].value', null)
+            const proposalId = _.get(this.props, 'logs[0].events[2].attributes[0].value', null)
             const proposalLink = proposalId ? `/proposals/${proposalId}` : "#";
             return <p><Account address={msg.value.proposer} /> <MsgType type={msg.type} /> <T>activities.withTitle</T> <Link to={proposalLink}>{msg.value.content.value.title}</Link><T>common.fullStop</T></p>
         case "cosmos-sdk/MsgDeposit":
@@ -73,9 +73,16 @@ export default class Activites extends Component {
 
             // distribution
         case "cosmos-sdk/MsgWithdrawValidatorCommission":
-            return <p><Account address={msg.value.validator_address} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /><T>common.fullStop</T></p>
+            let formattedWithdrawValAmount = null
+            return <p><Account address={msg.value.validator_address} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> {formattedWithdrawValAmount} <T>common.fullStop</T></p>
         case "cosmos-sdk/MsgWithdrawDelegationReward":
-            return <p><Account address={msg.value.delegator_address}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <T>activities.from</T> <Account address={msg.value.validator_address} /><T>common.fullStop</T></p>
+            let formattedWithdrawDelAmount = null
+            const withdrawDelAmount = _.get(this.props, 'logs[0].events[2].attributes[0].value', null)
+            if(withdrawDelAmount !== null) {
+                formattedWithdrawDelAmount = new Coin(withdrawDelAmount.replace('nund', '')).toString();
+            }
+
+            return <p><Account address={msg.value.delegator_address}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <em className="text-success">{formattedWithdrawDelAmount}</em> <T>activities.from</T> <Account address={msg.value.validator_address} /><T>common.fullStop</T></p>
         case "cosmos-sdk/MsgModifyWithdrawAddress":
             return <p><Account address={msg.value.delegator_address}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /></p>
 

@@ -191,8 +191,8 @@ Meteor.methods({
                         // store height, hash, numtransaction and time in db
                         let blockData = {};
                         blockData.height = height;
-                        blockData.hash = block.block_meta.block_id.hash;
-                        blockData.transNum = block.block_meta.header.num_txs;
+                        blockData.hash = block.block_id.hash;
+                        blockData.transNum = block.block.data.length;
                         blockData.time = new Date(block.block.header.time);
                         blockData.lastBlockHash = block.block.header.last_block_id.hash;
                         blockData.proposerAddress = block.block.header.proposer_address;
@@ -314,7 +314,7 @@ Meteor.methods({
                             }
                         }
 
-                        let chainStatus = Chain.findOne({chainId:block.block_meta.header.chain_id});
+                        let chainStatus = Chain.findOne({chainId:block.block.header.chain_id});
                         let lastSyncedTime = chainStatus?chainStatus.lastSyncedTime:0;
                         let timeDiff;
                         let blockTime = Meteor.settings.params.defaultBlockTime;
@@ -328,7 +328,7 @@ Meteor.methods({
                         let endGetValidatorsTime = new Date();
                         console.log("Get height validators time: "+((endGetValidatorsTime-startGetValidatorsTime)/1000)+"seconds.");
 
-                        Chain.update({chainId:block.block_meta.header.chain_id}, {$set:{lastSyncedTime:blockData.time, blockTime:blockTime}});
+                        Chain.update({chainId:block.block.header.chain_id}, {$set:{lastSyncedTime:blockData.time, blockTime:blockTime}});
 
                         analyticsData.averageBlockTime = blockTime;
                         analyticsData.timeDiff = timeDiff;

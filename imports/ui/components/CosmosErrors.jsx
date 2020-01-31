@@ -99,17 +99,10 @@ export default class CosmosErrors extends Component {
             error: errors.sdk[1],
             message: ""
         }
-        if (props.logs){
-            if (props.logs.length > 0){
-                for (let i in props.logs){
-                    if (!props.logs[i].success){
-                        let error = JSON.parse(props.logs[i].log);
-                        this.state = {
-                            error: errors[error.codespace][error.code],
-                            message: error.message
-                        }
-                    }
-                }
+        if(props.codespace && props.code) {
+            this.state = {
+                error: errors[props.codespace][props.code],
+                message: props.raw_log
             }
         }
         else{
