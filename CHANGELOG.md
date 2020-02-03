@@ -16,3 +16,4 @@
 * [#228] Added rewards column to account's delegation panel
 * Added memo button in each transaction
 * [#229] Fixed the account address display
+* [#263] Fixed Tx fee to be displayed in Minting Denom or Staking Denom depending on the amount of fee
