@@ -1,5 +1,8 @@
 # Changelog
 
+## [Unreleased]
+* [#260] Fixed Token unit to display the correct Denom Name/Type
+
 ## v0.37.x-patch-9
 
 ### Release Date: 22 Jan 2020
@@ -16,4 +19,3 @@
 * [#228] Added rewards column to account's delegation panel
 * Added memo button in each transaction
 * [#229] Fixed the account address display
-* [#260] Fixed Token Unit to display the correct Denom Name/Type
