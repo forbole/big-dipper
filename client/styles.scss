@@ -887,6 +887,7 @@ body {
     font-size: 12px;
     padding: 0 1rem;
     opacity: 0.9;
+    display:block;
      
      .popover-header{
        background-color: #fff;
@@ -896,16 +897,11 @@ body {
         padding: none;
         margin-bottom: 0;
       }
-
-  }
-     
-     .uptime{
-      display:block
-     }
+    }
 
      .material-icons{
       transform: translateY(5px);
-     }
+    }
   }
 
   

@@ -4,11 +4,6 @@ import AccountTooltip from '../components/AccountTooltip.jsx';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js';
 import SentryBoundary from '../components/SentryBoundary.jsx';
-import 'react-tippy/dist/tippy.css';
-import {
-    Tooltip,
-  } from 'react-tippy';
-
 
 const T = i18n.createComponent();
 
@@ -23,8 +18,6 @@ export default class AccountDelegations extends Component{
     render(){
         let numDelegations = this.props.delegations.length;
         let denomType = this.props.denom;
-        let sadface = new Object();
-        sadface = <i className="far fa-frown"></i>;
          
         return <Card>
             <CardHeader>{(numDelegations > 0)?numDelegations:<T>accounts.no</T>} <T>accounts.delegation</T>{(numDelegations>1)?<T>accounts.plural</T>:''}</CardHeader>
@@ -40,8 +33,7 @@ export default class AccountDelegations extends Component{
                     {this.props.delegations.sort((b, a) => (a.balance - b.balance)).map((d, i) => {
                         let reward = this.props.allRewards[d.validator_address];
                         return <Row key={i} className="delegation-info">
-                            <Col xs={7} md={5} className="text-nowrap overflow-auto"> 
-  <AccountTooltip address={d.validator_address} /></Col>
+                            <Col xs={7} md={5} className="text-nowrap overflow-auto"><AccountTooltip address={d.validator_address} /></Col>
                             <Col xs={2} md={3}>{new Coin(d.balance, denomType).stakeString()}</Col>
                             <Col xs={3} md={4}>{reward?new Coin(reward.amount, reward.denom).toString(4):'No rewards '} </Col>
                         </Row>
