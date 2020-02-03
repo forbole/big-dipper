@@ -2,7 +2,7 @@
 
 ## v0.37.x-patch-9
 
-### Release Date: 22 Jan 2020
+### Release Date: 22 Jan 2020 
 
 * Added features to disable `gov` and `mint` modules if they don't exist
 * [#254] Fixed the delegation order in delegation panel
@@ -15,4 +15,4 @@
 * [#230] Removed the delegation shares in account's delegation panel
 * [#228] Added rewards column to account's delegation panel
 * Added memo button in each transaction
-* [#229] Fixed the account address display
+* [#229] Fixed the account address display 
