@@ -1,7 +1,7 @@
 # Changelog
 
 ## [Unreleased]
-* [#260] Fixed Token unit to display the correct Denom Name/Type
+* [#260] Fixed Token unit to display the correct Denom Name/Type  
 
 ## v0.37.x-patch-9
 
