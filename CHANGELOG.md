@@ -1,5 +1,8 @@
 # Changelog
 
+## [Unreleased]
+* [#267] Fixed Fee Decimal Places
+
 ## v0.37.x-patch-9
 
 ### Release Date: 22 Jan 2020

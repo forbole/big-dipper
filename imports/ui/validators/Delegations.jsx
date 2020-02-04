@@ -38,7 +38,7 @@ export default class ValidatorDelegations extends Component{
                     delegations: delegations.map((d, i) => {
                         return <Row key={i} className="delegation-info">
                             <Col md={8} className="text-nowrap overflow-auto"><Account address={d.delegator_address} /></Col>
-                            <Col md={4}>{new Coin((d.shares/this.props.shares*this.props.tokens), this.props.denom).toString(4)}s</Col>
+                            <Col md={4}>{new Coin((d.shares/this.props.shares*this.props.tokens), this.props.denom).stakeString()}s</Col>
                         </Row>
                     })
                 })
