@@ -39,6 +39,11 @@ Block Explorer for Cosmos
 3. Update Bech32 address prefixes.
 4. Update genesis file location.
 
+### Requirements
+
+* [Meteor](https://www.meteor.com/install)
+* NodeJS version 4 (this is a known [issue](https://github.com/meteor/meteor/issues/5124). It is recommended to use [nvm](https://github.com/nvm-sh/nvm): `nvm install 4; nvm use 4`)
+
 ### Run in local
 
 ```sh
