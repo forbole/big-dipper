@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-* [#227] Display extra information for Parameter Change Proposal and Community Pool Spend Proposal
+* [#227] Added additional info to be displayed for Parameter Change Proposal and Community Pool Spend Proposal
 
 ## v0.37.x-patch-9
 
