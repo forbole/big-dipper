@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+* [#227] Display extra information for Parameter Change Proposal and Community Pool Spend Proposal
+
 ## v0.37.x-patch-9
 
 ### Release Date: 22 Jan 2020
