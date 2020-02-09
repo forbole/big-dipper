@@ -170,6 +170,12 @@ proposals:
     validMessage: 'Questa proposta è {$tentative}<strong>valida</strong>.'
     invalidMessage: 'Sono stati raccolti meno del {$quorum} di voti. Questa proposta è <strong>invalida</strong>.'
     moreVoteMessage: 'Sarà una proposta valida quando <span class="text-info">{$moreVotes}</span> più voti di ora saranno raccolti.'
+    key: 'Key'
+    value: 'Value'
+    amount: 'Amount'
+    recipient: 'Recipient'
+    changes: 'Changes'
+    subspace: 'Subspace'
 votingPower:
     distribution: 'Distribuzione del potere di voto'
     pareto: 'Principio di Pareto (regola 20/80)'
