@@ -1,5 +1,5 @@
 {
-  "name": "TheBigDipper",
+  "name": "und-mainchain-explorer",
   "private": true,
   "scripts": {
     "start": "meteor run",
