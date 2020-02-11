@@ -1,4 +1,4 @@
-FROM node:8.16.2-alpine3.10
+FROM node:12.15.0-alpine3.11
 
 COPY build/mainchain-explorer.tar.gz /src/mainchain-explorer.tar.gz
 
