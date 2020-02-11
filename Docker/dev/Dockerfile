@@ -1,4 +1,4 @@
-FROM geoffreybooth/meteor-base:1.8.2
+FROM geoffreybooth/meteor-base:1.9
 
 COPY . /mainchain-explorer
 WORKDIR /mainchain-explorer
