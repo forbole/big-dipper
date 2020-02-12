@@ -192,12 +192,12 @@ Meteor.methods({
                         let blockData = {};
                         blockData.height = height;
                         blockData.hash = block.block_id.hash;
-                        blockData.transNum = block.block.data.length;
+                        blockData.transNum = (block.block.data.txs === null) ? 0 : block.block.data.txs.length;
                         blockData.time = new Date(block.block.header.time);
                         blockData.lastBlockHash = block.block.header.last_block_id.hash;
                         blockData.proposerAddress = block.block.header.proposer_address;
                         blockData.validators = [];
-                        let precommits = block.block.last_commit.precommits;
+                        let precommits = block.block.last_commit.signatures;
                         if (precommits != null){
                             // console.log(precommits.length);
                             for (let i=0; i<precommits.length; i++){
