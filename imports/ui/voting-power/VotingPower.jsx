@@ -87,8 +87,8 @@ export default class VotingPower extends Component{
             return <Spinner type="grow" color="primary" />
         }
         else{
-            if (this.props.statsExist && this.props.stats){
-                return (                    
+            if (this.props.statsExist && this.props.stats && this.state.data.hasOwnProperty('datasets')){
+                return (
                     <Card>
                         <div className="card-header"><T>common.votingPower</T></div>
                         <CardBody id="voting-power-chart">
