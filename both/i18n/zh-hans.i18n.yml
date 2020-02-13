@@ -169,6 +169,12 @@ proposals:
     validMessage: '这个提案 {$tentative} <strong>有效</strong>.'
     invalidMessage: '已投票的在线投票权少于 {$quorum}。这个提案 <strong>無效</strong>。'
     moreVoteMessage: '当再有多 <span class="text-info">{$moreVotes}</span> 投票权投了票的话，这个提案将会有效。'
+    key: 'Key'
+    value: 'Value'
+    amount: 'Amount'
+    recipient: 'Recipient'
+    changes: 'Changes'
+    subspace: 'Subspace'
 votingPower:
     distribution: '投票权分布'
     pareto: '帕累托原则 (20/80 定率)'

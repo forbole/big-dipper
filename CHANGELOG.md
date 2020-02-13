@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Unreleased]
+* [#227] Added additional info to be displayed for Parameter Change Proposal and Community Pool Spend Proposal
 * [#267] Fixed Fee Decimal Places
 * [#263] Fixed Tx fee to be displayed in Minting or Staking Denom depending on the fee amount
 * [#260] Fixed Token unit to display the correct Denom Name/Type  
