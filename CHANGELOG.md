@@ -1,5 +1,8 @@
 # Changelog
 
+## [Unreleased]
+* Changed the structure of coins.js and settings.json 
+
 ## v0.37.x-patch-9
 
 ### Release Date: 22 Jan 2020
