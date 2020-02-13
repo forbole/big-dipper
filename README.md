@@ -39,6 +39,10 @@ Block Explorer for Cosmos
 3. Update Bech32 address prefixes.
 4. Update genesis file location.
 
+### Requirements
+
+* [Meteor](https://www.meteor.com/install)
+
 ### Run in local
 
 ```sh
