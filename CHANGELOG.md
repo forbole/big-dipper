@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Unreleased]
+* [#263] Fixed Tx fee to be displayed in Minting or Staking Denom depending on the fee amount
 * [#260] Fixed Token unit to display the correct Denom Name/Type  
 
 ## v0.37.x-patch-9
