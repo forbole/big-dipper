@@ -8,8 +8,6 @@ Block Explorer for Cosmos
 
 [Explore IRISnet (irishub) with Big Dipper](https://iris.bigdipper.live)
 
-[Explore Terra (columbus-3) with Big Dipper](https://terra.bigdipper.live)
-
 [Explore LikeCoin Chain (sheungwan) with Big Dipper](http://likecoin.bigdipper.live/)
 
 [Explore Kava (kava-2) with the Big Dipper](https://kava.bigdipper.live/)
@@ -46,8 +44,7 @@ Block Explorer for Cosmos
 ### Run in local
 
 ```sh
-meteor npm install
-meteor update
+meteor npm install --save
 meteor --settings settings.json
 ```
 
@@ -57,7 +54,7 @@ meteor --settings settings.json
 ./build.sh
 ```
 
-It will create a packaged Node JS tarball at `../output`. Deploy that packaged Node JS project with process manager like [forever](https://www.npmjs.com/package/forever) or [Phusion Passenger](https://www.phusionpassenger.com/library/walkthroughs/basics/nodejs/fundamental_concepts.html).
+It will create a packaged Node JS tarball at `../output`. Deploy that packaged Node JS project with process manager like [PM2](https://github.com/Unitech/pm2) or [Phusion Passenger](https://www.phusionpassenger.com/library/walkthroughs/basics/nodejs/fundamental_concepts.html).
 
 ---
 ## Donations :pray:
