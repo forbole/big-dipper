@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Unreleased]
+* Changed the structure of coins.js and settings.json 
 * Update Meteor to v1.9
 * [#267] Fixed Fee Decimal Places
 * [#263] Fixed Tx fee to be displayed in Minting or Staking Denom depending on the fee amount

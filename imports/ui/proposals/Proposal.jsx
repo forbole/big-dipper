@@ -66,7 +66,7 @@ export default class Proposal extends Component{
             });
 
             let now = moment();
-            const powerReduction = Meteor.settings.public.powerReduction || Meteor.settings.public.stakingFraction;
+            const powerReduction = Meteor.settings.public.powerReduction || Coin.StakingCoin.fraction;
             let totalVotingPower = this.props.chain.activeVotingPower * powerReduction;
             if (this.props.proposal.voting_start_time != '0001-01-01T00:00:00Z'){
                 if (now.diff(moment(this.props.proposal.voting_start_time)) > 0){
@@ -270,7 +270,7 @@ export default class Proposal extends Component{
             if (this.props.proposalExist && this.state.proposal != ''){
                 // console.log(this.state.proposal);
                 const proposalId = Number(this.props.proposal.proposalId), maxProposalId = Number(this.props.proposalCount);
-                const powerReduction = Meteor.settings.public.powerReduction || Meteor.settings.public.stakingFraction;
+                const powerReduction = Meteor.settings.public.powerReduction || Coin.StakingCoin.fraction;
                 let totalVotingPower = this.props.chain.activeVotingPower * powerReduction;
                 return <div>
                     <Helmet>

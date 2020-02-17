@@ -4,6 +4,7 @@ import { getAddress } from 'tendermint/lib/pubkey.js';
 import { Chain, ChainStates } from '../chain.js';
 import { Validators } from '../../validators/validators.js';
 import { VotingPowerHistory } from '../../voting-power/history.js';
+import Coin from '../../../../both/utils/coins.js';
 
 findVotingPower = (validator, genValidators) => {
     for (let v in genValidators){
@@ -89,8 +90,8 @@ Meteor.methods({
                     console.log(e);
                 }
 
-                if (Meteor.settings.public.mintingDenom) {
-                    url = LCD + '/supply/total/'+Meteor.settings.public.mintingDenom;
+                if ( Coin.StakingCoin.denom ) {
+                    url = LCD + '/supply/total/'+ Coin.StakingCoin.denom;
                     try{
                         response = HTTP.get(url);
                         let supply = JSON.parse(response.content).result;
@@ -227,7 +228,7 @@ Meteor.methods({
                                 min_self_delegation: msg[m].value.min_self_delegation,
                                 operator_address: msg[m].value.validator_address,
                                 delegator_address: msg[m].value.delegator_address,
-                                voting_power: Math.floor(parseInt(msg[m].value.value.amount) / Meteor.settings.public.stakingFraction),
+                                voting_power: Math.floor(parseInt(msg[m].value.value.amount) / Coin.StakingCoin.fraction),
                                 jailed: false,
                                 status: 2
                             }
