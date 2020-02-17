@@ -350,20 +350,29 @@ body {
   
   .proposal {
     padding: 1em;
-    margin-bottom: 1em;
+    margin-bottom: 0.5em;
   
     .label {
-      padding: 0.3em;
+      padding: 0.5em;
       word-wrap: break-word;
+      font-weight: bold;
     }
   
     .value {
-      padding: 0.3em;
+      padding: 0.5em;
       word-wrap: break-word;
+      vertical-align: middle;
   
       .tally-result-value {
         white-space: nowrap;
       }
+    }
+
+    .value-table{
+      padding: 0.5em 0.5em 0 0.5em;
+      word-wrap: break-word;
+      vertical-align: middle;
+      margin-bottom: -1em;
     }
   
     .tally-result-detail {
@@ -381,9 +390,6 @@ body {
       margin-top: 0.5em;
     }
   
-    .label {
-      font-weight: bold;
-    }
   
     .tally-result i.fas {
       min-width: 1.5em;

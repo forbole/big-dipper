@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import { Row, Col, Progress, Card, CardHeader, CardBody, Spinner,
-    TabContent, TabPane, Nav, NavLink, NavItem } from 'reactstrap';
+    TabContent, TabPane, Nav, NavLink, NavItem, Table } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { ProposalStatusIcon, VoteIcon } from '../components/Icons';
 import Account from '../components/Account.jsx';
@@ -25,7 +25,6 @@ const Result = posed.div({
 export default class Proposal extends Component{
     constructor(props){
         super(props);
-
         let showdown  = require('showdown');
         showdown.setFlavor('github');
         this.state = {
@@ -297,6 +296,17 @@ export default class Proposal extends Component{
                             <Col md={3} className="label"><T>proposals.description</T></Col>
                             <Col md={9} className="value"><Markdown markup={this.props.proposal.content.value.description} /></Col>
                         </Row>
+                        {/* Community Pool Spend Proposal */}
+                        {(this.props.proposal.content.type === 'cosmos-sdk/CommunityPoolSpendProposal')?<Row className="mb-2 border-top">
+                            <Col md={3} className="label"><T>proposals.recipient</T></Col>
+                            <Col md={9} className="value"> <Account address={this.props.proposal.content.value.recipient}/></Col> 
+                        </Row>:null}
+                        {(this.props.proposal.content.type === 'cosmos-sdk/CommunityPoolSpendProposal')?<Row className="mb-2 border-top">
+                            <Col md={3} className="label"><T>proposals.amount</T></Col>
+                            <Col md={9} className="value"> {this.props.proposal.content.value.amount.map((amount, j) => {
+                                return <div key={j}>{new Coin(amount.amount, amount.denom).toString()}</div>
+                            })}</Col> 
+                        </Row>:null}
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposalType</T></Col>
                             <Col md={9} className="value">{this.props.proposal.content.type.substr(11).match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</Col>
@@ -324,6 +334,31 @@ export default class Proposal extends Component{
                                 </Result>
                             </Col>
                         </Row>
+                        {/* Parameter Change Proposal */}
+                        {(this.props.proposal.content.type === 'cosmos-sdk/ParameterChangeProposal')?<Row className="mb-2 border-top">
+                            <Col md={3} className="label"><T>proposals.changes</T></Col>
+                            <Col md={6} className="value-table text-center">
+                            <Table bordered responsive="sm">
+                            <thead>
+                                <tr bgcolor="#ededed">
+                                <th><T>proposals.subspace</T></th>
+                                <th><T>proposals.key</T></th>
+                                <th><T>proposals.value</T></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                <td>{this.props.proposal.content.value.changes.map((changesItem, i) => {
+                                return <div key={i}>{changesItem.subspace.charAt(0).toUpperCase() + changesItem.subspace.slice(1)} </div> })}</td>
+                                <td>{this.props.proposal.content.value.changes.map((changesItem, i) => {
+                                return <div key={i}>{changesItem.key.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</div> })}</td>
+                                <td> {this.props.proposal.content.value.changes.map((changesItem, i) => {
+                                return <div key={i}>{numbro(changesItem.value.replace (/"/g, "")).format("0,000")}</div> })}</td>
+                                </tr>
+                            </tbody>
+                            </Table>
+                             </Col>
+                        </Row>:null}
                         <Row className="mb-2 border-top tally-result">
                             <Col md={3} className="label"><T>proposals.tallyResult</T> <em>({this.state.tallyDate})</em></Col>
                             <Col md={9} className="value">
