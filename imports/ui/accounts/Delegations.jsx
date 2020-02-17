@@ -3,10 +3,10 @@ import { Card, CardHeader, CardBody, Container, Row, Col, Spinner } from 'reacts
 import AccountTooltip from '../components/AccountTooltip.jsx';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js';
-import SentryBoundary from '../components/SentryBoundary.jsx'
-
+import SentryBoundary from '../components/SentryBoundary.jsx';
 
 const T = i18n.createComponent();
+
 
 export default class AccountDelegations extends Component{
     constructor(props){
@@ -18,8 +18,6 @@ export default class AccountDelegations extends Component{
     render(){
         let numDelegations = this.props.delegations.length;
         let denomType = this.props.denom;
-        let sadface = new Object();
-        sadface = <i className="far fa-frown"></i>;
          
         return <Card>
             <CardHeader>{(numDelegations > 0)?numDelegations:<T>accounts.no</T>} <T>accounts.delegation</T>{(numDelegations>1)?<T>accounts.plural</T>:''}</CardHeader>

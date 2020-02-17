@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { Meteor } from 'meteor/meteor';
 import { Link } from 'react-router-dom';
-import { Badge, Progress, Row, Col, Card, Spinner, UncontrolledTooltip } from 'reactstrap';
+import { Badge, Progress, Row, Col, Card, Spinner, UncontrolledPopover, PopoverHeader, PopoverBody, CardTitle, CardText } from 'reactstrap';
 import numbro from 'numbro';
 import Avatar from '../components/Avatar.jsx';
 import Account from './Account.jsx';
 import TimeStamp from '../components/TimeStamp.jsx';
+
+
 
 export default class AccountTooltip extends Account{
     constructor(props){
@@ -49,49 +51,52 @@ export default class AccountTooltip extends Account{
         let moniker = validator.description && validator.description.moniker || validator.address;
         let isActive = validator.status == 2 && !validator.jailed;
 
-        return <UncontrolledTooltip key='tooltip' data-toggle='tooltip' container='body' className='validator-tooltip' placement='right' flip={false} target={this.ref} autohide={false} fade={false}>
-            <Card body className='validator-tooltip-card'>
-                <Row className='d-flex justify-content-center'>
-                    <h4 className="moniker text-primary">{moniker}</h4>
-                </Row>
-                <Row className="voting-power data">
-                    <i className="material-icons">power</i>
-                    {validator.voting_power?numbro(validator.voting_power).format('0,0'):0}
-                </Row>
-                <Row className="self-delegation data">
-                    <i className="material-icons">equalizer</i>
-                    {validator.self_delegation?numbro(validator.self_delegation).format('0.00%'):'N/A'}
-                </Row>
-                {(isActive)?<Row className="commission data">
-                    <i className="material-icons">call_split</i>
-                    {numbro(validator.commission.commission_rates.rate).format('0.00%')}
-                </Row>:null}
-                {(!isActive)?<Row className="last-seen data">
-                {validator.lastSeen?<TimeStamp time={validator.lastSeen}/>:
-                     (validator.unbonding_time?<TimeStamp time={validator.unbonding_time}/>:null)}
-                </Row>:null}
-                {(!isActive)?<Row className="bond-status data" xs={2}>
-                    <Col xs={6}>{(validator.status == 0)?<Badge color="secondary">Unbonded</Badge>:<Badge color="warning">Unbonding</Badge>}</Col>
-                    <Col xs={6}>{validator.jailed?<Badge color="danger">Jailed</Badge>:''}</Col>
-                </Row>:null}
-                {(isActive)?<Row className="uptime data">
-                    <i className="material-icons">flash_on</i>
-                    <Progress value={validator.uptime} style={{width:'80%'}}>
-                       {validator.uptime?numbro(validator.uptime/100).format('0%'):0}
-                    </Progress>
-                </Row>:null}
-            </Card>
-        </UncontrolledTooltip>
+        return <UncontrolledPopover className='validator-popover' trigger="hover" placement="right" target={this.ref}>
+            <Card className='validator-popover-card' body outline color="danger">
+        <PopoverHeader>
+        <CardTitle className='d-flex justify-content-center'>
+        <h4 className="moniker text-primary">{moniker}</h4>
+        </CardTitle>
+        </PopoverHeader>
+        <PopoverBody>
+        <CardText className="voting-power data">
+            <i className="material-icons">power </i>
+            {validator.voting_power?numbro(validator.voting_power).format('0,0'):0}
+        </CardText>
+        <CardText className="self-delegation data">
+            <i className="material-icons">equalizer </i>
+            {validator.self_delegation?numbro(validator.self_delegation).format('0.00%'):'N/A'}
+        </CardText>
+        {(isActive)?<CardText className="commission data">
+            <i className="material-icons">call_split </i>
+            {numbro(validator.commission.commission_rates.rate).format('0.00%')}
+         </CardText>:null}
+        {(!isActive)?<CardText className="last-seen data">
+        <i class="material-icons">access_time </i>
+        {validator.lastSeen?<TimeStamp time={validator.lastSeen}/>:
+            (validator.unbonding_time?<TimeStamp time={validator.unbonding_time}/>:null)}
+         </CardText>:null}
+        {(!isActive)?<CardText className="bond-status data" xs={2}>
+        <Col xs={6}>{(validator.status == 0)?<Badge color="secondary">Unbonded</Badge>:<Badge color="warning">Unbonding</Badge>}</Col>
+        <Col xs={6}>{validator.jailed?<Badge color="danger">Jailed</Badge>:''}</Col>
+         </CardText>:null}
+        {(isActive)?<CardText className="uptime data">
+        <i className="material-icons">flash_on</i><Progress value={validator.uptime} style={{width:'70%', display:'inline-block'}}>{validator.uptime?numbro(validator.uptime/100).format('0%'):0}
+        </Progress>
+        </CardText>:null}            
+        </PopoverBody>
+        </Card>
+        </UncontrolledPopover>
     }
 
     render(){
+           
         return [
-            <span ref={this.ref} key='link' id="tooltip-avatar">
-                
-                <Link to={this.state.address}><Avatar moniker={this.state.moniker} profileUrl={this.state.validator?this.state.validator.profile_url:''} address={this.state.address} /> {this.state.moniker}</Link>
-                
+            <span ref={this.ref} key='link' className="validator-popover-row">
+            <Link to={this.state.address}><Avatar moniker={this.state.moniker} profileUrl={this.state.validator?this.state.validator.profile_url:''} address={this.state.address} /> {this.state.moniker} </Link>
             </span>,
-            this.renderDetailTooltip()
+             this.renderDetailTooltip()
         ]
     }
 }
+
