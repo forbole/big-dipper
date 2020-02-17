@@ -883,14 +883,33 @@ body {
     border-left-color: $gray-700;
   }
   
-  .validator-tooltip .tooltip-inner {
-    color: $gray-700; 
-    min-width: 200px;
-    padding: 0.1rem 0.1rem;
-    background-color: #fff;
-    
+  .validator-popover-row .img-fluid{
+    height: 30px;
   }
-  
+
+  .validator-popover .validator-popover-card {
+    min-width:235px;
+    position:absolute;
+    font-size: 12px;
+    padding: 0 0.5rem;
+    opacity: 0.9;
+    display:block;
+     
+     .popover-header{
+       background-color: #fff;
+       padding-top: 1rem;
+
+      .card-title{
+        padding: none;
+        margin-bottom: 0;
+      }
+    }
+
+     .material-icons{
+      transform: translateY(5px);
+    }
+  }
+
   
   .redelegate-validators {
     display: inline-block;
