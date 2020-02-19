@@ -14,7 +14,8 @@ export default class VotingPower extends Component{
         super(props);
         this.state = {
             data: {},
-            options: {}
+            options: {},
+            height: 0
         }
     }
 
@@ -44,6 +45,9 @@ export default class VotingPower extends Component{
                 let alpha = (this.props.stats.length+1-v)/this.props.stats.length*0.8+0.2;
                 backgroundColors.push('rgba(189, 8, 28,'+alpha+')');
             }
+
+            let chartHeight = 50*data.length;
+
             this.setState({
                 data:{
                     labels:labels,
@@ -75,10 +79,10 @@ export default class VotingPower extends Component{
                             }
                         }]
                     }
-                }
+                },
+                height: chartHeight
             });
 
-            $("#voting-power-chart").height(16*data.length);
         }
     }
 
@@ -92,7 +96,7 @@ export default class VotingPower extends Component{
                     <Card>
                         <div className="card-header"><T>common.votingPower</T></div>
                         <CardBody id="voting-power-chart">
-                            <SentryBoundary><HorizontalBar data={this.state.data} options={this.state.options} /></SentryBoundary>
+                            <SentryBoundary><HorizontalBar height={this.state.height} data={this.state.data} options={this.state.options} /></SentryBoundary>
                         </CardBody>
                     </Card>
                 );   
