@@ -24,7 +24,7 @@ class SignersChart extends Component {
         let data = [];
         let backgroundColors = [];
 
-        if (this.props.blocks != prevProps.blocks){
+        if (this.props.blocks != prevProps.blocks && this.props.validators != prevProps.validators){
             if (this.props.blocks.length > 0 && this.props.validators.length > 0){
                 for(let i = 0; i < this.props.validators.length; i++) {
                     let validator = this.props.validators[i]
