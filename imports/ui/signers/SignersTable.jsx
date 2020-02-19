@@ -30,7 +30,8 @@ export default class SignersTable extends Component {
                         address: validator.address,
                         website: validator.description.website,
                         lastSeen: validator.lastSeen,
-                        numSigned: 0
+                        numSigned: 0,
+                        lastSigned: 0
                     }
                 }
 
@@ -39,6 +40,9 @@ export default class SignersTable extends Component {
                     for(let k = 0; k < block.validators.length; k++) {
                         if(signersObj[block.validators[k]] !== undefined) {
                             signersObj[block.validators[k]].numSigned++
+                            if(block.height > signersObj[block.validators[k]].lastSigned) {
+                                signersObj[block.validators[k]].lastSigned = block.height
+                            }
                         }
                     }
                 }

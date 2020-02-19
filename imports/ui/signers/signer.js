@@ -15,10 +15,10 @@ export default class Signer extends Component {
             return <Row className="block-info">
                 <Col xs={1}><Link to={"/validator/"+this.props.signer.address}>{this.props.signer.moniker}</Link></Col>
                 <Col xs={4}>{this.props.signer.operatorAddress}</Col>
-                <Col xs={3}><a href={addhttp(this.props.signer.website)} target="_blank">{this.props.signer.website}</a></Col>
-
+                <Col xs={2}><a href={addhttp(this.props.signer.website)} target="_blank">{this.props.signer.website}</a></Col>
                 <Col xs={1}>{numbro(this.props.signer.numSigned).format('0,0')}</Col>
                 <Col xs={1}>{missed}% </Col>
+                <Col xs={1}><Link to={"/blocks/"+this.props.signer.lastSigned}>{numbro(this.props.signer.lastSigned).format('0,0')}</Link></Col>
                 <Col xs={2}>{lastSeen}</Col>
             </Row>
         }

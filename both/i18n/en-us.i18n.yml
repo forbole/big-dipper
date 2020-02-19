@@ -202,6 +202,7 @@ signers:
     blocksSigned: 'Blocks Signed'
     signed: 'Signed'
     percentMissed: '% Missed'
+    lastSigned: 'Last Signed'
 activities:
     single: 'A'
     happened: 'happened.'
