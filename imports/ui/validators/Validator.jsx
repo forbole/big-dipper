@@ -188,6 +188,9 @@ export default class Validator extends Component{
                 let website = (this.props.validator.description&&this.props.validator.description.website)?this.props.validator.description.website:undefined;
                 let details = (this.props.validator.description&&this.props.validator.description.details)?this.props.validator.description.details:"";
 
+                const powerReduction = Meteor.settings.public.powerReduction || Coin.StakingCoin.fraction;
+                const votingPowerToCoinRatio = powerReduction / Coin.StakingCoin.fraction;
+
                 return <Row className="validator-details">
                     <Helmet>
                         <title>{ moniker } - LikeChain Validator | The Big Dipper</title>
@@ -240,14 +243,23 @@ export default class Validator extends Component{
                         <Card>
                         <div className="card-header"><T>common.votingPower</T></div>
                             <CardBody className="voting-power-card">
-                                {this.state.user?<DelegationButtons validator={this.props.validator}
-                                    currentDelegation={this.state.currentUserDelegation}
-                                    history={this.props.history} stakingParams={this.props.chainStatus.staking?this.props.chainStatus.staking.params:null}/>:''}
-                                <Row>
-                                    {this.props.validator.voting_power?<Col xs={12}><h1 className="display-4 voting-power"><Badge color="primary" >{numbro(this.props.validator.voting_power).format('0,0')}</Badge></h1><span>(~{numbro(this.props.validator.voting_power/this.props.chainStatus.activeVotingPower).format('0.00%')})</span></Col>:''}
-                                    <Col sm={4} className="label"><T>validators.selfDelegationRatio</T></Col>
-                                    <Col sm={8} className="value">{this.props.validator.self_delegation?<span>{numbro(this.props.validator.self_delegation).format("0,0.00%")} <small className="text-secondary">(~{numbro(this.props.validator.voting_power*this.props.validator.self_delegation).format({thousandSeparated: true,mantissa:0})} {Coin.StakingCoin.displayName})</small></span>:'N/A'}</Col>
-                                    <Col sm={4} className="label"><T>validators.proposerPriority</T></Col>
+                            {this.state.user?<DelegationButtons validator={this.props.validator}
+                                currentDelegation={this.state.currentUserDelegation}
+                                history={this.props.history} stakingParams={this.props.chainStatus.staking?this.props.chainStatus.staking.params:null}/>:''}
+                            <Row>
+                                {this.props.validator.voting_power?<Col xs={12}><h1 className="display-4 voting-power"><Badge color="primary" >{numbro(this.props.validator.voting_power).format('0,0')}</Badge></h1><span>(~{numbro(this.props.validator.voting_power/this.props.chainStatus.activeVotingPower).format('0.00%')})</span></Col>:''}
+                                <Col sm={4} className="label"><T>validators.selfDelegationRatio</T></Col>
+
+                                <Col sm={8} className="value">{
+                                    this.props.validator.self_delegation ? <span>
+                                        {numbro(this.props.validator.self_delegation).format("0,0.00%")}
+                                        <small className="text-secondary">
+                                            (~{numbro(this.props.validator.voting_power*this.props.validator.self_delegation*votingPowerToCoinRatio).format({thousandSeparated: true,mantissa:0})} {Coin.StakingCoin.displayName})
+                                        </small>
+                                    </span> : 'N/A'
+                                }</Col>
+                                <Col sm={4} className="label"><T>validators.proposerPriority</T></Col>
+
                                 <Col sm={8} className="value">{this.props.validator.proposer_priority?numbro(this.props.validator.proposer_priority).format('0,0'):'N/A'}</Col>
                                 <Col sm={4} className="label"><T>validators.delegatorShares</T></Col>
                                     <Col sm={8} className="value">{numbro(this.props.validator.delegator_shares).format('0,0.00')}</Col>

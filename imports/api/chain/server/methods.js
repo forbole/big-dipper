@@ -90,8 +90,10 @@ Meteor.methods({
                     console.log(e);
                 }
 
-                if ( Coin.StakingCoin.denom ) {
-                    url = LCD + '/supply/total/'+ Coin.StakingCoin.denom;
+              
+                if (Coin.StakingCoin.denom) {
+                    url = LCD + '/supply/total/'+Coin.StakingCoin.denom;
+
                     try{
                         response = HTTP.get(url);
                         let supply = JSON.parse(response.content).result;
