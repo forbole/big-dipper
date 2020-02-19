@@ -36,6 +36,7 @@ navbar:
     simChinese: "中文（简）"
     license: 'LICENSE'
     forkMe: 'Fork me!'
+    signers: 'Signers'
 consensus:
     consensusState: 'Consensus State'
     round: 'Round'
@@ -111,6 +112,7 @@ validators:
     lastSyncTime: 'Last sync time'
     delegator: 'Delegator'
     amount: 'Amount'
+    website: 'Website'
 blocks:
     block: 'Block'
     proposer: 'Proposer'
@@ -192,6 +194,14 @@ accounts:
     signInWithLedger: 'Sign In With Ledger'
     signInWarning: 'Please make sure your Ledger device is connected and <strong class="text-primary">Cosmos App 1.5.0 or above</strong> is opened.'
     pleaseAccept: 'please accept in your Ledger device.'
+signers:
+    latestSigners: 'Latest Signers'
+    signers: 'Signers'
+    active: 'Active Signers'
+    activeValidators: 'Active Validators'
+    blocksSigned: 'Blocks Signed'
+    signed: 'Signed'
+    percentMissed: '% Missed'
 activities:
     single: 'A'
     happened: 'happened.'
