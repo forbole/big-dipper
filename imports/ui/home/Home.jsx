@@ -16,7 +16,7 @@ export default class Home extends Component{
         return <div id="home">
             <Helmet>
                 <title>Unification Mainchain Explorer</title>
-                <meta name="description" content="Official UND Mainchain implementation, built using Cosmos SDK." />
+                <meta name="description" content="Official UND Mainchain implementation" />
             </Helmet>
             <Row>
                 <Col md={3} xs={12}><h1>{Meteor.settings.public.chainName}</h1></Col>

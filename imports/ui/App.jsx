@@ -18,6 +18,7 @@ import SearchBar from '/imports/ui/components/SearchBar.jsx';
 import moment from 'moment';
 import SentryBoundary from '/imports/ui/components/SentryBoundary.jsx';
 import NotFound from '/imports/ui/pages/NotFound.jsx';
+import SignersPage from "./signers/SignersPage";
 
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -90,6 +91,7 @@ class App extends Component {
                                 <Route path="/validators/inactive" render={(props) => <Validators {...props} inactive={true} />} />
                                 <Route path="/voting-power-distribution" component={Distribution} />
                                 <Route path="/(validator|validators)" component={ValidatorDetails} />
+                                <Route path="/signers" exact component={SignersPage} />
                                 <Route component={NotFound} />
                             </Switch>
                         </SentryBoundary>

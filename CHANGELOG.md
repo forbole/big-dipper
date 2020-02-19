@@ -2,6 +2,16 @@
 
 See commits for individual file changes.
 
+## [PR23](https://github.com/unification-com/mainchain-explorer/pull/23) 19/02/2020
+
+* [[`99f29b6a5d`](https://github.com/nodejs/node/commit/99f29b6a5d)] - production bundle (Codegnosis)
+* [[`cd7a3656c2`](https://github.com/nodejs/node/commit/cd7a3656c2)] - Signers - check prevProps for validators too (Codegnosis)
+* [[`d5d9a7943c`](https://github.com/nodejs/node/commit/d5d9a7943c)] - plug in last 1000 signers page (Codegnosis)
+* [[`6b89ab1aba`](https://github.com/nodejs/node/commit/6b89ab1aba)] - Last 1000 blocks signed component (Codegnosis)
+* [[`e2ec8fe7f7`](https://github.com/nodejs/node/commit/e2ec8fe7f7)] - VotingPower dynamic chart height fix (Codegnosis)
+* [[`71c8e7e90f`](https://github.com/nodejs/node/commit/71c8e7e90f)] - UND reference fixes (Codegnosis)
+* [[`c2cd3eba4f`](https://github.com/nodejs/node/commit/c2cd3eba4f)] - i18n (Codegnosis)
+
 ## [PR21](https://github.com/unification-com/mainchain-explorer/pull/21) 14/02/2020
 
 * [[`aaaf904066`](https://github.com/nodejs/node/commit/aaaf904066)] - production bundle (Codegnosis)

@@ -36,6 +36,7 @@ navbar:
     simChinese: "中文（简）"
     license: 'LICENSE'
     forkMe: 'Fork me!'
+    signers: '簽名人'
 consensus:
     consensusState: '共識狀態'
     round: '輪數'
@@ -111,6 +112,7 @@ validators:
     lastSyncTime: '上一次同步時間'
     delegator: '委托人'
     amount: '數量'
+    website: '網站'
 blocks:
     proposer: '建塊人'
     block: '區塊'
@@ -192,6 +194,14 @@ accounts:
     signInWithLedger: '透過 Ledger 登入'
     signInWarning: '請確定你已經連接 Ledger 設備，並已開啓 <strong class="text-primary">Cosmos App 版本 1.5.0 或以上</strong>。'
     pleaseAccept: '請從你的 Ledger 設備確認。'
+signers:
+    latestSigners: 'Latest Signers'
+    signers: 'Signers'
+    active: 'Active Signers'
+    activeValidators: 'Active Validators'
+    blocksSigned: 'Blocks Signed'
+    signed: 'Signed'
+    percentMissed: '% Missed'
 activities:
     single: '一個'
     happened: '發生了'
