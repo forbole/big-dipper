@@ -2,6 +2,11 @@
 
 See commits for individual file changes.
 
+## [PR24](https://github.com/unification-com/mainchain-explorer/pull/24) 19/02/2020
+
+* [[`446b70dfa0`](https://github.com/nodejs/node/commit/446b70dfa0)] - production bundle (Codegnosis)
+* [[`dab1a0e0f1`](https://github.com/nodejs/node/commit/dab1a0e0f1)] - add last block signed to signers info (Codegnosis)
+
 ## [PR23](https://github.com/unification-com/mainchain-explorer/pull/23) 19/02/2020
 
 * [[`99f29b6a5d`](https://github.com/nodejs/node/commit/99f29b6a5d)] - production bundle (Codegnosis)
