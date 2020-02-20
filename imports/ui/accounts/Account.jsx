@@ -147,7 +147,7 @@ export default class AccountDetails extends Component{
 
                     this.setState({
                         rewards: [...totalRewards],
-                        total: cloneDeep(totalAmount)
+                        total: [...totalAmount]
                     })
     
             }
@@ -288,17 +288,9 @@ export default class AccountDetails extends Component{
 
 
     findCoin(coins){
-        for(let b in coins){
-            if(this.state.denom === coins[b].denom)
-            return new Coin(coins[b].amount, coins[b].denom).toString(4)
-        }
-    }
-
-    findTotalValue(findTotal){
-        for(let c in findTotal){
-            if(this.state.denom === findTotal[c].denom)
-                return findTotal[c].amount
-        }
+        let finder = (coins).find(({denom}) => denom === this.state.denom);
+        let coinFinder = finder ? new Coin(finder.amount, finder.denom).toString(4) : null;
+        return coinFinder
     }
 
     findValue(params){
@@ -337,7 +329,7 @@ export default class AccountDetails extends Component{
                         <CardHeader>
                             Balance
                             <div className="shareLink float-right">{this.renderShareLink()}</div>
-                            <div className="coin-dropdown float-right"><h5>Change Coin:</h5> {this.renderDropDown()}</div>
+                            <div className="coin-dropdown float-right"><h5>Select Coin:</h5> {this.renderDropDown()}</div>
                         </CardHeader>
                         <CardBody><br/> 
                             <Row className="account-distributions">
@@ -382,7 +374,7 @@ export default class AccountDetails extends Component{
                                     <Row>
                                         <Col xs={4} className="label d-flex align-self-end"><div className="infinity" /><T>accounts.total</T></Col>
                                         <Col xs={8} className="value text-right">{this.findCoin(this.state.total)}</Col>
-                                        <Col xs={12} className="dollar-value text-right text-secondary">~{numbro((this.findTotalValue(this.state.total))/Coin.StakingCoin.fraction*this.state.price).format("$0,0.0000a")} ({numbro(this.state.price).format("$0,0.00")}/{this.state.denom})</Col>
+                                        <Col xs={12} className="dollar-value text-right text-secondary">~{numbro((this.findValue(this.state.total))/Coin.StakingCoin.fraction*this.state.price).format("$0,0.0000a")} ({numbro(this.state.price).format("$0,0.00")}/{Coin.StakingCoin.displayName})</Col>
                                     </Row>
                                 </Col>
                             </Row>
