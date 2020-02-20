@@ -12,7 +12,7 @@ export default SignersTableContainer = withTracker((props) => {
 
     if (Meteor.isClient){
         heightHandle = Meteor.subscribe('blocks.height', props.limit);
-        validatorHandle = Meteor.subscribe('validators.voting_power');
+        validatorHandle = Meteor.subscribe('validators.all');
         loading = !heightHandle.ready() && !validatorHandle.ready();
     }
 
@@ -23,13 +23,14 @@ export default SignersTableContainer = withTracker((props) => {
 
     if (Meteor.isServer || !loading){
         blocks = Blockscon.find({}, {sort: {height:-1}}).fetch();
-        // validators = Validators.find({},{sort:{voting_power:-1, height:-1, limit: 90}}).fetch();
         validators =  Validators.find({
                 status: 2,
-                jailed:false
+                jailed: false
             },{
                 sort:{
-                    voting_power:-1
+                    voting_power:-1,
+                    uptime: -1,
+                    limit: 96
                 }
             }
         ).fetch();
@@ -50,6 +51,6 @@ export default SignersTableContainer = withTracker((props) => {
         blocksExist,
         validatorsExist,
         blocks: blocksExist ? blocks : {},
-        validators: validators
+        validators: validatorsExist ? validators: {}
     };
 })(SignersTable);

@@ -5,6 +5,7 @@ import Signer from "./signer";
 import numbro from "numbro";
 import SentryBoundary from '../components/SentryBoundary.jsx';
 import {HorizontalBar} from 'react-chartjs-2';
+import SignerUtils from "./utils";
 
 const T = i18n.createComponent();
 class SignersChart extends Component {
@@ -26,42 +27,20 @@ class SignersChart extends Component {
 
         if (this.props.blocks != prevProps.blocks && this.props.validators != prevProps.validators){
             if (this.props.blocks.length > 0 && this.props.validators.length > 0){
-                for(let i = 0; i < this.props.validators.length; i++) {
-                    let validator = this.props.validators[i]
-                    signersObj[validator.address] = {
-                        moniker: validator.description.moniker,
-                        operatorAddress: validator.operator_address,
-                        address: validator.address,
-                        website: validator.description.website,
-                        numSigned: 0
-                    }
-                }
-
-                for(let j = 0; j < this.props.blocks.length; j++) {
-                    let block = this.props.blocks[j]
-                    for(let k = 0; k < block.validators.length; k++) {
-                        if(signersObj[block.validators[k]] !== undefined) {
-                            signersObj[block.validators[k]].numSigned++
-                        }
-                    }
-                }
+                signersObj = SignerUtils.process(this.props.validators, this.props.blocks)
 
                 for (const sig of Object.values(signersObj)) {
                     labels.push(sig.moniker)
                     data.push(sig.numSigned)
-                    let percentSigned = (sig.numSigned / this.props.blocks.length) * 100.0
-                    let colour = 'rgba(8, 189, 28, 0.8)'
-                    if(percentSigned <= 98) {
-                        colour = 'rgba(255, 189, 28, 0.8)'
-                    }
-                    if(percentSigned <= 90) {
-                        colour = 'rgba(189, 8, 28, 0.8)'
-                    }
+                    let alpha = (sig.numSigned / this.props.blocks.length)
+                    if(alpha < 0.3) alpha = 0.3
+
+                    let colour = 'rgba(8, 189, 28, ' + alpha + ')'
                     backgroundColors.push(colour);
                     signersArray.push(sig)
                 }
 
-                let chartHeight = 50*data.length;
+                let chartHeight = 35*data.length;
 
                 this.setState(
                     {
