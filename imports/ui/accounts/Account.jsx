@@ -228,35 +228,12 @@ export default class AccountDetails extends Component{
     handleCoinSwitch = (type,e) => {
         e.preventDefault();
         switch (type){
-        case "ungm":
+        case type:
             this.setState({
-                denom: 'ungm'
+                denom: type
             })
             break;
 
-        case "echf":
-            this.setState({
-                denom: 'echf'
-            })
-            break;
-
-        case "eeur":
-            this.setState({
-                denom: 'eeur'
-            })
-            break;
-
-        case "ejpy":
-            this.setState({
-                denom: 'ejpy'
-            })
-            break;
-
-        case "eusd":
-            this.setState({
-                denom: 'eusd'
-            })
-            break;
 
         }
     }
