@@ -65,18 +65,13 @@ export default class AccountDetails extends Component{
             }
 
             if (result){
-                let totalAmount = [];
-                let amountAvailable = [];
 
                 if (result.available){
 
-                    amountAvailable = cloneDeep(result.available);
-                    totalAmount = cloneDeep(result.available);
-                    
                     this.setState({
-                        available: [...amountAvailable ],
+                        available: cloneDeep(result.available),
                         denom: Coin.StakingCoin.denom,
-                        total: [...totalAmount ],
+                        total: cloneDeep(result.available)
                         
                     })
                 }
@@ -90,20 +85,16 @@ export default class AccountDetails extends Component{
                         })
                     }, this)
 
-                    totalAmount.forEach((total, i) => {
+                    this.state.total.forEach((total, i) => {
                     if(total.denom === Meteor.settings.public.bondDenom )
-                    {
-                     let addValue = parseFloat(totalAmount[i].amount) + parseFloat(this.state.delegated);
-                     totalAmount[i].amount = addValue
-                    }
+                        this.state.total[i].amount = parseFloat(this.state.total[i].amount) + parseFloat(this.state.delegated);
                     }, this)
 
                     this.setState({
-                             total: [...totalAmount]
+                             total: [...this.state.total]
                          })
 
                 }
-
     
                 this.setState({unbondingDelegations: result.unbonding || []})
                 if (result.unbonding && result.unbonding.length > 0){
@@ -115,17 +106,15 @@ export default class AccountDetails extends Component{
                             , this})
                     }, this)
 
-                    totalAmount.forEach((total, i) => {
+                    this.state.total.forEach((total, i) => {
                         if(total.denom === Meteor.settings.public.bondDenom )
-                        {
-                         let addValue = parseFloat(totalAmount[i].amount) + parseFloat(this.state.unbonding);
-                         totalAmount[i].amount = addValue    
-                        }
+                            this.state.total[i].amount = parseFloat(this.state.total[i].amount) + parseFloat(this.state.unbonding);
+                        
                 
             }, this)
 
                  this.setState({
-                         total: [...totalAmount]
+                         total: [...this.state.total]
                      })
 
             }
@@ -135,19 +124,16 @@ export default class AccountDetails extends Component{
                 {
                     const totalRewards  = cloneDeep(result.total_rewards);
 
-                    totalRewards .forEach((rewardNum, i) => {
-                       if(rewardNum.denom === totalAmount[i].denom)
-                       {
-                        let addValue = parseFloat(totalAmount[i].amount) + parseFloat(rewardNum.amount);
-                         totalAmount[i].amount = addValue
-                       }                        
+                    totalRewards.forEach((rewardNum, i) => {
+                       if(rewardNum.denom === this.state.total[i].denom)
+                        this.state.total[i].amount = parseFloat(this.state.total[i].amount) + parseFloat(rewardNum.amount);                       
                     }, this)
 
                   
 
                     this.setState({
                         rewards: [...totalRewards],
-                        total: [...totalAmount]
+                        total: [...this.state.total]
                     })
     
             }
@@ -176,14 +162,13 @@ export default class AccountDetails extends Component{
                 if (result.commission){
                     result.commission.forEach((commissions, i) => {
                         const commissionAmount = commissions;
-                        if(commissions.denom === totalAmount[i].denom){
-                            let addValue = parseFloat(totalAmount[i].amount) + parseFloat(commissions.amount);
-                            totalAmount[i].amount = addValue
-                        }
+                        if(commissions.denom === this.state.total[i].denom)
+                            this.state.total[i].amount = parseFloat(this.state.total[i].amount) + parseFloat(commissions.amount);
+
                         this.setState({
                             operator_address: result.operator_address,
                             commission: [...this.state.commission, commissionAmount],
-                            total: [...totalAmount]
+                            total: [...this.state.total]
                         })
                     }, this)
 
@@ -233,8 +218,6 @@ export default class AccountDetails extends Component{
                 denom: type
             })
             break;
-
-
         }
     }
    
