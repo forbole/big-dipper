@@ -202,7 +202,7 @@ signers:
     blocksSigned: 'Blocks Signed'
     signed: 'Signed'
     percentMissed: '% Missed'
-    lastSigned: 'Last Signed'
+    lastSigned: 'Last # Signed'
 activities:
     single: '一個'
     happened: '發生了'

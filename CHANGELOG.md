@@ -2,6 +2,13 @@
 
 See commits for individual file changes.
 
+## [PR25](https://github.com/unification-com/mainchain-explorer/pull/25) 20/02/2020
+
+* [[`430f761b1d`](https://github.com/nodejs/node/commit/430f761b1d)] - production bundle (Codegnosis)
+* [[`64cfe529ab`](https://github.com/nodejs/node/commit/64cfe529ab)] - fixes and improvements to signers component (Codegnosis)
+* [[`5c1ae7cb0e`](https://github.com/nodejs/node/commit/5c1ae7cb0e)] - voting power chart size fix (Codegnosis)
+* [[`82b7d81684`](https://github.com/nodejs/node/commit/82b7d81684)] - i18n (Codegnosis)
+
 ## [PR24](https://github.com/unification-com/mainchain-explorer/pull/24) 19/02/2020
 
 * [[`446b70dfa0`](https://github.com/nodejs/node/commit/446b70dfa0)] - production bundle (Codegnosis)

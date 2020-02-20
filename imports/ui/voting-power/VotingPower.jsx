@@ -46,7 +46,7 @@ export default class VotingPower extends Component{
                 backgroundColors.push('rgba(189, 8, 28,'+alpha+')');
             }
 
-            let chartHeight = 50*data.length;
+            let chartHeight = 35*data.length;
 
             this.setState({
                 data:{

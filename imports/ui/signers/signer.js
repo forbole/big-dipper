@@ -11,7 +11,10 @@ export default class Signer extends Component {
     render() {
         if (this.props.signer){
             let missed = numbro(100.0 - ((this.props.signer.numSigned / this.props.numBlocks) * 100)).format('0.000')
-            let lastSeen = this.props.signer.lastSeen.toLocaleString('en-GB', { timeZone: 'UTC' })
+            let lastSeen;
+            if(this.props.signer.lastSeen !== undefined) {
+                lastSeen = this.props.signer.lastSeen.toLocaleString('en-GB', { timeZone: 'UTC' })
+            }
             return <Row className="block-info">
                 <Col xs={1}><Link to={"/validator/"+this.props.signer.address}>{this.props.signer.moniker}</Link></Col>
                 <Col xs={4}>{this.props.signer.operatorAddress}</Col>

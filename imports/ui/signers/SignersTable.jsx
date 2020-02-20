@@ -4,6 +4,7 @@ import {Spinner, Row, Col, Container} from 'reactstrap';
 import i18n from 'meteor/universe:i18n';
 import numbro from "numbro";
 import SignerHeader from "./SignerHeader";
+import SignerUtils from './utils.js'
 
 const T = i18n.createComponent();
 export default class SignersTable extends Component {
@@ -22,30 +23,7 @@ export default class SignersTable extends Component {
 
         if (this.props.blocks != prevProps.blocks && this.props.validators != prevProps.validators){
             if (this.props.blocks.length > 0 && this.props.validators.length > 0){
-                for(let i = 0; i < this.props.validators.length; i++) {
-                    let validator = this.props.validators[i]
-                    signersObj[validator.address] = {
-                        moniker: validator.description.moniker,
-                        operatorAddress: validator.operator_address,
-                        address: validator.address,
-                        website: validator.description.website,
-                        lastSeen: validator.lastSeen,
-                        numSigned: 0,
-                        lastSigned: 0
-                    }
-                }
-
-                for(let j = 0; j < this.props.blocks.length; j++) {
-                    let block = this.props.blocks[j]
-                    for(let k = 0; k < block.validators.length; k++) {
-                        if(signersObj[block.validators[k]] !== undefined) {
-                            signersObj[block.validators[k]].numSigned++
-                            if(block.height > signersObj[block.validators[k]].lastSigned) {
-                                signersObj[block.validators[k]].lastSigned = block.height
-                            }
-                        }
-                    }
-                }
+                signersObj = SignerUtils.process(this.props.validators, this.props.blocks)
 
                 for (const sig of Object.values(signersObj)) {
                     signersArray.push(sig)
