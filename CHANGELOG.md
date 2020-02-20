@@ -8,6 +8,7 @@
 * [#262] Fixed Validator Popover in Account Section 
 * [#260] Fixed Token unit to display the correct Denom Name/Type  
 * [#227] Added additional info to be displayed for Parameter Change Proposal and Community Pool Spend Proposal
+* [#276] Added Coin Selection Dropdown in Account Section to support multiple denomination
 
 ## v0.37.x-patch-9
 

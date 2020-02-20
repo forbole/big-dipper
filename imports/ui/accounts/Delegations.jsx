@@ -18,7 +18,8 @@ export default class AccountDelegations extends Component{
     render(){
         let numDelegations = this.props.delegations.length;
         let denomType = this.props.denom;
-         
+        let rewardDenom = '';
+
         return <Card>
             <CardHeader>{(numDelegations > 0)?numDelegations:<T>accounts.no</T>} <T>accounts.delegation</T>{(numDelegations>1)?<T>accounts.plural</T>:''}</CardHeader>
             {(numDelegations > 0)?<CardBody className="list overflow-auto">
@@ -31,11 +32,13 @@ export default class AccountDelegations extends Component{
                     </Row>
                     <SentryBoundary>
                     {this.props.delegations.sort((b, a) => (a.balance - b.balance)).map((d, i) => {
-                        let reward = this.props.allRewards[d.validator_address];
+                        let reward = this.props.rewardsForEachDel[d.validator_address];
+                            rewardDenom =(reward)?reward.find(({denom}) => denom === denomType): null;
+                        
                         return <Row key={i} className="delegation-info">
                             <Col xs={7} md={5} className="text-nowrap overflow-auto"><AccountTooltip address={d.validator_address} /></Col>
                             <Col xs={2} md={3}>{new Coin(d.balance, denomType).stakeString()}</Col>
-                            <Col xs={3} md={4}>{reward?new Coin(reward.amount, reward.denom).toString(4):'No rewards '} </Col>
+                            <Col xs={3} md={4}>{rewardDenom?new Coin(rewardDenom.amount, rewardDenom.denom).toString(4):'No rewards '} </Col>
                         </Row>
                     })}</SentryBoundary>
                 </Container>

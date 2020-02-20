@@ -84,7 +84,8 @@ export default class CosmosErrors extends Component {
                         }
                         
                         this.state = {
-                            error: (error.codespace && error.code && errors[error.codespace][error.code]) || errors.sdk[1],
+
+                            error: (error.codespace && error.code && errors[error.codespace] && errors[error.codespace][error.code]) || "Unknown error",
                             message: error.message || ""
                         }
                     }

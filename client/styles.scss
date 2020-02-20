@@ -495,6 +495,32 @@ body {
       font-size: 1.5em;
       transform: translateY(3px);
     }
+
+    .coin-dropdown{
+    display: flex;
+    vertical-align: middle !important;
+    overflow: visible;
+    text-align: center;
+    line-height: normal;
+
+   }
+   .account-dropdown{
+    padding: 0 1rem 0 0.5rem;
+    margin-top: -3px;
+    color: #bd081c;
+    font-weight: bold;
+    position:relative;
+    z-index: 1;
+    
+
+    .dropdown-toggle{
+      background-color:#bd081c;
+      border: solid 0.05rem #bd081c;
+
+    }
+
+   }
+
   }
   
   .vp-diff {

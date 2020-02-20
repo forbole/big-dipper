@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Spinner, UncontrolledTooltip, Row, Col, Card, CardHeader, CardBody, Progress } from 'reactstrap';
+import { Spinner, UncontrolledTooltip, Row, Col, Card, CardHeader, CardBody, Progress, UncontrolledDropdown, DropdownMenu, DropdownToggle, DropdownItem } from 'reactstrap';
 import numbro from 'numbro';
 import AccountCopy from '../components/AccountCopy.jsx';
 import LinkIcon from '../components/LinkIcon.jsx';
@@ -13,6 +13,9 @@ import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js'
 
 const T = i18n.createComponent();
+
+const cloneDeep = require('lodash/clonedeep');
+
 export default class AccountDetails extends Component{
     constructor(props){
         super(props);
@@ -20,17 +23,18 @@ export default class AccountDetails extends Component{
             address: props.match.params.address,
             loading: true,
             accountExists: false,
-            available: 0,
+            available: [],
             delegated: 0,
             unbonding: 0,
-            rewards: 0,
+            rewards: [],
             reward: [],
-            total: 0,
+            total: [],
             price: 0,
             user: localStorage.getItem(CURRENTUSERADDR),
-            commission: 0,
+            commission: [],
             denom: '',
-            allRewards: [],
+            rewardsForEachDel: [],
+            rewardDenomType: [],
         }
     }
 
@@ -61,15 +65,13 @@ export default class AccountDetails extends Component{
             }
 
             if (result){
-                // console.log(result);
+
                 if (result.available){
-                    const amount = result.available.amount || '0';
-                    const denomType  = result.available.denom;
 
                     this.setState({
-                        available: parseFloat(amount),
-                        total: parseFloat(this.state.total)+parseFloat(amount),
-                        denom: denomType,
+                        available: cloneDeep(result.available),
+                        denom: Coin.StakingCoin.denom,
+                        total: cloneDeep(result.available)
                         
                     })
                 }
@@ -80,54 +82,96 @@ export default class AccountDetails extends Component{
                         const amount = delegation.balance.amount || delegation.balance;
                         this.setState({
                             delegated: this.state.delegated+parseFloat(amount),
-                            total: this.state.total+parseFloat(amount)
                         })
                     }, this)
-                }
 
+                    this.state.total.forEach((total, i) => {
+                    if(total.denom === Meteor.settings.public.bondDenom )
+                        this.state.total[i].amount = parseFloat(this.state.total[i].amount) + parseFloat(this.state.delegated);
+                    }, this)
+
+                    this.setState({
+                             total: [...this.state.total]
+                         })
+
+                }
+    
                 this.setState({unbondingDelegations: result.unbonding || []})
                 if (result.unbonding && result.unbonding.length > 0){
                     result.unbonding.forEach((unbond, i) => {
                         unbond.entries.forEach((entry, j) => {
                             this.setState({
                                 unbonding: this.state.unbonding+parseFloat(entry.balance),
-                                total: this.state.total+parseFloat(entry.balance)
                             })
                             , this})
                     }, this)
-                }
+
+                    this.state.total.forEach((total, i) => {
+                        if(total.denom === Meteor.settings.public.bondDenom )
+                            this.state.total[i].amount = parseFloat(this.state.total[i].amount) + parseFloat(this.state.unbonding);
+                        
+                
+            }, this)
+
+                 this.setState({
+                         total: [...this.state.total]
+                     })
+
+            }
 
 
                 if(result.total_rewards && result.total_rewards.length > 0)
                 {
-                    result.total_rewards.forEach((reward, i) => {
-                        this.setState({
-                            rewards: this.state.rewards+parseFloat(reward.amount),
-                            total: this.state.total+parseFloat(reward.amount)
-                        })
+                    const totalRewards  = cloneDeep(result.total_rewards);
+
+                    totalRewards.forEach((rewardNum, i) => {
+                       if(rewardNum.denom === this.state.total[i].denom)
+                        this.state.total[i].amount = parseFloat(this.state.total[i].amount) + parseFloat(rewardNum.amount);                       
                     }, this)
-                }
+
+                  
+
+                    this.setState({
+                        rewards: [...totalRewards],
+                        total: [...this.state.total]
+                    })
+    
+            }
+ 
 
                 if (result.rewards && result.rewards.length > 0){
                     
                     for(let c = 0; c < result.rewards.length; c++){
-                        if(result.rewards[c].reward != null)
-                        {
-                            numRewards[result.rewards[c]["validator_address"]] = result.rewards[c].reward[0];
+                        if(result.rewards[c].reward != null){
+                            numRewards[result.rewards[c]["validator_address"]] = result.rewards[c].reward;
                         }
                     }
-                        this.setState({
-                            allRewards: numRewards,
-                        })
+                        for(let e in numRewards){
+                            for(let f in numRewards[e]){
+                                 if(this.state.denom === numRewards[e][f].denom){
+                                    this.setState({
+                                        rewardDenomType: numRewards[e][f].denom,
+                                        rewardsForEachDel: numRewards,
+                                    })
+                                }
+                                
+                            }
+                        }   
                 }
-                    
-
+ 
                 if (result.commission){
-                    this.setState({
-                        operator_address: result.operator_address,
-                        commission: parseFloat(result.commission.amount),
-                        total: parseFloat(this.state.total)+parseFloat(result.commission.amount)
-                    })
+                    result.commission.forEach((commissions, i) => {
+                        const commissionAmount = commissions;
+                        if(commissions.denom === this.state.total[i].denom)
+                            this.state.total[i].amount = parseFloat(this.state.total[i].amount) + parseFloat(commissions.amount);
+
+                        this.setState({
+                            operator_address: result.operator_address,
+                            commission: [...this.state.commission, commissionAmount],
+                            total: [...this.state.total]
+                        })
+                    }, this)
+
                 }
 
 
@@ -149,21 +193,49 @@ export default class AccountDetails extends Component{
                 address: this.props.match.params.address,
                 loading: true,
                 accountExists: false,
-                available: 0,
+                available: [],
                 delegated: 0,
                 unbonding: 0,
-                commission: 0,
-                rewards: 0,
-                total: 0,
+                commission: [],
+                rewards: [],
+                total: [],
                 price: 0,
-                reward: 0,
+                reward: [],
                 denom: '',
-                allRewards: {},
+                rewardsForEachDel: [],
+                rewardDenomType: [],
             }, () => {
                 this.getBalance();
             })
         }
     }
+
+    handleCoinSwitch = (type,e) => {
+        e.preventDefault();
+        switch (type){
+        case type:
+            this.setState({
+                denom: type
+            })
+            break;
+        }
+    }
+   
+    renderDropDown() {
+        return <UncontrolledDropdown direction='down' size="sm" className='account-dropdown'>
+             <DropdownToggle caret>
+             &nbsp;{this.state.denom}
+             </DropdownToggle>
+             <DropdownMenu>
+             {this.state.available.map((option, k) => (
+                <DropdownItem key={k} onClick={(e) => this.handleCoinSwitch(option.denom, e)}>{option.denom.toUpperCase()}</DropdownItem>
+                ))}
+             </DropdownMenu>
+         </UncontrolledDropdown>
+     }
+ 
+
+
 
     renderShareLink() {
         let primaryLink = `/account/${this.state.address}`
@@ -173,8 +245,26 @@ export default class AccountDetails extends Component{
         return <LinkIcon link={primaryLink} otherLinks={otherLinks} />
     }
 
+
+
+    findCoin(coins){
+        let finder = (coins).find(({denom}) => denom === this.state.denom);
+        let coinFinder = finder ? new Coin(finder.amount, finder.denom).toString(4) : null;
+        return coinFinder
+    }
+
+    findValue(params){
+        let current = (params).find(({denom}) => denom === this.state.denom);
+        let currentTotal = current ? current.amount : null;
+        return currentTotal
+    }
+
+
     render(){
 
+          let findCurrentCoin = this.state.total.find(({denom}) => denom === this.state.denom)
+          let currentCoinTotal = findCurrentCoin ? findCurrentCoin.amount : null;
+          
         if (this.state.loading){
             return <div id="account">
                 <h1 className="d-none d-lg-block"><T>accounts.accountDetails</T></h1>
@@ -199,16 +289,17 @@ export default class AccountDetails extends Component{
                         <CardHeader>
                             Balance
                             <div className="shareLink float-right">{this.renderShareLink()}</div>
+                            <div className="coin-dropdown float-right"><h5>Select Coin:</h5> {this.renderDropDown()}</div>
                         </CardHeader>
-                        <CardBody>
+                        <CardBody><br/> 
                             <Row className="account-distributions">
                                 <Col xs={12}>
                                     <Progress multi>
-                                        <Progress bar className="available" value={this.state.available/this.state.total*100} />
-                                        <Progress bar className="delegated" value={this.state.delegated/this.state.total*100} />
-                                        <Progress bar className="unbonding" value={this.state.unbonding/this.state.total*100} />
-                                        <Progress bar className="rewards" value={this.state.rewards/this.state.total*100} />
-                                        <Progress bar className="commission" value={this.state.commission/this.state.total*100} />
+                                        <Progress bar className="available" value={this.findValue(this.state.available)/currentCoinTotal*100} />
+                                        <Progress bar className="delegated" value={this.state.delegated/currentCoinTotal*100} />
+                                        <Progress bar className="unbonding" value={this.state.unbonding/currentCoinTotal*100} />
+                                        <Progress bar className="rewards" value={this.findValue(this.state.rewards)/currentCoinTotal*100} />
+                                        <Progress bar className="commission" value={this.findValue(this.state.commission)/currentCoinTotal*100} />
                                     </Progress>
                                 </Col>
                             </Row>
@@ -216,23 +307,23 @@ export default class AccountDetails extends Component{
                                 <Col md={6} lg={8}>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="available infinity" /><T>accounts.available</T></Col>
-                                        <Col xs={8} className="value text-right">{new Coin(this.state.available, this.state.denom).toString(4)}</Col>
+                                        <Col xs={8} className="value text-right">{this.findCoin(this.state.available)}</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="delegated infinity" /><T>accounts.delegated</T></Col>
-                                        <Col xs={8} className="value text-right">{new Coin(this.state.delegated, this.state.denom).toString(4)}</Col>
+                                        <Col xs={8} className="value text-right">{new Coin(this.state.delegated).toString(4)}</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="unbonding infinity" /><T>accounts.unbonding</T></Col>
-                                        <Col xs={8} className="value text-right">{new Coin(this.state.unbonding, this.state.denom).toString(4)}</Col>
+                                        <Col xs={8} className="value text-right">{new Coin(this.state.unbonding).toString(4)}</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="rewards infinity" /><T>accounts.rewards</T></Col>
-                                        <Col xs={8} className="value text-right">{new Coin(this.state.rewards, this.state.denom).toString(4)}</Col>
+                                        <Col xs={8} className="value text-right">{this.findCoin(this.state.rewards)}</Col>
                                     </Row>
                                     {this.state.commission?<Row>
                                         <Col xs={4} className="label text-nowrap"><div className="commission infinity" /><T>validators.commission</T></Col>
-                                        <Col xs={8} className="value text-right">{new Coin(this.state.commission, this.state.denom).toString(4)}</Col>
+                                        <Col xs={8} className="value text-right">{this.findCoin(this.state.commission)}</Col>
                                     </Row>:null}
                                 </Col>
                                 <Col md={6} lg={4} className="total d-flex flex-column justify-content-end">
@@ -242,8 +333,8 @@ export default class AccountDetails extends Component{
                                     </Row>:null}
                                     <Row>
                                         <Col xs={4} className="label d-flex align-self-end"><div className="infinity" /><T>accounts.total</T></Col>
-                                        <Col xs={8} className="value text-right">{new Coin(this.state.total, this.state.denom).toString(4)}</Col>
-                                        <Col xs={12} className="dollar-value text-right text-secondary">~{numbro(this.state.total/Coin.StakingCoin.fraction*this.state.price).format("$0,0.0000a")} ({numbro(this.state.price).format("$0,0.00")}/{this.state.denom})</Col>
+                                        <Col xs={8} className="value text-right">{this.findCoin(this.state.total)}</Col>
+                                        <Col xs={12} className="dollar-value text-right text-secondary">~{numbro((this.findValue(this.state.total))/Coin.StakingCoin.fraction*this.state.price).format("$0,0.0000a")} ({numbro(this.state.price).format("$0,0.00")}/{Coin.StakingCoin.displayName})</Col>
                                     </Row>
                                 </Col>
                             </Row>
@@ -257,7 +348,7 @@ export default class AccountDetails extends Component{
                             delegations={this.state.delegations}
                             reward={this.state.reward}
                             denom ={this.state.denom}
-                            allRewards ={this.state.allRewards}
+                            rewardsForEachDel ={this.state.rewardsForEachDel}
                         />
                     </Col>
                     <Col md={6}>
