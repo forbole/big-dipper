@@ -221,22 +221,25 @@ export default class AccountDetails extends Component{
         }
     }
    
+    displayStakingDenom(denomType){
+        let findCoinType = Meteor.settings.public.coins.find(({denom}) => denom === denomType);
+        let currentCoinType = findCoinType ? findCoinType.displayName : null;
+        return currentCoinType
+    }
+
     renderDropDown() {
         return <UncontrolledDropdown direction='down' size="sm" className='account-dropdown'>
              <DropdownToggle caret>
-             &nbsp;{this.state.denom}
+             &nbsp;{this.displayStakingDenom(this.state.denom)}
              </DropdownToggle>
              <DropdownMenu>
              {this.state.available.map((option, k) => (
-                <DropdownItem key={k} onClick={(e) => this.handleCoinSwitch(option.denom, e)}>{option.denom.toUpperCase()}</DropdownItem>
+                <DropdownItem key={k} onClick={(e) => this.handleCoinSwitch(option.denom, e)}>{this.displayStakingDenom(option.denom)}</DropdownItem>
                 ))}
              </DropdownMenu>
          </UncontrolledDropdown>
      }
  
-
-
-
     renderShareLink() {
         let primaryLink = `/account/${this.state.address}`
         let otherLinks = [
@@ -289,7 +292,7 @@ export default class AccountDetails extends Component{
                         <CardHeader>
                             Balance
                             <div className="shareLink float-right">{this.renderShareLink()}</div>
-                            <div className="coin-dropdown float-right"><h5>Select Coin:</h5> {this.renderDropDown()}</div>
+                           {(this.state.available.length > 1) ? <div className="coin-dropdown float-right"><h5>Select Coin:</h5> {this.renderDropDown()}</div> : null}
                         </CardHeader>
                         <CardBody><br/> 
                             <Row className="account-distributions">
