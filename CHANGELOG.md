@@ -1,11 +1,28 @@
 # Changelog
 
-## [Unreleased]
-* Changed the structure of coins.js and settings.json 
+## v0.37.x-patch-10
+
+### Release Date: 24 Feb 2020
+
+* Changed the structure of `coins.js` utility and `settings.json`. Information of multiple denoms can be defined in `settings.json`. A `bondDenom` should be defined and coins information is defined in `coins` array. `powerReduction` is the `token / power` ratio which is set to be `1,000,000` by default in the `staking` module. The display value of coins should be set correctly in the `coins` array. An example is as below.
+
+    ```json
+        "bondDenom": "umuon",
+        "powerReduction": 1000000,
+        "coins": [
+            {
+                "denom": "umuon",
+                "displayName": "Muon",
+                "displayNamePlural": "Muons",
+                "fraction": 1000000
+            }
+        ],
+    ```
+
 * Update Meteor to v1.9
 * [#267] Fixed Fee Decimal Places
 * [#263] Fixed Tx fee to be displayed in Minting or Staking Denom depending on the fee amount
-* [#262] Fixed Validator Popover in Account Section 
+* [#262] Fixed Validator Popover in Account Section
 * [#260] Fixed Token unit to display the correct Denom Name/Type  
 * [#227] Added additional info to be displayed for Parameter Change Proposal and Community Pool Spend Proposal
 * [#276] Added Coin Selection Dropdown in Account Section to support multiple denomination
@@ -13,7 +30,7 @@
 
 ## v0.37.x-patch-9
 
-### Release Date: 22 Jan 2020 
+### Release Date: 22 Jan 2020
 
 * Added features to disable `gov` and `mint` modules if they don't exist
 * [#254] Fixed the delegation order in delegation panel
