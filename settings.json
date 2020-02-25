@@ -13,12 +13,12 @@
         "bech32PrefixConsAddr": "undvalcons",
         "bech32PrefixConsPub": "undvalconspub",
         "stakingDenom": "UND",
-        "stakingDenomPlural": null,
+        "stakingDenomPlural": "UNDs",
         "mintingDenom": "nund",
         "stakingFraction": 1000000000,
-        "powerReduction": null,
-        "gasPrice": 0.02,
-        "coingeckoId": "unification"
+        "gasPrice": 0.025,
+        "coingeckoId": "unification",
+        "powerReduction": 1000000
     },
     "genesisFile": "https://raw.githubusercontent.com/unification-com/mainchain-cosmos/master/Docker/assets/node1/config/genesis.json",
     "remote":{
