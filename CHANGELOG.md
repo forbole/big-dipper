@@ -2,6 +2,15 @@
 
 See commits for individual file changes.
 
+## [PR26](https://github.com/unification-com/mainchain-explorer/pull/26) 25/02/2020
+
+* [[`e2b7127ec7`](https://github.com/nodejs/node/commit/e2b7127ec7)] - production bundle (Codegnosis)
+* [[`d55204b742`](https://github.com/nodejs/node/commit/d55204b742)] - ui proposals - output formatted proposed changes object (Codegnosis)
+* [[`2f3e1c4d8d`](https://github.com/nodejs/node/commit/2f3e1c4d8d)] - ui - re-enable governance (Codegnosis)
+* [[`35377199a0`](https://github.com/nodejs/node/commit/35377199a0)] - server - re-enable governance functionality (Codegnosis)
+* [[`59ca49a39d`](https://github.com/nodejs/node/commit/59ca49a39d)] - settings - add powerReduction, correct plural & pull DevNet genesis from DevNet proxy (Codegnosis)
+* [[`56474df194`](https://github.com/nodejs/node/commit/56474df194)] - i18n (Codegnosis)
+
 ## [PR25](https://github.com/unification-com/mainchain-explorer/pull/25) 20/02/2020
 
 * [[`430f761b1d`](https://github.com/nodejs/node/commit/430f761b1d)] - production bundle (Codegnosis)
