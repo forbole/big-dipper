@@ -156,6 +156,7 @@ proposals:
     votingEndTime: 'End Voting Time'
     totalDeposit: 'Total Deposit'
     description: 'Description'
+    changes: 'Changes'
     proposalType: 'Proposal Type'
     proposalStatus: 'Proposal Status'
     notStarted: 'not started'

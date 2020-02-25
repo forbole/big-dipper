@@ -14,8 +14,8 @@ import '../../api/validators/server/publications.js';
 import '../../api/records/server/methods.js';
 import '../../api/records/server/publications.js';
 
-//import '../../api/proposals/server/methods.js';
-//import '../../api/proposals/server/publications.js';
+import '../../api/proposals/server/methods.js';
+import '../../api/proposals/server/publications.js';
 import '../../api/enterprise/server/methods.js';
 import '../../api/enterprise/server/publications.js';
 

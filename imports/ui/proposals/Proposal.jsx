@@ -298,6 +298,10 @@ export default class Proposal extends Component{
                             <Col md={9} className="value"><Markdown markup={this.props.proposal.content.value.description} /></Col>
                         </Row>
                         <Row className="mb-2 border-top">
+                            <Col md={3} className="label"><T>proposals.changes</T></Col>
+                            <Col md={9} className="value"><pre>{JSON.stringify(this.props.proposal.content.value.changes, null, '    ').replace(/\\"/g,'')}</pre></Col>
+                        </Row>
+                        <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposalType</T></Col>
                             <Col md={9} className="value">{this.props.proposal.content.type.substr(11).match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</Col>
                         </Row>

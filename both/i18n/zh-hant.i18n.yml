@@ -156,6 +156,7 @@ proposals:
     votingEndTime: '投票結束時間'
     totalDeposit: '押金總額'
     description: '詳細內容'
+    changes: 'Changes'
     proposalType: '提案類型'
     proposalStatus: '提案狀態'
     notStarted: '未開始'
