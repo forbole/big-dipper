@@ -1,5 +1,5 @@
 import { Blockscon } from '../../api/blocks/blocks.js';
-//import { Proposals } from '../../api/proposals/proposals.js';
+import { Proposals } from '../../api/proposals/proposals.js';
 import { ValidatorRecords, Analytics, MissedBlocksStats, MissedBlocks, AverageData, AverageValidatorData } from '../../api/records/records.js';
 // import { Status } from '../../api/status/status.js';
 import { Transactions } from '../../api/transactions/transactions.js';
