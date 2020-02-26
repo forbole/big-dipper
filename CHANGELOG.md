@@ -2,6 +2,12 @@
 
 See commits for individual file changes.
 
+## [PR27](https://github.com/unification-com/mainchain-explorer/pull/27) 26/02/2020
+
+* [[`7e085a2e73`](https://github.com/nodejs/node/commit/7e085a2e73)] - production bundle (Codegnosis)
+* [[`8bc4d6563b`](https://github.com/nodejs/node/commit/8bc4d6563b)] - ui - fix proposal page not displaying when changes is undefined (Codegnosis)
+* [[`df991db52a`](https://github.com/nodejs/node/commit/df991db52a)] - i18n (Codegnosis)
+
 ## [PR26](https://github.com/unification-com/mainchain-explorer/pull/26) 25/02/2020
 
 * [[`e2b7127ec7`](https://github.com/nodejs/node/commit/e2b7127ec7)] - production bundle (Codegnosis)
