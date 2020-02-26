@@ -70,7 +70,9 @@ export default class Coin {
 		if (formatter) {
 			amount = numbro(amount).format(formatter)
 		}
-		return `${amount} ${this._coin.denom}`;
+
+		let denom = (this._coin == "")?Coin.StakingCoin.displayName:this._coin.denom;
+		return `${amount} ${denom}`;
 	}
 
 	stakeString (formatter) {
