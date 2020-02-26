@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## v0.37.x-patch-10.1
 
 * Fixed a display bug when there is no fee in the tx
 
