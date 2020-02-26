@@ -33,10 +33,17 @@ export default class Coin {
 		this._coin = coinList.find(coin =>
 			coin.denom.toLowerCase() === lowerDenom || coin.displayName.toLowerCase() === lowerDenom
 		);
-		if (lowerDenom === this._coin.denom.toLowerCase()) {
+
+		if (this._coin){
+			if (lowerDenom === this._coin.denom.toLowerCase()) {
+				this._amount = Number(amount);
+			} else if (lowerDenom === this._coin.displayName.toLowerCase()) {
+				this._amount = Number(amount) * this._coin.fraction;
+			}
+		}
+		else {
+			this._coin = "";
 			this._amount = Number(amount);
-		} else if (lowerDenom === this._coin.displayName.toLowerCase()) {
-			this._amount = Number(amount) * this._coin.fraction;
 		}
 	}
 
@@ -45,7 +52,7 @@ export default class Coin {
 	}
 
 	get stakingAmount () {
-		return this._amount / this._coin.fraction;
+		return (this._coin)?this._amount / this._coin.fraction:this._amount;
 	}
 
 	toString (precision) {
