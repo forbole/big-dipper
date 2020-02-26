@@ -2,7 +2,7 @@
 
 ## v0.37.x-patch-10.1
 
-* Fixed a display bug when there is no fee in the tx
+* Fixed a display bug when there is no denom value in the tx fee
 
 ## v0.37.x-patch-10
 
