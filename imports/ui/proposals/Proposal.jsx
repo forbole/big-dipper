@@ -273,6 +273,11 @@ export default class Proposal extends Component{
                 const proposalId = Number(this.props.proposal.proposalId), maxProposalId = Number(this.props.proposalCount);
                 const powerReduction = Meteor.settings.public.powerReduction || Meteor.settings.public.stakingFraction;
                 let totalVotingPower = this.props.chain.activeVotingPower * powerReduction;
+                let changes = '';
+                if(this.props.proposal.content.value.changes !== undefined) {
+                    changes = JSON.stringify(this.props.proposal.content.value.changes, null, '    ').replace(/\\"/g,'');
+                }
+
                 return <div>
                     <Helmet>
                         <title>{this.props.proposal.content.value.title} | Unification Mainchain</title>
@@ -297,10 +302,13 @@ export default class Proposal extends Component{
                             <Col md={3} className="label"><T>proposals.description</T></Col>
                             <Col md={9} className="value"><Markdown markup={this.props.proposal.content.value.description} /></Col>
                         </Row>
+
+                        {changes.length > 0?
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.changes</T></Col>
-                            <Col md={9} className="value"><pre>{JSON.stringify(this.props.proposal.content.value.changes, null, '    ').replace(/\\"/g,'')}</pre></Col>
-                        </Row>
+                            <Col md={9} className="value"><pre>{ changes }</pre></Col>
+                        </Row>: ''}
+
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposalType</T></Col>
                             <Col md={9} className="value">{this.props.proposal.content.type.substr(11).match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</Col>
