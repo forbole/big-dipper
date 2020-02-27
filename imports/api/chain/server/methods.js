@@ -161,16 +161,35 @@ Meteor.methods({
     'chain.getLatestStatus': function(){
         Chain.find().sort({created:-1}).limit(1);
     },
+
     'chain.genesis': function(){
         let chain = Chain.findOne({chainId: Meteor.settings.public.chainId});
-
         if (chain && chain.readGenesis){
             console.log('Genesis file has been processed');
         }
-        else if (Meteor.settings.debug.readGenesis) {
-            console.log('=== Start processing genesis file ===');
-            let response = HTTP.get(Meteor.settings.genesisFile);
-            let genesis = JSON.parse(response.content);
+
+         if(Meteor.settings.debug.readGenesis === true){
+            console.log('=== Start processing Genesis file ===');
+
+              response = HTTP.get(Meteor.settings.genesisFile);
+              genesis = JSON.parse(response.content);
+
+        }
+
+        else {
+            let url = RPC+'/genesis';
+            try{                
+                console.log('=== Start processing Genesis via RPC ===');
+                  response = HTTP.get(url);
+                  genesis = JSON.parse(response.content).result.genesis;
+
+            }
+            catch(e){
+            console.log(e);
+            }
+
+        }
+
             let distr = genesis.app_state.distr || genesis.app_state.distribution
             let chainParams = {
                 chainId: genesis.chain_id,
@@ -304,9 +323,7 @@ Meteor.methods({
             let result = Chain.upsert({chainId:chainParams.chainId}, {$set:chainParams});
 
 
-            console.log('=== Finished processing genesis file ===');
-
-        }
+            console.log('=== Finished processing Genesis ===');
 
         return true;
     }
