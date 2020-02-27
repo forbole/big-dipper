@@ -4,6 +4,8 @@
 
 * Fixed a display bug when there is no fee in the tx
 
+* [#280] Updated methods.js allowing to read Chain Parameters from Genesis file and RPC+'/genesis'
+
 ## v0.37.x-patch-10
 
 ### Release Date: 24 Feb 2020
