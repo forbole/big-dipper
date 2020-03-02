@@ -40,6 +40,7 @@ Meteor.methods({
             };
         }
         catch (e){
+            console.log(url);
             console.log(e);
         }
     }
