@@ -200,7 +200,9 @@ Meteor.methods({
                         blockData.lastBlockHash = block.block.header.last_block_id.hash;
                         blockData.proposerAddress = block.block.header.proposer_address;
                         blockData.validators = [];
-                        let precommits = block.block.last_commit.precommits;
+
+                        // Tendermint v0.33 start using "signatures" in last block instead of "precommits"
+                        let precommits = block.block.last_commit.signatures; 
                         if (precommits != null){
                             // console.log(precommits.length);
                             for (let i=0; i<precommits.length; i++){
