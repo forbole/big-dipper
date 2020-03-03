@@ -14,7 +14,7 @@ import Coin from '/both/utils/coins.js'
 
 const T = i18n.createComponent();
 
-const cloneDeep = require('lodash/clonedeep');
+const cloneDeep = require('lodash/cloneDeep');
 
 export default class AccountDetails extends Component{
     constructor(props){
