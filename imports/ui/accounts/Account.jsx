@@ -29,7 +29,6 @@ const T = i18n.createComponent();
 
 const cloneDeep = require('lodash/cloneDeep');
 
-//const includes = require('lodash/collections/includes');
 
 export default class AccountDetails extends Component {
   constructor(props) {

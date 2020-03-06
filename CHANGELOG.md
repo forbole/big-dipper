@@ -3,10 +3,9 @@
 ## [Unreleased]
 
 * [#294] Fixed cloneDeep typo in Account section for case-sensitve filesystems.
+
 * [#296] Updated Account Section to add new Coin Type to Total (if currently not present in Total array) & to 
-display Delegated & Unbonding values according to selected Coin in Coin Dropdown.   
-
-
+display Delegated & Unbonding values according to selected Coin in Coin Dropdown. 
 
 ## v0.37.x-patch-10.1
 
