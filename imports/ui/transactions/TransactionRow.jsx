@@ -37,9 +37,8 @@ export const TransactionRow = (props) => {
             <Alert color="danger">
                 <CosmosErrors
                     code={tx.code}
-                    logs={tx.logs}
-                    gasWanted={tx.gas_wanted}
-                    gasUses={tx.gas_used}
+                    codespace={tx.codespace}
+                    log={tx.raw_log}
                 />
             </Alert>
         </Col>:''}
