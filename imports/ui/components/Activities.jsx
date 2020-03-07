@@ -81,7 +81,7 @@ export default class Activites extends Component {
 
             // slashing
         case "cosmos-sdk/MsgUnjail":
-            return <p><Account address={msg.value.delegator_address}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /><T>common.fullStop</T></p>
+            return <p><Account address={msg.value.address}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /><T>common.fullStop</T></p>
 
             // ibc
         case "cosmos-sdk/IBCTransferMsg":
