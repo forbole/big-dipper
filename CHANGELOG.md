@@ -58,6 +58,9 @@
 * [#327] Fixed error in Proposals section to accept String and Number as a value in Changes table
 * Hide Italian it-IT Translation
 * Fixed hash overflow on mobile in Transaction Section (Added scroller)
+* [#306] Display errors with SDK v0.38 format
+* [#294] Fixed cloneDeep typo in Account section for case-sensitve filesystems.
+* [#284] Support Tendermint v0.33 block format
 
 ## v0.37.x-patch-10.1
 
