@@ -25,6 +25,7 @@
     "jquery": "^3.4.1",
     "js-sha256": "^0.9.0",
     "ledger-cosmos-js": "^2.1.7",
+    "lodash.cloneDeep": "^4.5.0",
     "meteor-node-stubs": "^0.4.1",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.28",
