@@ -213,10 +213,16 @@ div {
   }
 }
 
-img.moniker-avatar-list {
+.moniker-avatar-list {
   height: 24px;
   margin-right: 5px;
-  border: 1px solid rgba(0, 0, 0, 0.3);
+  float: left;
+
+  .paper {
+    width: 24px !important;
+    height: 24px !important;
+  }
+  // border: 1px solid rgba(0, 0, 0, 0.3);
 }
 
 div {
@@ -774,9 +780,14 @@ div#voting-power-dist .card {
   }
 
   div.validator-list div.validator-info {
-    img.moniker-avatar-list {
+    .moniker-avatar-list {
       height: 48px;
       float: left;
+
+      .paper {
+        height: 48px !important;
+        width: 48px !important;
+      }
     }
   
     div.validator-list div.validator-info {
