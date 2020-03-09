@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 * [#306] Display errors with SDK v0.38 format
+* [#297] Prettify unrecognized JSON messages
 * [#294] Fixed cloneDeep typo in Account section for case-sensitve filesystems.
 * [#284] Support Tendermint v0.33 block format
 
