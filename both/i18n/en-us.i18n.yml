@@ -237,7 +237,7 @@ messageTypes:
     IBCTransfer: 'IBC Transfer'
     IBCReceive: 'IBC Receive'
     post: 'Post'
-    like: 'Like'
+    react: 'Add Reaction'
     answerPoll: 'Answer'
 desmos:
     apost: 'a Message'
@@ -252,3 +252,4 @@ desmos:
     withAPoll: 'with a Poll'
     toPostId: 'to Post ID:'
     pollEnd: 'The poll is going to be ended on {$date}.'
+    withMedia: 'with Media'

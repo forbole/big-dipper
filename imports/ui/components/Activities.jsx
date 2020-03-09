@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Badge } from 'reactstrap';
 import Account from '../components/Account.jsx';
 import Poll from '../components/Poll.jsx';
+import MediaList from '../components/MediaList.jsx';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js'
 import ReactJson from 'react-json-view'
@@ -99,15 +100,16 @@ export default class Activites extends Component {
 
         case "desmos/MsgCreatePost":
             return <div>
-                <p><Account address={msg.value.creator}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <T>desmos.apost</T> {(msg.value.poll_data?<T>desmos.withAPoll</T>:'')} {(msg.value.parent_id != 0)?<span><T>desmos.asAReply</T> {msg.value.parent_id}</span>:''}<T>common.fullStop</T></p>
+                <p><Account address={msg.value.creator}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <T>desmos.apost</T> {(msg.value.medias?<T>desmos.withMedia</T>:'')} {(msg.value.poll_data?<T>desmos.withAPoll</T>:'')} {(msg.value.parent_id != 0)?<span><T>desmos.asAReply</T> {msg.value.parent_id}</span>:''}<T>common.fullStop</T></p>
                 <p><T message={msg.value.message} _purify={false}>desmos.sayMessage</T></p>
                 {(msg.value.poll_data)?<Poll 
                     poll={msg.value.poll_data}
                 />:''}
+                {(msg.value.medias)?<MediaList media={msg.value.medias}/>:''}
             </div>
             
-        case "desmos/MsgLikePost":
-            return <p><Account address={msg.value.liker} /> <MsgType type={msg.type} /> <T>desmos.postId</T> <span className="text-info">{msg.value.post_id}</span><T>common.fullStop</T></p>
+        case "desmos/MsgAddPostReaction":
+            return <p><Account address={msg.value.user} /> <MsgType type={msg.type} /> {msg.value.value} <T>desmos.postId</T> <span className="text-info">{msg.value.post_id}</span><T>common.fullStop</T></p>
         case "desmos/MsgAnswerPoll":
             return <p><Account address={msg.value.answerer} /> <MsgType type={msg.type} /> {msg.value.answers.map((answer,i) => <Badge key={i}>{answer}</Badge>)} <T>desmos.toPostId</T> {msg.value.post_id}</p>
         default:

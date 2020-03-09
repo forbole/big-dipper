@@ -54,10 +54,12 @@ export const MsgType = (props) => {
     
     case "desmos/MsgCreatePost":
         return <Badge color="primary"><T>messageTypes.post</T></Badge>
-    case "desmos/MsgLikePost":
-        return <Badge color="primary"><T>messageTypes.like</T></Badge>
+    case "desmos/MsgAddPostReaction":
+        return <Badge color="primary"><T>messageTypes.react</T></Badge>
     case "desmos/MsgAnswerPoll":
-        return <Badge color="primary"><T>messageTypes.answerPoll</T></Badge>        
+        return <Badge color="primary"><T>messageTypes.answerPoll</T></Badge>
+
+
     default:
         return <Badge color="primary">{props.type}</Badge>;
     }
