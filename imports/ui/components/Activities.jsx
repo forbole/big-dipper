@@ -1,6 +1,7 @@
 import React, {Component } from 'react';
 import { MsgType } from './MsgType.jsx';
 import { Link } from 'react-router-dom';
+import { Badge } from 'reactstrap';
 import Account from '../components/Account.jsx';
 import Poll from '../components/Poll.jsx';
 import i18n from 'meteor/universe:i18n';
@@ -105,9 +106,10 @@ export default class Activites extends Component {
                 />:''}
             </div>
             
-
         case "desmos/MsgLikePost":
             return <p><Account address={msg.value.liker} /> <MsgType type={msg.type} /> <T>desmos.postId</T> <span className="text-info">{msg.value.post_id}</span><T>common.fullStop</T></p>
+        case "desmos/MsgAnswerPoll":
+            return <p><Account address={msg.value.answerer} /> <MsgType type={msg.type} /> {msg.value.answers.map((answer,i) => <Badge>{answer}</Badge>)} <T>desmos.toPostId</T> {msg.value.post_id}</p>
         default:
             return <div><ReactJson src={msg.value} /></div>
         }

@@ -238,6 +238,7 @@ messageTypes:
     IBCReceive: 'IBC Receive'
     post: 'Post'
     like: 'Like'
+    answerPoll: 'Answer'
 desmos:
     apost: 'a Message'
     asAReply: 'as a reply to Post ID:'
@@ -249,3 +250,4 @@ desmos:
     likesList: 'Likes List'
     comments: 'Comments'
     withAPoll: 'with a Poll'
+    toPostId: 'to Post ID:'
