@@ -251,3 +251,4 @@ desmos:
     comments: 'Comments'
     withAPoll: 'with a Poll'
     toPostId: 'to Post ID:'
+    pollEnd: 'The poll is going to be ended on {$date}.'

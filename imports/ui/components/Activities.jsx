@@ -109,7 +109,7 @@ export default class Activites extends Component {
         case "desmos/MsgLikePost":
             return <p><Account address={msg.value.liker} /> <MsgType type={msg.type} /> <T>desmos.postId</T> <span className="text-info">{msg.value.post_id}</span><T>common.fullStop</T></p>
         case "desmos/MsgAnswerPoll":
-            return <p><Account address={msg.value.answerer} /> <MsgType type={msg.type} /> {msg.value.answers.map((answer,i) => <Badge>{answer}</Badge>)} <T>desmos.toPostId</T> {msg.value.post_id}</p>
+            return <p><Account address={msg.value.answerer} /> <MsgType type={msg.type} /> {msg.value.answers.map((answer,i) => <Badge key={i}>{answer}</Badge>)} <T>desmos.toPostId</T> {msg.value.post_id}</p>
         default:
             return <div><ReactJson src={msg.value} /></div>
         }
