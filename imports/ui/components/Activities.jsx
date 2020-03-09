@@ -2,6 +2,7 @@ import React, {Component } from 'react';
 import { MsgType } from './MsgType.jsx';
 import { Link } from 'react-router-dom';
 import Account from '../components/Account.jsx';
+import Poll from '../components/Poll.jsx';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js'
 import ReactJson from 'react-json-view'
@@ -96,16 +97,14 @@ export default class Activites extends Component {
             return <MsgType type={msg.type} />
 
         case "desmos/MsgCreatePost":
-            if (msg.value.parent_id == 0)
-                return <div>
-                    <p><Account address={msg.value.creator}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <T>desmos.apost</T><T>common.fullStop</T></p>
-                    <p><T message={msg.value.message} _purify={false}>desmos.sayMessage</T></p>
-                </div>
-            else
-                return <div>
-                    <p><Account address={msg.value.creator}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <T>desmos.asAReply</T> {msg.value.parent_id} <T>common.fullStop</T></p>
-                    <p><T message={msg.value.message} _purify={false}>desmos.sayMessage</T></p>
-                </div>
+            return <div>
+                <p><Account address={msg.value.creator}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <T>desmos.apost</T> {(msg.value.poll_data?<T>desmos.withAPoll</T>:'')} {(msg.value.parent_id != 0)?<span><T>desmos.asAReply</T> {msg.value.parent_id}</span>:''}<T>common.fullStop</T></p>
+                <p><T message={msg.value.message} _purify={false}>desmos.sayMessage</T></p>
+                {(msg.value.poll_data)?<Poll 
+                    poll={msg.value.poll_data}
+                />:''}
+            </div>
+            
 
         case "desmos/MsgLikePost":
             return <p><Account address={msg.value.liker} /> <MsgType type={msg.type} /> <T>desmos.postId</T> <span className="text-info">{msg.value.post_id}</span><T>common.fullStop</T></p>

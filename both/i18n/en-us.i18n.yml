@@ -239,7 +239,7 @@ messageTypes:
     post: 'Post'
     like: 'Like'
 desmos:
-    apost: 'a Post'
+    apost: 'a Message'
     asAReply: 'as a reply to Post ID:'
     sayMessage: 'It says "<em class="text-info">{$message}</em>".'
     postId: 'Post ID:'
@@ -248,3 +248,4 @@ desmos:
     commentNotAllowed: 'Comment not allowed'
     likesList: 'Likes List'
     comments: 'Comments'
+    withAPoll: 'with a Poll'
