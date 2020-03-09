@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, ListGroup, ListGroupItem } from 'reactstrap';
+import { ListGroup, ListGroupItem } from 'reactstrap';
 import PropTypes from 'prop-types';
 
 const Poll = (props) => {
