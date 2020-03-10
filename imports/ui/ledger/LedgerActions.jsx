@@ -98,12 +98,23 @@ const TypeMeta = {
 }
 
 const CoinAmount = (props) => {
-        if (!props.coin && !props.amount) return null;
-        let coin = new Coin(props.amount, props.denom).toString(4);
-        let denom = (props.mint)?Coin.StakingCoin.denom:Coin.StakingCoin.displayName;
-        return <span><span className={props.className || 'coin'}>{coin}</span> </span>
-    
+    let coin = {};
+    if (!props.coin && !props.amount) return null;
+    if(!props.denom){
+        coin = new Coin(props.amount).toString(4);
+    }
+    else{
+        let denomFinder =  Meteor.settings.public.coins.find(({ denom }) => denom === props.denom);
+        let displayDenom = denomFinder ? denomFinder.displayName : null;
+        
+        let finder = props.amount.find(({ denom }) => denom === props.denom)
+        coin = finder ? new Coin(finder.amount, finder.denom).toString(4) : '0.0000 ' + displayDenom;
+    }
+    let denom = (props.mint)?Coin.StakingCoin.denom:Coin.StakingCoin.displayName;
+
+    return <span><span className={props.className || 'coin'}>{coin}</span> </span>
 }
+
 
 const Amount = (props) => {
     if (!props.coin && !props.amount) return null;

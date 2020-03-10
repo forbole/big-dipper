@@ -4,6 +4,7 @@
 
 * [#303] Fixed wrong validator display in unjail message
 * [#294] Fixed cloneDeep typo in Account section for case-sensitve filesystems.
+* [#298] Fixed NaN values for Rewards and Commissions that were displayed after clicking Withdrawal Button
 
 ## v0.37.x-patch-10.1
 
