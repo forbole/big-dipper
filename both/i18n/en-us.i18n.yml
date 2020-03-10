@@ -239,6 +239,7 @@ messageTypes:
     post: 'Post'
     react: 'Add Reaction'
     answerPoll: 'Answer'
+    editPost: 'Edit Post'
 desmos:
     apost: 'a Message'
     asAReply: 'as a reply to Post ID:'

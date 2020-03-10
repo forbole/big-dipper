@@ -107,7 +107,11 @@ export default class Activites extends Component {
                 />:''}
                 {(msg.value.medias)?<MediaList media={msg.value.medias}/>:''}
             </div>
-            
+        case "desmos/MsgEditPost":
+            return <div>
+                <Account address={msg.value.editor} /> <MsgType type={msg.type} /> <T>desmos.postId</T> <span className="text-info">{msg.value.post_id}</span><T>common.fullStop</T>
+                <p><T message={msg.value.message} _purify={false}>desmos.sayMessage</T></p>
+            </div>
         case "desmos/MsgAddPostReaction":
             return <p><Account address={msg.value.user} /> <MsgType type={msg.type} /> {msg.value.value} <T>desmos.postId</T> <span className="text-info">{msg.value.post_id}</span><T>common.fullStop</T></p>
         case "desmos/MsgAnswerPoll":
