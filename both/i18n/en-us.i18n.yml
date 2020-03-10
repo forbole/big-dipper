@@ -240,6 +240,7 @@ messageTypes:
     react: 'Add Reaction'
     answerPoll: 'Answer'
     editPost: 'Edit Post'
+    removeReaction: 'Remove Reaction'
 desmos:
     apost: 'a Message'
     asAReply: 'as a reply to Post ID:'
@@ -252,5 +253,6 @@ desmos:
     comments: 'Comments'
     withAPoll: 'with a Poll'
     toPostId: 'to Post ID:'
+    fromPostId: 'from Post ID:'
     pollEnd: 'The poll is going to be ended on {$date}.'
     withMedia: 'with Media'

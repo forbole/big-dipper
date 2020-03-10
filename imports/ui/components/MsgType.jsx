@@ -58,6 +58,8 @@ export const MsgType = (props) => {
         return <Badge color="primary"><T>messageTypes.editPost</T></Badge>
     case "desmos/MsgAddPostReaction":
         return <Badge color="primary"><T>messageTypes.react</T></Badge>
+    case "desmos/MsgRemovePostReaction":
+        return <Badge color="primary"><T>messageTypes.removeReaction</T></Badge>
     case "desmos/MsgAnswerPoll":
         return <Badge color="primary"><T>messageTypes.answerPoll</T></Badge>
 

@@ -113,7 +113,11 @@ export default class Activites extends Component {
                 <p><T message={msg.value.message} _purify={false}>desmos.sayMessage</T></p>
             </div>
         case "desmos/MsgAddPostReaction":
-            return <p><Account address={msg.value.user} /> <MsgType type={msg.type} /> {msg.value.value} <T>desmos.postId</T> <span className="text-info">{msg.value.post_id}</span><T>common.fullStop</T></p>
+            return <p><Account address={msg.value.user} /> <MsgType type={msg.type} /> {msg.value.value} <T>desmos.toPostId</T> <span className="text-info">{msg.value.post_id}</span><T>common.fullStop</T></p>
+        case "desmos/MsgRemovePostReaction":
+            return <div>
+                <Account address={msg.value.user} /> <MsgType type={msg.type} /> {msg.value.reaction} <T>desmos.fromPostId</T> <span className="text-info">{msg.value.post_id}</span><T>common.fullStop</T>
+            </div>
         case "desmos/MsgAnswerPoll":
             return <p><Account address={msg.value.answerer} /> <MsgType type={msg.type} /> {msg.value.answers.map((answer,i) => <Badge key={i}>{answer}</Badge>)} <T>desmos.toPostId</T> {msg.value.post_id}</p>
         default:
