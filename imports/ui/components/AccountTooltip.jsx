@@ -68,9 +68,9 @@ export default class AccountTooltip extends Account{
             {validator.self_delegation?numbro(validator.self_delegation).format('0.00%'):'N/A'}
         </CardText>
         {(isActive)?<CardText className="commission data">
-            <i className="material-icons">call_split </i>
-            {numbro(validator.commission.commission_rates.rate).format('0.00%')}
-         </CardText>:null}
+            <i className="material-icons">call_split </i>{ (validator.commission.commission_rates)?
+            numbro(validator.commission.commission_rates.rate).format('0.00%') : numbro(validator.commission.rate).format('0.00%')  }
+         </CardText>:null} 
         {(!isActive)?<CardText className="last-seen data">
         <i class="material-icons">access_time </i>
         {validator.lastSeen?<TimeStamp time={validator.lastSeen}/>:
