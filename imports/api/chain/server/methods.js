@@ -58,7 +58,7 @@ Meteor.methods({
 
             // Since Tendermint v0.33, validator page default set to return 30 validators.
             // Query latest height with page 1 and 100 validators per page.
-            url = RPC+`/validators?height=${chain.latestBlockHeight}&page=1&per_page=100`;
+            url = RPC+`/validators?page=1&per_page=100`;
             response = HTTP.get(url);
             let validators = JSON.parse(response.content);
             validators = validators.result.validators;
