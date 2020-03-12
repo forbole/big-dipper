@@ -61,7 +61,7 @@ Meteor.methods({
 
             // Since Tendermint v0.33, validator page default set to return 30 validators.
             // Query latest height with page 1 and 100 validators per page.
-            url = RPC+`/validators?height=${chain.latestBlockHeight}&page=1&per_page=100`;
+            url = RPC+`/validators?page=1&per_page=100`;
             response = HTTP.get(url);
             let validators = JSON.parse(response.content);
             validators = validators.result.validators;
@@ -125,31 +125,31 @@ Meteor.methods({
                         console.log(e)
                     }
 
-                    url = LCD + '/minting/inflation';
-                    try{
-                        response = HTTP.get(url);
-                        let inflation = JSON.parse(response.content).result;
-                        if (inflation){
-                            chainStates.inflation = parseFloat(inflation)
-                        }
-                    }
-                    catch(e){
-                        console.log(url);
-                        console.log(e);
-                    }
+                    // url = LCD + '/minting/inflation';
+                    // try{
+                    //     response = HTTP.get(url);
+                    //     let inflation = JSON.parse(response.content).result;
+                    //     if (inflation){
+                    //         chainStates.inflation = parseFloat(inflation)
+                    //     }
+                    // }
+                    // catch(e){
+                    //     console.log(url);
+                    //     console.log(e);
+                    // }
 
-                    url = LCD + '/minting/annual-provisions';
-                    try{
-                        response = HTTP.get(url);
-                        let provisions = JSON.parse(response.content);
-                        if (provisions){
-                            chainStates.annualProvisions = parseFloat(provisions.result)
-                        }
-                    }
-                    catch(e){
-                        console.log(url);
-                        console.log(e);
-                    }
+                    // url = LCD + '/minting/annual-provisions';
+                    // try{
+                    //     response = HTTP.get(url);
+                    //     let provisions = JSON.parse(response.content);
+                    //     if (provisions){
+                    //         chainStates.annualProvisions = parseFloat(provisions.result)
+                    //     }
+                    // }
+                    // catch(e){
+                    //     console.log(url);
+                    //     console.log(e);
+                    // }
             		}
 
                 ChainStates.insert(chainStates);
