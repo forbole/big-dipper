@@ -6,6 +6,7 @@
         "slashingWindow": 10000,
         "uptimeWindow": 250,
         "initialPageSize": 30,
+        "validatorStatus0": 0,
         "bech32PrefixAccAddr": "cosmos",
         "bech32PrefixAccPub": "cosmospub",
         "bech32PrefixValAddr": "cosmosvaloper",

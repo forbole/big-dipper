@@ -375,7 +375,10 @@ Meteor.methods({
                                             validator.profile_url =  getValidatorProfileUrl(validatorData.description.identity)
                                         validator.operator_address = validatorData.operator_address;
                                         validator.delegator_address = Meteor.call('getDelegator', validatorData.operator_address);
-                                        validator.jailed = validatorData.jailed;
+                                        
+                                        // validatorData.jailed may be undefined in cosmos-sdk v0.39.0.
+                                        validator.jailed = !!validatorData.jailed;
+
                                         validator.status = validatorData.status;
                                         validator.min_self_delegation = validatorData.min_self_delegation;
                                         validator.tokens = validatorData.tokens;
@@ -521,7 +524,7 @@ Meteor.methods({
                                 Object.keys(validatorSet).forEach((conPubKey) => {
                                     let validatorData = validatorSet[conPubKey];
                                     // Active validators should have been updated in previous steps
-                                    if (validatorData.status === 2)
+                                    if (validatorData.status === 2 + Meteor.settings.public.validatorStatus0)
                                         return
 
                                     if (dbValidators[conPubKey] == undefined) {
@@ -621,7 +624,7 @@ Meteor.methods({
 
                         if (height % 60 == 1){
                             console.log("===== calculate voting power distribution =====");
-                            let activeValidators = Validators.find({status:2,jailed:false},{sort:{voting_power:-1}}).fetch();
+                            let activeValidators = Validators.find({status:2 + Meteor.settings.public.validatorStatus0,jailed:false},{sort:{voting_power:-1}}).fetch();
                             let numTopTwenty = Math.ceil(activeValidators.length*0.2);
                             let numBottomEighty = activeValidators.length - numTopTwenty;
 

@@ -119,7 +119,7 @@ return <span><CoinAmount mint className='gas' amount={props.gas * Meteor.setting
 }
 
 const isActiveValidator = (validator) => {
-    return !validator.jailed && validator.status == 2;
+    return !validator.jailed && validator.status == 2 + Meteor.settings.public.validatorStatus0;
 }
 
 const isBetween = (value, min, max) => {
@@ -511,7 +511,7 @@ class LedgerButton extends Component {
 
     getValidatorOptions = () => {
         let activeValidators = Validators.find(
-            {"jailed": false, "status": 2},
+            {"jailed": false, "status": 2 + Meteor.settings.public.validatorStatus0},
             {"sort":{"description.moniker":1}}
         );
         let redelegations = this.state.redelegations || {};
