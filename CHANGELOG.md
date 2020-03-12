@@ -4,6 +4,8 @@
 
 * [#303] Fixed wrong validator display in unjail message
 * [#294] Fixed cloneDeep typo in Account section for case-sensitve filesystems.
+*  Added Russian transation
+
 
 ## v0.37.x-patch-10.1
 
