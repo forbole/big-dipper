@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 * [#294] Fixed cloneDeep typo in Account section for case-sensitve filesystems.
+* Fixed Unjail message with a correct account address.
 
 ## v0.37.x-patch-10.1
 
