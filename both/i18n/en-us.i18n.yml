@@ -216,6 +216,7 @@ activities:
     withMoniker: 'with moniker'
     withTitle: 'with title'
     withA: 'with a'
+    withAmount: 'with <span class="text-info">{$amount}</span>'
 messageTypes:
     send: 'Send'
     multiSend: 'Multi Send'
