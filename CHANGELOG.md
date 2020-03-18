@@ -8,6 +8,7 @@
 *  Added Russian transation
 * Fixed Unjail message with a correct account address.
 * [#323] Display rewards amount in activities list.
+* [#327] Fixed error in Proposals section to accept String and Number as a value in Changes table 
 
 ## v0.37.x-patch-10.1
 
