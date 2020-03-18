@@ -11,6 +11,7 @@ import AccountTooltip from '/imports/ui/components/AccountTooltip.jsx';
 import Coin from '/both/utils/coins.js';
 import numbro from 'numbro';
 import TimeStamp from '../components/TimeStamp.jsx';
+import { PropTypes } from 'prop-types';
 
 const maxHeightModifier = {
     setMaxHeight: {
@@ -1045,3 +1046,54 @@ export {
     SubmitProposalButton,
     ProposalActionButtons
 }
+
+LedgerButton.propTypes = {
+    history: PropTypes.shape({
+        length:PropTypes.number,
+        action: PropTypes.string,
+        location:PropTypes.shape({
+            pathname: PropTypes.string,
+            search: PropTypes.string,
+            hash: PropTypes.string,
+            key: PropTypes.string,
+         }),
+        }),
+    rewards:PropTypes.array,
+    commission:PropTypes.array,
+    denom:PropTypes.string.isRequired,
+     }
+
+DelegationButtons.propTypes = {
+    validator: PropTypes.shape({
+        _id:PropTypes.shape({ 
+            _str: PropTypes.string
+        }),
+    address: PropTypes.string,
+    description:PropTypes.shape({
+        moniker: PropTypes.string,
+        identity: PropTypes.string,
+        website: PropTypes.string,
+        details: PropTypes.string,
+        }),
+    jailed: PropTypes.bool,
+    operator_address: PropTypes.string,
+    profile_url: PropTypes.string,
+    status: PropTypes.number
+    }),
+    history: PropTypes.shape({
+        length:PropTypes.number,
+        action: PropTypes.string,
+        location:PropTypes.shape({
+            pathname: PropTypes.string,
+            search: PropTypes.string,
+            hash: PropTypes.string,
+            key: PropTypes.string,
+         }),
+        }),
+    stakingParams: PropTypes.shape({
+        unbonding_time:PropTypes.string,
+        max_validators: PropTypes.number,
+        max_entries:PropTypes.number,
+        bond_denom:PropTypes.string
+        }),
+    }
