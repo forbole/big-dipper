@@ -10,6 +10,7 @@ export default class ValidatorTransactions extends Component{
         super(props);
         this.state = {
             transferTxs: {},
+            cdpTxs: {},
             stakingTxs: {},
             distributionTxs: {},
             governanceTxs: {},
@@ -23,6 +24,7 @@ export default class ValidatorTransactions extends Component{
                 // console.log("have txs.");
                 this.setState({
                     transferTxs: this.props.transferTxs,
+                    cdpTxs: this.props.cdpTxs,
                     stakingTxs: this.props.stakingTxs,
                     distributionTxs: this.props.distributionTxs,
                     governanceTxs: this.props.governanceTxs,
@@ -39,6 +41,7 @@ export default class ValidatorTransactions extends Component{
         else if (this.props.transactionsExist){
             return <TransactionTabs 
                 transferTxs={this.state.transferTxs}
+                cdpTxs={this.state.cdpTxs}
                 stakingTxs={this.state.stakingTxs}
                 distributionTxs={this.state.distributionTxs}
                 governanceTxs={this.state.governanceTxs}

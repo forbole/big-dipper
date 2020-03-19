@@ -33,6 +33,12 @@ body {
     }
   }
 
+  .nav-tabs {
+    .nav-link {
+      cursor: pointer;
+    }
+  }
+
   .popover{
     max-width: 500px !important;
     font-size: 13px !important;    
@@ -475,6 +481,27 @@ body {
       width: 1em;
       transform: translateY(2px);
       border-radius: 0.2em;
+    }
+
+    .cdp-logo {
+      display: block;
+      padding-left: 30px;
+      background-size: 24px;
+      background-position: top left;
+      background-repeat: no-repeat;
+
+      &.bnb {
+        background-image: url(/img/bnb-symbol.svg);
+      }
+      &.btc {
+        background-image: url(/img/bitcoin-symbol.svg);
+      }
+      &.xrp {
+        background-image: url(/img/xrp-symbol.svg);
+      }
+      &.atom {
+        background-image: url(/img/atom-symbol.svg);
+      }
     }
   
     .available {

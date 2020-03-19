@@ -20,9 +20,9 @@ export default class AccountDelegations extends Component{
         let denomType = this.props.denom;
         let rewardDenom = '';
 
-        return <Card>
-            <CardHeader>{(numDelegations > 0)?numDelegations:<T>accounts.no</T>} <T>accounts.delegation</T>{(numDelegations>1)?<T>accounts.plural</T>:''}</CardHeader>
-            {(numDelegations > 0)?<CardBody className="list overflow-auto">
+        return <div>
+            <h6>{(numDelegations > 0)?numDelegations:<T>accounts.no</T>} <T>accounts.delegation</T>{(numDelegations>1)?<T>accounts.plural</T>:''}</h6>
+            {(numDelegations > 0)?<div className="list overflow-auto">
                 <Container fluid>
                     <Row className="header text-nowrap d-none d-lg-flex">
                         <Col xs={7} md={5}><i className="fas fa-at"></i> <span><T>accounts.validators</T></span></Col>
@@ -42,7 +42,7 @@ export default class AccountDelegations extends Component{
                         </Row>
                     })}</SentryBoundary>
                 </Container>
-            </CardBody>:''}
-        </Card>
+            </div>:''}
+        </div>
     }
 }

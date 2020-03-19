@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
-import { Spinner, UncontrolledTooltip, Row, Col, Card, CardHeader, CardBody, Progress, UncontrolledDropdown, DropdownMenu, DropdownToggle, DropdownItem } from 'reactstrap';
+import React, { Component, useState } from 'react';
+import { Spinner, TabContent, TabPane, Nav, NavItem, NavLink, Row, Col, Card, CardHeader, CardBody, Progress, UncontrolledDropdown, DropdownMenu, DropdownToggle, DropdownItem } from 'reactstrap';
+import classnames from 'classnames';
 import numbro from 'numbro';
 import AccountCopy from '../components/AccountCopy.jsx';
 import LinkIcon from '../components/LinkIcon.jsx';
@@ -35,6 +36,8 @@ export default class AccountDetails extends Component{
             denom: '',
             rewardsForEachDel: [],
             rewardDenomType: [],
+            bondActiveTab: 'delegations',
+            cdpActiveTab: 'cdp-bnb'
         }
     }
 
@@ -263,11 +266,26 @@ export default class AccountDetails extends Component{
         return currentTotal
     }
 
+    toggleBond = (tab) => {
+        if (this.state.bondActiveTab !== tab) {
+            this.setState({
+                bondActiveTab: tab
+            });
+        }
+    }
+
+    toggleCDP = (tab) => {
+        if (this.state.cdpActiveTab !== tab) {
+            this.setState({
+                cdpActiveTab: tab
+            });
+        }
+    }
 
     render(){
 
-          let findCurrentCoin = this.state.total.find(({denom}) => denom === this.state.denom)
-          let currentCoinTotal = findCurrentCoin ? findCurrentCoin.amount : null;
+        let findCurrentCoin = this.state.total.find(({denom}) => denom === this.state.denom)
+        let currentCoinTotal = findCurrentCoin ? findCurrentCoin.amount : null;
           
         if (this.state.loading){
             return <div id="account">
@@ -347,21 +365,139 @@ export default class AccountDetails extends Component{
                 </Row>
                 <Row>
                     <Col md={6}>
-                        <Delegations 
-                            address={this.state.address} 
-                            delegations={this.state.delegations}
-                            reward={this.state.reward}
-                            denom ={this.state.denom}
-                            rewardsForEachDel ={this.state.rewardsForEachDel}
-                        />
+                        <Card>
+                            <CardHeader>
+                                Staking
+                            </CardHeader>
+                            <CardBody>
+                                <Nav tabs className="mb-2">
+                                    <NavItem>
+                                        <NavLink
+                                            className={classnames({ active: this.state.bondActiveTab === 'delegations' })}
+                                            onClick={() => { this.toggleBond('delegations'); }}
+                                        >
+                                            Delegations
+                                        </NavLink>
+                                    </NavItem>
+                                    <NavItem>
+                                        <NavLink
+                                            className={classnames({ active: this.state.bondActiveTab === 'unbondings' })}
+                                            onClick={() => { this.toggleBond('unbondings'); }}
+                                        >
+                                            Unbondings
+                                        </NavLink>
+                                    </NavItem>
+                                    <NavItem>
+                                        <NavLink
+                                            className={classnames({ active: this.state.bondActiveTab === 'redelegations' })}
+                                            onClick={() => { this.toggleBond('redelegations'); }}
+                                        >
+                                            Redelegations
+                                        </NavLink>
+                                    </NavItem>
+                                </Nav>
+                                <TabContent activeTab={this.state.bondActiveTab}>
+                                    <TabPane tabId="delegations">
+                                        <Delegations 
+                                            address={this.state.address} 
+                                            delegations={this.state.delegations}
+                                            reward={this.state.reward}
+                                            denom={this.state.denom}
+                                            rewardsForEachDel={this.state.rewardsForEachDel}
+                                        />
+                                    </TabPane>
+                                    <TabPane tabId="unbondings">
+                                        <Unbondings 
+                                            address={this.state.address} 
+                                            unbonding={this.state.unbondingDelegations}
+                                        />
+                                    </TabPane>
+                                    <TabPane tabId="redelegations">
+                                        <Unbondings 
+                                            address={this.state.address} 
+                                            unbonding={this.state.unbondingDelegations}
+                                        />
+                                    </TabPane>
+                                </TabContent>
+                            </CardBody>
+                        </Card>
+                        
                     </Col>
                     <Col md={6}>
-                        <Unbondings address={this.state.address} unbonding={this.state.unbondingDelegations}/>
+                        <Card>
+                            <CardHeader>CDP</CardHeader>
+                            <CardBody>
+                                <Nav tabs className="mb-2">
+                                    <NavItem>
+                                        <NavLink
+                                            className={classnames({ active: this.state.cdpActiveTab === 'cdp-bnb' })}
+                                            onClick={() => { this.toggleCDP('cdp-bnb'); }}
+                                        >
+                                            <span className="cdp-logo bnb">BNB</span>
+                                        </NavLink>
+                                    </NavItem>
+                                    <NavItem>
+                                        <NavLink
+                                            className={classnames({ active: this.state.cdpActiveTab === 'cdp-btc' })}
+                                            onClick={() => { this.toggleCDP('cdp-btc'); }}
+                                        >
+                                            <span className="cdp-logo btc">BTC</span>
+                                        </NavLink>
+                                    </NavItem>
+                                    <NavItem>
+                                        <NavLink
+                                            className={classnames({ active: this.state.cdpActiveTab === 'cdp-xrp' })}
+                                            onClick={() => { this.toggleCDP('cdp-xrp'); }}
+                                        >
+                                            <span className="cdp-logo xrp">XRP</span>
+                                        </NavLink>
+                                    </NavItem>
+                                    <NavItem>
+                                        <NavLink
+                                            className={classnames({ active: this.state.cdpActiveTab === 'cdp-atom' })}
+                                            onClick={() => { this.toggleCDP('cdp-atom'); }}
+                                        >
+                                            <span className="cdp-logo atom">ATOM</span>
+                                        </NavLink>
+                                    </NavItem>
+                                </Nav>
+                                <TabContent activeTab={this.state.cdpActiveTab}>
+                                    <TabPane tabId="cdp-bnb">
+                                        <Delegations 
+                                            address={this.state.address} 
+                                            delegations={this.state.delegations}
+                                            reward={this.state.reward}
+                                            denom={this.state.denom}
+                                            rewardsForEachDel={this.state.rewardsForEachDel}
+                                        />
+                                    </TabPane>
+                                    <TabPane tabId="cdp-btc">
+                                        <Unbondings 
+                                            address={this.state.address} 
+                                            unbonding={this.state.unbondingDelegations}
+                                        />
+                                    </TabPane>
+                                    <TabPane tabId="cdp-xrp">
+                                        <Unbondings 
+                                            address={this.state.address} 
+                                            unbonding={this.state.unbondingDelegations}
+                                        />
+                                    </TabPane>
+                                    <TabPane tabId="cdp-atom">
+                                        <Unbondings 
+                                            address={this.state.address} 
+                                            unbonding={this.state.unbondingDelegations}
+                                        />
+                                    </TabPane>
+                                </TabContent>
+                            </CardBody>
+                        </Card>
+                        
                     </Col>
                 </Row>
                 <Row>
                     <Col>
-                        <AccountTransactions delegator={this.state.address} denom ={this.state.denom} limit={100}/>
+                        <AccountTransactions delegator={this.state.address} denom={this.state.denom} limit={100}/>
                     </Col>
                 </Row>
             </div>

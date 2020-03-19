@@ -5,6 +5,7 @@ import classnames from 'classnames';
 import numbro from 'numbro';
 import { TransactionRow } from './TransactionRow.jsx';
 import i18n from 'meteor/universe:i18n';
+import PropTypes from 'prop-types';
 
 const T = i18n.createComponent();
 export default class TransactionTabs extends Component{
@@ -13,6 +14,7 @@ export default class TransactionTabs extends Component{
         this.state ={
             activeTab: 'tx-transfer',
             transferTxs: {},
+            cdpTxs: {},
             stakingTxs: {},
             distributionTxs: {},
             governanceTxs: {},
@@ -32,6 +34,7 @@ export default class TransactionTabs extends Component{
         if (this.props != prevProps){
             this.setState({
                 transferTxs: this.props.transferTxs,
+                cdpTxs: this.props.cdpTxs,
                 stakingTxs: this.props.stakingTxs,
                 distributionTxs: this.props.distributionTxs,
                 governanceTxs: this.props.governanceTxs,
@@ -51,6 +54,14 @@ export default class TransactionTabs extends Component{
                             onClick={() => { this.toggle('tx-transfer'); }}
                         >
                             <T>transactions.transfer</T> ({numbro(this.state.transferTxs.length).format("0,0")})
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink
+                            className={classnames({ active: this.state.activeTab === 'tx-cdp' })}
+                            onClick={() => { this.toggle('tx-cdp'); }}
+                        >
+                            <T>transactions.cdp</T> ({numbro(this.state.cdpTxs.length).format("0,0")})
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -91,6 +102,20 @@ export default class TransactionTabs extends Component{
                         <Row>
                             <Col>
                                 {(this.state.transferTxs.length > 0)?this.state.transferTxs.map((tx, i) => {
+                                    return <TransactionRow 
+                                        key={i} 
+                                        index={i} 
+                                        tx={tx}
+                                        blockList 
+                                    />
+                                }):''}
+                            </Col>
+                        </Row>
+                    </TabPane>
+                    <TabPane tabId="tx-cdp">
+                        <Row>
+                            <Col>
+                                {(this.state.cdpTxs.length > 0)?this.state.cdpTxs.map((tx, i) => {
                                     return <TransactionRow 
                                         key={i} 
                                         index={i} 
@@ -162,4 +187,30 @@ export default class TransactionTabs extends Component{
         </Card>
     }
 }
-                    
+
+TransactionTabs.propTypes = {
+    transferTxs: PropTypes.oneOfType([
+        PropTypes.array.isRequired,
+        PropTypes.object.isRequired,
+    ]),
+    cdpTxs: PropTypes.oneOfType([
+        PropTypes.array.isRequired,
+        PropTypes.object.isRequired,
+    ]),
+    stakingTxs: PropTypes.oneOfType([
+        PropTypes.array.isRequired,
+        PropTypes.object.isRequired,
+    ]),
+    distributionTxs: PropTypes.oneOfType([
+        PropTypes.array.isRequired,
+        PropTypes.object.isRequired,
+    ]),
+    governanceTxs: PropTypes.oneOfType([
+        PropTypes.array.isRequired,
+        PropTypes.object.isRequired,
+    ]),
+    slashingTxs: PropTypes.oneOfType([
+        PropTypes.array.isRequired,
+        PropTypes.object.isRequired,
+    ])
+}

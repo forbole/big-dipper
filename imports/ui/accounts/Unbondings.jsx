@@ -15,9 +15,9 @@ export default class AccountUnbondings extends Component{
 
     render(){
         let numUnbondings = this.props.unbonding.length;
-        return <Card>
-            <CardHeader>{(numUnbondings > 0)?numUnbondings:<T>accounts.no</T>}<T>accounts.unbonding</T>{(numUnbondings>1)?<T>accounts.plural</T>:''}</CardHeader>
-            {(numUnbondings > 0)?<CardBody className="list overflow-auto">
+        return <div>
+            <h6>{(numUnbondings > 0)?numUnbondings:<T>accounts.no</T>}<T>accounts.unbonding</T>{(numUnbondings>1)?<T>accounts.plural</T>:''}</h6>
+            {(numUnbondings > 0)?<div className="list overflow-auto">
                 <Container fluid>
                     <Row className="header text-nowrap d-none d-lg-flex">
                         <Col md={5}><i className="fas fa-at"></i> <span><T>accounts.validators</T></span></Col>
@@ -44,7 +44,7 @@ export default class AccountUnbondings extends Component{
                         </Row>
                     )}
                 </Container>
-            </CardBody>:''}
-        </Card>
+            </div>:''}
+        </div>
     }
 }

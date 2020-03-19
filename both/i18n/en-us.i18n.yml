@@ -138,6 +138,7 @@ transactions:
     noValidatorTxsFound: 'No transaction related to this validator was found.'
     memo: 'Memo'
     transfer: 'Transfer'
+    cdp: 'CDP'
     staking: 'Staking'
     distribution: 'Distribution'
     governance: 'Governance'

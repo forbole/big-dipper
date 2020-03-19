@@ -16,6 +16,7 @@ export default class Block extends Component{
 
         this.state = {
             transferTxs: {},
+            cdpTxs: {},
             stakingTxs: {},
             distributionTxs: {},
             governanceTxs: {},
@@ -29,6 +30,7 @@ export default class Block extends Component{
                 // console.log("have txs.");
                 this.setState({
                     transferTxs: this.props.transferTxs,
+                    cdpTxs: this.props.cdpTxs,
                     stakingTxs: this.props.stakingTxs,
                     distributionTxs: this.props.distributionTxs,
                     governanceTxs: this.props.governanceTxs,
@@ -75,6 +77,7 @@ export default class Block extends Component{
                     </Card>
                     <TranactionTabs
                         transferTxs={this.state.transferTxs}
+                        cdpTxs={this.state.cdpTxs}
                         stakingTxs={this.state.stakingTxs}
                         distributionTxs={this.state.distributionTxs}
                         governanceTxs={this.state.governanceTxs}

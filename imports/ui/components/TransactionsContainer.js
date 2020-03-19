@@ -33,6 +33,12 @@ export default TransactionsContainer = withTracker((props) => {
                 {"tx.value.msg.type":"cosmos-sdk/MsgMultiSend"}
             ]
         }).fetch() : {},
+        cdpTxs: transactionsExist ? Transactions.find({
+            $or: [
+                {"tx.value.msg.type":"cdp/MsgCreateCDP"},
+                {"tx.value.msg.type":"cdp/MsgDeposit"}
+            ]
+        }).fetch() : {},
         stakingTxs: transactionsExist ? Transactions.find({
             $or: [
                 {"tx.value.msg.type":"cosmos-sdk/MsgCreateValidator"},
