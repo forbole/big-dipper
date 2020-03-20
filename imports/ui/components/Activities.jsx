@@ -2,6 +2,7 @@ import React, {Component } from 'react';
 import { MsgType } from './MsgType.jsx';
 import { Link } from 'react-router-dom';
 import Account from '../components/Account.jsx';
+import { ListGroup, ListGroupItem } from 'reactstrap';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js'
 import JSONPretty from 'react-json-pretty';
@@ -45,6 +46,8 @@ export default class Activites extends Component {
         for (let i in this.props.events){
             events[this.props.events[i].type] = this.props.events[i].attributes
         }
+
+        console.log(events);
         
         switch (msg.type){
         // bank
@@ -54,6 +57,24 @@ export default class Activites extends Component {
             return <p><Account address={msg.value.from_address} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <span className="text-success">{amount}</span> <T>activities.to</T> <span className="address"><Account address={msg.value.to_address} /></span><T>common.fullStop</T></p>
         case "cosmos-sdk/MsgMultiSend":
             return <MultiSend msg={msg} />
+
+        // CDP
+        case "cdp/MsgCreateCDP":
+            return <div>
+                <div><Account address={msg.value.sender}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> {(this.props.invalid)?'':<span><T>activities.withID</T> {events['create_cdp'][0].value}</span>}</div>
+                <ListGroup className="mt-3">
+                    <ListGroupItem color="success"><T>activities.cdpCollateral</T></ListGroupItem>
+                    {(msg.value.collateral&&msg.value.collateral.length>0)?
+                        msg.value.collateral.map((collateral, i) => <ListGroupItem key={i}>{new Coin(collateral.amount, collateral.denom).toString()}</ListGroupItem>):''}
+                </ListGroup>
+                <ListGroup className="mt-2">
+                    <ListGroupItem color="success"><T>activities.cdpPricipal</T></ListGroupItem>
+                    {(msg.value.principal&&msg.value.principal.length>0)?
+                        msg.value.principal.map((principal, i) => <ListGroupItem key={i}>{new Coin(principal.amount, principal.denom).toString()}</ListGroupItem>):''}
+                </ListGroup>
+            </div>
+        case "cdp/MsgDeposit":
+            return <div><MsgType type={msg.type} /></div>
 
             // staking
         case "cosmos-sdk/MsgCreateValidator":
