@@ -15,6 +15,7 @@ export default class TransactionTabs extends Component{
             activeTab: 'tx-transfer',
             transferTxs: {},
             cdpTxs: {},
+            priceTxs: {},
             stakingTxs: {},
             distributionTxs: {},
             governanceTxs: {},
@@ -35,6 +36,7 @@ export default class TransactionTabs extends Component{
             this.setState({
                 transferTxs: this.props.transferTxs,
                 cdpTxs: this.props.cdpTxs,
+                priceTxs: this.props.priceTxs,
                 stakingTxs: this.props.stakingTxs,
                 distributionTxs: this.props.distributionTxs,
                 governanceTxs: this.props.governanceTxs,
@@ -62,6 +64,14 @@ export default class TransactionTabs extends Component{
                             onClick={() => { this.toggle('tx-cdp'); }}
                         >
                             <T>transactions.cdp</T> ({numbro(this.state.cdpTxs.length).format("0,0")})
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink
+                            className={classnames({ active: this.state.activeTab === 'tx-price' })}
+                            onClick={() => { this.toggle('tx-price'); }}
+                        >
+                            <T>transactions.priceFeed</T> ({numbro(this.state.priceTxs.length).format("0,0")})
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -194,6 +204,10 @@ TransactionTabs.propTypes = {
         PropTypes.object.isRequired,
     ]),
     cdpTxs: PropTypes.oneOfType([
+        PropTypes.array.isRequired,
+        PropTypes.object.isRequired,
+    ]),
+    priceTxs: PropTypes.oneOfType([
         PropTypes.array.isRequired,
         PropTypes.object.isRequired,
     ]),

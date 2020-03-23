@@ -139,6 +139,7 @@ transactions:
     memo: 'Memo'
     transfer: 'Transfer'
     cdp: 'CDP'
+    priceFeed: 'Price Feed'
     staking: 'Staking'
     distribution: 'Distribution'
     governance: 'Governance'
