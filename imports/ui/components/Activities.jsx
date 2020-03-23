@@ -2,10 +2,12 @@ import React, {Component } from 'react';
 import { MsgType } from './MsgType.jsx';
 import { Link } from 'react-router-dom';
 import Account from '../components/Account.jsx';
-import { ListGroup, ListGroupItem } from 'reactstrap';
+import { ListGroup, ListGroupItem, Table } from 'reactstrap';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js'
 import JSONPretty from 'react-json-pretty';
+import numbro from 'numbro';
+import moment from 'moment';
 import _ from 'lodash';
 
 const T = i18n.createComponent();
@@ -47,8 +49,6 @@ export default class Activites extends Component {
             events[this.props.events[i].type] = this.props.events[i].attributes
         }
 
-        console.log(events);
-        
         switch (msg.type){
         // bank
         case "cosmos-sdk/MsgSend":
@@ -65,18 +65,48 @@ export default class Activites extends Component {
                 <ListGroup className="mt-3">
                     <ListGroupItem color="success"><T>activities.cdpCollateral</T></ListGroupItem>
                     {(msg.value.collateral&&msg.value.collateral.length>0)?
-                        msg.value.collateral.map((collateral, i) => <ListGroupItem key={i}>{new Coin(collateral.amount, collateral.denom).toString()}</ListGroupItem>):''}
+                        msg.value.collateral.map((collateral, i) => <ListGroupItem key={i}>{new Coin(collateral.amount, collateral.denom).toString(6)}</ListGroupItem>):''}
                 </ListGroup>
                 <ListGroup className="mt-2">
                     <ListGroupItem color="success"><T>activities.cdpPricipal</T></ListGroupItem>
                     {(msg.value.principal&&msg.value.principal.length>0)?
-                        msg.value.principal.map((principal, i) => <ListGroupItem key={i}>{new Coin(principal.amount, principal.denom).toString()}</ListGroupItem>):''}
+                        msg.value.principal.map((principal, i) => <ListGroupItem key={i}>{new Coin(principal.amount, principal.denom).toString(6)}</ListGroupItem>):''}
                 </ListGroup>
             </div>
         case "cdp/MsgDeposit":
-            return <div><MsgType type={msg.type} /></div>
+            return <div><Account address={msg.value.depositor} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} />
+                <ListGroup className="mt-3">
+                    <ListGroupItem color="success"><T>activities.cdpOwner</T></ListGroupItem>
+                    <ListGroupItem><Account address={msg.value.owner} /></ListGroupItem>
+                </ListGroup>
+                <ListGroup className="mt-2">
+                    <ListGroupItem color="success"><T>activities.cdpDepositCollateral</T></ListGroupItem>
+                    {(msg.value.collateral&&msg.value.collateral.length>0)?
+                        msg.value.collateral.map((collateral, i) => <ListGroupItem key={i}>{new Coin(collateral.amount, collateral.denom).toString(6)}</ListGroupItem>):''}
+                </ListGroup>
+            </div>
 
-            // staking
+        // Pricefeed
+        case "pricefeed/MsgPostPrice":
+            return <div>
+                <Account address={msg.value.from} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} />
+                <Table striped className="mt-3">
+                    <thead>
+                        <tr>
+                            <th className="w-25">{msg.value.market_id}</th>
+                            <td>{numbro(msg.value.price).formatCurrency({ mantissa: 6 })}</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row" className="w-25"><T>activities.priceExpiry</T></th>
+                            <td>{moment.utc(msg.value.expiry).format('YYYY-MM-DD HH:mm:ss')}</td>
+                        </tr>
+                    </tbody>
+                </Table>
+            </div>
+
+        // staking
         case "cosmos-sdk/MsgCreateValidator":
             return <p><Account address={msg.value.delegator_address}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <T>activities.operatingAt</T> <span className="address"><Account address={msg.value.validator_address}/></span> <T>activities.withMoniker</T> <Link to="#">{msg.value.description.moniker}</Link><T>common.fullStop</T></p>
         case "cosmos-sdk/MsgEditValidator":

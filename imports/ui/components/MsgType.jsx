@@ -18,7 +18,10 @@ export const MsgType = (props) => {
     case "cdp/MsgCreateCDP":
         return <Badge color="success"><T>messageTypes.createCDP</T></Badge>    
     
-        // staking
+    // pricefeed
+    case "pricefeed/MsgPostPrice":
+        return <Badge color="info"><T>messageTypes.postPrice</T></Badge>
+    // staking
     case "cosmos-sdk/MsgCreateValidator":
         return <Badge color="warning"><T>messageTypes.createValidator</T></Badge>;
     case "cosmos-sdk/MsgEditValidator":
