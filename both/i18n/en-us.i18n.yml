@@ -23,6 +23,7 @@ common:
     cancel: 'Cancel'
     retry: 'Retry'
     rewards: 'Rewards'
+    lastUpdated: 'Last Updated:'
 navbar:
     siteName: 'The Big Dipper'
     version: 'beta'
@@ -144,6 +145,19 @@ transactions:
     distribution: 'Distribution'
     governance: 'Governance'
     slashing: 'Slashing'
+cdp:
+    id: 'ID'
+    owner: 'Owner'
+    collateral: 'Collateral Deposited'
+    principal: 'Principal Drawn'
+    accumulatedFees: 'Accumulated Fees'
+    collateralValue: 'Collateral Value'
+    collateralizationRatio: 'Collateral Ratio'
+    create: 'Create CDP'
+    deposit: 'Deposit'
+    withdraw: 'Withdraw'
+    draw: 'Draw Debt'
+    repay: 'Repay Debt'
 proposals:
     notFound: 'No proposal found.'
     listOfProposals: 'Here is a list of governance proposals.'

@@ -1,5 +1,13 @@
 import React, { Component, useState } from 'react';
-import { Spinner, TabContent, TabPane, Nav, NavItem, NavLink, Row, Col, Card, CardHeader, CardBody, Progress, UncontrolledDropdown, DropdownMenu, DropdownToggle, DropdownItem } from 'reactstrap';
+import { Spinner, 
+    TabContent, TabPane, 
+    Nav, NavItem, NavLink, 
+    Row, Col, 
+    Card, CardHeader, CardBody, 
+    Progress, 
+    UncontrolledDropdown, DropdownMenu, DropdownToggle, DropdownItem,
+    Badge
+} from 'reactstrap';
 import classnames from 'classnames';
 import numbro from 'numbro';
 import AccountCopy from '../components/AccountCopy.jsx';
@@ -10,6 +18,7 @@ import AccountTransactions from '../components/TransactionsContainer.js';
 import ChainStates from '../components/ChainStatesContainer.js'
 import { Helmet } from 'react-helmet';
 import { WithdrawButton, TransferButton } from '../ledger/LedgerActions.jsx';
+import CDP from '../cdp/CDP.jsx';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js'
 
@@ -426,7 +435,7 @@ export default class AccountDetails extends Component{
                     <Col md={6}>
                         <Card>
                             <CardHeader>CDP</CardHeader>
-                            <CardBody>
+                            <CardBody className="cdp-body">
                                 <Nav tabs className="mb-2">
                                     <NavItem>
                                         <NavLink
@@ -463,31 +472,58 @@ export default class AccountDetails extends Component{
                                 </Nav>
                                 <TabContent activeTab={this.state.cdpActiveTab}>
                                     <TabPane tabId="cdp-bnb">
-                                        <Delegations 
-                                            address={this.state.address} 
-                                            delegations={this.state.delegations}
-                                            reward={this.state.reward}
-                                            denom={this.state.denom}
-                                            rewardsForEachDel={this.state.rewardsForEachDel}
+                                        <div className="mb-3"><Badge color="success">BNB:USD</Badge> <strong className="text-info">{numbro(11.592788144429655).formatCurrency({mantissa:4})}</strong></div>
+                                        <CDP 
+                                            id={7}
+                                            collateral={[{
+                                                "denom": "bnb",
+                                                "amount": "810204807.553924619639057"
+                                            }]}
+                                            principal={[{
+                                                "denom": "usdx",
+                                                "amount": "50000000"
+                                            }]}
+                                            accumulatedFees={[{
+                                                "denom": "usdx",
+                                                "amount": "19975"
+                                            }]}
+                                            feesUpdated="2020-03-23T12:55:57.380775666Z"
+                                            collateralValue={{
+                                                "denom": "usdx",
+                                                "amount": "93925326"
+                                            }}
+                                            collateralizationRatio={1.877756350338039833}
                                         />
                                     </TabPane>
                                     <TabPane tabId="cdp-btc">
-                                        <Unbondings 
-                                            address={this.state.address} 
-                                            unbonding={this.state.unbondingDelegations}
+                                        <div className="mb-3"><Badge color="success">BTC:USD</Badge> <strong className="text-info">{numbro(5890.8).formatCurrency({mantissa:4})}</strong></div>
+                                        <CDP 
+                                            id={12}
+                                            collateral={[{
+                                                "denom": "btc",
+                                                "amount": "1501500"
+                                            }]}
+                                            principal={[{
+                                                "denom": "usdx",
+                                                "amount": "50000000"
+                                            }]}
+                                            accumulatedFees={[{
+                                                "denom": "usdx",
+                                                "amount": "406"
+                                            }]}
+                                            feesUpdated="2020-03-17T18:06:44.070373266Z"
+                                            collateralValue={{
+                                                "denom": "usdx",
+                                                "amount": "88450362"
+                                            }}
+                                            collateralizationRatio={1.768352843346791141}
                                         />
                                     </TabPane>
                                     <TabPane tabId="cdp-xrp">
-                                        <Unbondings 
-                                            address={this.state.address} 
-                                            unbonding={this.state.unbondingDelegations}
-                                        />
+                                        <CDP />
                                     </TabPane>
                                     <TabPane tabId="cdp-atom">
-                                        <Unbondings 
-                                            address={this.state.address} 
-                                            unbonding={this.state.unbondingDelegations}
-                                        />
+                                        <CDP />
                                     </TabPane>
                                 </TabContent>
                             </CardBody>
