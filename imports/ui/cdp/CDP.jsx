@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Button } from 'reactstrap';
+import { Table, Button, Modal, ModalHeader, ModalBody, ModalFooter, Input, Label, Form, FormGroup, FormText, FormFeedback } from 'reactstrap';
 import moment from 'moment';
 import numbro from 'numbro';
 import Account from '../components/Account.jsx';
@@ -12,6 +12,35 @@ const T = i18n.createComponent();
 export default class CDP extends Component{
     constructor(props){
         super(props);
+        this.state = {
+            modal: false,
+            ratio: 0,
+            collateral: 0,
+            debt: 0,
+            price: 11.5928
+        }
+
+        this.toggle = this.toggle.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+    }
+
+    toggle = () =>{
+        this.setState({
+            modal: !this.state.modal
+        })
+    }
+
+    handleChange = (e) => {
+        const { target } = e;
+        const value = target.value;
+        const { name } = target;
+        this.setState({
+            [name]: value,
+        }, () => {
+            this.setState({
+                ratio: this.state.collateral * this.state.price / this.state.debt
+            })
+        });
     }
 
     render(){
@@ -28,7 +57,7 @@ export default class CDP extends Component{
                             <td><Account address={this.props.owner} /></td>
                         </tr>:''}
                         {(this.props.collateral&&(this.props.collateral.length>0))?<tr>
-                            <th scope="row" className="w-25 text-muted"><T>cdp.collateral</T></th>
+                            <th scope="row" className="w-25 text-muted"><T>cdp.collateralDeposited</T></th>
                             <td>{this.props.collateral.map((col, i) => <div key={i}>{new Coin(col.amount, col.denom).toString(6)}</div>)}</td>
                         </tr>:''}
                         {(this.props.principal&&(this.props.principal.length>0))?<tr>
@@ -52,11 +81,43 @@ export default class CDP extends Component{
                 <div>
                     <Button color="success" size="sm"><T>cdp.deposit</T></Button> <Button color="warning" size="sm"><T>cdp.withdraw</T></Button> <Button color="danger" size="sm"><T>cdp.draw</T></Button> <Button color="info" size="sm"><T>cdp.repay</T></Button>
                 </div>
+                
             </div>
         }
         else{
             return <div>
-                <Button color="success" size="sm"><T>cdp.create</T></Button>
+                <Button color="success" size="sm" onClick={this.toggle}><T>cdp.create</T></Button>
+                <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
+                    <ModalHeader toggle={this.toggle}><T>cdp.create</T></ModalHeader>
+                    <ModalBody>
+                        <Form>
+                            <h3>Create CDP with <img src="/img/bnb-symbol.svg" style={{width:"24px",height:"24px"}}/> BNB</h3>
+                            <FormGroup>
+                                <Label for="collateral"><T>cdp.collateral</T></Label>
+                                <Input placeholder="Collateral Amount" name="collateral" onChange={this.handleChange} />
+                                <FormText>The amount of BNB you would like to deposit</FormText>
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="exampleEmail"><T>cdp.debt</T></Label>
+                                <Input placeholder="Debt Amount" name="debt" onChange={this.handleChange} />
+                                <FormText>The amount of debut in USDX you would like to draw</FormText>
+                            </FormGroup>
+                            <FormGroup>
+                                <Label><T>cdp.collateralizationRatio</T></Label>
+                                <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio>1.5))}
+                                    className={((this.state.ratio !== Infinity) && (this.state.ratio>1.5))?'text-success':'text-danger'}
+                                    value={((this.state.ratio !== Infinity)&&(this.state.ratio>0))?numbro(this.state.ratio).format({mantissa:6}):'Not available'}
+                                    disabled={true}
+                                />
+                                <FormFeedback invalid>Collateralization ratio is danger! It must be greater than 1.5</FormFeedback>
+                            </FormGroup>
+                        </Form>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="primary" onClick={this.toggle} disabled={!((this.state.ratio !== Infinity) && (this.state.ratio>1.5))}><T>cdp.create</T></Button>{' '}
+                        <Button color="secondary" onClick={this.toggle}><T>common.cancel</T></Button>
+                    </ModalFooter>
+                </Modal>
             </div>
         }
 

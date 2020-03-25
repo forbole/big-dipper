@@ -473,6 +473,8 @@ export default class AccountDetails extends Component{
                                 <TabContent activeTab={this.state.cdpActiveTab}>
                                     <TabPane tabId="cdp-bnb">
                                         <div className="mb-3"><Badge color="success">BNB:USD</Badge> <strong className="text-info">{numbro(11.592788144429655).formatCurrency({mantissa:4})}</strong></div>
+                                        {/* <CDP /> */}
+                                        
                                         <CDP 
                                             id={7}
                                             collateral={[{
