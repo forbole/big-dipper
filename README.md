@@ -4,31 +4,30 @@ Block Explorer for Cosmos
 
 ## Projects running on mainnets
 
-[Explore Cosmos Hub (cosmoshub-3) with Big Dipper](https://cosmos.bigdipper.live)
+[Explore Cosmos Hub with Big Dipper](https://cosmos.bigdipper.live)
 
-[Explore IRISnet (irishub) with Big Dipper](https://iris.bigdipper.live)
+[Explore IRISnet with Big Dipper](https://iris.bigdipper.live)
 
-[Explore LikeCoin Chain (sheungwan) with Big Dipper](http://likecoin.bigdipper.live/)
+[Explore LikeCoin Chain with Big Dipper](http://likecoin.bigdipper.live/)
 
-[Explore Kava (kava-2) with the Big Dipper](https://kava.bigdipper.live/)
+[Explore Kava with Big Dipper](https://kava.bigdipper.live/)
+
+[Explore e-Money with Big Dipper](https://e-money.network/)
+
 
 ## Projects with testnets
 
-[Desmos Network](https://morpheus.desmos.network/)
+[Agoric](https://explorer.testnet.agoric.com/)
 
 [Cyber Congress](https://cyberd.ai/)
 
-[Regen Network](http://bigdipper.regen.network/)
-
-[Sentinel](https://explorer.sentinel.co/)
-
-[e-Money](https://e-money.network/)
+[Desmos Network](https://morpheus.desmos.network/)
 
 [Persistence](https://explorer.persistence.one/)
 
-[TruStory](https://explorer.testnet.trustory.io)
+[Regen Network](https://explorer.regen.vitwit.com/)
 
-[Agoric](https://explorer.testnet.agoric.com/)
+[Sentinel](https://explorer.sentinel.co/)
 
 ## How to run The Big Dipper
 
