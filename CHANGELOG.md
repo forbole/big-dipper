@@ -9,6 +9,7 @@
 * Added Russian transation
 * Fixed Unjail message with a correct account address.
 * [#323] Display rewards amount in activities list.
+* Hide Italian it-IT Translation
 
 ## v0.37.x-patch-10.1
 
