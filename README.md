@@ -29,6 +29,8 @@ Block Explorer for Cosmos
 
 [Sentinel](https://explorer.sentinel.co/)
 
+[Dropil Chain](https://testnet-explorer.dropilchain.com/)
+
 ## How to run The Big Dipper
 
 1. Copy `default_settings.json` to `settings.json`.
