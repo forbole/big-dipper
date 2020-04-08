@@ -213,7 +213,6 @@ export class Ledger {
             msgs: tx.value.msg,
             sequence: txContext.sequence.toString(),
         };
-
         return JSON.stringify(canonicalizeJson(txFieldsToSign));
     }
 
@@ -455,6 +454,29 @@ export class Ledger {
 
         return Ledger.createSkeleton(txContext, [txMsg]);
     }
+
+    static claimSwap(
+        txContext,
+        swapID,
+        swapRandomNumber,
+    ) {
+        const txMsg = {
+            type: 'bep3/MsgClaimAtomicSwap',
+            value: {
+                from: txContext.bech32,
+                swap_id: swapID,
+                random_number: swapRandomNumber
+                // "value":{"from":"kava1xkyvq6mrnwz3ssytzn0lmxcc9g8x5wsn9zsgvc","swap_id":"3558054601918EA1D1EC9991D5CDAFC599F4CEF2DEF206075686CFAB9E67996A","random_number":"99F0C829F3671DFB5DF9CE1357923213E935D5D4E2290C11B7F1CF6793D5F821"}}],"memo":""}
+
+            }
+        };
+
+        return Ledger.createSkeleton(txContext, [txMsg]);
+    }
+
+
+
+
 
 }
 

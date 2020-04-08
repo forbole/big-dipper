@@ -6,7 +6,7 @@ import { Spinner,
     Card, CardHeader, CardBody, 
     Progress, 
     UncontrolledDropdown, DropdownMenu, DropdownToggle, DropdownItem,
-    Badge
+    Badge, Button 
 } from 'reactstrap';
 import classnames from 'classnames';
 import numbro from 'numbro';
@@ -17,10 +17,10 @@ import Unbondings from './Unbondings.jsx';
 import AccountTransactions from '../components/TransactionsContainer.js';
 import ChainStates from '../components/ChainStatesContainer.js'
 import { Helmet } from 'react-helmet';
-import { WithdrawButton, TransferButton } from '../ledger/LedgerActions.jsx';
+import { WithdrawButton, TransferButton, ClaimSwapButton } from '../ledger/LedgerActions.jsx';
 import CDP from '../cdp/CDP.jsx';
 import i18n from 'meteor/universe:i18n';
-import Coin from '/both/utils/coins.js'
+import Coin from '/both/utils/coins.js';
 
 const T = i18n.createComponent();
 
@@ -46,7 +46,10 @@ export default class AccountDetails extends Component{
             rewardsForEachDel: [],
             rewardDenomType: [],
             bondActiveTab: 'delegations',
-            cdpActiveTab: 'cdp-bnb'
+            cdpActiveTab: 'cdp-bnb',
+            cdpID: 0,
+            cdpOwner: '',
+            cdpCollateral: [],
         }
     }
 
@@ -78,12 +81,24 @@ export default class AccountDetails extends Component{
 
             if (result){
 
-                if (result.available){
+                if (result.available && result.available.length > 0){
 
                     this.setState({
                         available: cloneDeep(result.available),
                         denom: Coin.StakingCoin.denom,
                         total: cloneDeep(result.available)
+                        
+                    })
+                    
+                }
+
+                else{
+                    
+                    let avail = [{denom:"ukava",amount:"0"}]
+                    this.setState({
+                        available: avail,
+                        denom: Coin.StakingCoin.denom,
+                        total: avail
                         
                     })
                 }
@@ -94,7 +109,7 @@ export default class AccountDetails extends Component{
                         const amount = delegation.balance.amount || delegation.balance;
                         this.setState({
                             delegated: this.state.delegated+parseFloat(delegation.balance.amount),
-                            total: this.state.total+parseFloat(delegation.balance.amount)
+                            //total: this.state.total+parseFloat(delegation.balance.amount)
                         })
                     }, this)
 
@@ -122,8 +137,7 @@ export default class AccountDetails extends Component{
                     this.state.total.forEach((total, i) => {
                         if(total.denom === Meteor.settings.public.bondDenom )
                             this.state.total[i].amount = parseFloat(this.state.total[i].amount) + parseFloat(this.state.unbonding);
-                        
-                
+                                        
             }, this)
 
                  this.setState({
@@ -136,14 +150,11 @@ export default class AccountDetails extends Component{
                 if(result.total_rewards && result.total_rewards.length > 0)
                 {
                     const totalRewards  = cloneDeep(result.total_rewards);
-
+                    totalRewards > 0 ?
                     totalRewards.forEach((rewardNum, i) => {
                        if(rewardNum.denom === this.state.total[i].denom)
                         this.state.total[i].amount = parseFloat(this.state.total[i].amount) + parseFloat(rewardNum.amount);                       
-                    }, this)
-
-                  
-
+                    }, this) : null 
                     this.setState({
                         rewards: [...totalRewards],
                         total: [...this.state.total]
@@ -172,18 +183,23 @@ export default class AccountDetails extends Component{
                         }   
                 }
  
-                if (result.commission){
+                if (result.commission){                   
                     result.commission.forEach((commissions, i) => {
                         const commissionAmount = commissions;
-                        if(commissions.denom === this.state.total[i].denom)
-                            this.state.total[i].amount = parseFloat(this.state.total[i].amount) + parseFloat(commissions.amount);
+                        this.state.total[i].denom ?
+                        (commissions.denom === this.state.total[i].denom) ?
+                            this.state.total[i].amount = parseFloat(this.state.total[i].amount) + parseFloat(commissions.amount) : this.state.total[i].amount = [...commissionAmount] : null
+                        
+                        
+                            
+                        
 
                         this.setState({
                             operator_address: result.operator_address,
                             commission: [...this.state.commission, commissionAmount],
                             total: [...this.state.total]
                         })
-                    }, this)
+                    }, this) 
 
                 }
 
@@ -194,7 +210,132 @@ export default class AccountDetails extends Component{
                 })
             }
         })
-    }
+    
+
+                                    //////////CDP//////
+
+
+        Meteor.call('accounts.getCDP', this.props.match.params.address, (error, result) => {
+            if (error){
+                console.warn(error);
+                this.setState({
+                    loading:false
+                })
+            }
+    
+            if (result){
+                console.log("RESULT  !!" + JSON.stringify(result))
+                // for(let c in result){
+                //     console.log("HERE "  + JSON.stringify(result[c]))
+                //    console.log("HERE cdp "  + JSON.stringify(result[c][0].cdp))
+
+                // }
+
+                for(let e in result){
+                    for(let f in result[e]){
+                        let cdpResult = result[e][f].cdp;
+                        let collateralValueResult = result[e][f].collateral_value;
+                        let collateralizationRatioResult = result[e][f].collateralization_ratio;
+                        console.log("cdpResult " + JSON.stringify(cdpResult))
+                        console.log("collateralValueResult " + JSON.stringify(collateralValueResult))
+                        console.log("collateralizationRatioResult " + JSON.stringify(collateralizationRatioResult))
+
+                        //  if(this.state.denom === numRewards[e][f].denom){
+                        //     this.setState({
+                        //         rewardDenomType: numRewards[e][f].denom,
+                        //         rewardsForEachDel: numRewards,
+                        //     })
+                        // }
+
+                         this.setState({
+                        cdpID: cdpResult.id,
+                        cdpOwner: cdpResult.owner,
+                        cdpCollateral: [...cdpResult.collateral],       
+                    })
+                        
+                    }
+                // console.log("HERE "  + JSON.stringify(result[0]))
+                // console.log("HERE cdp "  + JSON.stringify(result[0].cdp))
+                    // result.forEach((resl, i) => {
+                    //     console.log("HERE - > " + JSON.stringify(resl[i]))
+                    // })
+                
+                    // console.log("RESULT CDP " + JSON.stringify(result.cdp))
+    
+                    // this.setState({
+                    //     cdpID: result.cdp.id,
+                    //     cdpOwner: result.cdp.owner,
+                    //     cdpCollateral: [...result.cdp.collateral],       
+                    // })
+                    
+                
+                }   
+        } 
+        })
+
+
+
+
+    //     Meteor.call('accounts.getAccountCDP', this.props.match.params.address, (error, result) => {
+    //         if (error){
+    //             console.warn(error);
+    //             this.setState({
+    //                 loading:false
+    //             })
+    //         }
+    
+    //         if (result){
+    //             console.log("RESULT  !!" + JSON.stringify(result))
+    //             // for(let c in result){
+    //             //     console.log("HERE "  + JSON.stringify(result[c]))
+    //             //    console.log("HERE cdp "  + JSON.stringify(result[c][0].cdp))
+
+    //             // }
+
+    //             for(let e in result){
+    //                 for(let f in result[e]){
+    //                     let cdpResult = result[e][f].cdp;
+    //                     let collateralValueResult = result[e][f].collateral_value;
+    //                     let collateralizationRatioResult = result[e][f].collateralization_ratio;
+    //                     console.log("cdpResult " + JSON.stringify(cdpResult))
+    //                     console.log("collateralValueResult " + JSON.stringify(collateralValueResult))
+    //                     console.log("collateralizationRatioResult " + JSON.stringify(collateralizationRatioResult))
+
+    //                     //  if(this.state.denom === numRewards[e][f].denom){
+    //                     //     this.setState({
+    //                     //         rewardDenomType: numRewards[e][f].denom,
+    //                     //         rewardsForEachDel: numRewards,
+    //                     //     })
+    //                     // }
+
+    //                      this.setState({
+    //                     cdpID: cdpResult.id,
+    //                     cdpOwner: cdpResult.owner,
+    //                     cdpCollateral: [...cdpResult.collateral],       
+    //                 })
+                        
+    //                 }
+    //             // console.log("HERE "  + JSON.stringify(result[0]))
+    //             // console.log("HERE cdp "  + JSON.stringify(result[0].cdp))
+    //                 // result.forEach((resl, i) => {
+    //                 //     console.log("HERE - > " + JSON.stringify(resl[i]))
+    //                 // })
+                
+    //                 // console.log("RESULT CDP " + JSON.stringify(result.cdp))
+    
+    //                 // this.setState({
+    //                 //     cdpID: result.cdp.id,
+    //                 //     cdpOwner: result.cdp.owner,
+    //                 //     cdpCollateral: [...result.cdp.collateral],       
+    //                 // })
+                    
+                
+    //             }   
+    //     } 
+    //     })
+
+
+     }
 
     componentDidMount(){
         this.getBalance();
@@ -217,6 +358,9 @@ export default class AccountDetails extends Component{
                 denom: '',
                 rewardsForEachDel: [],
                 rewardDenomType: [],
+                cdpID: 0,
+                cdpOwner: '',
+                cdpCollateral: [],
             }, () => {
                 this.getBalance();
             })
@@ -265,7 +409,7 @@ export default class AccountDetails extends Component{
 
     findCoin(coins){
         let finder = (coins).find(({denom}) => denom === this.state.denom);
-        let coinFinder = finder ? new Coin(finder.amount, finder.denom).toString(4) : null;
+        let coinFinder = finder ? new Coin(finder.amount, finder.denom).toString(4) : '0.0000 ' + this.state.denom;
         return coinFinder
     }
 
@@ -291,7 +435,10 @@ export default class AccountDetails extends Component{
         }
     }
 
+
     render(){
+
+        console.log("TOTAL " + JSON.stringify(this.state))
 
         let findCurrentCoin = this.state.total.find(({denom}) => denom === this.state.denom)
         let currentCoinTotal = findCurrentCoin ? findCurrentCoin.amount : null;
@@ -321,6 +468,7 @@ export default class AccountDetails extends Component{
                             Balance
                             <div className="shareLink float-right">{this.renderShareLink()}</div>
                            {(this.state.available.length > 1) ? <div className="coin-dropdown float-right"><h5>Select Coin:</h5> {this.renderDropDown()}</div> : null}
+                           <ClaimSwapButton validator={this.props.validator} address={this.state.operator_address} history={this.props.history}/>
                         </CardHeader>
                         <CardBody><br/> 
                             <Row className="account-distributions">

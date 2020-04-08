@@ -204,5 +204,46 @@ Meteor.methods({
         }
     },
 
+    //get BNB 
+    'accounts.getCDP': function(address){
+        
+        let cdp = {}
+
+        // get available atoms
+        let url = LCD + '/cdp/cdps/denom/bnb'
+        try{
+            let result = HTTP.get(url);
+            if (result.statusCode == 200){
+                cdp = JSON.parse(result.content).result;
+
+            }
+        }
+        catch (e){
+            console.log(e)
+        }
+        return cdp
+    },
+
+     //get BNB 
+     'accounts.getAccountCDP': function(address){
+        
+        let cdp = {}
+
+        // get available atoms
+        let url = LCD + '/cdp/cdps/cdp/'+address+'/bnb';
+        try{
+            let result = HTTP.get(url);
+            if (result.statusCode == 200){
+                cdp = JSON.parse(result.content).result;
+
+            }
+        }
+        catch (e){
+            console.log(e)
+        }
+        return cdp
+    }
+
+
          
 }) 

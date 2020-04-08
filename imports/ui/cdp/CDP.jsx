@@ -8,6 +8,7 @@ import i18n from 'meteor/universe:i18n';
 import PropTypes from 'prop-types';
 
 const T = i18n.createComponent();
+const collateralizationRatio = 2;
 
 export default class CDP extends Component{
     constructor(props){
@@ -104,12 +105,12 @@ export default class CDP extends Component{
                             </FormGroup>
                             <FormGroup>
                                 <Label><T>cdp.collateralizationRatio</T></Label>
-                                <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio>1.5))}
-                                    className={((this.state.ratio !== Infinity) && (this.state.ratio>1.5))?'text-success':'text-danger'}
+                                <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio> collateralizationRatio))}
+                                    className={((this.state.ratio !== Infinity) && (this.state.ratio> collateralizationRatio))?'text-success':'text-danger'}
                                     value={((this.state.ratio !== Infinity)&&(this.state.ratio>0))?numbro(this.state.ratio).format({mantissa:6}):'Not available'}
                                     disabled={true}
                                 />
-                                <FormFeedback invalid>Collateralization ratio is danger! It must be greater than 1.5</FormFeedback>
+                                <FormFeedback invalid>Collateralization ratio is danger! It must be greater than {collateralizationRatio}</FormFeedback>
                             </FormGroup>
                         </Form>
                     </ModalBody>

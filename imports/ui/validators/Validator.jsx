@@ -242,7 +242,7 @@ export default class Validator extends Component{
                             <CardBody className="voting-power-card">
                             {this.state.user?<DelegationButtons validator={this.props.validator}
                                 currentDelegation={this.state.currentUserDelegation}
-                                history={this.props.history} stakingParams={this.props.chainStatus.staking.params}/>:''}
+                                history={this.props.history} stakingParams={this.props.chainStatus.staking}/>:''}
                             <Row>
                                 {this.props.validator.voting_power?<Col xs={12}><h1 className="display-4 voting-power"><Badge color="primary" >{numbro(this.props.validator.voting_power).format('0,0')}</Badge></h1><span>(~{numbro(this.props.validator.voting_power/this.props.chainStatus.activeVotingPower).format('0.00%')})</span></Col>:''}
                                 <Col sm={4} className="label"><T>validators.selfDelegationRatio</T></Col>

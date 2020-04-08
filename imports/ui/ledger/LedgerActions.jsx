@@ -29,7 +29,8 @@ const Types = {
     SEND: 'send',
     SUBMITPROPOSAL: 'submitProposal',
     VOTE: 'vote',
-    DEPOSIT: 'deposit'
+    DEPOSIT: 'deposit',
+    CLAIMSWAP: 'claim'
 }
 
 const DEFAULT_GAS_ADJUSTMENT = '1.4';
@@ -94,16 +95,35 @@ const TypeMeta = {
         pathPreFix: 'gov/proposals',
         pathSuffix: 'deposits',
         gasAdjustment: '2'
+    },
+    [Types.CLAIMSWAP]: {
+        button: 'claim Swap',
+        pathPreFix: 'bep3/swap/claim',
+        pathSuffix: ' ',
+        gasAdjustment: '1.4'
     }
+
+    
 }
 
 const CoinAmount = (props) => {
-        if (!props.coin && !props.amount) return null;
-        let coin = new Coin(props.amount, props.denom).toString(4);
-        let denom = (props.mint)?Coin.StakingCoin.denom:Coin.StakingCoin.displayName;
-        return <span><span className={props.className || 'coin'}>{coin}</span> </span>
-    
+    let coin = {};
+    if (!props.coin && !props.amount) return null;
+    if(!props.denom){
+        coin = new Coin(props.amount).toString(4);
+    }
+    else{
+        let denomFinder =  Meteor.settings.public.coins.find(({ denom }) => denom === props.denom);
+        let displayDenom = denomFinder ? denomFinder.displayName : null;
+        
+        let finder = props.amount.find(({ denom }) => denom === props.denom)
+        coin = finder ? new Coin(finder.amount, finder.denom).toString(4) : '0.0000 ' + displayDenom;
+    }
+    let denom = (props.mint)?Coin.StakingCoin.denom:Coin.StakingCoin.displayName;
+
+    return <span><span className={props.className || 'coin'}>{coin}</span> </span>
 }
+
 
 const Amount = (props) => {
     if (!props.coin && !props.amount) return null;
@@ -112,6 +132,7 @@ const Amount = (props) => {
     let denom = (props.mint)?Coin.StakingCoin.denom:Coin.StakingCoin.displayName;
     return <span><span className={props.className || 'amount'}>{numbro(amount).format("0,0.0000")}</span> <span className='denom'>{denom}</span></span>
 }
+
 
 
 const Fee = (props) => {
@@ -176,7 +197,10 @@ class LedgerButton extends Component {
             proposalDescription: undefined,
             depositAmount: undefined,
             voteOption: undefined,
-            memo: DEFAULT_MEMO
+            memo: DEFAULT_MEMO,
+            swapID: undefined,
+            swapRandomNumber: undefined,
+            swapFrom: undefined,
         });
     }
     static getDerivedStateFromProps(props, state) {
@@ -376,9 +400,18 @@ class LedgerButton extends Component {
                     this.props.proposalId,
                     this.state.depositAmount.amount);
                 break;
+            case Types.CLAIMSWAP:
+                txMsg = Ledger.claimSwap(
+                    this.getTxContext(),
+                    this.state.swapID,
+                    this.state.swapRandomNumber,
+                
+                );
+                break;
 
 
         }
+        //console.log("THE SIM " + JSON.stringify(txMsg))
         callback(txMsg, this.getSimulateBody(txMsg))
     }
 
@@ -405,6 +438,7 @@ class LedgerButton extends Component {
     runSimulatation = (txMsg, simulateBody) => {
         let gasAdjustment = TypeMeta[this.state.actionType].gasAdjustment || DEFAULT_GAS_ADJUSTMENT;
         Meteor.call('transaction.simulate', simulateBody, this.state.user, this.getPath(), gasAdjustment, (err, res) =>{
+            console.log("Error " + JSON.stringify(err))
             if (res){
                 Ledger.applyGas(txMsg, res, Meteor.settings.public.gasPrice, Coin.StakingCoin.denom);
                 this.setStateOnSuccess('simulating', {
@@ -426,6 +460,7 @@ class LedgerButton extends Component {
             let txMsg = this.state.txMsg;
             const txContext = this.getTxContext();
             const bytesToSign = Ledger.getBytesToSign(txMsg, txContext);
+            console.log("BYTES TO ->>>  " + bytesToSign)
             this.ledger.sign(bytesToSign).then((sig) => {
                 try {
                     Ledger.applySignature(txMsg, txContext, sig);
@@ -443,6 +478,7 @@ class LedgerButton extends Component {
                     this.setStateOnError('signing', e.message)
                 }
             }, (err) => this.setStateOnError('signing', err.message))
+            
         } catch (e) {
             this.setStateOnError('signing', e.message)
         }
@@ -1027,10 +1063,57 @@ class ProposalActionButtons extends LedgerButton {
         </span>;
     }
 }
+
+
+
+class ClaimSwapButton extends LedgerButton {
+ 
+        renderActionTab = () => {
+            if (!this.state.currentUser) return null;
+            return <TabPane tabId="2">
+                <h3>Claim Swap</h3>
+                <h6>Please enter your Swap ID</h6>
+                <InputGroup>
+                    <Input name="swapID" onChange={this.handleInputChange}
+                        placeholder="Swap ID" type="text" value={this.state.swapID}
+                        invalid={this.state.swapID != null}/>
+                </InputGroup>
+                <Input name="swapRandomNumber" onChange={this.handleInputChange}
+                    placeholder="Swap Random Number" type="text"
+                    value={this.state.swapRandomNumber}
+                    invalid={this.state.swapRandomNumber != null}/> 
+                   
+            </TabPane>
+        }
+
+        getConfirmationMessage = () => {
+        return <span>You are going to <span className='action'>claim</span> swap for address {this.state.user}</span>
+        }
+
+        getPath = () => {
+            let meta = TypeMeta[this.state.actionType];
+            return `${meta.pathPreFix}`;
+        }
+
+        render = () => {
+            return <span className="ledger-buttons-group float-right">
+                <Button color="info" size="sm" onClick={() => this.openModal(Types.CLAIMSWAP, {})}> {TypeMeta[Types.CLAIMSWAP].button} </Button>
+                {this.renderModal()}
+            </span>;
+        }
+}
+
+
+
+
+
+
+
 export {
     DelegationButtons,
     WithdrawButton,
     TransferButton,
     SubmitProposalButton,
-    ProposalActionButtons
+    ProposalActionButtons,
+    ClaimSwapButton
 }

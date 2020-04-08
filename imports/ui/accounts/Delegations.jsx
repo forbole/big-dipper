@@ -37,7 +37,7 @@ export default class AccountDelegations extends Component{
                         
                         return <Row key={i} className="delegation-info">
                             <Col xs={7} md={5} className="text-nowrap overflow-auto"><AccountTooltip address={d.validator_address} /></Col>
-                            <Col xs={2} md={3}>{new Coin(d.balance, denomType).stakeString()}</Col>
+                            <Col xs={2} md={3}>{new Coin(d.balance.amount, denomType).stakeString()} </Col>
                             <Col xs={3} md={4}>{rewardDenom?new Coin(rewardDenom.amount, rewardDenom.denom).toString(4):'No rewards '} </Col>
                         </Row>
                     })}</SentryBoundary>
