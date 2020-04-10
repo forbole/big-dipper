@@ -18,7 +18,10 @@ export default class CDP extends Component{
             ratio: 0,
             collateral: 0,
             debt: 0,
-            price: 11.5928
+            price: 11.5928,
+            collateralAmount: 0,
+            debtAmount: 0
+
         }
 
         this.toggle = this.toggle.bind(this);
@@ -95,12 +98,12 @@ export default class CDP extends Component{
                             <h3>Create CDP with <img src="/img/bnb-symbol.svg" style={{width:"24px",height:"24px"}}/> BNB</h3>
                             <FormGroup>
                                 <Label for="collateral"><T>cdp.collateral</T></Label>
-                                <Input placeholder="Collateral Amount" name="collateral" onChange={this.handleChange} />
+                                <Input placeholder="Collateral Amount" name="collateral" value={this.state.collateral}  onChange={this.handleChange} />
                                 <FormText>The amount of BNB you would like to deposit</FormText>
                             </FormGroup>
                             <FormGroup>
-                                <Label for="exampleEmail"><T>cdp.debt</T></Label>
-                                <Input placeholder="Debt Amount" name="debt" onChange={this.handleChange} />
+                                <Label for="debt"><T>cdp.debt</T></Label>
+                                <Input placeholder="Debt Amount" name="debt" value={this.state.debt} onChange={this.handleChange} />
                                 <FormText>The amount of debut in USDX you would like to draw</FormText>
                             </FormGroup>
                             <FormGroup>

@@ -4,13 +4,18 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Spinner, TabContent, TabPane, Row, Col, Modal, ModalHeader,
     Form, ModalBody, ModalFooter, InputGroup, InputGroupAddon, Input, Progress,
-    UncontrolledTooltip, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
+    UncontrolledTooltip, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Table, Label, FormGroup, FormText, FormFeedback } from 'reactstrap';
 import { Ledger, DEFAULT_MEMO } from './ledger.js';
 import { Validators } from '/imports/api/validators/validators.js';
 import AccountTooltip from '/imports/ui/components/AccountTooltip.jsx';
 import Coin from '/both/utils/coins.js';
 import numbro from 'numbro';
 import TimeStamp from '../components/TimeStamp.jsx';
+import moment from 'moment';
+import Account from '../components/Account.jsx';
+import i18n from 'meteor/universe:i18n';
+
+
 
 const maxHeightModifier = {
     setMaxHeight: {
@@ -21,6 +26,9 @@ const maxHeightModifier = {
     }
 }
 
+const T = i18n.createComponent();
+const collateralizationRatio = 2;
+
 const Types = {
     DELEGATE: 'delegate',
     REDELEGATE: 'redelegate',
@@ -30,7 +38,8 @@ const Types = {
     SUBMITPROPOSAL: 'submitProposal',
     VOTE: 'vote',
     DEPOSIT: 'deposit',
-    CLAIMSWAP: 'claim'
+    CLAIMSWAP: 'claim',
+    CREATECDP: 'create CDP'
 }
 
 const DEFAULT_GAS_ADJUSTMENT = '1.4';
@@ -100,7 +109,13 @@ const TypeMeta = {
         button: 'claim Swap',
         pathPreFix: 'bep3/swap/claim',
         pathSuffix: ' ',
-        gasAdjustment: '1.4'
+        gasAdjustment: '1.6'
+    },
+    [Types.CREATECDP]: {
+        button: 'Create CDP',
+        pathPreFix: 'cdp',
+        pathSuffix: ' ',
+        gasAdjustment: '1.6'
     }
 
     
@@ -200,7 +215,14 @@ class LedgerButton extends Component {
             memo: DEFAULT_MEMO,
             swapID: undefined,
             swapRandomNumber: undefined,
-            swapFrom: undefined,
+            modal: false,
+            ratio: 0,
+            collateral: 0,
+            debt: 0,
+            price: 11.5928,
+            collateralAmount: 0,
+            debtAmount: 0,
+            
         });
     }
     static getDerivedStateFromProps(props, state) {
@@ -404,10 +426,14 @@ class LedgerButton extends Component {
                 txMsg = Ledger.claimSwap(
                     this.getTxContext(),
                     this.state.swapID,
-                    this.state.swapRandomNumber,
-                
-                );
+                    this.state.swapRandomNumber);
                 break;
+            case Types.CREATECDP:
+            txMsg = Ledger.createCDP(
+                this.getTxContext(),
+                this.state.collateral,
+                this.state.debt);
+            break;
 
 
         }
@@ -438,9 +464,12 @@ class LedgerButton extends Component {
     runSimulatation = (txMsg, simulateBody) => {
         let gasAdjustment = TypeMeta[this.state.actionType].gasAdjustment || DEFAULT_GAS_ADJUSTMENT;
         Meteor.call('transaction.simulate', simulateBody, this.state.user, this.getPath(), gasAdjustment, (err, res) =>{
-            console.log("Error " + JSON.stringify(err))
             if (res){
                 Ledger.applyGas(txMsg, res, Meteor.settings.public.gasPrice, Coin.StakingCoin.denom);
+                console.log("THE GAS txMSG--> " + JSON.stringify(txMsg))
+                console.log("THE GAS res--> " + JSON.stringify(res))
+                console.log("THE GAS gasPrice--> " + JSON.stringify(Meteor.settings.public.gasPrice))
+                console.log("THE GAS Coin.denom--> " + JSON.stringify(Coin.StakingCoin.denom))
                 this.setStateOnSuccess('simulating', {
                     gasEstimate: res,
                     activeTab: '3',
@@ -448,6 +477,7 @@ class LedgerButton extends Component {
                 })
             }
             else {
+                console.log("ERROR " + JSON.stringify(err))
                 this.setStateOnError('simulating', 'something went wrong')
             }
         })
@@ -460,10 +490,12 @@ class LedgerButton extends Component {
             let txMsg = this.state.txMsg;
             const txContext = this.getTxContext();
             const bytesToSign = Ledger.getBytesToSign(txMsg, txContext);
-            console.log("BYTES TO ->>>  " + bytesToSign)
             this.ledger.sign(bytesToSign).then((sig) => {
                 try {
                     Ledger.applySignature(txMsg, txContext, sig);
+                    console.log("THE MSGTX  - > " + JSON.stringify(txMsg))
+                    console.log("THE txContext  - > " + JSON.stringify(txContext))
+
                     Meteor.call('transaction.submit', txMsg, (err, res) => {
                         if (err) {
                             this.setStateOnError('signing', err.reason)
@@ -488,6 +520,7 @@ class LedgerButton extends Component {
         let target = e.currentTarget;
         let dataset = target.dataset;
         let value;
+
         switch (dataset.type) {
             case 'validator':
                 value = { moniker: dataset.moniker, operator_address: dataset.address}
@@ -496,7 +529,7 @@ class LedgerButton extends Component {
                 value = new Coin(target.value, target.nextSibling.innerText)
                 break;
             default:
-                value = target.value;
+                value = target.value.toUpperCase();
         }
         this.setState({[target.name]: value})
     }
@@ -1067,7 +1100,7 @@ class ProposalActionButtons extends LedgerButton {
 
 
 class ClaimSwapButton extends LedgerButton {
- 
+
         renderActionTab = () => {
             if (!this.state.currentUser) return null;
             return <TabPane tabId="2">
@@ -1076,33 +1109,141 @@ class ClaimSwapButton extends LedgerButton {
                 <InputGroup>
                     <Input name="swapID" onChange={this.handleInputChange}
                         placeholder="Swap ID" type="text" value={this.state.swapID}
-                        invalid={this.state.swapID != null}/>
+                        invalid={this.state.swapID === null}/>
                 </InputGroup>
+                <InputGroup>
                 <Input name="swapRandomNumber" onChange={this.handleInputChange}
                     placeholder="Swap Random Number" type="text"
                     value={this.state.swapRandomNumber}
-                    invalid={this.state.swapRandomNumber != null}/> 
-                   
+                    invalid={this.state.swapRandomNumber === null}/>
+                </InputGroup>
+                <InputGroup>
+                <Input name="memo" onChange={this.handleInputChange}
+                placeholder="Memo(optional)" type="textarea" value={this.state.memo}/>
+                </InputGroup>     
             </TabPane>
         }
 
+        supportAction(action) {
+            return action === Types.CLAIMSWAP;
+        }
+
         getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>claim</span> swap for address {this.state.user}</span>
+        return <span>You are going to <span className='action'>claim</span> swap for address <b>{this.state.user } </b>
+         with <Fee gas={this.state.gasEstimate}/>.</span>
         }
 
         getPath = () => {
             let meta = TypeMeta[this.state.actionType];
             return `${meta.pathPreFix}`;
         }
+        
+
+        // isDataValid = () => {
+        //     if (!this.state.currentUser) return false
+           
+        // }
 
         render = () => {
             return <span className="ledger-buttons-group float-right">
-                <Button color="info" size="sm" onClick={() => this.openModal(Types.CLAIMSWAP, {})}> {TypeMeta[Types.CLAIMSWAP].button} </Button>
+                <Button color="primary" size="sm" onClick={() => this.openModal(Types.CLAIMSWAP, {})}> {TypeMeta[Types.CLAIMSWAP].button} </Button>
                 {this.renderModal()}
             </span>;
         }
 }
 
+
+class CreateCDPButton extends LedgerButton {
+
+    constructor(props){
+        super(props);
+        this.state = {
+            modal: false,
+            ratio: 0,
+            collateral: 0,
+            debt: 0,
+            price: 11.5928,
+            collateralAmount: 0,
+            debtAmount: 0
+
+        }}
+    
+
+    toggle = () =>{
+        this.setState({
+            modal: !this.state.modal
+        })
+    }
+
+    handleChange = (e) => {
+        const { target } = e;
+        const value = target.value;
+        const { name } = target;
+        this.setState({
+            [name]: value,
+        }, () => {
+            this.setState({
+                ratio: this.state.collateral * this.state.price / this.state.debt
+            })
+        });
+    }
+ 
+    renderActionTab = () => {
+        if (!this.state.currentUser) return null;
+        return <TabPane tabId="2">
+            <h3>Create CDP with <img src="/img/bnb-symbol.svg" style={{width:"24px",height:"24px"}}/> BNB</h3>
+            <FormGroup>
+            <Label for="collateral"><T>cdp.collateral</T></Label>
+            <Input placeholder="Collateral Amount" name="collateral" value={this.state.collateral}  onChange={this.handleChange} />
+            <FormText>The amount of BNB you would like to deposit</FormText>
+            </FormGroup>
+            <FormGroup>
+            <Label for="debt"><T>cdp.debt</T></Label>
+            <Input placeholder="Debt Amount" name="debt" value={this.state.debt} onChange={this.handleChange} />
+            <FormText>The amount of debut in USDX you would like to draw</FormText>
+            </FormGroup>
+            <FormGroup>
+            <Label><T>cdp.collateralizationRatio</T></Label>
+            <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio > collateralizationRatio))} 
+            className={((this.state.ratio !== Infinity) && (this.state.ratio > collateralizationRatio))?'text-success':'text-danger'}
+            value={((this.state.ratio !== Infinity)&&(this.state.ratio>0))?numbro(this.state.ratio).format({mantissa:6}):'Not available'}
+            disabled={true}/>
+            <FormFeedback invalid>Collateralization ratio is danger! It must be greater than {collateralizationRatio}</FormFeedback>
+            </FormGroup>
+            <FormGroup>
+                <Input name="memo" onChange={this.handleInputChange}
+                placeholder="Memo(optional)" type="textarea" value={this.state.memo}/>
+            </FormGroup>               
+        </TabPane>
+    }
+
+    supportAction(action) {
+        return action === Types.CREATECDP;
+    }
+
+    getConfirmationMessage = () => {
+    return <span>You are going to <span className='action'>create CDP</span> for address <b>{this.state.user } </b>
+     with <Fee gas={this.state.gasEstimate}/>.</span>
+    }
+
+    getPath = () => {
+        let meta = TypeMeta[this.state.actionType];
+        return `${meta.pathPreFix}`;
+    }
+    
+
+    // isDataValid = () => {
+    //     if (!this.state.currentUser) return false
+       
+    // }
+
+    render = () => {
+        return <span className="ledger-buttons-group float-right">
+            <Button color="warning" size="sm" onClick={() => this.openModal(Types.CREATECDP, {})}> {TypeMeta[Types.CREATECDP].button} </Button>
+            {this.renderModal()}
+        </span>;
+    }
+}
 
 
 
@@ -1115,5 +1256,6 @@ export {
     TransferButton,
     SubmitProposalButton,
     ProposalActionButtons,
-    ClaimSwapButton
+    ClaimSwapButton,
+    CreateCDPButton
 }

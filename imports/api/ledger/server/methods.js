@@ -51,4 +51,21 @@ Meteor.methods({
             return JSON.parse(response.content).gas_estimate;
         }
     },
+
+
+    'transaction.getCDPParams': function(address){
+        this.unblock();
+        let url = LCD + '/cdp/parameters';
+        let cdpParams= {};
+
+        try{
+            let available = HTTP.get(url);
+            if (available.statusCode == 200){
+                cdpParams.collateralParams = JSON.parse(unbonding.content).result.liquidation_ratio;
+            }
+        }
+        catch (e){
+            console.log(e)
+        }
+    },
 })

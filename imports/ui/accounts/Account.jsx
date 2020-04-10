@@ -17,7 +17,7 @@ import Unbondings from './Unbondings.jsx';
 import AccountTransactions from '../components/TransactionsContainer.js';
 import ChainStates from '../components/ChainStatesContainer.js'
 import { Helmet } from 'react-helmet';
-import { WithdrawButton, TransferButton, ClaimSwapButton } from '../ledger/LedgerActions.jsx';
+import { WithdrawButton, TransferButton, ClaimSwapButton, CreateCDPButton } from '../ledger/LedgerActions.jsx';
 import CDP from '../cdp/CDP.jsx';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js';
@@ -215,63 +215,63 @@ export default class AccountDetails extends Component{
                                     //////////CDP//////
 
 
-        Meteor.call('accounts.getCDP', this.props.match.params.address, (error, result) => {
-            if (error){
-                console.warn(error);
-                this.setState({
-                    loading:false
-                })
-            }
+        // Meteor.call('accounts.getCDP', this.props.match.params.address, (error, result) => {
+        //     if (error){
+        //         console.warn(error);
+        //         this.setState({
+        //             loading:false
+        //         })
+        //     }
     
-            if (result){
-                console.log("RESULT  !!" + JSON.stringify(result))
-                // for(let c in result){
-                //     console.log("HERE "  + JSON.stringify(result[c]))
-                //    console.log("HERE cdp "  + JSON.stringify(result[c][0].cdp))
+        //     if (result){
+        //         console.log("RESULT  !!" + JSON.stringify(result))
+        //         // for(let c in result){
+        //         //     console.log("HERE "  + JSON.stringify(result[c]))
+        //         //    console.log("HERE cdp "  + JSON.stringify(result[c][0].cdp))
 
-                // }
+        //         // }
 
-                for(let e in result){
-                    for(let f in result[e]){
-                        let cdpResult = result[e][f].cdp;
-                        let collateralValueResult = result[e][f].collateral_value;
-                        let collateralizationRatioResult = result[e][f].collateralization_ratio;
-                        console.log("cdpResult " + JSON.stringify(cdpResult))
-                        console.log("collateralValueResult " + JSON.stringify(collateralValueResult))
-                        console.log("collateralizationRatioResult " + JSON.stringify(collateralizationRatioResult))
+        //         for(let e in result){
+        //             for(let f in result[e]){
+        //                 let cdpResult = result[e][f].cdp;
+        //                 let collateralValueResult = result[e][f].collateral_value;
+        //                 let collateralizationRatioResult = result[e][f].collateralization_ratio;
+        //                 console.log("cdpResult " + JSON.stringify(cdpResult))
+        //                 console.log("collateralValueResult " + JSON.stringify(collateralValueResult))
+        //                 console.log("collateralizationRatioResult " + JSON.stringify(collateralizationRatioResult))
 
-                        //  if(this.state.denom === numRewards[e][f].denom){
-                        //     this.setState({
-                        //         rewardDenomType: numRewards[e][f].denom,
-                        //         rewardsForEachDel: numRewards,
-                        //     })
-                        // }
+        //                 //  if(this.state.denom === numRewards[e][f].denom){
+        //                 //     this.setState({
+        //                 //         rewardDenomType: numRewards[e][f].denom,
+        //                 //         rewardsForEachDel: numRewards,
+        //                 //     })
+        //                 // }
 
-                         this.setState({
-                        cdpID: cdpResult.id,
-                        cdpOwner: cdpResult.owner,
-                        cdpCollateral: [...cdpResult.collateral],       
-                    })
+        //                  this.setState({
+        //                 cdpID: cdpResult.id,
+        //                 cdpOwner: cdpResult.owner,
+        //                 cdpCollateral: [...cdpResult.collateral],       
+        //             })
                         
-                    }
-                // console.log("HERE "  + JSON.stringify(result[0]))
-                // console.log("HERE cdp "  + JSON.stringify(result[0].cdp))
-                    // result.forEach((resl, i) => {
-                    //     console.log("HERE - > " + JSON.stringify(resl[i]))
-                    // })
+        //             }
+        //         // console.log("HERE "  + JSON.stringify(result[0]))
+        //         // console.log("HERE cdp "  + JSON.stringify(result[0].cdp))
+        //             // result.forEach((resl, i) => {
+        //             //     console.log("HERE - > " + JSON.stringify(resl[i]))
+        //             // })
                 
-                    // console.log("RESULT CDP " + JSON.stringify(result.cdp))
+        //             // console.log("RESULT CDP " + JSON.stringify(result.cdp))
     
-                    // this.setState({
-                    //     cdpID: result.cdp.id,
-                    //     cdpOwner: result.cdp.owner,
-                    //     cdpCollateral: [...result.cdp.collateral],       
-                    // })
+        //             // this.setState({
+        //             //     cdpID: result.cdp.id,
+        //             //     cdpOwner: result.cdp.owner,
+        //             //     cdpCollateral: [...result.cdp.collateral],       
+        //             // })
                     
                 
-                }   
-        } 
-        })
+        //         }   
+        // } 
+        // })
 
 
 
@@ -435,6 +435,30 @@ export default class AccountDetails extends Component{
         }
     }
 
+    createCDP = (callback) =>{
+ 
+            Meteor.call('create.cdp', {from: this.state.user}, this.getPath(), (err, res) =>{
+                if (res){
+                    if (this.props.address) {
+                        res.value.msg.push({
+                            type: 'cosmos-sdk/MsgWithdrawValidatorCommission',
+                            value: { validator_address: this.props.address }
+                        })
+                    }
+                    callback(res, res)
+                }
+                else {
+                    this.setState({
+                        loading: false,
+                        simulating: false,
+                        errorMessage: 'something went wrong'
+                    })
+                }
+            })
+        }
+    
+    
+
 
     render(){
 
@@ -468,7 +492,6 @@ export default class AccountDetails extends Component{
                             Balance
                             <div className="shareLink float-right">{this.renderShareLink()}</div>
                            {(this.state.available.length > 1) ? <div className="coin-dropdown float-right"><h5>Select Coin:</h5> {this.renderDropDown()}</div> : null}
-                           <ClaimSwapButton validator={this.props.validator} address={this.state.operator_address} history={this.props.history}/>
                         </CardHeader>
                         <CardBody><br/> 
                             <Row className="account-distributions">
@@ -509,6 +532,8 @@ export default class AccountDetails extends Component{
                                     {this.state.user?<Row>
                                         <Col xs={12}><TransferButton history={this.props.history} address={this.state.address} denom={this.state.denom}/></Col>
                                         {this.state.user===this.state.address?<Col xs={12}><WithdrawButton  history={this.props.history} rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address} denom={this.state.denom}/></Col>:null}
+                                        <Col xs={12}><ClaimSwapButton validator={this.props.validator} address={this.state.operator_address} history={this.props.history}/></Col>
+                                        <Col xs={12}><CreateCDPButton validator={this.props.validator} address={this.state.operator_address} history={this.props.history}/></Col>
                                     </Row>:null}
                                     <Row>
                                         <Col xs={4} className="label d-flex align-self-end"><div className="infinity" /><T>accounts.total</T></Col>
@@ -593,15 +618,15 @@ export default class AccountDetails extends Component{
                                             <span className="cdp-logo bnb">BNB</span>
                                         </NavLink>
                                     </NavItem>
-                                    <NavItem>
+                                    {/* <NavItem>
                                         <NavLink
                                             className={classnames({ active: this.state.cdpActiveTab === 'cdp-btc' })}
                                             onClick={() => { this.toggleCDP('cdp-btc'); }}
                                         >
                                             <span className="cdp-logo btc">BTC</span>
                                         </NavLink>
-                                    </NavItem>
-                                    <NavItem>
+                                    </NavItem> */}
+                                    {/* <NavItem>
                                         <NavLink
                                             className={classnames({ active: this.state.cdpActiveTab === 'cdp-xrp' })}
                                             onClick={() => { this.toggleCDP('cdp-xrp'); }}
@@ -616,8 +641,8 @@ export default class AccountDetails extends Component{
                                         >
                                             <span className="cdp-logo atom">ATOM</span>
                                         </NavLink>
-                                    </NavItem>
-                                </Nav>
+                                    </NavItem>*/}
+                                </Nav> 
                                 <TabContent activeTab={this.state.cdpActiveTab}>
                                     <TabPane tabId="cdp-bnb">
                                         <div className="mb-3"><Badge color="success">BNB:USD</Badge> <strong className="text-info">{numbro(11.592788144429655).formatCurrency({mantissa:4})}</strong></div>
@@ -645,7 +670,7 @@ export default class AccountDetails extends Component{
                                             collateralizationRatio={1.877756350338039833}
                                         />
                                     </TabPane>
-                                    <TabPane tabId="cdp-btc">
+                                    {/* <TabPane tabId="cdp-btc">
                                         <div className="mb-3"><Badge color="success">BTC:USD</Badge> <strong className="text-info">{numbro(5890.8).formatCurrency({mantissa:4})}</strong></div>
                                         <CDP 
                                             id={12}
@@ -668,7 +693,7 @@ export default class AccountDetails extends Component{
                                             }}
                                             collateralizationRatio={1.768352843346791141}
                                         />
-                                    </TabPane>
+                                    </TabPane> */}
                                     <TabPane tabId="cdp-xrp">
                                         <CDP />
                                     </TabPane>
