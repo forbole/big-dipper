@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
-import { Table, Button, Modal, ModalHeader, ModalBody, ModalFooter, Input, Label, Form, FormGroup, FormText, FormFeedback } from 'reactstrap';
+import { Table, Badge } from 'reactstrap';
 import moment from 'moment';
 import numbro from 'numbro';
 import Account from '../components/Account.jsx';
 import Coin from '/both/utils/coins.js'
 import i18n from 'meteor/universe:i18n';
 import PropTypes from 'prop-types';
+import { DepositCDPButton, WithdrawCDPButton, DrawDebtCDPButton, RepayDebtCDPButton, CreateCDPButton} from '../ledger/LedgerActions.jsx';
+
 
 const T = i18n.createComponent();
 const collateralizationRatio = 2;
+let timer = 0;
 
 export default class CDP extends Component{
     constructor(props){
@@ -18,9 +21,13 @@ export default class CDP extends Component{
             ratio: 0,
             collateral: 0,
             debt: 0,
-            price: 11.5928,
+            price: 0,
             collateralAmount: 0,
-            debtAmount: 0
+            debtAmount: 0,
+            cdpParams: null,
+            userCDP: null,
+            denom: '',
+            
 
         }
 
@@ -47,81 +54,123 @@ export default class CDP extends Component{
         });
     }
 
+    updateCDP(){
+        Meteor.call('accounts.getAccountCDP', this.props.owner, this.props.collateral, (error, result) => {
+            if (error){
+                console.warn(error);
+                this.setState({
+                    loading:false
+                })
+            }
+    
+            if (result){
+                
+                this.setState({
+                    userCDP: result,
+                    price: ((parseFloat(result.collateral_value.amount) / Meteor.settings.public.coins[5].fraction) / (parseFloat(result.cdp.collateral[0].amount) / Meteor.settings.public.coins[1].fraction))
+                    
+                })  
+            }
+        })
+    }
+
+    componentDidMount(){
+
+        Meteor.call('cdp.getCDPParams', (error, result) => {
+            if (error){
+                console.warn(error);
+                this.setState({
+                    loading:false
+                })
+            }
+    
+            if (result){
+                this.setState({
+                    cdpParams: result,
+                })
+            }
+        }),
+                
+        this.updateCDP();
+        timer = Meteor.setInterval(() => {
+            this.updateCDP();
+        },9000)
+        
+    }
+
+    componentWillUnmount(){
+        Meteor.clearInterval(timer);
+    }
+
+    
+
+
     render(){
-        if (this.props.id) {
+
+        if (this.state.userCDP) {
             return <div className="cdp-content">
                 <Table>
+                <div className="mb-3"><Badge color="success">BNB:USD</Badge> <strong className="text-info">{ numbro(this.state.price).formatCurrency({mantissa:4})}</strong></div>
                     <tbody>
                         <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.id</T></th>
-                            <td>{this.props.id}</td>
+                            <td>{this.state.userCDP.cdp.id}</td>
                         </tr>
                         {(this.props.owner)?<tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.owner</T></th>
                             <td><Account address={this.props.owner} /></td>
                         </tr>:''}
-                        {(this.props.collateral&&(this.props.collateral.length>0))?<tr>
+                        {(this.state.userCDP.cdp.collateral&&(this.state.userCDP.cdp.collateral.length>0))?<tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.collateralDeposited</T></th>
-                            <td>{this.props.collateral.map((col, i) => <div key={i}>{new Coin(col.amount, col.denom).toString(6)}</div>)}</td>
+                            <td>{this.state.userCDP.cdp.collateral.map((col, i) => <div key={i}>{new Coin(col.amount, col.denom).toString(6)}</div>)}</td>
                         </tr>:''}
-                        {(this.props.principal&&(this.props.principal.length>0))?<tr>
+                        {(this.state.userCDP.cdp.principal&&(this.state.userCDP.cdp.principal.length>0))?<tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.principal</T></th>
-                            <td>{this.props.principal.map((prin, i) => <div key={i}>{new Coin(prin.amount, prin.denom).toString(6)}</div>)}</td>
-                        </tr>:''}
-                        {(this.props.accumulatedFees&&(this.props.accumulatedFees.length>0))?<tr>
-                            <th scope="row" className="w-25 text-muted"><T>cdp.accumulatedFees</T></th>
-                            <td>{this.props.accumulatedFees.map((fee, i) => <div key={i}>{new Coin(fee.amount, fee.denom).toString(6)}<br/><small>(<T>common.lastUpdated</T> {moment.utc(this.props.feesUpdated).fromNow()})</small></div>)}</td>
+                            <td>{this.state.userCDP.cdp.principal.map((prin, i) => <div key={i}>{new Coin(prin.amount, prin.denom).toString(6)}</div>)}</td>
                         </tr>:''}
                         <tr>
-                            <th scope="row" className="w-25 text-muted"><T>cdp.collateralValue</T></th>
-                            <td>{new Coin(this.props.collateralValue.amount, this.props.collateralValue.denom).toString(6)}</td>
+                            <th scope="row" className="w-25 text-muted"><T>cdp.accumulatedFees</T></th>
+                            <td>{this.state.userCDP.cdp.accumulated_fees.map((fee, i) => <div key={i}>{new Coin(fee.amount, fee.denom).toString(6)}<br/>
+                            <small>(<T>common.lastUpdated</T> {moment.utc(this.state.userCDP.cdp.fees_updated).fromNow()})</small></div>)}</td>
                         </tr>
+
+                        {(this.state.userCDP.collateral_value&&(this.state.userCDP.collateral_value.length>0))?<tr>
+                            <th scope="row" className="w-25 text-muted"><T>cdp.collateralValue</T></th>
+                            <td>{this.state.userCDP.collateral_value.map((col, i) => <div key={i}>{new Coin(col.amount, col.denom).toString(6)}</div>)}</td>
+                        </tr>:''}
                         <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.collateralizationRatio</T></th>
-                            <td className={this.props.collateralizationRatio>1.5?"text-success":"text-danger"}>{numbro(this.props.collateralizationRatio).format({mantissa:4})}</td>
+                            <td className={this.state.userCDP.collateralization_ratio>1.5?"text-success":"text-danger"}>{numbro(this.state.userCDP.collateralization_ratio).format({mantissa:4})}</td>
                         </tr>
                     </tbody>
                 </Table>
                 <div>
-                    <Button color="success" size="sm"><T>cdp.deposit</T></Button> <Button color="warning" size="sm"><T>cdp.withdraw</T></Button> <Button color="danger" size="sm"><T>cdp.draw</T></Button> <Button color="info" size="sm"><T>cdp.repay</T></Button>
+                <CreateCDPButton 
+                    cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null}/>  
+                <DepositCDPButton 
+                    cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null}  
+                    collateral={this.props.collateral}  
+                /> 
+                <WithdrawCDPButton
+                cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null}  
+                collateral={this.props.collateral} 
+                /> 
+                <DrawDebtCDPButton
+                cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null}  
+                collateral={this.props.collateral} 
+                /> 
+                <RepayDebtCDPButton
+                cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null}  
+                collateral={this.props.collateral} 
+                /> 
+                    {/* <Button color="warning" size="sm"><T>cdp.withdraw</T></Button> <Button color="danger" size="sm"><T>cdp.draw</T></Button> <Button color="info" size="sm"><T>cdp.repay</T></Button> */}
                 </div>
                 
             </div>
         }
         else{
             return <div>
-                <Button color="success" size="sm" onClick={this.toggle}><T>cdp.create</T></Button>
-                <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
-                    <ModalHeader toggle={this.toggle}><T>cdp.create</T></ModalHeader>
-                    <ModalBody>
-                        <Form>
-                            <h3>Create CDP with <img src="/img/bnb-symbol.svg" style={{width:"24px",height:"24px"}}/> BNB</h3>
-                            <FormGroup>
-                                <Label for="collateral"><T>cdp.collateral</T></Label>
-                                <Input placeholder="Collateral Amount" name="collateral" value={this.state.collateral}  onChange={this.handleChange} />
-                                <FormText>The amount of BNB you would like to deposit</FormText>
-                            </FormGroup>
-                            <FormGroup>
-                                <Label for="debt"><T>cdp.debt</T></Label>
-                                <Input placeholder="Debt Amount" name="debt" value={this.state.debt} onChange={this.handleChange} />
-                                <FormText>The amount of debut in USDX you would like to draw</FormText>
-                            </FormGroup>
-                            <FormGroup>
-                                <Label><T>cdp.collateralizationRatio</T></Label>
-                                <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio> collateralizationRatio))}
-                                    className={((this.state.ratio !== Infinity) && (this.state.ratio> collateralizationRatio))?'text-success':'text-danger'}
-                                    value={((this.state.ratio !== Infinity)&&(this.state.ratio>0))?numbro(this.state.ratio).format({mantissa:6}):'Not available'}
-                                    disabled={true}
-                                />
-                                <FormFeedback invalid>Collateralization ratio is danger! It must be greater than {collateralizationRatio}</FormFeedback>
-                            </FormGroup>
-                        </Form>
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button color="primary" onClick={this.toggle} disabled={!((this.state.ratio !== Infinity) && (this.state.ratio>1.5))}><T>cdp.create</T></Button>{' '}
-                        <Button color="secondary" onClick={this.toggle}><T>common.cancel</T></Button>
-                    </ModalFooter>
-                </Modal>
+             <CreateCDPButton cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null}/>
             </div>
         }
 
@@ -129,12 +178,6 @@ export default class CDP extends Component{
 }
 
 CDP.propTypes = {
-    id: PropTypes.number,
     owner: PropTypes.string,
-    collateral: PropTypes.array,
-    principal: PropTypes.array,
-    accumulatedFees: PropTypes.array,
-    feesUpdated: PropTypes.string,
-    collateralValue: PropTypes.object,
-    collateralizationRatio: PropTypes.number
+    collateral: PropTypes.string,
 }

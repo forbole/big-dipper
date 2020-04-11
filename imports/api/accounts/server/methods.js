@@ -224,18 +224,18 @@ Meteor.methods({
         return cdp
     },
 
-     //get BNB 
-     'accounts.getAccountCDP': function(address){
+     //get Account CDP 
+     'accounts.getAccountCDP': function(address, collateral){
         
         let cdp = {}
 
         // get available atoms
-        let url = LCD + '/cdp/cdps/cdp/'+address+'/bnb';
+        let url = LCD + '/cdp/cdps/cdp/'+address+'/'+ collateral 
+        console.log("URL ->> " + url)
         try{
             let result = HTTP.get(url);
             if (result.statusCode == 200){
                 cdp = JSON.parse(result.content).result;
-
             }
         }
         catch (e){

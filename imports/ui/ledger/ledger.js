@@ -475,22 +475,107 @@ export class Ledger {
 
 
 
-    static createCDP(
-        txContext,
+    static createCDP( 
+        txContext,       
         collateral,
         debt
-
     ) {
         const txMsg = {
             type: 'cdp/MsgCreateCDP',
             value: {
                 collateral: [{
-                    amount: collateral.toString(),
-                    denom: txContext.denom
+                    amount: (parseFloat(collateral) * Meteor.settings.public.coins[1].fraction).toString(),
+                    denom: 'bnb'
                 }],
                 principal: [{
-                    amount: debt.toString(),
-                    denom: txContext.denom
+                    amount: (parseFloat(debt) * Meteor.settings.public.coins[5].fraction).toString(),
+                    denom: 'usdx'
+                }],
+                sender: txContext.bech32,
+               
+            },
+        };
+        return Ledger.createSkeleton(txContext, [txMsg]);
+    }
+
+
+    static depositCDP(
+        txContext,
+        collateral,
+        collateralDenom
+    ) {
+        const txMsg = {
+            type: 'cdp/MsgDeposit',
+            value: {
+                collateral: [{
+                    amount: (parseFloat(collateral) * Meteor.settings.public.coins[1].fraction).toString(),
+                    denom: collateralDenom
+                }],
+                depositor: txContext.bech32,
+                owner: txContext.bech32
+               
+            },
+        };
+        return Ledger.createSkeleton(txContext, [txMsg]);
+    }
+
+
+    static withdrawCDP(
+        txContext,
+        collateral,
+        collateralDenom
+
+    ) {
+        const txMsg = {
+            type: 'cdp/MsgWithdraw',
+            value: {
+                collateral: [{
+                    amount: (parseFloat(collateral) * Meteor.settings.public.coins[1].fraction).toString(),
+                    denom: collateralDenom
+                }],
+                depositor: txContext.bech32,
+                owner: txContext.bech32
+            },
+        };
+        return Ledger.createSkeleton(txContext, [txMsg]);
+    }
+
+
+    static drawDebt(
+        txContext,
+        collateral,
+        collateralDenom
+
+    ) {
+        const txMsg = {
+            type: 'cdp/MsgDrawDebt',
+            value: {
+                cdp_denom: collateralDenom,
+                principal: [{
+                    amount: (parseFloat(collateral) * Meteor.settings.public.coins[5].fraction).toString(),
+                    denom: 'usdx'
+                }],
+                sender: txContext.bech32,
+               
+            },
+        };
+        return Ledger.createSkeleton(txContext, [txMsg]);
+    }
+
+
+    static repayDebt(
+        txContext,
+        collateral,
+        collateralDenom
+
+    ) {
+        const txMsg = {
+            type: 'cdp/MsgRepayDebt',
+            value: {
+                cdp_denom: collateralDenom,
+                payment: [{
+                    amount: (parseFloat(collateral) * Meteor.settings.public.coins[5].fraction).toString(),
+                    denom: 'usdx'
                 }],
                 sender: txContext.bech32,
                
@@ -502,9 +587,9 @@ export class Ledger {
 
 
 
-
-
 }
+
+
 
 function versionString({ major, minor, patch }) {
     return `${major}.${minor}.${patch}`

@@ -53,15 +53,16 @@ Meteor.methods({
     },
 
 
-    'transaction.getCDPParams': function(address){
+    'cdp.getCDPParams': function(){
         this.unblock();
         let url = LCD + '/cdp/parameters';
         let cdpParams= {};
 
         try{
-            let available = HTTP.get(url);
-            if (available.statusCode == 200){
-                cdpParams.collateralParams = JSON.parse(unbonding.content).result.liquidation_ratio;
+            let response = HTTP.get(url);
+            if (response.statusCode == 200){
+                cdpParams = JSON.parse(response.content).result;
+                return cdpParams
             }
         }
         catch (e){

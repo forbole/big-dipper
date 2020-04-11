@@ -17,7 +17,7 @@ import Unbondings from './Unbondings.jsx';
 import AccountTransactions from '../components/TransactionsContainer.js';
 import ChainStates from '../components/ChainStatesContainer.js'
 import { Helmet } from 'react-helmet';
-import { WithdrawButton, TransferButton, ClaimSwapButton, CreateCDPButton } from '../ledger/LedgerActions.jsx';
+import { WithdrawButton, TransferButton, ClaimSwapButton, CreateCDPButton} from '../ledger/LedgerActions.jsx';
 import CDP from '../cdp/CDP.jsx';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js';
@@ -50,6 +50,11 @@ export default class AccountDetails extends Component{
             cdpID: 0,
             cdpOwner: '',
             cdpCollateral: [],
+            cdpPrincipal: [],
+            cdpAccumulatedFees: [],
+            cdpFeesUpdated: 0,
+            cdpCollateralValue: 0,
+            cdpCollateralizationRatio: 0
         }
     }
 
@@ -212,129 +217,6 @@ export default class AccountDetails extends Component{
         })
     
 
-                                    //////////CDP//////
-
-
-        // Meteor.call('accounts.getCDP', this.props.match.params.address, (error, result) => {
-        //     if (error){
-        //         console.warn(error);
-        //         this.setState({
-        //             loading:false
-        //         })
-        //     }
-    
-        //     if (result){
-        //         console.log("RESULT  !!" + JSON.stringify(result))
-        //         // for(let c in result){
-        //         //     console.log("HERE "  + JSON.stringify(result[c]))
-        //         //    console.log("HERE cdp "  + JSON.stringify(result[c][0].cdp))
-
-        //         // }
-
-        //         for(let e in result){
-        //             for(let f in result[e]){
-        //                 let cdpResult = result[e][f].cdp;
-        //                 let collateralValueResult = result[e][f].collateral_value;
-        //                 let collateralizationRatioResult = result[e][f].collateralization_ratio;
-        //                 console.log("cdpResult " + JSON.stringify(cdpResult))
-        //                 console.log("collateralValueResult " + JSON.stringify(collateralValueResult))
-        //                 console.log("collateralizationRatioResult " + JSON.stringify(collateralizationRatioResult))
-
-        //                 //  if(this.state.denom === numRewards[e][f].denom){
-        //                 //     this.setState({
-        //                 //         rewardDenomType: numRewards[e][f].denom,
-        //                 //         rewardsForEachDel: numRewards,
-        //                 //     })
-        //                 // }
-
-        //                  this.setState({
-        //                 cdpID: cdpResult.id,
-        //                 cdpOwner: cdpResult.owner,
-        //                 cdpCollateral: [...cdpResult.collateral],       
-        //             })
-                        
-        //             }
-        //         // console.log("HERE "  + JSON.stringify(result[0]))
-        //         // console.log("HERE cdp "  + JSON.stringify(result[0].cdp))
-        //             // result.forEach((resl, i) => {
-        //             //     console.log("HERE - > " + JSON.stringify(resl[i]))
-        //             // })
-                
-        //             // console.log("RESULT CDP " + JSON.stringify(result.cdp))
-    
-        //             // this.setState({
-        //             //     cdpID: result.cdp.id,
-        //             //     cdpOwner: result.cdp.owner,
-        //             //     cdpCollateral: [...result.cdp.collateral],       
-        //             // })
-                    
-                
-        //         }   
-        // } 
-        // })
-
-
-
-
-    //     Meteor.call('accounts.getAccountCDP', this.props.match.params.address, (error, result) => {
-    //         if (error){
-    //             console.warn(error);
-    //             this.setState({
-    //                 loading:false
-    //             })
-    //         }
-    
-    //         if (result){
-    //             console.log("RESULT  !!" + JSON.stringify(result))
-    //             // for(let c in result){
-    //             //     console.log("HERE "  + JSON.stringify(result[c]))
-    //             //    console.log("HERE cdp "  + JSON.stringify(result[c][0].cdp))
-
-    //             // }
-
-    //             for(let e in result){
-    //                 for(let f in result[e]){
-    //                     let cdpResult = result[e][f].cdp;
-    //                     let collateralValueResult = result[e][f].collateral_value;
-    //                     let collateralizationRatioResult = result[e][f].collateralization_ratio;
-    //                     console.log("cdpResult " + JSON.stringify(cdpResult))
-    //                     console.log("collateralValueResult " + JSON.stringify(collateralValueResult))
-    //                     console.log("collateralizationRatioResult " + JSON.stringify(collateralizationRatioResult))
-
-    //                     //  if(this.state.denom === numRewards[e][f].denom){
-    //                     //     this.setState({
-    //                     //         rewardDenomType: numRewards[e][f].denom,
-    //                     //         rewardsForEachDel: numRewards,
-    //                     //     })
-    //                     // }
-
-    //                      this.setState({
-    //                     cdpID: cdpResult.id,
-    //                     cdpOwner: cdpResult.owner,
-    //                     cdpCollateral: [...cdpResult.collateral],       
-    //                 })
-                        
-    //                 }
-    //             // console.log("HERE "  + JSON.stringify(result[0]))
-    //             // console.log("HERE cdp "  + JSON.stringify(result[0].cdp))
-    //                 // result.forEach((resl, i) => {
-    //                 //     console.log("HERE - > " + JSON.stringify(resl[i]))
-    //                 // })
-                
-    //                 // console.log("RESULT CDP " + JSON.stringify(result.cdp))
-    
-    //                 // this.setState({
-    //                 //     cdpID: result.cdp.id,
-    //                 //     cdpOwner: result.cdp.owner,
-    //                 //     cdpCollateral: [...result.cdp.collateral],       
-    //                 // })
-                    
-                
-    //             }   
-    //     } 
-    //     })
-
-
      }
 
     componentDidMount(){
@@ -361,6 +243,11 @@ export default class AccountDetails extends Component{
                 cdpID: 0,
                 cdpOwner: '',
                 cdpCollateral: [],
+                cdpPrincipal: [],
+                cdpAccumulatedFees: [],
+                cdpFeesUpdated: 0,
+                cdpCollateralValue: 0,
+                cdpCollateralizationRatio: 0
             }, () => {
                 this.getBalance();
             })
@@ -462,7 +349,6 @@ export default class AccountDetails extends Component{
 
     render(){
 
-        console.log("TOTAL " + JSON.stringify(this.state))
 
         let findCurrentCoin = this.state.total.find(({denom}) => denom === this.state.denom)
         let currentCoinTotal = findCurrentCoin ? findCurrentCoin.amount : null;
@@ -533,7 +419,6 @@ export default class AccountDetails extends Component{
                                         <Col xs={12}><TransferButton history={this.props.history} address={this.state.address} denom={this.state.denom}/></Col>
                                         {this.state.user===this.state.address?<Col xs={12}><WithdrawButton  history={this.props.history} rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address} denom={this.state.denom}/></Col>:null}
                                         <Col xs={12}><ClaimSwapButton validator={this.props.validator} address={this.state.operator_address} history={this.props.history}/></Col>
-                                        <Col xs={12}><CreateCDPButton validator={this.props.validator} address={this.state.operator_address} history={this.props.history}/></Col>
                                     </Row>:null}
                                     <Row>
                                         <Col xs={4} className="label d-flex align-self-end"><div className="infinity" /><T>accounts.total</T></Col>
@@ -618,87 +503,13 @@ export default class AccountDetails extends Component{
                                             <span className="cdp-logo bnb">BNB</span>
                                         </NavLink>
                                     </NavItem>
-                                    {/* <NavItem>
-                                        <NavLink
-                                            className={classnames({ active: this.state.cdpActiveTab === 'cdp-btc' })}
-                                            onClick={() => { this.toggleCDP('cdp-btc'); }}
-                                        >
-                                            <span className="cdp-logo btc">BTC</span>
-                                        </NavLink>
-                                    </NavItem> */}
-                                    {/* <NavItem>
-                                        <NavLink
-                                            className={classnames({ active: this.state.cdpActiveTab === 'cdp-xrp' })}
-                                            onClick={() => { this.toggleCDP('cdp-xrp'); }}
-                                        >
-                                            <span className="cdp-logo xrp">XRP</span>
-                                        </NavLink>
-                                    </NavItem>
-                                    <NavItem>
-                                        <NavLink
-                                            className={classnames({ active: this.state.cdpActiveTab === 'cdp-atom' })}
-                                            onClick={() => { this.toggleCDP('cdp-atom'); }}
-                                        >
-                                            <span className="cdp-logo atom">ATOM</span>
-                                        </NavLink>
-                                    </NavItem>*/}
                                 </Nav> 
                                 <TabContent activeTab={this.state.cdpActiveTab}>
                                     <TabPane tabId="cdp-bnb">
-                                        <div className="mb-3"><Badge color="success">BNB:USD</Badge> <strong className="text-info">{numbro(11.592788144429655).formatCurrency({mantissa:4})}</strong></div>
                                         {/* <CDP /> */}
                                         
-                                        <CDP 
-                                            id={7}
-                                            collateral={[{
-                                                "denom": "bnb",
-                                                "amount": "810204807.553924619639057"
-                                            }]}
-                                            principal={[{
-                                                "denom": "usdx",
-                                                "amount": "50000000"
-                                            }]}
-                                            accumulatedFees={[{
-                                                "denom": "usdx",
-                                                "amount": "19975"
-                                            }]}
-                                            feesUpdated="2020-03-23T12:55:57.380775666Z"
-                                            collateralValue={{
-                                                "denom": "usdx",
-                                                "amount": "93925326"
-                                            }}
-                                            collateralizationRatio={1.877756350338039833}
+                                        <CDP owner={this.state.address} collateral='bnb' 
                                         />
-                                    </TabPane>
-                                    {/* <TabPane tabId="cdp-btc">
-                                        <div className="mb-3"><Badge color="success">BTC:USD</Badge> <strong className="text-info">{numbro(5890.8).formatCurrency({mantissa:4})}</strong></div>
-                                        <CDP 
-                                            id={12}
-                                            collateral={[{
-                                                "denom": "btc",
-                                                "amount": "1501500"
-                                            }]}
-                                            principal={[{
-                                                "denom": "usdx",
-                                                "amount": "50000000"
-                                            }]}
-                                            accumulatedFees={[{
-                                                "denom": "usdx",
-                                                "amount": "406"
-                                            }]}
-                                            feesUpdated="2020-03-17T18:06:44.070373266Z"
-                                            collateralValue={{
-                                                "denom": "usdx",
-                                                "amount": "88450362"
-                                            }}
-                                            collateralizationRatio={1.768352843346791141}
-                                        />
-                                    </TabPane> */}
-                                    <TabPane tabId="cdp-xrp">
-                                        <CDP />
-                                    </TabPane>
-                                    <TabPane tabId="cdp-atom">
-                                        <CDP />
                                     </TabPane>
                                 </TabContent>
                             </CardBody>
