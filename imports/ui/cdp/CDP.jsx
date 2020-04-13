@@ -155,11 +155,11 @@ export default class CDP extends Component{
                 /> 
                 <DrawDebtCDPButton
                 cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null}  
-                collateral={this.state.cdpParams?this.state.cdpParams.debt_params[0].denom:null} 
+                collateral={this.state.cdpParams?this.state.cdpParams.collateral_params[0].denom:null} 
                 /> 
                 <RepayDebtCDPButton
                 cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null}  
-                collateral={this.state.cdpParams?this.state.cdpParams.debt_params[0].denom:null} 
+                collateral={this.state.cdpParams?this.state.cdpParams.collateral_params[0].denom:null} 
                 /> 
                 </div>
                 
