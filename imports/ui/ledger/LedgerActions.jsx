@@ -29,7 +29,6 @@ const maxHeightModifier = {
 }
 
 const T = i18n.createComponent();
-const collateralizationRatio = 2;
 
 const Types = {
     DELEGATE: 'delegate',
@@ -526,12 +525,7 @@ class LedgerButton extends Component {
                 if(res === '0'){
                     res = '300000'
                 }
-                console.log("res --> " + JSON.stringify(res))
                 Ledger.applyGas(txMsg, res, Meteor.settings.public.gasPrice, Coin.StakingCoin.denom);
-                console.log("THE GAS txMSG--> " + JSON.stringify(txMsg))
-                console.log("THE GAS res--> " + JSON.stringify(res))
-                console.log("THE GAS gasPrice--> " + JSON.stringify(Meteor.settings.public.gasPrice))
-                console.log("THE GAS Coin.denom--> " + JSON.stringify(Coin.StakingCoin.denom))
                 this.setStateOnSuccess('simulating', {
                     gasEstimate: res,
                     activeTab: '3',
@@ -539,7 +533,6 @@ class LedgerButton extends Component {
                 })
             }
             else {
-                console.log("ERROR " + JSON.stringify(err))
                 this.setStateOnError('simulating', 'something went wrong')
             }
         })
@@ -555,9 +548,6 @@ class LedgerButton extends Component {
             this.ledger.sign(bytesToSign).then((sig) => {
                 try {
                     Ledger.applySignature(txMsg, txContext, sig);
-                    console.log("THE MSGTX  - > " + JSON.stringify(txMsg))
-                    console.log("THE txContext  - > " + JSON.stringify(txContext))
-
                     Meteor.call('transaction.submit', txMsg, (err, res) => {
                         if (err) {
                             this.setStateOnError('signing', err.reason)
@@ -632,7 +622,6 @@ class LedgerButton extends Component {
     }
 
     openModal = (type, params = {}) => {
-        console.log("THE ACTIVE TAB -> " + this.state.activeTab)
         if (!TypeMeta[type]) {
             console.warn(`action type ${type} not supported`)
             return;
@@ -1173,22 +1162,24 @@ class ClaimSwapButton extends LedgerButton {
         if (!this.state.currentUser) return null;
         return <TabPane tabId="2">
             <h3>Claim Swap</h3>
-            <h6>Please enter your Swap ID</h6>
-            <InputGroup>
+            <FormGroup>
+            <Label for="swapID"><T>cdp.swapID</T></Label>
                 <Input name="swapID" onChange={this.handleInputChange}
                     placeholder="Swap ID" type="text" value={this.state.swapID} data-type='hash'
                     invalid={this.state.swapID === null} />
-            </InputGroup>
-            <InputGroup>
+            </FormGroup>
+            <FormGroup>
+            <Label for="swapRandNum"><T>cdp.swapRandNum</T></Label>
                 <Input name="swapRandomNumber" onChange={this.handleInputChange}
                     placeholder="Swap Random Number" type="text" data-type='hash'
                     value={this.state.swapRandomNumber}
                     invalid={this.state.swapRandomNumber === null} />
-            </InputGroup>
-            <InputGroup>
+            </FormGroup>
+            <FormGroup>
+            <Label for="memo"><T>cdp.memo</T></Label>
                 <Input name="memo" onChange={this.handleInputChange}
                     placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
-            </InputGroup>
+            </FormGroup>
         </TabPane>
     }
 
@@ -1269,13 +1260,14 @@ class CreateCDPButton extends LedgerButton {
             </FormGroup>
             <FormGroup>
                 <Label><T>cdp.collateralizationRatio</T></Label>
-                <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio > collateralizationRatio))}
-                    className={((this.state.ratio !== Infinity) && (this.state.ratio > collateralizationRatio)) ? 'text-success' : 'text-danger'}
+                <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio))}
+                    className={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? 'text-success' : 'text-danger'}
                     value={((this.state.ratio !== Infinity) && (this.state.ratio > 0)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : 'Not available'}
                     disabled={true} />
-                <FormFeedback>Collateralization ratio is danger! It must be greater than {collateralizationRatio}</FormFeedback>
+                <FormFeedback>Collateralization ratio is danger! It must be greater than {this.props.collateralizationRatio}</FormFeedback>
             </FormGroup>
             <FormGroup>
+            <Label for="memo"><T>cdp.memo</T></Label>
                 <Input name="memo" onChange={this.handleInputChange}
                     placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
             </FormGroup>
@@ -1304,7 +1296,7 @@ class CreateCDPButton extends LedgerButton {
     // }
 
     render = () => {
-        return <span className="ledger-buttons-group float-right">
+        return <span className="ledger-buttons-cdp">
             <Button color="warning" size="sm" onClick={() => this.openModal(Types.CREATECDP, {})}> {TypeMeta[Types.CREATECDP].button} </Button>
             {this.renderModal()}
         </span>;
@@ -1334,6 +1326,7 @@ class DepositCDPButton extends LedgerButton {
                 <FormText>The amount of BNB you would like to deposit</FormText>
             </FormGroup>
             <FormGroup>
+            <Label for="memo"><T>cdp.memo</T></Label>
                 <Input name="memo" onChange={this.handleInputChange}
                     placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
             </FormGroup>
@@ -1346,7 +1339,7 @@ class DepositCDPButton extends LedgerButton {
     }
 
     getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>Deposit</span> <Amount coin={{amount:this.state.collateral, denom:this.props.collateral}} /> for address <b>{this.state.user} </b>
+        return <span>You are going to <span className='action'>Deposit</span> <span className={'coin'}>{new Coin(this.state.collateral, this.props.collateral).convertToString(4)}</span> into CDP for address <b>{this.state.user} </b>
      with <Fee gas={this.state.gasEstimate} />.</span>
     }
 
@@ -1362,7 +1355,7 @@ class DepositCDPButton extends LedgerButton {
     // }
 
     render = () => {
-        return <span className="ledger-buttons-group float-right">
+        return <span className="ledger-buttons-cdp">
             <Button color="warning" size="sm" onClick={() => this.openModal(Types.DEPOSITCDP, {})}> {TypeMeta[Types.DEPOSITCDP].button} </Button>
             {this.renderModal()}
         </span>;
@@ -1377,7 +1370,8 @@ class WithdrawCDPButton extends LedgerButton {
         this.state = {
             ...this.state,
             collateral: 0,
-            collateralDenom: props.collateral
+            collateralDenom: props.collateral, 
+            amount: 0
 
         }
     }
@@ -1386,14 +1380,17 @@ class WithdrawCDPButton extends LedgerButton {
 
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
+        let maxAmount = this.state.currentUser.availableCoin;
         return <TabPane tabId="2">
-            <h3>Withdraw BNB <img src="/img/bnb-symbol.svg" style={{width:"24px",height:"24px"}}/> </h3>
+            <h3>Withdraw <img src="/img/bnb-symbol.svg" style={{width:"24px",height:"24px"}}/> BNB from CDP</h3>
             <FormGroup>
             <Label for="collateral"><T>cdp.withdraw</T></Label>
-            <Input placeholder="Collateral Amount" name="collateral" value={this.state.collateral}  onChange={this.handleInputChange} />
+            <Input placeholder="Collateral Amount" name="collateral" value={this.state.collateral} type="number" onChange={this.handleInputChange}
+            invalid={this.state.collateral != null && !isBetween(this.state.collateral, 1, maxAmount)} />
             <FormText>The amount of BNB you would like to withdraw</FormText>
             </FormGroup>
             <FormGroup>
+            <Label for="memo"><T>cdp.memo</T></Label>
                 <Input name="memo" onChange={this.handleInputChange}
                 placeholder="Memo(optional)" type="textarea" value={this.state.memo}/>
             </FormGroup>               
@@ -1404,9 +1401,10 @@ class WithdrawCDPButton extends LedgerButton {
         return action === Types.WITHDRAWCDP;
     }
 
+   
     getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>withdraw BNB</span> from CDP <Amount coin={{amount:this.state.collateral, denom:this.props.collateral}} /> for address <b>{this.state.user} </b>
-     with <Fee gas={this.state.gasEstimate} />.</span>
+    return this.props.collateral? <span>You are going to <span className='action'>withdraw </span> <span className={'coin'}>{new Coin(this.state.collateral, this.props.collateral).convertToString(4)}</span> from CDP  for address <b>{this.state.user} </b>
+     with <Fee gas={this.state.gasEstimate} />.</span> : ''
     }
 
     getPath = () => {
@@ -1415,13 +1413,10 @@ class WithdrawCDPButton extends LedgerButton {
     }
 
 
-    // isDataValid = () => {
-    //     if (!this.state.currentUser) return false
-
-    // }
+    
 
     render = () => {
-        return <span className="ledger-buttons-group float-right">
+        return <span className="ledger-buttons-cdp">
             <Button color="success" size="sm" onClick={() => this.openModal(Types.WITHDRAWCDP, {})}> {TypeMeta[Types.WITHDRAWCDP].button} </Button>
             {this.renderModal()}
         </span>;
@@ -1444,7 +1439,7 @@ class DrawDebtCDPButton extends LedgerButton {
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         return <TabPane tabId="2">
-            <h3>Draw USDX </h3>
+            <h3>Draw <img src="/img/usdx-symbol.svg" style={{width:"24px",height:"24px"}}/> USDX </h3>
             <FormGroup>
             <Label for="collateral"><T>cdp.draw</T></Label>
             <Input placeholder="Collateral Amount" name="collateral" value={this.state.collateral}  onChange={this.handleInputChange} />
@@ -1452,6 +1447,7 @@ class DrawDebtCDPButton extends LedgerButton {
             </FormGroup>
             
             <FormGroup>
+            <Label for="memo"><T>cdp.memo</T></Label>
                 <Input name="memo" onChange={this.handleInputChange}
                 placeholder="Memo(optional)" type="textarea" value={this.state.memo}/>
             </FormGroup>               
@@ -1463,7 +1459,7 @@ class DrawDebtCDPButton extends LedgerButton {
     }
 
     getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>draw USDX </span> from CDP <Amount coin={{amount:this.state.collateral, denom:this.props.collateral}} /> for address <b>{this.state.user} </b>
+        return <span>You are going to <span className='action'>draw </span> <span className={'coin'}>{new Coin(this.state.collateral, this.props.collateral).convertToString(4)}</span> from CDP  for address <b>{this.state.user} </b>
      with <Fee gas={this.state.gasEstimate} />.</span>
     }
 
@@ -1472,13 +1468,10 @@ class DrawDebtCDPButton extends LedgerButton {
         return  `${meta.pathPreFix}/${this.state.user}/${this.props.collateral}/${meta.pathSuffix}`
     }
 
-    // isDataValid = () => {
-    //     if (!this.state.currentUser) return false
-
-    // }
+   
 
     render = () => {
-        return <span className="ledger-buttons-group float-right">
+        return <span className="ledger-buttons-cdp">
             <Button color="danger" size="sm" onClick={() => this.openModal(Types.DRAWDEBT, {})}> {TypeMeta[Types.DRAWDEBT].button} </Button>
             {this.renderModal()}
         </span>;
@@ -1502,13 +1495,14 @@ class RepayDebtCDPButton extends LedgerButton {
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         return <TabPane tabId="2">
-            <h3>Repay USDX Debt </h3>
+            <h3>Repay <img src="/img/usdx-symbol.svg" style={{width:"24px",height:"24px"}}/> USDX Debt </h3>
             <FormGroup>
             <Label for="collateral"><T>cdp.repay</T></Label>
             <Input placeholder="Repay Amount" name="collateral" value={this.state.collateral}  onChange={this.handleInputChange} />
             <FormText>The amount of USDX you would like to repay</FormText>
             </FormGroup>
             <FormGroup>
+            <Label for="memo"><T>cdp.memo</T></Label>
                 <Input name="memo" onChange={this.handleInputChange}
                 placeholder="Memo(optional)" type="textarea" value={this.state.memo}/>
             </FormGroup>               
@@ -1520,7 +1514,7 @@ class RepayDebtCDPButton extends LedgerButton {
     }
 
     getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>repay USDX</span> to CDP <Amount coin={{amount:this.state.collateral, denom:this.props.collateral}} /> for address <b>{this.state.user} </b>
+        return <span>You are going to <span className='action'>repay </span> <span className={'coin'}>{new Coin(this.state.collateral, this.props.collateral).convertToString(4)}</span> to CDP for address <b>{this.state.user} </b>
      with <Fee gas={this.state.gasEstimate} />.</span>
     }
 
@@ -1529,13 +1523,8 @@ class RepayDebtCDPButton extends LedgerButton {
         return  `${meta.pathPreFix}/${this.state.user}/${this.props.collateral}/${meta.pathSuffix}`
     }
 
-    // isDataValid = () => {
-    //     if (!this.state.currentUser) return false
-
-    // }
-
     render = () => {
-        return <span className="ledger-buttons-group float-right">
+        return <span className="ledger-buttons-cdp">
             <Button color="info" size="sm" onClick={() => this.openModal(Types.REPAYDEPT, {})}> {TypeMeta[Types.REPAYDEPT].button} </Button>
             {this.renderModal()}
         </span>;

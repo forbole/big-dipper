@@ -995,6 +995,11 @@ body {
     margin: 5px 0;
     width: 100%;
   }
+
+  .ledger-buttons-cdp button{
+    display: inline;
+    margin: 0 10px;
+  }
   
   .redelegate-validators .ellipsis {
     display: inline-block;

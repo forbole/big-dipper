@@ -10,7 +10,6 @@ import { DepositCDPButton, WithdrawCDPButton, DrawDebtCDPButton, RepayDebtCDPBut
 
 
 const T = i18n.createComponent();
-const collateralizationRatio = 2;
 let timer = 0;
 
 export default class CDP extends Component{
@@ -27,6 +26,7 @@ export default class CDP extends Component{
             cdpParams: null,
             userCDP: null,
             denom: '',
+            collateralizationRatio: 0
             
 
         }
@@ -106,7 +106,7 @@ export default class CDP extends Component{
 
 
     render(){
-
+        
         if (this.state.userCDP) {
             return <div className="cdp-content">
                 <Table>
@@ -145,8 +145,6 @@ export default class CDP extends Component{
                     </tbody>
                 </Table>
                 <div>
-                <CreateCDPButton 
-                    cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null}/>  
                 <DepositCDPButton 
                     cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null}  
                     collateral={this.props.collateral}  
@@ -157,20 +155,24 @@ export default class CDP extends Component{
                 /> 
                 <DrawDebtCDPButton
                 cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null}  
-                collateral={this.props.collateral} 
+                collateral={this.state.cdpParams?this.state.cdpParams.debt_params[0].denom:null} 
                 /> 
                 <RepayDebtCDPButton
                 cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null}  
-                collateral={this.props.collateral} 
+                collateral={this.state.cdpParams?this.state.cdpParams.debt_params[0].denom:null} 
                 /> 
-                    {/* <Button color="warning" size="sm"><T>cdp.withdraw</T></Button> <Button color="danger" size="sm"><T>cdp.draw</T></Button> <Button color="info" size="sm"><T>cdp.repay</T></Button> */}
                 </div>
                 
             </div>
         }
         else{
             return <div>
-             <CreateCDPButton cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null}/>
+            <br></br>
+             <CreateCDPButton 
+                    cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null} 
+                    collateralizationRatio={this.state.cdpParams?parseInt(this.state.cdpParams.collateral_params[0].liquidation_ratio):null}
+                    />  
+            <br></br>
             </div>
         }
 

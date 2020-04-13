@@ -418,7 +418,7 @@ export default class AccountDetails extends Component{
                                     {this.state.user?<Row>
                                         <Col xs={12}><TransferButton history={this.props.history} address={this.state.address} denom={this.state.denom}/></Col>
                                         {this.state.user===this.state.address?<Col xs={12}><WithdrawButton  history={this.props.history} rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address} denom={this.state.denom}/></Col>:null}
-                                        <Col xs={12}><ClaimSwapButton validator={this.props.validator} address={this.state.operator_address} history={this.props.history}/></Col>
+                                        {this.state.user===this.state.address?<Col xs={12}><ClaimSwapButton validator={this.props.validator} address={this.state.operator_address} history={this.props.history}/></Col>:null}
                                     </Row>:null}
                                     <Row>
                                         <Col xs={4} className="label d-flex align-self-end"><div className="infinity" /><T>accounts.total</T></Col>
@@ -507,9 +507,9 @@ export default class AccountDetails extends Component{
                                 <TabContent activeTab={this.state.cdpActiveTab}>
                                     <TabPane tabId="cdp-bnb">
                                         {/* <CDP /> */}
-                                        
+                                        {this.state.user===this.state.address?
                                         <CDP owner={this.state.address} collateral='bnb' 
-                                        />
+                                        />: null}
                                     </TabPane>
                                 </TabContent>
                             </CardBody>

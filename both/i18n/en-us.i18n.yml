@@ -160,6 +160,9 @@ cdp:
     withdraw: 'Withdraw'
     draw: 'Draw Debt'
     repay: 'Repay Debt'
+    memo: 'Memo (optional)'
+    swapID: 'Swap ID'
+    swapRandNum: 'Swap Random Number'
 proposals:
     notFound: 'No proposal found.'
     listOfProposals: 'Here is a list of governance proposals.'

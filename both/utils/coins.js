@@ -27,7 +27,7 @@ for (let i in coinList) {
 export default class Coin {
 	static StakingCoin = coinList.find(coin => coin.denom === Meteor.settings.public.bondDenom);
 	static MinStake = 1 / Number(Coin.StakingCoin.fraction);
-	
+
 	constructor(amount, denom=Meteor.settings.public.bondDenom) {
 		const lowerDenom = denom.toLowerCase();
 		this._coin = coinList.find(coin =>
@@ -51,6 +51,10 @@ export default class Coin {
 		return this._amount;
 	}
 
+	get denom() {
+		return this._denom;
+	}
+
 	get stakingAmount () {
 		return (this._coin)?this._amount / this._coin.fraction:this._amount;
 	}
@@ -60,11 +64,18 @@ export default class Coin {
 		let minStake = Coin.StakingCoin.fraction/(precision?Math.pow(10, precision):10000)
 		if (this.amount < minStake) {
 			return `${numbro(this.amount).format('0,0.0000' )} ${this._coin.denom}`;
-		} else {
+		} 
+		else {
 			return `${precision?numbro(this.stakingAmount).format('0,0.' + '0'.repeat(precision)):autoformat(this.stakingAmount)} ${this._coin.displayName}`
 		}
 	}
 
+	// Return value in corresponding staking denom (no multiplications)
+	convertToString(precision){
+		return `${precision?numbro(this._amount).format('0,0.' + '0'.repeat(precision)):autoformat(this._amount)} ${this._coin.displayName}`	
+	}
+
+	//retrun value in mint String 
 	mintString (formatter) {
 		let amount = this.amount
 		if (formatter) {
@@ -75,6 +86,7 @@ export default class Coin {
 		return `${amount} ${denom}`;
 	}
 
+	//return value along with bonding (staking) denom type
 	stakeString (formatter) {
 		let amount = this.stakingAmount
 		if (formatter) {
