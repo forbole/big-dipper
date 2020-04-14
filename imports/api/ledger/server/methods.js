@@ -69,4 +69,22 @@ Meteor.methods({
             console.log(e)
         }
     },
+
+    'cdp.getCDPPrice': function(){
+        this.unblock();
+        let url = LCD + '/pricefeed/price/bnb:usd';
+        let cdpPrice = null;
+
+        try{
+            let response = HTTP.get(url);
+            if (response.statusCode == 200){
+                cdpPrice = JSON.parse(response.content).result.price;
+                return cdpPrice
+            }
+        }
+        catch (e){
+            console.log(e)
+        }
+    },
+
 })

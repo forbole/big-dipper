@@ -26,33 +26,17 @@ export default class CDP extends Component{
             cdpParams: null,
             userCDP: null,
             denom: '',
-            collateralizationRatio: 0
+            collateralizationRatio: 0,
+            collateralDeposited: 0,
+            principalDeposited: 0,
+            cdpPrice: null
             
 
         }
 
-        this.toggle = this.toggle.bind(this);
-        this.handleChange = this.handleChange.bind(this);
     }
 
-    toggle = () =>{
-        this.setState({
-            modal: !this.state.modal
-        })
-    }
-
-    handleChange = (e) => {
-        const { target } = e;
-        const value = target.value;
-        const { name } = target;
-        this.setState({
-            [name]: value,
-        }, () => {
-            this.setState({
-                ratio: this.state.collateral * this.state.price / this.state.debt
-            })
-        });
-    }
+ 
 
     updateCDP(){
         Meteor.call('accounts.getAccountCDP', this.props.owner, this.props.collateral, (error, result) => {
@@ -90,10 +74,28 @@ export default class CDP extends Component{
                 })
             }
         }),
+
+        Meteor.call('cdp.getCDPPrice',   (error, result) => {
+            if (error){
+                console.warn(error);
+                this.setState({
+                    loading:false
+                })
+            }
+    
+            if (result){
+                this.setState({
+                    cdpPrice: result,
+                })
+            }
+        }),
+
+        
                 
         this.updateCDP();
         timer = Meteor.setInterval(() => {
             this.updateCDP();
+            this.render();
         },9000)
         
     }
@@ -102,10 +104,16 @@ export default class CDP extends Component{
         Meteor.clearInterval(timer);
     }
 
+    findBNBValue(params){
+        let value = (params).find(({denom}) => denom === 'bnb');
+        let totalValue = value ? value.amount : null;
+        return totalValue
+    }
     
 
-
+    
     render(){
+        console.log("CDPPRICE " + JSON.stringify(this.state.cdpPrice))
         
         if (this.state.userCDP) {
             return <div className="cdp-content">
@@ -147,39 +155,59 @@ export default class CDP extends Component{
                 <div>
                 <DepositCDPButton 
                     cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null}  
-                    collateral={this.props.collateral}  
+                    collateral={this.props.collateral?this.props.collateral:null}
+                    bnbTotalValue={this.props.total?this.findBNBValue(this.props.total):null}  
                 /> 
                 <WithdrawCDPButton
                 cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null}  
-                collateral={this.props.collateral} 
+                collateral={this.props.collateral?this.props.collateral:null}
+                collateralDeposited = {this.state.userCDP?this.state.userCDP.cdp.collateral[0].amount:null} 
                 /> 
                 <DrawDebtCDPButton
                 cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null}  
-                collateral={this.state.cdpParams?this.state.cdpParams.collateral_params[0].denom:null} 
+                collateral={this.state.cdpParams?this.state.cdpParams.collateral_params[0].denom:null}
+                principalDeposited={this.state.userCDP?this.state.userCDP.cdp.principal[0].amount:null}
+                principalDenom={this.state.userCDP?this.state.userCDP.cdp.principal[0].denom:null}  
                 /> 
                 <RepayDebtCDPButton
                 cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null}  
-                collateral={this.state.cdpParams?this.state.cdpParams.collateral_params[0].denom:null} 
+                collateral={this.state.cdpParams?this.state.cdpParams.collateral_params[0].denom:null}
+                principalDeposited={this.state.userCDP?this.state.userCDP.cdp.principal[0].amount:null}
+                principalDenom={this.state.userCDP?this.state.userCDP.cdp.principal[0].denom:null}    
                 /> 
+                 <CreateCDPButton 
+                    cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null} 
+                    collateralizationRatio={this.state.cdpParams?parseInt(this.state.cdpParams.collateral_params[0].liquidation_ratio):null}
+                    price={this.state.cdpPrice?this.state.cdpPrice:null} 
+                    />  
                 </div>
                 
             </div>
         }
+    
         else{
             return <div>
             <br></br>
+            {/* <div className="mb-3"><Badge color="success">BNB:USD</Badge> <strong className="text-info">{ numbro(this.state.price).formatCurrency({mantissa:4})}</strong></div> */}
              <CreateCDPButton 
                     cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null} 
                     collateralizationRatio={this.state.cdpParams?parseInt(this.state.cdpParams.collateral_params[0].liquidation_ratio):null}
+                    price={this.state.cdpPrice?this.state.cdpPrice:null} 
                     />  
             <br></br>
             </div>
         }
-
+    
     }
+
 }
+
+
+
 
 CDP.propTypes = {
     owner: PropTypes.string,
     collateral: PropTypes.string,
+    total: PropTypes.array,
+    
 }
