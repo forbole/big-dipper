@@ -23,6 +23,7 @@ import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js';
 
 const T = i18n.createComponent();
+let timer = 0;
 
 const cloneDeep = require('lodash/cloneDeep');
 
@@ -221,6 +222,10 @@ export default class AccountDetails extends Component{
 
     componentDidMount(){
         this.getBalance();
+
+        timer = Meteor.setInterval(() => {
+            this.getBalance();
+        },10000)
     }
 
     componentDidUpdate(prevProps){
