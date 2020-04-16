@@ -231,7 +231,6 @@ Meteor.methods({
 
         // get available atoms
         let url = LCD + '/cdp/cdps/cdp/'+address+'/'+ collateral 
-        console.log("URL ->> " + url)
         try{
             let result = HTTP.get(url);
             if (result.statusCode == 200){

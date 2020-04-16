@@ -17,6 +17,7 @@ export default class Block extends Component{
         this.state = {
             transferTxs: {},
             cdpTxs: {},
+            swapTxs: {},
             priceTxs: {},
             stakingTxs: {},
             distributionTxs: {},
@@ -32,6 +33,7 @@ export default class Block extends Component{
                 this.setState({
                     transferTxs: this.props.transferTxs,
                     cdpTxs: this.props.cdpTxs,
+                    swapTxs: this.props.swapTxs,
                     priceTxs: this.props.priceTxs,
                     stakingTxs: this.props.stakingTxs,
                     distributionTxs: this.props.distributionTxs,
@@ -80,6 +82,7 @@ export default class Block extends Component{
                     <TranactionTabs
                         transferTxs={this.state.transferTxs}
                         cdpTxs={this.state.cdpTxs}
+                        swapTxs={this.state.swapTxs}
                         priceTxs={this.state.priceTxs}
                         stakingTxs={this.state.stakingTxs}
                         distributionTxs={this.state.distributionTxs}

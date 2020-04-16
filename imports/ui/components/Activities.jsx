@@ -3,6 +3,11 @@ import { MsgType } from './MsgType.jsx';
 import { Link } from 'react-router-dom';
 import Account from '../components/Account.jsx';
 import ClaimSwap from '../bep3/ClaimSwap.jsx';
+import CreateCDP from '../cdp/CreateCDP.jsx';
+import DepositCDP from '../cdp/DepositCDP.jsx';
+import WithdrawCDP from '../cdp/WithdrawCDP.jsx';
+import DrawDebt from '../cdp/DrawDebt.jsx';
+import RepayDebt from '../cdp/RepayDebt.jsx';
 import { ListGroup, ListGroupItem, Table } from 'reactstrap';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js'
@@ -70,20 +75,12 @@ export default class Activites extends Component {
         case "cdp/MsgCreateCDP":
             return <div>
                 <div><Account address={msg.value.sender}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> {(this.props.invalid)?'':<span><T>activities.withID</T> {events['create_cdp'][0].value}</span>}</div>
-                <ListGroup className="mt-3">
-                    <ListGroupItem color="success"><T>activities.cdpCollateral</T></ListGroupItem>
-                    {(msg.value.collateral&&msg.value.collateral.length>0)?
-                        msg.value.collateral.map((collateral, i) => <ListGroupItem key={i}>{new Coin(collateral.amount, collateral.denom).toString(6)}</ListGroupItem>):''}
-                </ListGroup>
-                <ListGroup className="mt-2">
-                    <ListGroupItem color="success"><T>activities.cdpPricipal</T></ListGroupItem>
-                    {(msg.value.principal&&msg.value.principal.length>0)?
-                        msg.value.principal.map((principal, i) => <ListGroupItem key={i}>{new Coin(principal.amount, principal.denom).toString(6)}</ListGroupItem>):''}
-                </ListGroup>
+                <CreateCDP collateral={msg.value.collateral} principal={msg.value.principal} />
             </div>
         case "cdp/MsgDeposit":
             return <div><Account address={msg.value.depositor} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} />
-                <ListGroup className="mt-3">
+            <DepositCDP address={msg.value.owner} collateral={msg.value.collateral}/>
+                {/* <ListGroup className="mt-3">
                     <ListGroupItem color="success"><T>activities.cdpOwner</T></ListGroupItem>
                     <ListGroupItem><Account address={msg.value.owner} /></ListGroupItem>
                 </ListGroup>
@@ -91,7 +88,22 @@ export default class Activites extends Component {
                     <ListGroupItem color="success"><T>activities.cdpDepositCollateral</T></ListGroupItem>
                     {(msg.value.collateral&&msg.value.collateral.length>0)?
                         msg.value.collateral.map((collateral, i) => <ListGroupItem key={i}>{new Coin(collateral.amount, collateral.denom).toString(6)}</ListGroupItem>):''}
-                </ListGroup>
+                </ListGroup> */}
+            </div>
+        case "cdp/MsgWithdraw":
+            return <div>
+                <div><Account address={msg.value.depositor}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> </div>
+                <WithdrawCDP depositor={msg.value.depositor} owner={msg.value.owner} collateral={msg.value.collateral}/>
+            </div>
+        case "cdp/MsgDrawDebt":
+            return <div>
+                <div><Account address={msg.value.sender}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> </div>
+                <DrawDebt sender={msg.value.sender} cdp_denom={msg.value.cdp_denom} principal={msg.value.principal}/>
+            </div>
+        case "cdp/MsgRepayDebt":
+            return <div>
+                <div><Account address={msg.value.sender}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> </div>
+                <RepayDebt sender={msg.value.sender} cdp_denom={msg.value.cdp_denom} payment={msg.value.payment} />
             </div>
 
         // Pricefeed

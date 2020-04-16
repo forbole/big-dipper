@@ -145,6 +145,8 @@ transactions:
     distribution: 'Distribution'
     governance: 'Governance'
     slashing: 'Slashing'
+    swap: 'Swap'
+    info: 'More Info'
 bep3:
     swap:
         swapID: 'Swap ID'
@@ -178,6 +180,11 @@ cdp:
     memo: 'Memo (optional)'
     swapID: 'Swap ID'
     swapRandNum: 'Swap Random Number'
+    sender: 'Sender'
+    cdpDenom: 'CDP Denom'
+    payment: 'Payment'
+    depositor: 'Depositor'
+
 proposals:
     notFound: 'No proposal found.'
     listOfProposals: 'Here is a list of governance proposals.'
@@ -268,6 +275,9 @@ messageTypes:
     claimAtomicSwap: 'BEP3 Atomic Swap Claim'
     createCDP: 'Create CDP'
     depositCDP: 'Deposit CDP'
+    withdrawCDP: 'Withdraw CDP'
+    repayDebt: 'Repay Debt'
+    drawDebt: 'Draw Debt'
     postPrice: 'Post Price'
     createValidator: 'Create Validator'
     editValidator: 'Edit Validator'

@@ -1,11 +1,22 @@
 import React, { Component } from 'react';
-import { Table, Spinner } from 'reactstrap';
+import { Table, Spinner, UncontrolledCollapse, Button, CardBody, Card} from 'reactstrap';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js';
 import PropTypes from 'prop-types';
 import SentryBoundary from '../components/SentryBoundary.jsx';
+import { Badge } from 'reactstrap';
+import Account from '../components/Account.jsx';
+import moment from 'moment';
+import numbro from 'numbro';
+import { Link } from 'react-router-dom';
 
-const T = i18n.createComponent();
+
+const T = i18n.createComponent(); 
+
+const BlockLink = (props) => {
+    let height = props.height;
+    return <Link to={"/blocks/"+height}>{numbro(height).format("0,0")}</Link>
+}
 
 export default class ClaimSwap extends Component {
     constructor(props) {
@@ -24,9 +35,13 @@ export default class ClaimSwap extends Component {
         })
     }
 
+    
+
     render(){
         if (this.state.swap){
-            return <Table responsive>
+        return <div><Button className="ledger-buttons-group my-2" color="primary" id="toggler" size="sm"><T>transactions.info</T>  </Button>
+            <UncontrolledCollapse toggler="#toggler">
+            <Table responsive>
                 <tbody>
                     <tr>
                         <th scope="row"><T>bep3.swap.swapID</T></th>
@@ -42,20 +57,20 @@ export default class ClaimSwap extends Component {
                     </tr>
                     <tr>
                         <th scope="row"><T>bep3.swap.expiredHeight</T></th>
-                        <td>{this.state.swap.expire_height}</td>
+                        <td>{ <BlockLink height={this.state.swap.expire_height}/> }</td>
                     </tr>
                     <tr>
                         <th scope="row"><T>bep3.swap.timestamp</T></th>
-                        <td>{this.state.swap.timestamp}</td>
+                        <td>{moment.unix(this.state.swap.timestamp).utc().fromNow()}</td>
                     </tr>
 
                     <tr>
                         <th scope="row"><T>bep3.swap.sender</T></th>
-                        <td>{this.state.swap.sender}</td>
+                        <td><Account address={this.state.swap.sender}/></td>
                     </tr>
                     <tr>
                         <th scope="row"><T>bep3.swap.recipient</T></th>
-                        <td>{this.state.swap.recipient}</td>
+                        <td> <Account address={this.state.swap.recipient}/></td>
                     </tr>
                     <tr>
                         <th scope="row"><T>bep3.swap.senderOtherChain</T></th>
@@ -67,25 +82,24 @@ export default class ClaimSwap extends Component {
                     </tr>
                     <tr>
                         <th scope="row"><T>bep3.swap.closedBlock</T></th>
-                        <td>{this.state.swap.closed_block}</td>
+                        <td><BlockLink height={this.state.swap.closed_block}/></td>
                     </tr>
                     <tr>
                         <th scope="row"><T>bep3.swap.crossChain</T></th>
-                        <td>{this.state.swap.cross_chain}</td>
+                        <td>{this.state.swap.cross_chain ? <i className="material-icons text-success">check_circle</i> : <i className="material-icons text-danger" >cancel</i>}</td>
                     </tr>
                     <tr>
                         <th scope="row"><T>bep3.swap.direction</T></th>
-                        <td>{this.state.swap.direction}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><T>bep3.swap.amount</T></th>
-                        <td>{this.state.swap.direction}</td>
-                    </tr>
-                    <tr>
-
+                    <td>  
+                    <Badge size="lg" color="success">{this.state.swap.direction === 'Incoming' ? 
+                   <span> <i className="material-icons">arrow_back</i> <span className="swap-direction">{this.state.swap.direction}</span> </span>: <span><span className="swap-direction">{this.state.swap.direction}</span> <i className="material-icons">arrow_forward</i></span>} </Badge>
+                     </td>
                     </tr>
                 </tbody>
+                
             </Table>
+            </UncontrolledCollapse>
+            </div>
         }
         else{
             return <div />

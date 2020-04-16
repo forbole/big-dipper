@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Transactions } from '/imports/api/transactions/transactions.js';
 import ValidatorTransactions from './Transactions.jsx';
-
+ 
 export default TransactionsContainer = withTracker((props) => {
     let transactionsHandle, transactions, transactionsExist;
     let loading = true;
@@ -36,7 +36,15 @@ export default TransactionsContainer = withTracker((props) => {
         cdpTxs: transactionsExist ? Transactions.find({
             $or: [
                 {"tx.value.msg.type":"cdp/MsgCreateCDP"},
-                {"tx.value.msg.type":"cdp/MsgDeposit"}
+                {"tx.value.msg.type":"cdp/MsgDeposit"},
+                {"tx.value.msg.type":"cdp/MsgWithdraw"},
+                {"tx.value.msg.type":"cdp/MsgDrawDebt"}, 
+                {"tx.value.msg.type":"cdp/MsgRepayDebt"}
+            ]
+        }).fetch() : {},
+        swapTxs: transactionsExist ? Transactions.find({
+            $or: [
+                {"tx.value.msg.type":"bep3/MsgClaimAtomicSwap"}
             ]
         }).fetch() : {},
         priceTxs: transactionsExist ? Transactions.find({

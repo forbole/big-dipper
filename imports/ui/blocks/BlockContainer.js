@@ -43,6 +43,25 @@ export default BlockContainer = withTracker((props) => {
                 {"tx.value.msg.type":"cosmos-sdk/MsgMultiSend"}
             ]
         }).fetch() : {},
+        cdpTxs: transactionsExist ? Transactions.find({
+            $or: [
+                {"tx.value.msg.type":"cdp/MsgCreateCDP"},
+                {"tx.value.msg.type":"cdp/MsgDeposit"},
+                {"tx.value.msg.type":"cdp/MsgWithdraw"},
+                {"tx.value.msg.type":"cdp/MsgDrawDebt"}, 
+                {"tx.value.msg.type":"cdp/MsgRepayDebt"}
+            ]
+        }).fetch() : {},
+        swapTxs: transactionsExist ? Transactions.find({
+            $or: [
+                {"tx.value.msg.type":"bep3/MsgClaimAtomicSwap"}
+            ]
+        }).fetch() : {},
+        priceTxs: transactionsExist ? Transactions.find({
+            $or: [
+                {"tx.value.msg.type":"pricefeed/MsgPostPrice"}
+            ]
+        }).fetch() : {},
         stakingTxs: transactionsExist ? Transactions.find({
             $or: [
                 {"tx.value.msg.type":"cosmos-sdk/MsgCreateValidator"},
