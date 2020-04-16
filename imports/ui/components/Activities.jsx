@@ -2,6 +2,7 @@ import React, {Component } from 'react';
 import { MsgType } from './MsgType.jsx';
 import { Link } from 'react-router-dom';
 import Account from '../components/Account.jsx';
+import ClaimSwap from '../bep3/ClaimSwap.jsx';
 import { ListGroup, ListGroupItem, Table } from 'reactstrap';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js'
@@ -57,7 +58,14 @@ export default class Activites extends Component {
             return <p><Account address={msg.value.from_address} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <span className="text-success">{amount}</span> <T>activities.to</T> <span className="address"><Account address={msg.value.to_address} /></span><T>common.fullStop</T></p>
         case "cosmos-sdk/MsgMultiSend":
             return <MultiSend msg={msg} />
-
+        
+        // BEP3
+        case "bep3/MsgClaimAtomicSwap":
+            return <div>
+                <Account address={msg.value.from} /> {(this.props.invalid)?<T>activities.failedTo</T>:''} {(this.props.invalid)?'':<span><T>activities.madeA</T> <MsgType type={msg.type} /></span>}
+                <ClaimSwap swapID={msg.value.swap_id} />
+            </div>
+            
         // CDP
         case "cdp/MsgCreateCDP":
             return <div>

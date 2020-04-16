@@ -12,6 +12,10 @@ export const MsgType = (props) => {
     case "cosmos-sdk/MsgMultiSend":
         return <Badge color="success"><T>messageTypes.multiSend</T></Badge>
     
+    // bep3
+    case "bep3/MsgClaimAtomicSwap":
+        return <Badge color="primary"><T>messageTypes.claimAtomicSwap</T></Badge>
+
     // cdp
     case "cdp/MsgDeposit":
         return <Badge color="success"><T>messageTypes.depositCDP</T></Badge>
