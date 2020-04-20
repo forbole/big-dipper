@@ -10,6 +10,7 @@
 * Fixed Unjail message with a correct account address.
 * [#323] Display rewards amount in activities list.
 * Hide Italian it-IT Translation
+* Fixed hash overflow on mobile in Transaction Section (Added scroller)
 
 ## v0.37.x-patch-10.1
 
