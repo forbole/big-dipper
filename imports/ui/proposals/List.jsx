@@ -11,6 +11,7 @@ import { SubmitProposalButton } from '../ledger/LedgerActions.jsx';
 const T = i18n.createComponent();
 
 const ProposalRow = (props) => {
+    
     return <tr>
         <th className="d-none d-sm-table-cell counter">{props.proposal.proposalId}</th>
         <td className="title"><Link to={"/proposals/"+props.proposal.proposalId}>{props.proposal.content.value.title}</Link></td>
@@ -18,7 +19,7 @@ const ProposalRow = (props) => {
         <td className="submit-block"><TimeStamp time={props.proposal.submit_time}/></td>
         <td className="voting-start">{(props.proposal.voting_start_time != "0001-01-01T00:00:00Z")?<TimeStamp time={props.proposal.voting_start_time}/>:'Not started'}</td>
         <td className="deposit text-right">{props.proposal.total_deposit?props.proposal.total_deposit.map((deposit, i) => {
-            return <div key={i}>{new Coin(deposit.amount).toString()}</div>
+            return <div key={i}>{new Coin(deposit.amount, deposit.denom).toString()}</div>
         }):'0'}</td>
     </tr>
 }

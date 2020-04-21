@@ -4,29 +4,32 @@ Block Explorer for Cosmos
 
 ## Projects running on mainnets
 
-[Explore Cosmos Hub (cosmoshub-2) with Big Dipper](https://cosmos.bigdipper.live)
+[Explore Cosmos Hub with Big Dipper](https://cosmos.bigdipper.live)
 
-[Explore IRISnet (irishub) with Big Dipper](https://iris.bigdipper.live)
+[Explore IRISnet with Big Dipper](https://iris.bigdipper.live)
 
-[Explore Terra (columbus-2) with Big Dipper](https://terra.bigdipper.live)
+[Explore LikeCoin Chain with Big Dipper](http://likecoin.bigdipper.live/)
 
-[Explore LikeCoin Chain (sheungwan) with Big Dipper](http://likecoin.bigdipper.live/)
+[Explore Kava with Big Dipper](https://kava.bigdipper.live/)
 
-[Explore Kava (kava-2) with the Big Dipper](https://kava.bigdipper.live/)
+[Explore e-Money with Big Dipper](https://e-money.network/)
+
 
 ## Projects with testnets
 
+[Agoric](https://explorer.testnet.agoric.com/)
+
 [Cyber Congress](https://cyberd.ai/)
 
-[Regen Network](http://bigdipper.regen.network/)
+[Desmos Network](https://morpheus.desmos.network/)
+
+[Persistence](https://explorer.persistence.one/)
+
+[Regen Network](https://explorer.regen.vitwit.com/)
 
 [Sentinel](https://explorer.sentinel.co/)
 
-[e-Money](https://e-money.network/)
-
-[Commit](https://explorer.commit.sg/)
-
-[TruStory](https://explorer.testnet.trustory.io)
+[Dropil Chain](https://testnet-explorer.dropilchain.com/)
 
 ## How to run The Big Dipper
 
@@ -35,11 +38,14 @@ Block Explorer for Cosmos
 3. Update Bech32 address prefixes.
 4. Update genesis file location.
 
+### Requirements
+
+* [Meteor v1.9](https://www.meteor.com/install)
+
 ### Run in local
 
 ```sh
-meteor npm install
-meteor update
+meteor npm install --save
 meteor --settings settings.json
 ```
 
@@ -49,7 +55,9 @@ meteor --settings settings.json
 ./build.sh
 ```
 
-It will create a packaged Node JS tarball at `../output`. Deploy that packaged Node JS project with process manager like [forever](https://www.npmjs.com/package/forever) or [Phusion Passenger](https://www.phusionpassenger.com/library/walkthroughs/basics/nodejs/fundamental_concepts.html).
+It will create a packaged Node JS tarball in `Linux x86_64` architecture at `../output`. Deploy that packaged Node JS project with process manager like [PM2](https://github.com/Unitech/pm2) or [Phusion Passenger](https://www.phusionpassenger.com/library/walkthroughs/basics/nodejs/fundamental_concepts.html). 
+
+You will need to have [MongoDB >= 4.x](https://docs.mongodb.com/manual/administration/install-on-linux/) installed and [setup environment variables](https://guide.meteor.com/deployment.html#environment) correctly in order run in production. For more details on how to deploy a Meteor application, please refer to the offical documentation on [Custom Deployment](https://guide.meteor.com/deployment.html#custom-deployment).
 
 ---
 ## Donations :pray:

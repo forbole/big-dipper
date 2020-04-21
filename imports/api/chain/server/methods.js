@@ -4,6 +4,7 @@ import { getAddress } from 'tendermint/lib/pubkey.js';
 import { Chain, ChainStates } from '../chain.js';
 import { Validators } from '../../validators/validators.js';
 import { VotingPowerHistory } from '../../voting-power/history.js';
+import Coin from '../../../../both/utils/coins.js';
 
 findVotingPower = (validator, genValidators) => {
     for (let v in genValidators){
@@ -89,57 +90,59 @@ Meteor.methods({
                     console.log(e);
                 }
 
-                url = LCD + '/supply/total/'+Meteor.settings.public.mintingDenom;
-                try{
-                    response = HTTP.get(url);
-                    let supply = JSON.parse(response.content).result;
-                    chainStates.totalSupply = parseInt(supply);
-                }
-                catch(e){
-                    console.log(e);
-                }
+                if ( Coin.StakingCoin.denom ) {
+                    url = LCD + '/supply/total/'+ Coin.StakingCoin.denom;
+                    try{
+                        response = HTTP.get(url);
+                        let supply = JSON.parse(response.content).result;
+                        chainStates.totalSupply = parseInt(supply);
+                    }
+                    catch(e){
+                        console.log(e);
+                    }
 
-                url = LCD + '/distribution/community_pool';
-                try {
-                    response = HTTP.get(url);
-                    let pool = JSON.parse(response.content).result;
-                    if (pool && pool.length > 0){
-                        chainStates.communityPool = [];
-                        pool.forEach((amount, i) => {
-                            chainStates.communityPool.push({
-                                denom: amount.denom,
-                                amount: parseFloat(amount.amount)
+                    url = LCD + '/distribution/community_pool';
+                    try {
+                        response = HTTP.get(url);
+                        let pool = JSON.parse(response.content).result;
+                        if (pool && pool.length > 0){
+                            chainStates.communityPool = [];
+                            pool.forEach((amount, i) => {
+                                chainStates.communityPool.push({
+                                    denom: amount.denom,
+                                    amount: parseFloat(amount.amount)
+                                })
                             })
-                        })
+                        }
                     }
-                }
-                catch (e){
-                    console.log(e)
-                }
+                    catch (e){
+                        console.log(e)
+                    }
 
-                url = LCD + '/minting/inflation';
-                try{
-                    response = HTTP.get(url);
-                    let inflation = JSON.parse(response.content).result;
-                    if (inflation){
-                        chainStates.inflation = parseFloat(inflation)
+                    url = LCD + '/minting/inflation';
+                    try{
+                        response = HTTP.get(url);
+                        let inflation = JSON.parse(response.content).result;
+                        if (inflation){
+                            chainStates.inflation = parseFloat(inflation)
+                        }
                     }
-                }
-                catch(e){
-                    console.log(e);
-                }
+                    catch(e){
+                        console.log(e);
+                    }
 
-                url = LCD + '/minting/annual-provisions';
-                try{
-                    response = HTTP.get(url);
-                    let provisions = JSON.parse(response.content);
-                    if (provisions){
-                        chainStates.annualProvisions = parseFloat(provisions.result)
+                    url = LCD + '/minting/annual-provisions';
+                    try{
+                        response = HTTP.get(url);
+                        let provisions = JSON.parse(response.content);
+                        if (provisions){
+                            chainStates.annualProvisions = parseFloat(provisions.result)
+                        }
                     }
-                }
-                catch(e){
-                    console.log(e);
-                }
+                    catch(e){
+                        console.log(e);
+                    }
+            		}
 
                 ChainStates.insert(chainStates);
             }
@@ -199,15 +202,15 @@ Meteor.methods({
                 crisis: genesis.app_state.crisis
             }
 
-            if (genesis.app_state.gov) {
+	    if (genesis.app_state.gov) {
                 chainParams.gov = {
                     startingProposalId: genesis.app_state.gov.starting_proposal_id,
                     depositParams: genesis.app_state.gov.deposit_params,
                     votingParams: genesis.app_state.gov.voting_params,
                     tallyParams: genesis.app_state.gov.tally_params
                 };
-            }
 
+	    }
             let totalVotingPower = 0;
 
             // read gentx
@@ -226,18 +229,19 @@ Meteor.methods({
                                 min_self_delegation: msg[m].value.min_self_delegation,
                                 operator_address: msg[m].value.validator_address,
                                 delegator_address: msg[m].value.delegator_address,
-                                voting_power: Math.floor(parseInt(msg[m].value.value.amount) / Meteor.settings.public.stakingFraction),
+                                voting_power: Math.floor(parseInt(msg[m].value.value.amount) / Coin.StakingCoin.fraction),
                                 jailed: false,
                                 status: 2
                             }
 
                             totalVotingPower += validator.voting_power;
 
-                            let pubkeyValue = Meteor.call('bech32ToPubkey', msg[m].value.pubkey);
+                            let pubkeyType = Meteor.settings.public.secp256k1?'tendermint/PubKeySecp256k1':'tendermint/PubKeyEd25519';
+                            let pubkeyValue = Meteor.call('bech32ToPubkey', msg[m].value.pubkey, pubkeyType);
                             // Validators.upsert({consensus_pubkey:msg[m].value.pubkey},validator);
 
                             validator.pub_key = {
-                                "type":"tendermint/PubKeyEd25519",
+                                "type":pubkeyType,
                                 "value":pubkeyValue
                             }
 
@@ -270,10 +274,11 @@ Meteor.methods({
                     let validator = genValidatorsSet[v];
                     validator.delegator_address = Meteor.call('getDelegator', genValidatorsSet[v].operator_address);
 
-                    let pubkeyValue = Meteor.call('bech32ToPubkey', validator.consensus_pubkey);
+                    let pubkeyType = Meteor.settings.public.secp256k1?'tendermint/PubKeySecp256k1':'tendermint/PubKeyEd25519';
+                    let pubkeyValue = Meteor.call('bech32ToPubkey', validator.consensus_pubkey, pubkeyType);
 
                     validator.pub_key = {
-                        "type":"tendermint/PubKeyEd25519",
+                        "type":pubkeyType,
                         "value":pubkeyValue
                     }
 

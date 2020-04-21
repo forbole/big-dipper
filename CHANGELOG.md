@@ -1,5 +1,6 @@
 # Changelog
 
+<<<<<<< HEAD
 See commits for individual file changes.
 
 ## [PR28](https://github.com/unification-com/mainchain-explorer/pull/28) 05/03/2020
@@ -156,4 +157,3 @@ See commits for individual file changes.
 * [[`c54c28f70d`](https://github.com/unification-com/mainchain-explorer/commit/c54c28f70d)] - introduce local settings (Indika Piyasena)
 * [[`4f603100e0`](https://github.com/unification-com/mainchain-explorer/commit/4f603100e0)] - don't rebuild source on changes to Docker configuration (Indika Piyasena)
 * [[`85b12734fb`](https://github.com/unification-com/mainchain-explorer/commit/85b12734fb)] - an attempt at building this project (Indika Piyasena)
-

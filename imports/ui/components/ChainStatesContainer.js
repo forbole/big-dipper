@@ -39,3 +39,5 @@ export default ChainStatesContainer = withTracker((props) => {
         coinStats: coinStatsExist ? coinStats : {}
     };
 })(Chain);
+
+
