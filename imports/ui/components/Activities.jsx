@@ -8,6 +8,7 @@ import DepositCDP from '../cdp/DepositCDP.jsx';
 import WithdrawCDP from '../cdp/WithdrawCDP.jsx';
 import DrawDebt from '../cdp/DrawDebt.jsx';
 import RepayDebt from '../cdp/RepayDebt.jsx';
+import CreateSwap from '../bep3/CreateSwap.jsx';
 import { ListGroup, ListGroupItem, Table } from 'reactstrap';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js'
@@ -70,25 +71,22 @@ export default class Activites extends Component {
                 <Account address={msg.value.from} /> {(this.props.invalid)?<T>activities.failedTo</T>:''} {(this.props.invalid)?'':<span><T>activities.madeA</T> <MsgType type={msg.type} /></span>}
                 <ClaimSwap swapID={msg.value.swap_id} />
             </div>
+        case "bep3/MsgCreateAtomicSwap":
+            return <div>
+                <Account address={msg.value.from} /> {(this.props.invalid)?<T>activities.failedTo</T>:''} {(this.props.invalid)?'':<span><T>activities.madeA</T> <MsgType type={msg.type} /></span>}
+                <CreateSwap from={msg.value.from} to={msg.value.to} receipientOtherChain={msg.value.recipient_other_chain} senderOtherChain={msg.value.sender_other_chain} 
+                randomHash={msg.value.random_number_hash} timestamp={msg.value.timestamp} amount={msg.value.amount}  expectedIncome={msg.value.expected_income} heightSpan={msg.value.height_span} crossChain={msg.value.cross_chain}/>
+            </div>
             
         // CDP
         case "cdp/MsgCreateCDP":
             return <div>
-                <div><Account address={msg.value.sender}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> {(this.props.invalid)?'':<span><T>activities.withID</T> {events['create_cdp'][0].value}</span>}</div>
+                <div><Account address={msg.value.sender}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> </div>
                 <CreateCDP collateral={msg.value.collateral} principal={msg.value.principal} />
             </div>
         case "cdp/MsgDeposit":
             return <div><Account address={msg.value.depositor} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} />
             <DepositCDP address={msg.value.owner} collateral={msg.value.collateral}/>
-                {/* <ListGroup className="mt-3">
-                    <ListGroupItem color="success"><T>activities.cdpOwner</T></ListGroupItem>
-                    <ListGroupItem><Account address={msg.value.owner} /></ListGroupItem>
-                </ListGroup>
-                <ListGroup className="mt-2">
-                    <ListGroupItem color="success"><T>activities.cdpDepositCollateral</T></ListGroupItem>
-                    {(msg.value.collateral&&msg.value.collateral.length>0)?
-                        msg.value.collateral.map((collateral, i) => <ListGroupItem key={i}>{new Coin(collateral.amount, collateral.denom).toString(6)}</ListGroupItem>):''}
-                </ListGroup> */}
             </div>
         case "cdp/MsgWithdraw":
             return <div>

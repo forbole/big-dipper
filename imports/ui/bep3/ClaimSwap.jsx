@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import { Table, Spinner, UncontrolledCollapse, Button, CardBody, Card} from 'reactstrap';
+import { Table, UncontrolledCollapse, Button, CardBody, Card} from 'reactstrap';
 import i18n from 'meteor/universe:i18n';
-import Coin from '/both/utils/coins.js';
 import PropTypes from 'prop-types';
-import SentryBoundary from '../components/SentryBoundary.jsx';
 import { Badge } from 'reactstrap';
 import Account from '../components/Account.jsx';
 import moment from 'moment';
@@ -74,11 +72,13 @@ export default class ClaimSwap extends Component {
                     </tr>
                     <tr>
                         <th scope="row"><T>bep3.swap.senderOtherChain</T></th>
-                        <td>{this.state.swap.sender_other_chain}</td>
+                        <td><a target="_blank" href={"https://explorer.binance.org/address/" + this.state.swap.sender_other_chain}>{this.state.swap.sender_other_chain}</a>
+                        </td>
                     </tr>
                     <tr>
                         <th scope="row"><T>bep3.swap.recipientOtherChain</T></th>
-                        <td>{this.state.swap.recipient_other_chain}</td>
+                        <td><a target="_blank" href={"https://explorer.binance.org/address/" + this.state.swap.recipient_other_chain}>{this.state.swap.recipient_other_chain}</a>
+                        </td>
                     </tr>
                     <tr>
                         <th scope="row"><T>bep3.swap.closedBlock</T></th>

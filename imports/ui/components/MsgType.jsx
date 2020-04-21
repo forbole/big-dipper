@@ -15,6 +15,8 @@ export const MsgType = (props) => {
     // bep3
     case "bep3/MsgClaimAtomicSwap":
         return <Badge color="primary"><T>messageTypes.claimAtomicSwap</T></Badge>
+    case "bep3/MsgCreateAtomicSwap":
+        return <Badge color="primary"><T>messageTypes.CreateAtomicSwap</T></Badge>
 
     // cdp
     case "cdp/MsgDeposit":

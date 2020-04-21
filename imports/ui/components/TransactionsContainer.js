@@ -44,7 +44,8 @@ export default TransactionsContainer = withTracker((props) => {
         }).fetch() : {},
         swapTxs: transactionsExist ? Transactions.find({
             $or: [
-                {"tx.value.msg.type":"bep3/MsgClaimAtomicSwap"}
+                {"tx.value.msg.type":"bep3/MsgClaimAtomicSwap"},
+                {"tx.value.msg.type":"bep3/MsgCreateAtomicSwap"}
             ]
         }).fetch() : {},
         priceTxs: transactionsExist ? Transactions.find({

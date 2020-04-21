@@ -162,6 +162,10 @@ bep3:
         crossChain: 'Cross Chain'
         direction: 'Direction'
         amount: 'Amount'
+        from: 'From'
+        to: 'To'
+        expectedIncome: 'Expected Income'
+        heightSpan: 'Height Span'
 cdp:
     id: 'ID'
     owner: 'Owner'
@@ -273,6 +277,7 @@ messageTypes:
     send: 'Send'
     multiSend: 'Multi Send'
     claimAtomicSwap: 'BEP3 Atomic Swap Claim'
+    CreateAtomicSwap: 'BEP3 Atomic Swap Create'
     createCDP: 'Create CDP'
     depositCDP: 'Deposit CDP'
     withdrawCDP: 'Withdraw CDP'
