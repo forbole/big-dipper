@@ -511,10 +511,12 @@ export default class AccountDetails extends Component{
                                 </Nav> 
                                 <TabContent activeTab={this.state.cdpActiveTab}>
                                     <TabPane tabId="cdp-bnb">
-                                        {/* <CDP /> */}
-                                        {this.state.user===this.state.address?
-                                        <CDP owner={this.state.address} collateral='bnb' total={this.state.total}
-                                        />: null}
+                                        <CDP 
+                                            owner={this.state.address} 
+                                            collateral='bnb' 
+                                            total={this.state.total} 
+                                            user={this.state.user}
+                                        />
                                     </TabPane>
                                 </TabContent>
                             </CardBody>
