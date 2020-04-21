@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { Badge } from 'reactstrap';
 import numbro from 'numbro';
 
-let errors = {
+const errors = {
     "sdk": {
         1: "Internal Error",
         2: "Tx Decode Error",
@@ -194,16 +194,28 @@ export default class CosmosErrors extends Component {
             error: errors.sdk[1],
             message: ""
         }
-        if(props.codespace && props.code) {
-            try {
-                this.state = {
-                    error: errors[props.codespace][props.code],
-                    message: props.raw_log
-                }
-            } catch(e) {
-                this.state = {
-                    error: errors.undefined[1],
-                    message: ("raw_log" in props) ? props.raw_log: ""
+        if (props.logs){
+            if (props.logs.length > 0){
+                for (let i in props.logs){
+                    if (!props.logs[i].success){
+                        let error = {};
+                        try {
+                            error = JSON.parse(props.logs[i].log);
+                        }
+                        catch (e){
+                            // debug(e);
+                            error = {
+                                code: 1,
+                                message: "Unknown error"
+                            }
+                        }
+                        
+                        this.state = {
+
+                            error: (error.codespace && error.code && errors[error.codespace] && errors[error.codespace][error.code]) || "Unknown error",
+                            message: error.message || ""
+                        }
+                    }
                 }
             }
         }

@@ -2,6 +2,11 @@
 
 See commits for individual file changes.
 
+## [PR29](https://github.com/unification-com/mainchain-explorer/pull/29) 21/04/2020
+
+* [[`8238932`](https://github.com/unification-com/mainchain-explorer/commit/8238932)] - merge upstream changes (Codegnosis)
+* [[`73af4f2`](https://github.com/unification-com/mainchain-explorer/commit/73af4f2)] - add testnet settings (Codegnosis)
+
 ## [PR28](https://github.com/unification-com/mainchain-explorer/pull/28) 05/03/2020
 
 * [[`49c6d0d3`](https://github.com/unification-com/mainchain-explorer/commit/49c6d0d3)] - ui - update error messages (Codegnosis)
@@ -156,4 +161,3 @@ See commits for individual file changes.
 * [[`c54c28f70d`](https://github.com/unification-com/mainchain-explorer/commit/c54c28f70d)] - introduce local settings (Indika Piyasena)
 * [[`4f603100e0`](https://github.com/unification-com/mainchain-explorer/commit/4f603100e0)] - don't rebuild source on changes to Docker configuration (Indika Piyasena)
 * [[`85b12734fb`](https://github.com/unification-com/mainchain-explorer/commit/85b12734fb)] - an attempt at building this project (Indika Piyasena)
-

@@ -1,45 +1,34 @@
-# Big Dipper :sparkles:
+![Unification](https://raw.githubusercontent.com/unification-com/mainchain/master/unification_logoblack.png "Unification")
 
-Block Explorer for Cosmos
+# Unification Block Explorer
 
-## Projects running on mainnets
+Block Explorer for Unification networks.
 
-[Explore Cosmos Hub (cosmoshub-2) with Big Dipper](https://cosmos.bigdipper.live)
+Forked from https://github.com/forbole/big-dipper, with UND specific modifications for:
 
-[Explore IRISnet (irishub) with Big Dipper](https://iris.bigdipper.live)
+* WRKChain Tx Msgs
+* BEACON Tx Msgs
+* Enterprise UND Tx Msgs
 
-[Explore Terra (columbus-2) with Big Dipper](https://terra.bigdipper.live)
+## Live block explorers
 
-[Explore LikeCoin Chain (sheungwan) with Big Dipper](http://likecoin.bigdipper.live/)
+[UND TestNet Explorer](https://explorer-testnet.unification.io)
 
-[Explore Kava (kava-2) with the Big Dipper](https://kava.bigdipper.live/)
-
-## Projects with testnets
-
-[Cyber Congress](https://cyberd.ai/)
-
-[Regen Network](http://bigdipper.regen.network/)
-
-[Sentinel](https://explorer.sentinel.co/)
-
-[e-Money](https://e-money.network/)
-
-[Commit](https://explorer.commit.sg/)
-
-[TruStory](https://explorer.testnet.trustory.io)
-
-## How to run The Big Dipper
+## How to run UND Block Explorer
 
 1. Copy `default_settings.json` to `settings.json`.
 2. Update the RPC and LCD URLs.
 3. Update Bech32 address prefixes.
 4. Update genesis file location.
 
+### Requirements
+
+* [Meteor v1.10](https://www.meteor.com/install)
+
 ### Run in local
 
 ```sh
-meteor npm install
-meteor update
+meteor npm install --save
 meteor --settings settings.json
 ```
 
@@ -49,15 +38,6 @@ meteor --settings settings.json
 ./build.sh
 ```
 
-It will create a packaged Node JS tarball at `../output`. Deploy that packaged Node JS project with process manager like [forever](https://www.npmjs.com/package/forever) or [Phusion Passenger](https://www.phusionpassenger.com/library/walkthroughs/basics/nodejs/fundamental_concepts.html).
+It will create a packaged Node JS tarball in `Linux x86_64` architecture at `../output`. Deploy that packaged Node JS project with process manager like [PM2](https://github.com/Unitech/pm2) or [Phusion Passenger](https://www.phusionpassenger.com/library/walkthroughs/basics/nodejs/fundamental_concepts.html). 
 
----
-## Donations :pray:
-
-The Big Dipper is always free and open. Anyone can use to monitor available Cosmos hub or zones, or port to your own chain built with Cosmos SDK. We welcome any supports to help us improve this project.
-
-ATOM: `cosmos1n67vdlaejpj3uzswr9qapeg76zlkusj5k875ma`\
-BTC: `1HrTuvS83VoUVA79wTifko69ziWTjEXzQS`\
-ETH: `0xec3AaC5023E0C9E2a76A223E4e312f275c76Cd77`
-
-And by downloading and using [Brave](https://brave.com/big517).
+You will need to have [MongoDB >= 4.x](https://docs.mongodb.com/manual/administration/install-on-linux/) installed and [setup environment variables](https://guide.meteor.com/deployment.html#environment) correctly in order run in production. For more details on how to deploy a Meteor application, please refer to the offical documentation on [Custom Deployment](https://guide.meteor.com/deployment.html#custom-deployment).

@@ -1,29 +1,35 @@
 {
     "public":{
-        "chainName": "Cosmos Testnet",
-        "chainId": "{Chain ID}",
+        "chainName": "UND Testnet",
+        "chainId": "{chain_id}",
         "gtm": "{Add your Google Tag Manager ID here}",
         "slashingWindow": 10000,
         "uptimeWindow": 250,
         "initialPageSize": 30,
-        "bech32PrefixAccAddr": "cosmos",
-        "bech32PrefixAccPub": "cosmospub",
-        "bech32PrefixValAddr": "cosmosvaloper",
-        "bech32PrefixValPub": "cosmosvaloperpub",
-        "bech32PrefixConsAddr": "cosmosvalcons",
-        "bech32PrefixConsPub": "cosmosvalconspub",
-        "stakingDenom": "ATOM",
-        "stakingDenomPlural": null,
-        "mintingDenom": "uatom",
-        "stakingFraction": 1000000,
-        "powerReduction": null,
-        "gasPrice": 0.02,
-        "coingeckoId": "cosmos"
+        "secp256k1": false,
+        "bech32PrefixAccAddr": "und",
+        "bech32PrefixAccPub": "undpub",
+        "bech32PrefixValAddr": "undvaloper",
+        "bech32PrefixValPub": "undvaloperpub",
+        "bech32PrefixConsAddr": "undvalcons",
+        "bech32PrefixConsPub": "undvalconspub",
+        "bondDenom": "nund",
+        "powerReduction": 1000000,
+        "coins": [
+            {
+                "denom": "nund",
+                "displayName": "UND",
+                "displayNamePlural": "UND",
+                "fraction": 1000000000
+            }
+        ],
+        "gasPrice": 0.25,
+        "coingeckoId": "unification"
     },
-    "genesisFile": "{Replace the address of the genesis file of the chain}",
+    "genesisFile": "{url_to_genesis.json}",
     "remote":{
-        "rpc":"https://gaia-seeds.interblock.io",
-        "lcd":"https://gaia-seeds.interblock.io:1317"
+        "rpc":"{http://rpc_client:26656}",
+        "lcd":"{http//rest_client:1317}"
     },
     "debug": {
         "startTimer": true,
@@ -41,4 +47,5 @@
         "delegationInterval": 900000
     }
 }
+
 

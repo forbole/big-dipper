@@ -44,10 +44,8 @@ Meteor.methods({
         try{
             let available = HTTP.get(url);
             if (available.statusCode == 200){
-                // console.log(JSON.parse(available.content))
                 balance.available = JSON.parse(available.content).result;
-                if (balance.available && balance.available.length > 0)
-                    balance.available = balance.available[0];
+
             }
         }
         catch (e){
@@ -82,7 +80,11 @@ Meteor.methods({
         try{
             let rewards = HTTP.get(url);
             if (rewards.statusCode == 200){
-                balance.rewards = JSON.parse(rewards.content).result.total;
+                //get seperate rewards value
+                balance.rewards = JSON.parse(rewards.content).result.rewards;
+                //get total rewards value
+                balance.total_rewards= JSON.parse(rewards.content).result.total;
+                
             }
         }
         catch (e){
@@ -100,7 +102,8 @@ Meteor.methods({
                 if (rewards.statusCode == 200){
                     let content = JSON.parse(rewards.content).result;
                     if (content.val_commission && content.val_commission.length > 0)
-                        balance.commission = content.val_commission[0];
+                        balance.commission = content.val_commission;
+
                 }
 
             }
@@ -190,5 +193,7 @@ Meteor.methods({
             })
             return redelegations
         }
-    }
-})
+    },
+
+         
+}) 

@@ -32,6 +32,10 @@ navbar:
     votingPower: '投票权分布'
     lang: "中文（简）"
     english: "English"
+    spanish: "Español"
+    italian: "Italiano"
+    polish: "Polski"
+    russian: "Русский"
     chinese: "中文（繁）"
     simChinese: "中文（简）"
     license: 'LICENSE'
@@ -129,6 +133,7 @@ transactions:
     txHash: '交易哈希'
     valid: '有效'
     fee: '费用'
+    noFee: 'No fee' 
     gasUsedWanted: '瓦斯 (已用 / 要求)'
     noTxFound: '没有这笔交易。'
     noValidatorTxsFound: '没有跟这个验证人有关的交易'
@@ -156,7 +161,6 @@ proposals:
     votingEndTime: '投票结束时间'
     totalDeposit: '押金总额'
     description: '详细内容'
-    changes: 'Parameter Changes'
     proposalType: '提案类型'
     proposalStatus: '提案状态'
     notStarted: '未开始'
@@ -171,6 +175,12 @@ proposals:
     validMessage: '这个提案 {$tentative} <strong>有效</strong>.'
     invalidMessage: '已投票的在线投票权少于 {$quorum}。这个提案 <strong>無效</strong>。'
     moreVoteMessage: '当再有多 <span class="text-info">{$moreVotes}</span> 投票权投了票的话，这个提案将会有效。'
+    key: 'Key'
+    value: 'Value'
+    amount: 'Amount'
+    recipient: 'Recipient'
+    changes: 'Changes'
+    subspace: 'Subspace'
 votingPower:
     distribution: '投票权分布'
     pareto: '帕累托原则 (20/80 定率)'
@@ -187,6 +197,7 @@ accounts:
     shares: '股数'
     mature: '成熟日期'
     no: '没有'
+    none: '没有'
     delegation: '委托'
     plural: ''
     signOut: '登出'
@@ -204,6 +215,7 @@ signers:
     signed: 'Signed'
     percentMissed: '% Missed'
     lastSigned: 'Last # Signed'
+    noRewards: 'No Rewards'
 activities:
     single: '一个'
     happened: '发生了'

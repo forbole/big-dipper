@@ -1,0 +1,49 @@
+{
+  "public":{
+    "chainName": "UND Testnet",
+    "chainId": "UND-Mainchain-TestNet-v4",
+    "gtm": "{Add your Google Tag Manager ID here}",
+    "slashingWindow": 10000,
+    "uptimeWindow": 250,
+    "initialPageSize": 30,
+    "secp256k1": false,
+    "bech32PrefixAccAddr": "und",
+    "bech32PrefixAccPub": "undpub",
+    "bech32PrefixValAddr": "undvaloper",
+    "bech32PrefixValPub": "undvaloperpub",
+    "bech32PrefixConsAddr": "undvalcons",
+    "bech32PrefixConsPub": "undvalconspub",
+    "bondDenom": "nund",
+    "powerReduction": 1000000,
+    "coins": [
+      {
+        "denom": "nund",
+        "displayName": "UND",
+        "displayNamePlural": "UND",
+        "fraction": 1000000000
+      }
+    ],
+    "gasPrice": 0.25,
+    "coingeckoId": "unification"
+  },
+  "genesisFile": "https://raw.githubusercontent.com/unification-com/testnet/master/latest/genesis.json",
+  "remote":{
+    "rpc":"http://18.218.225.121:26660",
+    "lcd":"https://rest-testnet.unification.io"
+  },
+  "debug": {
+    "startTimer": true,
+    "readGenesis": true
+  },
+  "params":{
+    "startHeight": 0,
+    "defaultBlockTime": 5000,
+    "blockInterval": 15000,
+    "consensusInterval": 1000,
+    "statusInterval":7500,
+    "signingInfoInterval": 1800000,
+    "proposalInterval": 5000,
+    "missedBlocksInterval": 60000,
+    "delegationInterval": 900000
+  }
+}
