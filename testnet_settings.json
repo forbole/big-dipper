@@ -1,8 +1,8 @@
 {
   "public":{
-    "chainName": "UND Testnet",
-    "chainId": "UND-Mainchain-TestNet-v4",
-    "gtm": "{Add your Google Tag Manager ID here}",
+    "chainName": "UND TestNet",
+    "chainId": "UND-Mainchain-TestNet-v5",
+    "gtm": "",
     "slashingWindow": 10000,
     "uptimeWindow": 250,
     "initialPageSize": 30,
@@ -28,7 +28,7 @@
   },
   "genesisFile": "https://raw.githubusercontent.com/unification-com/testnet/master/latest/genesis.json",
   "remote":{
-    "rpc":"http://18.218.225.121:26660",
+    "rpc":"http://3.22.167.50:26660",
     "lcd":"https://rest-testnet.unification.io"
   },
   "debug": {
