@@ -358,7 +358,14 @@ export default class Proposal extends Component{
                                 <td>{this.props.proposal.content.value.changes.map((changesItem, i) => {
                                 return <div key={i}>{changesItem.key.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</div> })}</td>
                                 <td> {this.props.proposal.content.value.changes.map((changesItem, i) => {
-                                return <div key={i}>{numbro(changesItem.value.replace (/"/g, "")).format("0,000")}</div> })}</td>
+                                    let changeValue = changesItem.value.replace (/"/g, "")
+                                    if(!isNaN(changeValue)) {
+                                        changeValue = numbro(changeValue).format("0,000")
+                                    }
+                                    return <div key={i}>{changeValue}</div>
+                                  })
+                                }
+                                </td>
                                 </tr>
                             </tbody>
                             </Table>
