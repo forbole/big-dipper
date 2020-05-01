@@ -28,7 +28,7 @@ export default class Proposals extends Component{
         return <div>
             <Helmet>
                 <title>Governance Proposals on Unification Mainchain</title>
-                <meta name="description" content="See how on-chain governance can be achieved on The Big Dipper." />
+                <meta name="description" content="See how on-chain governance can be achieved on Mainchain." />
             </Helmet>
             <Row>
                 <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>proposals.proposals</T></h1></Col>
