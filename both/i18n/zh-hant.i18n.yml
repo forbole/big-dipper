@@ -50,6 +50,7 @@ chainStates:
     marketCap: '市值'
     inflation: '通漲率'
     communityPool: '社區儲備'
+    totalSupply: 'Total Supply'
 chainStatus:
     startMessage: '這鏈將還有以下時間便會開始'
     stopWarning: '這鏈似乎已經停了 <em>{$time}</em>！ 請繼續餵我吃新的區塊 😭!'

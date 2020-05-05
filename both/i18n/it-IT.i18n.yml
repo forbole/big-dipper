@@ -50,6 +50,7 @@ chainStates:
     marketCap: 'Market Cap'
     inflation: 'Inflazione'
     communityPool: 'Community Pool'
+    totalSupply: 'Offerta totale'
 chainStatus:
     startMessage: 'The chain partirà tra'
     stopWarning: 'La chain sembra essersi fermata per <em>{$time}</em>! Dammi nuovi blocchi 😭!'

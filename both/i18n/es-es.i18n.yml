@@ -49,6 +49,7 @@ chainStates:
     marketCap: 'Capitalización de mercado'
     inflation: 'Inflación'
     communityPool: 'Community Pool'
+    totalSupply: 'Suministro total'
 chainStatus:
     startMessage: 'La cadena comenzará en'
     stopWarning: 'La cadena parece estar parada por <em>{$time}</em>! Dame de comer nuevos bloques 😭!'

@@ -50,6 +50,7 @@ chainStates:
     marketCap: 'Kapitalizacja rynkowa'
     inflation: 'Inflacja'
     communityPool: 'Zasoby Społeczności'
+    totalSupply: 'Całkowita podaż'
 chainStatus:
     startMessage: 'Łańcuch bloków danych rozpocznie działanie za ' 
     topWarning: 'Wygląda na to że, łańcuch bloków danych zatrzymał się na <em>{$time}</em>! Odśwież stronę i nakarm mnie nowymi blokami 😭!'
