@@ -11,6 +11,7 @@
 * Simplify validator storing
 * Get data and show proposal based on enabled modules
 * Calculate validator uptime in async
+* Update validator status
 
 ## v0.39.x-3
 

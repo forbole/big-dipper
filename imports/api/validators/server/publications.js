@@ -25,7 +25,7 @@ publishComposite('validators.firstSeen',{
 
 Meteor.publish('validators.voting_power', function(){
     return Validators.find({
-        status: 2,
+        status: 3,
         jailed:false
     },{
         sort:{
