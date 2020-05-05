@@ -95,16 +95,16 @@ Meteor.methods({
                 }
 
                 if ( Coin.StakingCoin.denom ) {
-                    // url = LCD + '/supply/total/'+ Coin.StakingCoin.denom;
-                    // try{
-                    //     response = HTTP.get(url);
-                    //     let supply = JSON.parse(response.content).result;
-                    //     chainStates.totalSupply = parseInt(supply);
-                    // }
-                    // catch(e){
-                    //     console.log(url);
-                    //     console.log(e);
-                    // }
+                    url = LCD + '/bank/total/'+ Coin.StakingCoin.denom;
+                    try{
+                        response = HTTP.get(url);
+                        let supply = JSON.parse(response.content).result;
+                        chainStates.totalSupply = parseInt(supply);
+                    }
+                    catch(e){
+                        console.log(url);
+                        console.log(e);
+                    }
 
                     url = LCD + '/distribution/community_pool';
                     try {
@@ -125,32 +125,32 @@ Meteor.methods({
                         console.log(e)
                     }
 
-                    // url = LCD + '/minting/inflation';
-                    // try{
-                    //     response = HTTP.get(url);
-                    //     let inflation = JSON.parse(response.content).result;
-                    //     if (inflation){
-                    //         chainStates.inflation = parseFloat(inflation)
-                    //     }
-                    // }
-                    // catch(e){
-                    //     console.log(url);
-                    //     console.log(e);
-                    // }
+                    url = LCD + '/minting/inflation';
+                    try{
+                        response = HTTP.get(url);
+                        let inflation = JSON.parse(response.content).result;
+                        if (inflation){
+                            chainStates.inflation = parseFloat(inflation)
+                        }
+                    }
+                    catch(e){
+                        console.log(url);
+                        console.log(e);
+                    }
 
-                    // url = LCD + '/minting/annual-provisions';
-                    // try{
-                    //     response = HTTP.get(url);
-                    //     let provisions = JSON.parse(response.content);
-                    //     if (provisions){
-                    //         chainStates.annualProvisions = parseFloat(provisions.result)
-                    //     }
-                    // }
-                    // catch(e){
-                    //     console.log(url);
-                    //     console.log(e);
-                    // }
-            		}
+                    url = LCD + '/minting/annual-provisions';
+                    try{
+                        response = HTTP.get(url);
+                        let provisions = JSON.parse(response.content);
+                        if (provisions){
+                            chainStates.annualProvisions = parseFloat(provisions.result)
+                        }
+                    }
+                    catch(e){
+                        console.log(url);
+                        console.log(e);
+                    }
+            	}
 
                 ChainStates.insert(chainStates);
             }
