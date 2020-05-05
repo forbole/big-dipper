@@ -93,7 +93,7 @@ Meteor.methods({
 
                 if ( Coin.StakingCoin.denom ) {
                     if (Meteor.settings.public.modules.supply){
-                        url = LCD + '/supply/total/'+ Coin.StakingCoin.denom;
+                        url = LCD + '/bank/total/'+ Coin.StakingCoin.denom;
                         try{
                             response = HTTP.get(url);
                             let supply = JSON.parse(response.content).result;
