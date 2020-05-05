@@ -1,7 +1,7 @@
 # Changelog
 
 ## [Unreleased]
-
+* Update validator status
 * [#306] Display errors with SDK v0.38 format
 * [#301] Using Jazzicon as avatar if no Keybase avatar exists
 * [#297] Prettify unrecognized JSON messages

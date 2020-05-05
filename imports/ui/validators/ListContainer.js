@@ -26,7 +26,7 @@ export default ValidatorListContainer = withTracker((props) => {
     }
     else{
         validatorsCond = {
-            jailed: false,
+            // jailed: false,
             status: 3
         }
     }
