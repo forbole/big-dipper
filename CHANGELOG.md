@@ -2,6 +2,11 @@
 
 See commits for individual file changes.
 
+## [PR30](https://github.com/unification-com/mainchain-explorer/pull/30) 05/05/2020
+
+* [[`cd94260faf`](https://github.com/unification-com/mainchain-explorer/commit/cd94260faf)] - i18n - total supply (Codegnosis)
+* [[`e75dc686dc`](https://github.com/unification-com/mainchain-explorer/commit/e75dc686dc)] - ui - output total supply (Codegnosis)
+
 ## [PR29](https://github.com/unification-com/mainchain-explorer/pull/29) 21/04/2020
 
 * [[`8238932`](https://github.com/unification-com/mainchain-explorer/commit/8238932)] - merge upstream changes (Codegnosis)
