@@ -203,7 +203,7 @@ export default class CDP extends Component{
                         principalDeposited={this.state.userCDP?this.state.userCDP.cdp.principal[0].amount:null}
                         principalDenom={this.state.userCDP?this.state.userCDP.cdp.principal[0].denom:null}
                         price={this.state.cdpPrice?this.state.cdpPrice:0}  
-                        collateralDeposited = {this.state.userCDP?this.state.userCDP.cdp.collateral[0].amount:null}
+                        collateralDeposited={this.state.userCDP?this.state.userCDP.cdp.collateral[0].amount:null}
                         collateralizationRatio={this.state.cdpParams?parseInt(this.state.cdpParams.collateral_params[0].liquidation_ratio):null}
                     />:''}
                     {(this.props.owner == this.props.user)?<DrawDebtCDPButton
@@ -212,7 +212,7 @@ export default class CDP extends Component{
                         principalDeposited={this.state.userCDP?this.state.userCDP.cdp.principal[0].amount:null}
                         principalDenom={this.state.userCDP?this.state.userCDP.cdp.principal[0].denom:null}
                         price={this.state.cdpPrice?this.state.cdpPrice:null}  
-                        collateralDeposited = {this.state.userCDP?this.state.userCDP.cdp.collateral[0].amount:null}
+                        collateralDeposited={this.state.userCDP?this.state.userCDP.cdp.collateral[0].amount:null}
                         collateralizationRatio={this.state.cdpParams?parseInt(this.state.cdpParams.collateral_params[0].liquidation_ratio):null}
                     />:''}
                     
@@ -223,7 +223,7 @@ export default class CDP extends Component{
                         principalDeposited={this.state.userCDP?this.state.userCDP.cdp.principal[0].amount:null}
                         principalDenom={this.state.userCDP?this.state.userCDP.cdp.principal[0].denom:null}
                         price={this.state.cdpPrice?this.state.cdpPrice:null}  
-                        collateralDeposited = {this.state.userCDP?this.state.userCDP.cdp.collateral[0].amount:null}
+                        collateralDeposited={this.state.userCDP?this.state.userCDP.cdp.collateral[0].amount:null}
                         collateralizationRatio={this.state.cdpParams?parseInt(this.state.cdpParams.collateral_params[0].liquidation_ratio):null}    
                         disabled={!this.state.cdpParams}
                     />:''}

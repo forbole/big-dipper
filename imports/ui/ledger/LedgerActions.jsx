@@ -1409,6 +1409,17 @@ class WithdrawCDPButton extends LedgerButton {
         }
     }
 
+    static getDerivedStateFromProps(nextProps, prevState){
+        if(!_.isEqual(nextProps.collateralDeposited,prevState.collateralDeposited)){
+            
+            return {
+                maxAmount: nextProps.collateralDeposited / Meteor.settings.public.coins[1].fraction,
+                ratio: ((parseInt(nextProps.collateralDeposited) / Meteor.settings.public.coins[1].fraction) * parseFloat(nextProps.price)) / (parseInt(nextProps.principalDeposited) / Meteor.settings.public.coins[5].fraction)
+            }
+        }
+        else return null;
+    }
+
     handleChange = (e) => {
         const { target } = e;
         const value = target.value;
@@ -1496,19 +1507,29 @@ class DrawDebtCDPButton extends LedgerButton {
         }
     }
 
+    static getDerivedStateFromProps(nextProps, prevState){
+        if(!_.isEqual(nextProps.principalDeposited,prevState.principalDeposited)){
+            
+            return {
+                maxAmount: nextProps.principalDeposited / Meteor.settings.public.coins[5].fraction,
+                ratio: ((parseInt(nextProps.collateralDeposited) / Meteor.settings.public.coins[1].fraction) * parseFloat(nextProps.price)) / (parseInt(nextProps.principalDeposited) / Meteor.settings.public.coins[5].fraction)
+            }
+        }
+        else return null;
+    }
 
-handleChange = (e) => {
-    const { target } = e;
-    const value = target.value;
-    const { name } = target;
-    this.setState({
-        [name]: value,
-    }, () => {
+    handleChange = (e) => {
+        const { target } = e;
+        const value = target.value;
+        const { name } = target;
         this.setState({
-            ratio: (((parseInt(this.props.collateralDeposited) / Meteor.settings.public.coins[1].fraction) * parseFloat(this.props.price)) / ((parseInt(this.props.principalDeposited) / Meteor.settings.public.coins[5].fraction) + parseFloat(this.state.draw))),
-        })
-    });
-}
+            [name]: value,
+        }, () => {
+            this.setState({
+                ratio: (((parseInt(this.props.collateralDeposited) / Meteor.settings.public.coins[1].fraction) * parseFloat(this.props.price)) / ((parseInt(this.props.principalDeposited) / Meteor.settings.public.coins[5].fraction) + parseFloat(this.state.draw))),
+            })
+        });
+    }
 
 
     renderActionTab = () => {
@@ -1583,6 +1604,18 @@ class RepayDebtCDPButton extends LedgerButton {
         }
     }
 
+    static getDerivedStateFromProps(nextProps, prevState){
+        if(!_.isEqual(nextProps.principalDeposited,prevState.principalDeposited)){
+            
+            return {
+                maxAmount: nextProps.principalDeposited / Meteor.settings.public.coins[5].fraction,
+                ratio: ((parseInt(nextProps.collateralDeposited) / Meteor.settings.public.coins[1].fraction) * parseFloat(nextProps.price)) / (parseInt(nextProps.principalDeposited) / Meteor.settings.public.coins[5].fraction),
+                usdxTotalValue: nextProps.usdxTotalValue / Meteor.settings.public.coins[5].fraction
+            }
+        }
+        else return null;
+    }
+
     handleChange = (e) => {
         const { target } = e;
         const value = target.value;
@@ -1651,11 +1684,6 @@ class RepayDebtCDPButton extends LedgerButton {
         </span>;
     }
 }
-
-
-
-
-
 
 export {
     DelegationButtons,
