@@ -19,6 +19,8 @@ Block Explorer for Cosmos
 
 [Agoric](https://explorer.testnet.agoric.com/)
 
+[Band Protocol](http://scan-bigdipper.bandchain.org/)
+
 [Cyber Congress](https://cyberd.ai/)
 
 [Desmos Network](https://morpheus.desmos.network/)
