@@ -40,7 +40,12 @@ export default class Activites extends Component {
 
     render(){
         // console.log(this.props);
-        let msg = this.props.msg;
+        const msg = this.props.msg;
+        const events = [];
+        for (let i in this.props.events){
+            events[this.props.events[i].type] = this.props.events[i].attributes
+        }
+        
         switch (msg.type){
         // bank
         case "cosmos-sdk/MsgSend":

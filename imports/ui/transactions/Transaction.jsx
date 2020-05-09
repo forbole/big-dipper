@@ -41,9 +41,8 @@ export default class Transaction extends Component{
                         <Alert color="danger">
                             <CosmosErrors
                                 code={tx.code}
-                                logs={tx.logs}
-                                gasWanted={tx.gas_wanted}
-                                gasUses={tx.gas_used}
+                                codespace={tx.codespace}
+                                log={tx.raw_log}
                             />
                         </Alert>
                     </Col></Row>:''}
@@ -74,7 +73,7 @@ export default class Transaction extends Component{
                         <div className="card-header"><T>transactions.activities</T></div>
                     </Card>
                     {(tx.tx.value.msg && tx.tx.value.msg.length >0)?tx.tx.value.msg.map((msg,i) => {
-                        return <Card body key={i}><Activities msg={msg} invalid={(!!tx.code)} events={tx.events} denom ={this.denom}/></Card>
+                        return <Card body key={i}><Activities msg={msg} invalid={(!!tx.code)} events={tx.logs[i].events} denom ={this.denom}/></Card>
                     }):''}
                 </Container>
             }
