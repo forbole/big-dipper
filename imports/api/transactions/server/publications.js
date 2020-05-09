@@ -24,11 +24,11 @@ publishComposite('transactions.list', function(limit = 30){
 publishComposite('transactions.validator', function(validatorAddress, delegatorAddress, limit=100){
     let query = {};
     if (validatorAddress && delegatorAddress){
-        query = {$or:[{"events.attributes.value":validatorAddress}, {"events.attributes.value":delegatorAddress}]}
+        query = {$or:[{"logs.events.attributes.value":validatorAddress}, {"logs.events.attributes.value":delegatorAddress}]}
     }
 
     if (!validatorAddress && delegatorAddress){
-        query = {"events.attributes.value":delegatorAddress}
+        query = {"logs.events.attributes.value":delegatorAddress}
     }
 
     return {
