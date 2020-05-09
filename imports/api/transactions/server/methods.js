@@ -36,26 +36,26 @@ Meteor.methods({
         // following cosmos-sdk/x/slashing/spec/06_events.md and cosmos-sdk/x/staking/spec/06_events.md
         return Transactions.find({
             $or: [{$and: [
-                {"events.type": "delegate"},
-                {"events.attributes.key": "validator"},
-                {"events.attributes.value": address}
+                {"logs.events.type": "delegate"},
+                {"logs.events.attributes.key": "validator"},
+                {"logs.events.attributes.value": address}
             ]}, {$and:[
-                {"events.attributes.key": "action"},
-                {"events.attributes.value": "unjail"},
-                {"events.attributes.key": "sender"},
-                {"events.attributes.value": address}
+                {"logs.events.attributes.key": "action"},
+                {"logs.events.attributes.value": "unjail"},
+                {"logs.events.attributes.key": "sender"},
+                {"logs.events.attributes.value": address}
             ]}, {$and:[
-                {"events.type": "create_validator"},
-                {"events.attributes.key": "validator"},
-                {"events.attributes.value": address}
+                {"logs.events.type": "create_validator"},
+                {"logs.events.attributes.key": "validator"},
+                {"logs.events.attributes.value": address}
             ]}, {$and:[
-                {"events.type": "unbond"},
-                {"events.attributes.key": "validator"},
-                {"events.attributes.value": address}
+                {"logs.events.type": "unbond"},
+                {"logs.events.attributes.key": "validator"},
+                {"logs.events.attributes.value": address}
             ]}, {$and:[
-                {"events.type": "redelegate"},
-                {"events.attributes.key": "destination_validator"},
-                {"events.attributes.value": address}
+                {"logs.events.type": "redelegate"},
+                {"logs.events.attributes.key": "destination_validator"},
+                {"logs.events.attributes.value": address}
             ]}],
             "code": {$exists: false},
             height:{$lt:height}},
