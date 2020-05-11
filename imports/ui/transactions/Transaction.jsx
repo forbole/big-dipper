@@ -52,7 +52,7 @@ export default class Transaction extends Component{
                         <CardBody>
                             <Row>
                                 <Col md={4} className="label"><T>common.hash</T></Col>
-                                <Col md={8} className="value text-nowrap address">{tx.txhash}</Col>
+                                <Col md={8} className="value text-nowrap overflow-auto address">{tx.txhash}</Col>
                                 <Col md={4} className="label"><T>common.height</T></Col>
                                 <Col md={8} className="value">
                                     <Link to={"/blocks/"+tx.height}>{numbro(tx.height).format("0,0")}</Link>
