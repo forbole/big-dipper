@@ -42,7 +42,7 @@ Block Explorer for Cosmos
 
 ### Requirements
 
-* [Meteor v1.9](https://www.meteor.com/install)
+* [Meteor v1.10.x](https://www.meteor.com/install)
 
 ### Run in local
 
