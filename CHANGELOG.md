@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+* Dockerize big-dipper
+
 ## v0.37.x-patch-11
 
 * [#303] Fixed wrong validator display in unjail message
