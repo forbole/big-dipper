@@ -51,7 +51,7 @@ export default class AccountTooltip extends Account{
         let moniker = validator.description && validator.description.moniker || validator.address;
         let isActive = validator.status == 2 && !validator.jailed;
 
-        return <UncontrolledPopover className='validator-popover' trigger="hover" placement="right" target={this.ref}>
+        return <UncontrolledPopover className='validator-popover' trigger="hover" placement="right" target={this.ref} key={this.ref}>
             <Card className='validator-popover-card' body outline color="danger">
         <PopoverHeader>
         <CardTitle className='d-flex justify-content-center'>
@@ -72,7 +72,7 @@ export default class AccountTooltip extends Account{
             numbro(validator.commission.commission_rates.rate).format('0.00%') : numbro(validator.commission.rate).format('0.00%')  }
          </CardText>:null} 
         {(!isActive)?<CardText className="last-seen data">
-        <i class="material-icons">access_time </i>
+        <i className="material-icons">access_time </i>
         {validator.lastSeen?<TimeStamp time={validator.lastSeen}/>:
             (validator.unbonding_time?<TimeStamp time={validator.unbonding_time}/>:null)}
          </CardText>:null}
