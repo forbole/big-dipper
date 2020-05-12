@@ -188,6 +188,10 @@ cdp:
     cdpDenom: 'CDP Denom'
     payment: 'Payment'
     depositor: 'Depositor'
+    cdpList: 'List of CDPs'
+    cdps: 'CDPs'
+    cdpID: 'CDP ID'
+    cdpFeesUpdated: 'Fees Updated'
 
 proposals:
     notFound: 'No proposal found.'

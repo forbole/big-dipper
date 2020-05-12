@@ -241,7 +241,24 @@ Meteor.methods({
             console.log(e)
         }
         return cdp
-    }
+    },
+
+        'cdp.getCDPList': function(){
+            this.unblock();
+            let url = LCD + '/cdp/cdps/denom/bnb';
+            try{
+                let result = HTTP.get(url);
+                if (result.statusCode == 200){
+                    let list = JSON.parse(result.content).result; 
+                       
+                    return list
+                    
+                }
+            }
+            catch (e){
+                console.log(e)
+            }
+        },
 
 
          
