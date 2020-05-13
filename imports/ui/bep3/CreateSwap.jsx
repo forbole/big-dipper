@@ -34,7 +34,6 @@ export default class CreateSwap extends Component {
 
 
     render(){
-        console.log(this.props)
         if (this.props.receipientOtherChain){
         return <div><Button className="ledger-buttons-group my-2" color="primary" id="toggler" size="sm"><T>transactions.info</T>  </Button>
             <UncontrolledCollapse toggler="#toggler">

@@ -1070,3 +1070,11 @@ body {
     cursor: help;
     opacity: 0.7;
   }
+
+  .pagination-wrapper {
+    overflow-x:auto;
+  }
+
+  .pagination{
+    justify-content: 'center',
+  }

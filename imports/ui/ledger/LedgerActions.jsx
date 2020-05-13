@@ -470,13 +470,15 @@ class LedgerButton extends Component {
                 txMsg = Ledger.depositCDP(
                     this.getTxContext(),
                     this.state.collateral,
-                    this.state.collateralDenom);
+                    this.state.collateralDenom,
+                    this.state.cdpOwner);
                 break;
             case Types.WITHDRAWCDP:
                 txMsg = Ledger.withdrawCDP(
                     this.getTxContext(),
                     this.state.collateral,
-                    this.state.collateralDenom);
+                    this.state.collateralDenom,
+                    this.state.cdpOwner);
                 break;
             case Types.DRAWDEBT:
                 txMsg = Ledger.drawDebt(
@@ -1309,7 +1311,7 @@ class DepositCDPButton extends LedgerButton {
             collateralDenom: props.collateral,
             maxAmount: props.bnbTotalValue / Meteor.settings.public.coins[1].fraction,
             ratio: ((parseInt(props.collateralDeposited) / Meteor.settings.public.coins[1].fraction) * parseFloat(props.price)) / (parseInt(props.principalDeposited) / Meteor.settings.public.coins[5].fraction),
-
+            cdpOwner: props.cdpOwner,
         }
     }
     
@@ -1369,13 +1371,14 @@ class DepositCDPButton extends LedgerButton {
     }
 
     getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>Deposit</span> <span className={'coin'}>{new Coin(this.state.collateral, this.props.collateral).convertToString(8)}</span> into CDP for address <b>{this.state.user} </b>
+        return <span>You are going to <span className='action'>Deposit</span> <span className={'coin'}>{new Coin(this.state.collateral, this.props.collateral).convertToString(8)}</span> from address <b>{this.state.user} </b> into CDP for address <b>{this.state.cdpOwner} </b>
      with <Fee gas={this.state.gasEstimate} />.</span>
     }
 
     getPath = () => {
             let meta = TypeMeta[this.state.actionType];
-            return  `${meta.pathPreFix}/${this.state.user}/${this.props.collateral}/${meta.pathSuffix}`
+            console.log("THIS STATE USER " + JSON.stringify(this.state.cdpOwner))
+            return  `${meta.pathPreFix}/${this.state.cdpOwner}/${this.props.collateral}/${meta.pathSuffix}`
          }
 
 
@@ -1405,8 +1408,11 @@ class WithdrawCDPButton extends LedgerButton {
             amount: 0,
             maxAmount: props.collateralDeposited / Meteor.settings.public.coins[1].fraction,
             ratio: ((parseInt(props.collateralDeposited) / Meteor.settings.public.coins[1].fraction) * parseFloat(props.price)) / (parseInt(props.principalDeposited) / Meteor.settings.public.coins[5].fraction),
-
+            cdpOwner: props.cdpOwner,
+            depositedValue: props.depositValue  / Meteor.settings.public.coins[1].fraction,
+            isDepositor: props.isDepositor
         }
+        console.log(this.state.isDepositor)
     }
 
     static getDerivedStateFromProps(nextProps, prevState){
@@ -1442,7 +1448,7 @@ class WithdrawCDPButton extends LedgerButton {
             <Label for="collateral"><T>cdp.withdraw</T></Label>
             <Input placeholder="Collateral Amount" name="collateral"  type="number" value={this.state.collateral} onChange={this.handleChange}
             min={Coin.MinStake} max={this.state.maxAmount} 
-            invalid={this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount)}/>    
+            invalid={this.state.isDepositor? this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.depositedValue) : this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount)}/>    
             <FormText>The amount of BNB you would like to withdraw</FormText>
             </FormGroup>
             <FormGroup>
@@ -1458,7 +1464,7 @@ class WithdrawCDPButton extends LedgerButton {
                 <Input name="memo" onChange={this.handleInputChange}
                 placeholder="Memo(optional)" type="textarea" value={this.state.memo}/>
             </FormGroup>
-            <span className={'coin'}>Your available CDP balance: {new Coin(this.state.maxAmount, this.props.collateral).convertToString(6)} </span>               
+            <span className={'coin'}>Your available CDP balance: {this.state.isDepositor? new Coin(this.state.depositedValue, this.props.collateral).convertToString(6) :new Coin(this.state.maxAmount, this.props.collateral).convertToString(6)} </span>               
         </TabPane>
     }
 
@@ -1473,13 +1479,13 @@ class WithdrawCDPButton extends LedgerButton {
 
    
     getConfirmationMessage = () => {
-    return this.props.collateral? <span>You are going to <span className='action'>withdraw </span> <span className={'coin'}>{new Coin(this.state.collateral, this.props.collateral).convertToString(8)}</span> from CDP  for address <b>{this.state.user} </b>
+    return this.props.collateral? <span>You are going to <span className='action'>withdraw </span> <span className={'coin'}>{new Coin(this.state.collateral, this.props.collateral).convertToString(8)}</span> for address <b>{this.state.user} </b> from CDP with address <b>{this.state.cdpOwner} </b>
      with <Fee gas={this.state.gasEstimate} />.</span> : ''
     }
 
     getPath = () => {
         let meta = TypeMeta[this.state.actionType];
-        return  `${meta.pathPreFix}/${this.state.user}/${this.props.collateral}/${meta.pathSuffix}`
+        return  `${meta.pathPreFix}/${this.state.cdpOwner}/${this.props.collateral}/${meta.pathSuffix}`
     }
 
 

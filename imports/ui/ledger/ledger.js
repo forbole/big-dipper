@@ -500,7 +500,8 @@ export class Ledger {
     static depositCDP(
         txContext,
         collateral,
-        collateralDenom
+        collateralDenom,
+        cdpOwner
     ) {
         const txMsg = {
             type: 'cdp/MsgDeposit',
@@ -510,7 +511,7 @@ export class Ledger {
                     denom: collateralDenom
                 }],
                 depositor: txContext.bech32,
-                owner: txContext.bech32
+                owner: cdpOwner
                
             },
         };
@@ -521,8 +522,8 @@ export class Ledger {
     static withdrawCDP(
         txContext,
         collateral,
-        collateralDenom
-
+        collateralDenom,
+        cdpOwner
     ) {
         const txMsg = {
             type: 'cdp/MsgWithdraw',
@@ -532,7 +533,7 @@ export class Ledger {
                     denom: collateralDenom
                 }],
                 depositor: txContext.bech32,
-                owner: txContext.bech32
+                owner: cdpOwner
             },
         };
         return Ledger.createSkeleton(txContext, [txMsg]);
