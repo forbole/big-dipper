@@ -1,0 +1,51 @@
+{
+    "public":{
+        "chainName": "Cosmos",
+        "chainId": "cosmoshub-3",
+        "gtm": false,
+        "uptimeWindow": 100,
+        "slashingWindow": 10000,
+        "initialPageSize": 30,
+        "secp256k1": false,
+        "genesisTime": "2019-12-11T16:11:34Z",
+        "bech32PrefixAccAddr": "cosmos",
+        "bech32PrefixAccPub": "cosmospub",
+        "bech32PrefixValAddr": "cosmosvaloper",
+        "bech32PrefixValPub": "cosmosvaloperpub",
+        "bech32PrefixConsAddr": "cosmosvalcons",
+        "bech32PrefixConsPub": "cosmosvalconspub",
+        "gasPrice": "0.02",
+        "bondDenom": "uatom",
+        "powerReduction": 1000000,
+        "coins": [
+            {
+                "denom": "uatom",
+                "displayName": "ATOM",
+                "displayNamePlural": "ATOMS",
+                "fraction": 1000000
+            }
+        ],
+        "coingeckoId": "cosmos",
+        "networks": "https://gist.githubusercontent.com/kwunyeung/8be4598c77c61e497dfc7220a678b3ee/raw/417b9a40832bb4171dfcad2adad1931f0e4e01aa/bd-networks.json"
+    },
+    "genesisFile": "https://raw.githubusercontent.com/cosmos/launch/master/genesis.json",
+    "remote":{
+        "rpc":"http://rpc.cosmoshub.bigdipper.live:80",
+        "lcd":"http://lcd.cosmoshub.bigdipper.live:80"
+    },
+    "debug": {
+        "startTimer": true,
+        "readGenesis": true
+    },
+    "params":{
+        "startHeight": 0,
+        "defaultBlockTime": 5000,
+        "blockInterval": 15000,
+        "consensusInterval": 1000,
+        "statusInterval":7500,
+        "signingInfoInterval": 1800000,
+        "proposalInterval": 10000,
+        "missedBlocksInterval": 60000,
+        "delegationInterval": 900000
+    }
+}
