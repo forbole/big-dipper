@@ -357,7 +357,7 @@ Meteor.methods({
                             else{
                                 let validatorData = validatorSet[valExist.consensus_pubkey]
                                 if (validatorData){
-                                    if (validatorData.description && (!valExist.description || validatorData.description.identity !== valExist.description.identity))
+                                    if (validatorData.description && (!valExist.description || validatorData.description.identity !== valExist.description.identity || !valExist.profile_url))
                                         validator.profile_url =  getValidatorProfileUrl(validatorData.description.identity)
                                     validator.jailed = validatorData.jailed;
                                     validator.status = validatorData.status;
@@ -438,7 +438,7 @@ Meteor.methods({
 
 
                     // check if there's any validator not in db 14400 blocks(~1 day)
-                    if (height % 10 == 0){
+                    if (height % 100 == 0){
                         try {
                             console.log('Checking all validators against db...')
                             let dbValidators = {}
@@ -473,8 +473,8 @@ Meteor.methods({
                         }
                     }
 
-                    // fetching keybase every 14400 blocks(~1 day)
-                    if (height % 14400 == 1){
+                    // fetching keybase every 20 blocks
+                    if (height % 20 == 1){
                         console.log('Fetching keybase...')
                         Validators.find({}).forEach((validator) => {
                             try {
@@ -528,14 +528,6 @@ Meteor.methods({
 
                     if (bulkVPHistory.length > 0){
                         bulkVPHistory.execute((err, result) => {
-                            if (err){
-                                console.log(err);
-                            }
-                        });
-                    }
-
-                    if (bulkTransations.length > 0){
-                        bulkTransations.execute((err, result) => {
                             if (err){
                                 console.log(err);
                             }
