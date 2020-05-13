@@ -243,7 +243,7 @@ Meteor.methods({
                     console.log(url);
                     let validators = JSON.parse(response.content);
                     validators.result.block_height = parseInt(validators.result.block_height);
-                    ValidatorSets.insert(validators.result);
+                    // ValidatorSets.insert(validators.result);
 
                     blockData.validatorsCount = validators.result.validators.length;
 
@@ -342,7 +342,7 @@ Meteor.methods({
                                 }
 
                                 // bulkValidators.insert(validator);
-                                bulkValidators.find({address: validator.address}).upsert().updateOne({$set:validator});
+                                bulkValidators.find({ consensus_pubkey: validator.consensus_pubkey}).upsert().updateOne({$set:validator});
                                 // console.log("validator first appears: "+bulkValidators.length);
                                 bulkVPHistory.insert({
                                     address: validator.address,
