@@ -194,7 +194,7 @@ Meteor.methods({
                         // store height, hash, numtransaction and time in db
                         let blockData = {};
                         blockData.height = height;
-                        blockData.hash = block.block_id.hash;
+                        blockData.hash = block.block_meta.block_id.hash;
                         blockData.transNum = block.block.data.txs?block.block.data.txs.length:0;
                         blockData.time = new Date(block.block.header.time);
                         blockData.lastBlockHash = block.block.header.last_block_id.hash;
