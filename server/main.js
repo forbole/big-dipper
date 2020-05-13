@@ -74,14 +74,14 @@ getProposalsResults = () => {
 }
 
 updateMissedBlocks = () => {
-    Meteor.call('ValidatorRecords.calculateMissedBlocks', (error, result) =>{
-        if (error){
-            console.log("missed blocks error: "+ error)
-        }
-        if (result){
-            console.log("missed blocks ok:" + result);
-        }
-    });
+    // Meteor.call('ValidatorRecords.calculateMissedBlocks', (error, result) =>{
+    //     if (error){
+    //         console.log("missed blocks error: "+ error)
+    //     }
+    //     if (result){
+    //         console.log("missed blocks ok:" + result);
+    //     }
+    // });
 /*
     Meteor.call('ValidatorRecords.calculateMissedBlocksStats', (error, result) =>{
         if (error){
@@ -107,14 +107,14 @@ getDelegations = () => {
 
 aggregateMinutely = () =>{
     // doing something every min
-    Meteor.call('Analytics.aggregateBlockTimeAndVotingPower', "m", (error, result) => {
-        if (error){
-            console.log("aggregate minutely block time error: "+error)
-        }
-        else{
-            console.log("aggregate minutely block time ok: "+result)
-        }
-    });
+    // Meteor.call('Analytics.aggregateBlockTimeAndVotingPower', "m", (error, result) => {
+    //     if (error){
+    //         console.log("aggregate minutely block time error: "+error)
+    //     }
+    //     else{
+    //         console.log("aggregate minutely block time ok: "+result)
+    //     }
+    // });
 
     Meteor.call('coinStats.getCoinStats', (error, result) => {
         if (error){
@@ -128,35 +128,35 @@ aggregateMinutely = () =>{
 
 aggregateHourly = () =>{
     // doing something every hour
-    Meteor.call('Analytics.aggregateBlockTimeAndVotingPower', "h", (error, result) => {
-        if (error){
-            console.log("aggregate hourly block time error: "+error)
-        }
-        else{
-            console.log("aggregate hourly block time ok: "+result)
-        }
-    });
+    // Meteor.call('Analytics.aggregateBlockTimeAndVotingPower', "h", (error, result) => {
+    //     if (error){
+    //         console.log("aggregate hourly block time error: "+error)
+    //     }
+    //     else{
+    //         console.log("aggregate hourly block time ok: "+result)
+    //     }
+    // });
 }
 
 aggregateDaily = () =>{
     // doing somthing every day
-    Meteor.call('Analytics.aggregateBlockTimeAndVotingPower', "d", (error, result) => {
-        if (error){
-            console.log("aggregate daily block time error: "+error)
-        }
-        else{
-            console.log("aggregate daily block time ok: "+result)
-        }
-    });
+    // Meteor.call('Analytics.aggregateBlockTimeAndVotingPower', "d", (error, result) => {
+    //     if (error){
+    //         console.log("aggregate daily block time error: "+error)
+    //     }
+    //     else{
+    //         console.log("aggregate daily block time ok: "+result)
+    //     }
+    // });
 
-    Meteor.call('Analytics.aggregateValidatorDailyBlockTime', (error, result) => {
-        if (error){
-            console.log("aggregate validators block time error:"+ error)
-        }
-        else {
-            console.log("aggregate validators block time ok:"+ result);
-        }
-    })
+    // Meteor.call('Analytics.aggregateValidatorDailyBlockTime', (error, result) => {
+    //     if (error){
+    //         console.log("aggregate validators block time error:"+ error)
+    //     }
+    //     else {
+    //         console.log("aggregate validators block time ok:"+ result);
+    //     }
+    // })
 }
 
 
@@ -207,13 +207,13 @@ Meteor.startup(function(){
                     }, Meteor.settings.params.proposalInterval);
                 }
 
-                timerMissedBlock = Meteor.setInterval(function(){
-                    updateMissedBlocks();
-                }, Meteor.settings.params.missedBlocksInterval);
+                // timerMissedBlock = Meteor.setInterval(function(){
+                //     updateMissedBlocks();
+                // }, Meteor.settings.params.missedBlocksInterval);
 
-                timerDelegation = Meteor.setInterval(function(){
-                    getDelegations();
-                }, Meteor.settings.params.delegationInterval);
+                // timerDelegation = Meteor.setInterval(function(){
+                //     getDelegations();
+                // }, Meteor.settings.params.delegationInterval);
 
                 timerAggregate = Meteor.setInterval(function(){
                     let now = new Date();
