@@ -199,11 +199,11 @@ Meteor.startup(function(){
 
                 if (Meteor.settings.params.proposalInterval >= 0) {
                     timerProposal = Meteor.setInterval(function () {
-                      getProposals();
+                        getProposals();
                     }, Meteor.settings.params.proposalInterval);
 
                     timerProposalsResults = Meteor.setInterval(function () {
-                      getProposalsResults();
+                        getProposalsResults();
                     }, Meteor.settings.params.proposalInterval);
                 }
 
@@ -221,13 +221,13 @@ Meteor.startup(function(){
                         aggregateMinutely();
                     }
 
-                    if ((now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)){
-                        aggregateHourly();
-                    }
+                    // if ((now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)){
+                    //     aggregateHourly();
+                    // }
 
-                    if ((now.getUTCHours() == 0) && (now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)){
-                        aggregateDaily();
-                    }
+                    // if ((now.getUTCHours() == 0) && (now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)){
+                    //     aggregateDaily();
+                    // }
                 }, 1000)
             }
         }

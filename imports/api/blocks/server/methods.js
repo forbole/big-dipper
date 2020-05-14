@@ -162,8 +162,26 @@ Meteor.methods({
             console.log(e);
         }
 
-        // console.log(validatorSet);
+        url = LCD + '/slashing/signing_infos?page=1&limit=' + Object.keys(validatorSet).length;
+        console.log(url);
 
+        try {
+            response = HTTP.get(url);
+            let signingInfos = JSON.parse(response.content).result;
+
+            for (let key in signingInfos){
+                if (signingInfos[key].address != ""){
+                    console.log(signingInfos[key].address);
+                    if (validatorSet[signingInfos[key].address]){
+                        validatorSet[signingInfos[key].address].uptime = (Meteor.settings.public.uptimeWindow - parseInt(signingInfos[key].missed_blocks_counter) / Meteor.settings.public.uptimeWindow);
+                        validatorSet[signingInfos[key].address].tombstoned = signingInfos[key].tombstoned;
+                    }
+                }
+            }
+        }
+        catch(e){
+            console.log(e);
+        }
 
         for(let key in validatorSet){
             try{
@@ -243,42 +261,10 @@ Meteor.methods({
                     console.log(url);
                     let validators = JSON.parse(response.content);
                     validators.result.block_height = parseInt(validators.result.block_height);
-                    ValidatorSets.insert(validators.result);
+                    // ValidatorSets.insert(validators.result);
 
                     blockData.validatorsCount = validators.result.validators.length;
 
-                    // let startBlockInsertTime = new Date();
-                    // Blockscon.insert(blockData);
-                    // let endBlockInsertTime = new Date();
-                    // console.log("Block insert time: "+((endBlockInsertTime-startBlockInsertTime)/1000)+"seconds.");
-
-                    // store valdiators exist records
-                    let existingValidators = Validators.find({address:{$exists:true}}).fetch();
-
-                    if (height > 1){
-                        // record precommits and calculate uptime
-                        // only record from block 2
-                        for (i in validators.result.validators){
-                            let address = validators.result.validators[i].address;
-                            let record = {
-                                height: height,
-                                address: address,
-                                exists: false,
-                                voting_power: parseInt(validators.result.validators[i].voting_power)//getValidatorVotingPower(existingValidators, address)
-                            }
-
-                            for (j in precommits){
-                                if (precommits[j] != null){
-                                    if (address == precommits[j].validator_address){
-                                        record.exists = true;
-                                        precommits.splice(j,1);
-                                        break;
-                                    }
-                                }
-                            }
-
-                        }
-                    }
 
                     let blockTime = Meteor.settings.params.defaultBlockTime;
 
@@ -317,6 +303,7 @@ Meteor.methods({
                                 validator.address = getAddress(validator.pub_key);
                                 validator.accpub = Meteor.call('pubkeyToBech32', validator.pub_key, Meteor.settings.public.bech32PrefixAccPub);
                                 validator.operator_pubkey = Meteor.call('pubkeyToBech32', validator.pub_key, Meteor.settings.public.bech32PrefixValPub);
+                                validator.consensus_address = Meteor.call('pubkeyToBech32', validator.pub_key, Meteor.settings.public.bech32PrefixConsAddr);
                                 validator.consensus_pubkey = Meteor.call('pubkeyToBech32', validator.pub_key, Meteor.settings.public.bech32PrefixConsPub);
 
                                 let validatorData = validatorSet[validator.consensus_pubkey]
@@ -342,7 +329,7 @@ Meteor.methods({
                                 }
 
                                 // bulkValidators.insert(validator);
-                                bulkValidators.find({address: validator.address}).upsert().updateOne({$set:validator});
+                                bulkValidators.find({ consensus_pubkey: validator.consensus_pubkey}).upsert().updateOne({$set:validator});
                                 // console.log("validator first appears: "+bulkValidators.length);
                                 bulkVPHistory.insert({
                                     address: validator.address,
