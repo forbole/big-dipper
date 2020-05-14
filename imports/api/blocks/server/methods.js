@@ -162,29 +162,41 @@ Meteor.methods({
             console.log(e);
         }
 
-        url = LCD + '/slashing/signing_infos?page=1&limit=' + Object.keys(validatorSet).length;
-        console.log(url);
+        // url = LCD + '/slashing/signing_infos?page=1&limit=' + Object.keys(validatorSet).length;
+        // console.log(url);
 
-        try {
-            response = HTTP.get(url);
-            let signingInfos = JSON.parse(response.content).result;
+        // try {
+        //     response = HTTP.get(url);
+        //     let signingInfos = JSON.parse(response.content).result;
 
-            for (let key in signingInfos){
-                if (signingInfos[key].address != ""){
-                    console.log(signingInfos[key].address);
-                    if (validatorSet[signingInfos[key].address]){
-                        validatorSet[signingInfos[key].address].uptime = (Meteor.settings.public.uptimeWindow - parseInt(signingInfos[key].missed_blocks_counter) / Meteor.settings.public.uptimeWindow);
-                        validatorSet[signingInfos[key].address].tombstoned = signingInfos[key].tombstoned;
-                    }
-                }
-            }
-        }
-        catch(e){
-            console.log(e);
-        }
+        //     for (let key in signingInfos){
+        //         if (signingInfos[key].address != ""){
+        //             console.log(signingInfos[key].address);
+        //             if (validatorSet[signingInfos[key].address]){
+        //                 validatorSet[signingInfos[key].address].uptime = (Meteor.settings.public.uptimeWindow - parseInt(signingInfos[key].missed_blocks_counter) / Meteor.settings.public.uptimeWindow);
+        //                 validatorSet[signingInfos[key].address].tombstoned = signingInfos[key].tombstoned;
+        //             }
+        //         }
+        //     }
+        // }
+        // catch(e){
+        //     console.log(e);
+        // }
 
         for(let key in validatorSet){
             try{
+                try {
+                    url = LCD+'/slashing/validators/'+validatorSet[key].consensus_pubkey+'/signing_info';
+                    response = HTTP.get(url);
+                    let signingInfo = JSON.parse(response.content).result;
+                    if (signingInfo){
+                        validatorSet[key].tombstoned = signingInfo.tombstoned
+                        validatorSet[key].uptime = (Meteor.settings.public.slashingWindow - parseInt(signingInfo.missed_blocks_counter))/Meteor.settings.public.slashingWindow * 100;
+                    }
+                }
+                catch(e){
+                    console.log(e.response.data);
+                }
                 Validators.upsert({consensus_pubkey:validatorSet[key].consensus_pubkey}, {$set:validatorSet[key]})
             }
             catch(e){
