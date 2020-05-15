@@ -139,7 +139,7 @@ transactions:
     transfer: 'Transferencia'
     staking: 'Participación'
     distribution: 'Distribución'
-    governance: 'Governanza'
+    governance: 'Gobernanza'
     slashing: 'Recorte'
 proposals:
     notFound: 'No se ha encontrado el proposal.'
