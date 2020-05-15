@@ -1377,7 +1377,6 @@ class DepositCDPButton extends LedgerButton {
 
     getPath = () => {
             let meta = TypeMeta[this.state.actionType];
-            console.log("THIS STATE USER " + JSON.stringify(this.state.cdpOwner))
             return  `${meta.pathPreFix}/${this.state.cdpOwner}/${this.props.collateral}/${meta.pathSuffix}`
          }
 

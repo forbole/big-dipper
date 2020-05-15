@@ -43,7 +43,7 @@ export default class AccountDetails extends Component{
             price: 0,
             user: localStorage.getItem(CURRENTUSERADDR),
             commission: [],
-            denom: '',
+            denom: Coin.StakingCoin.denom,
             rewardsForEachDel: [],
             rewardDenomType: [],
             bondActiveTab: 'delegations',
@@ -87,47 +87,65 @@ export default class AccountDetails extends Component{
 
             if (result){
 
-                if (result.available && result.available.length > 0){
+                    if (result.available && result.available.length > 0){
 
-                    this.setState({
-                        available: cloneDeep(result.available),
-                        denom: Coin.StakingCoin.denom,
-                        total: cloneDeep(result.available)
-                        
-                    })
-                    
+                        //Reset the values to display only the latest data from the chain 
+                        let availableValue = [];
+                        let totalValue = [];
+
+                        availableValue = cloneDeep(result.available)
+                        totalValue = cloneDeep(result.available)
+                        console.log(availableValue)
+                        this.setState({
+                            available: availableValue,
+                        total: totalValue
+                        })                    
                 }
 
                 else{
-                    
-                    let avail = [{denom:"ukava",amount:"0"}]
+                    let setZeroAmount = [{denom:"ukava",amount:"0"}]
                     this.setState({
-                        available: avail,
+                        available: cloneDeep(setZeroAmount),
                         denom: Coin.StakingCoin.denom,
-                        total: avail
+                        total: cloneDeep(setZeroAmount)
                         
                     })
                 }
 
                 this.setState({delegations: result.delegations || []})
                 if (result.delegations && result.delegations.length > 0){
+                    let delegatedValue = 0;
                     result.delegations.forEach((delegation, i) => {
-                        const amount = delegation.balance.amount || delegation.balance;
-                        this.setState({
-                            delegated: this.state.delegated+parseFloat(delegation.balance.amount),
-                            //total: this.state.total+parseFloat(delegation.balance.amount)
-                        })
+                        delegatedValue += parseFloat(delegation.balance.amount);
+                        // const amount = delegation.balance.amount || delegation.balance;
+                        // this.setState({
+                        //     delegated: this.state.delegated+parseFloat(delegation.balance.amount),
+                        //     //total: this.state.total+parseFloat(delegation.balance.amount)
+                        // })
                     }, this)
+                    this.setState({
+                        delegated: delegatedValue
+                    })
 
+                    if(this.state.total && this.state.total > 1){
                     this.state.total.forEach((total, i) => {
                     if(total.denom === Meteor.settings.public.bondDenom )
-                        this.state.total[i].amount = parseFloat(this.state.total[i].amount) + parseFloat(this.state.delegated);
+                        total.amount = parseFloat(this.state.total[i].amount) + parseFloat(this.state.delegated);
                     }, this)
 
                     this.setState({
                              total: [...this.state.total]
                          })
+                    }
 
+                //     else{
+                //         let totalValue = 0
+                //         totalValue += this.state.total.amount + parseFloat(this.state.delegated)
+                //         this.setState({
+                //             total: totalValue
+                //         })
+                //    }
+                    }
                 }
     
                 this.setState({unbondingDelegations: result.unbonding || []})
@@ -163,7 +181,7 @@ export default class AccountDetails extends Component{
                     }, this) : null 
                     this.setState({
                         rewards: [...totalRewards],
-                        total: [...this.state.total]
+                        //total: [...this.state.total]
                     })
     
             }
@@ -192,9 +210,9 @@ export default class AccountDetails extends Component{
                 if (result.commission){                   
                     result.commission.forEach((commissions, i) => {
                         const commissionAmount = commissions;
-                        this.state.total[i].denom ?
+                        this.state.total[i]?
                         (commissions.denom === this.state.total[i].denom) ?
-                            this.state.total[i].amount = parseFloat(this.state.total[i].amount) + parseFloat(commissions.amount) : this.state.total[i].amount = [...commissionAmount] : null
+                            this.state.total[i].amount = parseFloat(this.state.total[i].amount) + parseFloat(commissions.amount) : this.state.total[i].amount = commissionAmount.amount : '0'
                         
                         
                             
@@ -203,7 +221,7 @@ export default class AccountDetails extends Component{
                         this.setState({
                             operator_address: result.operator_address,
                             commission: [...this.state.commission, commissionAmount],
-                            total: [...this.state.total]
+                            //total: [...this.state.total]
                         })
                     }, this) 
 
@@ -214,7 +232,7 @@ export default class AccountDetails extends Component{
                     loading:false,
                     accountExists: true
                 })
-            }
+            
         })
     
 
@@ -353,10 +371,15 @@ export default class AccountDetails extends Component{
 
 
     render(){
-
-
-        let findCurrentCoin = this.state.total.find(({denom}) => denom === this.state.denom)
-        let currentCoinTotal = findCurrentCoin ? findCurrentCoin.amount : null;
+        let findCurrentCoin = "";
+        if(this.state.total && this.state.total > 1){
+            findCurrentCoin = this.state.total.find(({denom}) => denom === this.state.denom)
+           
+        }
+        else{
+             findCurrentCoin = Meteor.settings.public.bondDenom
+        }
+        let currentCoinTotal = findCurrentCoin ? findCurrentCoin.amount : '0';
           
         if (this.state.loading){
             return <div id="account">

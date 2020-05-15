@@ -70,7 +70,7 @@ export default class CDP extends Component{
 
     updateDeposits(){
         Meteor.call('cdp.getDeposits', this.props.owner, this.props.collateral, (error, result) => {
-            console.log(this.props.owner)
+            //console.log(this.props.owner)
             if (!error){
                 this.setState({
                     deposits: result
