@@ -9,4 +9,4 @@
 
 ## Reporting a Vulnerability
 
-Please report and security issues via email to <info@forbole.com>.
+Please report any security issues via email to <info@forbole.com>.
