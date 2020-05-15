@@ -13,6 +13,7 @@
 * [#327] Fixed error in Proposals section to accept String and Number as a value in Changes table 
 * Hide Italian it-IT Translation
 * Fixed hash overflow on mobile in Transaction Section (Added scroller)
+* [#346] Changed "Governanza" typo to "Gobernanza" in Spanish Translation 
 
 ## v0.37.x-patch-10.1
 
