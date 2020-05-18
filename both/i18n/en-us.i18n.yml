@@ -254,6 +254,7 @@ accounts:
     signInWarning: 'Please make sure your Ledger device is connected and <strong class="text-primary">Cosmos App 1.5.0 or above</strong> is opened.'
     pleaseAccept: 'please accept in your Ledger device.'
     noRewards: 'No Rewards'
+    redelegations: 'Redelegations'
 activities:
     single: 'A'
     happened: 'happened.'

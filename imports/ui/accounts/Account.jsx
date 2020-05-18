@@ -14,6 +14,7 @@ import AccountCopy from '../components/AccountCopy.jsx';
 import LinkIcon from '../components/LinkIcon.jsx';
 import Delegations from './Delegations.jsx';
 import Unbondings from './Unbondings.jsx';
+import Redelegations from './Redelegations.jsx';
 import AccountTransactions from '../components/TransactionsContainer.js';
 import ChainStates from '../components/ChainStatesContainer.js'
 import { Helmet } from 'react-helmet';
@@ -91,20 +92,22 @@ export default class AccountDetails extends Component{
 
                         //Reset the values to display only the latest data from the chain 
                         let availableValue = [];
-                        let totalValue = [];
+                        let getTotal = [];
 
                         availableValue = cloneDeep(result.available)
-                        totalValue = cloneDeep(result.available)
-                        console.log(availableValue)
+                        getTotal = result.available
+
+
                         this.setState({
                         available: availableValue,
-                        total: totalValue
+                        total: getTotal
                         })    
                 }
                 
+                
 
                 else{
-                    let setZeroAmount = [{denom:"ukava",amount: 0.00}]
+                    let setZeroAmount = [{denom:"ukava",amount: "0.00"}]
                     this.setState({
                         available: cloneDeep(setZeroAmount),
                         denom: Coin.StakingCoin.denom,
@@ -113,49 +116,62 @@ export default class AccountDetails extends Component{
                     })
                 }
 
+
                 this.setState({delegations: result.delegations || []})
                 if (result.delegations && result.delegations.length > 0){
-                    let delegatedValue = 0;
+                    let delegatedValue = [{denom: "ukava", amount: "0.00"}];
+
                     result.delegations.forEach((delegation, i) => {
-                        delegatedValue += parseFloat(delegation.balance.amount);
+                        delegatedValue[i].amount = parseFloat(delegatedValue[i].amount) +  parseFloat(delegation.balance.amount);
                     }, this)
                     this.setState({
                         delegated: delegatedValue,
                     })
+                    
 
                     if(this.state.total && this.state.total.length > 1){
+                    let totalValue = cloneDeep(this.state.total);
+
+
+                    this.state.delegated.forEach((delegated, i) => {
+                        totalValue.forEach((el, i) => {
+                        if(el.denom === delegated.denom  ){
+                            el.amount = parseFloat(el.amount) + parseFloat(delegated.amount)
+                        }
+
+                        // else{
+                        //     
+                        //     totalValue[1] = rewards
+                            
+                        // }
+                        this})
+                }, this)
+
+                this.setState({
+                    total: totalValue,
+                })
+            }
+
+
+                else{
                     let totalValue = this.state.total;
-                    totalValue.forEach((total, i) => {
-                    if(total.denom === Meteor.settings.public.bondDenom ){
-                        total.amount = parseFloat(this.state.total[i].amount) + parseFloat(this.state.delegated)
-                        }
-                    }, this)
+                    for(let v in totalValue){
+                        totalValue[v].amount = parseFloat(totalValue[v].amount) + parseFloat(this.state.delegated[v].amount)
+                    }
                     this.setState({
-                             total: totalValue,
-                         })
-                    }
-
-
-                    else{
-                        let totalValue = 0;
-                        for(let v in this.state.total){
-                            totalValue = this.state.total;
-                            totalValue[v].amount += parseFloat(this.state.delegated)
-                        }
-                        this.setState({
-                            total: totalValue,
-                        })
-                    }
+                        total: totalValue,
+                    })
+                }                    
+            }
                     
-                    }
 
     
                 this.setState({unbondingDelegations: result.unbonding || []})
                 if (result.unbonding && result.unbonding.length > 0){
-                    let unbondingValue = 0;
+                    let unbondingValue = [{denom: "ukava", amount: "0.00"}];
                     result.unbonding.forEach((unbond, i) => {
                         unbond.entries.forEach((entry, j) => {
-                            unbondingValue += parseFloat(entry.balance);
+                            unbondingValue[i].amount = parseFloat(unbondingValue[i].amount) +  parseFloat(entry.balance);
                             this.setState({
                                 unbonding: unbondingValue,
                             })
@@ -163,35 +179,34 @@ export default class AccountDetails extends Component{
                     }, this)
 
 
+
                     if(this.state.total && this.state.total.length > 1){
-                        let totalValue =[]
-                        this.state.total.forEach((total, i) => {
-                        if(total.denom === Meteor.settings.public.bondDenom ){
-                            total.amount = parseFloat(this.state.total[i].amount) + parseFloat(this.state.unbonding)
+                        let totalValue = this.state.total;
+    
+                        this.state.unbonding.forEach((unbond, i) => {
+                            totalValue.forEach((el, i) => {
+                            if(el.denom === unbond.denom  ){
+                                el.amount = parseFloat(el.amount) + parseFloat(unbond.amount)
                             }
-                        }, this)
-                        this.setState({
-                                 total: totalValue,
-                             })    
-                        }
-                        else{
-                            let totalValue = 0;
-                            for(let v in this.state.total){
-                                totalValue = this.state.total;
-                                totalValue[v].amount += parseFloat(this.state.unbonding)
-                            }
-                            this.setState({
-                                total: totalValue,
-                            })
-                        }
+    
+                            // else{
+                            //     totalValue[1] = rewards
+                                
+                            // }
+                            this})
+                    }, this)
+
+                    this.setState({
+                       total: totalValue,
+                    })
                 }
+            }
             
 
 
                 if(result.total_rewards && result.total_rewards.length > 0)
                 {
                     const totalRewards  = cloneDeep(result.total_rewards);
-
                     this.setState({
                         rewards: totalRewards,
                     })
@@ -203,32 +218,27 @@ export default class AccountDetails extends Component{
                             this.state.rewards.forEach((rewards, i) => {
                                 totalValue.forEach((el, i) => {
                                 if(rewards.denom === el.denom){
-                                    el.amount += parseFloat(rewards.amount)
+                                    el.amount = parseFloat(el.amount) + parseFloat(rewards.amount)
                                 }
-
-                                // else{
-                                //     // 1 to be changed
-                                //     totalValue[1] = rewards
-                                    
-                                // }
                                 this})
                         }, this)
-
                         this.setState({
                             total: totalValue,
                         })
-
                         }
 
                         else{
-                            //set if only one reward available 
-
+                            let totalValue = this.state.total;
+                            for(let v in totalValue){
+                               
+                                totalValue[v].amount = parseFloat(totalValue[v].amount) + parseFloat(this.state.rewards)
+                            }
+                            this.setState({
+                                total: totalValue,
+                            })
+    
                         }
-                    }
-
-                   
-                       
-                        
+                    }               
     
             }
  
@@ -254,10 +264,6 @@ export default class AccountDetails extends Component{
                 }
 
 
-
-
-
-
                 if(result.commission && result.commission.length > 0)
                 {
                     const totalCommissions  = cloneDeep(result.commission);
@@ -267,42 +273,34 @@ export default class AccountDetails extends Component{
                     })
 
                     if(this.state.commission.length > 0){
-                        console.log(this.state.total)
                         if(this.state.commission.length > 1){
                             let totalValue = this.state.total
                             this.state.commission.forEach((commission, i) => {
                                 totalValue.forEach((el, i) => {
                                 if(commission.denom === el.denom){
-                                    el.amount += parseFloat(commission.amount)
+                                    el.amount = parseFloat(el.amount) + parseFloat(commission.amount)
                                 }
-
-                                // else{
-                                //     // 1 to be chaged 
-                                //     totalValue[1] = commission
-                                    
-                                // }
                                 this})
                         }, this)
 
                         this.setState({
                             total: totalValue,
                         })
-
                         }
 
                         else{
-                            //set if only one reward available 
-
+                            let totalValue = this.state.total;
+                            for(let v in totalValue){
+                               
+                                totalValue[v].amount = parseFloat(totalValue[v].amount) + parseFloat(this.state.commission)
+                            }
+                            this.setState({
+                                total: totalValue,
+                            })
                         }
                     }
-
-                       
-                        
     
             }
-
-            
-
 
                 this.setState({
                     loading:false,
@@ -311,6 +309,8 @@ export default class AccountDetails extends Component{
             
             }
         })
+
+        
         
     }
      
@@ -395,15 +395,44 @@ export default class AccountDetails extends Component{
 
 
     findCoin(coins){
-        let finder = (coins).find(({denom}) => denom === this.state.denom);
-        let coinFinder = finder ? new Coin(finder.amount, finder.denom).toString(4) : '0.0000 ' + this.state.denom;
-        return coinFinder
+           if(coins && coins.length > 1 ){
+                let finder = (coins).find(({denom}) => denom === this.state.denom);
+                let coinFinder = finder ? new Coin(finder.amount, finder.denom).toString(4) : '0.0000 ' + this.state.denom;
+                return coinFinder
+            }
+            if(coins.length === 1 ){
+                for(let c in coins){
+                    if(coins[c].denom === this.state.denom){
+                        return new Coin(parseFloat(coins[c].amount), this.state.denom).toString(4)
+                    }
+                    else{
+                        return '0.0000 ' + this.state.denom;
+                    }
+
+                }
+            }
+            else{
+                     return '0.0000 ' + this.state.denom;
+                
+            }
+            
     }
+    
 
     findValue(params){
-        let current = (params).find(({denom}) => denom === this.state.denom);
-        let currentTotal = current ? current.amount : null;
-        return currentTotal
+        if(params && params.length > 1){
+            let current = (params).find(({denom}) => denom === this.state.denom);
+            let currentTotal = current ? current.amount : '0.0000';
+            return currentTotal
+        }
+        else{
+            let currentTotal = 0;
+            for(let p in params){
+                currentTotal = params[p].amount;
+            }
+            return currentTotal
+        } 
+        
     }
 
     toggleBond = (tab) => {
@@ -444,20 +473,29 @@ export default class AccountDetails extends Component{
             })
         }
     
+    findFraction(){
+        let findCurrentCoin = "";
+        let currentCoinFraction = 1;
+
+        if(this.state.total && this.state.total.length > 1){
+            findCurrentCoin = this.state.total.find(({denom}) => denom === this.state.denom)
+            currentCoinFraction = findCurrentCoin ? findCurrentCoin.amount : '0.0000';
+            return currentCoinFraction 
+        }
+        else{
+            for(let t in this.state.total){
+                currentCoinFraction = this.state.total[t].amount
+            }
+            return currentCoinFraction
+        }
+        
+    }
     
 
 
     render(){
 
-        let findCurrentCoin = "";
-        if(this.state.total && this.state.total.length > 1){
-            findCurrentCoin = this.state.total.find(({denom}) => denom === this.state.denom)
-           
-        }
-        else{
-             findCurrentCoin = Meteor.settings.public.bondDenom
-        }
-        let currentCoinTotal = findCurrentCoin ? findCurrentCoin.amount : '0';
+ 
           
         if (this.state.loading){
             return <div id="account">
@@ -489,11 +527,11 @@ export default class AccountDetails extends Component{
                             <Row className="account-distributions">
                                 <Col xs={12}>
                                     <Progress multi>
-                                        <Progress bar className="available" value={this.findValue(this.state.available)/currentCoinTotal*100} />
-                                        <Progress bar className="delegated" value={this.state.delegated/currentCoinTotal*100} />
-                                        <Progress bar className="unbonding" value={this.state.unbonding/currentCoinTotal*100} />
-                                        <Progress bar className="rewards" value={this.findValue(this.state.rewards)/currentCoinTotal*100} />
-                                        <Progress bar className="commission" value={this.findValue(this.state.commission)/currentCoinTotal*100} />
+                                        <Progress bar className="available" value={this.findValue(this.state.available)/this.findFraction() * 100} />
+                                        <Progress bar className="delegated" value={this.findValue(this.state.delegated)/this.findFraction() * 100} />
+                                        <Progress bar className="unbonding" value={this.findValue(this.state.unbonding)/this.findFraction() * 100} />
+                                        <Progress bar className="rewards" value={this.findValue(this.state.rewards)/this.findFraction() * 100} />
+                                        <Progress bar className="commission" value={this.findValue(this.state.commission)/this.findFraction() * 100} />
                                     </Progress>
                                 </Col>
                             </Row>
@@ -505,11 +543,11 @@ export default class AccountDetails extends Component{
                                     </Row>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="delegated infinity" /><T>accounts.delegated</T></Col>
-                                        <Col xs={8} className="value text-right">{new Coin(this.state.delegated).toString(4)}</Col>
+                                        <Col xs={8} className="value text-right">{this.findCoin(this.state.delegated)}</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="unbonding infinity" /><T>accounts.unbonding</T></Col>
-                                        <Col xs={8} className="value text-right">{new Coin(this.state.unbonding).toString(4)}</Col>
+                                        <Col xs={8} className="value text-right">{this.findCoin(this.state.unbonding)}</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="rewards infinity" /><T>accounts.rewards</T></Col>
@@ -586,9 +624,9 @@ export default class AccountDetails extends Component{
                                         />
                                     </TabPane>
                                     <TabPane tabId="redelegations">
-                                        <Unbondings 
+                                        <Redelegations 
                                             address={this.state.address} 
-                                            unbonding={this.state.unbondingDelegations}
+                                            redelegations={this.state.unbondingDelegations}
                                         />
                                     </TabPane>
                                 </TabContent>

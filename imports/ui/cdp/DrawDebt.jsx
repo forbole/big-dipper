@@ -20,8 +20,8 @@ export default class DrawDebt extends Component {
 
     render(){
         if (this.props){
-        return <div><Button className="ledger-buttons-group my-2" color="primary" id="toggler" size="sm"><T>transactions.info</T>  </Button>
-         <UncontrolledCollapse toggler="#toggler">
+        return <div><Button className="ledger-buttons-group my-2" color="primary" id="toggler_draw_debt" size="sm"><T>transactions.info</T>  </Button>
+         <UncontrolledCollapse toggler="#toggler_draw_debt">
          <Table responsive>
                 <tbody>
                     <tr>

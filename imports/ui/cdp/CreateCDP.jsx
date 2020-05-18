@@ -21,8 +21,8 @@ export default class CreateCDP extends Component {
 
     render(){
         if (this.state.createCDP){
-        return <div><Button className="ledger-buttons-group my-2" color="primary" id="toggler" size="sm"><T>transactions.info</T>  </Button>
-        <UncontrolledCollapse toggler="#toggler">
+        return <div><Button className="ledger-buttons-group my-2" color="primary" id="toggler_create_cdp" size="sm"><T>transactions.info</T>  </Button>
+        <UncontrolledCollapse toggler="#toggler_create_cdp">
         <Table responsive>
                 <tbody>
                     <tr>

@@ -22,8 +22,8 @@ export default class DepositCDP extends Component {
 
     render(){
         if (this.props){
-            return <div><Button className="ledger-buttons-group my-2" color="primary" id="toggler" size="sm"><T>transactions.info</T>  </Button>
-         <UncontrolledCollapse toggler="#toggler">
+            return <div><Button className="ledger-buttons-group my-2" color="primary" id="toggler_deposit_cdp" size="sm"><T>transactions.info</T>  </Button>
+         <UncontrolledCollapse toggler="#toggler_deposit_cdp">
             <Table responsive>
                     <tbody>
                         <br></br>
