@@ -516,15 +516,52 @@ body {
     }
   
     .rewards {
-      background-color: $teal;
+      background-color: rgb(50,205,50)
     }
   
     .commission {
-      background-color: $yellow;
+      background-color:	rgb(175,238,238)
     }
+
+    .available_2nd{
+      background-color: rgb(147,112,219)
+    }
+
+    .rewards_2nd{
+      background-color: rgb(34,139,34)
+    }
+
+    .commission_2nd{
+      background-color: rgb(0,206,209)
+    }
+
+    .available_3rd{
+      background-color: rgb(221,160,221)
+    }
+
   
     .total .value {
       font-size: 1.5em;
+      transform: translateY(3px);
+    }
+
+    .total .value-2 {
+      font-size: 1.25em;
+      transform: translateY(3px);
+    }
+
+    .total .value-3 {
+      font-size: 1em;
+      transform: translateY(3px);
+    }
+
+    .total .dollar-value-2{
+      font-size: 1em;
+      transform: translateY(3px);
+    }
+
+    .total .dollar-value-3{
+      font-size: 0.8em;
       transform: translateY(3px);
     }
 

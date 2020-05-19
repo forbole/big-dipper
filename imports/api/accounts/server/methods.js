@@ -122,35 +122,62 @@ Meteor.methods({
         return balance;
     },
     'accounts.getDelegation'(address, validator){
-        let url = `/staking/delegators/${address}/delegations/${validator}`;
-        let delegations = fetchFromUrl(url);
-        delegations = delegations && delegations.data.result;
-        if (delegations && delegations.shares)
-            delegations.shares = parseFloat(delegations.shares);
-
-        url = `/staking/redelegations?delegator=${address}&validator_to=${validator}`;
-        let relegations = fetchFromUrl(url);
-        relegations = relegations && relegations.data.result;
-        let completionTime;
-        if (relegations) {
-            relegations.forEach((relegation) => {
-                let entries = relegation.entries
-                let time = new Date(entries[entries.length-1].completion_time)
-                if (!completionTime || time > completionTime)
-                    completionTime = time
-            })
-            delegations.redelegationCompletionTime = completionTime;
+    let url = LCD + `/staking/delegators/${address}/delegations/${validator}`;
+        let delegations = {};
+        try{
+            delegations = HTTP.get(url);
+            if (delegations.statusCode == 200){
+                delegations = JSON.parse(delegations.content).result;
+                if (delegations && delegations.shares)
+                delegations.shares = parseFloat(delegations.shares);
+            };
+        }
+        catch (e){
+            console.log(url);
+            console.log(e);
         }
 
-        url = `/staking/delegators/${address}/unbonding_delegations/${validator}`;
-        let undelegations = fetchFromUrl(url);
-        undelegations = undelegations && undelegations.data.result;
-        if (undelegations) {
-            delegations.unbonding = undelegations.entries.length;
-            delegations.unbondingCompletionTime = undelegations.entries[0].completion_time;
+        url = LCD + `/staking/redelegations?delegator=${address}&validator_to=${validator}`;
+
+        try{
+            let completionTime;
+            let relegations = HTTP.get(url);
+            if (relegations.statusCode == 200){
+                relegations = JSON.parse(relegations.content).result;
+                relegations.forEach((relegation) => {
+                    let entries = relegation.entries
+                    let time = new Date(entries[entries.length-1].completion_time)
+                    if (!completionTime || time > completionTime)
+                        completionTime = time
+                })
+
+                delegations.redelegationCompletionTime = completionTime;
+            };
         }
-        return delegations;
+        catch (e){
+            console.log(url);
+            console.log(e);
+        }
+
+        url = LCD + `/staking/delegators/${address}/unbonding_delegations/${validator}`;
+
+        try{
+           
+            let undelegations = HTTP.get(url);
+            if (undelegations.statusCode == 200){
+                undelegations = JSON.parse(undelegations.content).result;
+                delegations.unbonding = undelegations.entries.length;
+                delegations.unbondingCompletionTime = undelegations.entries[0].completion_time;
+            };
+        }
+        catch (e){
+            console.log(url);
+            console.log(e);
+        }
+
+        return delegations
     },
+
     'accounts.getAllDelegations'(address){
         let url = LCD + '/staking/delegators/'+address+'/delegations';
 
