@@ -131,22 +131,6 @@ export default class AccountDetails extends Component{
 
                             , this})
                     }, this)
-
-
-
-                    
-                    // for(let i in result.delegations){
-
-                    //     result.delegations?
-                    //     delegatedValue[i].amount = 0 :
-                    //     delegatedValue[i].amount = 0
-                    // }
-                    // result.delegations.forEach((delegation, i) => {
-                    //     delegatedValue[i].amount = parseFloat(delegatedValue[i].amount) +  parseFloat(delegation.balance.amount);
-                    // }, this)
-                    // this.setState({
-                    //     delegated: delegatedValue,
-                    // })
                     
 
                     if(this.state.total && this.state.total.length > 1){
@@ -227,7 +211,6 @@ export default class AccountDetails extends Component{
                 if(result.total_rewards && result.total_rewards.length > 0)
                 {
                     const totalRewards  = cloneDeep(result.total_rewards);
-                    console.log(totalRewards)
                     this.setState({
                         rewards: totalRewards,
                     })
@@ -243,7 +226,6 @@ export default class AccountDetails extends Component{
                                 }
                                 this})
                         }, this)
-                       // console.log(totalValue)
                         this.setState({
                             total: totalValue,
                         })
@@ -254,14 +236,12 @@ export default class AccountDetails extends Component{
                             for(let v in totalValue){
                                 for(let c in this.state.rewards){
 
-                            //   console.log(this.state.rewards)
                                 totalValue[v].amount = parseFloat(totalValue[v].amount) + parseFloat(this.state.rewards[c].amount)
                             }
                         }
                             this.setState({
                                 total: totalValue,
                             })
-                           // console.log(totalValue)
                         }
                         
                     }               
@@ -352,7 +332,6 @@ export default class AccountDetails extends Component{
 
         })
      
-    console.log(this.state.bnbPrice)
         
     }
      
@@ -420,10 +399,9 @@ export default class AccountDetails extends Component{
 
 
     findCoin(coins, requestedDenom){
-      //  console.log(coins)
            if(coins && coins.length > 1 && requestedDenom){
                 let finder = (coins).find(({denom}) => denom === requestedDenom);
-                let coinFinder = finder ? new Coin(finder.amount, finder.denom).toString(4) : '0.0000 ' ;
+                let coinFinder = finder ? new Coin(finder.amount, finder.denom).toString(4) : null ;
                 return coinFinder
             }
             if(coins.length === 1 ){
@@ -432,13 +410,13 @@ export default class AccountDetails extends Component{
                         return new Coin(parseFloat(coins[c].amount), requestedDenom).toString(4)
                     }
                     else{
-                        return '0.0000 ' + requestedDenom;
+                        return new Coin(parseFloat('0.00'), requestedDenom).toString(4)
                     }
 
                 }
             }
             else{
-                     return '0.0000 ' + requestedDenom;
+                  return new Coin(parseFloat('0.00'), requestedDenom).toString(4)
                 
             }
             
@@ -446,7 +424,6 @@ export default class AccountDetails extends Component{
     
 
     findValue(params, requestedDenom){
-       // console.log(params)
         if(params && params.length > 1){
             let current = (params).find(({denom}) => denom === requestedDenom);
             let currentTotal = current ? current.amount : '0.0000';
@@ -559,7 +536,7 @@ export default class AccountDetails extends Component{
                                 </Col>
                             </Row>
                             <Row>
-                            <Col md={1} lg={2}>
+                            <Col md={2} >
                                    
                                     <Row>
                                         <Col xs={12} className="label text-nowrap"><T>accounts.available</T></Col>
@@ -624,9 +601,15 @@ export default class AccountDetails extends Component{
                                     <Row>
                                         <Col xs={12} className="value text-left"><div className="infinity" />{'  '}</Col>
                                     </Row>
+                                    <Row>
+                                        <Col xs={12} className="value text-left"><div className="rewards_3rd infinity" />{this.findCoin(this.state.rewards, 'usdx')}</Col>
+                                    </Row>
+                                    {this.state.commission?<Row>
+                                        <Col xs={12} className="value text-left"><div className="commission_3rd infinity" />{this.findCoin(this.state.commission, 'usdx')}</Col>
+                                    </Row>:null}
                                     
                                 </Col>
-                                <Col md={1} lg={4} className="total d-flex flex-column justify-content-end">
+                                <Col md={2} lg={4} className="total d-flex flex-column justify-content-end">
                                     {this.state.user?<Row>
                                         <Col xs={12}><TransferButton history={this.props.history} address={this.state.address} denom={this.state.denom}/></Col>
                                         {this.state.user===this.state.address?<Col xs={12}><WithdrawButton  history={this.props.history} rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address} denom={this.state.denom}/></Col>:null}

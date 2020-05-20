@@ -194,7 +194,7 @@ Meteor.methods({
                         // store height, hash, numtransaction and time in db
                         let blockData = {};
                         blockData.height = height;
-                        blockData.hash = block.block_meta.block_id.hash;
+                        blockData.hash = block.block_id.hash;
                         blockData.transNum = block.block.data.txs?block.block.data.txs.length:0;
                         blockData.time = new Date(block.block.header.time);
                         blockData.lastBlockHash = block.block.header.last_block_id.hash;
@@ -202,7 +202,7 @@ Meteor.methods({
                         blockData.validators = [];
 
                         // Tendermint v0.33 start using "signatures" in last block instead of "precommits"
-                        let precommits = block.block.last_commit.precommits; 
+                        let precommits = block.block.last_commit.signatures; 
                         if (precommits != null){
                             // console.log(precommits.length);
                             for (let i=0; i<precommits.length; i++){

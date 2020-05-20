@@ -192,7 +192,7 @@ export default class CDP extends Component{
                 </Table>
                 <div>
                     <DepositCDPButton 
-                        cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null}  
+                        cdpParams={this.state.cdpParams?this.state.cdpParams.debt_param.debt_floor:null}  
                         collateral={this.props.collateral?this.props.collateral:null}
                         bnbTotalValue={this.findTotalValue(this.state.total, 'bnb')}
                         principalDeposited={this.state.userCDP?this.state.userCDP.cdp.principal[0].amount:null}
@@ -203,7 +203,7 @@ export default class CDP extends Component{
                         cdpOwner = {this.state.userCDP? this.state.userCDP.cdp.owner: null}
                     /> 
                     {((this.props.owner == this.props.user) || (this.state.isDepositor))?<WithdrawCDPButton
-                        cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null}  
+                        cdpParams={this.state.cdpParams?this.state.cdpParams.debt_param.debt_floor:null}  
                         collateral={this.props.collateral?this.props.collateral:null}
                         principalDeposited={this.state.userCDP?this.state.userCDP.cdp.principal[0].amount:null}
                         principalDenom={this.state.userCDP?this.state.userCDP.cdp.principal[0].denom:null}
@@ -215,7 +215,7 @@ export default class CDP extends Component{
                         collateralizationRatio={this.state.cdpParams?parseInt(this.state.cdpParams.collateral_params[0].liquidation_ratio):null}
                     />:''}
                     {(this.props.owner == this.props.user)?<DrawDebtCDPButton
-                        cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null}  
+                        cdpParams={this.state.cdpParams?this.state.cdpParams.debt_param.debt_floor:null}  
                         collateral={this.props.collateral?this.props.collateral:null}
                         principalDeposited={this.state.userCDP?this.state.userCDP.cdp.principal[0].amount:null}
                         principalDenom={this.state.userCDP?this.state.userCDP.cdp.principal[0].denom:null}
@@ -225,13 +225,13 @@ export default class CDP extends Component{
                     />:''}
                     
                     {(this.props.owner == this.props.user)?<RepayDebtCDPButton
-                        cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null}  
+                        cdpParams={this.state.cdpParams?this.state.cdpParams.debt_param.debt_floor:null}  
                         collateral={this.props.collateral?this.props.collateral:null}
                         usdxTotalValue={this.props.total?this.findTotalValue(this.props.total, 'usdx'):null}
-                        principalDeposited={this.state.userCDP?this.state.userCDP.cdp.principal[0].amount:null}
-                        principalDenom={this.state.userCDP?this.state.userCDP.cdp.principal[0].denom:null}
+                        principalDeposited={this.state.userCDP > 0?this.state.userCDP.cdp.principal[0].amount:null}
+                        principalDenom={this.state.userCDP > 0?this.state.userCDP.cdp.principal[0].denom:null}
                         price={this.state.cdpPrice?this.state.cdpPrice:null}  
-                        collateralDeposited={this.state.userCDP?this.state.userCDP.cdp.collateral[0].amount:null}
+                        collateralDeposited={this.state.userCDP> 0?this.state.userCDP.cdp.collateral[0].amount:null}
                         collateralizationRatio={this.state.cdpParams?parseInt(this.state.cdpParams.collateral_params[0].liquidation_ratio):null}    
                         disabled={!this.state.cdpParams}
                     />:''}
@@ -245,7 +245,7 @@ export default class CDP extends Component{
             <br></br>
                 <div className="mb-3"><Badge color="success">BNB:USD</Badge> <strong className="text-info">{this.state.cdpPrice?numbro(this.state.cdpPrice).formatCurrency({mantissa:4}):0}</strong></div>
                 <CreateCDPButton 
-                    cdpParams={this.state.cdpParams?this.state.cdpParams.debt_params[0].debt_floor:null} 
+                    cdpParams={this.state.cdpParams?this.state.cdpParams.debt_param.debt_floor:null} 
                     collateralizationRatio={this.state.cdpParams?parseInt(this.state.cdpParams.collateral_params[0].liquidation_ratio):null}
                     collateral={this.state.cdpParams?this.state.cdpParams.collateral_params[0].denom:null}
                     price={this.state.cdpPrice?this.state.cdpPrice:null} 

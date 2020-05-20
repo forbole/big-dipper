@@ -350,7 +350,7 @@ class LedgerButton extends Component {
         Meteor.call('accounts.getAccountDetail', this.state.user, (error, result) => {
             try {
                 if (result) {
-                    let coin = result.coins ? (new Coin(result.coins[0].amount, result.coins[0].denom)) : (new Coin(0, result.coins[0].denom));
+                    let coin = result.coins > 0 ? (new Coin(result.coins[0].amount, result.coins[0].denom)) : (new Coin(0));
                     this.setStateOnSuccess('loadingBalance', {
                         currentUser: {
                             accountNumber: result.account_number,
