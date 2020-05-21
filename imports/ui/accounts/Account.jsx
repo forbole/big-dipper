@@ -66,6 +66,7 @@ export default class AccountDetails extends Component{
             totalBNBInUSD: 0,
             totalUSDXInUSD: 0,
             totalValueInUSD: 0,
+            redelegations: [],
         }
     }
 
@@ -349,8 +350,24 @@ export default class AccountDetails extends Component{
                 })
             }
 
-        })
+        }),
 
+        Meteor.call('accounts.getRedelegations', this.props.match.params.address, (error, result) => {
+            if (error){
+                console.warn(error);
+                this.setState({
+                    loading:false
+                })
+            }
+    
+            if (result){
+                this.setState({
+                    redelegations: result
+                })
+            }
+
+        })
+     
         
     }
      
@@ -393,6 +410,7 @@ export default class AccountDetails extends Component{
                 totalBNBInUSD: 0,
                 totalUSDXInUSD: 0,
                 totalValueInUSD: 0,
+                redelegations: [],
             }, () => {
                 this.getBalance();
             })
@@ -734,7 +752,7 @@ export default class AccountDetails extends Component{
                                     <TabPane tabId="redelegations">
                                         <Redelegations 
                                             address={this.state.address} 
-                                            redelegations={this.state.unbondingDelegations}
+                                            redelegations={this.state.redelegations}
                                         />
                                     </TabPane>
                                 </TabContent>

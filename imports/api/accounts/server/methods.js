@@ -231,6 +231,24 @@ Meteor.methods({
         }
     },
 
+    'accounts.getRedelegations'(address){
+
+        let url = LCD + '/staking/redelegations?delegator' + address;
+
+        try{
+            let userRedelegations = HTTP.get(url);
+            if (userRedelegations.statusCode == 200){
+                userRedelegations = JSON.parse(userRedelegations.content).result;
+
+                return userRedelegations;
+            };
+        }
+        catch (e){
+            console.log(url);
+            console.log(e);
+        }
+    },
+
     //get BNB 
     'accounts.getCDP': function(address){
         
