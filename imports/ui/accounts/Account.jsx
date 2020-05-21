@@ -349,10 +349,10 @@ export default class AccountDetails extends Component{
                 })
             }
 
-        }),
+        })
 
         
-    
+    }
      
 
     componentDidMount(){
