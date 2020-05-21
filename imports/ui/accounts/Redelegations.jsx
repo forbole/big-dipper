@@ -29,10 +29,10 @@ export default class AccountRedelegations extends Component{
                             </Row>
                         </Col>
                     </Row>
-                    {this.props.unbonding.map((u, i) =>
+                    {this.props.redelegations.map((r, i) =>
                         <Row key={i} className="delegation-info">
-                            <Col md={5} className="text-nowrap overflow-auto"><Account address={u.validator_address} /></Col>
-                            <Col md={7}>{u.entries.map((entry,j) =>
+                            <Col md={5} className="text-nowrap overflow-auto"><Account address={r.validator_address} /></Col>
+                            <Col md={7}>{r.entries.map((entry,j) =>
                                 <Row key={j}>
                                     <Col md={6}>
                                         {numbro(entry.balance).format("0,0")}

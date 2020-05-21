@@ -45,7 +45,7 @@ export default class List extends Component{
        
     getCDPList = () => {
             Meteor.call('cdp.getCDPList',  (error, result) => {
-                if (result){
+                if (result && result > 0){
                     this.setState({
                        cdpList: result.map((cdpList, i) => {
                         return <CDPRow key={i} index={i} cdpList={cdpList} />
@@ -53,11 +53,16 @@ export default class List extends Component{
                     pagesCount: Math.ceil(this.state.cdpList.length / this.state.pageSize),
 
                 })
-
-
+            }
+                else{
+                    this.setState({
+                        cdpList: undefined,
+                        pagesCount: 0,
+                
+                    })
                 }
-            });
-         } 
+            }
+        )} 
 
     handleClick(e, index) {
 
@@ -93,7 +98,7 @@ export default class List extends Component{
                             </tr>
                         </thead>
                         <tbody>
-                            {this.state.cdpList.slice(this.state.currentPage * this.state.pageSize,(this.state.currentPage + 1) * this.state.pageSize)}
+                            {this.state.cdpList? this.state.cdpList.slice(this.state.currentPage * this.state.pageSize,(this.state.currentPage + 1) * this.state.pageSize) : null}
                         </tbody>
                     </Table>
                     </div>

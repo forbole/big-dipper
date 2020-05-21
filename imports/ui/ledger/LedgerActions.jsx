@@ -50,7 +50,7 @@ const Types = {
 
 const DEFAULT_GAS_ADJUSTMENT = '1.4';
 
-const durationToDay = 1 / 60 / 60 / 24 / 10e8;
+
 
 const TypeMeta = {
     [Types.DELEGATE]: {
@@ -64,20 +64,26 @@ const TypeMeta = {
         pathPreFix: 'staking/delegators',
         pathSuffix: 'redelegations',
         warning: (duration, maxEntries) => {
-            let day = duration * durationToDay;
+            let dayTime = duration / 1000000;
+            let unbondingPeriod = moment.duration(dayTime);
+
             return `You are only able to redelegate from Validator A to Validator B
-                  up to ${maxEntries} times in a ${day} day period.
-                  Also, There is ${day} day cooldown from serial redelegation;
+                  up to ${maxEntries} times in a ${unbondingPeriod.humanize()} period.
+                  Also, There is ${unbondingPeriod.humanize()} cooldown from serial redelegation;
                   Once you redelegate from Validator A to Validator B,
                   you will not be able to redelegate from Validator B to another
-                  validator for the next ${day} days.`
+                  validator for the next ${unbondingPeriod.humanize()}.`
         }
     },
     [Types.UNDELEGATE]: {
         button: 'undelegate',
         pathPreFix: 'staking/delegators',
         pathSuffix: 'unbonding_delegations',
-        warning: (duration) => `There is a ${duration * durationToDay}-day unbonding period.`
+        warning: (duration) => { 
+        let dayTime = duration / 1000000;
+        let unbondingPeriod = moment.duration(dayTime)
+        return  `There is a ${unbondingPeriod.humanize()}-day unbonding period.`
+        }
     },
     [Types.WITHDRAW]: {
         button: 'withdraw',
@@ -350,7 +356,9 @@ class LedgerButton extends Component {
         Meteor.call('accounts.getAccountDetail', this.state.user, (error, result) => {
             try {
                 if (result) {
-                    let coin = result.coins > 0 ? (new Coin(result.coins[0].amount, result.coins[0].denom)) : (new Coin(0));
+                    let coin;
+                     coin = result.coins[0] ? (new Coin(result.coins[0].amount, result.coins[0].denom)) : (new Coin(0));
+                    
                     this.setStateOnSuccess('loadingBalance', {
                         currentUser: {
                             accountNumber: result.account_number,
@@ -733,6 +741,7 @@ class DelegationButtons extends LedgerButton {
         super(props);
     }
 
+    
     getDelegatedToken = (currentDelegation) => {
         if (currentDelegation && currentDelegation.shares && currentDelegation.tokenPerShare) {
             return new Coin(currentDelegation.shares * currentDelegation.tokenPerShare);
@@ -746,7 +755,6 @@ class DelegationButtons extends LedgerButton {
 
     isDataValid = () => {
         if (!this.state.currentUser) return false;
-
         let maxAmount;
         if (this.state.actionType === Types.DELEGATE) {
             maxAmount = this.state.currentUser.availableCoin;
@@ -804,8 +812,8 @@ class DelegationButtons extends LedgerButton {
     }
 
     getWarningMessage = () => {
-        let duration = this.props.stakingParams.unbonding_time;
-        let maxEntries = this.props.stakingParams.max_entries;
+        let duration = this.props.stakingParams? (this.props.stakingParams.params.unbonding_time) : null;
+        let maxEntries = this.props.stakingParams? this.props.stakingParams.params.max_entries : null;
         let warning = TypeMeta[this.state.actionType].warning;
         return warning && warning(duration, maxEntries);
     }
@@ -1411,7 +1419,7 @@ class WithdrawCDPButton extends LedgerButton {
             depositedValue: props.depositValue  / Meteor.settings.public.coins[1].fraction,
             isDepositor: props.isDepositor
         }
-        console.log(this.state.isDepositor)
+        //console.log(this.state.isDepositor)
     }
 
     static getDerivedStateFromProps(nextProps, prevState){
