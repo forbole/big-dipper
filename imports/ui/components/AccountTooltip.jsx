@@ -49,7 +49,7 @@ export default class AccountTooltip extends Account{
             return
         let validator = this.state.validator;
         let moniker = validator.description && validator.description.moniker || validator.address;
-        let isActive = validator.status == 2 && !validator.jailed;
+        let isActive = validator.status == 3 && !validator.jailed;
 
         return <UncontrolledPopover className='validator-popover' trigger="hover" placement="right" target={this.ref}>
             <Card className='validator-popover-card' body outline color="danger">
@@ -77,7 +77,7 @@ export default class AccountTooltip extends Account{
             (validator.unbonding_time?<TimeStamp time={validator.unbonding_time}/>:null)}
          </CardText>:null}
         {(!isActive)?<CardText className="bond-status data" xs={2}>
-        <Col xs={6}>{(validator.status == 0)?<Badge color="secondary">Unbonded</Badge>:<Badge color="warning">Unbonding</Badge>}</Col>
+        <Col xs={6}>{(validator.status == 1)?<Badge color="secondary">Unbonded</Badge>:<Badge color="warning">Unbonding</Badge>}</Col>
         <Col xs={6}>{validator.jailed?<Badge color="danger">Jailed</Badge>:''}</Col>
          </CardText>:null}
         {(isActive)?<CardText className="uptime data">
