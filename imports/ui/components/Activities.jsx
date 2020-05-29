@@ -76,7 +76,7 @@ export default class Activites extends Component {
             return <div>
                 <Account address={msg.value.from} /> {(this.props.invalid)?<T>activities.failedTo</T>:''} {(this.props.invalid)?'':<span><T>activities.madeA</T> <MsgType type={msg.type} /></span>}
                 <CreateSwap from={msg.value.from} to={msg.value.to} receipientOtherChain={msg.value.recipient_other_chain} senderOtherChain={msg.value.sender_other_chain} 
-                randomHash={msg.value.random_number_hash} timestamp={msg.value.timestamp} amount={msg.value.amount}  expectedIncome={msg.value.expected_income} heightSpan={msg.value.height_span} crossChain={msg.value.cross_chain}/>
+                    randomHash={msg.value.random_number_hash} timestamp={msg.value.timestamp} amount={msg.value.amount}  expectedIncome={msg.value.expected_income} heightSpan={msg.value.height_span} crossChain={msg.value.cross_chain}/>
             </div>
             
         // CDP

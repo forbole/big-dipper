@@ -18,38 +18,34 @@ export default class DepositCDP extends Component {
         }
     }
 
-
-
     render(){
         if (this.props){
             return <div><Button className="ledger-buttons-group my-2" color="primary" id="toggler_deposit_cdp" size="sm"><T>transactions.info</T>  </Button>
-         <UncontrolledCollapse toggler="#toggler_deposit_cdp">
-            <Table responsive>
-                    <tbody>
-                        <br></br>
-                        <tr>
-                            <th scope="row"><T>cdp.owner</T></th>
-                            <td>{this.props.address ? <Account address={this.props.address}/> : null}</td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><T>cdp.collateral</T></th>
-                            <td>{this.props.collateral?
-                            <span className={'coin'}>{new Coin((this.props.collateral[0].amount), this.props.collateral[0].denom).toString(4)}</span>:null}                        
-                            </td>
-                        </tr>
-                    </tbody>
-                    
-                </Table>
-            </UncontrolledCollapse>
+                <UncontrolledCollapse toggler="#toggler_deposit_cdp">
+                    <Table responsive>
+                        <tbody>
+                            <tr>
+                                <th scope="row"><T>cdp.owner</T></th>
+                                <td>{this.props.address ? <Account address={this.props.address}/> : null}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><T>cdp.collateral</T></th>
+                                <td>{this.props.collateral?
+                                    <span className='coin'>{new Coin((this.props.collateral.amount), this.props.collateral.denom).toString(4)}</span>:null}                        
+                                </td>
+                            </tr>
+                        </tbody>                    
+                    </Table>
+                </UncontrolledCollapse>
             </div>
-            }
-            else{
-                return <div />
-            }
+        }
+        else{
+            return <div />
         }
     }
+}
 
 DepositCDP.propTypes = {
     address: PropTypes.string.isRequired,
-    collateral: PropTypes.array.isRequired
+    collateral: PropTypes.object.isRequired
 }

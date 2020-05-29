@@ -25,7 +25,6 @@ export default class CreateSwap extends Component {
     componentDidMount() {
         Meteor.call('bep3.createSwap', (error, result) => {
             if (!error){
-                console.info(result);
                 this.setState({ swap: result})
             }
         })
@@ -35,54 +34,54 @@ export default class CreateSwap extends Component {
 
     render(){
         if (this.props.receipientOtherChain){
-        return <div><Button className="ledger-buttons-group my-2" color="primary" id="toggler_create_swap" size="sm"><T>transactions.info</T>  </Button>
-            <UncontrolledCollapse toggler="#toggler_create_swap">
-            <Table responsive>
-                <tbody>
-                    <tr>
-                        <th scope="row"><T>bep3.swap.from</T></th>
-                        <td>{<Account address={this.props.from}/>}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><T>bep3.swap.to</T></th>
-                        <td>{<Account address={this.props.to}/>}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><T>bep3.swap.recipient</T></th>
-                     <td><a target="_blank" href={"https://explorer.binance.org/address/" + this.props.receipientOtherChain}>{this.props.receipientOtherChain}</a></td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><T>bep3.swap.sender</T></th>
-                        <td><a target="_blank" href={"https://explorer.binance.org/address/" + this.props.senderOtherChain}>{this.props.senderOtherChain}</a></td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><T>bep3.swap.randomNumber</T></th>
-                        <td>{this.props.randomHash}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><T>bep3.swap.timestamp</T></th>
-                        <td>{moment.unix(this.props.timestamp).utc().fromNow()}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><T>bep3.swap.amount</T></th>
-                        <td>{this.props.amount? <span className={'coin'}>{new Coin((this.props.amount[0].amount), this.props.amount[0].denom).toString(4)}</span>:null}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><T>bep3.swap.expectedIncome</T></th>
-                        <td>{this.props.expectedIncome}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><T>bep3.swap.heightSpan</T></th>
-                        <td>{this.props.heightSpan}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><T>bep3.swap.crossChain</T></th>
-                        <td>{this.props.crossChain ? <i className="material-icons text-success">check_circle</i> : <i className="material-icons text-danger" >cancel</i>}</td>
-                    </tr>
-                </tbody>
-                
-            </Table>
-            </UncontrolledCollapse>
+            return <div><Button className="ledger-buttons-group my-2" color="primary" id="toggler_create_swap" size="sm"><T>transactions.info</T>  </Button>
+                <UncontrolledCollapse toggler="#toggler_create_swap">
+                    <Table responsive>
+                        <tbody>
+                            <tr>
+                                <th scope="row"><T>bep3.swap.from</T></th>
+                                <td><Account address={this.props.from}/></td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><T>bep3.swap.to</T></th>
+                                <td><Account address={this.props.to}/></td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><T>bep3.swap.recipient</T></th>
+                                <td><a target="_blank" href={"https://explorer.binance.org/address/" + this.props.receipientOtherChain}>{this.props.receipientOtherChain}</a></td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><T>bep3.swap.sender</T></th>
+                                <td><a target="_blank" href={"https://explorer.binance.org/address/" + this.props.senderOtherChain}>{this.props.senderOtherChain}</a></td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><T>bep3.swap.randomNumber</T></th>
+                                <td>{this.props.randomHash}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><T>bep3.swap.timestamp</T></th>
+                                <td>{moment.unix(this.props.timestamp).utc().fromNow()}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><T>bep3.swap.amount</T></th>
+                                <td>{this.props.amount? <span className='coin'>{new Coin((this.props.amount[0].amount), this.props.amount[0].denom).toString(4)}</span>:null}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><T>bep3.swap.expectedIncome</T></th>
+                                <td>{this.props.expectedIncome}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><T>bep3.swap.heightSpan</T></th>
+                                <td>{this.props.heightSpan}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><T>bep3.swap.crossChain</T></th>
+                                <td>{this.props.crossChain ? <i className="material-icons text-success">check_circle</i> : <i className="material-icons text-danger" >cancel</i>}</td>
+                            </tr>
+                        </tbody>
+                        
+                    </Table>
+                </UncontrolledCollapse>
             </div>
         }
         else{
