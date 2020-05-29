@@ -291,6 +291,7 @@ messageTypes:
     repayDebt: 'Repay Debt'
     drawDebt: 'Draw Debt'
     postPrice: 'Post Price'
+    claimIncentive: 'Claim Incentive'
     createValidator: 'Create Validator'
     editValidator: 'Edit Validator'
     delegate: 'Delegate'

@@ -29,7 +29,14 @@ export const MsgType = (props) => {
         return <Badge color="success"><T>messageTypes.drawDebt</T></Badge>  
     case "cdp/MsgRepayDebt":
         return <Badge color="success"><T>messageTypes.repayDebt</T></Badge>  
-            
+    
+    // incentive
+    case "incentive/MsgClaimReward":
+        return <Badge color="success"><T>messageTypes.claimIncentive</T></Badge>
+    
+    // auctions
+    case "auction/MsgPlaceBid":
+        return <Badge color="success"><T>messageTypes.placeBid</T></Badge>
     
     // pricefeed
     case "pricefeed/MsgPostPrice":

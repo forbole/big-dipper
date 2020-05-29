@@ -15,6 +15,7 @@ import Coin from '/both/utils/coins.js'
 import JSONPretty from 'react-json-pretty';
 import numbro from 'numbro';
 import moment from 'moment';
+import voca from 'voca';
 import _ from 'lodash';
 
 const T = i18n.createComponent();
@@ -86,7 +87,7 @@ export default class Activites extends Component {
             </div>
         case "cdp/MsgDeposit":
             return <div><Account address={msg.value.depositor} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} />
-            <DepositCDP address={msg.value.owner} collateral={msg.value.collateral}/>
+                <DepositCDP address={msg.value.owner} collateral={msg.value.collateral}/>
             </div>
         case "cdp/MsgWithdraw":
             return <div>
@@ -104,6 +105,23 @@ export default class Activites extends Component {
                 <RepayDebt sender={msg.value.sender} cdp_denom={msg.value.cdp_denom} payment={msg.value.payment} />
             </div>
 
+        // Incentive
+        case "incentive/MsgClaimReward":
+            return <div>
+                <Account address={msg.value.sender}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} />
+                <Table striped className="mt-3">
+                    <tbody>
+                        {events['claim_reward'].map((reward, i) => {
+                            if (i%2==1){
+                                return <tr key={i}>
+                                    <td>{voca.chain(reward.key).replace("_"," ").titleCase().value()}</td>
+                                    <td>{new Coin(parseInt(reward.value), reward.value.match(/[a-z]*$/)[0]).toString()}</td>
+                                </tr>
+                            }
+                        })}
+                    </tbody>
+                </Table>
+            </div>
         // Pricefeed
         case "pricefeed/MsgPostPrice":
             return <div>
