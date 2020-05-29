@@ -508,8 +508,8 @@ class LedgerButton extends Component {
     }
 
     getSimulateBody(txMsg) {
-        return txMsg && txMsg.value && txMsg.value.msg &&
-            txMsg.value.msg.length && txMsg.value.msg[0].value || {}
+        return (txMsg && txMsg.value && txMsg.value.msg &&
+            txMsg.value.msg.length && txMsg.value.msg[0].value) || {}
     }
 
     getPath = () => {
@@ -1017,8 +1017,8 @@ class SubmitProposalButton extends LedgerButton {
     }
 
     getSimulateBody(txMsg) {
-        txMsg = txMsg && txMsg.value && txMsg.value.msg &&
-            txMsg.value.msg.length && txMsg.value.msg[0].value || {}
+        txMsg = (txMsg && txMsg.value && txMsg.value.msg &&
+            txMsg.value.msg.length && txMsg.value.msg[0].value) || {}
         return {
             ...txMsg.content.value,
             initial_deposit: txMsg.initial_deposit,
@@ -1290,7 +1290,7 @@ class CreateCDPButton extends LedgerButton {
 
 
     getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>create CDP</span> with <span className={'coin'}>{new Coin(this.state.collateral, this.props.collateral).convertToString(6)}</span> for address <b>{this.state.user} </b>
+        return <span>You are going to <span className='action'>create CDP</span> with <span className='coin'>{new Coin(this.state.collateral, this.props.collateral).convertToString(6)}</span> for address <b>{this.state.user} </b>
      with <Fee gas={this.state.gasEstimate} />.</span>
     }
 
@@ -1369,7 +1369,7 @@ class DepositCDPButton extends LedgerButton {
                 <Input name="memo" onChange={this.handleInputChange}
                     placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
             </FormGroup>
-            <span className={'coin'}>Your available balance: {new Coin(this.state.maxAmount, this.props.collateral).convertToString(5)} </span>
+            <span className='coin'>Your available balance: {new Coin(this.state.maxAmount, this.props.collateral).convertToString(5)} </span>
         </TabPane>
 
     }
@@ -1379,7 +1379,7 @@ class DepositCDPButton extends LedgerButton {
     }
 
     getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>Deposit</span> <span className={'coin'}>{new Coin(this.state.collateral, this.props.collateral).convertToString(8)}</span> from address <b>{this.state.user} </b> into CDP for address <b>{this.state.cdpOwner} </b>
+        return <span>You are going to <span className='action'>Deposit</span> <span className='coin'>{new Coin(this.state.collateral, this.props.collateral).convertToString(8)}</span> from address <b>{this.state.user} </b> into CDP for address <b>{this.state.cdpOwner} </b>
      with <Fee gas={this.state.gasEstimate} />.</span>
     }
 
@@ -1471,7 +1471,7 @@ class WithdrawCDPButton extends LedgerButton {
                 <Input name="memo" onChange={this.handleInputChange}
                     placeholder="Memo(optional)" type="textarea" value={this.state.memo}/>
             </FormGroup>
-            <span className={'coin'}>Your available CDP balance: {this.state.isDepositor? new Coin(this.state.depositedValue, this.props.collateral).convertToString(6) :new Coin(this.state.maxAmount, this.props.collateral).convertToString(6)} </span>               
+            <span className='coin'>Your available CDP balance: {this.state.isDepositor? new Coin(this.state.depositedValue, this.props.collateral).convertToString(6) :new Coin(this.state.maxAmount, this.props.collateral).convertToString(6)} </span>               
         </TabPane>
     }
 
@@ -1486,7 +1486,7 @@ class WithdrawCDPButton extends LedgerButton {
 
    
     getConfirmationMessage = () => {
-        return this.props.collateral? <span>You are going to <span className='action'>withdraw </span> <span className={'coin'}>{new Coin(this.state.collateral, this.props.collateral).convertToString(8)}</span> for address <b>{this.state.user} </b> from CDP with address <b>{this.state.cdpOwner} </b>
+        return this.props.collateral? <span>You are going to <span className='action'>withdraw </span> <span className='coin'>{new Coin(this.state.collateral, this.props.collateral).convertToString(8)}</span> for address <b>{this.state.user} </b> from CDP with address <b>{this.state.cdpOwner} </b>
         with <Fee gas={this.state.gasEstimate} />.</span> : ''
     }
 
@@ -1583,7 +1583,7 @@ class DrawDebtCDPButton extends LedgerButton {
     }
 
     getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>draw </span> <span className={'coin'}>{new Coin(this.state.draw, this.props.principalDenom).convertToString(8)}</span> from CDP  for address <b>{this.state.user} </b>
+        return <span>You are going to <span className='action'>draw </span> <span className='coin'>{new Coin(this.state.draw, this.props.principalDenom).convertToString(8)}</span> from CDP  for address <b>{this.state.user} </b>
      with <Fee gas={this.state.gasEstimate} />.</span>
     }
 
@@ -1681,7 +1681,7 @@ class RepayDebtCDPButton extends LedgerButton {
     }
 
     getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>repay </span> <span className={'coin'}>{new Coin(this.state.debt, this.props.principalDenom).convertToString(8)}</span> to CDP for address <b>{this.state.user} </b>
+        return <span>You are going to <span className='action'>repay </span> <span className='coin'>{new Coin(this.state.debt, this.props.principalDenom).convertToString(8)}</span> to CDP for address <b>{this.state.user} </b>
      with <Fee gas={this.state.gasEstimate} />.</span>
     }
 

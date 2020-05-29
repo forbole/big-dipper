@@ -5,8 +5,6 @@ import { Spinner,
     Row, Col, 
     Card, CardHeader, CardBody, 
     Progress, 
-    UncontrolledDropdown, DropdownMenu, DropdownToggle, DropdownItem,
-    Badge, Button 
 } from 'reactstrap';
 import classnames from 'classnames';
 import numbro from 'numbro';
@@ -26,9 +24,9 @@ import Coin from '/both/utils/coins.js';
 
 const T = i18n.createComponent();
 let timer = 0;
-const coin_1 = 'ukava'
-const coin_2 = 'bnb'
-const coin_3 = 'usdx'
+const coin1 = 'ukava'
+const coin2 = 'bnb'
+const coin3 = 'usdx'
 
 const cloneDeep = require('lodash/cloneDeep');
 
@@ -300,9 +298,9 @@ export default class AccountDetails extends Component{
 
                 }
 
-                let calculateKavaInUSD = this.findValue(this.state.total, coin_1) * this.state.price;
-                let calculateBNBInUSD = this.findValue(this.state.total, coin_2) * this.state.bnbPrice;
-                let calculateUSDXInUSD = this.findValue(this.state.total, coin_3) * this.state.usdxPrice
+                let calculateKavaInUSD = this.findValue(this.state.total, coin1) * this.state.price;
+                let calculateBNBInUSD = this.findValue(this.state.total, coin2) * this.state.bnbPrice;
+                let calculateUSDXInUSD = this.findValue(this.state.total, coin3) * this.state.usdxPrice
                 let calculateTotalValueInUSD = calculateKavaInUSD + calculateBNBInUSD + calculateUSDXInUSD;
 
                 this.setState({
@@ -550,17 +548,17 @@ export default class AccountDetails extends Component{
                             <Row className="account-distributions">
                                 <Col xs={12}>
                                     <Progress multi> 
-                                        <Progress bar className="available" value={this.findValue(this.state.available, coin_1) / this.state.totalValueInUSD * 100} /> 
-                                        <Progress bar className="delegated" value={this.findValue(this.state.delegated, coin_1) * this.state.price / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="unbonding" value={this.findValue(this.state.unbonding, coin_1) * this.state.price / this.state.totalValueInUSD* 100} />
-                                        <Progress bar className="rewards" value={this.findValue(this.state.rewards, coin_1) * this.state.price  / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="commission" value={this.findValue(this.state.commission, coin_1) * this.state.price / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="available_2nd" value={this.findValue(this.state.available, coin_2) * this.state.bnbPrice / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="rewards_2nd" value={this.findValue(this.state.rewards, coin_2) * this.state.bnbPrice  / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="commission_2nd" value={this.findValue(this.state.commission, coin_2) * this.state.bnbPrice  / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="available_3rd" value={this.findValue(this.state.available, coin_3) * this.state.usdxPrice  / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="rewards_3rd" value={this.findValue(this.state.rewards, coin_3) * this.state.usdxPrice  / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="commission_3rd" value={this.findValue(this.state.commission, coin_3) * this.state.usdxPrice / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="available" value={this.findValue(this.state.available, coin1) / this.state.totalValueInUSD * 100} /> 
+                                        <Progress bar className="delegated" value={this.findValue(this.state.delegated, coin1) * this.state.price / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="unbonding" value={this.findValue(this.state.unbonding, coin1) * this.state.price / this.state.totalValueInUSD* 100} />
+                                        <Progress bar className="rewards" value={this.findValue(this.state.rewards, coin1) * this.state.price  / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="commission" value={this.findValue(this.state.commission, coin1) * this.state.price / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="available_2nd" value={this.findValue(this.state.available, coin2) * this.state.bnbPrice / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="rewards_2nd" value={this.findValue(this.state.rewards, coin2) * this.state.bnbPrice  / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="commission_2nd" value={this.findValue(this.state.commission, coin2) * this.state.bnbPrice  / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="available_3rd" value={this.findValue(this.state.available, coin3) * this.state.usdxPrice  / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="rewards_3rd" value={this.findValue(this.state.rewards, coin3) * this.state.usdxPrice  / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="commission_3rd" value={this.findValue(this.state.commission, coin3) * this.state.usdxPrice / this.state.totalValueInUSD * 100} />
                                     </Progress>
                                 </Col>
                             </Row>
@@ -584,25 +582,25 @@ export default class AccountDetails extends Component{
                                 </Col>
                                 <Col xs={3} md={2}>
                                     <Row>
-                                        <Col xs={12} className="value text-left "> <div className="available infinity" />{this.findCoin(this.state.available, coin_1)}</Col>
+                                        <Col xs={12} className="value text-left "> <div className="available infinity" />{this.findCoin(this.state.available, coin1)}</Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={12} className="value text-left"><div className="delegated infinity" />{this.findCoin(this.state.delegated, coin_1)}</Col>
+                                        <Col xs={12} className="value text-left"><div className="delegated infinity" />{this.findCoin(this.state.delegated, coin1)}</Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={12} className="value text-left"><div className="unbonding infinity" />{this.findCoin(this.state.unbonding, coin_1)}</Col>
+                                        <Col xs={12} className="value text-left"><div className="unbonding infinity" />{this.findCoin(this.state.unbonding, coin1)}</Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={12} className="value text-left"><div className="rewards infinity" />{this.findCoin(this.state.rewards, coin_1)}</Col>
+                                        <Col xs={12} className="value text-left"><div className="rewards infinity" />{this.findCoin(this.state.rewards, coin1)}</Col>
                                     </Row>
                                     {this.state.commission?<Row>
-                                        <Col xs={12} className="value text-left"><div className="commission infinity" />{this.findCoin(this.state.commission, coin_1)}</Col>
+                                        <Col xs={12} className="value text-left"><div className="commission infinity" />{this.findCoin(this.state.commission, coin1)}</Col>
                                     </Row>:null}
                                 </Col>
                                 <Col xs={3} md={2}>
                                     
                                     <Row>
-                                        <Col xs={12} className="value text-left"> <div className="available_2nd infinity" />{this.findCoin(this.state.available, coin_2)}</Col>
+                                        <Col xs={12} className="value text-left"> <div className="available_2nd infinity" />{this.findCoin(this.state.available, coin2)}</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={12} className="value text-left"><div className="infinity" />{'  '}</Col>
@@ -611,16 +609,16 @@ export default class AccountDetails extends Component{
                                         <Col xs={12} className="value text-left"><div className="infinity" />{' '}</Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={12} className="value text-left"><div className="rewards_2nd infinity" />{this.findCoin(this.state.rewards, coin_2)}</Col>
+                                        <Col xs={12} className="value text-left"><div className="rewards_2nd infinity" />{this.findCoin(this.state.rewards, coin2)}</Col>
                                     </Row>
                                     {this.state.commission?<Row>
-                                        <Col xs={12} className="value text-left"><div className="commission_2nd infinity" />{this.findCoin(this.state.commission, coin_2)}</Col>
+                                        <Col xs={12} className="value text-left"><div className="commission_2nd infinity" />{this.findCoin(this.state.commission, coin2)}</Col>
                                     </Row>:null}
                                 </Col>
                                 <Col xs={3} md={2} >
                                     
                                     <Row>
-                                        <Col xs={12} className="value text-left"> <div className="available_3rd infinity" />{this.findCoin(this.state.available, coin_3)}</Col>
+                                        <Col xs={12} className="value text-left"> <div className="available_3rd infinity" />{this.findCoin(this.state.available, coin3)}</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={12} className="value text-left"><div className="infinity" />{'  '}</Col>
@@ -629,10 +627,10 @@ export default class AccountDetails extends Component{
                                         <Col xs={12} className="value text-left"><div className="infinity" />{'  '}</Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={12} className="value text-left"><div className="rewards_3rd infinity" />{this.findCoin(this.state.rewards, coin_3)}</Col>
+                                        <Col xs={12} className="value text-left"><div className="rewards_3rd infinity" />{this.findCoin(this.state.rewards, coin3)}</Col>
                                     </Row>
                                     {this.state.commission?<Row>
-                                        <Col xs={12} className="value text-left"><div className="commission_3rd infinity" />{this.findCoin(this.state.commission, coin_3)}</Col>
+                                        <Col xs={12} className="value text-left"><div className="commission_3rd infinity" />{this.findCoin(this.state.commission, coin3)}</Col>
                                     </Row>:null}                                   
                                 </Col>
                                 <Col xs={3} md={4} className="total d-flex flex-column justify-content-end text-nowrap">
@@ -649,20 +647,20 @@ export default class AccountDetails extends Component{
                                 </Col>
                                 <Col md={12}  className="total d-flex flex-column justify-content-end">
                                     <Row>
-                                        <Col xs={12} className="value text-right">{this.findCoin(this.state.total, coin_1)}</Col>
-                                        <Col xs={12} className="dollar-value text-right text-secondary">~{numbro((this.findValue(this.state.total, coin_1))*this.state.price).format("$0,0.0000a")} ({numbro(this.state.price).format("$0,0.00")}/{Meteor.settings.public.coins[0].displayName})</Col>
+                                        <Col xs={12} className="value text-right">{this.findCoin(this.state.total, coin1)}</Col>
+                                        <Col xs={12} className="dollar-value text-right text-secondary">~{numbro((this.findValue(this.state.total, coin1))*this.state.price).format("$0,0.0000a")} ({numbro(this.state.price).format("$0,0.00")}/{Meteor.settings.public.coins[0].displayName})</Col>
                                     </Row>
                                 </Col>
                                 <Col md={12}  className="total d-flex flex-column justify-content-end">
                                     <Row>
-                                        <Col xs={12} className="value-2 text-right">{this.findCoin(this.state.total, coin_2)}</Col>
-                                        <Col xs={12} className="dollar-value-2 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin_2))*this.state.bnbPrice).format("$0,0.0000a")} ({numbro(this.state.bnbPrice).format("$0,0.00")}/{Meteor.settings.public.coins[1].displayName})</Col>
+                                        <Col xs={12} className="value-2 text-right">{this.findCoin(this.state.total, coin2)}</Col>
+                                        <Col xs={12} className="dollar-value-2 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin2))*this.state.bnbPrice).format("$0,0.0000a")} ({numbro(this.state.bnbPrice).format("$0,0.00")}/{Meteor.settings.public.coins[1].displayName})</Col>
                                     </Row>
                                 </Col>
                                 <Col md={12}  className="total d-flex flex-column justify-content-end">
                                     <Row>
-                                        <Col xs={12} className="value-3 text-right">{this.findCoin(this.state.total, coin_3)}</Col>
-                                        <Col xs={12} className="dollar-value-3 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin_3))*this.state.usdxPrice).format("$0,0.0000a")} ({numbro(this.state.usdxPrice).format("$0,0.00")}/{Meteor.settings.public.coins[5].displayName})</Col>
+                                        <Col xs={12} className="value-3 text-right">{this.findCoin(this.state.total, coin3)}</Col>
+                                        <Col xs={12} className="dollar-value-3 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin3))*this.state.usdxPrice).format("$0,0.0000a")} ({numbro(this.state.usdxPrice).format("$0,0.00")}/{Meteor.settings.public.coins[5].displayName})</Col>
                                     </Row>
                                 </Col>
                             </Row>
