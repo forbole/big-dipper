@@ -114,7 +114,7 @@ export default class Activites extends Component {
                         {events['claim_reward'].map((reward, i) => {
                             if (i%2==1){
                                 return <tr key={i}>
-                                    <td>{voca.chain(reward.key).replace("_"," ").titleCase().value()}</td>
+                                    <th>{voca.chain(reward.key).replace("_"," ").titleCase().value()}</th>
                                     <td>{new Coin(parseInt(reward.value), reward.value.match(/[a-z]*$/)[0]).toString()}</td>
                                 </tr>
                             }
