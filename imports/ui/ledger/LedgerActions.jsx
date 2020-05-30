@@ -1230,6 +1230,13 @@ class CreateCDPButton extends LedgerButton {
         }
     }
 
+    static getDerivedStateFromProps(nextProps, prevState){
+        if(!_.isEqual(nextProps.bnbTotalValue,prevState.bnbTotalValue)){
+            
+            return {maxAmount: nextProps.bnbTotalValue / Meteor.settings.public.coins[1].fraction}
+        }
+        else return null;
+    }
 
     handleChange = (e) => {
         const { target } = e;

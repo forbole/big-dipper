@@ -48,9 +48,6 @@ export default class CDP extends Component{
                 }
             })
         }
-        else{
-
-        }
     }
 
     updateCDP(){
@@ -233,7 +230,7 @@ export default class CDP extends Component{
                     {(this.props.owner == this.props.user)?<RepayDebtCDPButton
                         cdpParams={this.state.cdpParams?this.state.cdpParams.debt_param.debt_floor:null}  
                         collateral={this.props.collateral?this.props.collateral:null}
-                        usdxTotalValue={this.props.total?this.findTotalValue(this.props.total, 'usdx'):null}
+                        usdxTotalValue={this.state.total?this.findTotalValue(this.state.total, 'usdx'):null}
                         principalDeposited={this.state.userCDP > 0?this.state.userCDP.cdp.principal.amount:null}
                         principalDenom={this.state.userCDP > 0?this.state.userCDP.cdp.principal.denom:null}
                         price={this.state.cdpPrice?this.state.cdpPrice:null}  
@@ -254,7 +251,7 @@ export default class CDP extends Component{
                     collateralizationRatio={this.state.cdpParams?parseInt(this.state.cdpParams.collateral_params[0].liquidation_ratio):null}
                     collateral={this.state.cdpParams?this.state.cdpParams.collateral_params[0].denom:null}
                     price={this.state.cdpPrice?this.state.cdpPrice:null} 
-                    bnbTotalValue={this.props.total?this.findTotalValue(this.props.total, 'bnb'):null}
+                    bnbTotalValue={this.state.total?this.findTotalValue(this.state.total, 'bnb'):null}
                 />  
             </div>
         }
