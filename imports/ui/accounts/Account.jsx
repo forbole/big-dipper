@@ -497,26 +497,26 @@ export default class AccountDetails extends Component{
         }
     }
 
-    createCDP = (callback) =>{
-        Meteor.call('create.cdp', {from: this.state.user}, this.getPath(), (err, res) =>{
-            if (res){
-                if (this.props.address) {
-                    res.value.msg.push({
-                        type: 'cosmos-sdk/MsgWithdrawValidatorCommission',
-                        value: { validator_address: this.props.address }
-                    })
-                }
-                callback(res, res)
-            }
-            else {
-                this.setState({
-                    loading: false,
-                    simulating: false,
-                    errorMessage: 'something went wrong'
-                })
-            }
-        })
-    }
+    // createCDP = (callback) =>{
+    //     Meteor.call('create.cdp', {from: this.state.user}, this.getPath(), (err, res) =>{
+    //         if (res){
+    //             if (this.props.address) {
+    //                 res.value.msg.push({
+    //                     type: 'cosmos-sdk/MsgWithdrawValidatorCommission',
+    //                     value: { validator_address: this.props.address }
+    //                 })
+    //             }
+    //             callback(res, res)
+    //         }
+    //         else {
+    //             this.setState({
+    //                 loading: false,
+    //                 simulating: false,
+    //                 errorMessage: 'something went wrong'
+    //             })
+    //         }
+    //     })
+    // }
 
     render(){
         if (this.state.loading){
