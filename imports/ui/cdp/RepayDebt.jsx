@@ -26,29 +26,29 @@ export default class RepayDebt extends Component {
 
     render(){
         if (this.props){
-        return<div><Button className="ledger-buttons-group my-2" color="primary" id="toggler_repay_debt" size="sm"><T>transactions.info</T>  </Button>
-        <UncontrolledCollapse toggler="#toggler_repay_debt">
-        <Table responsive>
-                <tbody>
-                    <br></br>
-                    <tr>
-                        <th scope="row"><T>cdp.sender</T></th>
-                        <td>{this.props.sender ? <Account address={this.props.sender}/>  : null}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><T>cdp.cdpDenom</T></th>
-                        <td>{this.props.cdp_denom? this.props.cdp_denom : null}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><T>cdp.payment</T></th>
-                        <td>{this.props.payment?
-                        <span className={'coin'}>{new Coin((this.props.payment[0].amount), this.props.payment[0].denom).toString(4)}</span>:null}                        
-                        </td>
-                    </tr>
-                </tbody>
-            </Table>
-        </UncontrolledCollapse>
-        </div>
+            return<div><Button className="ledger-buttons-group my-2" color="primary" id="toggler_repay_debt" size="sm"><T>transactions.info</T>  </Button>
+                <UncontrolledCollapse toggler="#toggler_repay_debt">
+                    <Table responsive>
+                        <tbody>
+                            <br></br>
+                            <tr>
+                                <th scope="row"><T>cdp.sender</T></th>
+                                <td>{this.props.sender ? <Account address={this.props.sender}/>  : null}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><T>cdp.cdpDenom</T></th>
+                                <td>{this.props.cdp_denom? this.props.cdp_denom : null}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><T>cdp.payment</T></th>
+                                <td>{this.props.payment?
+                                    <span className='coin'>{new Coin((this.props.payment.amount), this.props.payment.denom).toString(4)}</span>:null}                        
+                                </td>
+                            </tr>
+                        </tbody>
+                    </Table>
+                </UncontrolledCollapse>
+            </div>
         }
         else{
             return <div />

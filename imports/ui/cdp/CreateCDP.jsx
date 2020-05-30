@@ -21,24 +21,22 @@ export default class CreateCDP extends Component {
 
     render(){
         if (this.state.createCDP){
-        return <div><Button className="ledger-buttons-group my-2" color="primary" id="toggler_create_cdp" size="sm"><T>transactions.info</T>  </Button>
-        <UncontrolledCollapse toggler="#toggler_create_cdp">
-        <Table responsive>
-                <tbody>
-                    <tr>
-                        <th scope="row"><T>activities.cdpCollateral</T></th>
-                        <td>{(this.props.collateral)?
-                        this.props.collateral.map((collateral, i) => <ListGroupItem key={i}>{new Coin(collateral.amount, collateral.denom).toString(6)}</ListGroupItem>):''}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><T>activities.cdpPricipal</T></th>
-                        <td>{(this.props.principal)?
-                        this.props.principal.map((principal, i) => <ListGroupItem key={i}>{new Coin(principal.amount, principal.denom).toString(6)}</ListGroupItem>):''}</td>
-                    </tr>
-                </tbody>
-            </Table>
-        </UncontrolledCollapse>
-        </div>
+            return <div><Button className="ledger-buttons-group my-2" color="primary" id="toggler_create_cdp" size="sm"><T>transactions.info</T>  </Button>
+                <UncontrolledCollapse toggler="#toggler_create_cdp">
+                    <Table responsive>
+                        <tbody>
+                            <tr>
+                                <th scope="row"><T>activities.cdpCollateral</T></th>
+                                <td>{(this.props.collateral)?<ListGroupItem>{new Coin(collateral.amount, collateral.denom).toString(6)}</ListGroupItem>:''}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><T>activities.cdpPricipal</T></th>
+                                <td>{(this.props.principal)?<ListGroupItem>{new Coin(principal.amount, principal.denom).toString(6)}</ListGroupItem>:''}</td>
+                            </tr>
+                        </tbody>
+                    </Table>
+                </UncontrolledCollapse>
+            </div>
         }
         else{
             return <div />
@@ -47,6 +45,6 @@ export default class CreateCDP extends Component {
 }
 
 CreateCDP.propTypes = {
-    collateral: PropTypes.array.isRequired,
-    principal: PropTypes.array.isRequired
+    collateral: PropTypes.object.isRequired,
+    principal: PropTypes.object.isRequired
 }

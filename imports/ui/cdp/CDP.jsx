@@ -82,7 +82,7 @@ export default class CDP extends Component{
                     if (this.props.user == result[i].depositor){
                         this.setState({
                             isDepositor: true,
-                            depositValue: result[i].amount[0].amount
+                            depositValue: result[i].amount.amount
                         })
                     }
                 }
@@ -168,13 +168,13 @@ export default class CDP extends Component{
                             <th scope="row" className="w-25 text-muted"><T>cdp.owner</T></th>
                             <td><Account address={this.props.owner} /></td>
                         </tr>:''}
-                        {(this.state.userCDP.cdp.collateral&&(this.state.userCDP.cdp.collateral.length>0))?<tr>
+                        {(this.state.userCDP.cdp.collateral)?<tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.collateralDeposited</T></th>
-                            <td>{this.state.userCDP.cdp.collateral.map((col, i) => <div key={i}>{new Coin(col.amount, col.denom).toString(6)}</div>)}</td>
+                            <td><div >{new Coin(this.state.userCDP.cdp.collateral.amount, this.state.userCDP.cdp.collateral.denom).toString(6)}</div></td>
                         </tr>:''}
-                        {(this.state.userCDP.cdp.principal&&(this.state.userCDP.cdp.principal.length>0))?<tr>
+                        {(this.state.userCDP.cdp.principal)?<tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.principal</T></th>
-                            <td>{this.state.userCDP.cdp.principal.map((prin, i) => <div key={i}>{new Coin(prin.amount, prin.denom).toString(6)}</div>)}</td>
+                            <td><div >{new Coin(this.state.userCDP.cdp.principal.amount, this.state.userCDP.cdp.principal.denom).toString(6)}</div></td>
                         </tr>:''}
                         <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.accumulatedFees</T></th>

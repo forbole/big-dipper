@@ -1447,8 +1447,9 @@ class WithdrawCDPButton extends LedgerButton {
         this.setState({
             [name]: value,
         }, () => {
+            let ratio = (( ((parseInt(this.props.collateralDeposited) / Meteor.settings.public.coins[1].fraction) - parseFloat(this.state.collateral)) * parseFloat(this.props.price)) / ((parseInt(this.props.principalDeposited) / Meteor.settings.public.coins[5].fraction) ));
             this.setState({
-                ratio: (( ((parseInt(this.props.collateralDeposited) / Meteor.settings.public.coins[1].fraction) - parseFloat(this.state.collateral)) * parseFloat(this.props.price)) / ((parseInt(this.props.principalDeposited) / Meteor.settings.public.coins[5].fraction) )),
+                ratio: ratio
             })
         });
     }
