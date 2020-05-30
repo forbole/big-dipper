@@ -231,10 +231,10 @@ export default class CDP extends Component{
                         cdpParams={this.state.cdpParams?this.state.cdpParams.debt_param.debt_floor:null}  
                         collateral={this.props.collateral?this.props.collateral:null}
                         usdxTotalValue={this.state.total?this.findTotalValue(this.state.total, 'usdx'):null}
-                        principalDeposited={this.state.userCDP > 0?this.state.userCDP.cdp.principal.amount:null}
-                        principalDenom={this.state.userCDP > 0?this.state.userCDP.cdp.principal.denom:null}
+                        principalDeposited={this.state.userCDP?this.state.userCDP.cdp.principal.amount:null}
+                        principalDenom={this.state.userCDP?this.state.userCDP.cdp.principal.denom:null}
                         price={this.state.cdpPrice?this.state.cdpPrice:null}  
-                        collateralDeposited={this.state.userCDP> 0?this.state.userCDP.cdp.collateral.amount:null}
+                        collateralDeposited={this.state.userCDP?this.state.userCDP.cdp.collateral.amount:null}
                         collateralizationRatio={this.state.cdpParams?parseInt(this.state.cdpParams.collateral_params[0].liquidation_ratio):null}    
                         disabled={!this.state.cdpParams}
                     />:''}
