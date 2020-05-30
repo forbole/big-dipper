@@ -66,7 +66,7 @@ Meteor.methods({
             }
         }
         catch (e){
-            console.log(e)
+            console.log(e.response.content)
         }
     },
 
@@ -83,7 +83,7 @@ Meteor.methods({
             }
         }
         catch (e){
-            console.log(e)
+            console.log(e.response.content)
         }
     },
 
@@ -99,7 +99,7 @@ Meteor.methods({
         }
         catch(e){
             console.log(url);
-            console.log(e);
+            console.log(e.response.content);
         }
     }
 
