@@ -481,14 +481,14 @@ export class Ledger {
         const txMsg = {
             type: 'cdp/MsgCreateCDP',
             value: {
-                collateral: [{
+                collateral: {
                     amount: (parseFloat(collateral) * Meteor.settings.public.coins[1].fraction).toString(),
                     denom: 'bnb'
-                }],
-                principal: [{
+                },
+                principal: {
                     amount: (parseFloat(debt) * Meteor.settings.public.coins[5].fraction).toString(),
                     denom: 'usdx'
-                }],
+                },
                 sender: txContext.bech32,
                
             },
@@ -506,10 +506,10 @@ export class Ledger {
         const txMsg = {
             type: 'cdp/MsgDeposit',
             value: {
-                collateral: [{
+                collateral: {
                     amount: parseInt(parseFloat(collateral) * Meteor.settings.public.coins[1].fraction).toString(),
                     denom: collateralDenom
-                }],
+                },
                 depositor: txContext.bech32,
                 owner: cdpOwner
                
@@ -528,10 +528,10 @@ export class Ledger {
         const txMsg = {
             type: 'cdp/MsgWithdraw',
             value: {
-                collateral: [{
+                collateral: {
                     amount: parseInt(parseFloat(collateral) * Meteor.settings.public.coins[1].fraction).toString(),
                     denom: collateralDenom
-                }],
+                },
                 depositor: txContext.bech32,
                 owner: cdpOwner
             },
@@ -550,10 +550,10 @@ export class Ledger {
             type: 'cdp/MsgDrawDebt',
             value: {
                 cdp_denom: collateralDenom,
-                principal: [{
+                principal: {
                     amount: parseInt(parseFloat(draw) * Meteor.settings.public.coins[5].fraction).toString(),
                     denom: 'usdx'
-                }],
+                },
                 sender: txContext.bech32,
                
             },
@@ -572,10 +572,10 @@ export class Ledger {
             type: 'cdp/MsgRepayDebt',
             value: {
                 cdp_denom: collateralDenom,
-                payment: [{
+                payment: {
                     amount: parseInt(parseFloat(debt) * Meteor.settings.public.coins[5].fraction).toString(),
                     denom: 'usdx'
-                }],
+                },
                 sender: txContext.bech32,
                
             },
