@@ -202,7 +202,7 @@ export default class CDP extends Component{
                         principalDenom={this.state.userCDP?this.state.userCDP.cdp.principal.denom:null}
                         price={this.state.cdpPrice?this.state.cdpPrice:null}  
                         collateralDeposited={this.state.userCDP?this.state.userCDP.cdp.collateral.amount:null}
-                        collateralizationRatio={this.state.cdpParams?parseInt(this.state.cdpParams.collateral_params[0].liquidation_ratio):null}
+                        collateralizationRatio={this.state.cdpParams?parseFloat(this.state.cdpParams.collateral_params[0].liquidation_ratio):null}
                         cdpOwner={this.state.userCDP? this.state.userCDP.cdp.owner: null}
                     /> 
                     {((this.props.owner == this.props.user) || (this.state.isDepositor))?<WithdrawCDPButton
@@ -215,7 +215,7 @@ export default class CDP extends Component{
                         cdpOwner={this.state.userCDP? this.state.userCDP.cdp.owner: null}
                         depositValue={this.state.depositValue? this.state.depositValue: null}
                         isDepositor={this.state.isDepositor? this.state.isDepositor: null}
-                        collateralizationRatio={this.state.cdpParams?parseInt(this.state.cdpParams.collateral_params[0].liquidation_ratio):null}
+                        collateralizationRatio={this.state.cdpParams?parseFloat(this.state.cdpParams.collateral_params[0].liquidation_ratio):null}
                     />:''}
                     {(this.props.owner == this.props.user)?<DrawDebtCDPButton
                         cdpParams={this.state.cdpParams?this.state.cdpParams.debt_param.debt_floor:null}  
@@ -224,7 +224,7 @@ export default class CDP extends Component{
                         principalDenom={this.state.userCDP?this.state.userCDP.cdp.principal.denom:null}
                         price={this.state.cdpPrice?this.state.cdpPrice:null}  
                         collateralDeposited={this.state.userCDP?this.state.userCDP.cdp.collateral.amount:null}
-                        collateralizationRatio={this.state.cdpParams?parseInt(this.state.cdpParams.collateral_params[0].liquidation_ratio):null}
+                        collateralizationRatio={this.state.cdpParams?parseFloat(this.state.cdpParams.collateral_params[0].liquidation_ratio):null}
                     />:''}
                     
                     {(this.props.owner == this.props.user)?<RepayDebtCDPButton
@@ -235,7 +235,7 @@ export default class CDP extends Component{
                         principalDenom={this.state.userCDP?this.state.userCDP.cdp.principal.denom:null}
                         price={this.state.cdpPrice?this.state.cdpPrice:null}  
                         collateralDeposited={this.state.userCDP?this.state.userCDP.cdp.collateral.amount:null}
-                        collateralizationRatio={this.state.cdpParams?parseInt(this.state.cdpParams.collateral_params[0].liquidation_ratio):null}    
+                        collateralizationRatio={this.state.cdpParams?parseFloat(this.state.cdpParams.collateral_params[0].liquidation_ratio):null}    
                         disabled={!this.state.cdpParams}
                     />:''}
                 </div>
