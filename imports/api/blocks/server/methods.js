@@ -531,7 +531,7 @@ Meteor.methods({
                                 Object.keys(validatorSet).forEach((conPubKey) => {
                                     let validatorData = validatorSet[conPubKey];
                                     // Active validators should have been updated in previous steps
-                                    if (validatorData.status === 2)
+                                    if (validatorData.status === 3)
                                         return
 
                                     if (dbValidators[conPubKey] == undefined) {
