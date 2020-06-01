@@ -239,7 +239,7 @@ Meteor.methods({
                                 delegator_address: msg[m].value.delegator_address,
                                 voting_power: Math.floor(parseInt(msg[m].value.value.amount) / Coin.StakingCoin.fraction),
                                 jailed: false,
-                                status: 2
+                                status: 3
                             }
 
                             totalVotingPower += validator.voting_power;
