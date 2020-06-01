@@ -1231,9 +1231,11 @@ class CreateCDPButton extends LedgerButton {
     }
 
     static getDerivedStateFromProps(nextProps, prevState){
-        if(!_.isEqual(nextProps.bnbTotalValue,prevState.bnbTotalValue)){
+        let maxAmount = nextProps.bnbTotalValue / Meteor.settings.public.coins[1].fraction;
+
+        if(!_.isEqual(maxAmount,prevState.maxAmount)){
             
-            return {maxAmount: nextProps.bnbTotalValue / Meteor.settings.public.coins[1].fraction}
+            return {maxAmount: maxAmount}
         }
         else return null;
     }
@@ -1331,9 +1333,11 @@ class DepositCDPButton extends LedgerButton {
     }
     
     static getDerivedStateFromProps(nextProps, prevState){
-        if(!_.isEqual(nextProps.bnbTotalValue,prevState.bnbTotalValue)){
+        let maxAmount = nextProps.bnbTotalValue / Meteor.settings.public.coins[1].fraction;
+
+        if(!_.isEqual(maxAmount,prevState.maxAmount)){
             
-            return {maxAmount: nextProps.bnbTotalValue / Meteor.settings.public.coins[1].fraction}
+            return {maxAmount: maxAmount}
         }
         else return null;
     }
@@ -1430,11 +1434,12 @@ class WithdrawCDPButton extends LedgerButton {
     }
 
     static getDerivedStateFromProps(nextProps, prevState){
-        if(!_.isEqual(nextProps.collateralDeposited,prevState.collateralDeposited)){
-            
+        let maxAmount = nextProps.collateralDeposited / Meteor.settings.public.coins[1].fraction;
+        let ratio = ((parseInt(nextProps.collateralDeposited) / Meteor.settings.public.coins[1].fraction) * parseFloat(nextProps.price)) / (parseInt(nextProps.principalDeposited) / Meteor.settings.public.coins[5].fraction);
+        if(!_.isEqual(maxAmount,prevState.maxAmount)){
             return {
-                maxAmount: nextProps.collateralDeposited / Meteor.settings.public.coins[1].fraction,
-                ratio: ((parseInt(nextProps.collateralDeposited) / Meteor.settings.public.coins[1].fraction) * parseFloat(nextProps.price)) / (parseInt(nextProps.principalDeposited) / Meteor.settings.public.coins[5].fraction)
+                maxAmount: maxAmount,
+                ratio: ratio
             }
         }
         else return null;
@@ -1529,11 +1534,13 @@ class DrawDebtCDPButton extends LedgerButton {
     }
 
     static getDerivedStateFromProps(nextProps, prevState){
-        if(!_.isEqual(nextProps.principalDeposited,prevState.principalDeposited)){
+        let maxAmount = nextProps.principalDeposited / Meteor.settings.public.coins[5].fraction;
+        let ratio = ((parseInt(nextProps.collateralDeposited) / Meteor.settings.public.coins[1].fraction) * parseFloat(nextProps.price)) / (parseInt(nextProps.principalDeposited) / Meteor.settings.public.coins[5].fraction);
+        if(!_.isEqual(maxAmount,prevState.maxAmount)){
             
             return {
-                maxAmount: nextProps.principalDeposited / Meteor.settings.public.coins[5].fraction,
-                ratio: ((parseInt(nextProps.collateralDeposited) / Meteor.settings.public.coins[1].fraction) * parseFloat(nextProps.price)) / (parseInt(nextProps.principalDeposited) / Meteor.settings.public.coins[5].fraction)
+                maxAmount: maxAmount,
+                ratio: ratio
             }
         }
         else return null;
@@ -1626,12 +1633,14 @@ class RepayDebtCDPButton extends LedgerButton {
     }
 
     static getDerivedStateFromProps(nextProps, prevState){
-        if(!_.isEqual(nextProps.principalDeposited,prevState.principalDeposited)){
-            
+        let maxAmount = nextProps.principalDeposited / Meteor.settings.public.coins[5].fraction;
+        let ratio = ((parseInt(nextProps.collateralDeposited) / Meteor.settings.public.coins[1].fraction) * parseFloat(nextProps.price)) / (parseInt(nextProps.principalDeposited) / Meteor.settings.public.coins[5].fraction);
+        let usdxTotalValue = nextProps.usdxTotalValue / Meteor.settings.public.coins[5].fraction;
+        if(!_.isEqual(maxAmount,prevState.maxAmount)){ 
             return {
-                maxAmount: nextProps.principalDeposited / Meteor.settings.public.coins[5].fraction,
-                ratio: ((parseInt(nextProps.collateralDeposited) / Meteor.settings.public.coins[1].fraction) * parseFloat(nextProps.price)) / (parseInt(nextProps.principalDeposited) / Meteor.settings.public.coins[5].fraction),
-                usdxTotalValue: nextProps.usdxTotalValue / Meteor.settings.public.coins[5].fraction
+                maxAmount: maxAmount,
+                ratio: ratio,
+                usdxTotalValue: usdxTotalValue
             }
         }
         else return null;
