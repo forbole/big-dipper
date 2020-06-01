@@ -23,7 +23,6 @@ export default class WithdrawCDP extends Component {
                 <UncontrolledCollapse toggler="#toggler_withdraw_cdp">
                     <Table responsive>
                         <tbody>
-                            <br></br>
                             <tr>
                                 <th scope="row"><T>cdp.depositor</T></th>
                                 <td>{this.props.depositor ? <Account address={this.props.depositor}/> : null}</td>

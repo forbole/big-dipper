@@ -21,9 +21,6 @@ export default class RepayDebt extends Component {
         }
     }
 
-    
-
-
     render(){
         if (this.props){
             return<div><Button className="ledger-buttons-group my-2" color="primary" id="toggler_repay_debt" size="sm"><T>transactions.info</T>  </Button>
