@@ -236,7 +236,9 @@ export default class AccountDetails extends Component {
                             let totalValue = cloneDeep(this.state.total);
                             for (let v in totalValue) {
                                 for (let c in this.state.rewards) {
-                                    totalValue[v].amount = parseFloat(totalValue[v].amount) + parseFloat(this.state.rewards[c].amount)
+                                    if (totalValue[v] === this.state.rewards[c]) {
+                                        totalValue[v].amount = parseFloat(totalValue[v].amount) + parseFloat(this.state.rewards[c].amount)
+                                    }
                                 }
                             }
                             this.setState({
@@ -369,7 +371,7 @@ export default class AccountDetails extends Component {
 
         timer = Meteor.setInterval(() => {
             this.getBalance();
-        },10000)
+        }, 10000)
     }
 
     componentDidUpdate(prevProps) {
