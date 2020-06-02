@@ -1255,7 +1255,7 @@ class CreateCDPButton extends LedgerButton {
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         return <TabPane tabId="2">
-            <h3>Create CDP with <img src="/img/bnb-symbol.svg" style={{ width: "24px", height: "24px" }} /> BNB</h3>
+            <h3>Create CDP with <img src="/img/bnb-symbol.svg" className="bnb-img" /> BNB</h3>
             <FormGroup>
                 <Label for="collateral"><T>cdp.collateral</T></Label>
                 <Input placeholder="Collateral Amount" name="collateral" value={this.state.collateral} onChange={this.handleChange} type="number"
@@ -1264,7 +1264,7 @@ class CreateCDPButton extends LedgerButton {
                 <FormText>The amount of BNB you would like to deposit</FormText>
             </FormGroup>
             <FormGroup>
-                <Label for="debt"><T>cdp.debt</T><FormText>(The maximum amount of USDX you could draw is {this.state.collateral * this.props.price / 1.5})</FormText></Label>
+                <Label for="debt"><T>cdp.debt</T><FormText>(The maximum amount of USDX you could draw is {numbro(this.state.collateral * this.props.price / this.props.collateralizationRatio).format({ mantissa: 4 })}</FormText></Label>
                 <Input invalid={this.state.debt < this.props.cdpParams / Meteor.settings.public.coins[5].fraction} placeholder="Debt Amount" name="debt" value={this.state.debt} type="number" onChange={this.handleChange} />
                 <FormText>The amount of debt in USDX you would like to draw</FormText>
                 <FormFeedback>The minimum debt is {this.props.cdpParams / Meteor.settings.public.coins[5].fraction} USDX </FormFeedback>
@@ -1358,7 +1358,7 @@ class DepositCDPButton extends LedgerButton {
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         return <TabPane tabId="2">
-            <h3>Deposit into CDP with <img src="/img/bnb-symbol.svg" style={{ width: "24px", height: "24px" }} /> BNB</h3>
+            <h3>Deposit into CDP with <img src="/img/bnb-symbol.svg" className="bnb-img" /> BNB</h3>
             <FormGroup>
                 <Label for="collateral"><T>cdp.deposit</T></Label>
                 <Input placeholder="Collateral Amount" name="collateral" value={this.state.collateral} onChange={this.handleChange}
@@ -1462,7 +1462,7 @@ class WithdrawCDPButton extends LedgerButton {
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         return <TabPane tabId="2">
-            <h3>Withdraw <img src="/img/bnb-symbol.svg" style={{ width: "24px", height: "24px" }} /> BNB from CDP</h3>
+            <h3>Withdraw <img src="/img/bnb-symbol.svg" className="bnb-img" /> BNB from CDP</h3>
             <FormGroup>
                 <Label for="collateral"><T>cdp.withdraw</T></Label>
                 <Input placeholder="Collateral Amount" name="collateral" type="number" value={this.state.collateral} onChange={this.handleChange}
@@ -1562,7 +1562,7 @@ class DrawDebtCDPButton extends LedgerButton {
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         return <TabPane tabId="2">
-            <h3>Draw <img src="/img/usdx-symbol.svg" style={{ width: "24px", height: "24px" }} /> USDX </h3>
+            <h3>Draw USDX </h3>
             <FormGroup>
                 <Label for="collateral"><T>cdp.draw</T></Label>
                 <Input placeholder="Draw Amount" name="draw" value={this.state.draw} type="number" onChange={this.handleChange}
@@ -1662,7 +1662,7 @@ class RepayDebtCDPButton extends LedgerButton {
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         return <TabPane tabId="2">
-            <h3>Repay <img src="/img/usdx-symbol.svg" style={{ width: "24px", height: "24px" }} /> USDX Debt </h3>
+            <h3>Repay USDX Debt </h3>
             <FormGroup>
                 <Label for="collateral"><T>cdp.repay</T></Label>
                 <Input placeholder="Repay Amount" name="debt" value={this.state.debt} type="number" onChange={this.handleChange}

@@ -194,8 +194,8 @@ export default class CDP extends Component {
                         </tr>
                     </tbody>
                 </Table>
-                <div>
-                <DepositCDPButton
+                {/* <div> */}
+                {/* <DepositCDPButton
                         cdpParams={this.state.cdpParams ? this.state.cdpParams.debt_param.debt_floor : null}
                         collateral={this.props.collateral ? this.props.collateral : null}
                         bnbTotalValue={this.findTotalValue(this.state.total, 'bnb')}
@@ -239,7 +239,7 @@ export default class CDP extends Component {
                         collateralizationRatio={this.state.cdpParams ? parseFloat(this.state.cdpParams.collateral_params[0].liquidation_ratio) : null}
                         disabled={!this.state.cdpParams}
                     /> : ''}
-                </div>
+                </div> */}
 
             </div>
         }

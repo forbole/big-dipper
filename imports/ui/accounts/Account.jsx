@@ -144,7 +144,6 @@ export default class AccountDetails extends Component {
                                 , this
                         })
                     }, this)
-                    console.log(this.state.total)
 
                     if (this.state.total && this.state.total.length > 1) {
                         let totalValue = cloneDeep(this.state.total);
@@ -170,7 +169,6 @@ export default class AccountDetails extends Component {
                         })
                     }
                 }
-                console.log(this.state.total)
 
                 this.setState({
                     unbondingDelegations: result.unbonding || []
@@ -188,7 +186,6 @@ export default class AccountDetails extends Component {
                             }), this
                         })
                     }, this)
-                    console.log(this.state.total)
 
                     if (this.state.total && this.state.total.length > 1) {
                         let totalValue = cloneDeep(this.state.total);
@@ -206,7 +203,6 @@ export default class AccountDetails extends Component {
                         })
                     }
                 }
-                console.log(this.state.total)
 
 
 
@@ -215,7 +211,6 @@ export default class AccountDetails extends Component {
                     this.setState({
                         rewards: totalRewards,
                     })
-                    console.log(this.state.total)
 
                     if (this.state.rewards.length > 0) {
 
@@ -231,7 +226,6 @@ export default class AccountDetails extends Component {
                             this.setState({
                                 total: totalValue,
                             })
-                            console.log(this.state.total)
                         } else {
                             let totalValue = cloneDeep(this.state.total);
                             for (let v in totalValue) {
@@ -245,7 +239,6 @@ export default class AccountDetails extends Component {
                                 total: totalValue,
                             })
                         }
-                        console.log(this.state.total)
                     }
 
                 }
@@ -258,7 +251,6 @@ export default class AccountDetails extends Component {
                             numRewards[result.rewards[c]["validator_address"]] = result.rewards[c].reward;
                         }
                     }
-                    console.log(this.state.total)
                     for (let e in numRewards) {
                         for (let f in numRewards[e]) {
                             if (this.state.denom === numRewards[e][f].denom) {
@@ -271,7 +263,6 @@ export default class AccountDetails extends Component {
                         }
                     }
                 }
-                console.log(this.state.total)
 
 
                 if (result.commission && result.commission.length > 0) {
@@ -281,7 +272,6 @@ export default class AccountDetails extends Component {
                         commission: totalCommissions,
                     })
 
-                    console.log(this.state.total)
                     if (this.state.commission.length > 0) {
                         if (this.state.commission.length > 1) {
                             let totalValue = cloneDeep(this.state.total);
@@ -303,11 +293,9 @@ export default class AccountDetails extends Component {
                                 totalValue[v].amount = parseFloat(totalValue[v].amount) + parseFloat(this.state.commission[v].amount)
                             }
 
-                            console.log(this.state.total)
                             this.setState({
                                 total: totalValue,
                             })
-                            console.log(this.state.total)
                         }
                     }
 
@@ -436,22 +424,22 @@ export default class AccountDetails extends Component {
     findCoin(coins, requestedDenom) {
         if (coins && coins.length > 1 && requestedDenom) {
             let finder = (coins).find(({ denom }) => denom === requestedDenom);
-            let coinFinder = finder ? new Coin(finder.amount, finder.denom).toString(8) : null;
+            let coinFinder = finder ? new Coin(finder.amount, finder.denom).toString(4) : '0.0000 ' + requestedDenom;
             return coinFinder
         }
         if (coins.length === 1) {
             for (let c in coins) {
                 if (coins[c].denom === requestedDenom) {
-                    return new Coin(parseFloat(coins[c].amount), requestedDenom).toString(8)
+                    return new Coin(parseFloat(coins[c].amount), requestedDenom).toString(4)
                 }
                 else {
-                    return new Coin(parseFloat('0.00'), requestedDenom).toString(8)
+                    return new Coin(parseFloat('0.00'), requestedDenom).toString(4)
                 }
 
             }
         }
         else {
-            return new Coin(parseFloat('0.00'), requestedDenom).toString(8)
+            return new Coin(parseFloat('0.00'), requestedDenom).toString(4)
         }
 
     }
