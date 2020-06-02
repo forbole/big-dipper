@@ -1264,18 +1264,18 @@ class CreateCDPButton extends LedgerButton {
                 <FormText>The amount of BNB you would like to deposit</FormText>
             </FormGroup>
             <FormGroup>
-                <Label for="debt"><T>cdp.debt</T></Label>
+                <Label for="debt"><T>cdp.debt</T><FormText>(The maximum amount of USDX you could draw is {this.state.collateral * this.props.price / 1.5})</FormText></Label>
                 <Input invalid={this.state.debt < this.props.cdpParams / Meteor.settings.public.coins[5].fraction} placeholder="Debt Amount" name="debt" value={this.state.debt} type="number" onChange={this.handleChange} />
                 <FormText>The amount of debt in USDX you would like to draw</FormText>
                 <FormFeedback>The minimum debt is {this.props.cdpParams / Meteor.settings.public.coins[5].fraction} USDX </FormFeedback>
             </FormGroup>
             <FormGroup>
                 <Label><T>cdp.collateralizationRatio</T></Label>
-                <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio))}
-                    className={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? 'text-success' : 'text-danger'}
+                <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio >= this.props.collateralizationRatio))}
+                    className={((this.state.ratio !== Infinity) && (this.state.ratio >= this.props.collateralizationRatio)) ? 'text-success' : 'text-danger'}
                     value={((this.state.ratio !== Infinity) && (this.state.ratio > 0)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 })}
                     disabled={true} />
-                <FormFeedback>Collateralization ratio is danger! It must be greater than {this.props.collateralizationRatio}</FormFeedback>
+                <FormFeedback>Collateralization ratio is danger! It must be equal or greater than {this.props.collateralizationRatio}</FormFeedback>
             </FormGroup>
             <FormGroup>
                 <Label for="memo"><T>cdp.memo</T></Label>
