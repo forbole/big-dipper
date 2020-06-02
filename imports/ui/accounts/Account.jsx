@@ -1,10 +1,11 @@
 import React, { Component, useState } from 'react';
-import { Spinner, 
-    TabContent, TabPane, 
-    Nav, NavItem, NavLink, 
-    Row, Col, 
-    Card, CardHeader, CardBody, 
-    Progress, 
+import {
+    Spinner,
+    TabContent, TabPane,
+    Nav, NavItem, NavLink,
+    Row, Col,
+    Card, CardHeader, CardBody,
+    Progress,
 } from 'reactstrap';
 import classnames from 'classnames';
 import numbro from 'numbro';
@@ -16,7 +17,7 @@ import Redelegations from './Redelegations.jsx';
 import AccountTransactions from '../components/TransactionsContainer.js';
 import ChainStates from '../components/ChainStatesContainer.js'
 import { Helmet } from 'react-helmet';
-import { WithdrawButton, TransferButton, ClaimSwapButton} from '../ledger/LedgerActions.jsx';
+import { WithdrawButton, TransferButton, ClaimSwapButton } from '../ledger/LedgerActions.jsx';
 import CDP from '../cdp/CDP.jsx';
 import SentryBoundary from '../components/SentryBoundary.jsx';
 import i18n from 'meteor/universe:i18n';
@@ -30,8 +31,8 @@ const coin3 = 'usdx'
 
 const cloneDeep = require('lodash/cloneDeep');
 
-export default class AccountDetails extends Component{
-    constructor(props){
+export default class AccountDetails extends Component {
+    constructor(props) {
         super(props);
         this.state = {
             address: props.match.params.address,
@@ -71,17 +72,17 @@ export default class AccountDetails extends Component{
 
     static getDerivedStateFromProps(props, state) {
         if (state.user !== localStorage.getItem(CURRENTUSERADDR)) {
-            return {user: localStorage.getItem(CURRENTUSERADDR)};
+            return { user: localStorage.getItem(CURRENTUSERADDR) };
         }
         return null;
     }
 
-    getBalance(){
+    getBalance() {
 
         let numRewards = {};
-        
+
         Meteor.call('coinStats.getStats', (error, result) => {
-            if (result){
+            if (result) {
                 this.setState({
                     price: result.usd
                 })
@@ -108,11 +109,14 @@ export default class AccountDetails extends Component{
                         available: getAvailableValue,
                         total: getTotalValue
                     })
+
+
                 } else {
                     let setZeroAmount = [{
                         denom: "ukava",
                         amount: "0.00"
                     }]
+
                     this.setState({
                         available: cloneDeep(setZeroAmount),
                         denom: Coin.StakingCoin.denom,
@@ -137,10 +141,10 @@ export default class AccountDetails extends Component{
                             this.setState({
                                 delegated: delegatedValue,
                             })
-                            , this
+                                , this
                         })
                     }, this)
-
+                    console.log(this.state.total)
 
                     if (this.state.total && this.state.total.length > 1) {
                         let totalValue = cloneDeep(this.state.total);
@@ -166,6 +170,7 @@ export default class AccountDetails extends Component{
                         })
                     }
                 }
+                console.log(this.state.total)
 
                 this.setState({
                     unbondingDelegations: result.unbonding || []
@@ -183,6 +188,7 @@ export default class AccountDetails extends Component{
                             }), this
                         })
                     }, this)
+                    console.log(this.state.total)
 
                     if (this.state.total && this.state.total.length > 1) {
                         let totalValue = cloneDeep(this.state.total);
@@ -200,6 +206,7 @@ export default class AccountDetails extends Component{
                         })
                     }
                 }
+                console.log(this.state.total)
 
 
 
@@ -208,6 +215,7 @@ export default class AccountDetails extends Component{
                     this.setState({
                         rewards: totalRewards,
                     })
+                    console.log(this.state.total)
 
                     if (this.state.rewards.length > 0) {
 
@@ -223,6 +231,7 @@ export default class AccountDetails extends Component{
                             this.setState({
                                 total: totalValue,
                             })
+                            console.log(this.state.total)
                         } else {
                             let totalValue = cloneDeep(this.state.total);
                             for (let v in totalValue) {
@@ -234,7 +243,7 @@ export default class AccountDetails extends Component{
                                 total: totalValue,
                             })
                         }
-
+                        console.log(this.state.total)
                     }
 
                 }
@@ -247,6 +256,7 @@ export default class AccountDetails extends Component{
                             numRewards[result.rewards[c]["validator_address"]] = result.rewards[c].reward;
                         }
                     }
+                    console.log(this.state.total)
                     for (let e in numRewards) {
                         for (let f in numRewards[e]) {
                             if (this.state.denom === numRewards[e][f].denom) {
@@ -259,6 +269,7 @@ export default class AccountDetails extends Component{
                         }
                     }
                 }
+                console.log(this.state.total)
 
 
                 if (result.commission && result.commission.length > 0) {
@@ -268,6 +279,7 @@ export default class AccountDetails extends Component{
                         commission: totalCommissions,
                     })
 
+                    console.log(this.state.total)
                     if (this.state.commission.length > 0) {
                         if (this.state.commission.length > 1) {
                             let totalValue = cloneDeep(this.state.total);
@@ -289,10 +301,11 @@ export default class AccountDetails extends Component{
                                 totalValue[v].amount = parseFloat(totalValue[v].amount) + parseFloat(this.state.commission[v].amount)
                             }
 
+                            console.log(this.state.total)
                             this.setState({
                                 total: totalValue,
                             })
-
+                            console.log(this.state.total)
                         }
                     }
 
@@ -315,15 +328,15 @@ export default class AccountDetails extends Component{
             }
         })
 
-        Meteor.call('cdp.getCDPPrice',   (error, result) => {
-            if (error){
+        Meteor.call('cdp.getCDPPrice', (error, result) => {
+            if (error) {
                 console.warn(error);
                 this.setState({
-                    loading:false
+                    loading: false
                 })
             }
-    
-            if (result){
+
+            if (result) {
                 this.setState({
                     bnbPrice: result
                 })
@@ -331,27 +344,27 @@ export default class AccountDetails extends Component{
 
         }),
 
-        Meteor.call('accounts.getRedelegations', this.props.match.params.address, (error, result) => {
-            if (error){
-                console.warn(error);
-                this.setState({
-                    loading:false
-                })
-            }
-    
-            if (result){
-                this.setState({
-                    redelegations: result
-                })
-            }
+            Meteor.call('accounts.getRedelegations', this.props.match.params.address, (error, result) => {
+                if (error) {
+                    console.warn(error);
+                    this.setState({
+                        loading: false
+                    })
+                }
 
-        })
-     
-        
+                if (result) {
+                    this.setState({
+                        redelegations: result
+                    })
+                }
+
+            })
+
+
     }
-     
 
-    componentDidMount(){
+
+    componentDidMount() {
         this.getBalance();
 
         timer = Meteor.setInterval(() => {
@@ -359,8 +372,8 @@ export default class AccountDetails extends Component{
         },10000)
     }
 
-    componentDidUpdate(prevProps){
-        if (this.props.match.params.address !== prevProps.match.params.address){
+    componentDidUpdate(prevProps) {
+        if (this.props.match.params.address !== prevProps.match.params.address) {
             this.setState({
                 address: this.props.match.params.address,
                 loading: true,
@@ -396,89 +409,89 @@ export default class AccountDetails extends Component{
         }
     }
 
-    handleCoinSwitch = (type,e) => {
+    handleCoinSwitch = (type, e) => {
         e.preventDefault();
-        switch (type){
-        case type:
-            this.setState({
-                denom: type
-            })
-            break;
+        switch (type) {
+            case type:
+                this.setState({
+                    denom: type
+                })
+                break;
         }
     }
 
- 
+
     renderShareLink() {
         let primaryLink = `/account/${this.state.address}`
         let otherLinks = [
-            {label: 'Transfer', url: `${primaryLink}/send`}
+            { label: 'Transfer', url: `${primaryLink}/send` }
         ]
         return <LinkIcon link={primaryLink} otherLinks={otherLinks} />
     }
 
 
 
-    findCoin(coins, requestedDenom){
-        if(coins && coins.length > 1 && requestedDenom){
-            let finder = (coins).find(({denom}) => denom === requestedDenom);
-            let coinFinder = finder ? new Coin(finder.amount, finder.denom).toString(4) : null ;
+    findCoin(coins, requestedDenom) {
+        if (coins && coins.length > 1 && requestedDenom) {
+            let finder = (coins).find(({ denom }) => denom === requestedDenom);
+            let coinFinder = finder ? new Coin(finder.amount, finder.denom).toString(8) : null;
             return coinFinder
         }
-        if(coins.length === 1 ){
-            for(let c in coins){
-                if(coins[c].denom === requestedDenom){
-                    return new Coin(parseFloat(coins[c].amount), requestedDenom).toString(4)
+        if (coins.length === 1) {
+            for (let c in coins) {
+                if (coins[c].denom === requestedDenom) {
+                    return new Coin(parseFloat(coins[c].amount), requestedDenom).toString(8)
                 }
-                else{
-                    return new Coin(parseFloat('0.00'), requestedDenom).toString(4)
+                else {
+                    return new Coin(parseFloat('0.00'), requestedDenom).toString(8)
                 }
 
             }
         }
-        else{
-            return new Coin(parseFloat('0.00'), requestedDenom).toString(4)
+        else {
+            return new Coin(parseFloat('0.00'), requestedDenom).toString(8)
         }
-            
+
     }
 
-    
 
-    findValue(params, requestedDenom){
+
+    findValue(params, requestedDenom) {
         let currentTotal = 0;
         let denomType = "";
         let denomFraction = 1;
         let stakingTotal = 0
 
-        if(requestedDenom){
-            denomType = Meteor.settings.public.coins.find(({denom}) => denom === requestedDenom);
-            denomFraction = denomType ? denomType.fraction :  null
+        if (requestedDenom) {
+            denomType = Meteor.settings.public.coins.find(({ denom }) => denom === requestedDenom);
+            denomFraction = denomType ? denomType.fraction : null
         }
 
-        if(params && params.length > 1){
-            let current = (params).find(({denom}) => denom === requestedDenom);
+        if (params && params.length > 1) {
+            let current = (params).find(({ denom }) => denom === requestedDenom);
             currentTotal = current ? current.amount : '0.0000';
-            
+
             stakingTotal = currentTotal / denomFraction
-            
+
             return stakingTotal
         }
 
-        else{           
-            for(let p in params){
-                if(params[p].denom === requestedDenom){
+        else {
+            for (let p in params) {
+                if (params[p].denom === requestedDenom) {
                     currentTotal = params[p].amount;
                     stakingTotal = currentTotal / denomFraction
                     return stakingTotal
                 }
-                else{
+                else {
                     currentTotal = 0
                     stakingTotal = 0
                     return stakingTotal
                 }
             }
-            
-        } 
-        
+
+        }
+
     }
 
     toggleBond = (tab) => {
@@ -518,18 +531,18 @@ export default class AccountDetails extends Component{
     //     })
     // }
 
-    render(){
-        if (this.state.loading){
+    render() {
+        if (this.state.loading) {
             return <div id="account">
                 <h1 className="d-none d-lg-block"><T>accounts.accountDetails</T></h1>
                 <Spinner type="grow" color="primary" />
             </div>
         }
-        else if (this.state.accountExists){
+        else if (this.state.accountExists) {
             return <div id="account">
                 <Helmet>
                     <title>Account Details of {this.state.address} | The Big Dipper</title>
-                    <meta name="description" content={"Account Details of "+this.state.address} />
+                    <meta name="description" content={"Account Details of " + this.state.address} />
                 </Helmet>
                 <Row>
                     <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>accounts.accountDetails</T></h1></Col>
@@ -544,20 +557,20 @@ export default class AccountDetails extends Component{
                             Balance
                             <div className="shareLink float-right">{this.renderShareLink()}</div>
                         </CardHeader>
-                        <CardBody><br/> 
+                        <CardBody><br />
                             <Row className="account-distributions">
                                 <Col xs={12}>
-                                    <Progress multi> 
-                                        <Progress bar className="available" value={this.findValue(this.state.available, coin1) / this.state.totalValueInUSD * 100} /> 
+                                    <Progress multi>
+                                        <Progress bar className="available" value={this.findValue(this.state.available, coin1) / this.state.totalValueInUSD * 100} />
                                         <Progress bar className="delegated" value={this.findValue(this.state.delegated, coin1) * this.state.price / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="unbonding" value={this.findValue(this.state.unbonding, coin1) * this.state.price / this.state.totalValueInUSD* 100} />
-                                        <Progress bar className="rewards" value={this.findValue(this.state.rewards, coin1) * this.state.price  / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="unbonding" value={this.findValue(this.state.unbonding, coin1) * this.state.price / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="rewards" value={this.findValue(this.state.rewards, coin1) * this.state.price / this.state.totalValueInUSD * 100} />
                                         <Progress bar className="commission" value={this.findValue(this.state.commission, coin1) * this.state.price / this.state.totalValueInUSD * 100} />
                                         <Progress bar className="available_2nd" value={this.findValue(this.state.available, coin2) * this.state.bnbPrice / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="rewards_2nd" value={this.findValue(this.state.rewards, coin2) * this.state.bnbPrice  / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="commission_2nd" value={this.findValue(this.state.commission, coin2) * this.state.bnbPrice  / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="available_3rd" value={this.findValue(this.state.available, coin3) * this.state.usdxPrice  / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="rewards_3rd" value={this.findValue(this.state.rewards, coin3) * this.state.usdxPrice  / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="rewards_2nd" value={this.findValue(this.state.rewards, coin2) * this.state.bnbPrice / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="commission_2nd" value={this.findValue(this.state.commission, coin2) * this.state.bnbPrice / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="available_3rd" value={this.findValue(this.state.available, coin3) * this.state.usdxPrice / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="rewards_3rd" value={this.findValue(this.state.rewards, coin3) * this.state.usdxPrice / this.state.totalValueInUSD * 100} />
                                         <Progress bar className="commission_3rd" value={this.findValue(this.state.commission, coin3) * this.state.usdxPrice / this.state.totalValueInUSD * 100} />
                                     </Progress>
                                 </Col>
@@ -576,9 +589,9 @@ export default class AccountDetails extends Component{
                                     <Row>
                                         <Col xs={12} className="label text-nowrap"><T>accounts.rewards</T></Col>
                                     </Row>
-                                    {this.state.commission?<Row>
+                                    {this.state.commission ? <Row>
                                         <Col xs={12} className="label text-nowrap"><T>validators.commission</T></Col>
-                                    </Row>:null}
+                                    </Row> : null}
                                 </Col>
                                 <Col xs={3} md={2}>
                                     <Row>
@@ -593,12 +606,12 @@ export default class AccountDetails extends Component{
                                     <Row>
                                         <Col xs={12} className="value text-left"><div className="rewards infinity" />{this.findCoin(this.state.rewards, coin1)}</Col>
                                     </Row>
-                                    {this.state.commission?<Row>
+                                    {this.state.commission ? <Row>
                                         <Col xs={12} className="value text-left"><div className="commission infinity" />{this.findCoin(this.state.commission, coin1)}</Col>
-                                    </Row>:null}
+                                    </Row> : null}
                                 </Col>
                                 <Col xs={3} md={2}>
-                                    
+
                                     <Row>
                                         <Col xs={12} className="value text-left"> <div className="available_2nd infinity" />{this.findCoin(this.state.available, coin2)}</Col>
                                     </Row>
@@ -611,12 +624,12 @@ export default class AccountDetails extends Component{
                                     <Row>
                                         <Col xs={12} className="value text-left"><div className="rewards_2nd infinity" />{this.findCoin(this.state.rewards, coin2)}</Col>
                                     </Row>
-                                    {this.state.commission?<Row>
+                                    {this.state.commission ? <Row>
                                         <Col xs={12} className="value text-left"><div className="commission_2nd infinity" />{this.findCoin(this.state.commission, coin2)}</Col>
-                                    </Row>:null}
+                                    </Row> : null}
                                 </Col>
                                 <Col xs={3} md={2} >
-                                    
+
                                     <Row>
                                         <Col xs={12} className="value text-left"> <div className="available_3rd infinity" />{this.findCoin(this.state.available, coin3)}</Col>
                                     </Row>
@@ -629,38 +642,38 @@ export default class AccountDetails extends Component{
                                     <Row>
                                         <Col xs={12} className="value text-left"><div className="rewards_3rd infinity" />{this.findCoin(this.state.rewards, coin3)}</Col>
                                     </Row>
-                                    {this.state.commission?<Row>
+                                    {this.state.commission ? <Row>
                                         <Col xs={12} className="value text-left"><div className="commission_3rd infinity" />{this.findCoin(this.state.commission, coin3)}</Col>
-                                    </Row>:null}                                   
+                                    </Row> : null}
                                 </Col>
                                 <Col xs={3} md={4} className="total d-flex flex-column justify-content-end text-nowrap">
-                                    {this.state.user?<Row>
-                                        <Col xs={12}><TransferButton history={this.props.history} address={this.state.address} denom={this.state.denom}/></Col>
-                                        {this.state.user===this.state.address?<Col xs={12}><WithdrawButton  history={this.props.history} rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address} denom={this.state.denom}/></Col>:null}
-                                        {this.state.user===this.state.address?<Col xs={12}><ClaimSwapButton validator={this.props.validator} address={this.state.operator_address} history={this.props.history}/></Col>:null}
-                                    </Row>:null}
+                                    {this.state.user ? <Row>
+                                        <Col xs={12}><TransferButton history={this.props.history} address={this.state.address} denom={this.state.denom} /></Col>
+                                        {this.state.user === this.state.address ? <Col xs={12}><WithdrawButton history={this.props.history} rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address} denom={this.state.denom} /></Col> : null}
+                                        {this.state.user === this.state.address ? <Col xs={12}><ClaimSwapButton validator={this.props.validator} address={this.state.operator_address} history={this.props.history} /></Col> : null}
+                                    </Row> : null}
                                 </Col>
-                                <Col md={12}  className="total d-flex flex-column justify-content-end">
+                                <Col md={12} className="total d-flex flex-column justify-content-end">
                                     <Row>
                                         <Col xs={12} className="label  text-right"><div className="infinity" /><T>accounts.total</T></Col>
                                     </Row>
                                 </Col>
-                                <Col md={12}  className="total d-flex flex-column justify-content-end">
+                                <Col md={12} className="total d-flex flex-column justify-content-end">
                                     <Row>
                                         <Col xs={12} className="value text-right">{this.findCoin(this.state.total, coin1)}</Col>
-                                        <Col xs={12} className="dollar-value text-right text-secondary">~{numbro((this.findValue(this.state.total, coin1))*this.state.price).format("$0,0.0000a")} ({numbro(this.state.price).format("$0,0.00")}/{Meteor.settings.public.coins[0].displayName})</Col>
+                                        <Col xs={12} className="dollar-value text-right text-secondary">~{numbro((this.findValue(this.state.total, coin1)) * this.state.price).format("$0,0.0000a")} ({numbro(this.state.price).format("$0,0.00")}/{Meteor.settings.public.coins[0].displayName})</Col>
                                     </Row>
                                 </Col>
-                                <Col md={12}  className="total d-flex flex-column justify-content-end">
+                                <Col md={12} className="total d-flex flex-column justify-content-end">
                                     <Row>
                                         <Col xs={12} className="value-2 text-right">{this.findCoin(this.state.total, coin2)}</Col>
-                                        <Col xs={12} className="dollar-value-2 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin2))*this.state.bnbPrice).format("$0,0.0000a")} ({numbro(this.state.bnbPrice).format("$0,0.00")}/{Meteor.settings.public.coins[1].displayName})</Col>
+                                        <Col xs={12} className="dollar-value-2 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin2)) * this.state.bnbPrice).format("$0,0.0000a")} ({numbro(this.state.bnbPrice).format("$0,0.00")}/{Meteor.settings.public.coins[1].displayName})</Col>
                                     </Row>
                                 </Col>
-                                <Col md={12}  className="total d-flex flex-column justify-content-end">
+                                <Col md={12} className="total d-flex flex-column justify-content-end">
                                     <Row>
                                         <Col xs={12} className="value-3 text-right">{this.findCoin(this.state.total, coin3)}</Col>
-                                        <Col xs={12} className="dollar-value-3 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin3))*this.state.usdxPrice).format("$0,0.0000a")} ({numbro(this.state.usdxPrice).format("$0,0.00")}/{Meteor.settings.public.coins[5].displayName})</Col>
+                                        <Col xs={12} className="dollar-value-3 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin3)) * this.state.usdxPrice).format("$0,0.0000a")} ({numbro(this.state.usdxPrice).format("$0,0.00")}/{Meteor.settings.public.coins[5].displayName})</Col>
                                     </Row>
                                 </Col>
                             </Row>
@@ -702,8 +715,8 @@ export default class AccountDetails extends Component{
                                 </Nav>
                                 <TabContent activeTab={this.state.bondActiveTab}>
                                     <TabPane tabId="delegations">
-                                        <Delegations 
-                                            address={this.state.address} 
+                                        <Delegations
+                                            address={this.state.address}
                                             delegations={this.state.delegations}
                                             reward={this.state.reward}
                                             denom={this.state.denom}
@@ -711,14 +724,14 @@ export default class AccountDetails extends Component{
                                         />
                                     </TabPane>
                                     <TabPane tabId="unbondings">
-                                        <Unbondings 
-                                            address={this.state.address} 
+                                        <Unbondings
+                                            address={this.state.address}
                                             unbonding={this.state.unbondingDelegations}
                                         />
                                     </TabPane>
                                     <TabPane tabId="redelegations">
-                                        <Redelegations 
-                                            address={this.state.address} 
+                                        <Redelegations
+                                            address={this.state.address}
                                             redelegations={this.state.redelegations}
                                         />
                                     </TabPane>
@@ -739,30 +752,29 @@ export default class AccountDetails extends Component{
                                             <span className="cdp-logo bnb">BNB</span>
                                         </NavLink>
                                     </NavItem>
-                                </Nav> 
+                                </Nav>
                                 <TabContent activeTab={this.state.cdpActiveTab}>
                                     <TabPane tabId="cdp-bnb">
-                                        <CDP 
-                                            owner={this.state.address} 
-                                            collateral='bnb' 
-                                            total={this.state.total} 
+                                        <CDP
+                                            owner={this.state.address}
+                                            collateral='bnb'
                                             user={this.state.user}
                                         />
                                     </TabPane>
                                 </TabContent>
                             </CardBody>
                         </Card>
-                        
+
                     </Col></SentryBoundary>
                 </Row>
                 <Row>
                     <Col>
-                        <AccountTransactions delegator={this.state.address} denom={this.state.denom} limit={100}/>
+                        <AccountTransactions delegator={this.state.address} denom={this.state.denom} limit={100} />
                     </Col>
                 </Row>
             </div>
         }
-        else{
+        else {
             return <div id="account">
                 <h1 className="d-none d-lg-block"><T>accounts.accountDetails</T></h1>
                 <p><T>acounts.notFound</T></p>

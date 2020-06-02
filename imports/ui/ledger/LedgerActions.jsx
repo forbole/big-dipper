@@ -79,10 +79,10 @@ const TypeMeta = {
         button: 'undelegate',
         pathPreFix: 'staking/delegators',
         pathSuffix: 'unbonding_delegations',
-        warning: (duration) => { 
+        warning: (duration) => {
             let dayTime = duration / 1000000;
             let unbondingPeriod = moment.duration(dayTime)
-            return  `There is a ${unbondingPeriod.humanize()}-day unbonding period.`
+            return `There is a ${unbondingPeriod.humanize()}-day unbonding period.`
         }
     },
     [Types.WITHDRAW]: {
@@ -358,7 +358,7 @@ class LedgerButton extends Component {
                 if (result) {
                     let coin;
                     coin = result.coins[0] ? (new Coin(result.coins[0].amount, result.coins[0].denom)) : (new Coin(0));
-                    
+
                     this.setStateOnSuccess('loadingBalance', {
                         currentUser: {
                             accountNumber: result.account_number,
@@ -418,92 +418,92 @@ class LedgerButton extends Component {
     createMessage = (callback) => {
         let txMsg
         switch (this.state.actionType) {
-        case Types.DELEGATE:
-            txMsg = Ledger.createDelegate(
-                this.getTxContext(),
-                this.props.validator.operator_address,
-                this.state.delegateAmount.amount)
-            break;
-        case Types.REDELEGATE:
-            txMsg = Ledger.createRedelegate(
-                this.getTxContext(),
-                this.props.validator.operator_address,
-                this.state.targetValidator.operator_address,
-                this.state.delegateAmount.amount)
-            break;
-        case Types.UNDELEGATE:
-            txMsg = Ledger.createUndelegate(
-                this.getTxContext(),
-                this.props.validator.operator_address,
-                this.state.delegateAmount.amount);
-            break;
-        case Types.SEND:
-            txMsg = Ledger.createTransfer(
-                this.getTxContext(),
-                this.state.transferTarget,
-                this.state.transferAmount.amount);
-            break;
-        case Types.SUBMITPROPOSAL:
-            txMsg = Ledger.createSubmitProposal(
-                this.getTxContext(),
-                this.state.proposalTitle,
-                this.state.proposalDescription,
-                this.state.depositAmount.amount);
-            break;
-        case Types.VOTE:
-            txMsg = Ledger.createVote(
-                this.getTxContext(),
-                this.props.proposalId,
-                this.state.voteOption);
-            break;
-        case Types.DEPOSIT:
-            txMsg = Ledger.createDeposit(
-                this.getTxContext(),
-                this.props.proposalId,
-                this.state.depositAmount.amount);
-            break;
-        case Types.CLAIMSWAP:
-            txMsg = Ledger.claimSwap(
-                this.getTxContext(),
-                this.state.swapID,
-                this.state.swapRandomNumber);
-            break;
-        case Types.CREATECDP:
-            txMsg = Ledger.createCDP(
-                this.getTxContext(),
-                this.state.collateral,
-                this.state.debt);
-            break;
-        case Types.DEPOSITCDP:
-            txMsg = Ledger.depositCDP(
-                this.getTxContext(),
-                this.state.collateral,
-                this.state.collateralDenom,
-                this.state.cdpOwner);
-            break;
-        case Types.WITHDRAWCDP:
-            txMsg = Ledger.withdrawCDP(
-                this.getTxContext(),
-                this.state.collateral,
-                this.state.collateralDenom,
-                this.state.cdpOwner);
-            break;
-        case Types.DRAWDEBT:
-            txMsg = Ledger.drawDebt(
-                this.getTxContext(),
-                this.state.draw,
-                this.state.collateralDenom);
-            break;
-        case Types.REPAYDEPT:
-            txMsg = Ledger.repayDebt(
-                this.getTxContext(),
-                this.state.debt,
-                this.state.collateralDenom);
-            break;
+            case Types.DELEGATE:
+                txMsg = Ledger.createDelegate(
+                    this.getTxContext(),
+                    this.props.validator.operator_address,
+                    this.state.delegateAmount.amount)
+                break;
+            case Types.REDELEGATE:
+                txMsg = Ledger.createRedelegate(
+                    this.getTxContext(),
+                    this.props.validator.operator_address,
+                    this.state.targetValidator.operator_address,
+                    this.state.delegateAmount.amount)
+                break;
+            case Types.UNDELEGATE:
+                txMsg = Ledger.createUndelegate(
+                    this.getTxContext(),
+                    this.props.validator.operator_address,
+                    this.state.delegateAmount.amount);
+                break;
+            case Types.SEND:
+                txMsg = Ledger.createTransfer(
+                    this.getTxContext(),
+                    this.state.transferTarget,
+                    this.state.transferAmount.amount);
+                break;
+            case Types.SUBMITPROPOSAL:
+                txMsg = Ledger.createSubmitProposal(
+                    this.getTxContext(),
+                    this.state.proposalTitle,
+                    this.state.proposalDescription,
+                    this.state.depositAmount.amount);
+                break;
+            case Types.VOTE:
+                txMsg = Ledger.createVote(
+                    this.getTxContext(),
+                    this.props.proposalId,
+                    this.state.voteOption);
+                break;
+            case Types.DEPOSIT:
+                txMsg = Ledger.createDeposit(
+                    this.getTxContext(),
+                    this.props.proposalId,
+                    this.state.depositAmount.amount);
+                break;
+            case Types.CLAIMSWAP:
+                txMsg = Ledger.claimSwap(
+                    this.getTxContext(),
+                    this.state.swapID,
+                    this.state.swapRandomNumber);
+                break;
+            case Types.CREATECDP:
+                txMsg = Ledger.createCDP(
+                    this.getTxContext(),
+                    this.state.collateral,
+                    this.state.debt);
+                break;
+            case Types.DEPOSITCDP:
+                txMsg = Ledger.depositCDP(
+                    this.getTxContext(),
+                    this.state.collateral,
+                    this.state.collateralDenom,
+                    this.state.cdpOwner);
+                break;
+            case Types.WITHDRAWCDP:
+                txMsg = Ledger.withdrawCDP(
+                    this.getTxContext(),
+                    this.state.collateral,
+                    this.state.collateralDenom,
+                    this.state.cdpOwner);
+                break;
+            case Types.DRAWDEBT:
+                txMsg = Ledger.drawDebt(
+                    this.getTxContext(),
+                    this.state.draw,
+                    this.state.collateralDenom);
+                break;
+            case Types.REPAYDEPT:
+                txMsg = Ledger.repayDebt(
+                    this.getTxContext(),
+                    this.state.debt,
+                    this.state.collateralDenom);
+                break;
 
 
         }
-        
+
         callback(txMsg, this.getSimulateBody(txMsg))
     }
 
@@ -531,7 +531,7 @@ class LedgerButton extends Component {
         let gasAdjustment = TypeMeta[this.state.actionType].gasAdjustment || DEFAULT_GAS_ADJUSTMENT;
         Meteor.call('transaction.simulate', simulateBody, this.state.user, this.getPath(), gasAdjustment, (err, res) => {
             if (res) {
-                if(res === '0'){
+                if (res === '0') {
                     res = '300000'
                 }
                 Ledger.applyGas(txMsg, res, Meteor.settings.public.gasPrice, Coin.StakingCoin.denom);
@@ -583,17 +583,17 @@ class LedgerButton extends Component {
         let value;
 
         switch (dataset.type) {
-        case 'validator':
-            value = { moniker: dataset.moniker, operator_address: dataset.address }
-            break;
-        case 'coin':
-            value = new Coin(target.value, target.nextSibling.innerText)
-            break;
-        case 'hash':
-            value = target.value.toUpperCase()
-            break;
-        default:
-            value = target.value;
+            case 'validator':
+                value = { moniker: dataset.moniker, operator_address: dataset.address }
+                break;
+            case 'coin':
+                value = new Coin(target.value, target.nextSibling.innerText)
+                break;
+            case 'hash':
+                value = target.value.toUpperCase()
+                break;
+            default:
+                value = target.value;
         }
         this.setState({ [target.name]: value })
     }
@@ -741,7 +741,7 @@ class DelegationButtons extends LedgerButton {
         super(props);
     }
 
-    
+
     getDelegatedToken = (currentDelegation) => {
         if (currentDelegation && currentDelegation.shares && currentDelegation.tokenPerShare) {
             return new Coin(currentDelegation.shares * currentDelegation.tokenPerShare);
@@ -780,22 +780,22 @@ class DelegationButtons extends LedgerButton {
         let moniker = this.props.validator.description && this.props.validator.description.moniker;
         let validatorAddress = <span className='ellipic'>this.props.validator.operator_address</span>;
         switch (this.state.actionType) {
-        case Types.DELEGATE:
-            action = 'Delegate to';
-            maxAmount = this.state.currentUser.availableCoin;
-            availableStatement = 'your available balance:'
-            break;
-        case Types.REDELEGATE:
-            action = 'Redelegate from';
-            target = this.getValidatorOptions();
-            maxAmount = this.getDelegatedToken(this.props.currentDelegation);
-            availableStatement = 'your delegated tokens:'
-            break;
-        case Types.UNDELEGATE:
-            action = 'Undelegate from';
-            maxAmount = this.getDelegatedToken(this.props.currentDelegation);
-            availableStatement = 'your delegated tokens:'
-            break;
+            case Types.DELEGATE:
+                action = 'Delegate to';
+                maxAmount = this.state.currentUser.availableCoin;
+                availableStatement = 'your available balance:'
+                break;
+            case Types.REDELEGATE:
+                action = 'Redelegate from';
+                target = this.getValidatorOptions();
+                maxAmount = this.getDelegatedToken(this.props.currentDelegation);
+                availableStatement = 'your delegated tokens:'
+                break;
+            case Types.UNDELEGATE:
+                action = 'Undelegate from';
+                maxAmount = this.getDelegatedToken(this.props.currentDelegation);
+                availableStatement = 'your delegated tokens:'
+                break;
         }
         return <TabPane tabId="2">
             <h3>{action} {moniker ? moniker : validatorAddress} {target ? 'to' : ''} {target}</h3>
@@ -812,20 +812,20 @@ class DelegationButtons extends LedgerButton {
     }
 
     getWarningMessage = () => {
-        let duration = this.props.stakingParams? (this.props.stakingParams.params.unbonding_time) : null;
-        let maxEntries = this.props.stakingParams? this.props.stakingParams.params.max_entries : null;
+        let duration = this.props.stakingParams ? (this.props.stakingParams.params.unbonding_time) : null;
+        let maxEntries = this.props.stakingParams ? this.props.stakingParams.params.max_entries : null;
         let warning = TypeMeta[this.state.actionType].warning;
         return warning && warning(duration, maxEntries);
     }
 
     getConfirmationMessage = () => {
         switch (this.state.actionType) {
-        case Types.DELEGATE:
-            return <span>You are going to <span className='action'>delegate</span> <Amount coin={this.state.delegateAmount} /> to <AccountTooltip address={this.props.validator.operator_address} sync /> with <Fee gas={this.state.gasEstimate} />.</span>
-        case Types.REDELEGATE:
-            return <span>You are going to <span className='action'>redelegate</span> <Amount coin={this.state.delegateAmount} /> from <AccountTooltip address={this.props.validator.operator_address} sync /> to <AccountTooltip address={this.state.targetValidator && this.state.targetValidator.operator_address} sync /> with <Fee gas={this.state.gasEstimate} />.</span>
-        case Types.UNDELEGATE:
-            return <span>You are going to <span className='action'>undelegate</span> <Amount coin={this.state.delegateAmount} /> from <AccountTooltip address={this.props.validator.operator_address} sync /> with <Fee gas={this.state.gasEstimate} />.</span>
+            case Types.DELEGATE:
+                return <span>You are going to <span className='action'>delegate</span> <Amount coin={this.state.delegateAmount} /> to <AccountTooltip address={this.props.validator.operator_address} sync /> with <Fee gas={this.state.gasEstimate} />.</span>
+            case Types.REDELEGATE:
+                return <span>You are going to <span className='action'>redelegate</span> <Amount coin={this.state.delegateAmount} /> from <AccountTooltip address={this.props.validator.operator_address} sync /> to <AccountTooltip address={this.state.targetValidator && this.state.targetValidator.operator_address} sync /> with <Fee gas={this.state.gasEstimate} />.</span>
+            case Types.UNDELEGATE:
+                return <span>You are going to <span className='action'>undelegate</span> <Amount coin={this.state.delegateAmount} /> from <AccountTooltip address={this.props.validator.operator_address} sync /> with <Fee gas={this.state.gasEstimate} />.</span>
         }
     }
 
@@ -1071,27 +1071,27 @@ class ProposalActionButtons extends LedgerButton {
         let inputs;
         let title;
         switch (this.state.actionType) {
-        case Types.VOTE:
-            title = `Vote on Proposal ${this.props.proposalId}`
-            inputs = (<Input type="select" name="voteOption" onChange={this.handleInputChange} defaultValue=''>
-                <option value='' disabled>Vote Option</option>
-                <option value='Yes'>yes</option>
-                <option value='Abstain'>abstain</option>
-                <option value='No'>no</option>
-                <option value='NoWithVeto'>no with veto</option>
-            </Input>)
-            break;
-        case Types.DEPOSIT:
-            title = `Deposit to Proposal ${this.props.proposalId}`
-            inputs = (<InputGroup>
-                <Input name="depositAmount" onChange={this.handleInputChange}
-                    data-type='coin' placeholder="Amount"
-                    min={Coin.MinStake} max={maxAmount.stakingAmount} type="number"
-                    invalid={this.state.depositAmount != null && !isBetween(this.state.depositAmount, 1, maxAmount)} />
-                <InputGroupAddon addonType="append">{Coin.StakingCoin.displayName}</InputGroupAddon>
-                <div>your available balance: <Amount coin={maxAmount} /></div>
-            </InputGroup>)
-            break;
+            case Types.VOTE:
+                title = `Vote on Proposal ${this.props.proposalId}`
+                inputs = (<Input type="select" name="voteOption" onChange={this.handleInputChange} defaultValue=''>
+                    <option value='' disabled>Vote Option</option>
+                    <option value='Yes'>yes</option>
+                    <option value='Abstain'>abstain</option>
+                    <option value='No'>no</option>
+                    <option value='NoWithVeto'>no with veto</option>
+                </Input>)
+                break;
+            case Types.DEPOSIT:
+                title = `Deposit to Proposal ${this.props.proposalId}`
+                inputs = (<InputGroup>
+                    <Input name="depositAmount" onChange={this.handleInputChange}
+                        data-type='coin' placeholder="Amount"
+                        min={Coin.MinStake} max={maxAmount.stakingAmount} type="number"
+                        invalid={this.state.depositAmount != null && !isBetween(this.state.depositAmount, 1, maxAmount)} />
+                    <InputGroupAddon addonType="append">{Coin.StakingCoin.displayName}</InputGroupAddon>
+                    <div>your available balance: <Amount coin={maxAmount} /></div>
+                </InputGroup>)
+                break;
         }
         return <TabPane tabId="2">
             <h3>{title}</h3>
@@ -1133,16 +1133,16 @@ class ProposalActionButtons extends LedgerButton {
 
     getConfirmationMessage = () => {
         switch (this.state.actionType) {
-        case Types.VOTE:
-            return <span>You are <span className='action'>voting</span> <strong>{this.state.voteOption}</strong> on proposal {this.props.proposalId}
-                <span> with <Fee gas={this.state.gasEstimate} />.</span>
-            </span>
-            break;
-        case Types.DEPOSIT:
-            return <span>You are <span className='action'>deposit</span> <Amount coin={this.state.depositAmount} /> to proposal {this.props.proposalId}
-                <span> with <Fee gas={this.state.gasEstimate} />.</span>
-            </span>
-            break;
+            case Types.VOTE:
+                return <span>You are <span className='action'>voting</span> <strong>{this.state.voteOption}</strong> on proposal {this.props.proposalId}
+                    <span> with <Fee gas={this.state.gasEstimate} />.</span>
+                </span>
+                break;
+            case Types.DEPOSIT:
+                return <span>You are <span className='action'>deposit</span> <Amount coin={this.state.depositAmount} /> to proposal {this.props.proposalId}
+                    <span> with <Fee gas={this.state.gasEstimate} />.</span>
+                </span>
+                break;
         }
     }
 
@@ -1230,12 +1230,11 @@ class CreateCDPButton extends LedgerButton {
         }
     }
 
-    static getDerivedStateFromProps(nextProps, prevState){
+    static getDerivedStateFromProps(nextProps, prevState) {
         let maxAmount = nextProps.bnbTotalValue / Meteor.settings.public.coins[1].fraction;
+        if (!_.isEqual(maxAmount, prevState.maxAmount)) {
 
-        if(!_.isEqual(maxAmount,prevState.maxAmount)){
-            
-            return {maxAmount: maxAmount}
+            return { maxAmount: maxAmount }
         }
         else return null;
     }
@@ -1259,22 +1258,22 @@ class CreateCDPButton extends LedgerButton {
             <h3>Create CDP with <img src="/img/bnb-symbol.svg" style={{ width: "24px", height: "24px" }} /> BNB</h3>
             <FormGroup>
                 <Label for="collateral"><T>cdp.collateral</T></Label>
-                <Input placeholder="Collateral Amount" name="collateral" value={this.state.collateral} onChange={this.handleChange} type="number"  
-                    min={Coin.MinStake} max={this.state.maxAmount} 
-                    invalid={this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount)}/> 
+                <Input placeholder="Collateral Amount" name="collateral" value={this.state.collateral} onChange={this.handleChange} type="number"
+                    min={Coin.MinStake} max={this.state.maxAmount}
+                    invalid={this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount)} />
                 <FormText>The amount of BNB you would like to deposit</FormText>
             </FormGroup>
             <FormGroup>
                 <Label for="debt"><T>cdp.debt</T></Label>
-                <Input invalid={this.state.debt < this.props.cdpParams/Meteor.settings.public.coins[5].fraction} placeholder="Debt Amount" name="debt" value={this.state.debt} type="number"  onChange={this.handleChange}  />
+                <Input invalid={this.state.debt < this.props.cdpParams / Meteor.settings.public.coins[5].fraction} placeholder="Debt Amount" name="debt" value={this.state.debt} type="number" onChange={this.handleChange} />
                 <FormText>The amount of debt in USDX you would like to draw</FormText>
-                <FormFeedback>The minimum debt is {this.props.cdpParams/Meteor.settings.public.coins[5].fraction} USDX </FormFeedback>    
+                <FormFeedback>The minimum debt is {this.props.cdpParams / Meteor.settings.public.coins[5].fraction} USDX </FormFeedback>
             </FormGroup>
             <FormGroup>
                 <Label><T>cdp.collateralizationRatio</T></Label>
                 <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio))}
                     className={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? 'text-success' : 'text-danger'}
-                    value={((this.state.ratio !== Infinity) && (this.state.ratio > 0)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 }) }
+                    value={((this.state.ratio !== Infinity) && (this.state.ratio > 0)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 })}
                     disabled={true} />
                 <FormFeedback>Collateralization ratio is danger! It must be greater than {this.props.collateralizationRatio}</FormFeedback>
             </FormGroup>
@@ -1331,13 +1330,13 @@ class DepositCDPButton extends LedgerButton {
             cdpOwner: props.cdpOwner,
         }
     }
-    
-    static getDerivedStateFromProps(nextProps, prevState){
+
+    static getDerivedStateFromProps(nextProps, prevState) {
         let maxAmount = nextProps.bnbTotalValue / Meteor.settings.public.coins[1].fraction;
 
-        if(!_.isEqual(maxAmount,prevState.maxAmount)){
-            
-            return {maxAmount: maxAmount}
+        if (!_.isEqual(maxAmount, prevState.maxAmount)) {
+
+            return { maxAmount: maxAmount }
         }
         else return null;
     }
@@ -1350,11 +1349,11 @@ class DepositCDPButton extends LedgerButton {
             [name]: value,
         }, () => {
             this.setState({
-                ratio: ((((parseInt(this.props.collateralDeposited) / Meteor.settings.public.coins[1].fraction) + parseFloat(this.state.collateral))* parseFloat(this.props.price)) / (parseInt(this.props.principalDeposited) / Meteor.settings.public.coins[5].fraction)),
+                ratio: ((((parseInt(this.props.collateralDeposited) / Meteor.settings.public.coins[1].fraction) + parseFloat(this.state.collateral)) * parseFloat(this.props.price)) / (parseInt(this.props.principalDeposited) / Meteor.settings.public.coins[5].fraction)),
             })
         });
     }
-    
+
 
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
@@ -1362,9 +1361,9 @@ class DepositCDPButton extends LedgerButton {
             <h3>Deposit into CDP with <img src="/img/bnb-symbol.svg" style={{ width: "24px", height: "24px" }} /> BNB</h3>
             <FormGroup>
                 <Label for="collateral"><T>cdp.deposit</T></Label>
-                <Input placeholder="Collateral Amount" name="collateral" value={this.state.collateral} onChange={this.handleChange} 
-                    min={Coin.MinStake} max={this.state.maxAmount} 
-                    invalid={this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount)}/>  
+                <Input placeholder="Collateral Amount" name="collateral" value={this.state.collateral} onChange={this.handleChange}
+                    min={Coin.MinStake} max={this.state.maxAmount}
+                    invalid={this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount)} />
                 <FormText>The amount of BNB you would like to deposit</FormText>
             </FormGroup>
             <FormGroup>
@@ -1396,7 +1395,7 @@ class DepositCDPButton extends LedgerButton {
 
     getPath = () => {
         let meta = TypeMeta[this.state.actionType];
-        return  `${meta.pathPreFix}/${this.state.cdpOwner}/${this.props.collateral}/${meta.pathSuffix}`
+        return `${meta.pathPreFix}/${this.state.cdpOwner}/${this.props.collateral}/${meta.pathSuffix}`
     }
 
 
@@ -1404,7 +1403,7 @@ class DepositCDPButton extends LedgerButton {
         if (!this.state.currentUser) return false
         return isBetween(this.state.collateral, 0.00000001, this.state.maxAmount)
     }
-    
+
 
     render = () => {
         return <span className="ledger-buttons-cdp">
@@ -1422,21 +1421,21 @@ class WithdrawCDPButton extends LedgerButton {
         this.state = {
             ...this.state,
             collateral: 0,
-            collateralDenom: props.collateral, 
+            collateralDenom: props.collateral,
             amount: 0,
             maxAmount: props.collateralDeposited / Meteor.settings.public.coins[1].fraction,
             ratio: ((parseInt(props.collateralDeposited) / Meteor.settings.public.coins[1].fraction) * parseFloat(props.price)) / (parseInt(props.principalDeposited) / Meteor.settings.public.coins[5].fraction),
             cdpOwner: props.cdpOwner,
-            depositedValue: props.depositValue  / Meteor.settings.public.coins[1].fraction,
+            depositedValue: props.depositValue / Meteor.settings.public.coins[1].fraction,
             isDepositor: props.isDepositor
         }
         //console.log(this.state.isDepositor)
     }
 
-    static getDerivedStateFromProps(nextProps, prevState){
+    static getDerivedStateFromProps(nextProps, prevState) {
         let maxAmount = nextProps.collateralDeposited / Meteor.settings.public.coins[1].fraction;
         let ratio = ((parseInt(nextProps.collateralDeposited) / Meteor.settings.public.coins[1].fraction) * parseFloat(nextProps.price)) / (parseInt(nextProps.principalDeposited) / Meteor.settings.public.coins[5].fraction);
-        if(!_.isEqual(maxAmount,prevState.maxAmount)){
+        if (!_.isEqual(maxAmount, prevState.maxAmount)) {
             return {
                 maxAmount: maxAmount,
                 ratio: ratio
@@ -1452,23 +1451,23 @@ class WithdrawCDPButton extends LedgerButton {
         this.setState({
             [name]: value,
         }, () => {
-            let ratio = (( ((parseInt(this.props.collateralDeposited) / Meteor.settings.public.coins[1].fraction) - parseFloat(this.state.collateral)) * parseFloat(this.props.price)) / ((parseInt(this.props.principalDeposited) / Meteor.settings.public.coins[5].fraction) ));
+            let ratio = ((((parseInt(this.props.collateralDeposited) / Meteor.settings.public.coins[1].fraction) - parseFloat(this.state.collateral)) * parseFloat(this.props.price)) / ((parseInt(this.props.principalDeposited) / Meteor.settings.public.coins[5].fraction)));
             this.setState({
                 ratio: ratio
             })
         });
     }
-    
+
 
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         return <TabPane tabId="2">
-            <h3>Withdraw <img src="/img/bnb-symbol.svg" style={{width:"24px",height:"24px"}}/> BNB from CDP</h3>
+            <h3>Withdraw <img src="/img/bnb-symbol.svg" style={{ width: "24px", height: "24px" }} /> BNB from CDP</h3>
             <FormGroup>
                 <Label for="collateral"><T>cdp.withdraw</T></Label>
-                <Input placeholder="Collateral Amount" name="collateral"  type="number" value={this.state.collateral} onChange={this.handleChange}
-                    min={Coin.MinStake} max={this.state.maxAmount} 
-                    invalid={this.state.isDepositor? this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.depositedValue) : this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount)}/>    
+                <Input placeholder="Collateral Amount" name="collateral" type="number" value={this.state.collateral} onChange={this.handleChange}
+                    min={Coin.MinStake} max={this.state.maxAmount}
+                    invalid={this.state.isDepositor ? this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.depositedValue) : this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount)} />
                 <FormText>The amount of BNB you would like to withdraw</FormText>
             </FormGroup>
             <FormGroup>
@@ -1482,9 +1481,9 @@ class WithdrawCDPButton extends LedgerButton {
             <FormGroup>
                 <Label for="memo"><T>cdp.memo</T></Label>
                 <Input name="memo" onChange={this.handleInputChange}
-                    placeholder="Memo(optional)" type="textarea" value={this.state.memo}/>
+                    placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
             </FormGroup>
-            <span className='coin'>Your available CDP balance: {this.state.isDepositor? new Coin(this.state.depositedValue, this.props.collateral).convertToString(6) :new Coin(this.state.maxAmount, this.props.collateral).convertToString(6)} </span>               
+            <span className='coin'>Your available CDP balance: {this.state.isDepositor ? new Coin(this.state.depositedValue, this.props.collateral).convertToString(6) : new Coin(this.state.maxAmount, this.props.collateral).convertToString(6)} </span>
         </TabPane>
     }
 
@@ -1497,19 +1496,19 @@ class WithdrawCDPButton extends LedgerButton {
         return isBetween(this.state.collateral, 0.00000001, this.state.maxAmount)
     }
 
-   
+
     getConfirmationMessage = () => {
-        return this.props.collateral? <span>You are going to <span className='action'>withdraw </span> <span className='coin'>{new Coin(this.state.collateral, this.props.collateral).convertToString(8)}</span> for address <b>{this.state.user} </b> from CDP with address <b>{this.state.cdpOwner} </b>
+        return this.props.collateral ? <span>You are going to <span className='action'>withdraw </span> <span className='coin'>{new Coin(this.state.collateral, this.props.collateral).convertToString(8)}</span> for address <b>{this.state.user} </b> from CDP with address <b>{this.state.cdpOwner} </b>
         with <Fee gas={this.state.gasEstimate} />.</span> : ''
     }
 
     getPath = () => {
         let meta = TypeMeta[this.state.actionType];
-        return  `${meta.pathPreFix}/${this.state.cdpOwner}/${this.props.collateral}/${meta.pathSuffix}`
+        return `${meta.pathPreFix}/${this.state.cdpOwner}/${this.props.collateral}/${meta.pathSuffix}`
     }
 
 
-    
+
 
     render = () => {
         return <span className="ledger-buttons-cdp">
@@ -1533,11 +1532,11 @@ class DrawDebtCDPButton extends LedgerButton {
         }
     }
 
-    static getDerivedStateFromProps(nextProps, prevState){
+    static getDerivedStateFromProps(nextProps, prevState) {
         let maxAmount = nextProps.principalDeposited / Meteor.settings.public.coins[5].fraction;
         let ratio = ((parseInt(nextProps.collateralDeposited) / Meteor.settings.public.coins[1].fraction) * parseFloat(nextProps.price)) / (parseInt(nextProps.principalDeposited) / Meteor.settings.public.coins[5].fraction);
-        if(!_.isEqual(maxAmount,prevState.maxAmount)){
-            
+        if (!_.isEqual(maxAmount, prevState.maxAmount)) {
+
             return {
                 maxAmount: maxAmount,
                 ratio: ratio
@@ -1563,28 +1562,28 @@ class DrawDebtCDPButton extends LedgerButton {
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         return <TabPane tabId="2">
-            <h3>Draw <img src="/img/usdx-symbol.svg" style={{width:"24px",height:"24px"}}/> USDX </h3>
+            <h3>Draw <img src="/img/usdx-symbol.svg" style={{ width: "24px", height: "24px" }} /> USDX </h3>
             <FormGroup>
                 <Label for="collateral"><T>cdp.draw</T></Label>
-                <Input placeholder="Draw Amount" name="draw" value={this.state.draw} type="number" onChange={this.handleChange} 
-                    min={Coin.MinStake} max={this.state.maxAmount} 
-                    invalid={this.state.draw != null && !isBetween(this.state.draw, 0, this.state.maxAmount)}/>   
+                <Input placeholder="Draw Amount" name="draw" value={this.state.draw} type="number" onChange={this.handleChange}
+                    min={Coin.MinStake} max={this.state.maxAmount}
+                    invalid={this.state.draw != null && !isBetween(this.state.draw, 0, this.state.maxAmount)} />
                 <FormText>The amount of USDX you would like to draw</FormText>
             </FormGroup>
             <FormGroup>
                 <Label><T>cdp.collateralizationRatio</T></Label>
                 <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio))}
                     className={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? 'text-success' : 'text-danger'}
-                    value={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 }) }
+                    value={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 })}
                     disabled={true} />
                 <FormFeedback>Collateralization ratio is danger! It must be greater than {this.props.collateralizationRatio}</FormFeedback>
             </FormGroup>
             <FormGroup>
                 <Label for="memo"><T>cdp.memo</T></Label>
                 <Input name="memo" onChange={this.handleInputChange}
-                    placeholder="Memo(optional)" type="textarea" value={this.state.memo}/>
+                    placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
             </FormGroup>
-            <span className='coin'>Your available balance: {new Coin(this.state.maxAmount, this.props.principalDenom).convertToString(8)} </span>               
+            <span className='coin'>Your available balance: {new Coin(this.state.maxAmount, this.props.principalDenom).convertToString(8)} </span>
         </TabPane>
     }
 
@@ -1604,10 +1603,10 @@ class DrawDebtCDPButton extends LedgerButton {
 
     getPath = () => {
         let meta = TypeMeta[this.state.actionType];
-        return  `${meta.pathPreFix}/${this.state.user}/${this.props.collateral}/${meta.pathSuffix}`
+        return `${meta.pathPreFix}/${this.state.user}/${this.props.collateral}/${meta.pathSuffix}`
     }
 
-   
+
 
     render = () => {
         return <span className="ledger-buttons-cdp">
@@ -1632,11 +1631,11 @@ class RepayDebtCDPButton extends LedgerButton {
         }
     }
 
-    static getDerivedStateFromProps(nextProps, prevState){
+    static getDerivedStateFromProps(nextProps, prevState) {
         let maxAmount = nextProps.principalDeposited / Meteor.settings.public.coins[5].fraction;
         let ratio = ((parseInt(nextProps.collateralDeposited) / Meteor.settings.public.coins[1].fraction) * parseFloat(nextProps.price)) / (parseInt(nextProps.principalDeposited) / Meteor.settings.public.coins[5].fraction);
         let usdxTotalValue = nextProps.usdxTotalValue / Meteor.settings.public.coins[5].fraction;
-        if(!_.isEqual(maxAmount,prevState.maxAmount)){ 
+        if (!_.isEqual(maxAmount, prevState.maxAmount)) {
             return {
                 maxAmount: maxAmount,
                 ratio: ratio,
@@ -1658,33 +1657,33 @@ class RepayDebtCDPButton extends LedgerButton {
             })
         });
     }
-    
+
 
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         return <TabPane tabId="2">
-            <h3>Repay <img src="/img/usdx-symbol.svg" style={{width:"24px",height:"24px"}}/> USDX Debt </h3>
+            <h3>Repay <img src="/img/usdx-symbol.svg" style={{ width: "24px", height: "24px" }} /> USDX Debt </h3>
             <FormGroup>
                 <Label for="collateral"><T>cdp.repay</T></Label>
-                <Input placeholder="Repay Amount" name="debt" value={this.state.debt} type="number" onChange={this.handleChange} 
-                    min={Coin.MinStake} max={this.state.maxAmount} 
-                    invalid={this.state.debt != null && !isBetween(this.state.debt, 0, this.state.usdxTotalValue)}/>  
+                <Input placeholder="Repay Amount" name="debt" value={this.state.debt} type="number" onChange={this.handleChange}
+                    min={Coin.MinStake} max={this.state.maxAmount}
+                    invalid={this.state.debt != null && !isBetween(this.state.debt, 0, this.state.usdxTotalValue)} />
                 <FormText>The amount of USDX you would like to repay</FormText>
             </FormGroup>
             <FormGroup>
                 <Label><T>cdp.collateralizationRatio</T></Label>
                 <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio))}
                     className={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? 'text-success' : 'text-danger'}
-                    value={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 }) }
+                    value={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 })}
                     disabled={true} />
                 <FormFeedback>Collateralization ratio is danger! It must be greater than {this.props.collateralizationRatio}</FormFeedback>
             </FormGroup>
             <FormGroup>
                 <Label for="memo"><T>cdp.memo</T></Label>
                 <Input name="memo" onChange={this.handleInputChange}
-                    placeholder="Memo(optional)" type="textarea" value={this.state.memo}/>
+                    placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
             </FormGroup>
-            <span className='coin'>Your current debt is: {new Coin(this.state.maxAmount, this.props.principalDenom).convertToString(8)} </span>                  
+            <span className='coin'>Your current debt is: {new Coin(this.state.maxAmount, this.props.principalDenom).convertToString(8)} </span>
         </TabPane>
     }
 
@@ -1704,7 +1703,7 @@ class RepayDebtCDPButton extends LedgerButton {
 
     getPath = () => {
         let meta = TypeMeta[this.state.actionType];
-        return  `${meta.pathPreFix}/${this.state.user}/${this.props.collateral}/${meta.pathSuffix}`
+        return `${meta.pathPreFix}/${this.state.user}/${this.props.collateral}/${meta.pathSuffix}`
     }
 
     render = () => {

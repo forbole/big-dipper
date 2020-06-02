@@ -12,16 +12,16 @@ const T = i18n.createComponent();
 const CDPRow = (props) => {
     return <tr>
         <th className="d-none d-sm-table-cell counter ">{(props.cdpList.cdp.id)}</th>
-        <td className="owner"><Link to={"/account/"+props.cdpList.cdp.owner}>{props.cdpList.cdp.owner}</Link></td>
-        <td className="collateral-deposited">{props.cdpList.collateral_value?<div>{new Coin(props.cdpList.collateral_value.amount, props.cdpList.collateral_value.denom).toString(4)}</div>:'0 usdx'}</td>
-        <td className="principal-drawn">{props.cdpList.cdp.principal?<div>{new Coin(props.cdpList.cdp.principal.amount, props.cdpList.cdp.principal.denom).toString()}</div>:'0 usdx'}</td>
-        <td className="value ">{numbro(parseFloat(props.cdpList.collateralization_ratio)).format('0.000000')}</td>
-        <td className="accumulated-fees">{props.cdpList.cdp.accumulated_fees?<div>{new Coin(props.cdpList.cdp.accumulated_fees.amount, props.cdpList.cdp.accumulated_fees.denom).toString()}</div>:'0 usdx'}</td>
-        <td className="fees-updated"><TimeStamp time={props.cdpList.cdp.fees_updated}/></td>
+        <td className="owner"><Link to={"/account/" + props.cdpList.cdp.owner}>{props.cdpList.cdp.owner}</Link></td>
+        <td className="collateral-deposited">{props.cdpList.collateral_value ? <div>{new Coin(props.cdpList.collateral_value.amount, props.cdpList.collateral_value.denom).toString(4)}</div> : '0 usdx'}</td>
+        <td className="principal-drawn">{props.cdpList.cdp.principal ? <div>{new Coin(props.cdpList.cdp.principal.amount, props.cdpList.cdp.principal.denom).toString()}</div> : '0 usdx'}</td>
+        <td className={parseFloat(props.cdpList.collateralization_ratio) > 1.5? "value text-success" : "value text-danger"}>{numbro(parseFloat(props.cdpList.collateralization_ratio)).format('0.000000')}</td>
+        <td className="accumulated-fees">{props.cdpList.cdp.accumulated_fees ? <div>{new Coin(props.cdpList.cdp.accumulated_fees.amount, props.cdpList.cdp.accumulated_fees.denom).toString()}</div> : '0 usdx'}</td>
+        <td className="fees-updated"><TimeStamp time={props.cdpList.cdp.fees_updated} /></td>
     </tr>
 }
 
-export default class List extends Component{
+export default class List extends Component {
 
     constructor(props) {
         super(props);
@@ -30,16 +30,19 @@ export default class List extends Component{
             currentPage: 0,
             pageSize: 15,
             pagesCount: 0,
+            minCollateralRatio: 0,
+            collateralParams: [],
         }
     }
-    
-    componentDidMount(){
+
+    componentDidMount() {
+        // this.getMinCollateralRatio();
         this.getCDPList();
     }
 
     getCDPList = () => {
-        Meteor.call('cdp.getCDPList',  (error, result) => {
-            if (result && result.length > 0){
+        Meteor.call('cdp.getCDPList', (error, result) => {
+            if (result && result.length > 0) {
                 this.setState({
                     cdpList: result.map((cdpList, i) => {
                         return <CDPRow key={i} index={i} cdpList={cdpList} />
@@ -48,15 +51,37 @@ export default class List extends Component{
 
                 })
             }
-            else{
+            else {
                 this.setState({
                     cdpList: undefined,
                     pagesCount: 0,
-            
+
                 })
             }
         })
-    } 
+    }
+
+
+    // getMinCollateralRatio = () => {
+    //     Meteor.call('cdp.getCDPParams', (error, result) => {
+    //         if (error) {
+    //             console.warn(error);
+    //             this.setState({
+    //                 collateralParams: undefined
+    //             })
+    //         }
+    //         if (result) {
+    //             console.log(result)
+    //             this.setState({
+    //                 collateralParams: result.collateral_params.map((param, i) => {
+    //                     return <CDPRow key={i} index={i} collateralParams={param} />
+    //                 }),
+
+    //             })
+
+    //         }
+    //     })
+    // }
 
     handleClick(e, index) {
         e.preventDefault();
@@ -65,11 +90,14 @@ export default class List extends Component{
         });
     }
 
-    render(){
-        if (this.props.loading){
+    render() {
+        //console.log(this.state.getMinCollateralRatio)
+        // console.log(this.props.cdpList.collateralization_ratio)
+        console.log(JSON.stringify(this.state.collateralParams))
+        if (this.props.loading) {
             return <Spinner type="grow" color="primary" />
         }
-        else{
+        else {
             return (<div>
                 <div className="pagination-wrapper">
                     <Table striped className="cdp-list" >
@@ -85,33 +113,33 @@ export default class List extends Component{
                             </tr>
                         </thead>
                         <tbody>
-                            {this.state.cdpList? this.state.cdpList.slice(this.state.currentPage * this.state.pageSize,(this.state.currentPage + 1) * this.state.pageSize) : null}
+                            {this.state.cdpList ? this.state.cdpList.slice(this.state.currentPage * this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize) : null}
                         </tbody>
                     </Table>
                 </div>
-                <Pagination aria-label="Page navigation example" >
+                <Pagination aria-label="CDP List Pagination" >
                     <PaginationItem disabled={this.state.currentPage <= 0}>
                         <PaginationLink
                             onClick={e => this.handleClick(e, this.state.currentPage - 1)}
                             previous
-                            href="#"                        
+                            href="#"
                         />
                     </PaginationItem>
-                
-                    {[...Array(this.state.pagesCount)].map((page, i) => 
+
+                    {[...Array(this.state.pagesCount)].map((page, i) =>
                         <PaginationItem active={i === this.state.currentPage} key={i}>
                             <PaginationLink onClick={e => this.handleClick(e, i)} href="#">
                                 {i + 1}
                             </PaginationLink>
                         </PaginationItem>
                     )}
-                
-                    <PaginationItem disabled={this.state.currentPage >= this.state.pagesCount - 1}>                        
+
+                    <PaginationItem disabled={this.state.currentPage >= this.state.pagesCount - 1}>
                         <PaginationLink
                             onClick={e => this.handleClick(e, currentPage + 1)}
                             next
                             href="#"
-                        />                        
+                        />
                     </PaginationItem>
                 </Pagination>
             </div>)
