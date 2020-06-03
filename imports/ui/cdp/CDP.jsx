@@ -181,7 +181,7 @@ export default class CDP extends Component {
                             <th scope="row" className="w-25 text-muted"><T>cdp.accumulatedFees</T></th>
                             <td>
                                 <div>{new Coin(this.state.userCDP.cdp.accumulated_fees.amount, this.state.userCDP.cdp.accumulated_fees.denom).toString(6)}
-                                    <small> (<T> common.lastUpdated </T> {moment.utc(this.state.userCDP.cdp.fees_updated).fromNow()})</small>
+                                    <small> (<T>common.lastUpdated</T> {moment.utc(this.state.userCDP.cdp.fees_updated).fromNow()})</small>
                                 </div></td>
                         </tr>
                         {(this.state.userCDP.collateral_value && (this.state.userCDP.collateral_value.length > 0)) ? <tr>

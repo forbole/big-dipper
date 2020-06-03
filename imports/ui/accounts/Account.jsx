@@ -69,6 +69,7 @@ export default class AccountDetails extends Component {
             totalUSDXInUSD: 0,
             totalValueInUSD: 0,
             redelegations: [],
+            hasIncentive: false,
         }
     }
 
@@ -350,8 +351,23 @@ export default class AccountDetails extends Component {
                     })
                 }
 
-            })
+            }),
 
+
+            Meteor.call('cdp.getIncentive', this.props.match.params.address, coin2, (error, result) => {
+            if (error) {
+                console.warn(error);
+                this.setState({
+                    loading: false,
+                    hasIncentive: false
+                })
+            }
+            if (result && result.length > 0) {
+                this.setState({
+                    hasIncentive: true,
+                })
+            }
+        })
 
     }
 
@@ -395,6 +411,7 @@ export default class AccountDetails extends Component {
                 totalUSDXInUSD: 0,
                 totalValueInUSD: 0,
                 redelegations: [],
+                hasIncentive: false,
             }, () => {
                 this.getBalance();
             })
@@ -744,6 +761,7 @@ export default class AccountDetails extends Component {
                                             <span className="cdp-logo bnb">BNB</span>
                                         </NavLink>
                                     </NavItem>
+                                    {this.state.hasIncentive === true ?
                                     <NavItem>
                                         <NavLink
                                             className={classnames({ active: this.state.cdpActiveTab === 'cdp-incentive' })}
@@ -754,7 +772,7 @@ export default class AccountDetails extends Component {
                                                     emoji_events
                                             </i> Incentive</span>
                                         </NavLink>
-                                    </NavItem>
+                                    </NavItem> : null }
                                 </Nav>
                                 <TabContent activeTab={this.state.cdpActiveTab}>
                                     <TabPane tabId="cdp-bnb">
