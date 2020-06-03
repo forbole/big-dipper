@@ -8,10 +8,10 @@ import i18n from 'meteor/universe:i18n';
 import PropTypes from 'prop-types';
 
 const T = i18n.createComponent();
-export default class TransactionTabs extends Component{
-    constructor(props){
+export default class TransactionTabs extends Component {
+    constructor(props) {
         super(props);
-        this.state ={
+        this.state = {
             activeTab: 'tx-transfer',
             transferTxs: {},
             cdpTxs: {},
@@ -20,7 +20,8 @@ export default class TransactionTabs extends Component{
             stakingTxs: {},
             distributionTxs: {},
             governanceTxs: {},
-            slashingTxs: {}
+            slashingTxs: {},
+            incentiveTxs: {},
         }
     }
 
@@ -32,8 +33,8 @@ export default class TransactionTabs extends Component{
         }
     }
 
-    componentDidUpdate(prevProps){
-        if (this.props != prevProps){
+    componentDidUpdate(prevProps) {
+        if (this.props != prevProps) {
             this.setState({
                 transferTxs: this.props.transferTxs,
                 cdpTxs: this.props.cdpTxs,
@@ -42,12 +43,13 @@ export default class TransactionTabs extends Component{
                 stakingTxs: this.props.stakingTxs,
                 distributionTxs: this.props.distributionTxs,
                 governanceTxs: this.props.governanceTxs,
-                slashingTxs: this.props.slashingTxs
-            })    
+                slashingTxs: this.props.slashingTxs,
+                incentiveTxs: this.props.incentiveTxs,
+            })
         }
     }
 
-    render(){
+    render() {
         return <Card>
             <CardHeader><T>transactions.transactions</T> <small>(<T>common.last</T> 100)</small></CardHeader>
             <CardBody>
@@ -121,98 +123,98 @@ export default class TransactionTabs extends Component{
                     <TabPane tabId="tx-transfer">
                         <Row>
                             <Col>
-                                {(this.state.transferTxs.length > 0)?this.state.transferTxs.map((tx, i) => {
-                                    return <TransactionRow 
-                                        key={i} 
-                                        index={i} 
+                                {(this.state.transferTxs.length > 0) ? this.state.transferTxs.map((tx, i) => {
+                                    return <TransactionRow
+                                        key={i}
+                                        index={i}
                                         tx={tx}
-                                        blockList 
+                                        blockList
                                     />
-                                }):''}
+                                }) : ''}
                             </Col>
                         </Row>
                     </TabPane>
                     <TabPane tabId="tx-cdp">
                         <Row>
                             <Col>
-                                {(this.state.cdpTxs.length > 0)?this.state.cdpTxs.map((tx, i) => {
-                                    return <TransactionRow 
-                                        key={i} 
-                                        index={i} 
+                                {(this.state.cdpTxs.length > 0) ? this.state.cdpTxs.map((tx, i) => {
+                                    return <TransactionRow
+                                        key={i}
+                                        index={i}
                                         tx={tx}
-                                        blockList 
+                                        blockList
                                     />
-                                }):''}
+                                }) : ''}
                             </Col>
                         </Row>
                     </TabPane>
                     <TabPane tabId="tx-swap">
                         <Row>
                             <Col>
-                                {(this.state.swapTxs.length > 0)?this.state.swapTxs.map((tx, i) => {
-                                    return <TransactionRow 
-                                        key={i} 
-                                        index={i} 
+                                {(this.state.swapTxs.length > 0) ? this.state.swapTxs.map((tx, i) => {
+                                    return <TransactionRow
+                                        key={i}
+                                        index={i}
                                         tx={tx}
-                                        blockList 
+                                        blockList
                                     />
-                                }):''}
+                                }) : ''}
                             </Col>
                         </Row>
                     </TabPane>
                     <TabPane tabId="tx-staking">
                         <Row>
                             <Col>
-                                {(this.state.stakingTxs.length > 0)?this.state.stakingTxs.map((tx, i) => {
-                                    return <TransactionRow 
-                                        key={i} 
-                                        index={i} 
-                                        tx={tx} 
+                                {(this.state.stakingTxs.length > 0) ? this.state.stakingTxs.map((tx, i) => {
+                                    return <TransactionRow
+                                        key={i}
+                                        index={i}
+                                        tx={tx}
                                         blockList
                                     />
-                                }):''}
+                                }) : ''}
                             </Col>
                         </Row>
                     </TabPane>
                     <TabPane tabId="tx-distr">
                         <Row>
                             <Col>
-                                {(this.state.distributionTxs.length > 0)?this.state.distributionTxs.map((tx, i) => {
-                                    return <TransactionRow 
-                                        key={i} 
-                                        index={i} 
-                                        tx={tx} 
+                                {(this.state.distributionTxs.length > 0) ? this.state.distributionTxs.map((tx, i) => {
+                                    return <TransactionRow
+                                        key={i}
+                                        index={i}
+                                        tx={tx}
                                         blockList
                                     />
-                                }):''}
+                                }) : ''}
                             </Col>
                         </Row>
                     </TabPane>
                     <TabPane tabId="tx-gov">
                         <Row>
                             <Col>
-                                {(this.state.governanceTxs.length > 0)?this.state.governanceTxs.map((tx, i) => {
-                                    return <TransactionRow 
-                                        key={i} 
-                                        index={i} 
-                                        tx={tx} 
+                                {(this.state.governanceTxs.length > 0) ? this.state.governanceTxs.map((tx, i) => {
+                                    return <TransactionRow
+                                        key={i}
+                                        index={i}
+                                        tx={tx}
                                         blockList
                                     />
-                                }):''}
+                                }) : ''}
                             </Col>
                         </Row>
                     </TabPane>
                     <TabPane tabId="tx-slashing">
                         <Row>
                             <Col>
-                                {(this.state.slashingTxs.length > 0)?this.state.slashingTxs.map((tx, i) => {
-                                    return <TransactionRow 
-                                        key={i} 
-                                        index={i} 
-                                        tx={tx} 
+                                {(this.state.slashingTxs.length > 0) ? this.state.slashingTxs.map((tx, i) => {
+                                    return <TransactionRow
+                                        key={i}
+                                        index={i}
+                                        tx={tx}
                                         blockList
                                     />
-                                }):''}
+                                }) : ''}
                             </Col>
                         </Row>
                     </TabPane>

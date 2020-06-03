@@ -22,6 +22,8 @@ import CDP from '../cdp/CDP.jsx';
 import SentryBoundary from '../components/SentryBoundary.jsx';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js';
+import Incentive from '../cdp/Incentive.jsx';
+
 
 const T = i18n.createComponent();
 let timer = 0;
@@ -742,10 +744,28 @@ export default class AccountDetails extends Component {
                                             <span className="cdp-logo bnb">BNB</span>
                                         </NavLink>
                                     </NavItem>
+                                    <NavItem>
+                                        <NavLink
+                                            className={classnames({ active: this.state.cdpActiveTab === 'cdp-incentive' })}
+                                            onClick={() => { this.toggleCDP('cdp-incentive'); }}
+                                        >
+                                            <span className="cdp-logo">
+                                                <i className="material-icons md-16">
+                                                    emoji_events
+                                            </i> Incentive</span>
+                                        </NavLink>
+                                    </NavItem>
                                 </Nav>
                                 <TabContent activeTab={this.state.cdpActiveTab}>
                                     <TabPane tabId="cdp-bnb">
                                         <CDP
+                                            owner={this.state.address}
+                                            collateral='bnb'
+                                            user={this.state.user}
+                                        />
+                                    </TabPane>
+                                    <TabPane tabId="cdp-incentive">
+                                        <Incentive
                                             owner={this.state.address}
                                             collateral='bnb'
                                             user={this.state.user}

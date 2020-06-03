@@ -168,6 +168,7 @@ bep3:
         heightSpan: 'Height Span'
 cdp:
     id: 'ID'
+    idClaimPeriod: 'Claim Period ID'
     owner: 'Owner'
     collateral: 'Collateral'
     collateralDeposited: 'Collateral Deposited'
@@ -192,6 +193,7 @@ cdp:
     cdps: 'CDPs'
     cdpID: 'CDP ID'
     cdpFeesUpdated: 'Fees Updated'
+    totalReward: 'Total Rewards Value'
 
 proposals:
     notFound: 'No proposal found.'
@@ -306,3 +308,4 @@ messageTypes:
     unjail: 'Unjail'
     IBCTransfer: 'IBC Transfer'
     IBCReceive: 'IBC Receive'
+    placeBid: 'Place Bid'

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Spinner, UncontrolledCollapse, Button, CardBody, Card, ListGroupItem} from 'reactstrap';
+import { Table, Spinner, UncontrolledCollapse, Button, CardBody, Card, ListGroupItem } from 'reactstrap';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js';
 import PropTypes from 'prop-types';
@@ -9,7 +9,7 @@ import Account from '../components/Account.jsx';
 
 
 
-const T = i18n.createComponent(); 
+const T = i18n.createComponent();
 
 
 
@@ -21,25 +21,24 @@ export default class RepayDebt extends Component {
         }
     }
 
-    render(){
-        if (this.props){
-            return<div><Button className="ledger-buttons-group my-2" color="primary" id="toggler_repay_debt" size="sm"><T>transactions.info</T>  </Button>
+    render() {
+        if (this.props) {
+            return <div><Button className="ledger-buttons-group my-2" color="primary" id="toggler_repay_debt" size="sm"><T>transactions.info</T>  </Button>
                 <UncontrolledCollapse toggler="#toggler_repay_debt">
                     <Table responsive>
                         <tbody>
-                            <br></br>
                             <tr>
                                 <th scope="row"><T>cdp.sender</T></th>
-                                <td>{this.props.sender ? <Account address={this.props.sender}/>  : null}</td>
+                                <td>{this.props.sender ? <Account address={this.props.sender} /> : null}</td>
                             </tr>
                             <tr>
                                 <th scope="row"><T>cdp.cdpDenom</T></th>
-                                <td>{this.props.cdp_denom? this.props.cdp_denom : null}</td>
+                                <td>{this.props.cdp_denom ? this.props.cdp_denom : null}</td>
                             </tr>
                             <tr>
                                 <th scope="row"><T>cdp.payment</T></th>
-                                <td>{this.props.payment?
-                                    <span className='coin'>{new Coin((this.props.payment.amount), this.props.payment.denom).toString(4)}</span>:null}                        
+                                <td>{this.props.payment ?
+                                    <span className='coin'>{new Coin((this.props.payment.amount), this.props.payment.denom).toString(4)}</span> : null}
                                 </td>
                             </tr>
                         </tbody>
@@ -47,7 +46,7 @@ export default class RepayDebt extends Component {
                 </UncontrolledCollapse>
             </div>
         }
-        else{
+        else {
             return <div />
         }
     }
@@ -56,5 +55,5 @@ export default class RepayDebt extends Component {
 RepayDebt.propTypes = {
     sender: PropTypes.string.isRequired,
     cdp_denom: PropTypes.string.isRequired,
-    payment: PropTypes.array.isRequired
+    payment: PropTypes.object.isRequired
 }

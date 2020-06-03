@@ -165,10 +165,10 @@ export default class CDP extends Component {
                             <th scope="row" className="w-25 text-muted"><T>cdp.id</T></th>
                             <td>{this.state.userCDP.cdp.id}</td>
                         </tr>
-                        {(this.props.owner) ? <tr>
+                        {(this.props.owner)?<tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.owner</T></th>
                             <td><Account address={this.props.owner} /></td>
-                        </tr> : ''}
+                        </tr>:''}
                         {(this.state.userCDP.cdp.collateral) ? <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.collateralDeposited</T></th>
                             <td><div >{new Coin(this.state.userCDP.cdp.collateral.amount, this.state.userCDP.cdp.collateral.denom).toString(6)}</div></td>
@@ -181,7 +181,7 @@ export default class CDP extends Component {
                             <th scope="row" className="w-25 text-muted"><T>cdp.accumulatedFees</T></th>
                             <td>
                                 <div>{new Coin(this.state.userCDP.cdp.accumulated_fees.amount, this.state.userCDP.cdp.accumulated_fees.denom).toString(6)}
-                                    <small>(<T>common.lastUpdated</T> {moment.utc(this.state.userCDP.cdp.fees_updated).fromNow()})</small>
+                                    <small> (<T> common.lastUpdated </T> {moment.utc(this.state.userCDP.cdp.fees_updated).fromNow()})</small>
                                 </div></td>
                         </tr>
                         {(this.state.userCDP.collateral_value && (this.state.userCDP.collateral_value.length > 0)) ? <tr>
@@ -194,11 +194,11 @@ export default class CDP extends Component {
                         </tr>
                     </tbody>
                 </Table>
-                {/* <div> */}
-                {/* <DepositCDPButton
+                <div>
+                <DepositCDPButton
                         cdpParams={this.state.cdpParams ? this.state.cdpParams.debt_param.debt_floor : null}
                         collateral={this.props.collateral ? this.props.collateral : null}
-                        bnbTotalValue={this.findTotalValue(this.state.total, 'bnb')}
+                        bnbTotalValue={this.state.total ? this.findTotalValue(this.state.total, 'bnb') : null}
                         principalDeposited={this.state.userCDP ? this.state.userCDP.cdp.principal.amount : null}
                         principalDenom={this.state.userCDP ? this.state.userCDP.cdp.principal.denom : null}
                         price={this.state.cdpPrice ? this.state.cdpPrice : null}
@@ -239,7 +239,7 @@ export default class CDP extends Component {
                         collateralizationRatio={this.state.cdpParams ? parseFloat(this.state.cdpParams.collateral_params[0].liquidation_ratio) : null}
                         disabled={!this.state.cdpParams}
                     /> : ''}
-                </div> */}
+                </div>
 
             </div>
         }

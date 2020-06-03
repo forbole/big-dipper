@@ -19,7 +19,6 @@ import _ from 'lodash';
 import i18n from 'meteor/universe:i18n';
 
 
-
 const maxHeightModifier = {
     setMaxHeight: {
         enabled: true,
@@ -45,7 +44,8 @@ const Types = {
     DEPOSITCDP: 'depositCDP',
     WITHDRAWCDP: 'withdrawCDP',
     DRAWDEBT: 'drawDebtCDP',
-    REPAYDEPT: 'repayDebtCDP'
+    REPAYDEBT: 'repayDebtCDP',
+    CLAIMINCENTIVEREWARDS: 'claimIncentiveRewards'
 }
 
 const DEFAULT_GAS_ADJUSTMENT = '1.4';
@@ -147,10 +147,16 @@ const TypeMeta = {
         pathSuffix: 'draw',
         gasAdjustment: '1.6'
     },
-    [Types.REPAYDEPT]: {
+    [Types.REPAYDEBT]: {
         button: 'repay debt',
         pathPreFix: 'cdp',
         pathSuffix: 'repay',
+        gasAdjustment: '1.6'
+    },
+    [Types.CLAIMINCENTIVEREWARDS]: {
+        button: 'claim rewards',
+        pathPreFix: 'incentive',
+        pathSuffix: 'claim',
         gasAdjustment: '1.6'
     }
 
@@ -494,11 +500,16 @@ class LedgerButton extends Component {
                     this.state.draw,
                     this.state.collateralDenom);
                 break;
-            case Types.REPAYDEPT:
+            case Types.REPAYDEBT:
                 txMsg = Ledger.repayDebt(
                     this.getTxContext(),
                     this.state.debt,
                     this.state.collateralDenom);
+                break;
+            case Types.CLAIMINCENTIVEREWARDS:
+                txMsg = Ledger.claimIncentiveRewards(
+                    this.getTxContext(),
+                    this.state.denom);
                 break;
 
 
@@ -1288,7 +1299,7 @@ class CreateCDPButton extends LedgerButton {
     }
 
     supportAction(action) {
-        return action === Types.CREATECDP;
+        return action === Types.CREATECDP
     }
 
     isDataValid = () => {
@@ -1688,7 +1699,7 @@ class RepayDebtCDPButton extends LedgerButton {
     }
 
     supportAction(action) {
-        return action === Types.REPAYDEPT;
+        return action === Types.REPAYDEBT;
     }
 
     isDataValid = () => {
@@ -1708,11 +1719,59 @@ class RepayDebtCDPButton extends LedgerButton {
 
     render = () => {
         return <span className="ledger-buttons-cdp">
-            <Button disabled={this.props.disabled} color="info" size="sm" onClick={() => this.openModal(Types.REPAYDEPT, {})}> {TypeMeta[Types.REPAYDEPT].button} </Button>
+            <Button disabled={this.props.disabled} color="info" size="sm" onClick={() => this.openModal(Types.REPAYDEBT, {})}> {TypeMeta[Types.REPAYDEBT].button} </Button>
             {this.renderModal()}
         </span>;
     }
 }
+
+class WithdrawIncentiveRewards extends LedgerButton {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            ...this.state,
+            denom: props.denom,
+            incentiveRewards: 0,
+        }
+    }
+
+    renderActionTab = () => {
+        if (!this.state.currentUser) return null;
+        return <TabPane tabId="2">
+            <h3>Withdraw all incentive rewards from CDP</h3>
+            {this.props.rewards ? <div>Your current rewards amount is: <CoinAmount amount={this.props.rewards} /></div> : ''}
+
+        </TabPane>
+
+    }
+
+    supportAction(action) {
+        return action === Types.CLAIMINCENTIVEREWARDS
+    }
+
+
+    getConfirmationMessage = () => {
+        return <span>You are going to <span className='action'>claim</span> incentive rewards from CDP for address <b>{this.state.user} </b>
+     with <Fee gas={this.state.gasEstimate} />.</span>
+    }
+
+    getPath = () => {
+        let meta = TypeMeta[this.state.actionType];
+        console.log(`${meta.pathPreFix}/${meta.pathSuffix}`)
+        return `${meta.pathPreFix}/${meta.pathSuffix}`
+    }
+
+
+    render = () => {
+        return <span className="ledger-buttons-incentive">
+            <Button color="success" size="sm" disabled={!this.props.rewards} onClick={() => this.openModal(Types.CLAIMINCENTIVEREWARDS, {})}> {TypeMeta[Types.CLAIMINCENTIVEREWARDS].button} </Button>
+            {this.renderModal()}
+        </span>;
+    }
+}
+
+
 
 export {
     DelegationButtons,
@@ -1725,5 +1784,6 @@ export {
     DepositCDPButton,
     WithdrawCDPButton,
     DrawDebtCDPButton,
-    RepayDebtCDPButton
+    RepayDebtCDPButton,
+    WithdrawIncentiveRewards
 }

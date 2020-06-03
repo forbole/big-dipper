@@ -5,8 +5,8 @@ import i18n from 'meteor/universe:i18n';
 
 const T = i18n.createComponent();
 
-export default class ValidatorTransactions extends Component{
-    constructor(props){
+export default class ValidatorTransactions extends Component {
+    constructor(props) {
         super(props);
         this.state = {
             transferTxs: {},
@@ -17,12 +17,13 @@ export default class ValidatorTransactions extends Component{
             distributionTxs: {},
             governanceTxs: {},
             slashingTxs: {},
-        };  
+            incentiveTxs: {},
+        };
     }
 
-    componentDidUpdate(prevProps){
-        if (this.props != prevProps){
-            if (this.props.transactionsExist){
+    componentDidUpdate(prevProps) {
+        if (this.props != prevProps) {
+            if (this.props.transactionsExist) {
                 // console.log("have txs.");
                 this.setState({
                     transferTxs: this.props.transferTxs,
@@ -32,18 +33,19 @@ export default class ValidatorTransactions extends Component{
                     stakingTxs: this.props.stakingTxs,
                     distributionTxs: this.props.distributionTxs,
                     governanceTxs: this.props.governanceTxs,
-                    slashingTxs: this.props.slashingTxs
+                    slashingTxs: this.props.slashingTxs,
+                    incentiveTxs: this.props.incentiveTxs
                 })
             }
         }
-    } 
+    }
 
-    render(){
-        if (this.props.loading){
+    render() {
+        if (this.props.loading) {
             return <Spinner color="primary" type="glow" />
         }
-        else if (this.props.transactionsExist){
-            return <TransactionTabs 
+        else if (this.props.transactionsExist) {
+            return <TransactionTabs
                 transferTxs={this.state.transferTxs}
                 cdpTxs={this.state.cdpTxs}
                 swapTxs={this.state.swapTxs}
@@ -52,6 +54,7 @@ export default class ValidatorTransactions extends Component{
                 distributionTxs={this.state.distributionTxs}
                 governanceTxs={this.state.governanceTxs}
                 slashingTxs={this.state.slashingTxs}
+                incentiveTxs={this.state.incentiveTxs}
             />
         }
         else {

@@ -64,12 +64,12 @@ export class Ledger {
         })
     }
     async isReady() {
-    // check if the version is supported
+        // check if the version is supported
         const version = await this.getCosmosAppVersion()
 
         if (!semver.gte(version, REQUIRED_COSMOS_APP_VERSION)) {
-        const msg = `Outdated version: Please update Ledger Cosmos App to the latest version.`
-        throw new Error(msg)
+            const msg = `Outdated version: Please update Ledger Cosmos App to the latest version.`
+            throw new Error(msg)
         }
 
         // throws if not open
@@ -109,20 +109,20 @@ export class Ledger {
         if (appName.toLowerCase() !== `cosmos`) {
             throw new Error(`Close ${appName} and open the Cosmos app`)
         }
-      }
+    }
     async getPubKey() {
         await this.connect()
 
         const response = await this.cosmosApp.publicKey(HDPATH)
         this.checkLedgerErrors(response)
         return response.compressed_pk
-      }
+    }
     async getCosmosAddress() {
         await this.connect()
 
         const pubKey = await this.getPubKey(this.cosmosApp)
-        return {pubKey, address:createCosmosAddress(pubKey)}
-      }
+        return { pubKey, address: createCosmosAddress(pubKey) }
+    }
     async confirmLedgerAddress() {
         await this.connect()
         const cosmosAppVersion = await this.getCosmosAppVersion()
@@ -139,7 +139,7 @@ export class Ledger {
         this.checkLedgerErrors(response, {
             rejectionMessage: "Displayed address was rejected"
         })
-      }
+    }
 
     async sign(signMessage) {
         await this.connect()
@@ -149,45 +149,45 @@ export class Ledger {
         // we have to parse the signature from Ledger as it's in DER format
         const parsedSignature = signatureImport(response.signature)
         return parsedSignature
-      }
-
-  /* istanbul ignore next: maps a bunch of errors */
-  checkLedgerErrors(
-    { error_message, device_locked },
-    {
-      timeoutMessag = "Connection timed out. Please try again.",
-      rejectionMessage = "User rejected the transaction"
-    } = {}
-  ) {
-    if (device_locked) {
-      throw new Error(`Ledger's screensaver mode is on`)
     }
-    switch (error_message) {
-        case `U2F: Timeout`:
-            throw new Error(timeoutMessag)
-        case `Cosmos app does not seem to be open`:
-            // hack:
-            // It seems that when switching app in Ledger, WebUSB will disconnect, disabling further action.
-            // So we clean up here, and re-initialize this.cosmosApp next time when calling `connect`
-            this.cosmosApp.transport.close()
-            this.cosmosApp = undefined
-            throw new Error(`Cosmos app is not open`)
-        case `Command not allowed`:
-            throw new Error(`Transaction rejected`)
-        case `Transaction rejected`:
-            throw new Error(rejectionMessage)
-        case `Unknown error code`:
+
+    /* istanbul ignore next: maps a bunch of errors */
+    checkLedgerErrors(
+        { error_message, device_locked },
+        {
+            timeoutMessag = "Connection timed out. Please try again.",
+            rejectionMessage = "User rejected the transaction"
+        } = {}
+    ) {
+        if (device_locked) {
             throw new Error(`Ledger's screensaver mode is on`)
-        case `Instruction not supported`:
-            throw new Error(
-                `Your Cosmos Ledger App is not up to date. ` +
-                `Please update to version ${REQUIRED_COSMOS_APP_VERSION}.`
-            )
-        case `No errors`:
-            // do nothing
-            break
-        default:
-            throw new Error(error_message)
+        }
+        switch (error_message) {
+            case `U2F: Timeout`:
+                throw new Error(timeoutMessag)
+            case `Cosmos app does not seem to be open`:
+                // hack:
+                // It seems that when switching app in Ledger, WebUSB will disconnect, disabling further action.
+                // So we clean up here, and re-initialize this.cosmosApp next time when calling `connect`
+                this.cosmosApp.transport.close()
+                this.cosmosApp = undefined
+                throw new Error(`Cosmos app is not open`)
+            case `Command not allowed`:
+                throw new Error(`Transaction rejected`)
+            case `Transaction rejected`:
+                throw new Error(rejectionMessage)
+            case `Unknown error code`:
+                throw new Error(`Ledger's screensaver mode is on`)
+            case `Instruction not supported`:
+                throw new Error(
+                    `Your Cosmos Ledger App is not up to date. ` +
+                    `Please update to version ${REQUIRED_COSMOS_APP_VERSION}.`
+                )
+            case `No errors`:
+                // do nothing
+                break
+            default:
+                throw new Error(error_message)
         }
     }
 
@@ -217,7 +217,7 @@ export class Ledger {
         return JSON.stringify(canonicalizeJson(txFieldsToSign));
     }
 
-    static applyGas(unsignedTx, gas, gasPrice=DEFAULT_GAS_PRICE, denom=DEFAULT_DENOM) {
+    static applyGas(unsignedTx, gas, gasPrice = DEFAULT_GAS_PRICE, denom = DEFAULT_DENOM) {
         if (typeof unsignedTx === 'undefined') {
             throw new Error('undefined unsignedTx');
         }
@@ -228,8 +228,8 @@ export class Ledger {
         // eslint-disable-next-line no-param-reassign
         unsignedTx.value.fee = {
             amount: [{
-                 amount: Math.round(gas * gasPrice).toString(),
-                 denom: denom,
+                amount: Math.round(gas * gasPrice).toString(),
+                denom: denom,
             }],
             gas: gas.toString(),
         };
@@ -271,7 +271,7 @@ export class Ledger {
     }
 
     // Creates a new tx skeleton
-    static createSkeleton(txContext, msgs=[]) {
+    static createSkeleton(txContext, msgs = []) {
         if (typeof txContext === 'undefined') {
             throw new Error('undefined txContext');
         }
@@ -473,8 +473,8 @@ export class Ledger {
 
 
 
-    static createCDP( 
-        txContext,       
+    static createCDP(
+        txContext,
         collateral,
         debt
     ) {
@@ -490,7 +490,7 @@ export class Ledger {
                     denom: 'usdx'
                 },
                 sender: txContext.bech32,
-               
+
             },
         };
         return Ledger.createSkeleton(txContext, [txMsg]);
@@ -512,7 +512,7 @@ export class Ledger {
                 },
                 depositor: txContext.bech32,
                 owner: cdpOwner
-               
+
             },
         };
         return Ledger.createSkeleton(txContext, [txMsg]);
@@ -555,7 +555,7 @@ export class Ledger {
                     denom: 'usdx'
                 },
                 sender: txContext.bech32,
-               
+
             },
         };
         return Ledger.createSkeleton(txContext, [txMsg]);
@@ -577,13 +577,31 @@ export class Ledger {
                     denom: 'usdx'
                 },
                 sender: txContext.bech32,
-               
+
             },
         };
-        
+
         return Ledger.createSkeleton(txContext, [txMsg]);
     }
 
+
+    static claimIncentiveRewards(
+        txContext,
+        denom
+
+
+    ) {
+        const txMsg = {
+            type: 'incentive/MsgClaimReward',
+            value: {
+                denom: denom,
+                sender: txContext.bech32,
+
+            },
+        };
+        console.log(txMsg)
+        return Ledger.createSkeleton(txContext, [txMsg]);
+    }
 
 
 }

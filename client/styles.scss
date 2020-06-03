@@ -491,6 +491,7 @@ body {
 
       &.bnb {
         background-image: url(/img/bnb-symbol.svg);
+        padding-bottom: 0.45em;
       }
       &.btc {
         background-image: url(/img/bitcoin-symbol.svg);
@@ -1043,6 +1044,11 @@ body {
   .ledger-buttons-cdp button{
     display: inline;
     margin: 0 10px;
+  }
+
+  .ledger-buttons-incentive button{
+    display: inline;
+    //margin: 0 10px;
   }
 
   
