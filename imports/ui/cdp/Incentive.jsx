@@ -6,7 +6,6 @@ import Account from '../components/Account.jsx';
 import Coin from '/both/utils/coins.js'
 import i18n from 'meteor/universe:i18n';
 import PropTypes from 'prop-types';
-// import { DepositCDPButton, WithdrawCDPButton, DrawDebtCDPButton, RepayDebtCDPButton, CreateCDPButton } from '../ledger/LedgerActions.jsx';
 import _ from 'lodash';
 import { WithdrawIncentiveRewards } from '../ledger/LedgerActions.jsx';
 
