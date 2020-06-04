@@ -282,6 +282,8 @@ activities:
     priceExpiry: 'Expiry'
     madeA: 'made a'
     claimSwap: 'Claim detail'
+    auctionID: 'Auction ID '
+    amount: 'Amount '
 messageTypes:
     send: 'Send'
     multiSend: 'Multi Send'

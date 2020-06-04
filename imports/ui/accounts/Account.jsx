@@ -354,7 +354,7 @@ export default class AccountDetails extends Component {
             }),
 
 
-            Meteor.call('cdp.getIncentive', this.props.match.params.address, coin2, (error, result) => {
+            Meteor.call('account.getIncentive', this.props.match.params.address, coin2, (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({

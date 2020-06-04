@@ -46,7 +46,7 @@ export default class Incentive extends Component {
 
     getIncentive() {
 
-        Meteor.call('cdp.getIncentive', this.props.owner, this.props.collateral, (error, result) => {
+        Meteor.call('account.getIncentive', this.props.owner, this.props.collateral, (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({

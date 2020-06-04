@@ -104,9 +104,25 @@ Meteor.methods({
         }
     },
 
-    'cdp.getIncentive': function (address, collateral) {
+    'account.getIncentive': function (address, collateral) {
         this.unblock();
         let url = LCD + '/incentive/claims/' + address + '/' + collateral;
+
+        try {
+            let response = HTTP.get(url);
+            if (response.statusCode == 200) {
+                return JSON.parse(response.content).result
+            }
+        }
+        catch (e) {
+            console.log(url);
+            console.log(e.response.content);
+        }
+    },
+
+    'account.auction': function () {
+        this.unblock();
+        let url = LCD + '/auction/auctions'
 
         try {
             let response = HTTP.get(url);
