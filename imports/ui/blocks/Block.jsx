@@ -24,6 +24,7 @@ export default class Block extends Component {
             governanceTxs: {},
             slashingTxs: {},
             incentiveTxs: {},
+            auctionTxs: {},
         };
     }
 
@@ -40,7 +41,8 @@ export default class Block extends Component {
                     distributionTxs: this.props.distributionTxs,
                     governanceTxs: this.props.governanceTxs,
                     slashingTxs: this.props.slashingTxs,
-                    incentiveTxs: this.propsincentiveTxs
+                    incentiveTxs: this.propsincentiveTxs,
+                    auctionTxs: this.props.auctionTxs,
                 })
             }
         }
@@ -91,6 +93,7 @@ export default class Block extends Component {
                         governanceTxs={this.state.governanceTxs}
                         slashingTxs={this.state.slashingTxs}
                         incentiveTxs={this.state.incentiveTxs}
+                        auctionTxs={this.state.auctionTxs}
                     />
                 </Container>
             }

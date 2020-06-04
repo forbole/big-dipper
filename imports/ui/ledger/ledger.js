@@ -604,6 +604,29 @@ export class Ledger {
     }
 
 
+
+    static auctionBid(
+        txContext,
+        auctionID,
+        amount
+    ) {
+        const txMsg = {
+            type: 'auction/MsgPlaceBid',
+            value: {
+                amount: {
+                    amount: parseInt(parseFloat(amount) * Meteor.settings.public.coins[5].fraction).toString(),
+                    denom: 'usdx'
+                },
+                auction_id: auctionID,
+                bidder: txContext.bech32,
+                
+
+            },
+        };
+        return Ledger.createSkeleton(txContext, [txMsg]);
+    }
+
+
 }
 
 

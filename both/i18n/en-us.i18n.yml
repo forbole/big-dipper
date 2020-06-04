@@ -284,6 +284,8 @@ activities:
     claimSwap: 'Claim detail'
     auctionID: 'Auction ID '
     amount: 'Amount '
+auction:
+    bidAmount: 'Bid Amount'
 messageTypes:
     send: 'Send'
     multiSend: 'Multi Send'

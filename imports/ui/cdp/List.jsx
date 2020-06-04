@@ -91,9 +91,7 @@ export default class List extends Component {
     }
 
     render() {
-        //console.log(this.state.getMinCollateralRatio)
-        // console.log(this.props.cdpList.collateralization_ratio)
-        console.log(JSON.stringify(this.state.collateralParams))
+
         if (this.props.loading) {
             return <Spinner type="grow" color="primary" />
         }

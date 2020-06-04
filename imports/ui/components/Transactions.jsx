@@ -18,6 +18,7 @@ export default class ValidatorTransactions extends Component {
             governanceTxs: {},
             slashingTxs: {},
             incentiveTxs: {},
+            auctionTxs: {},
         };
     }
 
@@ -34,7 +35,8 @@ export default class ValidatorTransactions extends Component {
                     distributionTxs: this.props.distributionTxs,
                     governanceTxs: this.props.governanceTxs,
                     slashingTxs: this.props.slashingTxs,
-                    incentiveTxs: this.props.incentiveTxs
+                    incentiveTxs: this.props.incentiveTxs,
+                    auctionTxs: this.props.auctionTxs,
                 })
             }
         }
@@ -55,6 +57,7 @@ export default class ValidatorTransactions extends Component {
                 governanceTxs={this.state.governanceTxs}
                 slashingTxs={this.state.slashingTxs}
                 incentiveTxs={this.state.incentiveTxs}
+                auctionTxs={this.state.auctionTxs}
             />
         }
         else {

@@ -45,7 +45,8 @@ const Types = {
     WITHDRAWCDP: 'withdrawCDP',
     DRAWDEBT: 'drawDebtCDP',
     REPAYDEBT: 'repayDebtCDP',
-    CLAIMINCENTIVEREWARDS: 'claimIncentiveRewards'
+    CLAIMINCENTIVEREWARDS: 'claimIncentiveRewards',
+    AUCTIONBID: 'auctionBid'
 }
 
 const DEFAULT_GAS_ADJUSTMENT = '1.4';
@@ -157,6 +158,12 @@ const TypeMeta = {
         button: 'claim rewards',
         pathPreFix: 'incentive',
         pathSuffix: 'claim',
+        gasAdjustment: '1.6'
+    },
+    [Types.AUCTIONBID]: {
+        button: 'Place Bid',
+        pathPreFix: 'auctions',
+        pathSuffix: 'bids',
         gasAdjustment: '1.6'
     }
 
@@ -511,7 +518,12 @@ class LedgerButton extends Component {
                     this.getTxContext(),
                     this.state.denom);
                 break;
-
+            case Types.AUCTIONBID:
+                txMsg = Ledger.auctionBid(
+                    this.getTxContext(),
+                    this.state.auctionID,
+                    this.state.amount);
+                break;
 
         }
 
@@ -1758,7 +1770,6 @@ class WithdrawIncentiveRewards extends LedgerButton {
 
     getPath = () => {
         let meta = TypeMeta[this.state.actionType];
-        console.log(`${meta.pathPreFix}/${meta.pathSuffix}`)
         return `${meta.pathPreFix}/${meta.pathSuffix}`
     }
 
@@ -1766,6 +1777,62 @@ class WithdrawIncentiveRewards extends LedgerButton {
     render = () => {
         return <span className="ledger-buttons-incentive">
             <Button color="success" size="sm" disabled={!this.props.rewards} onClick={() => this.openModal(Types.CLAIMINCENTIVEREWARDS, {})}> {TypeMeta[Types.CLAIMINCENTIVEREWARDS].button} </Button>
+            {this.renderModal()}
+        </span>;
+    }
+}
+
+class AuctionBidButton extends LedgerButton {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            ...this.state,
+            amount: 0,
+            denom: props.denom,
+            auctionID: props.auctionID
+        }
+    }
+
+    renderActionTab = () => {
+        if (!this.state.currentUser) return null;
+        return <TabPane tabId="2">
+            <h3>Place Bid on Auction {this.state.auctionID} </h3>
+            <FormGroup>
+                <Label for="collateral"><T>auction.bidAmount</T></Label>
+                <Input placeholder="Bid Amount" name="bid" value={this.state.amount} type="number" onChange={this.handleChange}
+                 />
+                <FormText>The amount of USDX you would like to bid</FormText>
+            </FormGroup>
+            <FormGroup>
+                <Label for="memo"><T>cdp.memo</T></Label>
+                <Input name="memo" onChange={this.handleInputChange}
+                    placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
+            </FormGroup>
+        </TabPane>
+
+    }
+
+    supportAction(action) {
+        return action === Types.AUCTIONBID
+    }
+
+
+    getConfirmationMessage = () => {
+        return <span>You are going to <span className='action'>place </span> a <span className='coin'>{new Coin(this.state.amount, this.state.denom).convertToString(8)}</span>  bid on auction with ID  <b>{this.state.auctionID} </b>
+     with <Fee gas={this.state.gasEstimate} />.</span>
+    }
+
+    getPath = () => {
+        let meta = TypeMeta[this.state.actionType];
+       
+        return `'auction'/${meta.pathPreFix}/${this.state.auctionID}/${meta.pathSuffix}`
+    }
+
+
+    render = () => {
+        return <span className="ledger-buttons-create-cdp button">
+            <Button color="danger" size="sm"  onClick={() => this.openModal(Types.AUCTIONBID, {})}> {TypeMeta[Types.AUCTIONBID].button} </Button>
             {this.renderModal()}
         </span>;
     }
@@ -1785,5 +1852,6 @@ export {
     WithdrawCDPButton,
     DrawDebtCDPButton,
     RepayDebtCDPButton,
-    WithdrawIncentiveRewards
+    WithdrawIncentiveRewards,
+    AuctionBidButton
 }

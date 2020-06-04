@@ -53,6 +53,11 @@ export default TransactionsContainer = withTracker((props) => {
                 { "tx.value.msg.type": "incentive/MsgClaimReward" },
             ]
         }).fetch() : {},
+        auctionTxs: transactionsExist ? Transactions.find({
+            $or: [
+                { "tx.value.msg.type": "auction/MsgPlaceBid" },
+            ]
+        }).fetch() : {},
         priceTxs: transactionsExist ? Transactions.find({
             $or: [
                 {"tx.value.msg.type":"pricefeed/MsgPostPrice"}
