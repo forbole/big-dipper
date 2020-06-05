@@ -191,6 +191,7 @@ cdp:
     depositor: 'Depositor'
     cdpList: 'List of CDPs'
     cdps: 'CDPs'
+    cdp: 'CDP'
     cdpID: 'CDP ID'
     cdpFeesUpdated: 'Fees Updated'
     totalReward: 'Total Rewards Value'
@@ -285,7 +286,15 @@ activities:
     auctionID: 'Auction ID '
     amount: 'Amount '
 auction:
+    auction: 'Auction'
     bidAmount: 'Bid Amount'
+    auctionList: 'Auction List'
+    auctions: 'Auctions '
+    auctionID: 'Auction ID'
+    value: 'Value'
+    bidder: 'Bidder '
+    bidsReceived: 'Received Bids'
+    endTime: 'End Time'
 messageTypes:
     send: 'Send'
     multiSend: 'Multi Send'
