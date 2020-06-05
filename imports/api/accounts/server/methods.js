@@ -27,6 +27,8 @@ Meteor.methods({
                     account = response.value;
                 else if (response.type === 'cosmos-sdk/DelayedVestingAccount' || response.type === 'cosmos-sdk/ContinuousVestingAccount')
                     account = response.value.BaseVestingAccount.BaseAccount
+                else if (response.type === 'cosmos-sdk/PeriodicVestingAccount')
+                    account = response.value
                 if (account && account.account_number != null)
                     return account
                 return null
