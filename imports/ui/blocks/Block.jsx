@@ -41,7 +41,7 @@ export default class Block extends Component {
                     distributionTxs: this.props.distributionTxs,
                     governanceTxs: this.props.governanceTxs,
                     slashingTxs: this.props.slashingTxs,
-                    incentiveTxs: this.propsincentiveTxs,
+                    incentiveTxs: this.props.incentiveTxs,
                     auctionTxs: this.props.auctionTxs,
                 })
             }
