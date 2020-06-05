@@ -8,6 +8,7 @@ import Coin from '/both/utils/coins.js'
 import { Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 
 const T = i18n.createComponent();
+let minCollateralRatio = 0;
 
 const CDPRow = (props) => {
     return <tr>
@@ -15,7 +16,7 @@ const CDPRow = (props) => {
         <td className="owner"><Link to={"/account/" + props.cdpList.cdp.owner}>{props.cdpList.cdp.owner}</Link></td>
         <td className="collateral-deposited">{props.cdpList.collateral_value ? <div>{new Coin(props.cdpList.collateral_value.amount, props.cdpList.collateral_value.denom).toString(4)}</div> : '0 usdx'}</td>
         <td className="principal-drawn">{props.cdpList.cdp.principal ? <div>{new Coin(props.cdpList.cdp.principal.amount, props.cdpList.cdp.principal.denom).toString()}</div> : '0 usdx'}</td>
-        <td className={parseFloat(props.cdpList.collateralization_ratio) > 1.5? "value text-success" : "value text-danger"}>{numbro(parseFloat(props.cdpList.collateralization_ratio)).format('0.000000')}</td>
+        <td className={parseFloat(props.cdpList.collateralization_ratio) > parseFloat(minCollateralRatio) ? "value text-success" : "value text-danger"}>{numbro(parseFloat(props.cdpList.collateralization_ratio)).format('0.000000')}</td>
         <td className="accumulated-fees">{props.cdpList.cdp.accumulated_fees ? <div>{new Coin(props.cdpList.cdp.accumulated_fees.amount, props.cdpList.cdp.accumulated_fees.denom).toString()}</div> : '0 usdx'}</td>
         <td className="fees-updated"><TimeStamp time={props.cdpList.cdp.fees_updated} /></td>
     </tr>
@@ -36,7 +37,7 @@ export default class List extends Component {
     }
 
     componentDidMount() {
-        // this.getMinCollateralRatio();
+        this.getMinCollateralRatio();
         this.getCDPList();
     }
 
@@ -62,26 +63,24 @@ export default class List extends Component {
     }
 
 
-    // getMinCollateralRatio = () => {
-    //     Meteor.call('cdp.getCDPParams', (error, result) => {
-    //         if (error) {
-    //             console.warn(error);
-    //             this.setState({
-    //                 collateralParams: undefined
-    //             })
-    //         }
-    //         if (result) {
-    //             console.log(result)
-    //             this.setState({
-    //                 collateralParams: result.collateral_params.map((param, i) => {
-    //                     return <CDPRow key={i} index={i} collateralParams={param} />
-    //                 }),
+    getMinCollateralRatio = () => {
+        Meteor.call('cdp.getCDPParams', (error, result) => {
+            if (error) {
+                console.warn(error);
+                this.setState({
+                    collateralParams: undefined
+                })
+            }
+            if (result) {
+                minCollateralRatio = result.collateral_params[0].liquidation_ratio
+                this.setState({
+                    collateralParams: result.collateral_params[0]
 
-    //             })
+                })
 
-    //         }
-    //     })
-    // }
+            }
+        })
+    }
 
     handleClick(e, index) {
         e.preventDefault();

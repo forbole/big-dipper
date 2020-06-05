@@ -8,7 +8,6 @@ import i18n from 'meteor/universe:i18n';
 import PropTypes from 'prop-types';
 import { DepositCDPButton, WithdrawCDPButton, DrawDebtCDPButton, RepayDebtCDPButton, CreateCDPButton } from '../ledger/LedgerActions.jsx';
 import _ from 'lodash';
-import Auction from './Auction.jsx'
 
 const T = i18n.createComponent();
 let timer = 0;
@@ -239,8 +238,6 @@ export default class CDP extends Component {
                         collateralizationRatio={this.state.cdpParams ? parseFloat(this.state.cdpParams.collateral_params[0].liquidation_ratio) : null}
                         disabled={!this.state.cdpParams}
                     /> : ''}
-
-                    <Auction />
                 </div>
 
             </div>
@@ -248,17 +245,16 @@ export default class CDP extends Component {
 
         else {
             return <div >
-                <div className="mb-3"><Badge color="success">BNB:USD</Badge> <strong className="text-info">{this.state.cdpPrice ? numbro(this.state.cdpPrice).formatCurrency({ mantissa: 4 }) : 0  }</strong></div>
+                <div className="mb-3"><Badge color="success">BNB:USD</Badge> <strong className="text-info">{this.state.cdpPrice ? numbro(this.state.cdpPrice).formatCurrency({ mantissa: 4 }) : 0}</strong></div>
                 <div className={"cdp-buttons"}>
-                <CreateCDPButton
-                    cdpParams={this.state.cdpParams ? this.state.cdpParams.debt_param.debt_floor : null}
-                    collateralizationRatio={this.state.cdpParams ? parseFloat(this.state.cdpParams.collateral_params[0].liquidation_ratio) : null}
-                    collateral={this.state.cdpParams ? this.state.cdpParams.collateral_params[0].denom : null}
-                    price={this.state.cdpPrice ? this.state.cdpPrice : null}
-                    bnbTotalValue={this.state.total ? this.findTotalValue(this.state.total, 'bnb') : null}
-                />
-                <Auction />
-</div>
+                    <CreateCDPButton
+                        cdpParams={this.state.cdpParams ? this.state.cdpParams.debt_param.debt_floor : null}
+                        collateralizationRatio={this.state.cdpParams ? parseFloat(this.state.cdpParams.collateral_params[0].liquidation_ratio) : null}
+                        collateral={this.state.cdpParams ? this.state.cdpParams.collateral_params[0].denom : null}
+                        price={this.state.cdpPrice ? this.state.cdpPrice : null}
+                        bnbTotalValue={this.state.total ? this.findTotalValue(this.state.total, 'bnb') : null}
+                    />
+                </div>
             </div>
         }
 

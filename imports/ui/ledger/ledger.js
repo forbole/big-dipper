@@ -608,13 +608,13 @@ export class Ledger {
     static auctionBid(
         txContext,
         auctionID,
-        amount
+        bid
     ) {
         const txMsg = {
             type: 'auction/MsgPlaceBid',
             value: {
                 amount: {
-                    amount: parseInt(parseFloat(amount) * Meteor.settings.public.coins[5].fraction).toString(),
+                    amount: parseInt(parseFloat(bid) * Meteor.settings.public.coins[5].fraction).toString(),
                     denom: 'usdx'
                 },
                 auction_id: auctionID,

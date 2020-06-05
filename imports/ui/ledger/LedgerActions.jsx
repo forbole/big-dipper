@@ -161,7 +161,7 @@ const TypeMeta = {
         gasAdjustment: '1.6'
     },
     [Types.AUCTIONBID]: {
-        button: 'Place Bid',
+        button: 'Place a Bid',
         pathPreFix: 'auctions',
         pathSuffix: 'bids',
         gasAdjustment: '1.6'
@@ -522,7 +522,7 @@ class LedgerButton extends Component {
                 txMsg = Ledger.auctionBid(
                     this.getTxContext(),
                     this.state.auctionID,
-                    this.state.amount);
+                    this.state.bid);
                 break;
 
         }
@@ -1687,7 +1687,7 @@ class RepayDebtCDPButton extends LedgerButton {
         return <TabPane tabId="2">
             <h3>Repay USDX Debt </h3>
             <FormGroup>
-                <Label for="collateral"><T>cdp.repay</T></Label>
+                <Label for="debt"><T>cdp.repay</T></Label>
                 <Input placeholder="Repay Amount" name="debt" value={this.state.debt} type="number" onChange={this.handleChange}
                     min={Coin.MinStake} max={this.state.maxAmount}
                     invalid={this.state.debt != null && !isBetween(this.state.debt, 0, this.state.usdxTotalValue)} />
@@ -1788,10 +1788,21 @@ class AuctionBidButton extends LedgerButton {
         super(props);
         this.state = {
             ...this.state,
-            amount: 0,
+            bid: 0,
             denom: props.denom,
-            auctionID: props.auctionID
+            auctionID: props.auctionID,
+            minAmount: parseFloat(props.currentBidAmount) / (Meteor.settings.public.coins[5].fraction) * 1.01,
+            maxAmount: parseFloat(props.maxBid) / (Meteor.settings.public.coins[5].fraction)
         }
+    }
+
+    handleChange = (e) => {
+        const { target } = e;
+        const value = target.value;
+        const { name } = target;
+        this.setState({
+            [name]: value,
+        })
     }
 
     renderActionTab = () => {
@@ -1799,10 +1810,12 @@ class AuctionBidButton extends LedgerButton {
         return <TabPane tabId="2">
             <h3>Place Bid on Auction {this.state.auctionID} </h3>
             <FormGroup>
-                <Label for="collateral"><T>auction.bidAmount</T></Label>
-                <Input placeholder="Bid Amount" name="bid" value={this.state.amount} type="number" onChange={this.handleChange}
-                 />
+                <Label for="bid"><T>auction.bidAmount</T></Label>
+                <Input placeholder="Bid Amount" name="bid" value={this.state.bid} type="number" onChange={this.handleChange}
+                    min={this.state.minAmount} max={this.state.maxAmount}
+                    invalid={this.state.bid != null && !isBetween(this.state.minAmount, 0, this.state.maxAmount)} />
                 <FormText>The amount of USDX you would like to bid</FormText>
+                <FormFeedback>The bid value must be between {new Coin(this.state.minAmount, this.state.denom).convertToString(4)} and {new Coin(this.state.maxAmount, this.state.denom).convertToString(4)}</FormFeedback>
             </FormGroup>
             <FormGroup>
                 <Label for="memo"><T>cdp.memo</T></Label>
@@ -1819,20 +1832,20 @@ class AuctionBidButton extends LedgerButton {
 
 
     getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>place </span> a <span className='coin'>{new Coin(this.state.amount, this.state.denom).convertToString(8)}</span>  bid on auction with ID  <b>{this.state.auctionID} </b>
+        return <span>You are going to <span className='action'>place </span> a <span className='coin'>{new Coin(this.state.bid, this.state.denom).convertToString(4)}</span>  bid on auction with ID  <b>{this.state.auctionID} </b>
      with <Fee gas={this.state.gasEstimate} />.</span>
     }
 
     getPath = () => {
         let meta = TypeMeta[this.state.actionType];
-       
-        return `'auction'/${meta.pathPreFix}/${this.state.auctionID}/${meta.pathSuffix}`
+
+        return `auction/${meta.pathPreFix}/${this.state.auctionID}/${meta.pathSuffix}`
     }
 
 
     render = () => {
         return <span className="ledger-buttons-create-cdp button">
-            <Button color="danger" size="sm"  onClick={() => this.openModal(Types.AUCTIONBID, {})}> {TypeMeta[Types.AUCTIONBID].button} </Button>
+            <Button color="danger" size="sm" onClick={() => this.openModal(Types.AUCTIONBID, {})}> {TypeMeta[Types.AUCTIONBID].button} </Button>
             {this.renderModal()}
         </span>;
     }
