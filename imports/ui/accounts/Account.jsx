@@ -1,12 +1,11 @@
-import React, { Component, useState } from 'react';
+import React, { Component } from 'react';
 import {
     Spinner,
     TabContent, TabPane,
     Nav, NavItem, NavLink,
     Row, Col,
     Card, CardHeader, CardBody,
-    Progress,
-} from 'reactstrap';
+    Progress} from 'reactstrap';
 import classnames from 'classnames';
 import numbro from 'numbro';
 import AccountCopy from '../components/AccountCopy.jsx';
@@ -17,12 +16,14 @@ import Redelegations from './Redelegations.jsx';
 import AccountTransactions from '../components/TransactionsContainer.js';
 import ChainStates from '../components/ChainStatesContainer.js'
 import { Helmet } from 'react-helmet';
-import { WithdrawButton, TransferButton, ClaimSwapButton } from '../ledger/LedgerActions.jsx';
+import { WithdrawButton, TransferButton,  } from '../ledger/LedgerActions.jsx';
 import CDP from '../cdp/CDP.jsx';
 import SentryBoundary from '../components/SentryBoundary.jsx';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js';
 import Incentive from '../cdp/Incentive.jsx';
+import CreateSwapButton from '/imports/ui/bep3/CreateSwapButton.jsx'
+
 
 
 const T = i18n.createComponent();
@@ -73,7 +74,7 @@ export default class AccountDetails extends Component {
         }
     }
 
-    static getDerivedStateFromProps(props, state) {
+    static getDerivedStateFromProps(state) {
         if (state.user !== localStorage.getItem(CURRENTUSERADDR)) {
             return { user: localStorage.getItem(CURRENTUSERADDR) };
         }
@@ -138,7 +139,7 @@ export default class AccountDetails extends Component {
                         amount: "0.00"
                     }];
 
-                    result.delegations.forEach((unbond, i) => {
+                    result.delegations.forEach((unbond) => {
                         delegatedValue.forEach((entry, j) => {
                             delegatedValue[j].amount = parseFloat(delegatedValue[j].amount) + parseFloat(unbond.balance.amount);
                             this.setState({
@@ -151,8 +152,8 @@ export default class AccountDetails extends Component {
                     if (this.state.total && this.state.total.length > 1) {
                         let totalValue = cloneDeep(this.state.total);
 
-                        this.state.delegated.forEach((delegated, i) => {
-                            totalValue.forEach((el, i) => {
+                        this.state.delegated.forEach((delegated) => {
+                            totalValue.forEach((el) => {
                                 if (el.denom === delegated.denom) {
                                     el.amount = parseFloat(el.amount) + parseFloat(delegated.amount)
                                 }
@@ -182,7 +183,7 @@ export default class AccountDetails extends Component {
                         amount: "0.00"
                     }];
                     result.unbonding.forEach((unbond, i) => {
-                        unbond.entries.forEach((entry, j) => {
+                        unbond.entries.forEach((entry) => {
                             unbondingValue[i].amount = parseFloat(unbondingValue[i].amount) + parseFloat(entry.balance);
                             this.setState({
                                 unbonding: unbondingValue,
@@ -193,8 +194,8 @@ export default class AccountDetails extends Component {
                     if (this.state.total && this.state.total.length > 1) {
                         let totalValue = cloneDeep(this.state.total);
 
-                        this.state.unbonding.forEach((unbond, i) => {
-                            totalValue.forEach((el, i) => {
+                        this.state.unbonding.forEach((unbond) => {
+                            totalValue.forEach((el) => {
                                 if (el.denom === unbond.denom) {
                                     el.amount = parseFloat(el.amount) + parseFloat(unbond.amount)
                                 }
@@ -219,8 +220,8 @@ export default class AccountDetails extends Component {
 
                         if (this.state.rewards.length > 1) {
                             let totalValue = cloneDeep(this.state.total);
-                            this.state.rewards.forEach((rewards, i) => {
-                                totalValue.forEach((el, i) => {
+                            this.state.rewards.forEach((rewards) => {
+                                totalValue.forEach((el) => {
                                     if (rewards.denom === el.denom) {
                                         el.amount = parseFloat(el.amount) + parseFloat(rewards.amount)
                                     }
@@ -278,8 +279,8 @@ export default class AccountDetails extends Component {
                     if (this.state.commission.length > 0) {
                         if (this.state.commission.length > 1) {
                             let totalValue = cloneDeep(this.state.total);
-                            this.state.commission.forEach((commission, i) => {
-                                totalValue.forEach((el, i) => {
+                            this.state.commission.forEach((commission) => {
+                                totalValue.forEach((el) => {
                                     if (commission.denom === el.denom) {
                                         el.amount = parseFloat(el.amount) + parseFloat(commission.amount)
                                     }
@@ -355,19 +356,19 @@ export default class AccountDetails extends Component {
 
 
             Meteor.call('account.getIncentive', this.props.match.params.address, coin2, (error, result) => {
-            if (error) {
-                console.warn(error);
-                this.setState({
-                    loading: false,
-                    hasIncentive: false
-                })
-            }
-            if (result && result.length > 0) {
-                this.setState({
-                    hasIncentive: true,
-                })
-            }
-        })
+                if (error) {
+                    console.warn(error);
+                    this.setState({
+                        loading: false,
+                        hasIncentive: false
+                    })
+                }
+                if (result && result.length > 0) {
+                    this.setState({
+                        hasIncentive: true,
+                    })
+                }
+            })
 
     }
 
@@ -659,7 +660,8 @@ export default class AccountDetails extends Component {
                                     {this.state.user ? <Row>
                                         <Col xs={12}><TransferButton history={this.props.history} address={this.state.address} denom={this.state.denom} /></Col>
                                         {this.state.user === this.state.address ? <Col xs={12}><WithdrawButton history={this.props.history} rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address} denom={this.state.denom} /></Col> : null}
-                                        {this.state.user === this.state.address ? <Col xs={12}><ClaimSwapButton validator={this.props.validator} address={this.state.operator_address} history={this.props.history} /></Col> : null}
+                                        {/* {this.state.user === this.state.address ? <Col xs={12}><ClaimSwapButton validator={this.props.validator} address={this.state.operator_address} history={this.props.history} /></Col> : null} */}
+                                        {this.state.user === this.state.address ? <Col xs={12}><CreateSwapButton validator={this.props.validator} address={this.state.operator_address} history={this.props.history} denom={this.state.denom} /></Col> : null}
                                     </Row> : null}
                                 </Col>
                                 <Col md={12} className="total d-flex flex-column justify-content-end">
@@ -762,17 +764,17 @@ export default class AccountDetails extends Component {
                                         </NavLink>
                                     </NavItem>
                                     {this.state.hasIncentive === true ?
-                                    <NavItem>
-                                        <NavLink
-                                            className={classnames({ active: this.state.cdpActiveTab === 'cdp-incentive' })}
-                                            onClick={() => { this.toggleCDP('cdp-incentive'); }}
-                                        >
-                                            <span className="cdp-logo">
-                                                <i className="material-icons md-16">
-                                                    emoji_events
+                                        <NavItem>
+                                            <NavLink
+                                                className={classnames({ active: this.state.cdpActiveTab === 'cdp-incentive' })}
+                                                onClick={() => { this.toggleCDP('cdp-incentive'); }}
+                                            >
+                                                <span className="cdp-logo">
+                                                    <i className="material-icons md-16">
+                                                        emoji_events
                                             </i> Incentive</span>
-                                        </NavLink>
-                                    </NavItem> : null }
+                                            </NavLink>
+                                        </NavItem> : null}
                                 </Nav>
                                 <TabContent activeTab={this.state.cdpActiveTab}>
                                     <TabPane tabId="cdp-bnb">

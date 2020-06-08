@@ -33,6 +33,7 @@
     "plottable": "^3.8.6",
     "prop-types": "^15.7.2",
     "react": "^16.13.0",
+    "react-bootstrap-typeahead": "^5.0.0-rc.3",
     "react-chartjs-2": "^2.9.0",
     "react-dom": "^16.13.0",
     "react-google-tag-manager": "^2.2.1",

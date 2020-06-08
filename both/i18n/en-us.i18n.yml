@@ -166,6 +166,12 @@ bep3:
         to: 'To'
         expectedIncome: 'Expected Income'
         heightSpan: 'Height Span'
+        binanceAddress: 'Binance Address'
+        binanceMnemonics: 'Binance Mnemonics'
+        enterAddress: 'Please enter Binance account address to create swap'
+        enterMnemonics: 'Please enter 24-word secret phrase'
+        amountKava: 'The requested amount of BNB'
+        memo: 'Memo (optional)'
 cdp:
     id: 'ID'
     idClaimPeriod: 'Claim Period ID'
