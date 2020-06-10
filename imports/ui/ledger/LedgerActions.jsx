@@ -122,7 +122,7 @@ const TypeMeta = {
         button: 'claim swap',
         pathPreFix: 'bep3/swap/claim',
         pathSuffix: ' ',
-        gasAdjustment: '1.6'
+        gasAdjustment: '1.8'
     },
     [Types.CREATECDP]: {
         button: 'create CDP',
@@ -479,7 +479,7 @@ class LedgerButton extends Component {
                 txMsg = Ledger.claimSwap(
                     this.getTxContext(),
                     this.state.swapID,
-                    this.state.swapRandomNumber);
+                    this.state.secretNum);
                 break;
             case Types.CREATECDP:
                 txMsg = Ledger.createCDP(
@@ -1190,6 +1190,31 @@ class ProposalActionButtons extends LedgerButton {
 
 class ClaimSwapButton extends LedgerButton {
 
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            ...this.state,
+            swapID: props.swapID,
+            secretNum: props.secretNum,
+        }
+    }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+
+        if (!_.isEqual(nextProps.swapID, prevState.swapID)) {
+
+            return {
+                swapID: nextProps.swapID,
+                secretNum: nextProps.secretNum
+            }
+        }
+        else return null;
+
+
+    }
+
+
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         return <TabPane tabId="2">
@@ -1201,11 +1226,11 @@ class ClaimSwapButton extends LedgerButton {
                     invalid={this.state.swapID === null} />
             </FormGroup>
             <FormGroup>
-                <Label for="swapRandNum"><T>cdp.swapRandNum</T></Label>
-                <Input name="swapRandomNumber" onChange={this.handleInputChange}
+                <Label for="secretNum"><T>cdp.swapRandNum</T></Label>
+                <Input name="secretNum" onChange={this.handleInputChange}
                     placeholder="Swap Random Number" type="text" data-type='hash'
-                    value={this.state.swapRandomNumber}
-                    invalid={this.state.swapRandomNumber === null} />
+                    value={this.state.secretNum}
+                    invalid={this.state.secretNum === null} />
             </FormGroup>
             <FormGroup>
                 <Label for="memo"><T>cdp.memo</T></Label>
@@ -1232,7 +1257,7 @@ class ClaimSwapButton extends LedgerButton {
 
 
     render = () => {
-        return <span className="ledger-buttons-group float-right">
+        return <span className="ledger-buttons-swap button">
             <Button color="primary" size="sm" onClick={() => this.openModal(Types.CLAIMSWAP, {})}> {TypeMeta[Types.CLAIMSWAP].button} </Button>
             {this.renderModal()}
         </span>;

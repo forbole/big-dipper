@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.8.7",
-    "@kava-labs/javascript-sdk": "^1.0.3",
+    "@binance-chain/javascript-sdk": "^3.0.2",
+    "@kava-labs/javascript-sdk": "^1.0.11",
     "@ledgerhq/hw-transport-webusb": "^4.78.0",
     "@lunie/cosmos-js": "0.0.22",
     "@types/meteor-universe-i18n": "^1.14.4",

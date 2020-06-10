@@ -1052,6 +1052,14 @@ body {
   }
 
   
+
+  .ledger-buttons-swap button{
+    display: inline-block;
+    margin: 5px 0;
+    justify-content: center;
+
+   }
+  
   .redelegate-validators .ellipsis {
     display: inline-block;
     max-width: 100%;
@@ -1154,12 +1162,21 @@ body {
   }
 
   .mnemonics-field{
-    width: 6em !important;
+    width: 7.5em !important;
     display: inline-block !important;
     padding-left: 0.5em;
     padding-bottom: none !important;
+    height: 0em !important;
+    margin-bottom: -2em !important;
+
   }
 
-   .mnemonics-number{
-    width: 1.2em;
-   }
+
+  .mnemonics-number{
+  width: 1.2em;
+  }
+
+  .action {
+      color: green;
+      font-weight: 500;
+    }

@@ -458,13 +458,13 @@ export class Ledger {
     static claimSwap(
         txContext,
         swapID,
-        swapRandomNumber,
+        secretNum,
     ) {
         const txMsg = {
             type: 'bep3/MsgClaimAtomicSwap',
             value: {
                 from: txContext.bech32,
-                random_number: swapRandomNumber,
+                random_number: secretNum,
                 swap_id: swapID,
             },
         };
@@ -619,7 +619,7 @@ export class Ledger {
                 },
                 auction_id: auctionID,
                 bidder: txContext.bech32,
-                
+
 
             },
         };

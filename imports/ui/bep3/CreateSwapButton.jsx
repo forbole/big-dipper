@@ -1,14 +1,15 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import {
-    Button, TabContent, TabPane, Modal, Form, ModalBody, ModalFooter, Input, Label, FormGroup, FormText
+    Button, TabContent, TabPane, Modal, Form, ModalBody, ModalFooter, Input, Label, FormGroup, FormText,
 } from 'reactstrap';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js';
-
+import { Typeahead } from 'react-bootstrap-typeahead';
+import incomingSwap from './incomingSwap.js';
+import { ClaimSwapButton } from '/imports/ui/ledger/LedgerActions.jsx'
 
 const T = i18n.createComponent();
-
-
+const BINANCE_PREFIX = "tbnb"
 
 export default class CreateSwapButton extends Component {
     constructor(props) {
@@ -21,38 +22,121 @@ export default class CreateSwapButton extends Component {
             maxAmount: props.bnbTotalValue / Meteor.settings.public.coins[1].fraction,
             denom: props.denom,
             binanceMnemonics: [],
+            binanceSwapAmount: 0,
+            binanceAddress: "",
             isOpen: false,
+            invalid: true,
+            multiple: false,
+            selected: [],
+            mnemonicsList: [],
+            user: localStorage.getItem(CURRENTUSERADDR),
+            currentActiveTab: '1',
+            swapID: '',
+            secretRandomNum: '',
+
         }
 
-        this.handleInputChange = this.handleInputChange.bind(this)
-        // this.handleChange = this.handleChange.bind(this);
-        // this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+
+
     }
 
 
-    handleInputChange(event) {
-        console.log(event)
-        let binanceMnemonics = this.state.binanceMnemonics;
-        for (let i in binanceMnemonics) {
-            binanceMnemonics[i].value = event.target.value;
-            this.setState({ binanceMnemonics });
-            break;
-        }
+    componentDidMount() {
+        fetch('/Mnemonics.txt')
+            .then((r) => r.text())
+            .then(text => {
+                this.setState({
+                    mnemonicsList: text.split('\n')
+                })
+            })
+
     }
-    // handleChanges(event) {
-    //     let target = event.target.value;
 
-    //     this.setState({ binanceMnemonics: event.target.value });
-    // }
 
-    // handleSubmit(event) {
-    //     alert('A name was submitted: ' + this.state.binanceMnemonics);
-    //     event.preventDefault();
-    // }
 
+    handleSubmit(event) {
+        event.preventDefault();
+        let data = new FormData(event.target);
+
+
+    }
+
+    startsWith = (str, prefix) => {
+        return str.substr(0, prefix.length) === prefix
+    }
 
     handleChange = (e) => {
-        console.log(e)
+
+
+        // get data from the form
+        // check amount if emtpy, set state to true if empty, return
+        // check address if empty, set state to true if empty, return
+        // check every element in mnemnonic, set state to true if empty, return
+        // otherwise, set state to false
+
+        const swapForm = document.getElementById("swap-form")
+        const formData = new FormData(swapForm);
+
+        const getMnemonics = formData.getAll('binanceMnemonics[]')
+        const getSwapAmount = formData.get('swapAmount')
+        const getBinanceAddress = formData.get('binanceAddress')
+
+
+        if (getSwapAmount === "" || getSwapAmount <= 0) {
+            this.setState({
+                invalid: true,
+            });
+            return;
+        }
+
+        if (getBinanceAddress.length != 43 || !(this.startsWith(getBinanceAddress, BINANCE_PREFIX))) {
+            this.setState({
+                invalid: true,
+            });
+            return;
+        }
+
+
+        getMnemonics.forEach((value, key) => {
+
+            //mnemonic[key] = value.join(' ')
+
+            if (getMnemonics[key] === "" || getMnemonics[key].length <= 0) {
+                this.setState({
+                    invalid: true,
+                });
+                return;
+            }
+            else {
+                this.setState({
+                    invalid: false,
+                }, () => {
+                    this.setState({
+                        binanceMnemonics: getMnemonics.join(' '),
+                        binanceSwapAmount: getSwapAmount,
+                        binanceAddress: getBinanceAddress,
+                    })
+                });
+
+            }
+        })
+
+
+    }
+
+    updateState() {
+        this.setState({
+            binanceMnemonics: getMnemonics,
+            binanceSwapAmount: getSwapAmount,
+            binanceAddress: getBinanceAddress,
+        })
+    }
+
+
+
+    SetSelected = (e) => {
         const { target } = e;
         const value = target.value;
         const { name } = target;
@@ -64,6 +148,9 @@ export default class CreateSwapButton extends Component {
     close = () => {
         this.setState({
             isOpen: false,
+            binanceMnemonics: [],
+            binanceSwapAmount: 0,
+            binanceAddress: "",
         });
     }
 
@@ -74,70 +161,118 @@ export default class CreateSwapButton extends Component {
         })
     }
 
+    getSwap = async () => {
+
+        let getSwap = await incomingSwap(this.state.binanceAddress, this.state.binanceMnemonics, this.state.user, this.state.binanceSwapAmount)
+
+        if (getSwap) {
+            this.setState({
+                swapID: getSwap.swapID.toUpperCase(),
+                secretRandomNum: getSwap.secretRandomNum.toUpperCase(),
+                currentActiveTab: '2',
+            })
+        }
+
+
+    }
+
+
+
     createSwap = () => {
         //Create 24 mnemonics input fields
-        const mnemonicsCount = new Array(25)
-        for (let c = 1; c < mnemonicsCount.length; c++) {
-            mnemonicsCount[c] = c;
+        const mnemonicsCount = new Array(24)
+        for (let c = 0; c < mnemonicsCount.length; c++) {
+
+            mnemonicsCount[c] = c + 1;
         }
-        return <Modal isOpen={this.state.isOpen} toggle={this.close} className="ledger-modal">
-            <ModalBody>
-                <TabContent className='ledger-modal-tab' activeTab={this.state.activeTab}>
-                    <TabPane>
-                        <h3>Create Swap from <span className="bnb-img bnb" />  Binance  </h3>
-                        <FormGroup>
-                            <Label for="swapAmount"><T>bep3.swap.amount</T></Label>
-                            <Input placeholder="Swap Amount" name="swapAmount" value={this.state.swapAmount} type="number" onChange={this.handleChange}
-                                min={Coin.MinStake}
-                                invalid={this.state.swapAmount === null} />
-                            <FormText><T>bep3.swap.amountKava</T></FormText>
-                        </FormGroup>
-                        <FormGroup>
-                            <Label for="binanceAddress"><T>bep3.swap.binanceAddress</T></Label>
-                            <Input name="binanceAddress" onChange={this.handleChange}
-                                placeholder="Binance Address" type="text" value={this.state.binanceAddress}
-                                invalid={this.state.binanceAddress === null} />
-                            <FormText><T>bep3.swap.enterAddress</T></FormText>
-                        </FormGroup>
-                        <FormGroup >
-                            <Label for="binanceMnemonics"><T>bep3.swap.binanceMnemonics</T></Label>
-                            <Form inline >
+
+
+        return <Modal isOpen={this.state.isOpen} toggle={this.close}>
+            <Form id="swap-form" onSubmit={this.handleSubmit}>
+                <ModalBody>
+                    <TabContent activeTab={this.state.currentActiveTab}>
+                        <TabPane tabId="1">
+                            <h3>Create Swap from <img src="/img/bnb-symbol.svg" className="bnb-img" />  Binance  </h3>
+                            <FormGroup>
+                                <Label for="swapAmount"><T>bep3.swap.amount</T></Label>
+                                <Input placeholder="Swap Amount" name="swapAmount" type="number" id="swapAmount" onChange={this.handleChange}
+
+                                />
+                                <FormText><T>bep3.swap.amountKava</T></FormText>
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="binanceAddress"><T>bep3.swap.binanceAddress</T></Label>
+                                <Input name="binanceAddress" onChange={this.handleChange}
+                                    placeholder="Binance Address" type="text" />
+                                <FormText><T>bep3.swap.enterAddress</T></FormText>
+                            </FormGroup>
+                            <FormGroup  >
+
+
+                                <Label for="binanceMnemonics" className="d-block"><T>bep3.swap.binanceMnemonics</T></Label>
                                 {
                                     mnemonicsCount.map((val, index) => {
-                                        return <FormGroup className={"mr-sm-3 mb-sm-0"} key={index} >
+                                        return <FormGroup className={"form-control d-inline"} key={index} >
                                             <Label for={`mnemonics${val}`} className="mnemonics-number">{val}</Label>
+                                            {/* <Typeahead
+                                                labelKey="name"
+                                                options={this.state.mnemonicsList}
+                                                className="mnemonics-field py-n1 no-gutters"
+                                                id={`mnemonics-${val}`}
+                                                placeholder={`Phrase ${val}`}
+                                                type="text"
+                                                onInputChange={this.handleChange}
+                                                minLength={3}
+                                                inputProps={{ name: 'binanceMnemonics[]' }}
 
-                                            <Input className="mnemonics-field" type="hash" name={`binanceMnemonics-${val}`} id={`mnemonics-${val}`} placeholder={`Phrase ${val}`} value={this.state.binanceMnemonics}
-                                                onChange={this.handleInputChange} />
+                                            /> */}
+
+                                            <Input
+                                                name='binanceMnemonics[]'
+                                                className="mnemonics-field py-n1 no-gutters"
+                                                id={`mnemonics-${val}`}
+                                                placeholder={`Phrase ${val}`}
+                                                type="text"
+                                                onChange={this.handleChange}
+                                            />
 
                                         </FormGroup>
 
                                     })}
 
 
-
-                            </Form>
-                            <FormText color="danger"><T>bep3.swap.enterMnemonics</T></FormText>
-                        </FormGroup>
-                    </TabPane>
-                </TabContent>
-            </ModalBody>
-            <ModalFooter>
-                <Button color="primary" className="float-right" disabled={!this.state.swapAmount || !this.state.binanceAddress || !this.state.binanceMnemonics} >
-                    Next
-                </Button>
-                <Button color="secondary" onClick={this.close}>Close</Button>
-            </ModalFooter>
+                                <span>
+                                    <FormText color="danger" className="pt-2"><T>bep3.swap.enterMnemonics</T></FormText>
+                                </span>
+                            </FormGroup>
+                            <FormGroup className="pb-5 mb-3" >
+                                <Button color="secondary" className="float-right ml-2" onClick={this.close}>Close</Button>
+                                <Button type="submit" color="primary" className="float-right" disabled={this.state.invalid} onClick={this.getSwap}>
+                                    Next
+                                </Button>
+                            </FormGroup>
+                        </TabPane>
+                        <TabPane tabId="2">
+                            <span>The swap has been <span className='action'>successful!</span> Please claim your BNB for address <b>{this.state.user} </b> using the button below</span>
+                            <div></div>
+                            <ClaimSwapButton swapID={this.state.swapID} secretNum={this.state.secretRandomNum} />
+                            <div></div>
+                        </TabPane>
+                    </TabContent>
+                </ModalBody>
+            </Form>
         </Modal>
     }
 
     render = () => {
-        return <span className="ledger-buttons-create-cdp button float-right">
+
+        return <span className="ledger-buttons-swap button float-right">
             <Button color="danger" size="sm" onClick={() => this.openModal()}> Create Swap </Button>
             {this.createSwap()}
         </span>;
     }
 }
+
 
 // CreateSwapButton.propTypes = {
 //     
