@@ -122,7 +122,7 @@ const TypeMeta = {
         button: 'claim swap',
         pathPreFix: 'bep3/swap/claim',
         pathSuffix: ' ',
-        gasAdjustment: '1.8'
+        gasAdjustment: '2'
     },
     [Types.CREATECDP]: {
         button: 'create CDP',
@@ -1257,7 +1257,7 @@ class ClaimSwapButton extends LedgerButton {
 
 
     render = () => {
-        return <span className="ledger-buttons-swap button">
+        return <span className="ledger-buttons-swap button float-right">
             <Button color="primary" size="sm" onClick={() => this.openModal(Types.CLAIMSWAP, {})}> {TypeMeta[Types.CLAIMSWAP].button} </Button>
             {this.renderModal()}
         </span>;

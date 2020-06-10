@@ -5,7 +5,8 @@ import {
     Nav, NavItem, NavLink,
     Row, Col,
     Card, CardHeader, CardBody,
-    Progress} from 'reactstrap';
+    Progress
+} from 'reactstrap';
 import classnames from 'classnames';
 import numbro from 'numbro';
 import AccountCopy from '../components/AccountCopy.jsx';
@@ -16,7 +17,7 @@ import Redelegations from './Redelegations.jsx';
 import AccountTransactions from '../components/TransactionsContainer.js';
 import ChainStates from '../components/ChainStatesContainer.js'
 import { Helmet } from 'react-helmet';
-import { WithdrawButton, TransferButton,  } from '../ledger/LedgerActions.jsx';
+import { WithdrawButton, TransferButton, ClaimSwapButton} from '../ledger/LedgerActions.jsx';
 import CDP from '../cdp/CDP.jsx';
 import SentryBoundary from '../components/SentryBoundary.jsx';
 import i18n from 'meteor/universe:i18n';
@@ -660,7 +661,7 @@ export default class AccountDetails extends Component {
                                     {this.state.user ? <Row>
                                         <Col xs={12}><TransferButton history={this.props.history} address={this.state.address} denom={this.state.denom} /></Col>
                                         {this.state.user === this.state.address ? <Col xs={12}><WithdrawButton history={this.props.history} rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address} denom={this.state.denom} /></Col> : null}
-                                        {/* {this.state.user === this.state.address ? <Col xs={12}><ClaimSwapButton validator={this.props.validator} address={this.state.operator_address} history={this.props.history} /></Col> : null} */}
+                                        {this.state.user === this.state.address ? <Col xs={12}><ClaimSwapButton validator={this.props.validator} address={this.state.operator_address} history={this.props.history} swapID={''} secretNum={''} /></Col> : null}
                                         {this.state.user === this.state.address ? <Col xs={12}><CreateSwapButton validator={this.props.validator} address={this.state.operator_address} history={this.props.history} denom={this.state.denom} /></Col> : null}
                                     </Row> : null}
                                 </Col>
