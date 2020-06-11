@@ -163,15 +163,23 @@ export default class CreateSwapButton extends Component {
 
     getSwap = async () => {
 
-        let getSwap = await incomingSwap(this.state.binanceAddress, this.state.binanceMnemonics, this.state.user, this.state.binanceSwapAmount)
+        try {
+            let getSwap = await incomingSwap(this.state.binanceAddress, this.state.binanceMnemonics, this.state.user, this.state.binanceSwapAmount)
 
-        if (getSwap) {
+            if (getSwap) {
+                this.setState({
+                    swapID: getSwap.swapID.toUpperCase(),
+                    secretRandomNum: getSwap.secretRandomNum.toUpperCase(),
+                    currentActiveTab: '2',
+                })
+            }
+        }
+        catch (e) {
             this.setState({
-                swapID: getSwap.swapID.toUpperCase(),
-                secretRandomNum: getSwap.secretRandomNum.toUpperCase(),
-                currentActiveTab: '2',
+                errorMessage: e,
             })
         }
+
 
 
     }
@@ -247,7 +255,7 @@ export default class CreateSwapButton extends Component {
                             </FormGroup>
                             <FormGroup className="pb-5 mb-3" >
                                 <Button color="secondary" className="float-right ml-2" onClick={this.close}>Close</Button>
-                                <Button type="submit" color="primary" className="float-right" disabled={this.state.invalid} onClick={this.getSwap}>
+                                <Button type="submit" color="primary" className="float-right" disabled={this.state.invalid} onClick={this.getSwap} >
                                     Next
                                 </Button>
                             </FormGroup>

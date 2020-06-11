@@ -1195,8 +1195,9 @@ class ClaimSwapButton extends LedgerButton {
         super(props);
         this.state = {
             ...this.state,
-            swapID: props.swapID,
-            secretNum: props.secretNum,
+            swapID: props.swapID || '',
+            secretNum: props.secretNum || '',
+            displayClaimSwapDetails: props.claimSwap,
         }
     }
 
@@ -1210,9 +1211,9 @@ class ClaimSwapButton extends LedgerButton {
             }
         }
         else return null;
-
-
     }
+
+
 
 
     renderActionTab = () => {
@@ -1222,7 +1223,7 @@ class ClaimSwapButton extends LedgerButton {
             <FormGroup>
                 <Label for="swapID"><T>cdp.swapID</T></Label>
                 <Input name="swapID" onChange={this.handleInputChange}
-                    placeholder="Swap ID" type="text" value={this.state.swapID} data-type='hash'
+                    placeholder="Swap ID" type="text"  data-type='hash' value={this.state.swapID}
                     invalid={this.state.swapID === null} />
             </FormGroup>
             <FormGroup>
@@ -1258,7 +1259,7 @@ class ClaimSwapButton extends LedgerButton {
 
     render = () => {
         return <span className="ledger-buttons-swap button float-right">
-            <Button color="primary" size="sm" onClick={() => this.openModal(Types.CLAIMSWAP, {})}> {TypeMeta[Types.CLAIMSWAP].button} </Button>
+            <Button color="warning" size="sm" onClick={() => this.openModal(Types.CLAIMSWAP, {})}> {TypeMeta[Types.CLAIMSWAP].button} </Button>
             {this.renderModal()}
         </span>;
     }
