@@ -14,7 +14,7 @@ const CDPRow = (props) => {
     return <tr>
         <th className="d-none d-sm-table-cell counter ">{(props.cdpList.cdp.id)}</th>
         <td className="owner"><Link to={"/account/" + props.cdpList.cdp.owner}>{props.cdpList.cdp.owner}</Link></td>
-        <td className="collateral-deposited">{props.cdpList.collateral_value ? <div>{new Coin(props.cdpList.collateral_value.amount, props.cdpList.collateral_value.denom).toString(4)}</div> : '0 usdx'}</td>
+        <td className="collateral-deposited">{props.cdpList.cdp.collateral ? <div>{new Coin(props.cdpList.cdp.collateral.amount, props.cdpList.cdp.collateral.denom).toString(4)}</div> : '0 usdx'}</td>
         <td className="principal-drawn">{props.cdpList.cdp.principal ? <div>{new Coin(props.cdpList.cdp.principal.amount, props.cdpList.cdp.principal.denom).toString()}</div> : '0 usdx'}</td>
         <td className={parseFloat(props.cdpList.collateralization_ratio) > parseFloat(minCollateralRatio) ? "value text-success" : "value text-danger"}>{numbro(parseFloat(props.cdpList.collateralization_ratio)).format('0.000000')}</td>
         <td className="accumulated-fees">{props.cdpList.cdp.accumulated_fees ? <div>{new Coin(props.cdpList.cdp.accumulated_fees.amount, props.cdpList.cdp.accumulated_fees.denom).toString()}</div> : '0 usdx'}</td>
