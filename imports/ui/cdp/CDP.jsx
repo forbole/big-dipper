@@ -45,6 +45,9 @@ export default class CDP extends Component {
                         total: result.available
                     })
                 }
+                else {
+                    console.log("I AM CAUSING PROBLEM HERE ")
+                }
             })
         }
     }
@@ -158,7 +161,7 @@ export default class CDP extends Component {
         if (this.state.userCDP && this.state.userCDP.cdp) {
             return <div className="cdp-content">
                 <Table>
-                    <div className="mb-3"><Badge color="success">BNB:USD</Badge> <strong className="text-info">{this.state.cdpPrice ? numbro(this.state.cdpPrice).formatCurrency({ mantissa: 4 }) : 0}</strong></div>
+                    <div className="mb-2"> <strong className="text-success">1 : {this.state.cdpPrice ? numbro(this.state.cdpPrice).formatCurrency({ mantissa: 4 }) : 0}</strong></div>
                     <tbody>
                         <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.id</T></th>
@@ -245,7 +248,9 @@ export default class CDP extends Component {
 
         else {
             return <div >
-                <div className="mb-3"><Badge color="success">BNB:USD</Badge> <strong className="text-info">{this.state.cdpPrice ? numbro(this.state.cdpPrice).formatCurrency({ mantissa: 4 }) : 0}</strong></div>
+                <div ><Badge color="success" className="badge-bnb-usd">BNB:USD</Badge> </div>
+                <div className="mb-2"> <strong className="text-success">1 : {this.state.cdpPrice ? numbro(this.state.cdpPrice).formatCurrency({ mantissa: 4 }) : 0}</strong></div>
+
                 <div className={"cdp-buttons"}>
                     <CreateCDPButton
                         cdpParams={this.state.cdpParams ? this.state.cdpParams.debt_param.debt_floor : null}
@@ -256,11 +261,13 @@ export default class CDP extends Component {
                     />
                 </div>
             </div>
+
         }
 
-    }
 
+    }
 }
+
 
 
 

@@ -176,14 +176,14 @@ export default class AccountDetails extends Component {
                 this.setState({
                     unbondingDelegations: result.unbonding || []
                 })
+                const unbondingValue = [{
+                    denom: "ukava",
+                    amount: "0.00"
+                }];
                 if (result.unbonding && result.unbonding.length > 0) {
-                    let unbondingValue = [{
-                        denom: "ukava",
-                        amount: "0.00"
-                    }];
                     result.unbonding.forEach((unbond, i) => {
                         unbond.entries.forEach((entry, j) => {
-                            unbondingValue[i].amount = parseFloat(unbondingValue[i].amount) + parseFloat(entry.balance);
+                            unbondingValue[unbondingValue.length - 1].amount = parseFloat(unbondingValue[unbondingValue.length - 1].amount) + parseFloat(entry.balance);
                             this.setState({
                                 unbonding: unbondingValue,
                             }), this
@@ -233,7 +233,7 @@ export default class AccountDetails extends Component {
                             let totalValue = cloneDeep(this.state.total);
                             for (let v in totalValue) {
                                 for (let c in this.state.rewards) {
-                                    if (totalValue[v] === this.state.rewards[c]) {
+                                    if (totalValue[v].denom === this.state.rewards[c].denom) {
                                         totalValue[v].amount = parseFloat(totalValue[v].amount) + parseFloat(this.state.rewards[c].amount)
                                     }
                                 }
@@ -355,19 +355,19 @@ export default class AccountDetails extends Component {
 
 
             Meteor.call('account.getIncentive', this.props.match.params.address, coin2, (error, result) => {
-            if (error) {
-                console.warn(error);
-                this.setState({
-                    loading: false,
-                    hasIncentive: false
-                })
-            }
-            if (result && result.length > 0) {
-                this.setState({
-                    hasIncentive: true,
-                })
-            }
-        })
+                if (error) {
+                    console.warn(error);
+                    this.setState({
+                        loading: false,
+                        hasIncentive: false
+                    })
+                }
+                if (result && result.length > 0) {
+                    this.setState({
+                        hasIncentive: true,
+                    })
+                }
+            })
 
     }
 
@@ -655,37 +655,53 @@ export default class AccountDetails extends Component {
                                         <Col xs={12} className="value text-left"><div className="commission_3rd infinity" />{this.findCoin(this.state.commission, coin3)}</Col>
                                     </Row> : null}
                                 </Col>
-                                <Col xs={3} md={4} className="total d-flex flex-column justify-content-end text-nowrap">
-                                    {this.state.user ? <Row>
-                                        <Col xs={12}><TransferButton history={this.props.history} address={this.state.address} denom={this.state.denom} /></Col>
-                                        {this.state.user === this.state.address ? <Col xs={12}><WithdrawButton history={this.props.history} rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address} denom={this.state.denom} /></Col> : null}
-                                        {this.state.user === this.state.address ? <Col xs={12}><ClaimSwapButton validator={this.props.validator} address={this.state.operator_address} history={this.props.history} /></Col> : null}
-                                    </Row> : null}
-                                </Col>
-                                <Col md={12} className="total d-flex flex-column justify-content-end">
-                                    <Row>
+
+                                <Col xs={4} className="total d-flex flex-column justify-content-end pt-5">
+                                    <Row className="pt-5">
                                         <Col xs={12} className="label  text-right"><div className="infinity" /><T>accounts.total</T></Col>
                                     </Row>
-                                </Col>
-                                <Col md={12} className="total d-flex flex-column justify-content-end">
                                     <Row>
                                         <Col xs={12} className="value text-right">{this.findCoin(this.state.total, coin1)}</Col>
                                         <Col xs={12} className="dollar-value text-right text-secondary">~{numbro((this.findValue(this.state.total, coin1)) * this.state.price).format("$0,0.0000a")} ({numbro(this.state.price).format("$0,0.00")}/{Meteor.settings.public.coins[0].displayName})</Col>
                                     </Row>
-                                </Col>
-                                <Col md={12} className="total d-flex flex-column justify-content-end">
                                     <Row>
                                         <Col xs={12} className="value-2 text-right">{this.findCoin(this.state.total, coin2)}</Col>
                                         <Col xs={12} className="dollar-value-2 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin2)) * this.state.bnbPrice).format("$0,0.0000a")} ({numbro(this.state.bnbPrice).format("$0,0.00")}/{Meteor.settings.public.coins[1].displayName})</Col>
                                     </Row>
-                                </Col>
-                                <Col md={12} className="total d-flex flex-column justify-content-end">
                                     <Row>
                                         <Col xs={12} className="value-3 text-right">{this.findCoin(this.state.total, coin3)}</Col>
                                         <Col xs={12} className="dollar-value-3 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin3)) * this.state.usdxPrice).format("$0,0.0000a")} ({numbro(this.state.usdxPrice).format("$0,0.00")}/{Meteor.settings.public.coins[5].displayName})</Col>
                                     </Row>
                                 </Col>
+
+                                {/* <Col xs={3} className="total d-flex flex-column justify-content-end">
+                                    <Row>
+                                        <Col xs={12} className="value text-right">{this.findCoin(this.state.total, coin1)}</Col>
+                                        <Col xs={12} className="dollar-value text-right text-secondary">~{numbro((this.findValue(this.state.total, coin1)) * this.state.price).format("$0,0.0000a")} ({numbro(this.state.price).format("$0,0.00")}/{Meteor.settings.public.coins[0].displayName})</Col>
+                                    </Row>
+                                </Col> */}
+                                {/* <Col xs={3} className="total d-flex flex-column justify-content-end">
+                                    <Row>
+                                        <Col xs={12} className="value-2 text-right">{this.findCoin(this.state.total, coin2)}</Col>
+                                        <Col xs={12} className="dollar-value-2 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin2)) * this.state.bnbPrice).format("$0,0.0000a")} ({numbro(this.state.bnbPrice).format("$0,0.00")}/{Meteor.settings.public.coins[1].displayName})</Col>
+                                    </Row>
+                                </Col> */}
+                                {/* <Col xs={3} className="total d-flex flex-column justify-content-end">
+                                    <Row>
+                                        <Col xs={12} className="value-3 text-right">{this.findCoin(this.state.total, coin3)}</Col>
+                                        <Col xs={12} className="dollar-value-3 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin3)) * this.state.usdxPrice).format("$0,0.0000a")} ({numbro(this.state.usdxPrice).format("$0,0.00")}/{Meteor.settings.public.coins[5].displayName})</Col>
+                                    </Row>
+                                </Col> */}
+                                <Col xs={12} className="total d-flex flex-column justify-content-end text-nowrap py-2">
+                                    {this.state.user ? <Row>
+                                        <Col xs={12} >
+                                            {this.state.user === this.state.address ? <ClaimSwapButton validator={this.props.validator} address={this.state.operator_address} history={this.props.history} /> : null}
+                                            {this.state.user === this.state.address ? <WithdrawButton history={this.props.history} rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address} denom={this.state.denom} /> : null}
+                                            <TransferButton history={this.props.history} address={this.state.address} denom={this.state.denom} /></Col>
+                                    </Row> : null}
+                                </Col>
                             </Row>
+
                         </CardBody>
                     </Card></Col>
                 </Row></SentryBoundary>
@@ -762,17 +778,17 @@ export default class AccountDetails extends Component {
                                         </NavLink>
                                     </NavItem>
                                     {this.state.hasIncentive === true ?
-                                    <NavItem>
-                                        <NavLink
-                                            className={classnames({ active: this.state.cdpActiveTab === 'cdp-incentive' })}
-                                            onClick={() => { this.toggleCDP('cdp-incentive'); }}
-                                        >
-                                            <span className="cdp-logo">
-                                                <i className="material-icons md-16">
-                                                    emoji_events
+                                        <NavItem>
+                                            <NavLink
+                                                className={classnames({ active: this.state.cdpActiveTab === 'cdp-incentive' })}
+                                                onClick={() => { this.toggleCDP('cdp-incentive'); }}
+                                            >
+                                                <span className="cdp-logo">
+                                                    <i className="material-icons md-16">
+                                                        emoji_events
                                             </i> Incentive</span>
-                                        </NavLink>
-                                    </NavItem> : null }
+                                            </NavLink>
+                                        </NavItem> : null}
                                 </Nav>
                                 <TabContent activeTab={this.state.cdpActiveTab}>
                                     <TabPane tabId="cdp-bnb">

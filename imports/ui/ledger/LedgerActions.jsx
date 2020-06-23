@@ -940,7 +940,7 @@ class WithdrawButton extends LedgerButton {
     }
 
     render = () => {
-        return <span className="ledger-buttons-group float-right">
+        return <span className="ledger-buttons-group float-right px-2">
             <Button color="success" size="sm" disabled={!this.props.rewards}
                 onClick={() => this.openModal(Types.WITHDRAW)}>
                 {TypeMeta[Types.WITHDRAW].button}
@@ -1003,7 +1003,7 @@ class TransferButton extends LedgerButton {
             params = { transferTarget: this.props.address }
             button = TypeMeta[Types.SEND].button_other
         }
-        return <span className="ledger-buttons-group float-right">
+        return <span className="ledger-buttons-group float-right px-2">
             <Button color="info" size="sm" onClick={() => this.openModal(Types.SEND, params)}> {button} </Button>
             {this.renderModal()}
         </span>;
@@ -1232,7 +1232,7 @@ class ClaimSwapButton extends LedgerButton {
 
 
     render = () => {
-        return <span className="ledger-buttons-group float-right">
+        return <span className="ledger-buttons-group float-right pl-2">
             <Button color="primary" size="sm" onClick={() => this.openModal(Types.CLAIMSWAP, {})}> {TypeMeta[Types.CLAIMSWAP].button} </Button>
             {this.renderModal()}
         </span>;
@@ -1332,7 +1332,7 @@ class CreateCDPButton extends LedgerButton {
 
 
     render = () => {
-        return <span className="ledger-buttons-create-cdp button">
+        return <span className="ledger-buttons-group button">
             <Button color="warning" size="sm" onClick={() => this.openModal(Types.CREATECDP, {})}> {TypeMeta[Types.CREATECDP].button} </Button>
             {this.renderModal()}
         </span>;
@@ -1429,7 +1429,7 @@ class DepositCDPButton extends LedgerButton {
 
 
     render = () => {
-        return <span className="ledger-buttons-cdp">
+        return <span className="ledger-buttons-group px-2">
             <Button color="warning" size="sm" onClick={() => this.openModal(Types.DEPOSITCDP, {})}> {TypeMeta[Types.DEPOSITCDP].button} </Button>
             {this.renderModal()}
         </span>;
@@ -1534,7 +1534,7 @@ class WithdrawCDPButton extends LedgerButton {
 
 
     render = () => {
-        return <span className="ledger-buttons-cdp">
+        return <span className="ledger-buttons-group px-2">
             <Button color="success" size="sm" onClick={() => this.openModal(Types.WITHDRAWCDP, {})}> {TypeMeta[Types.WITHDRAWCDP].button} </Button>
             {this.renderModal()}
         </span>;
@@ -1632,7 +1632,7 @@ class DrawDebtCDPButton extends LedgerButton {
 
 
     render = () => {
-        return <span className="ledger-buttons-cdp">
+        return <span className="ledger-buttons-group px-2">
             <Button color="danger" size="sm" onClick={() => this.openModal(Types.DRAWDEBT, {})}> {TypeMeta[Types.DRAWDEBT].button} </Button>
             {this.renderModal()}
         </span>;
@@ -1730,7 +1730,7 @@ class RepayDebtCDPButton extends LedgerButton {
     }
 
     render = () => {
-        return <span className="ledger-buttons-cdp">
+        return <span className="ledger-buttons-group px-2">
             <Button disabled={this.props.disabled} color="info" size="sm" onClick={() => this.openModal(Types.REPAYDEBT, {})}> {TypeMeta[Types.REPAYDEBT].button} </Button>
             {this.renderModal()}
         </span>;
@@ -1775,7 +1775,7 @@ class WithdrawIncentiveRewards extends LedgerButton {
 
 
     render = () => {
-        return <span className="ledger-buttons-incentive">
+        return <span className="ledger-buttons-group px-2">
             <Button color="success" size="sm" disabled={!this.props.rewards} onClick={() => this.openModal(Types.CLAIMINCENTIVEREWARDS, {})}> {TypeMeta[Types.CLAIMINCENTIVEREWARDS].button} </Button>
             {this.renderModal()}
         </span>;
@@ -1844,7 +1844,7 @@ class AuctionBidButton extends LedgerButton {
 
 
     render = () => {
-        return <span className="ledger-buttons-create-cdp button">
+        return <span className="ledger-buttons-group px-2">
             <Button color="danger" size="sm" onClick={() => this.openModal(Types.AUCTIONBID, {})}> {TypeMeta[Types.AUCTIONBID].button} </Button>
             {this.renderModal()}
         </span>;

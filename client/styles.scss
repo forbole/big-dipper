@@ -547,6 +547,7 @@ body {
     .commission_3rd{
       background-color: rgb(34,139,34)
     }
+
   
     .total .value {
       font-size: 1.5em;
@@ -1039,17 +1040,36 @@ body {
     display: block;
     margin: 5px 0;
     width: 100%;
+    border: none;
+    border-radius: 6rem;
+  //box-shadow: 0px 8px 15px rgba(255, 0, 0, 0.2);
+  transition: all 0.3s ease 0s;
+  cursor: pointer;
+  outline: none;
+
   }
 
-  .ledger-buttons-cdp button{
-    display: inline-block;
-    margin: 0 10px;
-  }
+  .ledger-buttons-group button:hover {
+  //background-color: #2EE59D;
+  box-shadow: 0px 15px 20px rgba(255, 0, 0, 0.2);
+  color: #fff;
+  transform: translateY(-4px);
+}
 
-  .ledger-buttons-incentive button{
-    display: inline;
-    //margin: 0 10px;
-  }
+.collateral-ratio-icon{
+  height: 20px;
+  width: 20px;
+}
+
+  // .ledger-buttons-cdp button{
+  //   display: inline-block;
+  //   margin: 0 10px;
+  // }
+
+  // .ledger-buttons-incentive button{
+  //   display: inline;
+  //   //margin: 0 10px;
+  // }
 
   
   .redelegate-validators .ellipsis {
@@ -1151,4 +1171,8 @@ body {
   .cdp-buttons{
     display: inline-flex;
 
+  }
+
+  .badge-bnb-usd{
+    width: 8em;
   }
