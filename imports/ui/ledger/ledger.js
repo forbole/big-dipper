@@ -233,7 +233,6 @@ export class Ledger {
             }],
             gas: gas.toString(),
         };
-
         return unsignedTx;
     }
 
@@ -599,7 +598,6 @@ export class Ledger {
 
             },
         };
-        console.log(txMsg)
         return Ledger.createSkeleton(txContext, [txMsg]);
     }
 
@@ -619,7 +617,7 @@ export class Ledger {
                 },
                 auction_id: auctionID,
                 bidder: txContext.bech32,
-                
+
 
             },
         };

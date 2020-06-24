@@ -652,12 +652,13 @@ export default class AccountDetails extends Component {
                                         <Col xs={12} className="value text-left"><div className="rewards_3rd infinity" />{this.findCoin(this.state.rewards, coin3)}</Col>
                                     </Row>
                                     {this.state.commission ? <Row>
-                                        <Col xs={12} className="value text-left"><div className="commission_3rd infinity" />{this.findCoin(this.state.commission, coin3)}</Col>
+                                        <Col xs={12} className="value text-left
+                                        "><div className="commission_3rd infinity" />{this.findCoin(this.state.commission, coin3)}</Col>
                                     </Row> : null}
                                 </Col>
 
-                                <Col xs={4} className="total d-flex flex-column justify-content-end pt-5">
-                                    <Row className="pt-5">
+                                <Col xs={4} className="total d-flex flex-column justify-content-end">
+                                    <Row >
                                         <Col xs={12} className="label  text-right"><div className="infinity" /><T>accounts.total</T></Col>
                                     </Row>
                                     <Row>
@@ -692,7 +693,7 @@ export default class AccountDetails extends Component {
                                         <Col xs={12} className="dollar-value-3 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin3)) * this.state.usdxPrice).format("$0,0.0000a")} ({numbro(this.state.usdxPrice).format("$0,0.00")}/{Meteor.settings.public.coins[5].displayName})</Col>
                                     </Row>
                                 </Col> */}
-                                <Col xs={12} className="total d-flex flex-column justify-content-end text-nowrap py-2">
+                                <Col xs={12} className="total d-flex flex-column justify-content-end text-nowrap pt-3">
                                     {this.state.user ? <Row>
                                         <Col xs={12} >
                                             {this.state.user === this.state.address ? <ClaimSwapButton validator={this.props.validator} address={this.state.operator_address} history={this.props.history} /> : null}

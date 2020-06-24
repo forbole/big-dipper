@@ -175,7 +175,7 @@ cdp:
     principal: 'Principal Drawn'
     accumulatedFees: 'Accumulated Fees'
     collateralValue: 'Collateral Value'
-    collateralizationRatio: 'Collateral Ratio'
+    collateralizationRatio: 'Collateralization Ratio'
     debt: 'Debt'
     create: 'Create CDP'
     deposit: 'Deposit'

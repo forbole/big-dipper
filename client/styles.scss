@@ -108,6 +108,11 @@ body {
   
   .ledger-sign-in .error-message, .ledger-modal .error-message {
     color: red;
+
+  }
+
+  .modal-body-cdp{
+    padding: 2rem;
   }
   
   #header {
@@ -1039,7 +1044,8 @@ body {
   .ledger-buttons-group button {
     display: block;
     margin: 5px 0;
-    width: 100%;
+    width: 5.5rem;
+    padding: 0.3rem;
     border: none;
     border-radius: 6rem;
   //box-shadow: 0px 8px 15px rgba(255, 0, 0, 0.2);
@@ -1051,7 +1057,7 @@ body {
 
   .ledger-buttons-group button:hover {
   //background-color: #2EE59D;
-  box-shadow: 0px 15px 20px rgba(255, 0, 0, 0.2);
+  //box-shadow: 0px 15px 20px rgba(255, 0, 0, 0.2);
   color: #fff;
   transform: translateY(-4px);
 }
@@ -1061,6 +1067,10 @@ body {
   width: 20px;
 }
 
+.coin-available{
+  font-size: 0.8rem;
+  //opacity: 70%,
+}
   // .ledger-buttons-cdp button{
   //   display: inline-block;
   //   margin: 0 10px;
@@ -1176,3 +1186,29 @@ body {
   .badge-bnb-usd{
     width: 8em;
   }
+
+  .collateral-input{
+    text-align: right;
+
+  }
+
+  .modal-create-cdp{
+    padding: 0rem;
+    height: 2rem;
+    //width: 10rem;
+  }
+  
+  .form-group{
+    margin-bottom: 1.5rem;
+  }
+
+.bnb-usd-toast{
+  width: 10rem;
+  display: inline-block;
+  text-align: center;
+}
+
+.bnb-usd-price{
+  display: flex;
+  justify-content: center;
+}

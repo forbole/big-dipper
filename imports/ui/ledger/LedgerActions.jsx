@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import {
     Button, Spinner, TabContent, TabPane, Row, Col, Modal, ModalHeader,
     Form, ModalBody, ModalFooter, InputGroup, InputGroupAddon, Input, Progress,
-    UncontrolledTooltip, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Table, Label, FormGroup, FormText, FormFeedback
+    UncontrolledTooltip, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Table, Label, FormGroup, FormText, FormFeedback, InputGroupText
 } from 'reactstrap';
 import { Ledger, DEFAULT_MEMO } from './ledger.js';
 import { Validators } from '/imports/api/validators/validators.js';
@@ -17,7 +17,6 @@ import moment from 'moment';
 import Account from '../components/Account.jsx';
 import _ from 'lodash';
 import i18n from 'meteor/universe:i18n';
-
 
 const maxHeightModifier = {
     setMaxHeight: {
@@ -733,7 +732,7 @@ class LedgerButton extends Component {
 
     renderModal = () => {
         return <Modal isOpen={this.state.isOpen} toggle={this.close} className="ledger-modal">
-            <ModalBody>
+            <ModalBody >
                 <TabContent className='ledger-modal-tab' activeTab={this.state.activeTab}>
                     <TabPane tabId="0"></TabPane>
                     <TabPane tabId="1">
@@ -753,7 +752,7 @@ class LedgerButton extends Component {
             </ModalBody>
             <ModalFooter>
                 {this.getActionButton()}
-                <Button color="secondary" disabled={this.state.signing} onClick={this.close}>Close</Button>
+                <Button color="secondary" disabled={this.state.signing} onClick={this.close}>Cancel</Button>
             </ModalFooter>
         </Modal>
     }
@@ -1277,36 +1276,71 @@ class CreateCDPButton extends LedgerButton {
 
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
-        return <TabPane tabId="2">
-            <h3>Create CDP with <img src="/img/bnb-symbol.svg" className="bnb-img" /> BNB</h3>
+        return <TabPane tabId="2" className="modal-body-cdp">
+            <h3 className="text-center pb-5">Create CDP with <img src="/img/bnb-symbol.svg" className="bnb-img" /> BNB</h3>
             <FormGroup>
-                <Label for="collateral"><T>cdp.collateral</T></Label>
-                <Input placeholder="Collateral Amount" name="collateral" value={this.state.collateral} onChange={this.handleChange} type="number"
-                    min={Coin.MinStake} max={this.state.maxAmount}
-                    invalid={this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount)} />
-                <FormText>The amount of BNB you would like to deposit</FormText>
+                <Label for="collateral" className="mb-n4"><T>cdp.collateral</T></Label>
+                <FormText className="coin-available mb-n5 float-right">Max {new Coin(this.state.maxAmount, this.props.collateral).convertToString()}</FormText>
+                <InputGroup className="modal-create-cdp py-n5">
+                    <InputGroupAddon addonType="prepend">
+                        <InputGroupText className="modal-create-cdp"><img src="/img/bnb-symbol.svg" className="bnb-img" /> </InputGroupText>
+                    </InputGroupAddon>
+
+                    <Input placeholder="Collateral Amount" name="collateral" value={this.state.collateral} onChange={this.handleChange} type="number"
+                        min={Coin.MinStake} max={this.state.maxAmount}
+                        invalid={this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount)} className="modal-create-cdp " />
+                    <InputGroupAddon addonType="append">
+                        <InputGroupText className=" modal-create-cdp font-weight-bold">BNB</InputGroupText>
+                    </InputGroupAddon>
+                </InputGroup>
             </FormGroup>
+
+
+
             <FormGroup>
-                <Label for="debt"><T>cdp.debt</T><FormText>(The maximum amount of USDX you could draw is {numbro(this.state.collateral * this.props.price / this.props.collateralizationRatio).format({ mantissa: 4 })}</FormText></Label>
-                <Input invalid={this.state.debt < this.props.cdpParams / Meteor.settings.public.coins[5].fraction} placeholder="Debt Amount" name="debt" value={this.state.debt} type="number" onChange={this.handleChange} />
-                <FormText>The amount of debt in USDX you would like to draw</FormText>
-                <FormFeedback>The minimum debt is {this.props.cdpParams / Meteor.settings.public.coins[5].fraction} USDX </FormFeedback>
+                <Label for="debt" className="mb-n4"><T>cdp.debt</T></Label>
+                <FormText invalid={true} className="coin-available mb-n5 float-right">The minimum debt is {this.props.cdpParams / Meteor.settings.public.coins[5].fraction} USDX </FormText>
+                <InputGroup className="modal-create-cdp py-n5">
+                    <FormFeedback invalid className="coin-available ">The minimum debt is {this.props.cdpParams / Meteor.settings.public.coins[5].fraction} USDX </FormFeedback>
+                    <InputGroupAddon addonType="prepend">
+                        <InputGroupText className="modal-create-cdp"><img src="/img/usdx-symbol.svg" className="bnb-img" /> </InputGroupText>
+                    </InputGroupAddon>
+
+                    <Input invalid={(this.state.debt < this.props.cdpParams / Meteor.settings.public.coins[5].fraction)} placeholder="Debt Amount" name="debt" value={this.state.debt} type="number" onChange={this.handleChange} className="modal-create-cdp " />
+                    <InputGroupAddon addonType="append">
+                        <InputGroupText className="modal-create-cdp font-weight-bold">USDX</InputGroupText>
+                    </InputGroupAddon>
+                    {/* <FormFeedback invalid={true} className="coin-available mb-n5 float-right">The minimum debt is {this.props.cdpParams / Meteor.settings.public.coins[5].fraction} USDX </FormFeedback> */}
+
+                </InputGroup>
+
             </FormGroup>
+
+
             <FormGroup>
-                <Label><T>cdp.collateralizationRatio</T></Label>
-                <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio >= this.props.collateralizationRatio))}
-                    className={((this.state.ratio !== Infinity) && (this.state.ratio >= this.props.collateralizationRatio)) ? 'text-success' : 'text-danger'}
-                    value={((this.state.ratio !== Infinity) && (this.state.ratio > 0)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 })}
-                    disabled={true} />
-                <FormFeedback>Collateralization ratio is danger! It must be equal or greater than {this.props.collateralizationRatio}</FormFeedback>
+                <InputGroup >
+                    <InputGroupAddon addonType="prepend">
+                        <Label for="collateral" className="mt-3"><T>cdp.collateralizationRatio</T></Label>
+                    </InputGroupAddon>
+
+
+                    <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio >= this.props.collateralizationRatio))}
+                        className={((this.state.ratio !== Infinity) && (this.state.ratio >= this.props.collateralizationRatio)) ? 'modal-create-cdp text-success text-right mt-2' : 'modal-create-cdp text-danger text-right mt-2 pr-5'}
+                        value={((this.state.ratio !== Infinity) && (this.state.ratio > 0)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 })}
+                        disabled={true} />
+                    {/* <FormFeedback className="coin-available mb-n5 float-right">The minimum debt is {this.props.cdpParams / Meteor.settings.public.coins[5].fraction} USDX </FormFeedback> */}
+
+                </InputGroup>
+
             </FormGroup>
-            <FormGroup>
-                <Label for="memo"><T>cdp.memo</T></Label>
-                <Input name="memo" onChange={this.handleInputChange}
+
+
+            <FormGroup className="mb-n4" >
+                <Label for="memo" className="mb-n4"><T>cdp.memo</T></Label>
+                <Input name="memo" onChange={this.handleInputChange} className="mb-n4"
                     placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
             </FormGroup>
-            <span className='coin'>Your available balance: {new Coin(this.state.maxAmount, this.props.collateral).convertToString(5)} </span>
-        </TabPane>
+        </TabPane >
 
     }
 
@@ -1316,12 +1350,13 @@ class CreateCDPButton extends LedgerButton {
 
     isDataValid = () => {
         if (!this.state.currentUser) return false
-        return isBetween(this.state.collateral, 0.00000001, this.state.maxAmount)
+        return isBetween(this.state.collateral, 0.00000001, this.state.maxAmount) && isBetween(this.state.debt, this.props.cdpParams / Meteor.settings.public.coins[5].fraction, numbro(this.state.collateral * this.props.price / this.props.collateralizationRatio));
+
     }
 
 
     getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>create CDP</span> with <span className='coin'>{new Coin(this.state.collateral, this.props.collateral).convertToString(6)}</span> for address <b>{this.state.user} </b>
+        return <span>You are going to <span className='action'>create CDP</span> with <span className='coin'>{new Coin(this.state.collateral, this.props.collateral).convertToString()}</span> for address <b>{this.state.user} </b>
      with <Fee gas={this.state.gasEstimate} />.</span>
     }
 
@@ -1380,29 +1415,60 @@ class DepositCDPButton extends LedgerButton {
 
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
-        return <TabPane tabId="2">
-            <h3>Deposit into CDP with <img src="/img/bnb-symbol.svg" className="bnb-img" /> BNB</h3>
+        return <TabPane tabId="2" className="modal-body-cdp">
+            <h3 className="text-center pb-5">Deposit into CDP with <img src="/img/bnb-symbol.svg" className="bnb-img" /> BNB</h3>
             <FormGroup>
-                <Label for="collateral"><T>cdp.deposit</T></Label>
-                <Input placeholder="Collateral Amount" name="collateral" value={this.state.collateral} onChange={this.handleChange}
-                    min={Coin.MinStake} max={this.state.maxAmount}
-                    invalid={this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount)} />
-                <FormText>The amount of BNB you would like to deposit</FormText>
+                <Label for="deposit" className="mb-n4"><T>cdp.deposit</T></Label>
+                <FormText className="coin-available mb-n5 float-right">Max {new Coin(this.state.maxAmount, this.props.collateral).convertToString()}</FormText>
+                <InputGroup className="modal-create-cdp py-n5">
+                    <InputGroupAddon addonType="prepend">
+                        <InputGroupText className="modal-create-cdp"><img src="/img/bnb-symbol.svg" className="bnb-img" /> </InputGroupText>
+                    </InputGroupAddon>
+
+                    <Input placeholder="Collateral Amount" name="collateral" value={this.state.collateral} onChange={this.handleChange}
+                        min={Coin.MinStake} max={this.state.maxAmount}
+                        invalid={this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount)} className="modal-create-cdp " />
+                    <InputGroupAddon addonType="append">
+                        <InputGroupText className="modal-create-cdp font-weight-bold">BNB</InputGroupText>
+                    </InputGroupAddon>
+                </InputGroup>
             </FormGroup>
+
             <FormGroup>
+                <InputGroup >
+                    <InputGroupAddon addonType="prepend">
+                        <Label for="collateral" className="mt-3"><T>cdp.collateralizationRatio</T></Label>
+                    </InputGroupAddon>
+                    <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio))}
+                        className={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? 'modal-create-cdp text-success text-right mt-2' : 'modal-create-cdp text-danger text-right mt-2 pr-5'}
+                        value={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 })}
+                        disabled={true} />
+
+
+                </InputGroup>
+
+            </FormGroup>
+
+            <FormGroup className="mb-n4" >
+                <Label for="memo" className="mb-n4"><T>cdp.memo</T></Label>
+                <Input name="memo" onChange={this.handleInputChange} className="mb-n4"
+                    placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
+            </FormGroup>
+
+            {/* <FormGroup>
                 <Label><T>cdp.collateralizationRatio</T></Label>
                 <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio))}
                     className={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? 'text-success' : 'text-danger'}
                     value={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 })}
                     disabled={true} />
                 <FormFeedback>Collateralization ratio is danger! It must be greater than {this.props.collateralizationRatio}</FormFeedback>
-            </FormGroup>
-            <FormGroup>
+            </FormGroup> */}
+            {/* <FormGroup>
                 <Label for="memo"><T>cdp.memo</T></Label>
                 <Input name="memo" onChange={this.handleInputChange}
                     placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
-            </FormGroup>
-            <span className='coin'>Your available balance: {new Coin(this.state.maxAmount, this.props.collateral).convertToString(5)} </span>
+            </FormGroup> */}
+            {/* <span className='coin'>Your available balance: {new Coin(this.state.maxAmount, this.props.collateral).convertToString(5)} </span> */}
         </TabPane>
 
     }
@@ -1412,7 +1478,7 @@ class DepositCDPButton extends LedgerButton {
     }
 
     getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>Deposit</span> <span className='coin'>{new Coin(this.state.collateral, this.props.collateral).convertToString(8)}</span> from address <b>{this.state.user} </b> into CDP for address <b>{this.state.cdpOwner} </b>
+        return <span>You are going to <span className='action'>Deposit</span> <span className='coin'>{new Coin(this.state.collateral, this.props.collateral).convertToString()}</span> from address <b>{this.state.user} </b> into CDP for address <b>{this.state.cdpOwner} </b>
      with <Fee gas={this.state.gasEstimate} />.</span>
     }
 
@@ -1484,7 +1550,43 @@ class WithdrawCDPButton extends LedgerButton {
 
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
-        return <TabPane tabId="2">
+        return <TabPane tabId="2" className="modal-body-cdp">
+            <h3 className="text-center pb-5">Withdraw <img src="/img/bnb-symbol.svg" className="bnb-img" /> BNB from CDP </h3>
+            <FormGroup>
+                <Label for="withdraw" className="mb-n4"><T>cdp.withdraw</T></Label>
+                <FormText className="coin-available mb-n5 float-right">Max {this.state.isDepositor ? new Coin(this.state.depositedValue, this.props.collateral).convertToString() : new Coin(this.state.maxAmount, this.props.collateral).convertToString()}</FormText>
+                <InputGroup className="modal-create-cdp py-n5">
+                    <InputGroupAddon addonType="prepend">
+                        <InputGroupText className="modal-create-cdp"><img src="/img/bnb-symbol.svg" className="bnb-img" /> </InputGroupText>
+                    </InputGroupAddon>
+
+                    <Input placeholder="Collateral Amount" name="collateral" type="number" value={this.state.collateral} onChange={this.handleChange}
+                        min={Coin.MinStake} max={this.state.maxAmount}
+                        invalid={this.state.isDepositor ? this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.depositedValue) : this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount)} className="modal-create-cdp " />
+                    <InputGroupAddon addonType="append">
+                        <InputGroupText className="modal-create-cdp font-weight-bold">BNB</InputGroupText>
+                    </InputGroupAddon>
+                </InputGroup>
+            </FormGroup>
+
+            <FormGroup>
+                <InputGroup >
+                    <InputGroupAddon addonType="prepend">
+                        <Label for="collateral" className="mt-3"><T>cdp.collateralizationRatio</T></Label>
+                    </InputGroupAddon>
+                    <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio))}
+                        className={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? 'modal-create-cdp text-success text-right mt-2' : 'modal-create-cdp text-danger text-right mt-2 pr-5'}
+                        value={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 })}
+                        disabled={true} />
+                </InputGroup>
+            </FormGroup>
+
+            <FormGroup className="mb-n4" >
+                <Label for="memo" className="mb-n4"><T>cdp.memo</T></Label>
+                <Input name="memo" onChange={this.handleInputChange} className="mb-n4"
+                    placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
+            </FormGroup>
+            {/* 
             <h3>Withdraw <img src="/img/bnb-symbol.svg" className="bnb-img" /> BNB from CDP</h3>
             <FormGroup>
                 <Label for="collateral"><T>cdp.withdraw</T></Label>
@@ -1492,21 +1594,21 @@ class WithdrawCDPButton extends LedgerButton {
                     min={Coin.MinStake} max={this.state.maxAmount}
                     invalid={this.state.isDepositor ? this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.depositedValue) : this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount)} />
                 <FormText>The amount of BNB you would like to withdraw</FormText>
-            </FormGroup>
-            <FormGroup>
+            </FormGroup> */}
+            {/* <FormGroup>
                 <Label><T>cdp.collateralizationRatio</T></Label>
                 <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio))}
                     className={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? 'text-success' : 'text-danger'}
                     value={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 })}
                     disabled={true} />
                 <FormFeedback>Collateralization ratio is danger! It must be greater than {this.props.collateralizationRatio}</FormFeedback>
-            </FormGroup>
-            <FormGroup>
+            </FormGroup> */}
+            {/* <FormGroup>
                 <Label for="memo"><T>cdp.memo</T></Label>
                 <Input name="memo" onChange={this.handleInputChange}
                     placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
             </FormGroup>
-            <span className='coin'>Your available CDP balance: {this.state.isDepositor ? new Coin(this.state.depositedValue, this.props.collateral).convertToString(6) : new Coin(this.state.maxAmount, this.props.collateral).convertToString(6)} </span>
+            <span className='coin'>Your available CDP balance: {this.state.isDepositor ? new Coin(this.state.depositedValue, this.props.collateral).convertToString() : new Coin(this.state.maxAmount, this.props.collateral).convertToString()} </span> */}
         </TabPane>
     }
 
@@ -1584,29 +1686,65 @@ class DrawDebtCDPButton extends LedgerButton {
 
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
-        return <TabPane tabId="2">
-            <h3>Draw USDX </h3>
+        return <TabPane tabId="2" className="modal-body-cdp">
+            <h3 className="text-center pb-5">Draw <img src="/img/usdx-symbol.svg" className="bnb-img mb-1" /> USDX from CDP </h3>
             <FormGroup>
-                <Label for="collateral"><T>cdp.draw</T></Label>
-                <Input placeholder="Draw Amount" name="draw" value={this.state.draw} type="number" onChange={this.handleChange}
-                    min={Coin.MinStake} max={this.state.maxAmount}
-                    invalid={this.state.draw != null && !isBetween(this.state.draw, 0, this.state.maxAmount)} />
-                <FormText>The amount of USDX you would like to draw</FormText>
+                <Label for="draw" className="mb-n4"><T>cdp.draw</T></Label>
+                <FormText className="coin-available mb-n5 float-right">Max {new Coin(this.state.maxAmount, this.props.principalDenom).convertToString()}</FormText>
+                <InputGroup className="modal-create-cdp py-n5">
+                    <InputGroupAddon addonType="prepend">
+                        <InputGroupText className="modal-create-cdp"><img src="/img/usdx-symbol.svg" className="bnb-img" /> </InputGroupText>
+                    </InputGroupAddon>
+
+                    <Input placeholder="Draw Amount" name="draw" value={this.state.draw} type="number" onChange={this.handleChange}
+                        min={Coin.MinStake} max={this.state.maxAmount}
+                        invalid={this.state.draw != null && !isBetween(this.state.draw, 0, this.state.maxAmount)} className="modal-create-cdp " />
+                    <InputGroupAddon addonType="append">
+                        <InputGroupText className="modal-create-cdp font-weight-bold">USDX</InputGroupText>
+                    </InputGroupAddon>
+                </InputGroup>
             </FormGroup>
+
             <FormGroup>
-                <Label><T>cdp.collateralizationRatio</T></Label>
-                <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio))}
-                    className={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? 'text-success' : 'text-danger'}
-                    value={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 })}
-                    disabled={true} />
-                <FormFeedback>Collateralization ratio is danger! It must be greater than {this.props.collateralizationRatio}</FormFeedback>
+                <InputGroup >
+                    <InputGroupAddon addonType="prepend">
+                        <Label for="collateral" className="mt-3"><T>cdp.collateralizationRatio</T></Label>
+                    </InputGroupAddon>
+                    <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio))}
+                        className={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? 'modal-create-cdp text-success text-right mt-2' : 'modal-create-cdp text-danger text-right mt-2 pr-5'}
+                        value={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 })}
+                        disabled={true} />
+                </InputGroup>
             </FormGroup>
-            <FormGroup>
-                <Label for="memo"><T>cdp.memo</T></Label>
-                <Input name="memo" onChange={this.handleInputChange}
+            <FormGroup className="mb-n4" >
+                <Label for="memo" className="mb-n4"><T>cdp.memo</T></Label>
+                <Input name="memo" onChange={this.handleInputChange} className="mb-n4"
                     placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
             </FormGroup>
-            <span className='coin'>Your available balance: {new Coin(this.state.maxAmount, this.props.principalDenom).convertToString(8)} </span>
+
+            {/* <TabPane tabId="2">
+                <h3>Draw USDX </h3>
+                <FormGroup>
+                    <Label for="collateral"><T>cdp.draw</T></Label>
+                    <Input placeholder="Draw Amount" name="draw" value={this.state.draw} type="number" onChange={this.handleChange}
+                        min={Coin.MinStake} max={this.state.maxAmount}
+                        invalid={this.state.draw != null && !isBetween(this.state.draw, 0, this.state.maxAmount)} />
+                    <FormText>The amount of USDX you would like to draw</FormText>
+                </FormGroup> */}
+            {/* <FormGroup>
+                    <Label><T>cdp.collateralizationRatio</T></Label>
+                    <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio))}
+                        className={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? 'text-success' : 'text-danger'}
+                        value={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 })}
+                        disabled={true} />
+                    <FormFeedback>Collateralization ratio is danger! It must be greater than {this.props.collateralizationRatio}</FormFeedback>
+                </FormGroup> */}
+            {/* <FormGroup>
+                    <Label for="memo"><T>cdp.memo</T></Label>
+                    <Input name="memo" onChange={this.handleInputChange}
+                        placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
+                </FormGroup>
+                <span className='coin'>Your available balance: {new Coin(this.state.maxAmount, this.props.principalDenom).convertToString(8)} </span> */}
         </TabPane>
     }
 
@@ -1620,7 +1758,7 @@ class DrawDebtCDPButton extends LedgerButton {
     }
 
     getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>draw </span> <span className='coin'>{new Coin(this.state.draw, this.props.principalDenom).convertToString(8)}</span> from CDP  for address <b>{this.state.user} </b>
+        return <span>You are going to <span className='action'>draw </span> <span className='coin'>{new Coin(this.state.draw, this.props.principalDenom).convertToString()}</span> from CDP  for address <b>{this.state.user} </b>
      with <Fee gas={this.state.gasEstimate} />.</span>
     }
 
@@ -1684,16 +1822,53 @@ class RepayDebtCDPButton extends LedgerButton {
 
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
-        return <TabPane tabId="2">
-            <h3>Repay USDX Debt </h3>
+        return <TabPane tabId="2" className="modal-body-cdp">
+            <h3 className="text-center pb-5">Repay <img src="/img/usdx-symbol.svg" className="bnb-img mb-1" /> USDX Debt </h3>
             <FormGroup>
-                <Label for="debt"><T>cdp.repay</T></Label>
-                <Input placeholder="Repay Amount" name="debt" value={this.state.debt} type="number" onChange={this.handleChange}
-                    min={Coin.MinStake} max={this.state.maxAmount}
-                    invalid={this.state.debt != null && !isBetween(this.state.debt, 0, this.state.usdxTotalValue)} />
-                <FormText>The amount of USDX you would like to repay</FormText>
+                <Label for="repay" className="mb-n4"><T>cdp.repay</T></Label>
+                <FormText className="coin-available mb-n5 float-right">Current Debt {new Coin(this.state.maxAmount, this.props.principalDenom).convertToString()}</FormText>
+                <InputGroup className="modal-create-cdp py-n5">
+                    <InputGroupAddon addonType="prepend">
+                        <InputGroupText className="modal-create-cdp"><img src="/img/usdx-symbol.svg" className="bnb-img" /> </InputGroupText>
+                    </InputGroupAddon>
+
+                    <Input placeholder="Repay Amount" name="debt" value={this.state.debt} type="number" onChange={this.handleChange}
+                        min={Coin.MinStake} max={this.state.maxAmount}
+                        invalid={this.state.debt != null && !isBetween(this.state.debt, 0, this.state.usdxTotalValue)} className="modal-create-cdp " />
+                    <InputGroupAddon addonType="append">
+                        <InputGroupText className="modal-create-cdp font-weight-bold">USDX</InputGroupText>
+                    </InputGroupAddon>
+                </InputGroup>
             </FormGroup>
+
             <FormGroup>
+                <InputGroup >
+                    <InputGroupAddon addonType="prepend">
+                        <Label for="collateral" className="mt-3"><T>cdp.collateralizationRatio</T></Label>
+                    </InputGroupAddon>
+                    <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio))}
+                        className={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? 'modal-create-cdp text-success text-right mt-2' : 'modal-create-cdp text-danger text-right mt-2 pr-5'}
+                        value={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 })}
+                        disabled={true} />
+
+                </InputGroup>
+            </FormGroup>
+            <FormGroup className="mb-n4" >
+                <Label for="memo" className="mb-n4"><T>cdp.memo</T></Label>
+                <Input name="memo" onChange={this.handleInputChange} className="mb-n4"
+                    placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
+            </FormGroup>
+
+            {/* <TabPane tabId="2">
+                <h3>Repay USDX Debt </h3>
+                <FormGroup>
+                    <Label for="debt"><T>cdp.repay</T></Label>
+                    <Input placeholder="Repay Amount" name="debt" value={this.state.debt} type="number" onChange={this.handleChange}
+                        min={Coin.MinStake} max={this.state.maxAmount}
+                        invalid={this.state.debt != null && !isBetween(this.state.debt, 0, this.state.usdxTotalValue)} />
+                    <FormText>The amount of USDX you would like to repay</FormText>
+                </FormGroup> */}
+            {/* <FormGroup>
                 <Label><T>cdp.collateralizationRatio</T></Label>
                 <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio))}
                     className={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? 'text-success' : 'text-danger'}
@@ -1706,7 +1881,7 @@ class RepayDebtCDPButton extends LedgerButton {
                 <Input name="memo" onChange={this.handleInputChange}
                     placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
             </FormGroup>
-            <span className='coin'>Your current debt is: {new Coin(this.state.maxAmount, this.props.principalDenom).convertToString(8)} </span>
+            <span className='coin'>Your current debt is: {new Coin(this.state.maxAmount, this.props.principalDenom).convertToString(8)} </span> */}
         </TabPane>
     }
 
