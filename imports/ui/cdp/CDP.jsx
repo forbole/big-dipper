@@ -173,12 +173,17 @@ export default class CDP extends Component {
         if (this.state.userCDP && this.state.userCDP.cdp) {
             return <div className="cdp-content">
                 <Table>
-                    <span >
-                        <span >
-                            <div ><Badge color="success" className="badge-bnb-usd">BNB:USD</Badge> </div>
+                    <span className="bnb-usd-price ">
+                        <span className="pr-3">
+                            <div ><Badge color="success" className="badge-bnb-usd">BNB : USD</Badge> </div>
                             <div className="mb-2"> <strong className="text-success">1 : {this.state.BNB_USD ? numbro(this.state.BNB_USD).formatCurrency({ mantissa: 4 }) : 0}</strong></div>
-                        </span> 
-                        </span>                   <tbody>
+                        </span>
+                        <span >
+                            <div ><Badge color="success" className="badge-bnb-usd">BNB : USD : 30</Badge> </div>
+                            <div className="mb-2"> <strong className="text-success">1 : {this.state.BNB_USD_30 ? numbro(this.state.BNB_USD_30).formatCurrency({ mantissa: 4 }) : 0}</strong></div>
+                        </span>
+                    </span>
+                    <tbody>
                         <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.id</T></th>
                             <td>{this.state.userCDP.cdp.id}</td>
@@ -264,18 +269,18 @@ export default class CDP extends Component {
 
         else {
             return <div >
-                <span className="bnb-usd-price">
-                    <span className="px-4">
-                        <div ><Badge color="success" className="badge-bnb-usd">BNB:USD</Badge> </div>
+                <span className="bnb-usd-price ">
+                    <span className="pr-3">
+                        <div ><Badge color="success" className="badge-bnb-usd">BNB : USD</Badge> </div>
                         <div className="mb-2"> <strong className="text-success">1 : {this.state.BNB_USD ? numbro(this.state.BNB_USD).formatCurrency({ mantissa: 4 }) : 0}</strong></div>
                     </span>
-                    <span className="px-4">
-                        <div ><Badge color="success" className="badge-bnb-usd">BNB:USD:30</Badge> </div>
+                    <span >
+                        <div ><Badge color="success" className="badge-bnb-usd">BNB : USD : 30</Badge> </div>
                         <div className="mb-2"> <strong className="text-success">1 : {this.state.BNB_USD_30 ? numbro(this.state.BNB_USD_30).formatCurrency({ mantissa: 4 }) : 0}</strong></div>
                     </span>
                     {/* <div className="mb-2"> <strong className="text-success">1 : {this.state.BNB_USD ? numbro(this.state.BNB_USD).formatCurrency({ mantissa: 4 }) : 0}</strong></div> */}
                 </span>
-                <div className="bnb-usd-price">
+                <div className="bnb-usd-price ">
                     <CreateCDPButton
                         cdpParams={this.state.cdpParams ? this.state.cdpParams.debt_param.debt_floor : null}
                         collateralizationRatio={this.state.cdpParams ? parseFloat(this.state.cdpParams.collateral_params[0].liquidation_ratio) : null}

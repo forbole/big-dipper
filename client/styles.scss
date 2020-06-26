@@ -111,8 +111,8 @@ body {
 
   }
 
-  .modal-body-cdp{
-    padding: 2rem;
+  .modal-body{
+    padding: 1rem;
   }
   
   #header {
@@ -1044,10 +1044,10 @@ body {
   .ledger-buttons-group button {
     display: block;
     margin: 5px 0;
-    width: 5.5rem;
+    width: 6.7rem;
     padding: 0.3rem;
     border: none;
-    border-radius: 6rem;
+    border-radius: 5rem;
   //box-shadow: 0px 8px 15px rgba(255, 0, 0, 0.2);
   transition: all 0.3s ease 0s;
   cursor: pointer;
@@ -1159,7 +1159,7 @@ body {
     justify-content: 'center',
   }
 
-  .bnb-img{
+  .symbol-img {
      width: 1.5rem; 
      height: 1.5rem;
   }
@@ -1210,5 +1210,10 @@ body {
 
 .bnb-usd-price{
   display: flex;
-  justify-content: center;
+  //justify-content: center;
+}
+
+.cdp-content{
+  padding: 1rem;
+
 }

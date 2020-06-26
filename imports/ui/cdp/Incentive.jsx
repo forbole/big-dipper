@@ -57,7 +57,7 @@ export default class Incentive extends Component {
             if (result) {
 
                 result.forEach((el, i) => {
-                    claims[i] = el.claim_period_id + ", "
+                    claims[i] = el.claim_period_id
                 }),
 
                     result.forEach((el, i) => {
@@ -87,7 +87,7 @@ export default class Incentive extends Component {
                     <tbody>
                         <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.idClaimPeriod</T></th>
-                            <td>{this.state.claimPerdiods ? this.state.claimPerdiods : null}</td>
+                            <td>{this.state.claimPerdiods ? this.state.claimPerdiods.join() : null}</td>
                         </tr>
                         {(this.props.owner) ? <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.owner</T></th>

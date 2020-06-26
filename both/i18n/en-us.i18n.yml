@@ -147,6 +147,10 @@ transactions:
     slashing: 'Slashing'
     swap: 'Swap'
     info: 'More Info'
+    address: 'Address'
+    amount: 'Amount'
+
+
 bep3:
     swap:
         swapID: 'Swap ID'
@@ -195,6 +199,8 @@ cdp:
     cdpID: 'CDP ID'
     cdpFeesUpdated: 'Fees Updated'
     totalReward: 'Total Rewards Value'
+    bnbusd: 'BNB:USD Market'
+    bnbusd30: 'BNB:USD:30 Market'
 
 proposals:
     notFound: 'No proposal found.'

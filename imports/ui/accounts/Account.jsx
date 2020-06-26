@@ -674,31 +674,12 @@ export default class AccountDetails extends Component {
                                         <Col xs={12} className="dollar-value-3 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin3)) * this.state.usdxPrice).format("$0,0.0000a")} ({numbro(this.state.usdxPrice).format("$0,0.00")}/{Meteor.settings.public.coins[5].displayName})</Col>
                                     </Row>
                                 </Col>
-
-                                {/* <Col xs={3} className="total d-flex flex-column justify-content-end">
-                                    <Row>
-                                        <Col xs={12} className="value text-right">{this.findCoin(this.state.total, coin1)}</Col>
-                                        <Col xs={12} className="dollar-value text-right text-secondary">~{numbro((this.findValue(this.state.total, coin1)) * this.state.price).format("$0,0.0000a")} ({numbro(this.state.price).format("$0,0.00")}/{Meteor.settings.public.coins[0].displayName})</Col>
-                                    </Row>
-                                </Col> */}
-                                {/* <Col xs={3} className="total d-flex flex-column justify-content-end">
-                                    <Row>
-                                        <Col xs={12} className="value-2 text-right">{this.findCoin(this.state.total, coin2)}</Col>
-                                        <Col xs={12} className="dollar-value-2 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin2)) * this.state.bnbPrice).format("$0,0.0000a")} ({numbro(this.state.bnbPrice).format("$0,0.00")}/{Meteor.settings.public.coins[1].displayName})</Col>
-                                    </Row>
-                                </Col> */}
-                                {/* <Col xs={3} className="total d-flex flex-column justify-content-end">
-                                    <Row>
-                                        <Col xs={12} className="value-3 text-right">{this.findCoin(this.state.total, coin3)}</Col>
-                                        <Col xs={12} className="dollar-value-3 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin3)) * this.state.usdxPrice).format("$0,0.0000a")} ({numbro(this.state.usdxPrice).format("$0,0.00")}/{Meteor.settings.public.coins[5].displayName})</Col>
-                                    </Row>
-                                </Col> */}
                                 <Col xs={12} className="total d-flex flex-column justify-content-end text-nowrap pt-3">
                                     {this.state.user ? <Row>
                                         <Col xs={12} >
                                             {this.state.user === this.state.address ? <ClaimSwapButton validator={this.props.validator} address={this.state.operator_address} history={this.props.history} /> : null}
                                             {this.state.user === this.state.address ? <WithdrawButton history={this.props.history} rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address} denom={this.state.denom} /> : null}
-                                            <TransferButton history={this.props.history} address={this.state.address} denom={this.state.denom} /></Col>
+                                            <TransferButton history={this.props.history} address={this.state.address} denom={this.state.denom} total={this.state.total} /></Col>
                                     </Row> : null}
                                 </Col>
                             </Row>

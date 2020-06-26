@@ -819,7 +819,7 @@ class DelegationButtons extends LedgerButton {
                 availableStatement = 'your delegated tokens:'
                 break;
         }
-        return <TabPane tabId="2">
+        return <TabPane tabId="2" className="modal-body">
             <h3>{action} {moniker ? moniker : validatorAddress} {target ? 'to' : ''} {target}</h3>
             <InputGroup>
                 <Input name="delegateAmount" onChange={this.handleInputChange} data-type='coin'
@@ -924,10 +924,11 @@ class WithdrawButton extends LedgerButton {
     }
 
     renderActionTab = () => {
-        return <TabPane tabId="2">
-            <h3>Withdraw rewards from all delegations</h3>
-            {this.props.rewards ? <div>Your current rewards amount is: <CoinAmount amount={this.props.rewards} denom={this.props.denom} /></div> : ''}
-            {this.props.commission ? <div>Your current commission amount is: <CoinAmount amount={this.props.commission} denom={this.props.denom} /></div> : ''}
+        return <TabPane tabId="2" className="modal-body">
+            <h3 className="text-center pt-2">Withdraw <img src="/img/kava-symbol.png" className="symbol-img mb-1" /> KAVA Rewards from </h3>
+            <h3 className="text-center pb-4"> all delegations</h3>
+            {this.props.rewards ? <div className="px-4">Your current rewards amount is: <CoinAmount amount={this.props.rewards} denom={this.props.denom} /></div> : ''}
+            {this.props.commission ? <div className="px-4">Your current commission amount is: <CoinAmount amount={this.props.commission} denom={this.props.denom} /></div> : ''}
         </TabPane>
     }
 
@@ -950,27 +951,75 @@ class WithdrawButton extends LedgerButton {
 }
 
 class TransferButton extends LedgerButton {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            ...this.state,
+            total: props.total,
+            totalKavaAvailable: 0,
+        }
+    }
+
+    updateTotalKava = () => {
+        this.state.total.forEach((item, i) => {
+
+            if (item.denom === Meteor.settings.public.bondDenom) {
+                this.setState({
+                    totalKavaAvailable: item,
+                })
+            }
+        })
+    }
+
+    componentDidMount() {
+        this.updateTotalKava();
+    }
+
+
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         let maxAmount = this.state.currentUser.availableCoin;
-        return <TabPane tabId="2">
-            <h3>Transfer {Coin.StakingCoin.displayName}</h3>
-            <InputGroup>
-                <Input name="transferTarget" onChange={this.handleInputChange}
-                    placeholder="Send to" type="text"
-                    value={this.state.transferTarget}
-                    invalid={this.state.transferTarget != null && !isAddress(this.state.transferTarget)} />
-            </InputGroup>
-            <InputGroup>
-                <Input name="transferAmount" onChange={this.handleInputChange}
-                    data-type='coin' placeholder="Amount"
-                    min={Coin.MinStake} max={maxAmount.stakingAmount} type="number"
-                    invalid={this.state.transferAmount != null && !isBetween(this.state.transferAmount, 1, maxAmount)} />
-                <InputGroupAddon addonType="append">{Coin.StakingCoin.displayName}</InputGroupAddon>
-            </InputGroup>
-            <Input name="memo" onChange={this.handleInputChange}
-                placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
-            <div>your available balance: <Amount coin={maxAmount} /> </div>
+        console.log(this.state.totalKavaAvailable)
+        return <TabPane tabId="2" className="modal-body">
+            <h3 className="text-center pb-5 pt-2">Transfer <img src="/img/kava-symbol.png" className="symbol-img  mb-1" /> {Coin.StakingCoin.displayName}</h3>
+            <FormGroup>
+                <Label for="deposit" className="mb-n4"><T>transactions.address</T></Label>
+                <InputGroup className="modal-create-cdp py-n5">
+                    <InputGroupAddon addonType="prepend">
+                        <InputGroupText className="modal-create-cdp"><i className="fas fa-user px-1"></i></InputGroupText>
+                    </InputGroupAddon>
+                    <Input name="transferTarget" onChange={this.handleInputChange}
+                        placeholder="Send to" type="text"
+                        value={this.state.transferTarget}
+                        invalid={this.state.transferTarget != null && !isAddress(this.state.transferTarget)} className="modal-create-cdp " />
+                </InputGroup>
+            </FormGroup>
+
+            <FormGroup>
+                <Label for="address" className="mb-n4"><T>transactions.amount</T></Label>
+                <FormText className="coin-available mb-n5 float-right">Max {new Coin(Math.floor(this.state.totalKavaAvailable.amount), this.state.totalKavaAvailable.denom).toString(4)}</FormText>
+                <InputGroup className="modal-create-cdp py-n5" >
+                    <InputGroupAddon addonType="prepend">
+                        <InputGroupText className="modal-create-cdp"><img src="/img/kava-symbol.png" className="symbol-img " /> </InputGroupText>
+                    </InputGroupAddon>
+                    <Input name="transferAmount" onChange={this.handleInputChange}
+                        data-type='coin' placeholder="Amount"
+                        min={Coin.MinStake} max={this.state.totalKavaAvailable.amount} type="number"
+                        invalid={this.state.transferAmount != null && !isBetween(this.state.transferAmount, 1, this.state.totalKavaAvailable.amount)} className="modal-create-cdp " />
+
+                    <InputGroupAddon addonType="append">
+                        <InputGroupText className=" modal-create-cdp font-weight-bold">{Coin.StakingCoin.displayName}</InputGroupText>
+                    </InputGroupAddon>
+                </InputGroup>
+            </FormGroup>
+
+            <FormGroup>
+                <InputGroup className="modal-create-cdp py-n5">
+                    <Input name="memo" onChange={this.handleInputChange}
+                        placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
+                </InputGroup>
+            </FormGroup>
         </TabPane>
     }
 
@@ -986,7 +1035,7 @@ class TransferButton extends LedgerButton {
 
     isDataValid = () => {
         if (!this.state.currentUser) return false
-        return isBetween(this.state.transferAmount, 1, this.state.currentUser.availableCoin)
+        return isBetween(this.state.transferAmount, 1, this.state.totalKavaAvailable.amount)
     }
 
     getConfirmationMessage = () => {
@@ -1013,7 +1062,7 @@ class SubmitProposalButton extends LedgerButton {
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         let maxAmount = this.state.currentUser.availableCoin;
-        return <TabPane tabId="2">
+        return <TabPane tabId="2" className="modal-body">
             <h3>Submit A New Proposal</h3>
             <InputGroup>
                 <Input name="proposalTitle" onChange={this.handleInputChange}
@@ -1115,7 +1164,7 @@ class ProposalActionButtons extends LedgerButton {
                 </InputGroup>)
                 break;
         }
-        return <TabPane tabId="2">
+        return <TabPane tabId="2" className="modal-body">
             <h3>{title}</h3>
             {inputs}
             <Input name="memo" onChange={this.handleInputChange}
@@ -1191,25 +1240,39 @@ class ClaimSwapButton extends LedgerButton {
 
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
-        return <TabPane tabId="2">
-            <h3>Claim Swap</h3>
+        return <TabPane tabId="2" className="modal-body">
+            <h3 className="text-center pb-4 pt-2">Claim <img src="/img/bnb-symbol.svg" className="symbol-img mb-1" /> BNB Swap</h3>
             <FormGroup>
-                <Label for="swapID"><T>cdp.swapID</T></Label>
-                <Input name="swapID" onChange={this.handleInputChange}
-                    placeholder="Swap ID" type="text" value={this.state.swapID} data-type='hash'
-                    invalid={this.state.swapID === null} />
+                <Label for="swapID" className="mb-n4"><T>cdp.swapID</T></Label>
+                <InputGroup className="modal-create-cdp py-n5">
+                    <InputGroupAddon addonType="prepend">
+                        <InputGroupText className="modal-create-cdp"><i className="fas fa-stream px-1"></i></InputGroupText>
+                    </InputGroupAddon>
+                    <Input name="swapID" onChange={this.handleInputChange}
+                        placeholder="Swap ID" type="text" value={this.state.swapID} data-type='hash'
+                        invalid={this.state.swapID === null} className="modal-create-cdp " />
+                </InputGroup>
             </FormGroup>
+
             <FormGroup>
-                <Label for="swapRandNum"><T>cdp.swapRandNum</T></Label>
-                <Input name="swapRandomNumber" onChange={this.handleInputChange}
-                    placeholder="Swap Random Number" type="text" data-type='hash'
-                    value={this.state.swapRandomNumber}
-                    invalid={this.state.swapRandomNumber === null} />
+                <Label for="swapRandNum" className="mb-n4"><T>cdp.swapRandNum</T></Label>
+                <InputGroup className="modal-create-cdp py-n5">
+                    <InputGroupAddon addonType="prepend">
+                        <InputGroupText className="modal-create-cdp"><i className="fas fa-exchange-alt px-1"></i></InputGroupText>
+                    </InputGroupAddon>
+                    <Input name="swapRandomNumber" onChange={this.handleInputChange}
+                        placeholder="Swap Random Number" type="text" data-type='hash'
+                        value={this.state.swapRandomNumber}
+                        invalid={this.state.swapRandomNumber === null} className="modal-create-cdp " />
+                </InputGroup>
             </FormGroup>
+
             <FormGroup>
                 <Label for="memo"><T>cdp.memo</T></Label>
-                <Input name="memo" onChange={this.handleInputChange}
-                    placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
+                <InputGroup className="modal-create-cdp py-n5">
+                    <Input name="memo" onChange={this.handleInputChange}
+                        placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
+                </InputGroup>
             </FormGroup>
         </TabPane>
     }
@@ -1276,14 +1339,14 @@ class CreateCDPButton extends LedgerButton {
 
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
-        return <TabPane tabId="2" className="modal-body-cdp">
-            <h3 className="text-center pb-5">Create CDP with <img src="/img/bnb-symbol.svg" className="bnb-img" /> BNB</h3>
+        return <TabPane tabId="2" className="modal-body">
+            <h3 className="text-center pb-5 pt-2">Create CDP with <img src="/img/bnb-symbol.svg" className="symbol-img" /> BNB</h3>
             <FormGroup>
                 <Label for="collateral" className="mb-n4"><T>cdp.collateral</T></Label>
                 <FormText className="coin-available mb-n5 float-right">Max {new Coin(this.state.maxAmount, this.props.collateral).convertToString()}</FormText>
                 <InputGroup className="modal-create-cdp py-n5">
                     <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="modal-create-cdp"><img src="/img/bnb-symbol.svg" className="bnb-img" /> </InputGroupText>
+                        <InputGroupText className="modal-create-cdp"><img src="/img/bnb-symbol.svg" className="symbol-img" /> </InputGroupText>
                     </InputGroupAddon>
 
                     <Input placeholder="Collateral Amount" name="collateral" value={this.state.collateral} onChange={this.handleChange} type="number"
@@ -1303,7 +1366,7 @@ class CreateCDPButton extends LedgerButton {
                 <InputGroup className="modal-create-cdp py-n5">
                     <FormFeedback invalid className="coin-available ">The minimum debt is {this.props.cdpParams / Meteor.settings.public.coins[5].fraction} USDX </FormFeedback>
                     <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="modal-create-cdp"><img src="/img/usdx-symbol.svg" className="bnb-img" /> </InputGroupText>
+                        <InputGroupText className="modal-create-cdp"><img src="/img/usdx-symbol.svg" className="symbol-img" /> </InputGroupText>
                     </InputGroupAddon>
 
                     <Input invalid={(this.state.debt < this.props.cdpParams / Meteor.settings.public.coins[5].fraction)} placeholder="Debt Amount" name="debt" value={this.state.debt} type="number" onChange={this.handleChange} className="modal-create-cdp " />
@@ -1415,19 +1478,22 @@ class DepositCDPButton extends LedgerButton {
 
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
-        return <TabPane tabId="2" className="modal-body-cdp">
-            <h3 className="text-center pb-5">Deposit into CDP with <img src="/img/bnb-symbol.svg" className="bnb-img" /> BNB</h3>
+        return <TabPane tabId="2" className="modal-body">
+            <h3 className="text-center pb-5">Deposit into CDP with <img src="/img/bnb-symbol.svg" className="symbol-img" /> BNB</h3>
             <FormGroup>
                 <Label for="deposit" className="mb-n4"><T>cdp.deposit</T></Label>
                 <FormText className="coin-available mb-n5 float-right">Max {new Coin(this.state.maxAmount, this.props.collateral).convertToString()}</FormText>
                 <InputGroup className="modal-create-cdp py-n5">
-                    <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="modal-create-cdp"><img src="/img/bnb-symbol.svg" className="bnb-img" /> </InputGroupText>
-                    </InputGroupAddon>
+                    <FormFeedback className="coin-available mb-n5 float-right">Max {new Coin(this.state.maxAmount, this.props.collateral).convertToString()}</FormFeedback>
 
+                    <InputGroupAddon addonType="prepend">
+                        <InputGroupText className="modal-create-cdp"><img src="/img/bnb-symbol.svg" className="symbol-img" /> </InputGroupText>
+                    </InputGroupAddon>
                     <Input placeholder="Collateral Amount" name="collateral" value={this.state.collateral} onChange={this.handleChange}
                         min={Coin.MinStake} max={this.state.maxAmount}
                         invalid={this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount)} className="modal-create-cdp " />
+                    <FormFeedback className="coin-available mb-n5 float-right">Max {new Coin(this.state.maxAmount, this.props.collateral).convertToString()}</FormFeedback>
+
                     <InputGroupAddon addonType="append">
                         <InputGroupText className="modal-create-cdp font-weight-bold">BNB</InputGroupText>
                     </InputGroupAddon>
@@ -1550,14 +1616,14 @@ class WithdrawCDPButton extends LedgerButton {
 
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
-        return <TabPane tabId="2" className="modal-body-cdp">
-            <h3 className="text-center pb-5">Withdraw <img src="/img/bnb-symbol.svg" className="bnb-img" /> BNB from CDP </h3>
+        return <TabPane tabId="2" className="modal-body">
+            <h3 className="text-center pb-5">Withdraw <img src="/img/bnb-symbol.svg" className="symbol-img" /> BNB from CDP </h3>
             <FormGroup>
                 <Label for="withdraw" className="mb-n4"><T>cdp.withdraw</T></Label>
                 <FormText className="coin-available mb-n5 float-right">Max {this.state.isDepositor ? new Coin(this.state.depositedValue, this.props.collateral).convertToString() : new Coin(this.state.maxAmount, this.props.collateral).convertToString()}</FormText>
                 <InputGroup className="modal-create-cdp py-n5">
                     <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="modal-create-cdp"><img src="/img/bnb-symbol.svg" className="bnb-img" /> </InputGroupText>
+                        <InputGroupText className="modal-create-cdp"><img src="/img/bnb-symbol.svg" className="symbol-img" /> </InputGroupText>
                     </InputGroupAddon>
 
                     <Input placeholder="Collateral Amount" name="collateral" type="number" value={this.state.collateral} onChange={this.handleChange}
@@ -1587,7 +1653,7 @@ class WithdrawCDPButton extends LedgerButton {
                     placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
             </FormGroup>
             {/* 
-            <h3>Withdraw <img src="/img/bnb-symbol.svg" className="bnb-img" /> BNB from CDP</h3>
+            <h3>Withdraw <img src="/img/bnb-symbol.svg" className="symbol-img" /> BNB from CDP</h3>
             <FormGroup>
                 <Label for="collateral"><T>cdp.withdraw</T></Label>
                 <Input placeholder="Collateral Amount" name="collateral" type="number" value={this.state.collateral} onChange={this.handleChange}
@@ -1686,14 +1752,14 @@ class DrawDebtCDPButton extends LedgerButton {
 
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
-        return <TabPane tabId="2" className="modal-body-cdp">
-            <h3 className="text-center pb-5">Draw <img src="/img/usdx-symbol.svg" className="bnb-img mb-1" /> USDX from CDP </h3>
+        return <TabPane tabId="2" className="modal-body">
+            <h3 className="text-center pb-5">Draw <img src="/img/usdx-symbol.svg" className="symbol-img mb-1" /> USDX from CDP </h3>
             <FormGroup>
                 <Label for="draw" className="mb-n4"><T>cdp.draw</T></Label>
                 <FormText className="coin-available mb-n5 float-right">Max {new Coin(this.state.maxAmount, this.props.principalDenom).convertToString()}</FormText>
                 <InputGroup className="modal-create-cdp py-n5">
                     <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="modal-create-cdp"><img src="/img/usdx-symbol.svg" className="bnb-img" /> </InputGroupText>
+                        <InputGroupText className="modal-create-cdp"><img src="/img/usdx-symbol.svg" className="symbol-img" /> </InputGroupText>
                     </InputGroupAddon>
 
                     <Input placeholder="Draw Amount" name="draw" value={this.state.draw} type="number" onChange={this.handleChange}
@@ -1721,30 +1787,6 @@ class DrawDebtCDPButton extends LedgerButton {
                 <Input name="memo" onChange={this.handleInputChange} className="mb-n4"
                     placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
             </FormGroup>
-
-            {/* <TabPane tabId="2">
-                <h3>Draw USDX </h3>
-                <FormGroup>
-                    <Label for="collateral"><T>cdp.draw</T></Label>
-                    <Input placeholder="Draw Amount" name="draw" value={this.state.draw} type="number" onChange={this.handleChange}
-                        min={Coin.MinStake} max={this.state.maxAmount}
-                        invalid={this.state.draw != null && !isBetween(this.state.draw, 0, this.state.maxAmount)} />
-                    <FormText>The amount of USDX you would like to draw</FormText>
-                </FormGroup> */}
-            {/* <FormGroup>
-                    <Label><T>cdp.collateralizationRatio</T></Label>
-                    <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio))}
-                        className={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? 'text-success' : 'text-danger'}
-                        value={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 })}
-                        disabled={true} />
-                    <FormFeedback>Collateralization ratio is danger! It must be greater than {this.props.collateralizationRatio}</FormFeedback>
-                </FormGroup> */}
-            {/* <FormGroup>
-                    <Label for="memo"><T>cdp.memo</T></Label>
-                    <Input name="memo" onChange={this.handleInputChange}
-                        placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
-                </FormGroup>
-                <span className='coin'>Your available balance: {new Coin(this.state.maxAmount, this.props.principalDenom).convertToString(8)} </span> */}
         </TabPane>
     }
 
@@ -1822,14 +1864,14 @@ class RepayDebtCDPButton extends LedgerButton {
 
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
-        return <TabPane tabId="2" className="modal-body-cdp">
-            <h3 className="text-center pb-5">Repay <img src="/img/usdx-symbol.svg" className="bnb-img mb-1" /> USDX Debt </h3>
+        return <TabPane tabId="2" className="modal-body">
+            <h3 className="text-center pb-5">Repay <img src="/img/usdx-symbol.svg" className="symbol-img mb-1" /> USDX Debt </h3>
             <FormGroup>
                 <Label for="repay" className="mb-n4"><T>cdp.repay</T></Label>
                 <FormText className="coin-available mb-n5 float-right">Current Debt {new Coin(this.state.maxAmount, this.props.principalDenom).convertToString()}</FormText>
                 <InputGroup className="modal-create-cdp py-n5">
                     <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="modal-create-cdp"><img src="/img/usdx-symbol.svg" className="bnb-img" /> </InputGroupText>
+                        <InputGroupText className="modal-create-cdp"><img src="/img/usdx-symbol.svg" className="symbol-img" /> </InputGroupText>
                     </InputGroupAddon>
 
                     <Input placeholder="Repay Amount" name="debt" value={this.state.debt} type="number" onChange={this.handleChange}
@@ -1858,30 +1900,6 @@ class RepayDebtCDPButton extends LedgerButton {
                 <Input name="memo" onChange={this.handleInputChange} className="mb-n4"
                     placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
             </FormGroup>
-
-            {/* <TabPane tabId="2">
-                <h3>Repay USDX Debt </h3>
-                <FormGroup>
-                    <Label for="debt"><T>cdp.repay</T></Label>
-                    <Input placeholder="Repay Amount" name="debt" value={this.state.debt} type="number" onChange={this.handleChange}
-                        min={Coin.MinStake} max={this.state.maxAmount}
-                        invalid={this.state.debt != null && !isBetween(this.state.debt, 0, this.state.usdxTotalValue)} />
-                    <FormText>The amount of USDX you would like to repay</FormText>
-                </FormGroup> */}
-            {/* <FormGroup>
-                <Label><T>cdp.collateralizationRatio</T></Label>
-                <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio))}
-                    className={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? 'text-success' : 'text-danger'}
-                    value={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 })}
-                    disabled={true} />
-                <FormFeedback>Collateralization ratio is danger! It must be greater than {this.props.collateralizationRatio}</FormFeedback>
-            </FormGroup>
-            <FormGroup>
-                <Label for="memo"><T>cdp.memo</T></Label>
-                <Input name="memo" onChange={this.handleInputChange}
-                    placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
-            </FormGroup>
-            <span className='coin'>Your current debt is: {new Coin(this.state.maxAmount, this.props.principalDenom).convertToString(8)} </span> */}
         </TabPane>
     }
 
@@ -1925,7 +1943,7 @@ class WithdrawIncentiveRewards extends LedgerButton {
 
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
-        return <TabPane tabId="2">
+        return <TabPane tabId="2" className="modal-body">
             <h3>Withdraw all incentive rewards from CDP</h3>
             {this.props.rewards ? <div>Your current rewards amount is: <CoinAmount amount={this.props.rewards} /></div> : ''}
 
@@ -1982,7 +2000,7 @@ class AuctionBidButton extends LedgerButton {
 
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
-        return <TabPane tabId="2">
+        return <TabPane tabId="2" className="modal-body">
             <h3>Place Bid on Auction {this.state.auctionID} </h3>
             <FormGroup>
                 <Label for="bid"><T>auction.bidAmount</T></Label>
