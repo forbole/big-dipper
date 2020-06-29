@@ -496,7 +496,7 @@ body {
 
       &.bnb {
         background-image: url(/img/bnb-symbol.svg);
-        padding-bottom: 0.45em;
+        padding-bottom: 0.44em;
       }
       &.btc {
         background-image: url(/img/bitcoin-symbol.svg);
@@ -1049,9 +1049,10 @@ body {
     border: none;
     border-radius: 5rem;
   //box-shadow: 0px 8px 15px rgba(255, 0, 0, 0.2);
-  transition: all 0.3s ease 0s;
-  cursor: pointer;
-  outline: none;
+    transition: all 0.3s ease 0s;
+    cursor: pointer;
+    outline: none;
+    //overflow: auto;
 
   }
 
@@ -1215,5 +1216,9 @@ body {
 
 .cdp-content{
   padding: 1rem;
+}
+
+.vertical-aligned{
+  vertical-align: middle;
 
 }

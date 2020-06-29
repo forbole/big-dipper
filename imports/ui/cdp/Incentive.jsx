@@ -24,7 +24,6 @@ export default class Incentive extends Component {
             debt: 0,
             collateralAmount: 0,
             debtAmount: 0,
-            cdpParams: null,
             userCDP: null,
             denom: '',
             collateralizationRatio: 0,
@@ -83,11 +82,11 @@ export default class Incentive extends Component {
     render() {
         if (this.state.incentive && this.state.incentive.length > 0) {
             return <div className="cdp-content">
-                <Table>
+                <Table >
                     <tbody>
                         <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.idClaimPeriod</T></th>
-                            <td>{this.state.claimPerdiods ? this.state.claimPerdiods.join() : null}</td>
+                            <td>{this.state.claimPerdiods ? this.state.claimPerdiods.join(", ") : null}</td>
                         </tr>
                         {(this.props.owner) ? <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.owner</T></th>
@@ -96,19 +95,14 @@ export default class Incentive extends Component {
 
                         <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.totalReward</T></th>
-                            <td><div >{new Coin(this.state.claimRewardsTotal).toString(6)}</div></td>
+                            <td className="vertical-aligned"><div >{new Coin(this.state.claimRewardsTotal).toString(6)}</div></td>
 
                         </tr>
-
-                        {this.props.owner === this.props.user ? <tr>
-                            <th scope="row" className="w-25 text-muted">{' '}</th>
-                            {(this.state.claimRewardsTotal && this.state.claimRewardsTotal > 0) ? <td><WithdrawIncentiveRewards rewards={parseFloat(this.state.claimRewardsTotal)}
-                                denom={this.props.collateral} /></td> : null}</tr> : null}
-
-
                     </tbody>
                 </Table>
-
+                {this.props.owner === this.props.user ? 
+                (this.state.claimRewardsTotal && this.state.claimRewardsTotal > 0) ? <div className="mt-n3"><WithdrawIncentiveRewards rewards={parseFloat(this.state.claimRewardsTotal)}
+                        denom={this.props.collateral} /></div> : null : null}
             </div>
         }
 

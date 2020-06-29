@@ -759,14 +759,14 @@ export default class AccountDetails extends Component {
                                             <span className="cdp-logo bnb">BNB</span>
                                         </NavLink>
                                     </NavItem>
-                                    {this.state.hasIncentive === true ?
+                                    {this.state.hasIncentive?
                                         <NavItem>
                                             <NavLink
                                                 className={classnames({ active: this.state.cdpActiveTab === 'cdp-incentive' })}
                                                 onClick={() => { this.toggleCDP('cdp-incentive'); }}
                                             >
-                                                <span className="cdp-logo">
-                                                    <i className="material-icons md-16">
+                                                <span className="cdp-logo ">
+                                                    <i className="material-icons">
                                                         emoji_events
                                             </i> Incentive</span>
                                             </NavLink>

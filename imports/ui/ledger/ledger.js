@@ -514,6 +514,7 @@ export class Ledger {
 
             },
         };
+        console.log(Ledger.createSkeleton(txContext, [txMsg]))
         return Ledger.createSkeleton(txContext, [txMsg]);
     }
 
