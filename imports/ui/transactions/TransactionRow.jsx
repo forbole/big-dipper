@@ -19,7 +19,7 @@ export const TransactionRow = (props) => {
      
     return <SentryBoundary><Row className={(tx.code)?"tx-info invalid":"tx-info"}>
         <Col xs={12} lg={7} className="activity">{(tx.tx.value.msg && tx.tx.value.msg.length >0)?tx.tx.value.msg.map((msg,i) => {
-            return <Card body key={i}><Activities msg={msg} invalid={(!!tx.code)} events={tx.events} /></Card>
+            return <Card body key={i}><Activities msg={msg} invalid={(!!tx.code)} events={(tx.logs&&tx.logs[i])?tx.logs[i].events:null} /></Card>
         }):''}</Col>
         <Col xs={(!props.blockList)?{size:6,order:"last"}:{size:12,order:"last"}} md={(!props.blockList)?{size:3, order: "last"}:{size:7, order: "last"}} lg={(!props.blockList)?{size:1,order:"last"}:{size:2,order:"last"}} className="text-truncate"><i className="fas fa-hashtag d-lg-none"></i> <Link to={"/transactions/"+tx.txhash}>{tx.txhash}</Link></Col>
         <Col xs={6} md={9} lg={{size:2,order:"last"}} className="text-nowrap"><i className="material-icons">schedule</i> <span>{tx.block()?<TimeAgo time={tx.block().time} />:''}</span>{(tx.tx.value.memo && tx.tx.value.memo != "")?<span>
@@ -37,9 +37,8 @@ export const TransactionRow = (props) => {
             <Alert color="danger">
                 <CosmosErrors
                     code={tx.code}
-                    logs={tx.logs}
-                    gasWanted={tx.gas_wanted}
-                    gasUses={tx.gas_used}
+                    codespace={tx.codespace}
+                    log={tx.raw_log}
                 />
             </Alert>
         </Col>:''}

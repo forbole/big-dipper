@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import Account from '../components/Account.jsx';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js'
+import JSONPretty from 'react-json-pretty';
 import _ from 'lodash';
 
 const T = i18n.createComponent();
@@ -41,11 +42,10 @@ export default class Activites extends Component {
         // console.log(this.props);
         const msg = this.props.msg;
         const events = [];
-            
         for (let i in this.props.events){
             events[this.props.events[i].type] = this.props.events[i].attributes
         }
-        
+
         switch (msg.type){
         // bank
         case "cosmos-sdk/MsgSend":
@@ -96,7 +96,7 @@ export default class Activites extends Component {
             return <MsgType type={msg.type} />
 
         default:
-            return <div>{JSON.stringify(msg.value)}</div>
+            return <div><JSONPretty id="json-pretty" data={msg.value}></JSONPretty></div>
         }
     }
 }
