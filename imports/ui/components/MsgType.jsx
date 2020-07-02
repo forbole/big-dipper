@@ -6,12 +6,38 @@ const T = i18n.createComponent();
 
 export const MsgType = (props) => {
     switch (props.type){
-    // bank
+    // starname
+    case "domain/AddAccountCertificates":
+        return <Badge color="info"><T>messageTypes.accountAddCertificate</T></Badge>
+    case "domain/DeleteAccount":
+        return <Badge color="warning"><T>messageTypes.accountDelete</T></Badge>
+    case "domain/DeleteAccountCertificates":
+        return <Badge color="warning"><T>messageTypes.accountDeleteCertificate</T></Badge>
+    case "domain/DeleteDomain":
+        return <Badge color="warning"><T>messageTypes.domainDelete</T></Badge>
+    case "domain/RegisterAccount":
+        return <Badge color="success"><T>messageTypes.accountRegister</T></Badge>
+    case "domain/RegisterDomain":
+        return <Badge color="success"><T>messageTypes.domainRegister</T></Badge>
+    case "domain/RenewAccount":
+        return <Badge color="success"><T>messageTypes.accountRenew</T></Badge>
+    case "domain/RenewDomain":
+        return <Badge color="success"><T>messageTypes.domainRenew</T></Badge>
+    case "domain/ReplaceAccountResources":
+        return <Badge color="info"><T>messageTypes.accountReplaceResources</T></Badge>
+    case "domain/SetAccountMetadata":
+        return <Badge color="info"><T>messageTypes.accountSetMetadata</T></Badge>
+    case "domain/TransferAccount":
+        return <Badge color="secondary"><T>messageTypes.accountTransfer</T></Badge>
+    case "domain/TransferDomainAll":
+        return <Badge color="secondary"><T>messageTypes.domainTransfer</T></Badge>
+
+        // bank
     case "cosmos-sdk/MsgSend":
         return <Badge color="success"><T>messageTypes.send</T></Badge>
     case "cosmos-sdk/MsgMultiSend":
         return <Badge color="success"><T>messageTypes.multiSend</T></Badge>
-        
+
         // staking
     case "cosmos-sdk/MsgCreateValidator":
         return <Badge color="warning"><T>messageTypes.createValidator</T></Badge>;
@@ -23,7 +49,7 @@ export const MsgType = (props) => {
         return <Badge color="warning"><T>messageTypes.undelegate</T></Badge>;
     case "cosmos-sdk/MsgBeginRedelegate":
         return <Badge color="warning"><T>messageTypes.redelegate</T></Badge>;
-        
+
         // gov
     case "cosmos-sdk/MsgSubmitProposal":
         return <Badge color="info"><T>messageTypes.submitProposal</T></Badge>
@@ -31,7 +57,7 @@ export const MsgType = (props) => {
         return <Badge color="info"><T>messageTypes.deposit</T></Badge>
     case "cosmos-sdk/MsgVote":
         return <Badge color="info"><T>messageTypes.vote</T></Badge>;
-        
+
         // distribution
     case "cosmos-sdk/MsgWithdrawValidatorCommission":
         return <Badge color="secondary"><T>messageTypes.withdrawComission</T></Badge>;
@@ -43,7 +69,7 @@ export const MsgType = (props) => {
         // slashing
     case "cosmos-sdk/MsgUnjail":
         return <Badge color="danger"><T>messageTypes.unjail</T></Badge>;
-        
+
         // ibc
     case "cosmos-sdk/IBCTransferMsg":
         return <Badge color="dark"><T>messageTypes.IBCTransfer</T></Badge>;

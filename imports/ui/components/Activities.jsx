@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import Account from '../components/Account.jsx';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js'
+import JSONPretty from 'react-json-pretty';
 import _ from 'lodash';
 
 const T = i18n.createComponent();
@@ -41,13 +42,38 @@ export default class Activites extends Component {
         // console.log(this.props);
         const msg = this.props.msg;
         const events = [];
-            
         for (let i in this.props.events){
             events[this.props.events[i].type] = this.props.events[i].attributes
         }
-        
+
         switch (msg.type){
-        // bank
+        // starname
+        case "domain/AddAccountCertificates":
+            return <p><span className="text-primary">{msg.value.name}*{msg.value.domain}</span> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /><T>common.fullStop</T></p>
+        case "domain/DeleteAccount":
+            return <p><Account address={msg.value.owner} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <span className="text-primary">{msg.value.name}*{msg.value.domain}</span><T>common.fullStop</T></p>
+        case "domain/DeleteAccountCertificates":
+            return <p><span className="text-warning">{msg.value.name}*{msg.value.domain}</span> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /><T>common.fullStop</T></p>
+        case "domain/DeleteDomain":
+            return <p><Account address={msg.value.admin} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <span className="text-primary">*{msg.value.domain}</span><T>common.fullStop</T></p>
+        case "domain/RegisterAccount":
+            return <p><Account address={msg.value.owner} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <span className="text-primary">{msg.value.name}*{msg.value.domain}</span><T>common.fullStop</T></p>
+        case "domain/RegisterDomain":
+            return <p><Account address={msg.value.admin} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <span className="text-primary">*{msg.value.domain}</span><T>common.fullStop</T></p>
+        case "domain/RenewAccount":
+            return <p><Account address={msg.value.signer} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <span className="text-primary">{msg.value.name}*{msg.value.domain}</span><T>common.fullStop</T></p>
+        case "domain/RenewDomain":
+            return <p><Account address={msg.value.signer} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <span className="text-primary">*{msg.value.domain}</span><T>common.fullStop</T></p>
+        case "domain/ReplaceAccountResources":
+            return <p><span className="text-primary">{msg.value.name}*{msg.value.domain}</span> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /><T>common.fullStop</T></p>
+        case "domain/SetAccountMetadata":
+            return <p><span className="text-primary">{msg.value.name}*{msg.value.domain}</span> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /><T>common.fullStop</T></p>
+        case "domain/TransferAccount":
+            return <p><Account address={msg.value.owner} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <span className="text-primary">{msg.value.name}*{msg.value.domain}</span> <T>activities.to</T> <span className="address"><Account address={msg.value.new_owner} /></span><T>common.fullStop</T></p>
+        case "domain/TransferDomainAll":
+            return <p><Account address={msg.value.owner} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg.type} /> <span className="text-primary">*{msg.value.domain}</span> <T>activities.to</T> <span className="address"><Account address={msg.value.new_admin} /></span><T>common.fullStop</T></p>
+
+            // bank
         case "cosmos-sdk/MsgSend":
             let amount = '';
             amount = msg.value.amount.map((coin) => new Coin(coin.amount, coin.denom).toString()).join(', ')
@@ -96,7 +122,7 @@ export default class Activites extends Component {
             return <MsgType type={msg.type} />
 
         default:
-            return <div>{JSON.stringify(msg.value)}</div>
+            return <div><JSONPretty id="json-pretty" data={msg}></JSONPretty></div>
         }
     }
 }

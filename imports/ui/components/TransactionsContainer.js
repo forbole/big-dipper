@@ -66,6 +66,22 @@ export default TransactionsContainer = withTracker((props) => {
                 {"tx.value.msg.type":"cosmos-sdk/IBCTransferMsg"},
                 {"tx.value.msg.type":"cosmos-sdk/IBCReceiveMsg"}
             ]
+        }).fetch() : {},
+        starnameTxs: transactionsExist ? Transactions.find({
+            $or: [
+                {"tx.value.msg.type":"domain/AddAccountCertificates"},
+                {"tx.value.msg.type":"domain/DeleteAccount"},
+                {"tx.value.msg.type":"domain/DeleteAccountCertificates"},
+                {"tx.value.msg.type":"domain/DeleteDomain"},
+                {"tx.value.msg.type":"domain/RegisterAccount"},
+                {"tx.value.msg.type":"domain/RegisterDomain"},
+                {"tx.value.msg.type":"domain/RenewAccount"},
+                {"tx.value.msg.type":"domain/RenewDomain"},
+                {"tx.value.msg.type":"domain/ReplaceAccountResources"},
+                {"tx.value.msg.type":"domain/SetAccountMetadata"},
+                {"tx.value.msg.type":"domain/TransferAccount"},
+                {"tx.value.msg.type":"domain/TransferDomainAll"},
+            ]
         }).fetch() : {}
     };
 })(ValidatorTransactions);

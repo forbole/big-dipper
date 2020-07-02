@@ -9,6 +9,7 @@ const fetchFromUrl = (url) => {
         };
     }
     catch (e){
+        console.log(res);
         console.log(e);
     }
 }
@@ -32,6 +33,7 @@ Meteor.methods({
             }
         }
         catch (e){
+            console.log(url);
             console.log(e)
         }
     },
@@ -49,6 +51,7 @@ Meteor.methods({
             }
         }
         catch (e){
+            console.log(url);
             console.log(e)
         }
 
@@ -61,6 +64,7 @@ Meteor.methods({
             }
         }
         catch (e){
+            console.log(url);
             console.log(e);
         }
         // get unbonding
@@ -72,6 +76,7 @@ Meteor.methods({
             }
         }
         catch (e){
+            console.log(url);
             console.log(e);
         }
 
@@ -88,6 +93,7 @@ Meteor.methods({
             }
         }
         catch (e){
+            console.log(url);
             console.log(e);
         }
 
@@ -108,6 +114,7 @@ Meteor.methods({
 
             }
             catch (e){
+                console.log(url);
                 console.log(e)
             }
         }
@@ -162,6 +169,7 @@ Meteor.methods({
             };
         }
         catch (e){
+            console.log(url);
             console.log(e);
         }
     },
@@ -176,6 +184,7 @@ Meteor.methods({
             };
         }
         catch (e){
+            console.log(url);
             console.log(e);
         }
     },

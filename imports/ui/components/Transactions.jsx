@@ -14,7 +14,8 @@ export default class ValidatorTransactions extends Component{
             distributionTxs: {},
             governanceTxs: {},
             slashingTxs: {},
-        };  
+            starnameTxs: {},
+        };
     }
 
     componentDidUpdate(prevProps){
@@ -26,7 +27,8 @@ export default class ValidatorTransactions extends Component{
                     stakingTxs: this.props.stakingTxs,
                     distributionTxs: this.props.distributionTxs,
                     governanceTxs: this.props.governanceTxs,
-                    slashingTxs: this.props.slashingTxs
+                    slashingTxs: this.props.slashingTxs,
+                    starnameTxs: this.props.starnameTxs,
                 })
             }
         }
@@ -37,12 +39,13 @@ export default class ValidatorTransactions extends Component{
             return <Spinner color="primary" type="glow" />
         }
         else if (this.props.transactionsExist){
-            return <TransactionTabs 
+            return <TransactionTabs
                 transferTxs={this.state.transferTxs}
                 stakingTxs={this.state.stakingTxs}
                 distributionTxs={this.state.distributionTxs}
                 governanceTxs={this.state.governanceTxs}
                 slashingTxs={this.state.slashingTxs}
+                starnameTxs={this.state.starnameTxs}
             />
         }
         else {
