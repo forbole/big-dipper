@@ -243,7 +243,7 @@ messageTypes:
     accountReplaceResources: 'Set Resources'
     accountSetMetadata: 'Set Metadata'
     accountTransfer: 'Transfer Starname'
-    domaintDelete: 'Delete Starname'
+    domainDelete: 'Delete Starname'
     domainRegister: 'Register Starname'
     domainRenew: 'Renew Starname'
     domainTransfer: 'Transfer Starname'
