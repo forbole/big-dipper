@@ -458,7 +458,7 @@ export default class Proposal extends Component {
                             <Col md={9} className="value">{(this.state.proposal.voting_start_time != '0001-01-01T00:00:00Z') ? <TimeStamp time={this.state.proposal.voting_end_time} /> : '-'}</Col>
                         </Row>
                     </div>
-                    <Row className='clearfix'>
+                    <Row className='clearfix mb-3'>
                         <Link to={`/proposals/${proposalId - 1}`} className={`btn btn-outline-danger float-left ${proposalId - 1 <= 0 ? "disabled" : ""}`}><i className="fas fa-caret-left"></i> Prev Proposal </Link>
                         <Link to="/proposals" className="btn btn-primary" style={{ margin: 'auto' }}><i className="fas fa-caret-up"></i> <T>common.backToList</T></Link>
                         <Link to={`/proposals/${proposalId + 1}`} className={`btn btn-outline-danger float-right ${proposalId >= maxProposalId ? "disabled" : ""}`}><i className="fas fa-caret-right"></i> Next Proposal</Link>
