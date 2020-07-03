@@ -28,7 +28,7 @@ const maxHeightModifier = {
 }
 
 const T = i18n.createComponent();
-let maxKavaAmount = 0;
+let coinMaxAvailable = 0;
 
 const Types = {
     DELEGATE: 'delegate',
@@ -224,6 +224,12 @@ const isAddress = (address) => {
 
 const isValidatorAddress = (address) => {
     return address && startsWith(address, Meteor.settings.public.bech32PrefixValAddr)
+}
+
+const getTotalValue = (params, denomType) => {
+    let value = (params).find(({ denom }) => denom === denomType);
+    coinMaxAvailable = value ? value.amount : null;
+    return coinMaxAvailable
 }
 
 class LedgerButton extends Component {
@@ -527,7 +533,6 @@ class LedgerButton extends Component {
                 break;
 
         }
-        console.log(this.getSimulateBody(txMsg))
         callback(txMsg, this.getSimulateBody(txMsg))
     }
 
@@ -554,8 +559,6 @@ class LedgerButton extends Component {
     runSimulatation = (txMsg, simulateBody) => {
         let gasAdjustment = TypeMeta[this.state.actionType].gasAdjustment || DEFAULT_GAS_ADJUSTMENT;
         Meteor.call('transaction.simulate', simulateBody, this.state.user, this.getPath(), gasAdjustment, (err, res) => {
-            console.log(res)
-            // console.log(err)
             if (res) {
                 if (res === '0') {
                     res = '300000'
@@ -579,9 +582,7 @@ class LedgerButton extends Component {
         try {
             let txMsg = this.state.txMsg;
             const txContext = this.getTxContext();
-            console.log(txContext)
             const bytesToSign = Ledger.getBytesToSign(txMsg, txContext);
-            console.log(bytesToSign)
             this.ledger.sign(bytesToSign).then((sig) => {
                 try {
                     Ledger.applySignature(txMsg, txContext, sig);
@@ -811,7 +812,7 @@ class DelegationButtons extends LedgerButton {
             case Types.DELEGATE:
                 action = 'Delegate to';
                 maxAmount = this.state.currentUser.availableCoin;
-                availableStatement = 'your available balance:'
+                availableStatement = 'Available balance:'
                 break;
             case Types.REDELEGATE:
                 action = 'Redelegate from';
@@ -830,20 +831,20 @@ class DelegationButtons extends LedgerButton {
             <FormGroup>
                 <Label for="tx" className="mb-n4"><T>transactions.amount</T></Label>
                 <FormText className="coin-available mb-n5 float-right">{availableStatement} {<Amount coin={maxAmount} />}</FormText>
-                <InputGroup className="modal-create-cdp py-n5">
+                <InputGroup className="modal-for-ledger py-n5">
                     <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="modal-create-cdp"><img src="/img/kava-symbol.png" className="symbol-img" /> </InputGroupText>
+                        <InputGroupText className="modal-for-ledger"><img src="/img/kava-symbol.png" className="symbol-img" /> </InputGroupText>
                     </InputGroupAddon>
                     <Input name="delegateAmount" onChange={this.handleInputChange} data-type='coin'
                         placeholder="Amount" min={Coin.MinStake} max={maxAmount.stakingAmount} type="number"
-                        invalid={this.state.delegateAmount != null && !isBetween(this.state.delegateAmount, 1, maxAmount)} className="modal-create-cdp " />
+                        invalid={this.state.delegateAmount != null && !isBetween(this.state.delegateAmount, 1, maxAmount)} className="modal-for-ledger " />
                     <InputGroupAddon addonType="append">{Coin.StakingCoin.displayName}</InputGroupAddon>
                 </InputGroup>
             </FormGroup>
 
             <FormGroup>
                 <Label for="memo"><T>cdp.memo</T></Label>
-                <InputGroup className="modal-create-cdp py-n5">
+                <InputGroup className="modal-for-ledger py-n5">
                     <Input name="memo" onChange={this.handleInputChange}
                         placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
                 </InputGroup>
@@ -981,58 +982,53 @@ class TransferButton extends LedgerButton {
 
 
 
-    componentDidMount() {
-        if (!this.state.currentUser) return null;
-        this.getTotalValue(this.state.currentUser.coinList, Meteor.settings.public.bondDenom);
-    }
+    // componentDidMount() {
+    //     if (!this.state.currentUser) return null;
+    //     getTotalValue(this.state.currentUser.coinList, Meteor.settings.public.bondDenom);
+    // }
 
 
-    getTotalValue(params, denomType) {
-        let value = (params).find(({ denom }) => denom === denomType);
-        maxKavaAmount = value ? value.amount : null;
-        return maxKavaAmount
-    }
 
 
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
-        this.getTotalValue(this.state.currentUser.coinList, Meteor.settings.public.bondDenom);
+        coinMaxAvailable = getTotalValue(this.state.currentUser.coinList, Meteor.settings.public.bondDenom);
 
         return <TabPane tabId="2" className="modal-body">
             <h3 className="text-center pb-4 pt-3">Transfer <img src="/img/kava-symbol.png" className="symbol-img  mb-1" /> {Coin.StakingCoin.displayName}</h3>
             <FormGroup>
                 <Label for="deposit" className="mb-n4"><T>transactions.address</T></Label>
-                <InputGroup className="modal-create-cdp py-n5">
+                <InputGroup className="modal-for-ledger py-n5">
                     <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="modal-create-cdp"><i className="fas fa-user px-1"></i></InputGroupText>
+                        <InputGroupText className="modal-for-ledger"><i className="fas fa-user px-1"></i></InputGroupText>
                     </InputGroupAddon>
                     <Input name="transferTarget" onChange={this.handleInputChange}
                         placeholder="Send to" type="text"
                         value={this.state.transferTarget}
-                        invalid={this.state.transferTarget != null && !isAddress(this.state.transferTarget)} className="modal-create-cdp " />
+                        invalid={this.state.transferTarget != null && !isAddress(this.state.transferTarget)} className="modal-for-ledger " />
                 </InputGroup>
             </FormGroup>
 
             <FormGroup>
                 <Label for="address" className="mb-n4"><T>transactions.amount</T></Label>
-                <FormText className="coin-available mb-n5 float-right">Max {new Coin(maxKavaAmount).toString(4)}</FormText>
-                <InputGroup className="modal-create-cdp py-n5" >
+                <FormText className="coin-available mb-n5 float-right">Max {new Coin(coinMaxAvailable).toString(4)}</FormText>
+                <InputGroup className="modal-for-ledger py-n5" >
                     <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="modal-create-cdp"><img src="/img/kava-symbol.png" className="symbol-img " /> </InputGroupText>
+                        <InputGroupText className="modal-for-ledger"><img src="/img/kava-symbol.png" className="symbol-img " /> </InputGroupText>
                     </InputGroupAddon>
                     <Input name="transferAmount" onChange={this.handleInputChange} data-type='coin'
                         placeholder="Amount"
-                        min={Coin.MinStake} max={maxKavaAmount / Meteor.settings.public.coins[0].fraction} type="number"
-                        invalid={this.state.transferAmount != null && !isBetween(this.state.transferAmount, Coin.MinStake, maxKavaAmount)} className="modal-create-cdp " />
+                        min={Coin.MinStake} max={coinMaxAvailable / Meteor.settings.public.coins[0].fraction} type="number"
+                        invalid={this.state.transferAmount != null && !isBetween(this.state.transferAmount, Coin.MinStake, coinMaxAvailable)} className="modal-for-ledger " />
 
                     <InputGroupAddon addonType="append">
-                        <InputGroupText className=" modal-create-cdp font-weight-bold">{Coin.StakingCoin.displayName}</InputGroupText>
+                        <InputGroupText className=" modal-for-ledger font-weight-bold">{Coin.StakingCoin.displayName}</InputGroupText>
                     </InputGroupAddon>
                 </InputGroup>
             </FormGroup>
 
             <FormGroup>
-                <InputGroup className="modal-create-cdp py-n5">
+                <InputGroup className="modal-for-ledger py-n5">
                     <Input name="memo" onChange={this.handleInputChange}
                         placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
                 </InputGroup>
@@ -1052,7 +1048,7 @@ class TransferButton extends LedgerButton {
 
     isDataValid = () => {
         if (!this.state.currentUser) return false
-        return isBetween(this.state.transferAmount, Coin.MinStake, maxKavaAmount)
+        return isBetween(this.state.transferAmount, Coin.MinStake, coinMaxAvailable)
     }
 
     getConfirmationMessage = () => {
@@ -1074,33 +1070,53 @@ class TransferButton extends LedgerButton {
         </span>;
     }
 }
-
 class SubmitProposalButton extends LedgerButton {
+
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
-        let maxAmount = this.state.currentUser.availableCoin;
+        coinMaxAvailable = getTotalValue(this.state.currentUser.coinList, Meteor.settings.public.bondDenom);
         return <TabPane tabId="2" className="modal-body">
-            <h3>Submit A New Proposal</h3>
-            <InputGroup>
-                <Input name="proposalTitle" onChange={this.handleInputChange}
-                    placeholder="Title" type="text"
-                    value={this.state.proposalTitle} />
-            </InputGroup>
-            <InputGroup>
-                <Input name="proposalDescription" onChange={this.handleInputChange}
-                    placeholder="Description" type="textarea"
-                    value={this.state.proposalDescription} />
-            </InputGroup>
-            <InputGroup>
-                <Input name="depositAmount" onChange={this.handleInputChange}
-                    data-type='coin' placeholder="Amount"
-                    min={Coin.MinStake} max={maxAmount.stakingAmount} type="number"
-                    invalid={this.state.depositAmount != null && !isBetween(this.state.depositAmount, 1, maxAmount)} />
-                <InputGroupAddon addonType="append">{Coin.StakingCoin.displayName}</InputGroupAddon>
-            </InputGroup>
-            <Input name="memo" onChange={this.handleInputChange}
-                placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
-            <div>your available balance: <Amount coin={maxAmount} /></div>
+            <h3 className="text-center pb-4 pt-3">Submit A New Proposal</h3>
+            <FormGroup>
+                <Label for="proposalTitle" className="mb-n4"><T>proposals.title</T></Label>
+                <InputGroup className="modal-for-ledger py-n5">
+                    <Input name="proposalTitle" onChange={this.handleInputChange}
+                        placeholder="Title" type="text"
+                        value={this.state.proposalTitle} className="modal-for-ledger " />
+                </InputGroup>
+            </FormGroup>
+
+            <FormGroup>
+                <Label for="depositAmount" className="mb-n4"><T>proposals.amount</T></Label>
+                <FormText className="coin-available mb-n5 float-right">Max {(new Coin(coinMaxAvailable)).toString(4)}</FormText>
+                <InputGroup className="modal-for-ledger py-n5">
+                    <Input name="depositAmount" onChange={this.handleInputChange}
+                        data-type='coin' placeholder="Amount"
+                        min={Coin.MinStake} max={coinMaxAvailable} type="number"
+                        invalid={this.state.depositAmount != null && !isBetween(this.state.depositAmount, 1, coinMaxAvailable)} className="modal-for-ledger " />
+                    <InputGroupAddon addonType="append">
+                        <InputGroupText className=" modal-for-ledger font-weight-bold">{Coin.StakingCoin.displayName}</InputGroupText>
+                    </InputGroupAddon>
+                </InputGroup>
+            </FormGroup>
+
+            <FormGroup>
+                <Label for="proposalDescription" className="mb-n4"><T>proposals.description</T></Label>
+                <FormText className="coin-available mb-n5 float-right">Max 5000 characters</FormText>
+                <InputGroup className="modal-for-ledger py-n5">
+                    <Input name="proposalDescription" onChange={this.handleInputChange}
+                        placeholder="Description" type="textarea" value={this.state.proposalDescription}
+                        className="modal-for-ledger " />
+                </InputGroup>
+            </FormGroup>
+
+            <FormGroup>
+                <Label for="memo"><T>cdp.memo</T></Label>
+                <InputGroup className="modal-for-ledger py-n5">
+                    <Input name="memo" onChange={this.handleInputChange}
+                        placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
+                </InputGroup>
+            </FormGroup>
         </TabPane>
     }
 
@@ -1126,20 +1142,20 @@ class SubmitProposalButton extends LedgerButton {
 
     isDataValid = () => {
         if (!this.state.currentUser) return false
-        return this.state.proposalTitle != null && this.state.proposalDescription != null && isBetween(this.state.depositAmount, 1, this.state.currentUser.availableCoin)
+        return this.state.proposalTitle != null && this.state.proposalDescription != null && this.state.proposalDescription.length <= 5000 && isBetween(this.state.depositAmount, Coin.MinStake, coinMaxAvailable)
     }
 
     getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>submit</span> a new proposal.
+
+        return <div className="modal-confirmation">
+            <div className="text-center mb-3"> <h4>You are going to <span className='action'>submit</span> a new proposal.</h4></div>
             <div>
-                <h3> {this.state.proposalTitle} </h3>
-                <div> {this.state.proposalDescription} </div>
-                <div> Initial Deposit:
-                    <Amount coin={this.state.depositAmount} />
-                </div>
-                <span> Fee: <Fee gas={this.state.gasEstimate} />.</span>
+                <div className="d-flex"><h5><T>proposals.title</T>: </h5> <h5 className="font-weight-normal pl-1"> {this.state.proposalTitle} </h5> </div>
+                <div className="d-flex"> <h5 ><T>proposals.description</T>: </h5><h5 className="font-weight-normal pl-1"> {this.state.proposalDescription}</h5> </div>
+                <div className="d-flex"> <h5 ><T>proposals.initialDeposit</T>: </h5><h5 className="font-weight-normal pl-1"> <Amount coin={this.state.depositAmount} /></h5></div>
+                <div className="d-flex"> <h5 ><T>proposals.fee</T>: </h5> <h5 className="font-weight-normal pl-1"> <Fee gas={this.state.gasEstimate} /></h5></div>
             </div>
-        </span>
+        </div>
     }
 
     render = () => {
@@ -1154,38 +1170,54 @@ class ProposalActionButtons extends LedgerButton {
 
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
-        let maxAmount = this.state.currentUser.availableCoin;
+        coinMaxAvailable = getTotalValue(this.state.currentUser.coinList, Meteor.settings.public.bondDenom);
 
         let inputs;
         let title;
         switch (this.state.actionType) {
             case Types.VOTE:
                 title = `Vote on Proposal ${this.props.proposalId}`
-                inputs = (<Input type="select" name="voteOption" onChange={this.handleInputChange} defaultValue=''>
-                    <option value='' disabled>Vote Option</option>
-                    <option value='Yes'>yes</option>
-                    <option value='Abstain'>abstain</option>
-                    <option value='No'>no</option>
-                    <option value='NoWithVeto'>no with veto</option>
-                </Input>)
+                inputs = (<FormGroup>
+                    <Label for="proposalTitle" className="mb-n4"><T>proposals.vote</T></Label>
+                    <InputGroup className="modal-for-ledger py-n5">
+                        <Input type="select" name="voteOption" onChange={this.handleInputChange} defaultValue='' placeholder="Vote" className="modal-for-ledger">
+                            <option value='' disabled>Vote Option</option>
+                            <option value='Yes'>Yes</option>
+                            <option value='Abstain'>Abstain</option>
+                            <option value='No'>No</option>
+                            <option value='NoWithVeto'>No with veto</option>
+                        </Input>
+                    </InputGroup>
+                </FormGroup>
+                )
                 break;
             case Types.DEPOSIT:
-                title = `Deposit to Proposal ${this.props.proposalId}`
-                inputs = (<InputGroup>
-                    <Input name="depositAmount" onChange={this.handleInputChange}
-                        data-type='coin' placeholder="Amount"
-                        min={Coin.MinStake} max={maxAmount.stakingAmount} type="number"
-                        invalid={this.state.depositAmount != null && !isBetween(this.state.depositAmount, 1, maxAmount)} />
-                    <InputGroupAddon addonType="append">{Coin.StakingCoin.displayName}</InputGroupAddon>
-                    <div>your available balance: <Amount coin={maxAmount} /></div>
-                </InputGroup>)
+                title = (<div>Deposit <img src="/img/kava-symbol.png" className="symbol-img mb-1" /> KAVA to Proposal {this.props.proposalId} </div>)
+                inputs = (<FormGroup>
+                    <Label for="depositAmount" className="mb-n4"><T>proposals.amount</T></Label>
+                    <FormText className="coin-available mb-n5 float-right">Max {(new Coin(coinMaxAvailable)).toString(4)}</FormText>
+                    <InputGroup className="modal-for-ledger py-n5">
+                        <Input name="depositAmount" onChange={this.handleInputChange}
+                            data-type='coin' placeholder="Amount"
+                            min={Coin.MinStake} max={coinMaxAvailable} type="number"
+                            invalid={this.state.depositAmount != null && !isBetween(this.state.depositAmount, 1, coinMaxAvailable)} className="modal-for-ledger" />
+                        <InputGroupAddon addonType="append">
+                            <InputGroupText className=" modal-for-ledger font-weight-bold">{Coin.StakingCoin.displayName}</InputGroupText>
+                        </InputGroupAddon>
+                    </InputGroup>
+                </FormGroup>)
                 break;
         }
         return <TabPane tabId="2" className="modal-body">
-            <h3>{title}</h3>
+            <h3 className="text-center pb-4 pt-3">{title}</h3>
             {inputs}
-            <Input name="memo" onChange={this.handleInputChange}
-                placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
+            <FormGroup>
+                <Label for="memo"><T>cdp.memo</T></Label>
+                <InputGroup className="modal-for-ledger py-n5">
+                    <Input name="memo" onChange={this.handleInputChange}
+                        placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
+                </InputGroup>
+            </FormGroup>
         </TabPane>
 
     }
@@ -1215,7 +1247,7 @@ class ProposalActionButtons extends LedgerButton {
         if (this.state.actionType === Types.VOTE) {
             return ['Yes', 'No', 'NoWithVeto', 'Abstain'].indexOf(this.state.voteOption) !== -1;
         } else {
-            return isBetween(this.state.depositAmount, 1, this.state.currentUser.availableCoin)
+            return isBetween(this.state.depositAmount, Coin.MinStake, coinMaxAvailable)
         }
     }
 
@@ -1227,7 +1259,7 @@ class ProposalActionButtons extends LedgerButton {
                 </span>
                 break;
             case Types.DEPOSIT:
-                return <span>You are <span className='action'>deposit</span> <Amount coin={this.state.depositAmount} /> to proposal {this.props.proposalId}
+                return <span>You are going to <span className='action'>deposit</span> <Amount coin={this.state.depositAmount} /> to proposal {this.props.proposalId}
                     <span> with <Fee gas={this.state.gasEstimate} />.</span>
                 </span>
                 break;
@@ -1261,32 +1293,32 @@ class ClaimSwapButton extends LedgerButton {
             <h3 className="text-center pb-4 pt-3">Claim <img src="/img/bnb-symbol.svg" className="symbol-img mb-1" /> BNB Swap</h3>
             <FormGroup>
                 <Label for="swapID" className="mb-n4"><T>cdp.swapID</T></Label>
-                <InputGroup className="modal-create-cdp py-n5">
+                <InputGroup className="modal-for-ledger py-n5">
                     <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="modal-create-cdp"><i className="fas fa-stream px-1"></i></InputGroupText>
+                        <InputGroupText className="modal-for-ledger"><i className="fas fa-stream px-1"></i></InputGroupText>
                     </InputGroupAddon>
                     <Input name="swapID" onChange={this.handleInputChange}
                         placeholder="Swap ID" type="text" value={this.state.swapID} data-type='hash'
-                        invalid={this.state.swapID === null} className="modal-create-cdp " />
+                        invalid={this.state.swapID === null} className="modal-for-ledger " />
                 </InputGroup>
             </FormGroup>
 
             <FormGroup>
                 <Label for="swapRandNum" className="mb-n4"><T>cdp.swapRandNum</T></Label>
-                <InputGroup className="modal-create-cdp py-n5">
+                <InputGroup className="modal-for-ledger py-n5">
                     <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="modal-create-cdp"><i className="fas fa-exchange-alt px-1"></i></InputGroupText>
+                        <InputGroupText className="modal-for-ledger"><i className="fas fa-exchange-alt px-1"></i></InputGroupText>
                     </InputGroupAddon>
                     <Input name="swapRandomNumber" onChange={this.handleInputChange}
                         placeholder="Swap Random Number" type="text" data-type='hash'
                         value={this.state.swapRandomNumber}
-                        invalid={this.state.swapRandomNumber === null} className="modal-create-cdp " />
+                        invalid={this.state.swapRandomNumber === null} className="modal-for-ledger " />
                 </InputGroup>
             </FormGroup>
 
             <FormGroup>
                 <Label for="memo"><T>cdp.memo</T></Label>
-                <InputGroup className="modal-create-cdp py-n5">
+                <InputGroup className="modal-for-ledger py-n5">
                     <Input name="memo" onChange={this.handleInputChange}
                         placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
                 </InputGroup>
@@ -1361,16 +1393,16 @@ class CreateCDPButton extends LedgerButton {
             <FormGroup>
                 <Label for="collateral" className="mb-n4"><T>cdp.collateral</T></Label>
                 <FormText className="coin-available mb-n5 float-right">Max {new Coin(this.state.maxAmount, this.props.collateral).convertToString()}</FormText>
-                <InputGroup className="modal-create-cdp py-n5">
+                <InputGroup className="modal-for-ledger py-n5">
                     <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="modal-create-cdp"><img src="/img/bnb-symbol.svg" className="symbol-img" /> </InputGroupText>
+                        <InputGroupText className="modal-for-ledger"><img src="/img/bnb-symbol.svg" className="symbol-img" /> </InputGroupText>
                     </InputGroupAddon>
 
                     <Input placeholder="Collateral Amount" name="collateral" value={this.state.collateral} onChange={this.handleChange} type="number"
                         min={Coin.MinStake} max={this.state.maxAmount}
-                        invalid={this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount)} className="modal-create-cdp " />
+                        invalid={this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount)} className="modal-for-ledger " />
                     <InputGroupAddon addonType="append">
-                        <InputGroupText className=" modal-create-cdp font-weight-bold">BNB</InputGroupText>
+                        <InputGroupText className=" modal-for-ledger font-weight-bold">BNB</InputGroupText>
                     </InputGroupAddon>
                 </InputGroup>
             </FormGroup>
@@ -1380,15 +1412,15 @@ class CreateCDPButton extends LedgerButton {
             <FormGroup>
                 <Label for="debt" className="mb-n4"><T>cdp.debt</T></Label>
                 <FormText invalid={true} className="coin-available mb-n5 float-right">The minimum debt is {this.props.debtFloor / Meteor.settings.public.coins[5].fraction} USDX </FormText>
-                <InputGroup className="modal-create-cdp py-n5">
+                <InputGroup className="modal-for-ledger py-n5">
                     <FormFeedback invalid className="coin-available ">The minimum debt is {this.props.debtFloor / Meteor.settings.public.coins[5].fraction} USDX </FormFeedback>
                     <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="modal-create-cdp"><img src="/img/usdx-symbol.svg" className="symbol-img" /> </InputGroupText>
+                        <InputGroupText className="modal-for-ledger"><img src="/img/usdx-symbol.svg" className="symbol-img" /> </InputGroupText>
                     </InputGroupAddon>
 
-                    <Input invalid={(this.state.debt < this.props.debtFloor / Meteor.settings.public.coins[5].fraction)} placeholder="Debt Amount" name="debt" value={this.state.debt} type="number" onChange={this.handleChange} className="modal-create-cdp " />
+                    <Input invalid={(this.state.debt < this.props.debtFloor / Meteor.settings.public.coins[5].fraction)} placeholder="Debt Amount" name="debt" value={this.state.debt} type="number" onChange={this.handleChange} className="modal-for-ledger " />
                     <InputGroupAddon addonType="append">
-                        <InputGroupText className="modal-create-cdp font-weight-bold">USDX</InputGroupText>
+                        <InputGroupText className="modal-for-ledger font-weight-bold">USDX</InputGroupText>
                     </InputGroupAddon>
                     {/* <FormFeedback invalid={true} className="coin-available mb-n5 float-right">The minimum debt is {this.props.debtFloor / Meteor.settings.public.coins[5].fraction} USDX </FormFeedback> */}
 
@@ -1405,7 +1437,7 @@ class CreateCDPButton extends LedgerButton {
 
 
                     <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio >= this.props.collateralizationRatio))}
-                        className={((this.state.ratio !== Infinity) && (this.state.ratio >= this.props.collateralizationRatio)) ? 'modal-create-cdp text-success text-right mt-2' : 'modal-create-cdp text-danger text-right mt-2 pr-5'}
+                        className={((this.state.ratio !== Infinity) && (this.state.ratio >= this.props.collateralizationRatio)) ? 'modal-for-ledger text-success text-right mt-2' : 'modal-for-ledger text-danger text-right mt-2 pr-5'}
                         value={((this.state.ratio !== Infinity) && (this.state.ratio > 0)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 })}
                         disabled={true} />
                     {/* <FormFeedback className="coin-available mb-n5 float-right">The minimum debt is {this.props.debtFloor / Meteor.settings.public.coins[5].fraction} USDX </FormFeedback> */}
@@ -1500,19 +1532,19 @@ class DepositCDPButton extends LedgerButton {
             <FormGroup>
                 <Label for="deposit" className="mb-n4"><T>cdp.deposit</T></Label>
                 <FormText className="coin-available mb-n5 float-right">Max {new Coin(this.state.maxAmount, this.props.collateral).convertToString()}</FormText>
-                <InputGroup className="modal-create-cdp py-n5">
+                <InputGroup className="modal-for-ledger py-n5">
                     <FormFeedback className="coin-available mb-n5 float-right">Max {new Coin(this.state.maxAmount, this.props.collateral).convertToString()}</FormFeedback>
 
                     <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="modal-create-cdp"><img src="/img/bnb-symbol.svg" className="symbol-img" /> </InputGroupText>
+                        <InputGroupText className="modal-for-ledger"><img src="/img/bnb-symbol.svg" className="symbol-img" /> </InputGroupText>
                     </InputGroupAddon>
                     <Input placeholder="Collateral Amount" name="collateral" value={this.state.collateral} onChange={this.handleChange}
                         min={Coin.MinStake} max={this.state.maxAmount}
-                        invalid={this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount)} className="modal-create-cdp " />
+                        invalid={this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount)} className="modal-for-ledger " />
                     <FormFeedback className="coin-available mb-n5 float-right">Max {new Coin(this.state.maxAmount, this.props.collateral).convertToString()}</FormFeedback>
 
                     <InputGroupAddon addonType="append">
-                        <InputGroupText className="modal-create-cdp font-weight-bold">BNB</InputGroupText>
+                        <InputGroupText className="modal-for-ledger font-weight-bold">BNB</InputGroupText>
                     </InputGroupAddon>
                 </InputGroup>
             </FormGroup>
@@ -1523,7 +1555,7 @@ class DepositCDPButton extends LedgerButton {
                         <Label for="collateral" className="mt-3"><T>cdp.collateralizationRatio</T></Label>
                     </InputGroupAddon>
                     <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio))}
-                        className={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? 'modal-create-cdp text-success text-right mt-2' : 'modal-create-cdp text-danger text-right mt-2 pr-5'}
+                        className={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? 'modal-for-ledger text-success text-right mt-2' : 'modal-for-ledger text-danger text-right mt-2 pr-5'}
                         value={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 })}
                         disabled={true} />
 
@@ -1623,16 +1655,16 @@ class WithdrawCDPButton extends LedgerButton {
             <FormGroup>
                 <Label for="withdraw" className="mb-n4"><T>cdp.withdraw</T></Label>
                 <FormText className="coin-available mb-n5 float-right">Max {this.state.isDepositor ? new Coin(this.state.depositedValue, this.props.collateral).convertToString() : new Coin(this.state.maxAmount, this.props.collateral).convertToString()}</FormText>
-                <InputGroup className="modal-create-cdp py-n5">
+                <InputGroup className="modal-for-ledger py-n5">
                     <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="modal-create-cdp"><img src="/img/bnb-symbol.svg" className="symbol-img" /> </InputGroupText>
+                        <InputGroupText className="modal-for-ledger"><img src="/img/bnb-symbol.svg" className="symbol-img" /> </InputGroupText>
                     </InputGroupAddon>
 
                     <Input placeholder="Collateral Amount" name="collateral" type="number" value={this.state.collateral} onChange={this.handleChange}
                         min={Coin.MinStake} max={this.state.maxAmount}
-                        invalid={this.state.isDepositor ? this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.depositedValue) : this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount)} className="modal-create-cdp " />
+                        invalid={this.state.isDepositor ? this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.depositedValue) : this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount)} className="modal-for-ledger " />
                     <InputGroupAddon addonType="append">
-                        <InputGroupText className="modal-create-cdp font-weight-bold">BNB</InputGroupText>
+                        <InputGroupText className="modal-for-ledger font-weight-bold">BNB</InputGroupText>
                     </InputGroupAddon>
                 </InputGroup>
             </FormGroup>
@@ -1643,7 +1675,7 @@ class WithdrawCDPButton extends LedgerButton {
                         <Label for="collateral" className="mt-3"><T>cdp.collateralizationRatio</T></Label>
                     </InputGroupAddon>
                     <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio))}
-                        className={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? 'modal-create-cdp text-success text-right mt-2' : 'modal-create-cdp text-danger text-right mt-2 pr-5'}
+                        className={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? 'modal-for-ledger text-success text-right mt-2' : 'modal-for-ledger text-danger text-right mt-2 pr-5'}
                         value={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 })}
                         disabled={true} />
                 </InputGroup>
@@ -1736,16 +1768,16 @@ class DrawDebtCDPButton extends LedgerButton {
             <FormGroup>
                 <Label for="draw" className="mb-n4"><T>cdp.draw</T></Label>
                 {/* <FormText className="coin-available mb-n5 float-right">Max {new Coin(this.state.maxAmount, this.props.principalDenom).convertToString()}</FormText> */}
-                <InputGroup className="modal-create-cdp py-n5">
+                <InputGroup className="modal-for-ledger py-n5">
                     <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="modal-create-cdp"><img src="/img/usdx-symbol.svg" className="symbol-img" /> </InputGroupText>
+                        <InputGroupText className="modal-for-ledger"><img src="/img/usdx-symbol.svg" className="symbol-img" /> </InputGroupText>
                     </InputGroupAddon>
 
                     <Input placeholder="Draw Amount" name="draw" value={this.state.draw} type="number" onChange={this.handleChange}
                         min={Coin.MinStake}
-                        invalid={this.state.draw != null && (this.state.ratio > this.props.collateralizationRatio)} className="modal-create-cdp " />
+                        invalid={this.state.draw != null && (this.state.ratio > this.props.collateralizationRatio)} className="modal-for-ledger " />
                     <InputGroupAddon addonType="append">
-                        <InputGroupText className="modal-create-cdp font-weight-bold">USDX</InputGroupText>
+                        <InputGroupText className="modal-for-ledger font-weight-bold">USDX</InputGroupText>
                     </InputGroupAddon>
                 </InputGroup>
             </FormGroup>
@@ -1756,7 +1788,7 @@ class DrawDebtCDPButton extends LedgerButton {
                         <Label for="collateral" className="mt-3"><T>cdp.collateralizationRatio</T></Label>
                     </InputGroupAddon>
                     <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio))}
-                        className={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? 'modal-create-cdp text-success text-right mt-2' : 'modal-create-cdp text-danger text-right mt-2 pr-5'}
+                        className={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? 'modal-for-ledger text-success text-right mt-2' : 'modal-for-ledger text-danger text-right mt-2 pr-5'}
                         value={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 })}
                         disabled={true} />
                 </InputGroup>
@@ -1850,16 +1882,16 @@ class RepayDebtCDPButton extends LedgerButton {
             <FormGroup>
                 <Label for="repay" className="mb-n4"><T>cdp.repay</T></Label>
                 <FormText className="coin-available mb-n5 float-right">Current Debt is {new Coin(this.state.maxAmount, this.props.principalDenom).convertToString()}</FormText>
-                <InputGroup className="modal-create-cdp py-n5">
+                <InputGroup className="modal-for-ledger py-n5">
                     <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="modal-create-cdp"><img src="/img/usdx-symbol.svg" className="symbol-img" /> </InputGroupText>
+                        <InputGroupText className="modal-for-ledger"><img src="/img/usdx-symbol.svg" className="symbol-img" /> </InputGroupText>
                     </InputGroupAddon>
 
                     <Input placeholder="Repay Amount" name="debt" value={this.state.debt} type="number" onChange={this.handleChange}
                         min={Coin.MinStake} max={this.state.maxAmount}
-                        invalid={this.state.debt != null && !isBetween(this.state.debt, parseInt(this.props.minDebt) / Meteor.settings.public.coins[5].fraction, this.state.maxAmount)} className="modal-create-cdp " />
+                        invalid={this.state.debt != null && !isBetween(this.state.debt, parseInt(this.props.minDebt) / Meteor.settings.public.coins[5].fraction, this.state.maxAmount)} className="modal-for-ledger " />
                     <InputGroupAddon addonType="append">
-                        <InputGroupText className="modal-create-cdp font-weight-bold">USDX</InputGroupText>
+                        <InputGroupText className="modal-for-ledger font-weight-bold">USDX</InputGroupText>
                     </InputGroupAddon>
                 </InputGroup>
             </FormGroup>
@@ -1870,7 +1902,7 @@ class RepayDebtCDPButton extends LedgerButton {
                         <Label for="collateral" className="mt-3"><T>cdp.collateralizationRatio</T></Label>
                     </InputGroupAddon>
                     <Input invalid={!((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio))}
-                        className={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? 'modal-create-cdp text-success text-right mt-2' : 'modal-create-cdp text-danger text-right mt-2 pr-5'}
+                        className={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? 'modal-for-ledger text-success text-right mt-2' : 'modal-for-ledger text-danger text-right mt-2 pr-5'}
                         value={((this.state.ratio !== Infinity) && (this.state.ratio > this.props.collateralizationRatio)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 })}
                         disabled={true} />
 
@@ -1981,7 +2013,31 @@ class AuctionBidButton extends LedgerButton {
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         return <TabPane tabId="2" className="modal-body">
-            <h3>Place Bid on Auction {this.state.auctionID} </h3>
+            <h3 className="text-center pb-4">Place a Bid on Auction {this.state.auctionID} </h3>
+            <FormGroup>
+                <Label for="bid" className="mb-n4"><T>auction.bidAmount</T></Label>
+                {(new Coin(this.state.minAmount, this.props.principalDenom).convertToString()) > 0 ? <FormText className="coin-available mb-n5 float-right">Min {new Coin(this.state.minAmount, this.props.principalDenom).convertToString()}</FormText> : null}
+                <InputGroup className="modal-for-ledger py-n5">
+                    <InputGroupAddon addonType="prepend">
+                        <InputGroupText className="modal-for-ledger"><img src="/img/usdx-symbol.svg" className="symbol-img" /> </InputGroupText>
+                    </InputGroupAddon>
+
+                    <Input placeholder="Bid Amount" name="bid" value={this.state.bid} type="number" onChange={this.handleChange}
+                        min={this.state.minAmount} max={this.state.maxAmount}
+                        invalid={this.state.bid != null && !isBetween(this.state.bid, this.state.minAmount, this.state.maxAmount)} className="modal-for-ledger " />
+                    <InputGroupAddon addonType="append">
+                        <InputGroupText className="modal-for-ledger font-weight-bold">USDX</InputGroupText>
+                    </InputGroupAddon>
+                </InputGroup>
+            </FormGroup>
+
+            <FormGroup className="mb-n4" >
+                <Label for="memo" className="mb-n4"><T>cdp.memo</T></Label>
+                <Input name="memo" onChange={this.handleInputChange} className="mb-n4"
+                    placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
+            </FormGroup>
+
+            {/* <h3>Place Bid on Auction {this.state.auctionID} </h3>
             <FormGroup>
                 <Label for="bid"><T>auction.bidAmount</T></Label>
                 <Input placeholder="Bid Amount" name="bid" value={this.state.bid} type="number" onChange={this.handleChange}
@@ -1994,7 +2050,7 @@ class AuctionBidButton extends LedgerButton {
                 <Label for="memo"><T>cdp.memo</T></Label>
                 <Input name="memo" onChange={this.handleInputChange}
                     placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
-            </FormGroup>
+            </FormGroup> */}
         </TabPane>
 
     }
@@ -2003,9 +2059,13 @@ class AuctionBidButton extends LedgerButton {
         return action === Types.AUCTIONBID
     }
 
+    isDataValid = () => {
+        if (!this.state.currentUser) return false
+        return isBetween(this.state.bid, this.state.minAmount, this.state.maxAmount)
+    }
 
     getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>place </span> a <span className='coin'>{new Coin(this.state.bid, this.state.denom).convertToString(4)}</span>  bid on auction with ID  <b>{this.state.auctionID} </b>
+        return <span>You are going to <span className='action'>place </span> a <span className='coin'>{new Coin(this.state.bid, this.state.denom).convertToString(4)}</span> bid on auction with ID  <b>{this.state.auctionID} </b>
      with <Fee gas={this.state.gasEstimate} />.</span>
     }
 
@@ -2017,7 +2077,7 @@ class AuctionBidButton extends LedgerButton {
 
 
     render = () => {
-        return <span className="ledger-buttons-group px-2">
+        return <span className="ledger-buttons-group">
             <Button color="danger" size="sm" onClick={() => this.openModal(Types.AUCTIONBID, {})}> {TypeMeta[Types.AUCTIONBID].button} </Button>
             {this.renderModal()}
         </span>;

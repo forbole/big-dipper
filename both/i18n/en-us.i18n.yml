@@ -237,6 +237,9 @@ proposals:
     recipient: 'Recipient'
     changes: 'Changes'
     subspace: 'Subspace'
+    initialDeposit: 'Initial Deposit'
+    fee: 'Fee'
+    vote: 'Vote'
 votingPower:
     distribution: 'Voting Power Distribution'
     pareto: 'Pareto Principle (20/80 rule)'

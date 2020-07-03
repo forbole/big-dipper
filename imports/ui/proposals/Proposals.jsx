@@ -14,13 +14,13 @@ const ProposalList = (props) => {
         <p className="lead"><T>proposals.listOfProposals</T></p>
         <Row>
             <Col md={12}>
-                <List {...props}/>
+                <List {...props} />
             </Col>
         </Row>
     </div>
 }
-export default class Proposals extends Component{
-    constructor(props){
+export default class Proposals extends Component {
+    constructor(props) {
         super(props);
     }
 

@@ -114,6 +114,10 @@ body {
   .modal-body{
     padding: 1rem;
   }
+
+  .modal-confirmation{
+    padding: 1rem;
+ }
   
   #header {
     .sign-in-btn {
@@ -1193,10 +1197,9 @@ body {
 
   }
 
-  .modal-create-cdp{
+  .modal-for-ledger{
     padding: 0rem;
     height: 2rem;
-    //width: 10rem;
   }
   
   .form-group{
@@ -1222,3 +1225,15 @@ body {
   vertical-align: middle;
 
 }
+
+.material-icons.greenColor{
+   color: #1EC490;
+   }
+
+  .material-icons.redColor{
+    color: #FD3B4C
+  }
+
+  .bold-text{
+    font-weight: 500;
+  }

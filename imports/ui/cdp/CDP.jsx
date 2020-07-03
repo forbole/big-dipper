@@ -270,7 +270,7 @@ export default class CDP extends Component {
 
         else {
             return <div >
-                <span className="bnb-usd-price d-flex justify-content-center">
+                <span className="bnb-usd-price">
                     <span className="pr-3">
                         <div ><Badge color="success" className="badge-bnb-usd">BNB : USD</Badge> </div>
                         <div className="mb-2"> <strong className="text-success">1 : {this.state.BNB_USD ? numbro(this.state.BNB_USD).formatCurrency({ mantissa: 4 }) : 0}</strong></div>
