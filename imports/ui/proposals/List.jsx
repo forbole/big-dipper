@@ -11,7 +11,6 @@ import { SubmitProposalButton } from '../ledger/LedgerActions.jsx';
 const T = i18n.createComponent();
 
 const ProposalRow = (props) => {
-    console.log(props)
     return <tr>
         <th className="d-none d-sm-table-cell counter">{props.proposal.proposalId}</th>
         <td className="title"><Link to={"/proposals/" + props.proposal.proposalId}>{props.proposal.content.value.title}</Link></td>

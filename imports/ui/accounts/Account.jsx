@@ -321,7 +321,7 @@ export default class AccountDetails extends Component {
             }
         })
 
-        Meteor.call('cdp.getCDPPrice', (error, result) => {
+        Meteor.call('cdp.getCDPPrice', 'bnb:usd', (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({
@@ -570,7 +570,7 @@ export default class AccountDetails extends Component {
                             <Row className="account-distributions">
                                 <Col xs={12}>
                                     <Progress multi>
-                                        <Progress bar className="available" value={this.findValue(this.state.available, coin1) / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="available" value={this.findValue(this.state.available, coin1) * this.state.price / this.state.totalValueInUSD * 100} />
                                         <Progress bar className="delegated" value={this.findValue(this.state.delegated, coin1) * this.state.price / this.state.totalValueInUSD * 100} />
                                         <Progress bar className="unbonding" value={this.findValue(this.state.unbonding, coin1) * this.state.price / this.state.totalValueInUSD * 100} />
                                         <Progress bar className="rewards" value={this.findValue(this.state.rewards, coin1) * this.state.price / this.state.totalValueInUSD * 100} />
@@ -759,7 +759,7 @@ export default class AccountDetails extends Component {
                                             <span className="cdp-logo bnb">BNB</span>
                                         </NavLink>
                                     </NavItem>
-                                    {this.state.hasIncentive?
+                                    {this.state.hasIncentive ?
                                         <NavItem>
                                             <NavLink
                                                 className={classnames({ active: this.state.cdpActiveTab === 'cdp-incentive' })}
