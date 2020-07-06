@@ -12,6 +12,20 @@
 *  Added Russian transation
 * Fixed Unjail message with a correct account address.
 * [#323] Display rewards amount in activities list.
+* Implemented maximum USDX draw debt amount.
+* Implemented min liquidation ratio & min repay debt value.
+* Updated CDP display in Account to show BNB:USD and BNB:USD:30 price.
+* Updated Withdraw and Repay CDP Price to BNB:USD:30.
+* Updated all Ledger's form styling.
+* Updated buttons size, added padding & transition.
+* Added PeriodicVestingAccount Account Type.
+* Implemented Auctions in Nav and Auction Button.
+* Implemented Incentive Rewards Claim.
+* Change Collateral Deposited and Principal Drawn font to bold in CDP List. 
+* Added increase/reduce arrows in CDP list to indicate if the Collateralization Ratio is higher than or close to 1.5 ratio.
+* Updated total available value displayed in 'Send' form.
+
+
 
 ## v0.37.x-patch-10.1
 
