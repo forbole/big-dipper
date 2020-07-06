@@ -12,6 +12,7 @@
 *  Added Russian transation
 * Fixed Unjail message with a correct account address.
 * [#323] Display rewards amount in activities list.
+* [#367] Fixed wrong (unbonding) calculation of Total Kava Value.
 
 ## v0.37.x-patch-10.1
 
