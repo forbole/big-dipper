@@ -75,13 +75,12 @@ export default class Starname extends Component {
                         <title>Starname {this.props.starname} On The IOV Name Service</title>
                         <meta name="description" content={"Details of starname " + this.props.starname} />
                     </Helmet>
-                    <h4><T>starname.starname</T></h4>
+                    <h4><T>starname.starname</T> ✰</h4>
                     <Card>
-                        <div className="card-header"><T>starname.starname</T></div>
                         <CardBody>
                             <Row>
-                                <Col md={4} className="label"><T>starname.starname</T></Col>
-                                <Col md={8} className="value text-nowrap overflow-auto">{this.props.starname}</Col>
+                                <Col md={4} className="label card-header"><T>starname.starname</T></Col>
+                                <Col md={8} className="value text-nowrap overflow-auto card-header">{this.props.starname}</Col>
                                 <Col md={4} className="label"><T>starname.owner</T></Col>
                                 <Col md={8} className="value text-nowrap overflow-auto address"><Account address={data.owner} /></Col>
                                 <Col md={4} className="label"><T>starname.broker</T></Col>
@@ -100,11 +99,10 @@ export default class Starname extends Component {
                         </CardBody>
                     </Card>
                     {info && <Card>
-                        <div className="card-header"><T>starname.domain</T></div>
                         <CardBody>
                             <Row>
-                                <Col md={4} className="label"><T>starname.domain</T></Col>
-                                <Col md={8} className="value text-nowrap overflow-auto">{info.name}</Col>
+                                <Col md={4} className="label card-header"><T>starname.domain</T></Col>
+                                <Col md={8} className="value text-nowrap overflow-auto card-header">{info.name}</Col>
                                 <Col md={4} className="label"><T>starname.type</T></Col>
                                 <Col md={8} className="value text-nowrap overflow-auto">{info.type}</Col>
                                 <Col md={4} className="label"><T>starname.admin</T></Col>
