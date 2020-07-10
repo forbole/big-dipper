@@ -40,6 +40,14 @@ export default class ChainStates extends Component{
                 })
             }
 
+            this.state = data;
+        }
+        else{
+            this.state = {
+                price: "$-",
+                marketCap: "$-",
+                inflation: 0,
+            }
         }
 
     }
