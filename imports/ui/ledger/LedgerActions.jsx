@@ -1047,7 +1047,7 @@ class TransferButton extends LedgerButton {
 
             <FormGroup>
                 <Label for="address" className="mb-n4"><T>transactions.amount</T></Label>
-                <FormText className="coin-available mb-n5 float-right">Max {new Coin(this.state.selectedToken && this.state.selectedToken.maxAmount ? this.state.selectedToken.maxAmount : 0).toString(4)}</FormText>
+                <FormText className="coin-available mb-n5 float-right">Max {new Coin(this.state.selectedToken && this.state.selectedToken.maxAmount ? (this.state.selectedToken.maxAmount, this.state.selectedToken.denom)  : 0).toString(4)}</FormText>
                 <InputGroup className="modal-for-ledger py-n5" >
                     <InputGroupAddon addonType="prepend">
                         <InputGroupText className="modal-for-ledger"><img src="/img/kava-symbol.png" className="symbol-img " /> </InputGroupText>
