@@ -276,6 +276,8 @@ class LedgerButton extends Component {
             debt: 0,
             collateralAmount: 0,
             debtAmount: 0,
+            denom: undefined,
+            selectedToken: undefined,
 
 
 
@@ -611,6 +613,7 @@ class LedgerButton extends Component {
         let dataset = target.dataset;
         let value;
 
+
         switch (dataset.type) {
             case 'validator':
                 value = { moniker: dataset.moniker, operator_address: dataset.address }
@@ -621,10 +624,14 @@ class LedgerButton extends Component {
             case 'hash':
                 value = target.value.toUpperCase()
                 break;
+            case 'token':
+                value = { maxAmount: target.value, denom: dataset.denom, placeholder: dataset.placeholder }
+                break;
             default:
                 value = target.value;
         }
         this.setState({ [target.name]: value })
+
     }
 
     redirectToSignin = () => {
@@ -978,6 +985,9 @@ class TransferButton extends LedgerButton {
         this.state = {
             ...this.state,
             total: props.total,
+            selectedToken: {},
+            // denom: Meteor.settings.public.bondDenom,
+            // tokenPlaceholder: undefined,
         }
     }
 
@@ -994,9 +1004,34 @@ class TransferButton extends LedgerButton {
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         coinMaxAvailable = getTotalValue(this.state.currentUser.coinList, Meteor.settings.public.bondDenom);
+        let maxKavaAvailable = getTotalValue(this.state.currentUser.coinList, Meteor.settings.public.coins[0].denom) / Meteor.settings.public.coins[0].fraction;
+        let maxUSDXAvailable = getTotalValue(this.state.currentUser.coinList, Meteor.settings.public.coins[5].denom) / Meteor.settings.public.coins[5].fraction;
+        let maxBNBAvailable = getTotalValue(this.state.currentUser.coinList, Meteor.settings.public.coins[1].denom) / Meteor.settings.public.coins[1].fraction;
+
+        console.log("SLECETED TOKEN  - > " + JSON.stringify(this.state.selectedToken))
+
+    
 
         return <TabPane tabId="2" className="modal-body">
-            <h3 className="text-center pb-4 pt-3">Transfer <img src="/img/kava-symbol.png" className="symbol-img  mb-1" /> {Coin.StakingCoin.displayName}</h3>
+            <span className="d-inline-flex text-center transfer-coin ">
+                <h3 className="text-center pb-4 pt-3"> Transfer </h3>
+                <UncontrolledDropdown direction='down' size='sm' className='transfer-coin-dropdown'>
+                    <DropdownToggle caret={true}>
+                        {this.state.selectedToken && this.state.selectedToken.placeholder ? this.state.selectedToken.placeholder : 'Tokens'}
+                    </DropdownToggle>
+                    <DropdownMenu>
+                        <DropdownItem name='selectedToken' value={maxKavaAvailable} data-type='token' data-placeholder='KAVA' data-denom='ukava' 
+                            onClick={this.handleInputChange}><img src="/img/kava-symbol.png" className="symbol-img  mb-1" /> KAVA</DropdownItem>
+                        <DropdownItem divider />
+                        <DropdownItem name='selectedToken' value={maxUSDXAvailable} data-type='token' data-placeholder='USDX' data-denom='usdx'
+                            onClick={this.handleInputChange}><img src="/img/usdx-symbol.svg" className="symbol-img  mb-1" /> USDX</DropdownItem>
+                        <DropdownItem divider />
+                        <DropdownItem name='selectedToken' value={maxBNBAvailable} data-type='token' data-placeholder='BNB' data-denom='bnb'
+                            onClick={this.handleInputChange}><img src="/img/bnb-symbol.svg" className="symbol-img  mb-1" /> BNB</DropdownItem>
+                    </DropdownMenu>
+                </UncontrolledDropdown>
+            </span>
+
             <FormGroup>
                 <Label for="deposit" className="mb-n4"><T>transactions.address</T></Label>
                 <InputGroup className="modal-for-ledger py-n5">
@@ -1012,18 +1047,18 @@ class TransferButton extends LedgerButton {
 
             <FormGroup>
                 <Label for="address" className="mb-n4"><T>transactions.amount</T></Label>
-                <FormText className="coin-available mb-n5 float-right">Max {new Coin(coinMaxAvailable).toString(4)}</FormText>
+                <FormText className="coin-available mb-n5 float-right">Max {new Coin(this.state.selectedToken && this.state.selectedToken.maxAmount ? this.state.selectedToken.maxAmount : 0).toString(4)}</FormText>
                 <InputGroup className="modal-for-ledger py-n5" >
                     <InputGroupAddon addonType="prepend">
                         <InputGroupText className="modal-for-ledger"><img src="/img/kava-symbol.png" className="symbol-img " /> </InputGroupText>
                     </InputGroupAddon>
                     <Input name="transferAmount" onChange={this.handleInputChange} data-type='coin'
                         placeholder="Amount"
-                        min={Coin.MinStake} max={coinMaxAvailable / Meteor.settings.public.coins[0].fraction} type="number"
-                        invalid={this.state.transferAmount != null && !isBetween(this.state.transferAmount, Coin.MinStake, coinMaxAvailable)} className="modal-for-ledger " />
+                        min={Coin.MinStake} max={this.state.selectedToken.maxAmount} type="number"
+                        invalid={this.state.transferAmount != null && !isBetween(this.state.transferAmount, Coin.MinStake, this.state.selectedToken.maxAmount)} className="modal-for-ledger " />
 
                     <InputGroupAddon addonType="append">
-                        <InputGroupText className=" modal-for-ledger font-weight-bold">{Coin.StakingCoin.displayName}</InputGroupText>
+                        <InputGroupText className=" modal-for-ledger font-weight-bold">{this.state.selectedToken ? this.state.selectedToken.placeholder : ''}</InputGroupText>
                     </InputGroupAddon>
                 </InputGroup>
             </FormGroup>

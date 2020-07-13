@@ -466,6 +466,11 @@ body {
       margin-bottom: 0.8em;
     }
   }
+
+  .transfer-coin{
+    align-items: baseline;
+    justify-content: center;
+  }
   
   .address.copy {
     max-width: calc(100% - 1.2em);
