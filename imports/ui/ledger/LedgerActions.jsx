@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import {
     Button, Spinner, TabContent, TabPane, Row, Col, Modal, ModalHeader,
     Form, ModalBody, ModalFooter, InputGroup, InputGroupAddon, Input, Progress,
-    UncontrolledTooltip, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Table, Label, FormGroup, FormText, FormFeedback, InputGroupText
+    UncontrolledTooltip, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, UncontrolledButtonDropdown, Table, Label, FormGroup, FormText, FormFeedback, InputGroupText
 } from 'reactstrap';
 import { Ledger, DEFAULT_MEMO } from './ledger.js';
 import { Validators } from '/imports/api/validators/validators.js';
@@ -425,12 +425,13 @@ class LedgerButton extends Component {
     }
 
     getTxContext = () => {
+        let denom = this.state.selectedToken && this.state.selectedToken.denom ? this.state.selectedToken.denom : Coin.StakingCoin.denom
         return {
             chainId: Meteor.settings.public.chainId,
             bech32: this.state.user,
             accountNumber: this.state.currentUser.accountNumber,
             sequence: this.state.currentUser.sequence,
-            denom: Coin.StakingCoin.denom,
+            denom: denom,
             pk: this.state.pubKey,
             path: [44, 118, 0, 0, 0],
             memo: this.state.memo
@@ -463,7 +464,8 @@ class LedgerButton extends Component {
                 txMsg = Ledger.createTransfer(
                     this.getTxContext(),
                     this.state.transferTarget,
-                    this.state.transferAmount.amount);
+                    (this.state.transferAmount * this.state.selectedToken.fraction),
+                    this.state.selectedToken.denom);
                 break;
             case Types.SUBMITPROPOSAL:
                 txMsg = Ledger.createSubmitProposal(
@@ -625,7 +627,7 @@ class LedgerButton extends Component {
                 value = target.value.toUpperCase()
                 break;
             case 'token':
-                value = { maxAmount: target.value, denom: dataset.denom, placeholder: dataset.placeholder }
+                value = { maxTokenAmount: target.value, denom: dataset.denom, placeholder: dataset.placeholder, fraction: dataset.fraction }
                 break;
             default:
                 value = target.value;
@@ -1003,33 +1005,29 @@ class TransferButton extends LedgerButton {
 
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
-        coinMaxAvailable = getTotalValue(this.state.currentUser.coinList, Meteor.settings.public.bondDenom);
-        let maxKavaAvailable = getTotalValue(this.state.currentUser.coinList, Meteor.settings.public.coins[0].denom) / Meteor.settings.public.coins[0].fraction;
-        let maxUSDXAvailable = getTotalValue(this.state.currentUser.coinList, Meteor.settings.public.coins[5].denom) / Meteor.settings.public.coins[5].fraction;
-        let maxBNBAvailable = getTotalValue(this.state.currentUser.coinList, Meteor.settings.public.coins[1].denom) / Meteor.settings.public.coins[1].fraction;
+        let maxKavaAvailable = getTotalValue(this.state.currentUser.coinList, Meteor.settings.public.coins[0].denom)
+        let maxUSDXAvailable = getTotalValue(this.state.currentUser.coinList, Meteor.settings.public.coins[5].denom)
+        let maxBNBAvailable = getTotalValue(this.state.currentUser.coinList, Meteor.settings.public.coins[1].denom)
 
-        console.log("SLECETED TOKEN  - > " + JSON.stringify(this.state.selectedToken))
-
-    
 
         return <TabPane tabId="2" className="modal-body">
             <span className="d-inline-flex text-center transfer-coin ">
-                <h3 className="text-center pb-4 pt-3"> Transfer </h3>
-                <UncontrolledDropdown direction='down' size='sm' className='transfer-coin-dropdown'>
-                    <DropdownToggle caret={true}>
-                        {this.state.selectedToken && this.state.selectedToken.placeholder ? this.state.selectedToken.placeholder : 'Tokens'}
+                <h3 className="text-center pb-4 pt-3 pr-2"> Transfer </h3>
+                 <UncontrolledButtonDropdown size="sm" className='transfer-coin-dropdown mt-2'>
+                    <DropdownToggle className="transfer-coin-dropdown-toggle" caret>
+                        {this.state.selectedToken && this.state.selectedToken.placeholder ? <div className="token-transfer-dropdown" ><img src={`/img/${this.state.selectedToken.placeholder}-symbol.svg` ? `/img/${this.state.selectedToken.placeholder}-symbol.svg` : `/img/${this.state.selectedToken.placeholder}-symbol.png`} className="symbol-img mt-2" /> <h3 className="mt-2"> {this.state.selectedToken.placeholder} </h3></div> : <h4 className="mt-1">Tokens</h4>}
                     </DropdownToggle>
-                    <DropdownMenu>
-                        <DropdownItem name='selectedToken' value={maxKavaAvailable} data-type='token' data-placeholder='KAVA' data-denom='ukava' 
+                    <DropdownMenu right>
+                        <DropdownItem name='selectedToken' value={maxKavaAvailable} data-type='token' data-placeholder='kava' data-denom='ukava' data-fraction={Meteor.settings.public.coins[0].fraction}
                             onClick={this.handleInputChange}><img src="/img/kava-symbol.png" className="symbol-img  mb-1" /> KAVA</DropdownItem>
                         <DropdownItem divider />
-                        <DropdownItem name='selectedToken' value={maxUSDXAvailable} data-type='token' data-placeholder='USDX' data-denom='usdx'
+                        <DropdownItem name='selectedToken' value={maxUSDXAvailable} data-type='token' data-placeholder='usdx' data-denom='usdx' data-fraction={Meteor.settings.public.coins[5].fraction}
                             onClick={this.handleInputChange}><img src="/img/usdx-symbol.svg" className="symbol-img  mb-1" /> USDX</DropdownItem>
                         <DropdownItem divider />
-                        <DropdownItem name='selectedToken' value={maxBNBAvailable} data-type='token' data-placeholder='BNB' data-denom='bnb'
+                        <DropdownItem name='selectedToken' value={maxBNBAvailable} data-type='token' data-placeholder='bnb' data-denom='bnb' data-fraction={Meteor.settings.public.coins[1].fraction}
                             onClick={this.handleInputChange}><img src="/img/bnb-symbol.svg" className="symbol-img  mb-1" /> BNB</DropdownItem>
                     </DropdownMenu>
-                </UncontrolledDropdown>
+                </UncontrolledButtonDropdown>
             </span>
 
             <FormGroup>
@@ -1047,19 +1045,20 @@ class TransferButton extends LedgerButton {
 
             <FormGroup>
                 <Label for="address" className="mb-n4"><T>transactions.amount</T></Label>
-                <FormText className="coin-available mb-n5 float-right">Max {new Coin(this.state.selectedToken && this.state.selectedToken.maxAmount ? (this.state.selectedToken.maxAmount, this.state.selectedToken.denom)  : 0).toString(4)}</FormText>
+                {this.state.selectedToken && this.state.selectedToken.maxTokenAmount ?
+                    <FormText className="coin-available mb-n5 float-right">Max {new Coin(this.state.selectedToken.maxTokenAmount, this.state.selectedToken.denom).toString()}</FormText> : null}
                 <InputGroup className="modal-for-ledger py-n5" >
-                    <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="modal-for-ledger"><img src="/img/kava-symbol.png" className="symbol-img " /> </InputGroupText>
-                    </InputGroupAddon>
-                    <Input name="transferAmount" onChange={this.handleInputChange} data-type='coin'
+                    {this.state.selectedToken && this.state.selectedToken.placeholder ? <InputGroupAddon addonType="prepend">
+                        <InputGroupText className="modal-for-ledger"><img src={`/img/${this.state.selectedToken.placeholder}-symbol.svg`} className="symbol-img " /> </InputGroupText>
+                    </InputGroupAddon> : null}
+                    <Input name="transferAmount" onChange={this.handleInputChange}
                         placeholder="Amount"
-                        min={Coin.MinStake} max={this.state.selectedToken.maxAmount} type="number"
-                        invalid={this.state.transferAmount != null && !isBetween(this.state.transferAmount, Coin.MinStake, this.state.selectedToken.maxAmount)} className="modal-for-ledger " />
+                        min={Coin.MinStake} max={this.state.selectedToken && this.state.selectedToken.maxTokenAmount ? this.state.selectedToken.maxTokenAmount : null} type="number"
+                        invalid={this.state.transferAmount != null && !isBetween(this.state.transferAmount, Coin.MinStake, (this.state.selectedToken.maxTokenAmount))} className="modal-for-ledger " />
 
-                    <InputGroupAddon addonType="append">
-                        <InputGroupText className=" modal-for-ledger font-weight-bold">{this.state.selectedToken ? this.state.selectedToken.placeholder : ''}</InputGroupText>
-                    </InputGroupAddon>
+                    {this.state.selectedToken && this.state.selectedToken.placeholder ? <InputGroupAddon addonType="append">
+                        <InputGroupText className=" modal-for-ledger font-weight-bold">{this.state.selectedToken.placeholder.toUpperCase()}</InputGroupText>
+                    </InputGroupAddon> : null}
                 </InputGroup>
             </FormGroup>
 
@@ -1083,12 +1082,15 @@ class TransferButton extends LedgerButton {
     }
 
     isDataValid = () => {
-        if (!this.state.currentUser) return false
-        return isBetween(this.state.transferAmount, Coin.MinStake, coinMaxAvailable)
+        if (!(this.state.currentUser && this.state.selectedToken && this.state.selectedToken.maxTokenAmount)) return null
+        return isBetween(this.state.transferAmount, Coin.MinStake, (this.state.selectedToken.maxTokenAmount))
     }
 
     getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>send</span> <Amount coin={this.state.transferAmount} /> to {this.state.transferTarget}
+        if (!(this.state.selectedToken && this.state.selectedToken.fraction && this.state.selectedToken.denom)) return null
+
+        return <span> You are going to <span className='action'>send </span>
+            <span className='amount'>{new Coin(this.state.transferAmount * this.state.selectedToken.fraction, this.state.selectedToken.denom).toString()}</span>  to {this.state.transferTarget}
             <span> with <Fee gas={this.state.gasEstimate} />.</span>
         </span>
     }

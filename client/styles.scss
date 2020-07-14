@@ -468,10 +468,27 @@ body {
   }
 
   .transfer-coin{
-    align-items: baseline;
-    justify-content: center;
+    margin-left: 25%;
+    margin-right: 25%;
+    display: inline-flex;
+  }
+
+  .token-transfer-dropdown{
+    width: 100px;
+    padding: none;
+    display: inline-flex;
   }
   
+  .transfer-coin-dropdown-toggle{
+    height: 50px;
+    width: 110px;
+  }
+
+.btn.dropdown-toggle::before{
+  float: right;
+  margin-top: 15%;
+}
+
   .address.copy {
     max-width: calc(100% - 1.2em);
   }

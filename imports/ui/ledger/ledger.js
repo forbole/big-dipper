@@ -297,6 +297,7 @@ export class Ledger {
                 }],
             },
         };
+        //console.log(txSkeleton)
         //return Ledger.applyGas(txSkeleton, DEFAULT_GAS);
         return txSkeleton
     }
@@ -373,20 +374,20 @@ export class Ledger {
     static createTransfer(
         txContext,
         toAddress,
-        amount
+        amount,
+        denom
     ) {
         const txMsg = {
             type: 'cosmos-sdk/MsgSend',
             value: {
                 amount: [{
                     amount: amount.toString(),
-                    denom: txContext.denom
+                    denom: denom
                 }],
                 from_address: txContext.bech32,
                 to_address: toAddress
             }
         };
-
         return Ledger.createSkeleton(txContext, [txMsg]);
     }
 
