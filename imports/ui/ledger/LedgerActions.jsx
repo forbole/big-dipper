@@ -843,7 +843,7 @@ class DelegationButtons extends LedgerButton {
                 <FormText className="coin-available mb-n5 float-right">{availableStatement} {<CoinAmount amount={maxAmount} />}</FormText>
                 <InputGroup className="modal-for-ledger py-n5">
                     <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="modal-for-ledger"><img src="/img/kava-symbol.png" className="symbol-img" /> </InputGroupText>
+                        <InputGroupText className="modal-for-ledger"><img src="/img/kava-symbol.svg" className="symbol-img" /> </InputGroupText>
                     </InputGroupAddon>
                     <Input name="delegateAmount" onChange={this.handleInputChange} data-type='coin'
                         placeholder="Amount" min={Coin.MinStake} max={maxAmount} type="number"
@@ -955,7 +955,7 @@ class WithdrawButton extends LedgerButton {
 
     renderActionTab = () => {
         return <TabPane tabId="2" className="modal-body">
-            <h3 className="text-center pt-3">Withdraw <img src="/img/kava-symbol.png" className="symbol-img mb-1" /> KAVA rewards from </h3>
+            <h3 className="text-center pt-3">Withdraw <img src="/img/kava-symbol.svg" className="symbol-img mb-1" /> KAVA rewards from </h3>
             <h3 className="text-center pb-4"> all delegations</h3>
             {this.props.rewards ? <div className="px-4">Your current rewards amount is: <CoinAmount amount={this.props.rewards} denom={this.props.denom} /></div> : ''}
             {this.props.commission ? <div className="px-4">Your current commission amount is: <CoinAmount amount={this.props.commission} denom={this.props.denom} /></div> : ''}
@@ -988,8 +988,6 @@ class TransferButton extends LedgerButton {
             ...this.state,
             total: props.total,
             selectedToken: {},
-            // denom: Meteor.settings.public.bondDenom,
-            // tokenPlaceholder: undefined,
         }
     }
 
@@ -1013,13 +1011,13 @@ class TransferButton extends LedgerButton {
         return <TabPane tabId="2" className="modal-body">
             <span className="d-inline-flex text-center transfer-coin ">
                 <h3 className="text-center pb-4 pt-3 pr-2"> Transfer </h3>
-                 <UncontrolledButtonDropdown size="sm" className='transfer-coin-dropdown mt-2'>
+                 <UncontrolledDropdown size="sm" className='transfer-coin-dropdown mt-2'>
                     <DropdownToggle className="transfer-coin-dropdown-toggle" caret>
-                        {this.state.selectedToken && this.state.selectedToken.placeholder ? <div className="token-transfer-dropdown" ><img src={`/img/${this.state.selectedToken.placeholder}-symbol.svg` ? `/img/${this.state.selectedToken.placeholder}-symbol.svg` : `/img/${this.state.selectedToken.placeholder}-symbol.png`} className="symbol-img mt-2" /> <h3 className="mt-2"> {this.state.selectedToken.placeholder} </h3></div> : <h4 className="mt-1">Tokens</h4>}
+                        {this.state.selectedToken && this.state.selectedToken.placeholder ? <div className="token-transfer-dropdown" ><img src={`/img/${this.state.selectedToken.placeholder}-symbol.svg` || `/img/${this.state.selectedToken.placeholder}-symbol.png`} className="symbol-img mt-1 mr-1" /> <h5 className="mt-2"> {this.state.selectedToken.placeholder} </h5></div> : <h5 className="mt-2">Tokens</h5>}
                     </DropdownToggle>
                     <DropdownMenu right>
                         <DropdownItem name='selectedToken' value={maxKavaAvailable} data-type='token' data-placeholder='kava' data-denom='ukava' data-fraction={Meteor.settings.public.coins[0].fraction}
-                            onClick={this.handleInputChange}><img src="/img/kava-symbol.png" className="symbol-img  mb-1" /> KAVA</DropdownItem>
+                            onClick={this.handleInputChange}><img src="/img/kava-symbol.svg" className="symbol-img  mb-1" /> KAVA</DropdownItem>
                         <DropdownItem divider />
                         <DropdownItem name='selectedToken' value={maxUSDXAvailable} data-type='token' data-placeholder='usdx' data-denom='usdx' data-fraction={Meteor.settings.public.coins[5].fraction}
                             onClick={this.handleInputChange}><img src="/img/usdx-symbol.svg" className="symbol-img  mb-1" /> USDX</DropdownItem>
@@ -1027,7 +1025,7 @@ class TransferButton extends LedgerButton {
                         <DropdownItem name='selectedToken' value={maxBNBAvailable} data-type='token' data-placeholder='bnb' data-denom='bnb' data-fraction={Meteor.settings.public.coins[1].fraction}
                             onClick={this.handleInputChange}><img src="/img/bnb-symbol.svg" className="symbol-img  mb-1" /> BNB</DropdownItem>
                     </DropdownMenu>
-                </UncontrolledButtonDropdown>
+                </UncontrolledDropdown>
             </span>
 
             <FormGroup>
@@ -1230,7 +1228,7 @@ class ProposalActionButtons extends LedgerButton {
                 )
                 break;
             case Types.DEPOSIT:
-                title = (<div>Deposit <img src="/img/kava-symbol.png" className="symbol-img mb-1" /> KAVA to Proposal {this.props.proposalId} </div>)
+                title = (<div>Deposit <img src="/img/kava-symbol.svg" className="symbol-img mb-1" /> KAVA to Proposal {this.props.proposalId} </div>)
                 inputs = (<FormGroup>
                     <Label for="depositAmount" className="mb-n4"><T>proposals.amount</T></Label>
                     <FormText className="coin-available mb-n5 float-right">Max {(new Coin(coinMaxAvailable)).toString(4)}</FormText>
@@ -1995,7 +1993,7 @@ class WithdrawIncentiveRewards extends LedgerButton {
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         return <TabPane tabId="2" className="modal-body">
-            <h3 className="text-center pt-3">Claim all <img src="/img/kava-symbol.png" className="symbol-img mb-1" /> KAVA incentive </h3>
+            <h3 className="text-center pt-3">Claim all <img src="/img/kava-symbol.svg" className="symbol-img mb-1" /> KAVA incentive </h3>
             <h3 className="text-center pb-4"> rewards from the CDP</h3>
             {this.props.rewards ? <div className="text-center mb-n3">Your current rewards amount is: <CoinAmount amount={this.props.rewards} /></div> : ''}
         </TabPane>
@@ -2007,7 +2005,7 @@ class WithdrawIncentiveRewards extends LedgerButton {
 
 
     getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>claim</span> all <img src="/img/kava-symbol.png" className="symbol-img mb-1" /> KAVA incentive rewards from CDP for address <b>{this.state.user} </b>
+        return <span>You are going to <span className='action'>claim</span> all <img src="/img/kava-symbol.svg" className="symbol-img mb-1" /> KAVA incentive rewards from CDP for address <b>{this.state.user} </b>
      with <Fee gas={this.state.gasEstimate} />.</span>
     }
 
