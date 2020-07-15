@@ -1011,7 +1011,7 @@ class TransferButton extends LedgerButton {
         return <TabPane tabId="2" className="modal-body">
             <span className="d-inline-flex text-center transfer-coin ">
                 <h3 className="text-center pb-4 pt-3 pr-2"> Transfer </h3>
-                 <UncontrolledDropdown size="sm" className='transfer-coin-dropdown mt-2'>
+                <UncontrolledDropdown size="sm" className='transfer-coin-dropdown mt-2'>
                     <DropdownToggle className="transfer-coin-dropdown-toggle" caret>
                         {this.state.selectedToken && this.state.selectedToken.placeholder ? <div className="token-transfer-dropdown" ><img src={`/img/${this.state.selectedToken.placeholder}-symbol.svg` || `/img/${this.state.selectedToken.placeholder}-symbol.png`} className="symbol-img mt-1 mr-1" /> <h5 className="mt-2"> {this.state.selectedToken.placeholder} </h5></div> : <h5 className="mt-2">Tokens</h5>}
                     </DropdownToggle>
@@ -1043,8 +1043,8 @@ class TransferButton extends LedgerButton {
 
             <FormGroup>
                 <Label for="address" className="mb-n4"><T>transactions.amount</T></Label>
-                {this.state.selectedToken && this.state.selectedToken.maxTokenAmount ?
-                    <FormText className="coin-available mb-n5 float-right">Max {new Coin(this.state.selectedToken.maxTokenAmount, this.state.selectedToken.denom).toString()}</FormText> : null}
+
+                <FormText className="coin-available mb-n5 float-right">Max {(this.state.selectedToken && this.state.selectedToken.maxTokenAmount) ? new Coin(this.state.selectedToken.maxTokenAmount, this.state.selectedToken.denom).toString(4) : new Coin(0, this.state.selectedToken.denom).toString(4)}</FormText>
                 <InputGroup className="modal-for-ledger py-n5" >
                     {this.state.selectedToken && this.state.selectedToken.placeholder ? <InputGroupAddon addonType="prepend">
                         <InputGroupText className="modal-for-ledger"><img src={`/img/${this.state.selectedToken.placeholder}-symbol.svg`} className="symbol-img " /> </InputGroupText>
@@ -1458,7 +1458,6 @@ class CreateCDPButton extends LedgerButton {
                     <InputGroupAddon addonType="append">
                         <InputGroupText className="modal-for-ledger font-weight-bold">USDX</InputGroupText>
                     </InputGroupAddon>
-                    {/* <FormFeedback invalid={true} className="coin-available mb-n5 float-right">The minimum debt is {this.props.debtFloor / Meteor.settings.public.coins[5].fraction} USDX </FormFeedback> */}
 
                 </InputGroup>
 
@@ -1476,7 +1475,6 @@ class CreateCDPButton extends LedgerButton {
                         className={((this.state.ratio !== Infinity) && (this.state.ratio >= this.props.collateralizationRatio)) ? 'modal-for-ledger text-success text-right mt-2' : 'modal-for-ledger text-danger text-right mt-2 pr-5'}
                         value={((this.state.ratio !== Infinity) && (this.state.ratio > 0)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 })}
                         disabled={true} />
-                    {/* <FormFeedback className="coin-available mb-n5 float-right">The minimum debt is {this.props.debtFloor / Meteor.settings.public.coins[5].fraction} USDX </FormFeedback> */}
 
                 </InputGroup>
 
@@ -1654,7 +1652,6 @@ class WithdrawCDPButton extends LedgerButton {
             depositedValue: props.depositValue / Meteor.settings.public.coins[1].fraction,
             isDepositor: props.isDepositor
         }
-        //console.log(this.state.isDepositor)
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
@@ -2072,21 +2069,6 @@ class AuctionBidButton extends LedgerButton {
                 <Input name="memo" onChange={this.handleInputChange} className="mb-n4"
                     placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
             </FormGroup>
-
-            {/* <h3>Place Bid on Auction {this.state.auctionID} </h3>
-            <FormGroup>
-                <Label for="bid"><T>auction.bidAmount</T></Label>
-                <Input placeholder="Bid Amount" name="bid" value={this.state.bid} type="number" onChange={this.handleChange}
-                    min={this.state.minAmount} max={this.state.maxAmount}
-                    invalid={this.state.bid != null && !isBetween(this.state.minAmount, 0, this.state.maxAmount)} />
-                <FormText>The amount of USDX you would like to bid</FormText>
-                <FormFeedback>The bid value must be between {new Coin(this.state.minAmount, this.state.denom).convertToString(4)} and {new Coin(this.state.maxAmount, this.state.denom).convertToString(4)}</FormFeedback>
-            </FormGroup>
-            <FormGroup>
-                <Label for="memo"><T>cdp.memo</T></Label>
-                <Input name="memo" onChange={this.handleInputChange}
-                    placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
-            </FormGroup> */}
         </TabPane>
 
     }
