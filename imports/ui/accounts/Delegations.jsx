@@ -22,7 +22,7 @@ export default class AccountDelegations extends Component{
 
         return <div>
             <h6>{(numDelegations > 0)?numDelegations:<T>accounts.no</T>} <T>accounts.delegation</T>{(numDelegations>1)?<T>accounts.plural</T>:''}</h6>
-            {(numDelegations > 0)?<div className="list overflow-auto">
+            {(numDelegations > 0)?<div className="list overflow-auto"> 
                 <Container fluid>
                     <Row className="header text-nowrap d-none d-lg-flex">
                         <Col xs={7} md={5}><i className="fas fa-at"></i> <span><T>accounts.validators</T></span></Col>
