@@ -244,11 +244,12 @@ Meteor.methods({
 
                             totalVotingPower += validator.voting_power;
 
-                            let pubkeyValue = Meteor.call('bech32ToPubkey', msg[m].value.pubkey);
+                            let pubkeyType = Meteor.settings.public.secp256k1?'tendermint/PubKeySecp256k1':'tendermint/PubKeyEd25519';
+                            let pubkeyValue = Meteor.call('bech32ToPubkey', msg[m].value.pubkey, pubkeyType);
                             // Validators.upsert({consensus_pubkey:msg[m].value.pubkey},validator);
 
                             validator.pub_key = {
-                                "type":"tendermint/PubKeyEd25519",
+                                "type":pubkeyType,
                                 "value":pubkeyValue
                             }
 
@@ -281,10 +282,11 @@ Meteor.methods({
                     let validator = genValidatorsSet[v];
                     validator.delegator_address = Meteor.call('getDelegator', genValidatorsSet[v].operator_address);
 
-                    let pubkeyValue = Meteor.call('bech32ToPubkey', validator.consensus_pubkey);
+                    let pubkeyType = Meteor.settings.public.secp256k1?'tendermint/PubKeySecp256k1':'tendermint/PubKeyEd25519';
+                    let pubkeyValue = Meteor.call('bech32ToPubkey', validator.consensus_pubkey, pubkeyType);
 
                     validator.pub_key = {
-                        "type":"tendermint/PubKeyEd25519",
+                        "type":pubkeyType,
                         "value":pubkeyValue
                     }
 

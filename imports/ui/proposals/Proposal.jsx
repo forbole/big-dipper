@@ -348,12 +348,12 @@ export default class Proposal extends Component{
                             </thead>
                             <tbody>
                                 <tr>
-                                <td>{this.props.proposal.content.value.changes.map((changesItem, i) => {
-                                return <div key={i}>{changesItem.subspace.charAt(0).toUpperCase() + changesItem.subspace.slice(1)} </div> })}</td>
-                                <td>{this.props.proposal.content.value.changes.map((changesItem, i) => {
-                                return <div key={i}>{changesItem.key.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</div> })}</td>
-                                <td> {this.props.proposal.content.value.changes.map((changesItem, i) => {
-                                return <div key={i}>{numbro(changesItem.value.replace (/"/g, "")).format("0,000")}</div> })}</td>
+                                <td>{this.props.proposal.content.value.changes ? this.props.proposal.content.value.changes.map((changesItem, i) => {
+                                return <div key={i}>{changesItem.subspace.charAt(0).toUpperCase() + changesItem.subspace.slice(1)} </div> }): ''}</td>
+                                <td>{this.props.proposal.content.value.changes ? this.props.proposal.content.value.changes.map((changesItem, i) => {
+                                return <div key={i}>{changesItem.key.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</div> }): ''}</td>
+                                <td> {this.props.proposal.content.value.changes ? this.props.proposal.content.value.changes.map((changesItem, i) => {
+                                return   parseFloat(changesItem.value.replace (/"/g, "")) ?  <div key={i}>{numbro(changesItem.value.replace (/"/g, "")).format("0,000")}</div> : <div key={i}>{changesItem.value.replace(/"|}|{/g, "")}</div>}): ''}</td>
                                 </tr>
                             </tbody>
                             </Table>
