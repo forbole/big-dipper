@@ -70,6 +70,7 @@ export default class AccountDetails extends Component {
             totalValueInUSD: 0,
             redelegations: [],
             hasIncentive: false,
+            operator_address : "",
         }
     }
 
@@ -248,11 +249,13 @@ export default class AccountDetails extends Component {
 
 
                 if (result.rewards && result.rewards.length > 0) {
+                    let op_address = "";
 
                     for (let c = 0; c < result.rewards.length; c++) {
                         if (result.rewards[c].reward != null) {
                             numRewards[result.rewards[c]["validator_address"]] = result.rewards[c].reward;
                         }
+                        op_address = result.rewards[c]["validator_address"];
                     }
                     for (let e in numRewards) {
                         for (let f in numRewards[e]) {
@@ -260,6 +263,7 @@ export default class AccountDetails extends Component {
                                 this.setState({
                                     rewardDenomType: numRewards[e][f].denom,
                                     rewardsForEachDel: numRewards,
+                                    operator_address: op_address,
                                 })
                             }
 
@@ -413,6 +417,7 @@ export default class AccountDetails extends Component {
                 totalValueInUSD: 0,
                 redelegations: [],
                 hasIncentive: false,
+                operator_address: ""
             }, () => {
                 this.getBalance();
             })
