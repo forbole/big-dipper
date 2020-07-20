@@ -786,7 +786,7 @@ class DelegationButtons extends LedgerButton {
         if (!this.state.currentUser) return false;
         let maxAmount;
         if (this.state.actionType === Types.DELEGATE) {
-            maxAmount = this.state.currentUser.availableCoin;
+            maxAmount = getTotalValue(this.state.currentUser.coinList, Meteor.settings.public.bondDenom);
         } else {
             maxAmount = this.getDelegatedToken(this.props.currentDelegation);
         }
@@ -811,7 +811,8 @@ class DelegationButtons extends LedgerButton {
         switch (this.state.actionType) {
             case Types.DELEGATE:
                 action = 'Delegate to';
-                maxAmount = this.state.currentUser.availableCoin;
+                //maxAmount = this.state.currentUser.availableCoin;
+                maxAmount = getTotalValue(this.state.currentUser.coinList, Meteor.settings.public.bondDenom);
                 availableStatement = 'Available balance:'
                 break;
             case Types.REDELEGATE:
@@ -830,15 +831,15 @@ class DelegationButtons extends LedgerButton {
             <h3 className="text-center pb-4 pt-3">{action} {moniker ? moniker : validatorAddress} {target ? 'to' : ''} {target}</h3>
             <FormGroup>
                 <Label for="tx" className="mb-n4"><T>transactions.amount</T></Label>
-                <FormText className="coin-available mb-n5 float-right">{availableStatement} {<Amount coin={maxAmount} />}</FormText>
+                <FormText className="coin-available mb-n5 float-right">{availableStatement} {<CoinAmount amount={maxAmount} />}</FormText>
                 <InputGroup className="modal-for-ledger py-n5">
                     <InputGroupAddon addonType="prepend">
                         <InputGroupText className="modal-for-ledger"><img src="/img/kava-symbol.png" className="symbol-img" /> </InputGroupText>
                     </InputGroupAddon>
                     <Input name="delegateAmount" onChange={this.handleInputChange} data-type='coin'
-                        placeholder="Amount" min={Coin.MinStake} max={maxAmount.stakingAmount} type="number"
+                        placeholder="Amount" min={Coin.MinStake} max={maxAmount} type="number"
                         invalid={this.state.delegateAmount != null && !isBetween(this.state.delegateAmount, 1, maxAmount)} className="modal-for-ledger " />
-                    <InputGroupAddon addonType="append">{Coin.StakingCoin.displayName}</InputGroupAddon>
+                    <InputGroupAddon addonType="append" className="mb-1">{Coin.StakingCoin.displayName}</InputGroupAddon>
                 </InputGroup>
             </FormGroup>
 
