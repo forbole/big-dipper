@@ -924,7 +924,7 @@ class WithdrawButton extends LedgerButton {
             if (res) {
                 if (this.props.address) {
                     res.value.msg.push({
-                        type: 'cosmos-sdk/MsgWithdrawValidatorCommission',
+                        type: 'cosmos-sdk/MsgWithdrawValidatorRewardsAll',
                         value: { validator_address: this.props.address }
                     })
                 }
