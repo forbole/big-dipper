@@ -77,3 +77,4 @@
 * [#229] Fixed the account address display 
 * [#228] Added rewards column to account's delegation panel
 * Added memo button in each transaction
+* [#380] Fixed undefined value of operator_address in withdraw commission
