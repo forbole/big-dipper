@@ -684,8 +684,8 @@ export default class AccountDetails extends Component {
                                     {this.state.user ? <Row>
                                         <Col xs={12} >
                                             {this.state.user === this.state.address ? <ClaimSwapButton validator={this.props.validator} address={this.state.operator_address} history={this.props.history} /> : null}
-                                            {this.state.user === this.state.address ? <WithdrawButton history={this.props.history} rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address} denom={this.state.denom} /> : null}
-                                            <TransferButton history={this.props.history} address={this.state.address} denom={this.state.denom} total={this.state.total} /></Col>
+                                            {this.state.user === this.state.address ? <WithdrawButton rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address} denom={this.state.denom} /> : null}
+                                            <TransferButton address={this.state.address} denom={this.state.denom} total={this.state.total} /></Col>
                                     </Row> : null}
                                 </Col>
                             </Row>
