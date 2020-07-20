@@ -291,10 +291,11 @@ export default class AccountDetails extends Component {
                             })
                         } else {
                             let totalValue = cloneDeep(this.state.total);
+                            let totalCommission = cloneDeep(this.state.commission);
                             for (let v in totalValue) {
-
-                                totalValue[v].amount = parseFloat(totalValue[v].amount) + parseFloat(this.state.commission[v].amount)
-                            }
+                                if(totalValue[v].denom === Meteor.settings.public.bondDenom){
+                                    totalValue[v].amount = parseFloat(totalValue[v].amount) + parseFloat(totalCommission[0].amount)
+                            }}
 
                             this.setState({
                                 total: totalValue,
