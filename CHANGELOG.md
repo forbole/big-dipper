@@ -24,8 +24,8 @@
 * Change Collateral Deposited and Principal Drawn font to bold in CDP List. 
 * Added increase/reduce arrows in CDP list to indicate if the Collateralization Ratio is higher than or close to 1.5 ratio.
 * Updated total available KAVA value displayed in 'Send' & 'Delegate' form.
-* [#375] Fixed the Commission Value Calculations that caused Account Page to break
-* [#372] Fixed Redelegation List showing on all account pages 
+* [#375] Fixed the Commission Value Calculations that caused Account Page to break 
+* [#372] Fixed Redelegation List showing on all account pages  
 
 
 
