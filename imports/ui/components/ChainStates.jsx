@@ -40,7 +40,6 @@ export default class ChainStates extends Component{
                 })
             }
 
-           
         }
 
     }
