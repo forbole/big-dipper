@@ -42,7 +42,6 @@ export default class Activites extends Component {
         // console.log(this.props);
         const msg = this.props.msg;
         const events = [];
-
         for (let i in this.props.events){
             events[this.props.events[i].type] = this.props.events[i].attributes
         }
