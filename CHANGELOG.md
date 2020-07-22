@@ -26,8 +26,7 @@
 * Updated total available KAVA value displayed in 'Send' & 'Delegate' form.
 * [#375] Fixed the Commission Value Calculations that caused Account Page to break 
 * [#372] Fixed Redelegation List showing on all account pages  
-
-
+* [#380] Fixed undefined value of operator_address in withdraw commission
 
 ## v0.37.x-patch-10.1
 
