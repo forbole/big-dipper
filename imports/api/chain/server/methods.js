@@ -38,6 +38,7 @@ Meteor.methods({
             }});
         }
         catch(e){
+            console.log(url);
             console.log(e);
         }
     },
@@ -58,7 +59,9 @@ Meteor.methods({
                 return `no updates (getting block ${chain.latestBlockHeight} at block ${latestState.height})`
             }
 
-            url = RPC+'/validators';
+            // Since Tendermint v0.33, validator page default set to return 30 validators.
+            // Query latest height with page 1 and 100 validators per page.
+            url = RPC+`/validators?height=${chain.latestBlockHeight}&page=1&per_page=100`;
             response = HTTP.get(url);
             let validators = JSON.parse(response.content);
             validators = validators.result.validators;
@@ -87,6 +90,7 @@ Meteor.methods({
                     chainStates.notBondedTokens = parseInt(bonding.not_bonded_tokens);
                 }
                 catch(e){
+                    console.log(url);
                     console.log(e);
                 }
 
@@ -98,6 +102,7 @@ Meteor.methods({
                         chainStates.totalSupply = parseInt(supply);
                     }
                     catch(e){
+                        console.log(url);
                         console.log(e);
                     }
 
@@ -116,6 +121,7 @@ Meteor.methods({
                         }
                     }
                     catch (e){
+                        console.log(url);
                         console.log(e)
                     }
 
@@ -128,6 +134,7 @@ Meteor.methods({
                         }
                     }
                     catch(e){
+                        console.log(url);
                         console.log(e);
                     }
 
@@ -140,6 +147,7 @@ Meteor.methods({
                         }
                     }
                     catch(e){
+                        console.log(url);
                         console.log(e);
                     }
             		}
@@ -154,6 +162,7 @@ Meteor.methods({
             return chain.latestBlockHeight;
         }
         catch (e){
+            console.log(url);
             console.log(e);
             return "Error getting chain status.";
         }
