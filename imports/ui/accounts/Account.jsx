@@ -191,21 +191,21 @@ export default class AccountDetails extends Component {
                         })
                     }, this)
 
-                    if (this.state.total && this.state.total.length > 1) {
-                        let totalValue = cloneDeep(this.state.total);
 
-                        this.state.unbonding.forEach((unbond, i) => {
-                            totalValue.forEach((el, i) => {
-                                if (el.denom === unbond.denom) {
-                                    el.amount = parseFloat(el.amount) + parseFloat(unbond.amount)
-                                }
-                            })
-                        }, this)
+                    let totalValue = cloneDeep(this.state.total);
 
-                        this.setState({
-                            total: totalValue,
+                    this.state.unbonding.forEach((unbond, i) => {
+                        totalValue.forEach((el, i) => {
+                            if (el.denom === unbond.denom) {
+                                el.amount = parseFloat(el.amount) + parseFloat(unbond.amount)
+                            }
                         })
-                    }
+                    }, this)
+
+                    this.setState({
+                        total: totalValue,
+                    })
+
                 }
 
 
