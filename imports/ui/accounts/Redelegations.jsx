@@ -17,7 +17,9 @@ export default class AccountRedelegations extends Component{
     render(){
         let numRedelegations = this.props.redelegations.length;
         return <div>
-            <h6>{(numRedelegations > 0 )? numRedelegations :<T>accounts.no</T>}<T>accounts.redelegations</T>{(numRedelegations>1)?<T>accounts.plural</T>:''}</h6>
+          
+            <h6>{(numRedelegations > 0 )? numRedelegations : <T>accounts.no</T>}<T>accounts.redelegations</T>{(numRedelegations>1)?<T>accounts.plural</T>:''}</h6>
+
             {(numRedelegations > 0)?<div className="list overflow-auto"> 
                 <Container fluid>
                     <Row className="header text-nowrap d-none d-lg-flex">
