@@ -92,6 +92,7 @@ export default class AccountDetails extends Component {
                 })
             }
         });
+
         Meteor.call('accounts.getBalance', this.props.match.params.address, (error, result) => {
             if (error) {
                 console.warn(error);
@@ -113,8 +114,6 @@ export default class AccountDetails extends Component {
                         available: getAvailableValue,
                         total: getTotalValue
                     })
-
-
                 } else {
                     let setZeroAmount = [{
                         denom: "ukava",
@@ -128,7 +127,6 @@ export default class AccountDetails extends Component {
 
                     })
                 }
-
 
                 this.setState({
                     delegations: result.delegations || []
@@ -145,9 +143,8 @@ export default class AccountDetails extends Component {
                             this.setState({
                                 delegated: delegatedValue,
                             })
-                                , this
                         })
-                    }, this)
+                    })
 
                     if (this.state.total && this.state.total.length > 1) {
                         let totalValue = cloneDeep(this.state.total);
@@ -158,7 +155,7 @@ export default class AccountDetails extends Component {
                                     el.amount = parseFloat(el.amount) + parseFloat(delegated.amount)
                                 }
                             })
-                        }, this)
+                        })
 
                         this.setState({
                             total: totalValue,
@@ -201,7 +198,7 @@ export default class AccountDetails extends Component {
                             }
                         })
 
-                    }, this)
+                    })
 
                     this.setState({
                         total: totalValue,
@@ -209,17 +206,14 @@ export default class AccountDetails extends Component {
 
                 }
 
-                    else {
-                        let totalValue = cloneDeep(this.state.total);
-                        for (let v in totalValue) {
-                            totalValue[v].amount = parseFloat(totalValue[v].amount) + parseFloat(this.state.unbonding[v].amount)
-                        }
-                        this.setState({
-                            total: totalValue,
-                        })
-
-
+                else {
+                    let totalValue = cloneDeep(this.state.total);
+                    for (let v in totalValue) {
+                        totalValue[v].amount = parseFloat(totalValue[v].amount) + parseFloat(this.state.unbonding[v].amount)
                     }
+                    this.setState({
+                        total: totalValue,
+                    })
                 }
 
                 if (result.total_rewards && result.total_rewards.length > 0) {
@@ -261,13 +255,13 @@ export default class AccountDetails extends Component {
 
 
                 if (result.rewards && result.rewards.length > 0) {
-                    let op_address = "";
+                    let opAddress = "";
 
                     for (let c = 0; c < result.rewards.length; c++) {
                         if (result.rewards[c].reward != null) {
                             numRewards[result.rewards[c]["validator_address"]] = result.rewards[c].reward;
                         }
-                        op_address = result.rewards[c]["validator_address"];
+                        opAddress = result.rewards[c]["validator_address"];
                     }
                     for (let e in numRewards) {
                         for (let f in numRewards[e]) {
@@ -275,7 +269,7 @@ export default class AccountDetails extends Component {
                                 this.setState({
                                     rewardDenomType: numRewards[e][f].denom,
                                     rewardsForEachDel: numRewards,
-                                    operator_address: op_address,
+                                    operator_address: opAddress,
                                 })
                             }
 
@@ -337,7 +331,7 @@ export default class AccountDetails extends Component {
                 })
 
             }
-        })
+        });
 
         Meteor.call('cdp.getCDPPrice', 'bnb:usd', (error, result) => {
             if (error) {
@@ -353,39 +347,39 @@ export default class AccountDetails extends Component {
                 })
             }
 
-        }),
+        });
 
-            Meteor.call('accounts.getRedelegations', this.props.match.params.address, (error, result) => {
-                if (error) {
-                    console.warn(error);
-                    this.setState({
-                        loading: false
-                    })
-                }
+        Meteor.call('accounts.getRedelegations', this.props.match.params.address, (error, result) => {
+            if (error) {
+                console.warn(error);
+                this.setState({
+                    loading: false
+                })
+            }
 
-                if (result) {
-                    this.setState({
-                        redelegations: result
-                    })
-                }
+            if (result) {
+                this.setState({
+                    redelegations: result
+                })
+            }
 
-            }),
+        });
 
 
-            Meteor.call('account.getIncentive', this.props.match.params.address, coin2, (error, result) => {
-                if (error) {
-                    console.warn(error);
-                    this.setState({
-                        loading: false,
-                        hasIncentive: false
-                    })
-                }
-                if (result && result.length > 0) {
-                    this.setState({
-                        hasIncentive: true,
-                    })
-                }
-            })
+        Meteor.call('account.getIncentive', this.props.match.params.address, coin2, (error, result) => {
+            if (error) {
+                console.warn(error);
+                this.setState({
+                    loading: false,
+                    hasIncentive: false
+                })
+            }
+            if (result && result.length > 0) {
+                this.setState({
+                    hasIncentive: true,
+                })
+            }
+        })
 
     }
 
@@ -481,8 +475,6 @@ export default class AccountDetails extends Component {
         }
 
     }
-
-
 
     findValue(params, requestedDenom) {
         let currentTotal = 0;
@@ -787,7 +779,7 @@ export default class AccountDetails extends Component {
                                                 <span className="cdp-logo ">
                                                     <i className="material-icons">
                                                         emoji_events
-                                            </i> Incentive</span>
+                                                    </i> Incentive</span>
                                             </NavLink>
                                         </NavItem> : null}
                                 </Nav>
