@@ -70,7 +70,7 @@ export default class AccountDetails extends Component {
             totalValueInUSD: 0,
             redelegations: [],
             hasIncentive: false,
-            operator_address : "",
+            operator_address: "",
         }
     }
 
@@ -200,6 +200,7 @@ export default class AccountDetails extends Component {
                                 el.amount = parseFloat(el.amount) + parseFloat(unbond.amount)
                             }
                         })
+
                     }, this)
 
                     this.setState({
@@ -208,7 +209,18 @@ export default class AccountDetails extends Component {
 
                 }
 
+                    else {
+                        let totalValue = cloneDeep(this.state.total);
+                        for (let v in totalValue) {
+                            totalValue[v].amount = parseFloat(totalValue[v].amount) + parseFloat(this.state.unbonding[v].amount)
+                        }
+                        this.setState({
+                            total: totalValue,
+                        })
 
+
+                    }
+                }
 
                 if (result.total_rewards && result.total_rewards.length > 0) {
                     const totalRewards = cloneDeep(result.total_rewards);
@@ -297,9 +309,10 @@ export default class AccountDetails extends Component {
                             let totalValue = cloneDeep(this.state.total);
                             let totalCommission = cloneDeep(this.state.commission);
                             for (let v in totalValue) {
-                                if(totalValue[v].denom === Meteor.settings.public.bondDenom){
+                                if (totalValue[v].denom === Meteor.settings.public.bondDenom) {
                                     totalValue[v].amount = parseFloat(totalValue[v].amount) + parseFloat(totalCommission[0].amount)
-                            }}
+                                }
+                            }
 
                             this.setState({
                                 total: totalValue,
@@ -686,7 +699,7 @@ export default class AccountDetails extends Component {
                                             {this.state.user === this.state.address ? <ClaimSwapButton validator={this.props.validator} address={this.state.operator_address} /> : null}
                                             {this.state.user === this.state.address ? <WithdrawButton rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address} denom={this.state.denom} /> : null}
                                             <TransferButton address={this.state.address} denom={this.state.denom} total={this.state.total} /></Col>
-                                    </Row> : null} 
+                                    </Row> : null}
                                 </Col>
                             </Row>
 
