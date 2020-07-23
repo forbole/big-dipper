@@ -231,7 +231,7 @@ Meteor.methods({
 
     'accounts.getRedelegations'(address) {
 
-        let url = LCD + '/staking/redelegations?delegator=' + address;
+        let url = LCD + '/staking/redelegations?delegator=' + address; 
 
         try {
             let userRedelegations = HTTP.get(url);
