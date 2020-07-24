@@ -1,6 +1,7 @@
 # Changelog
 
 ## kava-3-v1.0.0
+### Release Date: 24 Jul 2020
 
 * [#306] Display errors with SDK v0.38 format
 * [#301] Using Jazzicon as avatar if no Keybase avatar exists
