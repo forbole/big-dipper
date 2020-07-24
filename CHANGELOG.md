@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## kava-3-v1.0.0
 
 * [#306] Display errors with SDK v0.38 format
 * [#301] Using Jazzicon as avatar if no Keybase avatar exists
@@ -9,7 +9,7 @@
 * [#294] Fixed cloneDeep typo in Account section for case-sensitve filesystems.
 * [#284] Support Tendermint v0.33 block format
 * Fixed Commission bug in AccountTooltip to read rates from validator.commission.commission_rates.rate & validator.commission.rate
-*  Added Russian transation
+* Added Russian transation
 * Fixed Unjail message with a correct account address.
 * [#323] Display rewards amount in activities list.
 * Implemented maximum USDX draw debt amount.
