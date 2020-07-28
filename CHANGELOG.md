@@ -1,5 +1,8 @@
 # Changelog
 
+# Unreleased
+* [#389] Fixed unbonding value calculations when no unbonding value was found 
+
 ## kava-3-v1.0.0
 ### Release Date: 24 Jul 2020
 
@@ -29,6 +32,7 @@
 * [#372] Fixed Redelegation List showing on all account pages  
 * [#375] Fixed the Commission Value Calculations that caused Account Page to break 
 * [#380] Fixed undefined value of operator_address in withdraw commission
+
 
 ## v0.37.x-patch-10.1
 
