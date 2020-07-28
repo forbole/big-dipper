@@ -567,12 +567,10 @@ export default class AccountDetails extends Component {
         }
         else if (this.state.accountExists) {
             return <div id="account">
-                <SentryBoundary>
                 <Helmet>
                     <title>Account Details of {this.state.address} | The Big Dipper</title>
                     <meta name="description" content={"Account Details of " + this.state.address} />
                 </Helmet>
-                </SentryBoundary>
                 <SentryBoundary>
                     <Row>
                         <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>accounts.accountDetails</T></h1></Col>
@@ -835,4 +833,3 @@ export default class AccountDetails extends Component {
     }
 
 }
-
