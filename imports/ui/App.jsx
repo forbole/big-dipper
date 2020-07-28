@@ -18,6 +18,8 @@ import SearchBar from '/imports/ui/components/SearchBar.jsx';
 import moment from 'moment';
 import SentryBoundary from '/imports/ui/components/SentryBoundary.jsx';
 import NotFound from '/imports/ui/pages/NotFound.jsx';
+import CDPs from '/imports/ui/cdp/CDPs.jsx'
+import Auction from '/imports/ui/auction/Auction.jsx';
 
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -26,10 +28,10 @@ if (Meteor.isClient)
 
 // import './App.js'
 
-const RouteHeader = withRouter( (props) => <Header {...props}/>)
-const MobileSearchBar = withRouter( ({history}) => <SearchBar history={history} id="mobile-searchbar" mobile />)
+const RouteHeader = withRouter((props) => <Header {...props} />)
+const MobileSearchBar = withRouter(({ history }) => <SearchBar history={history} id="mobile-searchbar" mobile />)
 
-function getLang () {
+function getLang() {
     return (
         navigator.languages && navigator.languages[0] ||
         navigator.language ||
@@ -40,26 +42,26 @@ function getLang () {
 }
 
 class App extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
     }
 
-    componentDidMount(){
+    componentDidMount() {
         let lastDay = moment("2019-02-10");
         let now = moment();
-        if (now.diff(lastDay) < 0 ){
+        if (now.diff(lastDay) < 0) {
             toast.error("🐷 Gung Hei Fat Choi! 恭喜發財！");
         }
 
         let lang = getLang();
 
-        if ((lang.toLowerCase() == 'zh-tw') || (lang.toLowerCase() == 'zh-hk')){
+        if ((lang.toLowerCase() == 'zh-tw') || (lang.toLowerCase() == 'zh-hk')) {
             i18n.setLocale('zh-Hant');
         }
-        else if ((lang.toLowerCase() == 'zh-cn') || (lang.toLowerCase() == 'zh-hans-cn') || (lang.toLowerCase() == 'zh')){
+        else if ((lang.toLowerCase() == 'zh-cn') || (lang.toLowerCase() == 'zh-hans-cn') || (lang.toLowerCase() == 'zh')) {
             i18n.setLocale('zh-Hans');
         }
-        else{
+        else {
             i18n.setLocale(lang);
         }
 
@@ -72,31 +74,33 @@ class App extends Component {
     render() {
         const history = createMemoryHistory();
 
-        return(
+        return (
             // <Router history={history}>
-                <div>
-                    {(Meteor.settings.public.gtm)?<GoogleTagManager gtmId={Meteor.settings.public.gtm} />:''}
-                    <RouteHeader refreshApp={this.propagateStateChange}/>
-                    <Container fluid id="main">
-                        <ToastContainer />
-                        <SentryBoundary>
-                            <MobileSearchBar />
-                            <Switch>
-                                <Route exact path="/" component={Home} />
-                                <Route path="/blocks" component={BlocksTable} />
-                                <Route path="/transactions" component={Transactions} />
-                                <Route path="/account/:address" render={(props)=><Account {...props} />} />
-                                <Route path="/validators" exact component={Validators} />
-                                <Route path="/validators/inactive" render={(props) => <Validators {...props} inactive={true} />} />
-                                <Route path="/voting-power-distribution" component={Distribution} />
-                                <Route path="/(validator|validators)" component={ValidatorDetails} />
-                                <Route path="/proposals" component={Proposals} />
-                                <Route component={NotFound} />
-                            </Switch>
-                        </SentryBoundary>
-                    </Container>
-                    <Footer />
-                </div>
+            <div>
+                {(Meteor.settings.public.gtm) ? <GoogleTagManager gtmId={Meteor.settings.public.gtm} /> : ''}
+                <RouteHeader refreshApp={this.propagateStateChange} />
+                <Container fluid id="main">
+                    <ToastContainer />
+                    <SentryBoundary>
+                        <MobileSearchBar />
+                        <Switch>
+                            <Route exact path="/" component={Home} />
+                            <Route path="/blocks" component={BlocksTable} />
+                            <Route path="/transactions" component={Transactions} />
+                            <Route path="/account/:address" render={(props) => <Account {...props} />} />
+                            <Route path="/validators" exact component={Validators} />
+                            <Route path="/validators/inactive" render={(props) => <Validators {...props} inactive={true} />} />
+                            <Route path="/voting-power-distribution" component={Distribution} />
+                            <Route path="/(validator|validators)" component={ValidatorDetails} />
+                            <Route path="/proposals" component={Proposals} />
+                            <Route path="/cdps" component={CDPs} />
+                            <Route path="/auctions" component={Auction} />
+                            <Route component={NotFound} />
+                        </Switch>
+                    </SentryBoundary>
+                </Container>
+                <Footer />
+            </div>
             // </Router>
         );
     }

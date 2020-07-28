@@ -2,7 +2,8 @@
 // https://github.com/cosmos/ledger-cosmos-js/blob/master/src/index.js
 import 'babel-polyfill';
 import Cosmos from "@lunie/cosmos-js"
-import { App, comm_u2f } from "ledger-cosmos-js"
+import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
+import CosmosApp from "ledger-cosmos-js"
 import { signatureImport } from "secp256k1"
 import semver from "semver"
 import bech32 from "bech32";
@@ -25,7 +26,7 @@ DerivationPath{44, 118, account, 0, index}
 */
 
 const HDPATH = [44, 118, 0, 0, 0]
-const BECH32PREFIX = `cosmos`
+const BECH32PREFIX = Meteor.settings.public.bech32PrefixAccAddr
 
 function bech32ify(address, prefix) {
     const words = bech32.toWords(address)
@@ -33,14 +34,14 @@ function bech32ify(address, prefix) {
 }
 
 export const toPubKey = (address) => {
-    return bech32.decode('cosmos', address);
+    return bech32.decode(Meteor.settings.public.bech32PrefixAccAddr, address);
 }
 
 function createCosmosAddress(publicKey) {
     const message = CryptoJS.enc.Hex.parse(publicKey.toString(`hex`))
     const hash = ripemd160(sha256(message)).toString()
     const address = Buffer.from(hash, `hex`)
-    const cosmosAddress = bech32ify(address, `cosmos`)
+    const cosmosAddress = bech32ify(address, Meteor.settings.public.bech32PrefixAccAddr)
     return cosmosAddress
 }
 
@@ -63,12 +64,12 @@ export class Ledger {
         })
     }
     async isReady() {
-    // check if the version is supported
+        // check if the version is supported
         const version = await this.getCosmosAppVersion()
 
         if (!semver.gte(version, REQUIRED_COSMOS_APP_VERSION)) {
-        const msg = `Outdated version: Please update Ledger Cosmos App to the latest version.`
-        throw new Error(msg)
+            const msg = `Outdated version: Please update Ledger Cosmos App to the latest version.`
+            throw new Error(msg)
         }
 
         // throws if not open
@@ -79,8 +80,8 @@ export class Ledger {
         // assume well connection if connected once
         if (this.cosmosApp) return
 
-        const communicationMethod = await comm_u2f.create_async(timeout, true)
-        const cosmosLedgerApp = new App(communicationMethod)
+        const transport = await TransportWebUSB.create(timeout)
+        const cosmosLedgerApp = new CosmosApp(transport)
 
         this.cosmosApp = cosmosLedgerApp
 
@@ -90,7 +91,7 @@ export class Ledger {
     async getCosmosAppVersion() {
         await this.connect()
 
-        const response = await this.cosmosApp.get_version()
+        const response = await this.cosmosApp.getVersion()
         this.checkLedgerErrors(response)
         const { major, minor, patch, test_mode } = response
         checkAppMode(this.testModeAllowed, test_mode)
@@ -108,20 +109,20 @@ export class Ledger {
         if (appName.toLowerCase() !== `cosmos`) {
             throw new Error(`Close ${appName} and open the Cosmos app`)
         }
-      }
+    }
     async getPubKey() {
         await this.connect()
 
         const response = await this.cosmosApp.publicKey(HDPATH)
         this.checkLedgerErrors(response)
         return response.compressed_pk
-      }
+    }
     async getCosmosAddress() {
         await this.connect()
 
         const pubKey = await this.getPubKey(this.cosmosApp)
-        return {pubKey, address:createCosmosAddress(pubKey)}
-      }
+        return { pubKey, address: createCosmosAddress(pubKey) }
+    }
     async confirmLedgerAddress() {
         await this.connect()
         const cosmosAppVersion = await this.getCosmosAppVersion()
@@ -132,13 +133,13 @@ export class Ledger {
         }
 
         const response = await this.cosmosApp.getAddressAndPubKey(
+            HDPATH,
             BECH32PREFIX,
-            HDPATH
         )
         this.checkLedgerErrors(response, {
             rejectionMessage: "Displayed address was rejected"
         })
-      }
+    }
 
     async sign(signMessage) {
         await this.connect()
@@ -148,40 +149,45 @@ export class Ledger {
         // we have to parse the signature from Ledger as it's in DER format
         const parsedSignature = signatureImport(response.signature)
         return parsedSignature
-      }
-
-  /* istanbul ignore next: maps a bunch of errors */
-  checkLedgerErrors(
-    { error_message, device_locked },
-    {
-      timeoutMessag = "Connection timed out. Please try again.",
-      rejectionMessage = "User rejected the transaction"
-    } = {}
-  ) {
-    if (device_locked) {
-      throw new Error(`Ledger's screensaver mode is on`)
     }
-    switch (error_message) {
-        case `U2F: Timeout`:
-            throw new Error(timeoutMessag)
-        case `Cosmos app does not seem to be open`:
-            throw new Error(`Cosmos app is not open`)
-        case `Command not allowed`:
-            throw new Error(`Transaction rejected`)
-        case `Transaction rejected`:
-            throw new Error(rejectionMessage)
-        case `Unknown error code`:
+
+    /* istanbul ignore next: maps a bunch of errors */
+    checkLedgerErrors(
+        { error_message, device_locked },
+        {
+            timeoutMessag = "Connection timed out. Please try again.",
+            rejectionMessage = "User rejected the transaction"
+        } = {}
+    ) {
+        if (device_locked) {
             throw new Error(`Ledger's screensaver mode is on`)
-        case `Instruction not supported`:
-            throw new Error(
-                `Your Cosmos Ledger App is not up to date. ` +
-                `Please update to version ${REQUIRED_COSMOS_APP_VERSION}.`
-            )
-        case `No errors`:
-            // do nothing
-            break
-        default:
-            throw new Error(error_message)
+        }
+        switch (error_message) {
+            case `U2F: Timeout`:
+                throw new Error(timeoutMessag)
+            case `Cosmos app does not seem to be open`:
+                // hack:
+                // It seems that when switching app in Ledger, WebUSB will disconnect, disabling further action.
+                // So we clean up here, and re-initialize this.cosmosApp next time when calling `connect`
+                this.cosmosApp.transport.close()
+                this.cosmosApp = undefined
+                throw new Error(`Cosmos app is not open`)
+            case `Command not allowed`:
+                throw new Error(`Transaction rejected`)
+            case `Transaction rejected`:
+                throw new Error(rejectionMessage)
+            case `Unknown error code`:
+                throw new Error(`Ledger's screensaver mode is on`)
+            case `Instruction not supported`:
+                throw new Error(
+                    `Your Cosmos Ledger App is not up to date. ` +
+                    `Please update to version ${REQUIRED_COSMOS_APP_VERSION}.`
+                )
+            case `No errors`:
+                // do nothing
+                break
+            default:
+                throw new Error(error_message)
         }
     }
 
@@ -211,7 +217,7 @@ export class Ledger {
         return JSON.stringify(canonicalizeJson(txFieldsToSign));
     }
 
-    static applyGas(unsignedTx, gas, gasPrice=DEFAULT_GAS_PRICE, denom=DEFAULT_DENOM) {
+    static applyGas(unsignedTx, gas, gasPrice = DEFAULT_GAS_PRICE, denom = DEFAULT_DENOM) {
         if (typeof unsignedTx === 'undefined') {
             throw new Error('undefined unsignedTx');
         }
@@ -222,12 +228,11 @@ export class Ledger {
         // eslint-disable-next-line no-param-reassign
         unsignedTx.value.fee = {
             amount: [{
-                 amount: Math.round(gas * gasPrice).toString(),
-                 denom: denom,
+                amount: Math.round(gas * gasPrice).toString(),
+                denom: denom,
             }],
             gas: gas.toString(),
         };
-
         return unsignedTx;
     }
 
@@ -265,7 +270,7 @@ export class Ledger {
     }
 
     // Creates a new tx skeleton
-    static createSkeleton(txContext, msgs=[]) {
+    static createSkeleton(txContext, msgs = []) {
         if (typeof txContext === 'undefined') {
             throw new Error('undefined txContext');
         }
@@ -276,7 +281,7 @@ export class Ledger {
             throw new Error('txContext does not contain the sequence value');
         }
         const txSkeleton = {
-            type: 'auth/StdTx',
+            type: 'cosmos-sdk/StdTx',
             value: {
                 msg: msgs,
                 fee: '',
@@ -314,7 +319,6 @@ export class Ledger {
                 validator_address: validatorBech32,
             },
         };
-
         return Ledger.createSkeleton(txContext, [txMsg]);
     }
 
@@ -450,7 +454,181 @@ export class Ledger {
         return Ledger.createSkeleton(txContext, [txMsg]);
     }
 
+    static claimSwap(
+        txContext,
+        swapID,
+        swapRandomNumber,
+    ) {
+        const txMsg = {
+            type: 'bep3/MsgClaimAtomicSwap',
+            value: {
+                from: txContext.bech32,
+                random_number: swapRandomNumber,
+                swap_id: swapID,
+            },
+        };
+        return Ledger.createSkeleton(txContext, [txMsg]);
+    }
+
+
+
+    static createCDP(
+        txContext,
+        collateral,
+        debt
+    ) {
+        const txMsg = {
+            type: 'cdp/MsgCreateCDP',
+            value: {
+                collateral: {
+                    amount: (parseFloat(collateral) * Meteor.settings.public.coins[1].fraction).toString(),
+                    denom: 'bnb'
+                },
+                principal: {
+                    amount: (parseFloat(debt) * Meteor.settings.public.coins[5].fraction).toString(),
+                    denom: 'usdx'
+                },
+                sender: txContext.bech32,
+
+            },
+        };
+        return Ledger.createSkeleton(txContext, [txMsg]);
+    }
+
+
+    static depositCDP(
+        txContext,
+        collateral,
+        collateralDenom,
+        cdpOwner
+    ) {
+        const txMsg = {
+            type: 'cdp/MsgDeposit',
+            value: {
+                collateral: {
+                    amount: parseInt(parseFloat(collateral) * Meteor.settings.public.coins[1].fraction).toString(),
+                    denom: collateralDenom
+                },
+                depositor: txContext.bech32,
+                owner: cdpOwner
+
+            },
+        };
+        console.log(Ledger.createSkeleton(txContext, [txMsg]))
+        return Ledger.createSkeleton(txContext, [txMsg]);
+    }
+
+
+    static withdrawCDP(
+        txContext,
+        collateral,
+        collateralDenom,
+        cdpOwner
+    ) {
+        const txMsg = {
+            type: 'cdp/MsgWithdraw',
+            value: {
+                collateral: {
+                    amount: parseInt(parseFloat(collateral) * Meteor.settings.public.coins[1].fraction).toString(),
+                    denom: collateralDenom
+                },
+                depositor: txContext.bech32,
+                owner: cdpOwner
+            },
+        };
+        return Ledger.createSkeleton(txContext, [txMsg]);
+    }
+
+
+    static drawDebt(
+        txContext,
+        draw,
+        collateralDenom
+
+    ) {
+        const txMsg = {
+            type: 'cdp/MsgDrawDebt',
+            value: {
+                cdp_denom: collateralDenom,
+                principal: {
+                    amount: parseInt(parseFloat(draw) * Meteor.settings.public.coins[5].fraction).toString(),
+                    denom: 'usdx'
+                },
+                sender: txContext.bech32,
+
+            },
+        };
+        return Ledger.createSkeleton(txContext, [txMsg]);
+    }
+
+
+    static repayDebt(
+        txContext,
+        debt,
+        collateralDenom
+
+    ) {
+        const txMsg = {
+            type: 'cdp/MsgRepayDebt',
+            value: {
+                cdp_denom: collateralDenom,
+                payment: {
+                    amount: parseInt(parseFloat(debt) * Meteor.settings.public.coins[5].fraction).toString(),
+                    denom: 'usdx'
+                },
+                sender: txContext.bech32,
+
+            },
+        };
+
+        return Ledger.createSkeleton(txContext, [txMsg]);
+    }
+
+
+    static claimIncentiveRewards(
+        txContext,
+        denom
+
+
+    ) {
+        const txMsg = {
+            type: 'incentive/MsgClaimReward',
+            value: {
+                denom: denom,
+                sender: txContext.bech32,
+
+            },
+        };
+        return Ledger.createSkeleton(txContext, [txMsg]);
+    }
+
+
+
+    static auctionBid(
+        txContext,
+        auctionID,
+        bid
+    ) {
+        const txMsg = {
+            type: 'auction/MsgPlaceBid',
+            value: {
+                amount: {
+                    amount: parseInt(parseFloat(bid) * Meteor.settings.public.coins[5].fraction).toString(),
+                    denom: 'usdx'
+                },
+                auction_id: auctionID,
+                bidder: txContext.bech32,
+
+
+            },
+        };
+        return Ledger.createSkeleton(txContext, [txMsg]);
+    }
+
+
 }
+
+
 
 function versionString({ major, minor, patch }) {
     return `${major}.${minor}.${patch}`

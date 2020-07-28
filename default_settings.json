@@ -12,9 +12,22 @@
         "bech32PrefixValPub": "cosmosvaloperpub",
         "bech32PrefixConsAddr": "cosmosvalcons",
         "bech32PrefixConsPub": "cosmosvalconspub",
-        "stakingDenom": "ATOM",
-        "mintingDenom": "uatom",
-        "stakingFraction": 1000000,
+        "bondDenom": "uatom",
+        "powerReduction": 1000000,
+        "coins": [
+            {
+                "denom": "uatom",
+                "displayName": "ATOM",
+                "displayNamePlural": "ATOMS",
+                "fraction": 1000000
+            }, 
+            {
+                "denom": "umuon",
+                "displayName": "MUON",
+                "displayNamePlural": "MUONS",
+                "fraction": 1000000
+            } 
+        ],
         "gasPrice": 0.02,
         "coingeckoId": "cosmos"
     },
@@ -39,4 +52,5 @@
         "delegationInterval": 900000
     }
 }
+
 

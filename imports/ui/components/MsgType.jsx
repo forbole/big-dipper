@@ -11,8 +11,37 @@ export const MsgType = (props) => {
         return <Badge color="success"><T>messageTypes.send</T></Badge>
     case "cosmos-sdk/MsgMultiSend":
         return <Badge color="success"><T>messageTypes.multiSend</T></Badge>
-        
-        // staking
+    
+    // bep3
+    case "bep3/MsgClaimAtomicSwap":
+        return <Badge color="primary"><T>messageTypes.claimAtomicSwap</T></Badge>
+    case "bep3/MsgCreateAtomicSwap":
+        return <Badge color="primary"><T>messageTypes.CreateAtomicSwap</T></Badge>
+
+    // cdp
+    case "cdp/MsgDeposit":
+        return <Badge color="success"><T>messageTypes.depositCDP</T></Badge>
+    case "cdp/MsgCreateCDP":
+        return <Badge color="success"><T>messageTypes.createCDP</T></Badge>
+    case "cdp/MsgWithdraw":
+        return <Badge color="success"><T>messageTypes.withdrawCDP</T></Badge>  
+    case "cdp/MsgDrawDebt":
+        return <Badge color="success"><T>messageTypes.drawDebt</T></Badge>  
+    case "cdp/MsgRepayDebt":
+        return <Badge color="success"><T>messageTypes.repayDebt</T></Badge>  
+    
+    // incentive
+    case "incentive/MsgClaimReward":
+        return <Badge color="success"><T>messageTypes.claimIncentive</T></Badge>
+    
+    // auctions
+    case "auction/MsgPlaceBid":
+        return <Badge color="success"><T>messageTypes.placeBid</T></Badge>
+    
+    // pricefeed
+    case "pricefeed/MsgPostPrice":
+        return <Badge color="info"><T>messageTypes.postPrice</T></Badge>
+    // staking
     case "cosmos-sdk/MsgCreateValidator":
         return <Badge color="warning"><T>messageTypes.createValidator</T></Badge>;
     case "cosmos-sdk/MsgEditValidator":

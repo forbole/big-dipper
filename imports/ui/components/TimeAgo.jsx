@@ -38,6 +38,6 @@ export default class TimeAgo extends Component{
     }
 
     render(){
-        return <div>{this.state.time}</div>
+        return <small>{this.state.time}</small>
     }
 }

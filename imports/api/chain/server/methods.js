@@ -4,6 +4,7 @@ import { getAddress } from 'tendermint/lib/pubkey.js';
 import { Chain, ChainStates } from '../chain.js';
 import { Validators } from '../../validators/validators.js';
 import { VotingPowerHistory } from '../../voting-power/history.js';
+import Coin from '../../../../both/utils/coins.js';
 
 findVotingPower = (validator, genValidators) => {
     for (let v in genValidators){
@@ -37,6 +38,7 @@ Meteor.methods({
             }});
         }
         catch(e){
+            console.log(url);
             console.log(e);
         }
     },
@@ -57,7 +59,9 @@ Meteor.methods({
                 return `no updates (getting block ${chain.latestBlockHeight} at block ${latestState.height})`
             }
 
-            url = RPC+'/validators';
+            // Since Tendermint v0.33, validator page default set to return 30 validators.
+            // Query latest height with page 1 and 100 validators per page.
+            url = RPC+`/validators?height=${chain.latestBlockHeight}&page=1&per_page=100`;
             response = HTTP.get(url);
             let validators = JSON.parse(response.content);
             validators = validators.result.validators;
@@ -86,42 +90,67 @@ Meteor.methods({
                     chainStates.notBondedTokens = parseInt(bonding.not_bonded_tokens);
                 }
                 catch(e){
+                    console.log(url);
                     console.log(e);
                 }
 
-                url = LCD + '/supply/total/'+Meteor.settings.public.mintingDenom;
-                try{
-                    response = HTTP.get(url);
-                    let supply = JSON.parse(response.content).result;
-                    chainStates.totalSupply = parseInt(supply);
-                }
-                catch(e){
-                    console.log(e);
-                }
-
-                url = LCD + '/minting/inflation';
-                try{
-                    response = HTTP.get(url);
-                    let inflation = JSON.parse(response.content).result;
-                    if (inflation){
-                        chainStates.inflation = parseFloat(inflation)
+                if ( Coin.StakingCoin.denom ) {
+                    url = LCD + '/supply/total/'+ Coin.StakingCoin.denom;
+                    try{
+                        response = HTTP.get(url);
+                        let supply = JSON.parse(response.content).result;
+                        chainStates.totalSupply = parseInt(supply);
                     }
-                }
-                catch(e){
-                    console.log(e);
-                }
-
-                url = LCD + '/minting/annual-provisions';
-                try{
-                    response = HTTP.get(url);
-                    let provisions = JSON.parse(response.content);
-                    if (provisions){
-                        chainStates.annualProvisions = parseFloat(provisions.result)
+                    catch(e){
+                        console.log(url);
+                        console.log(e);
                     }
-                }
-                catch(e){
-                    console.log(e);
-                }
+
+                    url = LCD + '/distribution/community_pool';
+                    try {
+                        response = HTTP.get(url);
+                        let pool = JSON.parse(response.content).result;
+                        if (pool && pool.length > 0){
+                            chainStates.communityPool = [];
+                            pool.forEach((amount, i) => {
+                                chainStates.communityPool.push({
+                                    denom: amount.denom,
+                                    amount: parseFloat(amount.amount)
+                                })
+                            })
+                        }
+                    }
+                    catch (e){
+                        console.log(url);
+                        console.log(e)
+                    }
+
+                    url = LCD + '/minting/inflation';
+                    try{
+                        response = HTTP.get(url);
+                        let inflation = JSON.parse(response.content).result;
+                        if (inflation){
+                            chainStates.inflation = parseFloat(inflation)
+                        }
+                    }
+                    catch(e){
+                        console.log(url);
+                        console.log(e);
+                    }
+
+                    url = LCD + '/minting/annual-provisions';
+                    try{
+                        response = HTTP.get(url);
+                        let provisions = JSON.parse(response.content);
+                        if (provisions){
+                            chainStates.annualProvisions = parseFloat(provisions.result)
+                        }
+                    }
+                    catch(e){
+                        console.log(url);
+                        console.log(e);
+                    }
+            		}
 
                 ChainStates.insert(chainStates);
             }
@@ -133,6 +162,7 @@ Meteor.methods({
             return chain.latestBlockHeight;
         }
         catch (e){
+            console.log(url);
             console.log(e);
             return "Error getting chain status.";
         }
@@ -146,7 +176,7 @@ Meteor.methods({
         if (chain && chain.readGenesis){
             console.log('Genesis file has been processed');
         }
-        else{
+        else if (Meteor.settings.debug.readGenesis) {
             console.log('=== Start processing genesis file ===');
             let response = HTTP.get(Meteor.settings.genesisFile);
             let genesis = JSON.parse(response.content);
@@ -169,10 +199,10 @@ Meteor.methods({
                     withdrawAddrEnabled: distr.withdraw_addr_enabled
                 },
                 gov: {
-                    startingProposalId: genesis.app_state.gov.starting_proposal_id,
-                    depositParams: genesis.app_state.gov.deposit_params,
-                    votingParams: genesis.app_state.gov.voting_params,
-                    tallyParams: genesis.app_state.gov.tally_params
+                    startingProposalId: 0,
+                    depositParams: {},
+                    votingParams: {},
+                    tallyParams: {}
                 },
                 slashing:{
                     params: genesis.app_state.slashing.params
@@ -181,6 +211,14 @@ Meteor.methods({
                 crisis: genesis.app_state.crisis
             }
 
+	    if (genesis.app_state.gov) {
+                chainParams.gov = {
+                    startingProposalId: genesis.app_state.gov.starting_proposal_id,
+                    depositParams: genesis.app_state.gov.deposit_params,
+                    votingParams: genesis.app_state.gov.voting_params,
+                    tallyParams: genesis.app_state.gov.tally_params
+                };
+	    }
             let totalVotingPower = 0;
 
             // read gentx
@@ -199,7 +237,7 @@ Meteor.methods({
                                 min_self_delegation: msg[m].value.min_self_delegation,
                                 operator_address: msg[m].value.validator_address,
                                 delegator_address: msg[m].value.delegator_address,
-                                voting_power: Math.floor(parseInt(msg[m].value.value.amount) / Meteor.settings.public.stakingFraction),
+                                voting_power: Math.floor(parseInt(msg[m].value.value.amount) / Coin.StakingCoin.fraction),
                                 jailed: false,
                                 status: 2
                             }

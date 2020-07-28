@@ -16,6 +16,8 @@ import { Helmet } from 'react-helmet';
 import LinkIcon from '../components/LinkIcon.jsx';
 import i18n from 'meteor/universe:i18n';
 import TimeStamp from '../components/TimeStamp.jsx';
+import SentryBoundary from '../components/SentryBoundary.jsx';
+import Coin from '../../../both/utils/coins.js';
 
 const T = i18n.createComponent();
 
@@ -45,7 +47,8 @@ export default class Validator extends Component{
             records: "",
             history: "",
             updateTime: "",
-            user: localStorage.getItem(CURRENTUSERADDR)
+            user: localStorage.getItem(CURRENTUSERADDR),
+            denom: "",
         }
         this.getUserDelegations();
     }
@@ -179,6 +182,7 @@ export default class Validator extends Component{
         }
         else{
             if (this.props.validatorExist){
+
                 let moniker = (this.props.validator.description&&this.props.validator.description.moniker)?this.props.validator.description.moniker:this.props.validator.address;
                 let identity = (this.props.validator.description&&this.props.validator.description.identity)?this.props.validator.description.identity:"";
                 let website = (this.props.validator.description&&this.props.validator.description.website)?this.props.validator.description.website:undefined;
@@ -203,6 +207,7 @@ export default class Validator extends Component{
                       </Card>
                     <Card>
                           <div className="card-header"><T>validators.uptime</T> <Link className="float-right" to={"/validator/"+this.props.validator.address+"/missed/blocks"}><T>common.more</T>...</Link></div>
+                          <SentryBoundary>
                           <CardBody>
                                 <Row>
                                     <Col xs={8} className="label"><T numBlocks={Meteor.settings.public.uptimeWindow}>validators.lastNumBlocks</T></Col>
@@ -210,6 +215,7 @@ export default class Validator extends Component{
                                     <Col md={12} className="blocks-list">{this.state.records}</Col>
                                 </Row>
                             </CardBody>
+                            </SentryBoundary>
                         </Card>
                   </Col>
                     <Col md={8}>
@@ -236,11 +242,11 @@ export default class Validator extends Component{
                             <CardBody className="voting-power-card">
                             {this.state.user?<DelegationButtons validator={this.props.validator}
                                 currentDelegation={this.state.currentUserDelegation}
-                                history={this.props.history} stakingParams={this.props.chainStatus.staking.params}/>:''}
+                                history={this.props.history} stakingParams={this.props.chainStatus.staking}/>:''}
                             <Row>
                                 {this.props.validator.voting_power?<Col xs={12}><h1 className="display-4 voting-power"><Badge color="primary" >{numbro(this.props.validator.voting_power).format('0,0')}</Badge></h1><span>(~{numbro(this.props.validator.voting_power/this.props.chainStatus.activeVotingPower).format('0.00%')})</span></Col>:''}
                                 <Col sm={4} className="label"><T>validators.selfDelegationRatio</T></Col>
-                                    <Col sm={8} className="value">{this.props.validator.self_delegation?<span>{numbro(this.props.validator.self_delegation).format("0,0.00%")} <small className="text-secondary">(~{numbro(this.props.validator.voting_power*this.props.validator.self_delegation).format({thousandSeparated: true,mantissa:0})} {Meteor.settings.public.stakingDenom})</small></span>:'N/A'}</Col>
+                                    <Col sm={8} className="value">{this.props.validator.self_delegation?<span>{numbro(this.props.validator.self_delegation).format("0,0.00%")} <small className="text-secondary">(~{numbro(this.props.validator.voting_power*this.props.validator.self_delegation).format({thousandSeparated: true,mantissa:0})} {Coin.StakingCoin.displayName})</small></span>:'N/A'}</Col>
                                     <Col sm={4} className="label"><T>validators.proposerPriority</T></Col>
                                 <Col sm={8} className="value">{this.props.validator.proposer_priority?numbro(this.props.validator.proposer_priority).format('0,0'):'N/A'}</Col>
                                 <Col sm={4} className="label"><T>validators.delegatorShares</T></Col>
@@ -271,7 +277,7 @@ export default class Validator extends Component{
                         </Nav>
                         <Switch>
                             <Route exact path="/(validator|validators)/:address" render={() => <div className="power-history">{this.state.history}</div> } />
-                            <Route path="/(validator|validators)/:address/delegations" render={() => <ValidatorDelegations address={this.props.validator.operator_address} tokens={this.props.validator.tokens} shares={this.props.validator.delegator_shares} />} />
+                            <Route path="/(validator|validators)/:address/delegations" render={() => <ValidatorDelegations address={this.props.validator.operator_address} tokens={this.props.validator.tokens} shares={this.props.validator.delegator_shares} denom={this.props.denom} />} />
                             <Route path="/(validator|validators)/:address/transactions" render={() => <ValidatorTransactions validator={this.props.validator.operator_address} delegator={this.props.validator.delegator_address} limit={100}/>} />
                       </Switch>
 

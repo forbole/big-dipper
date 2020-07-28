@@ -11,8 +11,7 @@ Meteor.methods({
             let url = LCD + '/gov/proposals';
             let response = HTTP.get(url);
             let proposals = JSON.parse(response.content).result;
-            // console.log(proposals);
-
+            //  console.log(proposals);
             let finishedProposalIds = new Set(Proposals.find(
                 {"proposal_status":{$in:["Passed", "Rejected", "Removed"]}}
             ).fetch().map((p)=> p.proposalId));
