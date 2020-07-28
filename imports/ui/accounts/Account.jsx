@@ -171,13 +171,15 @@ export default class AccountDetails extends Component {
                     }
                 }
 
-                this.setState({
-                    unbondingDelegations: result.unbonding || []
-                })
                 const unbondingValue = [{
                     denom: "ukava",
                     amount: "0.00"
                 }];
+                this.setState({
+                    unbondingDelegations: result.unbonding || [],
+                    unbonding: unbondingValue
+                })
+
                 if (result.unbonding && result.unbonding.length > 0) {
                     result.unbonding.forEach((unbond, i) => {
                         unbond.entries.forEach((entry, j) => {
@@ -209,7 +211,12 @@ export default class AccountDetails extends Component {
                 else {
                     let totalValue = cloneDeep(this.state.total);
                     for (let v in totalValue) {
-                        totalValue[v].amount = parseFloat(totalValue[v].amount) + parseFloat(this.state.unbonding[v].amount)
+                        for (let c in this.state.unbonding) {
+                            if (totalValue[v].denom === this.state.unbonding[c].denom) {
+                                totalValue[v].amount = parseFloat(totalValue[v].amount) + parseFloat(this.state.unbonding[c].amount)
+                            }
+                        }
+
                     }
                     this.setState({
                         total: totalValue,
@@ -560,17 +567,21 @@ export default class AccountDetails extends Component {
         }
         else if (this.state.accountExists) {
             return <div id="account">
+                <SentryBoundary>
                 <Helmet>
                     <title>Account Details of {this.state.address} | The Big Dipper</title>
                     <meta name="description" content={"Account Details of " + this.state.address} />
                 </Helmet>
-                <Row>
-                    <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>accounts.accountDetails</T></h1></Col>
-                    <Col md={9} xs={12} className="text-md-right"><ChainStates denom={this.state.denom} /></Col>
-                </Row>
-                <Row>
-                    <Col><h3 className="text-primary"><AccountCopy address={this.state.address} /></h3></Col>
-                </Row>
+                </SentryBoundary>
+                <SentryBoundary>
+                    <Row>
+                        <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>accounts.accountDetails</T></h1></Col>
+                        <Col md={9} xs={12} className="text-md-right"><ChainStates denom={this.state.denom} /></Col>
+                    </Row>
+                    <Row>
+                        <Col><h3 className="text-primary"><AccountCopy address={this.state.address} /></h3></Col>
+                    </Row>
+                </SentryBoundary>
                 <SentryBoundary><Row>
                     <Col><Card>
                         <CardHeader>
@@ -805,18 +816,23 @@ export default class AccountDetails extends Component {
                     </Col></SentryBoundary>
                 </Row>
                 <Row>
-                    <Col>
-                        <AccountTransactions delegator={this.state.address} denom={this.state.denom} limit={100} />
-                    </Col>
+                    <SentryBoundary>
+                        <Col>
+                            <AccountTransactions delegator={this.state.address} denom={this.state.denom} limit={100} />
+                        </Col>
+                    </SentryBoundary>
                 </Row>
             </div>
         }
+
         else {
-            return <div id="account">
+            return <SentryBoundary ><div id="account">
                 <h1 className="d-none d-lg-block"><T>accounts.accountDetails</T></h1>
                 <p><T>acounts.notFound</T></p>
             </div>
+            </SentryBoundary>
         }
     }
+
 }
 
