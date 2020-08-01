@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+* Bump Meteor to v1.10.2 and update some dependency pcakges with security issues
 * Dockerize big-dipper
 * [#306] Display errors with SDK v0.38 format
 * [#301] Using Jazzicon as avatar if no Keybase avatar exists
