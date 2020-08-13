@@ -4,22 +4,22 @@ Block Explorer for Cosmos
 
 ## Projects running on mainnets
 
+[Explore Band Protocol with Big Dipper](http://band.bigdipper.live/)
+
 [Explore Cosmos Hub with Big Dipper](https://cosmos.bigdipper.live)
+
+[Explore e-Money with Big Dipper](https://e-money.network/)
 
 [Explore IRISnet with Big Dipper](https://iris.bigdipper.live)
 
-[Explore LikeCoin Chain with Big Dipper](http://likecoin.bigdipper.live/)
-
 [Explore Kava with Big Dipper](https://kava.bigdipper.live/)
 
-[Explore e-Money with Big Dipper](https://e-money.network/)
+[Explore LikeCoin Chain with Big Dipper](http://likecoin.bigdipper.live/)
 
 
 ## Projects with testnets
 
 [Agoric](https://explorer.testnet.agoric.com/)
-
-[Band Protocol](http://scan-bigdipper.bandchain.org/)
 
 [Cyber Congress](https://cyberd.ai/)
 
@@ -30,8 +30,6 @@ Block Explorer for Cosmos
 [Regen Network](https://explorer.regen.vitwit.com/)
 
 [Sentinel](https://explorer.sentinel.co/)
-
-[Dropil Chain](https://testnet-explorer.dropilchain.com/)
 
 ## How to run The Big Dipper
 
