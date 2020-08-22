@@ -2,6 +2,7 @@
 
 # Unreleased
 * [#389] Fixed unbonding value calculations when no unbonding value was found 
+* Disabled the Auction button when the bid has reached maximum value
 
 ## kava-3-v1.0.0
 ### Release Date: 24 Jul 2020
