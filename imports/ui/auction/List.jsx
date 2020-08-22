@@ -22,7 +22,7 @@ const AuctionRow = (props) => {
         <td className="end-time"><TimeStamp time={rowItem.base_auction.end_time} /></td>
         <td className="max-time"><TimeStamp time={rowItem.base_auction.max_end_time} /></td>
         <td className="bid-button">
-            {rowItem.base_auction && rowItem.base_auction.bid && rowItem.base_auction.bid.amount && rowItem.max_bid && rowItem.max_bid.amount && rowItem.base_auction.bid.amount >= rowItem.max_bid.amount ? null :
+            {rowItem.base_auction && rowItem.base_auction.bid && rowItem.base_auction.bid.amount && rowItem.max_bid && rowItem.max_bid.amount && rowItem.base_auction.bid.amount >= rowItem.max_bid.amount ? <span className="maxBid">Max Bid Value Reached</span> :
                 <AuctionBidButton auctionID={rowItem.base_auction.id} denom={rowItem.base_auction.bid.denom} currentBidAmount={rowItem.base_auction.bid ? rowItem.base_auction.bid.amount : 0} maxBid={rowItem.max_bid ? rowItem.max_bid.amount : 0} />}</td>
     </tr>
 }
