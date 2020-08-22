@@ -2017,7 +2017,7 @@ class AuctionBidButton extends LedgerButton {
             <h3 className="text-center pb-4">Place a Bid on Auction {this.state.auctionID} </h3>
             <FormGroup>
                 <Label for="bid" className="mb-n4"><T>auction.bidAmount</T></Label>
-                {(new Coin(this.state.minAmount, this.props.principalDenom).convertToString()) > 0 ? <FormText className="coin-available mb-n5 float-right">Min {new Coin(this.state.minAmount, this.props.principalDenom).convertToString()}</FormText> : null}
+                {(new Coin(this.state.minAmount, this.state.denom).convertToString()) > 0 ? <FormText className="coin-available mb-n5 float-right">Min {new Coin(this.state.minAmount, this.state.denom).convertToString()}</FormText> : null}
                 <InputGroup className="modal-for-ledger py-n5">
                     <InputGroupAddon addonType="prepend">
                         <InputGroupText className="modal-for-ledger"><img src="/img/usdx-symbol.svg" className="symbol-img" /> </InputGroupText>
@@ -2037,21 +2037,6 @@ class AuctionBidButton extends LedgerButton {
                 <Input name="memo" onChange={this.handleInputChange} className="mb-n4"
                     placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
             </FormGroup>
-
-            {/* <h3>Place Bid on Auction {this.state.auctionID} </h3>
-            <FormGroup>
-                <Label for="bid"><T>auction.bidAmount</T></Label>
-                <Input placeholder="Bid Amount" name="bid" value={this.state.bid} type="number" onChange={this.handleChange}
-                    min={this.state.minAmount} max={this.state.maxAmount}
-                    invalid={this.state.bid != null && !isBetween(this.state.minAmount, 0, this.state.maxAmount)} />
-                <FormText>The amount of USDX you would like to bid</FormText>
-                <FormFeedback>The bid value must be between {new Coin(this.state.minAmount, this.state.denom).convertToString(4)} and {new Coin(this.state.maxAmount, this.state.denom).convertToString(4)}</FormFeedback>
-            </FormGroup>
-            <FormGroup>
-                <Label for="memo"><T>cdp.memo</T></Label>
-                <Input name="memo" onChange={this.handleInputChange}
-                    placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
-            </FormGroup> */}
         </TabPane>
 
     }

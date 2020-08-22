@@ -21,9 +21,9 @@ const AuctionRow = (props) => {
         <td className="bids-received">{rowItem.base_auction.has_received_bids ? <div> <i className="material-icons greenColor mx-1">check_circle_outline</i> <span className="d-none d-sm-inline">Yes</span> </div> : <div><i className="material-icons redColor mx-1 ">highlight_off</i><span className="d-none d-sm-inline">No</span> </div>}</td>
         <td className="end-time"><TimeStamp time={rowItem.base_auction.end_time} /></td>
         <td className="max-time"><TimeStamp time={rowItem.base_auction.max_end_time} /></td>
-        <td className="bid-button"><AuctionBidButton auctionID={rowItem.base_auction.id} denom={rowItem.base_auction.bid.denom} currentBidAmount={rowItem.base_auction.bid ? rowItem.base_auction.bid.amount : 0} maxBid={rowItem.max_bid ? rowItem.max_bid.amount : 0} /></td>
-
-
+        <td className="bid-button">
+            {rowItem.base_auction && rowItem.base_auction.bid && rowItem.base_auction.bid.amount && rowItem.max_bid && rowItem.max_bid.amount && rowItem.base_auction.bid.amount >= rowItem.max_bid.amount ? null :
+                <AuctionBidButton auctionID={rowItem.base_auction.id} denom={rowItem.base_auction.bid.denom} currentBidAmount={rowItem.base_auction.bid ? rowItem.base_auction.bid.amount : 0} maxBid={rowItem.max_bid ? rowItem.max_bid.amount : 0} />}</td>
     </tr>
 }
 
