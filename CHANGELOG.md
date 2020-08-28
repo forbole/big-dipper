@@ -1,12 +1,20 @@
 # Changelog
 
+## kava-3-v1.0.2
+
+### Release Date: 28 Aug 2020
+
+* Port back the fee rounding fix
+
 ## kava-3-v1.0.1
+
 ### Release Date: 22 Aug 2020
 
 * [#389] Fixed unbonding value calculations when no unbonding value was found 
 * Disabled the Auction button when the bid has reached maximum value
 
 ## kava-3-v1.0.0
+
 ### Release Date: 24 Jul 2020
 
 * [#306] Display errors with SDK v0.38 format
@@ -35,7 +43,6 @@
 * [#372] Fixed Redelegation List showing on all account pages  
 * [#375] Fixed the Commission Value Calculations that caused Account Page to break 
 * [#380] Fixed undefined value of operator_address in withdraw commission
-
 
 ## v0.37.x-patch-10.1
 
