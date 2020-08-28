@@ -26,7 +26,7 @@ common:
     lastUpdated: 'Last Updated:'
 navbar:
     siteName: 'BIG DIPPER'
-    version: 'v0.37.x-p11'
+    version: 'kava-3-v1.0.2'
     validators: 'Validators'
     blocks: 'Blocks'
     transactions: 'Transactions'
