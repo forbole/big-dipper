@@ -1,5 +1,9 @@
 # Changelog
 
+# [Unreleased]
+
+* Updated Account Page to display tokens in Staking Denoms and aligned token values to right 
+
 ## kava-3-v1.0.2
 
 ### Release Date: 28 Aug 2020
