@@ -12,6 +12,8 @@ Block Explorer for Cosmos
 
 [Explore IRISnet with Big Dipper](https://iris.bigdipper.live)
 
+[Explore IOV with Big Dipper](https://big-dipper.iov-mainnet-2.iov.one/)
+
 [Explore Kava with Big Dipper](https://kava.bigdipper.live/)
 
 [Explore LikeCoin Chain with Big Dipper](http://likecoin.bigdipper.live/)
@@ -20,8 +22,6 @@ Block Explorer for Cosmos
 ## Projects with testnets
 
 [Agoric](https://explorer.testnet.agoric.com/)
-
-[Cyber Congress](https://cyberd.ai/)
 
 [Desmos Network](https://morpheus.desmos.network/)
 
