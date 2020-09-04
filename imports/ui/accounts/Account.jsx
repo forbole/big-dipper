@@ -463,22 +463,22 @@ export default class AccountDetails extends Component {
     findCoin(coins, requestedDenom) {
         if (coins && coins.length > 1 && requestedDenom) {
             let finder = (coins).find(({ denom }) => denom === requestedDenom);
-            let coinFinder = finder ? new Coin(finder.amount, finder.denom).toString(4) : '0.0000 ' + requestedDenom;
+            let coinFinder = finder ? new Coin(finder.amount, finder.denom).stakeString(4) : new Coin(parseFloat('0.00'), requestedDenom).stakeString(4)
             return coinFinder
         }
         if (coins.length === 1) {
             for (let c in coins) {
                 if (coins[c].denom === requestedDenom) {
-                    return new Coin(parseFloat(coins[c].amount), requestedDenom).toString(4)
+                    return new Coin(parseFloat(coins[c].amount), requestedDenom).stakeString(4)
                 }
                 else {
-                    return new Coin(parseFloat('0.00'), requestedDenom).toString(4)
+                    return new Coin(parseFloat('0.00'), requestedDenom).stakeString(4)
                 }
 
             }
         }
         else {
-            return new Coin(parseFloat('0.00'), requestedDenom).toString(4)
+            return new Coin(parseFloat('0.00'), requestedDenom).stakeString(4)
         }
 
     }

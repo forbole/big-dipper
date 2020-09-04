@@ -90,8 +90,8 @@ export default class Coin {
 	stakeString (formatter) {
 		let amount = this.stakingAmount
 		if (formatter) {
-			amount = numbro(amount).format(formatter)
+			amount = numbro(amount).format('0,0.' + '0'.repeat(formatter))
 		}
-		return `${amount} ${Coin.StakingCoin.displayName}`;
+		return `${amount} ${this._coin.displayName}`;
 	}
 }
