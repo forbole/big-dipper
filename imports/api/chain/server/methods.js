@@ -188,7 +188,7 @@ Meteor.methods({
                 auth: genesis.app_state.auth,
                 bank: genesis.app_state.bank,
                 staking: {
-                    pool: genesis.app_state.staking.pool,
+                    // pool: genesis.app_state.staking.pool,
                     params: genesis.app_state.staking.params
                 },
                 mint: genesis.app_state.mint,
