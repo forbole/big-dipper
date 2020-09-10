@@ -19,15 +19,15 @@ export default ValidatorListContainer = withTracker((props) => {
     if (props.inactive){
         validatorsCond = {
             $or: [
-                { status: { $lt : 2 } },
-                { jailed: true }
+                { status: { $lt : 3 } },
+                // { jailed: true }
             ]
         }
     }
     else{
         validatorsCond = {
-            jailed: false,
-            status: 2
+            // jailed: false,
+            status: 3
         }
     }
 
