@@ -95,16 +95,16 @@ Meteor.methods({
                 }
 
                 if ( Coin.StakingCoin.denom ) {
-                    url = LCD + '/supply/total/'+ Coin.StakingCoin.denom;
-                    try{
-                        response = HTTP.get(url);
-                        let supply = JSON.parse(response.content).result;
-                        chainStates.totalSupply = parseInt(supply);
-                    }
-                    catch(e){
-                        console.log(url);
-                        console.log(e);
-                    }
+                    // url = LCD + '/supply/total/'+ Coin.StakingCoin.denom;
+                    // try{
+                    //     response = HTTP.get(url);
+                    //     let supply = JSON.parse(response.content).result;
+                    //     chainStates.totalSupply = parseInt(supply);
+                    // }
+                    // catch(e){
+                    //     console.log(url);
+                    //     console.log(e);
+                    // }
 
                     url = LCD + '/distribution/community_pool';
                     try {
