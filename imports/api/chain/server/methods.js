@@ -99,7 +99,7 @@ Meteor.methods({
                     try{
                         response = HTTP.get(url);
                         let supply = JSON.parse(response.content).result;
-                        chainStates.totalSupply = parseInt(supply);
+                        chainStates.totalSupply = parseInt(supply.amount);
                     }
                     catch(e){
                         console.log(url);

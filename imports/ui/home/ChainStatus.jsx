@@ -34,8 +34,7 @@ export default class ChainStatus extends React.Component {
                 numValidators: this.props.status.validators,
                 totalNumValidators: this.props.status.totalValidators,
                 bondedTokens: this.props.states.bondedTokens,
-                notBondedTokens: this.props.states.notBondedTokens,
-                // totalSupply: this.props.states.totalSupply
+                totalSupply: this.props.states.totalSupply
             })
 
             switch (this.state.avgBlockTimeType){
@@ -201,7 +200,7 @@ export default class ChainStatus extends React.Component {
                                     </DropdownMenu>
                                 </UncontrolledDropdown>
                                 <CardTitle><T>chainStatus.onlineVotingPower</T> ({this.state.votingPowerText})</CardTitle>
-                                <CardText><span className="display-4 value text-primary">{this.state.votingPower}</span><T percent={numbro(this.state.bondedTokens/(this.state.bondedTokens+this.state.notBondedTokens)).format("0.00%")} totalStakes={numbro((this.state.bondedTokens+this.state.notBondedTokens)/Coin.StakingCoin.fraction).format("0.00a")} denom={Coin.StakingCoin.displayName} denomPlural={Coin.StakingCoin.displayNamePlural}>chainStatus.fromTotalStakes</T></CardText>
+                                <CardText><span className="display-4 value text-primary">{this.state.votingPower}</span><T percent={numbro(this.state.bondedTokens/this.state.totalSupply).format("0.00%")} totalStakes={numbro(this.state.totalSupply/Coin.StakingCoin.fraction).format("0.00a")} denom={Coin.StakingCoin.displayName} denomPlural={Coin.StakingCoin.displayNamePlural}>chainStatus.fromTotalStakes</T></CardText>
                             </Card>
                         </Col>
                     </Row>
