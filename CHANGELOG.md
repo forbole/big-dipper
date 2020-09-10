@@ -9,14 +9,12 @@
 * [#297] Prettify unrecognized JSON messages
 * [#294] Fixed cloneDeep typo in Account section for case-sensitve filesystems.
 * [#284] Support Tendermint v0.33 block format
+* [#346] Changed "Governanza" typo to "Gobernanza" in Spanish Translation 
+* [#375] Fixed the Commission Value Calculations that caused Account Page to break 
+* [#372] Fixed Redelegation List showing on all account pages  
 
 ## v0.37.x-patch-11
 
-* [#306] Display errors with SDK v0.38 format
-* [#301] Using Jazzicon as avatar if no Keybase avatar exists
-* [#297] Prettify unrecognized JSON messages
-* [#294] Fixed cloneDeep typo in Account section for case-sensitve filesystems.
-* [#284] Support Tendermint v0.33 block format
 * [#303] Fixed wrong validator display in unjail message
 * [#294] Fixed cloneDeep typo in Account section for case-sensitve filesystems.
 * [#298] Fixed NaN values for Rewards and Commissions that were displayed after clicking Withdrawal Button
@@ -28,7 +26,6 @@
 * [#327] Fixed error in Proposals section to accept String and Number as a value in Changes table 
 * Hide Italian it-IT Translation
 * Fixed hash overflow on mobile in Transaction Section (Added scroller)
-* [#346] Changed "Governanza" typo to "Gobernanza" in Spanish Translation 
 
 ## v0.37.x-patch-10.1
 
