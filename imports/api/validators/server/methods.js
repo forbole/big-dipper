@@ -7,8 +7,8 @@ Meteor.methods({
         this.unblock();
         // look up the create validator time to consider if the validator has never updated the commission
         let tx = Transactions.findOne({$and:[
-            {"tx.value.msg.value.delegator_address":address},
-            {"tx.value.msg.type":"cosmos-sdk/MsgCreateValidator"},
+            {"tx.body.messages.value.delegator_address":address},
+            {"tx.body.messages.type":"cosmos-sdk/MsgCreateValidator"},
             {code:{$exists:false}}
         ]});
 
