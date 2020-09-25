@@ -6,11 +6,15 @@ Block Explorer for Cosmos
 
 [Explore Cosmos Hub (cosmoshub-3) with Big Dipper](https://cosmos.bigdipper.live)
 
+[Explore Akash with Big Dipper](https://akash.bigdipper.live/)
+
+[Explore Band Protocol with Big Dipper](http://band.bigdipper.live/)
+
 [Explore IRISnet (irishub) with Big Dipper](https://iris.bigdipper.live)
 
 [Explore LikeCoin Chain (sheungwan) with Big Dipper](http://likecoin.bigdipper.live/)
 
-[Explore Kava (kava-2) with the Big Dipper](https://kava.bigdipper.live/)
+[Explore Kava (kava-4) with the Big Dipper](https://kava.bigdipper.live/)
 
 ## Projects with testnets
 
