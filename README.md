@@ -4,6 +4,8 @@ Block Explorer for Cosmos
 
 ## Projects running on mainnets
 
+[Explorer Akash with Big Dipper](https://akash.bigdipper.live/)
+
 [Explore Band Protocol with Big Dipper](http://band.bigdipper.live/)
 
 [Explore Cosmos Hub with Big Dipper](https://cosmos.bigdipper.live)
