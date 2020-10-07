@@ -39,6 +39,7 @@ navbar:
     russian: "Русский"
     chinese: "中文（繁）"
     simChinese: "中文（简）"
+    portuguese: "Português"
     license: 'LICENCJA'
     forkMe: 'Fork me!'
 consensus:
@@ -51,7 +52,7 @@ chainStates:
     inflation: 'Inflacja'
     communityPool: 'Zasoby Społeczności'
 chainStatus:
-    startMessage: 'Łańcuch bloków danych rozpocznie działanie za ' 
+    startMessage: 'Łańcuch bloków danych rozpocznie działanie za '
     topWarning: 'Wygląda na to że, łańcuch bloków danych zatrzymał się na <em>{$time}</em>! Odśwież stronę i nakarm mnie nowymi blokami 😭!'
     latestHeight: 'Ostatnia wysokość bloku'
     averageBlockTime: 'Średni Czas Bloku'
@@ -132,7 +133,7 @@ transactions:
     txHash: 'Tx Hash'
     valid: 'Ważna'
     fee: 'Opłata'
-    noFee: 'Bezpłatnie' 
+    noFee: 'Bezpłatnie'
     gasUsedWanted: 'Gaz (użyty/ wymagany)'
     noTxFound: 'Nie znaleziono podanej transakcji.'
     noValidatorTxsFound: 'Nie znaleziono żadnej transakcji dla podanego Walidatora'

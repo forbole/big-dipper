@@ -39,6 +39,7 @@ navbar:
     russian: "Русский"
     chinese: "中文（繁）"
     simChinese: "中文（简）"
+    portuguese: "Português"
     license: 'ЛИЦЕНЗИЯ'
     forkMe: Форк!'
 consensus:
@@ -63,7 +64,7 @@ chainStatus:
     lastDay: 'последний день'
     seconds: 'секунды'
     activeValidators: 'активные валидаторы'
-    outOfValidators: 'из {$totalValidators} валидаторах' 
+    outOfValidators: 'из {$totalValidators} валидаторах'
     onlineVotingPower: 'онлайн право голоса'
     fromTotalStakes: '{$percent} от {$totalStakes} {$denomPlural}'
 analytics:
@@ -127,7 +128,7 @@ blocks:
 transactions:
     transaction: 'Сделка'
     transactions: 'Сделки'
-    notFound: 'Не найдено.' 
+    notFound: 'Не найдено.'
     activities: 'Деятельность'
     txHash: 'хэш сделки'
     valid: 'Действительны'
@@ -169,7 +170,7 @@ proposals:
     percentageVoted: '<span class="text-info">{$percent}</span> количество голосов онлайн проголосовало.'
     validMessage: 'Это предположение {$tentative}<strong>действительное</strong>.'
     invalidMessage: 'Меньше чем {$quorum} количество голосов проголосовало. Это предположение <strong>недействительное</strong>.'
-    moreVoteMessage: 'Это будет действительным если<span class="text-info">{$moreVotes}</span> большее количество голосов.' 
+    moreVoteMessage: 'Это будет действительным если<span class="text-info">{$moreVotes}</span> большее количество голосов.'
 votingPower:
     distribution: 'Распределение количество голосов'
     pareto: 'Принцип Парето (правило 20/80)'
