@@ -38,6 +38,7 @@ navbar:
     russian: "Русский"
     chinese: "中文（繁）"
     simChinese: "中文（简）"
+    portuguese: "Português"
     license: 'LICENSE'
     forkMe: 'Fork me!'
 consensus:
@@ -131,7 +132,7 @@ transactions:
     txHash: '交易哈希'
     valid: '有效'
     fee: '費用'
-    noFee: 'No fee' 
+    noFee: 'No fee'
     gasUsedWanted: '瓦斯 (已用 / 要求)'
     noTxFound: '沒有這筆交易。'
     noValidatorTxsFound: '沒有跟這個驗證人有關的交易'

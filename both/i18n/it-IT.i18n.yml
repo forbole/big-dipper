@@ -39,6 +39,7 @@ navbar:
     russian: "Русский"
     chinese: "中文（繁）"
     simChinese: "中文（简）"
+    portuguese: "Português"
     license: 'LICENZA'
     forkMe: 'Forkami!'
 consensus:
