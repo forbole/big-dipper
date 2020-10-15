@@ -38,7 +38,7 @@ export const MsgType = (props) => {
     case "cosmos-sdk/MsgWithdrawDelegationReward":
         return <Badge color="secondary"><T>messageTypes.withdrawReward</T></Badge>;
     case "cosmos-sdk/MsgModifyWithdrawAddress":
-        return <Badge color="secondary"><T>messgeTypes.modifyWithdrawAddress</T></Badge>;
+        return <Badge color="secondary"><T>messageTypes.modifyWithdrawAddress</T></Badge>;
 
         // slashing
     case "cosmos-sdk/MsgUnjail":
