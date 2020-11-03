@@ -64,8 +64,5 @@
     "eslint-plugin-jsx-a11y": "^6.3.1",
     "eslint-plugin-meteor": "^5.2.0",
     "eslint-plugin-react": "^7.20.5"
-  },
-  "eslintConfig": {
-    "extends": "@meteorjs/eslint-config-meteor"
   }
 }
