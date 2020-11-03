@@ -23,8 +23,7 @@ common:
     cancel: 'Cancelar'
     retry: 'Reintentar'
 navbar:
-    siteName: 'The Big Dipper'
-    version: 'beta'
+    siteName: 'BIG DIPPER'
     validators: 'Validadores'
     blocks: 'Bloques'
     transactions: 'Transacciones'
