@@ -47,12 +47,12 @@ export default class AccountDetails extends Component{
 
     getBalance(){
 
-        let numRewards = new Object();
+        let numRewards = {};
         
         Meteor.call('coinStats.getStats', (error, result) => {
             if (result){
                 this.setState({
-                    price: result.usd
+                    price: result.usd || 0
                 })
             }
         });
