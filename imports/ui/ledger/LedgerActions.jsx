@@ -49,14 +49,14 @@ const TypeMeta = {
         pathPreFix: 'staking/delegators',
         pathSuffix: 'redelegations',
         warning: (duration, maxEntries) => {
-                let day = duration*durationToDay;
-                return `You are only able to redelegate from Validator A to Validator B
+            let day = duration*durationToDay;
+            return `You are only able to redelegate from Validator A to Validator B
                   up to ${maxEntries} times in a ${day} day period.
                   Also, There is ${day} day cooldown from serial redelegation;
                   Once you redelegate from Validator A to Validator B,
                   you will not be able to redelegate from Validator B to another
                   validator for the next ${day} days.`
-              }
+        }
     },
     [Types.UNDELEGATE]: {
         button: 'undelegate',
@@ -234,7 +234,7 @@ class LedgerButton extends Component {
             if (!this.state.success)
                 this.tryConnect();
             this.getBalance();
-       }
+        }
     }
 
     componentDidMount() {
@@ -291,7 +291,7 @@ class LedgerButton extends Component {
                             accountNumber: result.account_number,
                             sequence: result.sequence || 0,
                             availableCoin: coin
-                    }})
+                        }})
                 }
                 if (!result || error) {
                     this.setStateOnError(
@@ -301,7 +301,7 @@ class LedgerButton extends Component {
                     )
                 }
             } catch (e) {
-            this.setStateOnError('loadingBalance', e.message);
+                this.setStateOnError('loadingBalance', e.message);
             }
         })
     }
@@ -325,7 +325,7 @@ class LedgerButton extends Component {
         }, (err) => this.setState({
             success: false,
             activeTab: '1'
-       }));
+        }));
     }
 
     getTxContext = () => {
@@ -344,50 +344,50 @@ class LedgerButton extends Component {
     createMessage = (callback) => {
         let txMsg
         switch (this.state.actionType) {
-            case Types.DELEGATE:
-                txMsg = Ledger.createDelegate(
-                    this.getTxContext(),
-                    this.props.validator.operator_address,
-                    this.state.delegateAmount.amount)
-                break;
-            case Types.REDELEGATE:
-                txMsg = Ledger.createRedelegate(
-                    this.getTxContext(),
-                    this.props.validator.operator_address,
-                    this.state.targetValidator.operator_address,
-                    this.state.delegateAmount.amount)
-                break;
-            case Types.UNDELEGATE:
-                txMsg = Ledger.createUndelegate(
-                    this.getTxContext(),
-                    this.props.validator.operator_address,
-                    this.state.delegateAmount.amount);
-                break;
-            case Types.SEND:
-                txMsg = Ledger.createTransfer(
-                    this.getTxContext(),
-                    this.state.transferTarget,
-                    this.state.transferAmount.amount);
-                break;
-            case Types.SUBMITPROPOSAL:
-                txMsg = Ledger.createSubmitProposal(
-                    this.getTxContext(),
-                    this.state.proposalTitle,
-                    this.state.proposalDescription,
-                    this.state.depositAmount.amount);
-                break;
-            case Types.VOTE:
-                txMsg = Ledger.createVote(
-                    this.getTxContext(),
-                    this.props.proposalId,
-                    this.state.voteOption);
-                break;
-            case Types.DEPOSIT:
-                txMsg = Ledger.createDeposit(
-                    this.getTxContext(),
-                    this.props.proposalId,
-                    this.state.depositAmount.amount);
-                break;
+        case Types.DELEGATE:
+            txMsg = Ledger.createDelegate(
+                this.getTxContext(),
+                this.props.validator.operator_address,
+                this.state.delegateAmount.amount)
+            break;
+        case Types.REDELEGATE:
+            txMsg = Ledger.createRedelegate(
+                this.getTxContext(),
+                this.props.validator.operator_address,
+                this.state.targetValidator.operator_address,
+                this.state.delegateAmount.amount)
+            break;
+        case Types.UNDELEGATE:
+            txMsg = Ledger.createUndelegate(
+                this.getTxContext(),
+                this.props.validator.operator_address,
+                this.state.delegateAmount.amount);
+            break;
+        case Types.SEND:
+            txMsg = Ledger.createTransfer(
+                this.getTxContext(),
+                this.state.transferTarget,
+                this.state.transferAmount.amount);
+            break;
+        case Types.SUBMITPROPOSAL:
+            txMsg = Ledger.createSubmitProposal(
+                this.getTxContext(),
+                this.state.proposalTitle,
+                this.state.proposalDescription,
+                this.state.depositAmount.amount);
+            break;
+        case Types.VOTE:
+            txMsg = Ledger.createVote(
+                this.getTxContext(),
+                this.props.proposalId,
+                this.state.voteOption);
+            break;
+        case Types.DEPOSIT:
+            txMsg = Ledger.createDeposit(
+                this.getTxContext(),
+                this.props.proposalId,
+                this.state.depositAmount.amount);
+            break;
 
 
         }
@@ -465,14 +465,14 @@ class LedgerButton extends Component {
         let dataset = target.dataset;
         let value;
         switch (dataset.type) {
-            case 'validator':
-                value = { moniker: dataset.moniker, operator_address: dataset.address}
-                break;
-            case 'coin':
-                value = new Coin(target.value, target.nextSibling.innerText)
-                break;
-            default:
-                value = target.value;
+        case 'validator':
+            value = { moniker: dataset.moniker, operator_address: dataset.address}
+            break;
+        case 'coin':
+            value = new Coin(target.value, target.nextSibling.innerText)
+            break;
+        default:
+            value = target.value;
         }
         this.setState({[target.name]: value})
     }
@@ -557,7 +557,7 @@ class LedgerButton extends Component {
                                 </Col>
                                 <Col xs='5' className="uptime data">
                                     <Progress value={validator.uptime} style={{width:'80%'}}>
-                                       {validator.uptime?numbro(validator.uptime/100).format('0%'):0}
+                                        {validator.uptime?numbro(validator.uptime/100).format('0%'):0}
                                     </Progress>
                                 </Col>
                             </Row>
@@ -658,22 +658,22 @@ class DelegationButtons extends LedgerButton {
         let moniker = this.props.validator.description && this.props.validator.description.moniker;
         let validatorAddress = <span className='ellipic'>this.props.validator.operator_address</span>;
         switch (this.state.actionType) {
-            case Types.DELEGATE:
-                action = 'Delegate to';
-                maxAmount = this.state.currentUser.availableCoin;
-                availableStatement = 'your available balance:'
-                break;
-            case Types.REDELEGATE:
-                action = 'Redelegate from';
-                target = this.getValidatorOptions();
-                maxAmount = this.getDelegatedToken(this.props.currentDelegation);
-                availableStatement = 'your delegated tokens:'
-                break;
-            case Types.UNDELEGATE:
-                action = 'Undelegate from';
-                maxAmount = this.getDelegatedToken(this.props.currentDelegation);
-                availableStatement = 'your delegated tokens:'
-                break;
+        case Types.DELEGATE:
+            action = 'Delegate to';
+            maxAmount = this.state.currentUser.availableCoin;
+            availableStatement = 'your available balance:'
+            break;
+        case Types.REDELEGATE:
+            action = 'Redelegate from';
+            target = this.getValidatorOptions();
+            maxAmount = this.getDelegatedToken(this.props.currentDelegation);
+            availableStatement = 'your delegated tokens:'
+            break;
+        case Types.UNDELEGATE:
+            action = 'Undelegate from';
+            maxAmount = this.getDelegatedToken(this.props.currentDelegation);
+            availableStatement = 'your delegated tokens:'
+            break;
         }
         return <TabPane tabId="2">
             <h3>{action} {moniker?moniker:validatorAddress} {target?'to':''} {target}</h3>
@@ -698,12 +698,12 @@ class DelegationButtons extends LedgerButton {
 
     getConfirmationMessage = () => {
         switch (this.state.actionType) {
-            case Types.DELEGATE:
-                return <span>You are going to <span className='action'>delegate</span> <Amount coin={this.state.delegateAmount}/> to <AccountTooltip address={this.props.validator.operator_address} sync/> with <Fee gas={this.state.gasEstimate}/>.</span>
-            case Types.REDELEGATE:
-                return <span>You are going to <span className='action'>redelegate</span> <Amount coin={this.state.delegateAmount}/> from <AccountTooltip address={this.props.validator.operator_address} sync/> to <AccountTooltip address={this.state.targetValidator && this.state.targetValidator.operator_address} sync/> with <Fee gas={this.state.gasEstimate}/>.</span>
-            case Types.UNDELEGATE:
-                return <span>You are going to <span className='action'>undelegate</span> <Amount coin={this.state.delegateAmount}/> from <AccountTooltip address={this.props.validator.operator_address} sync/> with <Fee gas={this.state.gasEstimate}/>.</span>
+        case Types.DELEGATE:
+            return <span>You are going to <span className='action'>delegate</span> <Amount coin={this.state.delegateAmount}/> to <AccountTooltip address={this.props.validator.operator_address} sync/> with <Fee gas={this.state.gasEstimate}/>.</span>
+        case Types.REDELEGATE:
+            return <span>You are going to <span className='action'>redelegate</span> <Amount coin={this.state.delegateAmount}/> from <AccountTooltip address={this.props.validator.operator_address} sync/> to <AccountTooltip address={this.state.targetValidator && this.state.targetValidator.operator_address} sync/> with <Fee gas={this.state.gasEstimate}/>.</span>
+        case Types.UNDELEGATE:
+            return <span>You are going to <span className='action'>undelegate</span> <Amount coin={this.state.delegateAmount}/> from <AccountTooltip address={this.props.validator.operator_address} sync/> with <Fee gas={this.state.gasEstimate}/>.</span>
         }
     }
 
@@ -789,9 +789,9 @@ class WithdrawButton extends LedgerButton {
 
     getConfirmationMessage = () => {
         return <span>You are going to <span className='action'>withdraw</span> rewards <CoinAmount amount={this.props.rewards} denom={this.props.denom}/>
-             {this.props.commission?<span> and commission <CoinAmount amount={this.props.commission} denom={this.props.denom}/></span>:null}
+            {this.props.commission?<span> and commission <CoinAmount amount={this.props.commission} denom={this.props.denom}/></span>:null}
             <span> with  <Fee gas={this.state.gasEstimate}/>.</span>
-         </span>
+        </span>
     }
 
     render = () => {
@@ -826,7 +826,7 @@ class TransferButton extends LedgerButton {
             </InputGroup>
             <Input name="memo" onChange={this.handleInputChange}
                 placeholder="Memo(optional)" type="textarea" value={this.state.memo}/>
-    <div>your available balance: <Amount coin={maxAmount}/> </div>
+            <div>your available balance: <Amount coin={maxAmount}/> </div>
         </TabPane>
     }
 
@@ -948,27 +948,27 @@ class ProposalActionButtons extends LedgerButton {
         let inputs;
         let title;
         switch (this.state.actionType) {
-            case Types.VOTE:
-                title=`Vote on Proposal ${this.props.proposalId}`
-                inputs = (<Input type="select" name="voteOption" onChange={this.handleInputChange} defaultValue=''>
-                    <option value='' disabled>Vote Option</option>
-                    <option value='Yes'>yes</option>
-                    <option value='Abstain'>abstain</option>
-                    <option value='No'>no</option>
-                    <option value='NoWithVeto'>no with veto</option>
-                </Input>)
-                break;
-            case Types.DEPOSIT:
-                title=`Deposit to Proposal ${this.props.proposalId}`
-                inputs = (<InputGroup>
-                    <Input name="depositAmount" onChange={this.handleInputChange}
-                        data-type='coin' placeholder="Amount"
-                        min={Coin.MinStake} max={maxAmount.stakingAmount} type="number"
-                        invalid={this.state.depositAmount != null && !isBetween(this.state.depositAmount, 1, maxAmount)}/>
-                    <InputGroupAddon addonType="append">{Coin.StakingCoin.displayName}</InputGroupAddon>
-                    <div>your available balance: <Amount coin={maxAmount}/></div>
-                </InputGroup>)
-                break;
+        case Types.VOTE:
+            title=`Vote on Proposal ${this.props.proposalId}`
+            inputs = (<Input type="select" name="voteOption" onChange={this.handleInputChange} defaultValue=''>
+                <option value='' disabled>Vote Option</option>
+                <option value='Yes'>yes</option>
+                <option value='Abstain'>abstain</option>
+                <option value='No'>no</option>
+                <option value='NoWithVeto'>no with veto</option>
+            </Input>)
+            break;
+        case Types.DEPOSIT:
+            title=`Deposit to Proposal ${this.props.proposalId}`
+            inputs = (<InputGroup>
+                <Input name="depositAmount" onChange={this.handleInputChange}
+                    data-type='coin' placeholder="Amount"
+                    min={Coin.MinStake} max={maxAmount.stakingAmount} type="number"
+                    invalid={this.state.depositAmount != null && !isBetween(this.state.depositAmount, 1, maxAmount)}/>
+                <InputGroupAddon addonType="append">{Coin.StakingCoin.displayName}</InputGroupAddon>
+                <div>your available balance: <Amount coin={maxAmount}/></div>
+            </InputGroup>)
+            break;
         }
         return <TabPane tabId="2">
             <h3>{title}</h3>
@@ -1010,16 +1010,16 @@ class ProposalActionButtons extends LedgerButton {
 
     getConfirmationMessage = () => {
         switch (this.state.actionType) {
-            case Types.VOTE:
-                return <span>You are <span className='action'>voting</span> <strong>{this.state.voteOption}</strong> on proposal {this.props.proposalId}
-                    <span> with <Fee gas={this.state.gasEstimate}/>.</span>
-                </span>
-                break;
-            case Types.DEPOSIT:
-                return <span>You are <span className='action'>deposit</span> <Amount coin={this.state.depositAmount}/> to proposal {this.props.proposalId}
-                    <span> with <Fee gas={this.state.gasEstimate}/>.</span>
-                </span>
-                break;
+        case Types.VOTE:
+            return <span>You are <span className='action'>voting</span> <strong>{this.state.voteOption}</strong> on proposal {this.props.proposalId}
+                <span> with <Fee gas={this.state.gasEstimate}/>.</span>
+            </span>
+            break;
+        case Types.DEPOSIT:
+            return <span>You are <span className='action'>deposit</span> <Amount coin={this.state.depositAmount}/> to proposal {this.props.proposalId}
+                <span> with <Fee gas={this.state.gasEstimate}/>.</span>
+            </span>
+            break;
         }
     }
 
@@ -1056,29 +1056,29 @@ LedgerButton.propTypes = {
             search: PropTypes.string,
             hash: PropTypes.string,
             key: PropTypes.string,
-         }),
         }),
+    }),
     rewards:PropTypes.array,
     commission:PropTypes.array,
     denom:PropTypes.string.isRequired,
-     }
+}
 
 DelegationButtons.propTypes = {
     validator: PropTypes.shape({
         _id:PropTypes.shape({ 
             _str: PropTypes.string
         }),
-    address: PropTypes.string,
-    description:PropTypes.shape({
-        moniker: PropTypes.string,
-        identity: PropTypes.string,
-        website: PropTypes.string,
-        details: PropTypes.string,
+        address: PropTypes.string,
+        description:PropTypes.shape({
+            moniker: PropTypes.string,
+            identity: PropTypes.string,
+            website: PropTypes.string,
+            details: PropTypes.string,
         }),
-    jailed: PropTypes.bool,
-    operator_address: PropTypes.string,
-    profile_url: PropTypes.string,
-    status: PropTypes.number
+        jailed: PropTypes.bool,
+        operator_address: PropTypes.string,
+        profile_url: PropTypes.string,
+        status: PropTypes.number
     }),
     history: PropTypes.shape({
         length:PropTypes.number,
@@ -1088,12 +1088,12 @@ DelegationButtons.propTypes = {
             search: PropTypes.string,
             hash: PropTypes.string,
             key: PropTypes.string,
-         }),
         }),
+    }),
     stakingParams: PropTypes.shape({
         unbonding_time:PropTypes.string,
         max_validators: PropTypes.number,
         max_entries:PropTypes.number,
         bond_denom:PropTypes.string
-        }),
-    }
+    }),
+}
