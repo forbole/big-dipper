@@ -127,7 +127,7 @@ const Amount = (props) => {
 
 
 const Fee = (props) => {
-return <span><CoinAmount mint className='gas' amount={props.gas * Meteor.settings.public.gasPrice}/> as fee </span>
+    return <span><CoinAmount mint className='gas' amount={Math.ceil(props.gas * Meteor.settings.public.gasPrice)}/> as fee </span>
 }
 
 const isActiveValidator = (validator) => {
