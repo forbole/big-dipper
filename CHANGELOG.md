@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+* [#420] Update brand font
 * Bump Meteor to v1.11.1 and update some dependency pcakges with security issues
 * Dockerize big-dipper
 * [#306] Display errors with SDK v0.38 format
