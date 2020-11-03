@@ -93,7 +93,7 @@ export default class AccountTooltip extends Account{
            
         return [
             <span ref={this.ref} key='link' className="validator-popover-row">
-                <Link to={this.state.address}><Avatar moniker={this.state.moniker} profileUrl={this.state.validator?this.state.validator.profile_url:''} address={this.state.address} /> {this.state.moniker} </Link>
+                <Link to={this.state.address}><Avatar list moniker={this.state.moniker} profileUrl={this.state.validator?this.state.validator.profile_url:''} address={this.state.validator?this.state.validator.address:''} /> {this.state.moniker} </Link>
             </span>,
             this.renderDetailTooltip()
         ]
