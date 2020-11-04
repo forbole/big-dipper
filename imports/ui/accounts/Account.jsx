@@ -88,7 +88,7 @@ export default class AccountDetails extends Component {
         Meteor.call('coinStats.getStats', (error, result) => {
             if (result) {
                 this.setState({
-                    price: result.usd
+                    price: result.usd || 0
                 })
             }
         });
@@ -448,7 +448,6 @@ export default class AccountDetails extends Component {
                 break;
         }
     }
-
 
     renderShareLink() {
         let primaryLink = `/account/${this.state.address}`

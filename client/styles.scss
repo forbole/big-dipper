@@ -86,6 +86,13 @@ body {
   }
 
   #header {
+    .sign-in-btn {
+      margin-top: 5px;
+    }
+
+    a.navbar-brand span {
+      font-family: 'Red Hat Display', sans-serif;
+    }
     .dropdown-header img {
       height: 2em;
       margin-right: 0.25em;

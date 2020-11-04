@@ -134,16 +134,16 @@ export default class Header extends Component {
             let { action, address } = groups;
             params = { action }
             switch (groups.action) {
-                case 'send':
-                    params.transferTarget = address
-                    redirectUrl = `/account/${address}`
-                    break
-                case 'withdraw':
-                    redirectUrl = `/account/${getUser()}`
-                    break;
-                case 'delegate':
-                    redirectUrl = `/validators/${address}`
-                    break;
+            case 'send':
+                params.transferTarget = address
+                redirectUrl = `/account/${address}`
+                break
+            case 'withdraw':
+                redirectUrl = `/account/${getUser()}`
+                break;
+            case 'delegate':
+                redirectUrl = `/validators/${address}`
+                break;
             }
         } else {
             let location = this.props.location;
