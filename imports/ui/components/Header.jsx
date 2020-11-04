@@ -133,16 +133,16 @@ export default class Header extends Component {
             let { action, address } = groups;
             params = {action}
             switch (groups.action) {
-                case 'send':
-                    params.transferTarget = address
-                    redirectUrl = `/account/${address}`
-                    break
-                case 'withdraw':
-                    redirectUrl = `/account/${getUser()}`
-                    break;
-                case 'delegate':
-                    redirectUrl = `/validators/${address}`
-                    break;
+            case 'send':
+                params.transferTarget = address
+                redirectUrl = `/account/${address}`
+                break
+            case 'withdraw':
+                redirectUrl = `/account/${getUser()}`
+                break;
+            case 'delegate':
+                redirectUrl = `/validators/${address}`
+                break;
             }
         } else {
             let location = this.props.location;
@@ -197,10 +197,10 @@ export default class Header extends Component {
                                         <UncontrolledPopover className="d-none d-lg-block" trigger="legacy" placement="bottom" target="user-acconut-icon">
                                             <PopoverBody>
                                                 <div className="text-center"> 
-                                                <p><T>accounts.signInText</T></p>
-                                                <p><Link className="text-nowrap" to={`/account/${signedInAddress}`}>{signedInAddress}</Link></p>
-                                                <Button className="float-right" color="link" onClick={this.signOut.bind(this)}><i className="material-icons">exit_to_app</i><span> <T>accounts.signOut</T></span></Button>
-                                            </div>
+                                                    <p><T>accounts.signInText</T></p>
+                                                    <p><Link className="text-nowrap" to={`/account/${signedInAddress}`}>{signedInAddress}</Link></p>
+                                                    <Button className="float-right" color="link" onClick={this.signOut.bind(this)}><i className="material-icons">exit_to_app</i><span> <T>accounts.signOut</T></span></Button>
+                                                </div>
                                             </PopoverBody>
                                         </UncontrolledPopover>
                                     </span>

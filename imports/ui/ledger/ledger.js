@@ -68,8 +68,8 @@ export class Ledger {
         const version = await this.getCosmosAppVersion()
 
         if (!semver.gte(version, REQUIRED_COSMOS_APP_VERSION)) {
-        const msg = `Outdated version: Please update Ledger Cosmos App to the latest version.`
-        throw new Error(msg)
+            const msg = `Outdated version: Please update Ledger Cosmos App to the latest version.`
+            throw new Error(msg)
         }
 
         // throws if not open
@@ -109,20 +109,20 @@ export class Ledger {
         if (appName.toLowerCase() !== `cosmos`) {
             throw new Error(`Close ${appName} and open the Cosmos app`)
         }
-      }
+    }
     async getPubKey() {
         await this.connect()
 
         const response = await this.cosmosApp.publicKey(HDPATH)
         this.checkLedgerErrors(response)
         return response.compressed_pk
-      }
+    }
     async getCosmosAddress() {
         await this.connect()
 
         const pubKey = await this.getPubKey(this.cosmosApp)
         return {pubKey, address:createCosmosAddress(pubKey)}
-      }
+    }
     async confirmLedgerAddress() {
         await this.connect()
         const cosmosAppVersion = await this.getCosmosAppVersion()
@@ -139,7 +139,7 @@ export class Ledger {
         this.checkLedgerErrors(response, {
             rejectionMessage: "Displayed address was rejected"
         })
-      }
+    }
 
     async sign(signMessage) {
         await this.connect()
@@ -149,20 +149,20 @@ export class Ledger {
         // we have to parse the signature from Ledger as it's in DER format
         const parsedSignature = signatureImport(response.signature)
         return parsedSignature
-      }
-
-  /* istanbul ignore next: maps a bunch of errors */
-  checkLedgerErrors(
-    { error_message, device_locked },
-    {
-      timeoutMessag = "Connection timed out. Please try again.",
-      rejectionMessage = "User rejected the transaction"
-    } = {}
-  ) {
-    if (device_locked) {
-      throw new Error(`Ledger's screensaver mode is on`)
     }
-    switch (error_message) {
+
+    /* istanbul ignore next: maps a bunch of errors */
+    checkLedgerErrors(
+        { error_message, device_locked },
+        {
+            timeoutMessag = "Connection timed out. Please try again.",
+            rejectionMessage = "User rejected the transaction"
+        } = {}
+    ) {
+        if (device_locked) {
+            throw new Error(`Ledger's screensaver mode is on`)
+        }
+        switch (error_message) {
         case `U2F: Timeout`:
             throw new Error(timeoutMessag)
         case `Cosmos app does not seem to be open`:
@@ -228,8 +228,8 @@ export class Ledger {
         // eslint-disable-next-line no-param-reassign
         unsignedTx.value.fee = {
             amount: [{
-                 amount: Math.ceil(gas * gasPrice).toString(),
-                 denom: denom,
+                amount: Math.ceil(gas * gasPrice).toString(),
+                denom: denom,
             }],
             gas: gas.toString(),
         };

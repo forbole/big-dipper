@@ -171,7 +171,7 @@ proposals:
     percentageVoted: '<span class="text-info">{$percent}</span> of online voting power has been voted.'
     validMessage: 'This proposal is {$tentative}<strong>valid</strong>.'
     invalidMessage: 'Less than {$quorum} of voting power is voted. This proposal is <strong>invalid</strong>.'
-    moreVoteMessage: 'It will be a valid proposal once <span class="text-info">{$moreVotes}</span> more votes are casted.'
+    moreVoteMessage: 'It will be a valid proposal once <span class="text-info">{$moreVotes}</span> more votes are cast.'
     key: 'Key'
     value: 'Value'
     amount: 'Amount'

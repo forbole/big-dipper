@@ -13,12 +13,12 @@ export default class ChainInfo extends Component{
 
     render(){
         return(
-        <div className="chainInfo">
-            <Row>
-            <Col md={3} xs={12}><h1>{Meteor.settings.public.chainName}</h1></Col>
-            <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
-            </Row>
-        </div>
+            <div className="chainInfo">
+                <Row>
+                    <Col md={3} xs={12}><h1>{Meteor.settings.public.chainName}</h1></Col>
+                    <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
+                </Row>
+            </div>
         );
     }
 }

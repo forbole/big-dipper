@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+* [#420] Update brand font
+* [#418] Fix avatar at delegation pane
+* [#404] Replace "casted" with "cast"
+* [#421] Fix NaN on account delegation pane
+* [#417] Fix NaN on account total value
 * Bump Meteor to v1.11.1 and update some dependency pcakges with security issues
 * Dockerize big-dipper
 * [#306] Display errors with SDK v0.38 format
