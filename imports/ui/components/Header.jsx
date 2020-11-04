@@ -71,46 +71,45 @@ export default class Header extends Component {
         i18n.setLocale(lang)
     }
 
-    componentDidMount() {
-        let url = Meteor.settings.public.networks
-        if (!url)
-            return
-        try {
-            HTTP.get(url, null, (error, result) => {
-                if (result.statusCode == 200) {
-                    let networks = JSON.parse(result.content);
-                    if (networks.length > 0) {
-                        this.setState({
-                            networks: <DropdownMenu>{
-                                networks.map((network, i) => {
-                                    return <span key={i}>
-                                        <DropdownItem header><img src={network.logo} /> {network.name}</DropdownItem>
-                                        {network.links.map((link, k) => {
-                                            return <DropdownItem key={k} disabled={link.chain_id == Meteor.settings.public.chainId}>
-                                                <a href={link.url} target="_blank">{link.chain_id} <Badge size="xs" color="secondary">{link.name}</Badge></a>
-                                            </DropdownItem>
-                                        })}
-                                        {(i < networks.length - 1) ? <DropdownItem divider /> : ''}
-                                    </span>
+    componentDidMount(){
+        const url = Meteor.settings.public.networks
+        if (url){
+            try{
+                HTTP.get(url, null, (error, result) => {
+                    if (result.statusCode == 200){
+                        let networks = JSON.parse(result.content);
+                        if (networks.length > 0){
+                            this.setState({
+                                networks: <DropdownMenu>{
+                                    networks.map((network, i) => {
+                                        return <span key={i}>
+                                            <DropdownItem header><img src={network.logo} /> {network.name}</DropdownItem>
+                                            {network.links.map((link, k) => {
+                                                return <DropdownItem key={k} disabled={link.chain_id == Meteor.settings.public.chainId}>
+                                                    <a href={link.url} target="_blank">{link.chain_id} <Badge size="xs" color="secondary">{link.name}</Badge></a>
+                                                </DropdownItem>})}
+                                            {(i < networks.length - 1)?<DropdownItem divider />:''}
+                                        </span>
 
-                                })
-                            }</DropdownMenu>
-                        })
+                                    })
+                                }</DropdownMenu>
+                            })
+                        }
                     }
-                }
-            })
+                })
+            }
+            catch(e){
+                console.warn(e);
+            }
+        }
 
-            Meteor.call('getVersion', (error, result) => {
-                if (result) {
-                    this.setState({
-                        version:result
-                    })
-                }
-            })
-        }
-        catch (e) {
-            console.warn(e);
-        }
+        Meteor.call('getVersion', (error, result) => {
+            if (result) {
+                this.setState({
+                    version:result
+                })
+            }
+        })
     }
 
     signOut() {
