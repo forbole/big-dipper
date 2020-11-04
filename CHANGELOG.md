@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## v0.39.x
 
 * [#420] Update brand font
 * [#418] Fix avatar at delegation pane
