@@ -17,6 +17,8 @@
 
 ### Release Date: 24 Jul 2020
 
+## v0.39.x
+
 * [#420] Update brand font
 * [#418] Fix avatar at delegation pane
 * [#404] Replace "casted" with "cast"
