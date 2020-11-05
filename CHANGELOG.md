@@ -34,7 +34,7 @@
 * [#375] Fixed the Commission Value Calculations that caused Account Page to break
 * [#380] Fixed undefined value of operator_address in withdraw commission
 
-## [Unrelease]
+## v0.39.x-1
 
 * [#425] Fixed `commission_rates` might not exists in `validator.commission` object
 
