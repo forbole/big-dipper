@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unrelease]
+## v0.39.x-1
 
 * [#425] Fixed `commission_rates` might not exists in `validator.commission` object
 
