@@ -1,6 +1,7 @@
 #!/bin/bash
 
 echo "Generating version file"
-echo $(git describe --tag) | tee private/version
+export TAG=$(git describe --tag)
+echo $TAG | tee private/version
 git add private/version
-git commit --amend -C HEAD --no-verify
+git commit -am "add version $TAG"
