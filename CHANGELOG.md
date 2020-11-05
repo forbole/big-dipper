@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unrelease]
+
+* [#425] Fixed `commission_rates` might not exists in `validator.commission` object
+
 ## v0.39.x
 
 * [#420] Update brand font
@@ -15,8 +19,8 @@
 * [#297] Prettify unrecognized JSON messages
 * [#294] Fixed cloneDeep typo in Account section for case-sensitve filesystems.
 * [#284] Support Tendermint v0.33 block format
-* [#346] Changed "Governanza" typo to "Gobernanza" in Spanish Translation 
-* [#375] Fixed the Commission Value Calculations that caused Account Page to break 
+* [#346] Changed "Governanza" typo to "Gobernanza" in Spanish Translation
+* [#375] Fixed the Commission Value Calculations that caused Account Page to break
 * [#372] Fixed Redelegation List showing on all account pages  
 
 ## v0.37.x-patch-11
@@ -29,7 +33,7 @@
 * Added Russian transation
 * Fixed Unjail message with a correct account address.
 * [#323] Display rewards amount in activities list.
-* [#327] Fixed error in Proposals section to accept String and Number as a value in Changes table 
+* [#327] Fixed error in Proposals section to accept String and Number as a value in Changes table
 * Hide Italian it-IT Translation
 * Fixed hash overflow on mobile in Transaction Section (Added scroller)
 
@@ -78,6 +82,6 @@
 * [#239] Fixed Coin untilty. Now it shows coins from the chain matching with the `settings.json` if configuration exist. Please note there is a new `coins` object in the [`settings.json`](https://github.com/forbole/big_dipper/blob/master/default_settings.json#L17) to define the display parameters of each coin
 * [#238] Styled the tooltip not to block the validator info
 * [#230] Removed the delegation shares in account's delegation panel
-* [#229] Fixed the account address display 
+* [#229] Fixed the account address display
 * [#228] Added rewards column to account's delegation panel
 * Added memo button in each transaction
