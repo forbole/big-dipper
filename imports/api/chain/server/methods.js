@@ -193,10 +193,10 @@ Meteor.methods({
                 },
                 mint: genesis.app_state.mint,
                 distr: {
-                    communityTax: distr.community_tax,
-                    baseProposerReward: distr.base_proposer_reward,
-                    bonusProposerReward: distr.bonus_proposer_reward,
-                    withdrawAddrEnabled: distr.withdraw_addr_enabled
+                    communityTax: null, // distr.community_tax,
+                    baseProposerReward: null, // distr.base_proposer_reward,
+                    bonusProposerReward: null, // distr.bonus_proposer_reward,
+                    withdrawAddrEnabled: null, // distr.withdraw_addr_enabled
                 },
                 gov: {
                     startingProposalId: 0,
@@ -205,7 +205,7 @@ Meteor.methods({
                     tallyParams: {}
                 },
                 slashing:{
-                    params: genesis.app_state.slashing.params
+                    params: null //
                 },
                 supply: genesis.app_state.supply,
                 crisis: genesis.app_state.crisis
