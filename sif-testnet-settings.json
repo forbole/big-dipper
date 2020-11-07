@@ -1,0 +1,76 @@
+{
+    "public":{
+        "chainName": "Sifnode",
+        "chainId": "monkey-bars",
+        "gtm": "{Add your Google Tag Manager ID here}",
+        "slashingWindow": 10000,
+        "uptimeWindow": 250,
+        "initialPageSize": 30,
+        "secp256k1": false,
+        "bech32PrefixAccAddr": "sif",
+        "bech32PrefixAccPub": "sifpub",
+        "bech32PrefixValAddr": "sifvaloper",
+        "bech32PrefixValPub": "sifvaloperpub",
+        "bech32PrefixConsAddr": "sifvalcons",
+        "bech32PrefixConsPub": "sifvalconspub",
+        "bondDenom": "trwn",
+        "powerReduction": 1000000,
+        "coins": [
+            {
+                "denom": "trwn",
+                "displayName": "TRWN",
+                "displayNamePlural": "TRWNS",
+                "fraction": 1000000
+            },           
+            {
+                "denom": "cusdt",
+                "displayName": "CUSDT",
+                "displayNamePlural": "CUSDTS",
+                "fraction": 1000000
+            },           
+            {
+                "denom": "cusdc",
+                "displayName": "CUSDC",
+                "displayNamePlural": "CUSDC",
+                "fraction": 1000000
+            },           
+            {
+                "denom": "clink",
+                "displayName": "CLINK",
+                "displayNamePlural": "CLINKS",
+                "fraction": 1000000
+            },           
+            {
+                "denom": "chot",
+                "displayName": "CHOT",
+                "displayNamePlural": "CHOTS",
+                "fraction": 1000000
+            }
+
+        ],
+        "gasPrice": 0.02,
+        "coingeckoId": "sif"
+    },
+    "genesisFile": "https://raw.githubusercontent.com/Sifchain/networks/feature/genesis/testnet/monkey-bars-testnet-3/genesis.json",
+    "remote":{
+        "rpc":"http://35.166.247.98:26657",
+        "lcd":"http://35.166.247.98:1317"
+    },
+    "debug": {
+        "startTimer": true,
+        "readGenesis": true
+    },
+    "params":{
+        "startHeight": 0,
+        "defaultBlockTime": 5000,
+        "blockInterval": 15000,
+        "consensusInterval": 1000,
+        "statusInterval":7500,
+        "signingInfoInterval": 1800000,
+        "proposalInterval": 5000,
+        "missedBlocksInterval": 60000,
+        "delegationInterval": 900000
+    }
+}
+
+
