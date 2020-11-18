@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 * [392] Fixed account page not rendering when the account is empty
+* [413] Fixed validator page error after logging in with Ledger
 
 ## v0.39.x-1
 

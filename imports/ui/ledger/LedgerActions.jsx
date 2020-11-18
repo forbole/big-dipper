@@ -712,7 +712,7 @@ class DelegationButtons extends LedgerButton {
         if (!delegation) return null;
         let completionTime = delegation.redelegationCompletionTime;
         let isCompleted = !completionTime || new Date() >= completionTime;
-        let maxEntries = this.props.stakingParams.max_entries;
+        let maxEntries = this.props.stakingParams?this.props.stakingParams.max_entries:7;
         let canUnbond = !delegation.unbonding || maxEntries > delegation.unbonding;
         return <span>
             <div id='redelegate-button' className={`disabled-btn-wrapper${isCompleted?'':' disabled'}`}>
