@@ -26,7 +26,7 @@ common:
     lastUpdated: 'Last Updated:'
 navbar:
     siteName: 'BIG DIPPER'
-    version: 'kava-3-v1.0.2'
+    version: 'kava-4'
     validators: 'Validators'
     blocks: 'Blocks'
     transactions: 'Transactions'
@@ -40,6 +40,7 @@ navbar:
     russian: "Русский"
     chinese: "中文（繁）"
     simChinese: "中文（简）"
+    portuguese: "Português"
     license: 'LICENSE'
     forkMe: 'Fork me!'
 consensus:
@@ -133,7 +134,7 @@ transactions:
     txHash: 'Tx Hash'
     valid: 'Valid'
     fee: 'Fee'
-    noFee: 'No fee' 
+    noFee: 'No fee'
     gasUsedWanted: 'Gas (used / wanted)'
     noTxFound: 'No such transaction found.'
     noValidatorTxsFound: 'No transaction related to this validator was found.'
@@ -230,7 +231,7 @@ proposals:
     percentageVoted: '<span class="text-info">{$percent}</span> of online voting power has been voted.'
     validMessage: 'This proposal is {$tentative}<strong>valid</strong>.'
     invalidMessage: 'Less than {$quorum} of voting power is voted. This proposal is <strong>invalid</strong>.'
-    moreVoteMessage: 'It will be a valid proposal once <span class="text-info">{$moreVotes}</span> more votes are casted.'
+    moreVoteMessage: 'It will be a valid proposal once <span class="text-info">{$moreVotes}</span> more votes are cast.'
     key: 'Key'
     value: 'Value'
     amount: 'Amount'

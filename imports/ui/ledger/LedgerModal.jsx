@@ -97,24 +97,24 @@ class LedgerModal extends React.Component {
     render() {
         return (
             <Modal isOpen={this.props.isOpen} toggle={this.closeModal} className="ledger-sign-in">
-            <ModalHeader><T>accounts.signInWithLedger</T></ModalHeader>
-            <ModalBody>
-                <TabContent activeTab={this.state.activeTab}>
-                <TabPane tabId="1">
-                    <T _purify={false}>accounts.signInWarning</T>
-                </TabPane>
-                <TabPane tabId="2">
-                    {this.state.currentUser?<span>You are currently logged in as <strong className="text-primary d-block">{this.state.currentUser}.</strong></span>:null}
-                    <T>accounts.toLoginAs</T> <strong className="text-primary d-block">{this.state.address}</strong><T>accounts.pleaseAccept</T>
-                </TabPane>
-            </TabContent>
-            {this.state.loading?<Spinner type="grow" color="primary" />:''}
-            <p className="error-message">{this.state.errorMessage}</p>
-        </ModalBody>
-            <ModalFooter>
-            {this.getActionButton()}
-                <Button color="secondary" onClick={this.closeModal}><T>common.cancel</T></Button>
-            </ModalFooter>
+                <ModalHeader><T>accounts.signInWithLedger</T></ModalHeader>
+                <ModalBody>
+                    <TabContent activeTab={this.state.activeTab}>
+                        <TabPane tabId="1">
+                            <T _purify={false}>accounts.signInWarning</T>
+                        </TabPane>
+                        <TabPane tabId="2">
+                            {this.state.currentUser?<span>You are currently logged in as <strong className="text-primary d-block">{this.state.currentUser}.</strong></span>:null}
+                            <T>accounts.toLoginAs</T> <strong className="text-primary d-block">{this.state.address}</strong><T>accounts.pleaseAccept</T>
+                        </TabPane>
+                    </TabContent>
+                    {this.state.loading?<Spinner type="grow" color="primary" />:''}
+                    <p className="error-message">{this.state.errorMessage}</p>
+                </ModalBody>
+                <ModalFooter>
+                    {this.getActionButton()}
+                    <Button color="secondary" onClick={this.closeModal}><T>common.cancel</T></Button>
+                </ModalFooter>
             </Modal>
         );
     }

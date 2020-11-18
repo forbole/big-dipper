@@ -11,5 +11,6 @@ Fixes #
 ## Checklist
 - [ ] Targeted PR against correct branch.
 - [ ] Linked to Github issue with discussion and accepted design OR link to spec that describes this work.
+- [ ] Run `meteor npm run lint`
 - [ ] Added an entry to the `CHANGELOG.md` file.
 - [ ] Re-reviewed `Files changed` in the Github PR explorer.

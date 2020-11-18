@@ -24,8 +24,7 @@ common:
     retry: 'Riprova'
     rewards: 'Reward'
 navbar:
-    siteName: 'The Big Dipper'
-    version: 'beta'
+    siteName: 'BIG DIPPER'
     validators: 'Validatori'
     blocks: 'Blocchi'
     transactions: 'Transazioni'
@@ -39,6 +38,7 @@ navbar:
     russian: "Русский"
     chinese: "中文（繁）"
     simChinese: "中文（简）"
+    portuguese: "Português"
     license: 'LICENZA'
     forkMe: 'Forkami!'
 consensus:
