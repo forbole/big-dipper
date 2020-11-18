@@ -19,22 +19,28 @@ const cloneDeep = require('lodash/cloneDeep');
 export default class AccountDetails extends Component{
     constructor(props){
         super(props);
+        const defaultCoin = Meteor.settings.public.coins.map(coin => {
+            return {
+                denom: coin.denom,
+                amount: 0
+            }
+        })
         this.state = {
             address: props.match.params.address,
             loading: true,
             accountExists: false,
-            available: [],
+            available: [defaultCoin],
             delegated: 0,
             unbonding: 0,
-            rewards: [],
-            reward: [],
-            total: [],
+            rewards: [defaultCoin],
+            reward: [defaultCoin],
+            total: [defaultCoin],
             price: 0,
             user: localStorage.getItem(CURRENTUSERADDR),
-            commission: [],
+            commission: [defaultCoin],
             denom: '',
-            rewardsForEachDel: [],
-            rewardDenomType: [],
+            rewardsForEachDel: [defaultCoin],
+            rewardDenomType: [defaultCoin],
         }
     }
 
@@ -66,13 +72,12 @@ export default class AccountDetails extends Component{
 
             if (result){
 
-                if (result.available){
+                if (result.available && (result.available.length > 0)){
 
                     this.setState({
                         available: cloneDeep(result.available),
                         denom: Coin.StakingCoin.denom,
                         total: cloneDeep(result.available)
-                        
                     })
                 }
 
@@ -125,7 +130,7 @@ export default class AccountDetails extends Component{
                     const totalRewards  = cloneDeep(result.total_rewards);
 
                     totalRewards.forEach((rewardNum, i) => {
-                        if(rewardNum.denom === this.state.total[i].denom)
+                        if(this.state.total[i] && (rewardNum.denom === this.state.total[i].denom))
                             this.state.total[i].amount = parseFloat(this.state.total[i].amount) + parseFloat(rewardNum.amount);                       
                     }, this)
 
@@ -162,7 +167,7 @@ export default class AccountDetails extends Component{
                 if (result.commission){
                     result.commission.forEach((commissions, i) => {
                         const commissionAmount = commissions;
-                        if(commissions.denom === this.state.total[i].denom)
+                        if(this.state.total[i] && (commissions.denom === this.state.total[i].denom))
                             this.state.total[i].amount = parseFloat(this.state.total[i].amount) + parseFloat(commissions.amount);
 
                         this.setState({

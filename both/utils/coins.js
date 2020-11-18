@@ -19,7 +19,7 @@ const coinList = Meteor.settings.public.coins;
 for (let i in coinList) {
 	const coin = coinList[i];
 	if (!coin.displayNamePlural) {
-		coin.displayNamePlural = coin.displayName + 's';
+		coin.displayNamePlural = coin.displayName;
 	}
 }
 
