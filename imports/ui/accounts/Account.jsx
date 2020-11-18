@@ -115,7 +115,6 @@ export default class AccountDetails extends Component {
 
                     getAvailableValue = cloneDeep(result.available)
                     getTotalValue = cloneDeep(result.available)
-                if (result.available && (result.available.length > 0)){
 
                     this.setState({
                         available: getAvailableValue,
