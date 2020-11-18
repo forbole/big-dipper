@@ -1,5 +1,9 @@
 # Changelog
 
+## kava-4-v1
+
+Compatibilty fix with SDK v0.39.x
+
 ## kava-3-v1.0.2
 
 ### Release Date: 28 Aug 2020
