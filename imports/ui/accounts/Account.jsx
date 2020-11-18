@@ -36,22 +36,28 @@ const cloneDeep = require('lodash/cloneDeep');
 export default class AccountDetails extends Component {
     constructor(props) {
         super(props);
+        const defaultCoin = Meteor.settings.public.coins.map(coin => {
+            return {
+                denom: coin.denom,
+                amount: 0
+            }
+        })
         this.state = {
             address: props.match.params.address,
             loading: true,
             accountExists: false,
-            available: [],
+            available: [defaultCoin],
             delegated: 0,
             unbonding: 0,
-            rewards: [],
-            reward: [],
-            total: [],
+            rewards: [defaultCoin],
+            reward: [defaultCoin],
+            total: [defaultCoin],
             price: 0,
             user: localStorage.getItem(CURRENTUSERADDR),
-            commission: [],
+            commission: [defaultCoin],
             denom: Coin.StakingCoin.denom,
-            rewardsForEachDel: [],
-            rewardDenomType: [],
+            rewardsForEachDel: [defaultCoin],
+            rewardDenomType: [defaultCoin],
             bondActiveTab: 'delegations',
             cdpActiveTab: 'cdp-bnb',
             cdpID: 0,
@@ -109,6 +115,7 @@ export default class AccountDetails extends Component {
 
                     getAvailableValue = cloneDeep(result.available)
                     getTotalValue = cloneDeep(result.available)
+                if (result.available && (result.available.length > 0)){
 
                     this.setState({
                         available: getAvailableValue,

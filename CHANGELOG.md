@@ -34,6 +34,11 @@
 * [#375] Fixed the Commission Value Calculations that caused Account Page to break
 * [#380] Fixed undefined value of operator_address in withdraw commission
 
+## [Unreleased]
+
+* [392] Fixed account page not rendering when the account is empty
+* [413] Fixed validator page error after logging in with Ledger
+
 ## v0.39.x-1
 
 * [#425] Fixed `commission_rates` might not exists in `validator.commission` object

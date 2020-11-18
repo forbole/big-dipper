@@ -8,9 +8,9 @@ const fetchFromUrl = (url) => {
         if (res.statusCode == 200) {
             return res
         };
-    } catch (e) {
-        console.log(res);
-        console.log(e.response.content);
+    }
+    catch (e){
+        console.log(e);
     }
 }
 
