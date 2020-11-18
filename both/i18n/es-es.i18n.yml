@@ -24,7 +24,6 @@ common:
     retry: 'Reintentar'
 navbar:
     siteName: 'The Big Dipper'
-    version: 'beta'
     validators: 'Validadores'
     blocks: 'Bloques'
     transactions: 'Transacciones'

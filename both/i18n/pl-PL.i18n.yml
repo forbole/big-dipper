@@ -25,7 +25,6 @@ common:
     rewards: 'Nagrody'
 navbar:
     siteName: 'Wielki Wóz'
-    version: 'beta'
     validators: 'Walidatorzy'
     blocks: 'Bloki'
     transactions: 'Transakcje'

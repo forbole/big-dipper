@@ -25,7 +25,6 @@ common:
     rewards: 'награды'
 navbar:
     siteName: 'The Big Dipper'
-    version: 'бета'
     validators: 'валидаторы'
     blocks: 'блоки'
     transactions: 'транзакции'
