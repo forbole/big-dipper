@@ -9,7 +9,6 @@ const fetchFromUrl = (url) => {
         };
     }
     catch (e){
-        console.log(res);
         console.log(e);
     }
 }
