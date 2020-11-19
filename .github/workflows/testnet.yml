@@ -2,7 +2,7 @@ name: Publish Testnet Image for block-explorer
 
 on:
   push:
-    branches: feature/github-actions
+    branches: develop
 
 jobs:
   testnet:
