@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.39.x-3
+
+* [431] Create correct index for trasaction events
+
 ## v0.39.x-2
 
 * [392] Fixed account page not rendering when the account is empty
