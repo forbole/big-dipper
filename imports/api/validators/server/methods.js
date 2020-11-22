@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Transactions } from '../../transactions/transactions.js';
 import { Blockscon } from '../../blocks/blocks.js';
-import { Delegations } from '../../delegations/delegations.js';
 
 Meteor.methods({
     'Validators.findCreateValidatorTime': function(address){
@@ -40,8 +39,7 @@ Meteor.methods({
             };
         }
         catch (e){
-            console.log(url);
-            console.log(e);
+            console.log("Getting error: %o when fetching from %o", e, url);
         }
     }
 });

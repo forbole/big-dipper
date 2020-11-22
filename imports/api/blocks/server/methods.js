@@ -441,8 +441,9 @@ Meteor.methods({
                                         // calculate self delegation percentage every 30 blocks
 
                                         if (height % 30 == 1){
+                                            let url = LCD + '/staking/delegators/'+valExist.delegator_address+'/delegations/'+valExist.operator_address
                                             try{
-                                                let response = HTTP.get(LCD + '/staking/delegators/'+valExist.delegator_address+'/delegations/'+valExist.operator_address);
+                                                let response = HTTP.get(url);
 
                                                 if (response.statusCode == 200){
                                                     let selfDelegation = JSON.parse(response.content).result;
@@ -452,7 +453,7 @@ Meteor.methods({
                                                 }
                                             }
                                             catch(e){
-                                                // console.log(e);
+                                                console.log("Get error: %o when fetching %o", e, url);
                                             }
                                         }
 
