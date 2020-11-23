@@ -7,6 +7,7 @@
 * Use react-json-view instead of JSONPretty
 * Update uptime with signing info
 * [280] Remove reading genesis file
+* Remove plural denom
 
 ## v0.39.x-3
 
