@@ -74,11 +74,18 @@ getValidatorUptime = (validatorSet) => {
                 let signingInfo = JSON.parse(response.content).result;
                 if (signingInfo){
                     validatorSet[key].tombstoned = signingInfo.tombstoned
+                    validatorSet[key].jailed_until = signingInfo.jailed_until
+                    validatorSet[key].index_offset = signingInfo.index_offset
+                    validatorSet[key].start_height = signingInfo.start_height
                     validatorSet[key].uptime = (slashingParams.signed_blocks_window - parseInt(signingInfo.missed_blocks_counter))/slashingParams.signed_blocks_window * 100;
                 }
             }
             catch(e){
-                console.log(e.response.data);
+                // if (!e.response.data){
+                //     validatorSet[key].tombstoned = false;
+                //     validatorSet[key].uptime = 0;
+                // }
+                console.log("Getting signing info of %o: %o", validatorSet[key].consensus_pubkey, e.response);
             }
             Validators.upsert({consensus_pubkey:validatorSet[key].consensus_pubkey}, {$set:validatorSet[key]})
         }
@@ -295,7 +302,7 @@ Meteor.methods({
                         console.log("Block insert time: "+((endBlockInsertTime-startBlockInsertTime)/1000)+"seconds.");
 
                         // store valdiators exist records
-                        let existingValidators = Validators.find({address:{$exists:true}}).fetch();
+                        // let existingValidators = Validators.find({address:{$exists:true}}).fetch();
 
                         if (height > 1){
                             // record precommits and calculate uptime
@@ -313,6 +320,7 @@ Meteor.methods({
                                     if (precommits[j] != null){
                                         if (address == precommits[j].validator_address){
                                             record.exists = true;
+                                            bulkValidators.find({address:precommits[j].validator_address}).upsert().updateOne({$set:{lastSeen:blockData.time}});
                                             precommits.splice(j,1);
                                             break;
                                         }

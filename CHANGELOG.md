@@ -5,6 +5,7 @@
 * [435] Show inflation as 0% if there is no inflation (no minting module integrated)
 * [433] Create tx index for MsgCreateValidator
 * Use react-json-view instead of JSONPretty
+* Update uptime with signing info
 
 ## v0.39.x-3
 
