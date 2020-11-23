@@ -6,6 +6,7 @@
 * [433] Create tx index for MsgCreateValidator
 * Use react-json-view instead of JSONPretty
 * Update uptime with signing info
+* [280] Remove reading genesis file
 
 ## v0.39.x-3
 
