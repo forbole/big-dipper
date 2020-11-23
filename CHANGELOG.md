@@ -8,6 +8,7 @@
 * Update uptime with signing info
 * [280] Remove reading genesis file
 * Remove plural denom
+* Simplify validator storing
 
 ## v0.39.x-3
 

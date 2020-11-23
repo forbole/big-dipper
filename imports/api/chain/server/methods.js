@@ -88,7 +88,7 @@ Meteor.methods({
                 }
                 catch(e){
                     console.log(url);
-                    console.log(e);
+                    console.log(e.response.content);
                 }
 
                 if ( Coin.StakingCoin.denom ) {
@@ -100,7 +100,7 @@ Meteor.methods({
                     }
                     catch(e){
                         console.log(url);
-                        console.log(e);
+                        console.log(e.response.content);
                     }
 
                     url = LCD + '/distribution/community_pool';
@@ -119,7 +119,7 @@ Meteor.methods({
                     }
                     catch (e){
                         console.log(url);
-                        console.log(e)
+                        console.log(e.response.content)
                     }
 
                     url = LCD + '/minting/inflation';
@@ -132,7 +132,7 @@ Meteor.methods({
                     }
                     catch(e){
                         console.log(url);
-                        console.log(e);
+                        console.log(e.response.content);
                     }
 
                     url = LCD + '/minting/annual-provisions';
@@ -145,7 +145,7 @@ Meteor.methods({
                     }
                     catch(e){
                         console.log(url);
-                        console.log(e);
+                        console.log(e.response.content);
                     }
                 }
 

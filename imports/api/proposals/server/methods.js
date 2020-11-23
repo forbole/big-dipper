@@ -148,7 +148,7 @@ const getVoteDetail = (votes) => {
                 }
             }
             catch (e){
-                console.log(e);
+                console.log(e.response.content);
             }
             votingPowerMap[voter] = {votingPower: votingPower};
         }
