@@ -26,8 +26,7 @@ export default class AccountDelegations extends Component{
                 <Container fluid>
                     <Row className="header text-nowrap d-none d-lg-flex">
                         <Col xs={7} md={4}><i className="fas fa-at"></i> <span><T>accounts.validators</T></span></Col>
-
-                        <Col xs={2} md={5}><i className="fas fa-wallet"></i> <span><T>{Coin.StakingCoin.displayNamePlural}</T></span></Col>
+                        <Col xs={2} md={5}><i className="fas fa-wallet"></i> <span><T>{Coin.StakingCoin.displayName}</T></span></Col>
                         <Col xs={3} md={3}><i className="fas fa-gift"></i> <span><T>common.rewards</T></span></Col>
                     </Row>
                     <SentryBoundary>
