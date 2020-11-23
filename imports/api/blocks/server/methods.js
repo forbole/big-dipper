@@ -113,29 +113,6 @@ Meteor.methods({
         }
         return totalBlockDiff/heights.length;
     },
-    'blocks.findUpTime'(address){
-        let collection = ValidatorRecords.rawCollection();
-        // let aggregateQuery = Meteor.wrapAsync(collection.aggregate, collection);
-        var pipeline = [
-            {$match:{"address":address}},
-            // {$project:{address:1,height:1,exists:1}},
-            {$sort:{"height":-1}},
-            {$limit:(Meteor.settings.public.uptimeWindow-1)},
-            {$unwind: "$_id"},
-            {$group:{
-                "_id": "$address",
-                "uptime": {
-                    "$sum":{
-                        $cond: [{$eq: ['$exists', true]}, 1, 0]
-                    }
-                }
-            }
-            }];
-        // let result = aggregateQuery(pipeline, { cursor: {} });
-
-        return Promise.await(collection.aggregate(pipeline).toArray());
-        // return .aggregate()
-    },
     'blocks.getLatestHeight': function() {
         this.unblock();
         let url = RPC+'/status';
