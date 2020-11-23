@@ -1,0 +1,25 @@
+name: Publish Testnet Image for block-explorer
+
+on:
+  push:
+    branches: develop
+
+jobs:
+  testnet:
+    name: testnet
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        run: |
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build images
+        run: |
+            docker build -t sifchain/block-explorer:testnet .
+
+      - name: Push images
+        run: |
+            docker push sifchain/block-explorer:testnet
