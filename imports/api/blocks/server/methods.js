@@ -25,6 +25,16 @@ getRemovedValidators = (prevValidators, validators) => {
     return prevValidators;
 }
 
+getValidatorFromConsensusKey = (validators, consensusKey) => {
+    for (v in validators){
+        let pubkeyType = Meteor.settings.public.secp256k1?'tendermint/PubKeySecp256k1':'tendermint/PubKeyEd25519';
+        if (validators[v].pub_key.value == Meteor.call('bech32ToPubkey', consensusKey, pubkeyType)){
+            return validators[v]
+        }
+    }
+    return null;
+}
+
 getValidatorProfileUrl = (identity) => {
     if (identity.length == 16){
         let response = HTTP.get(`https://keybase.io/_/api/1.0/user/lookup.json?key_suffix=${identity}&fields=pictures`)
