@@ -1,5 +1,5 @@
 {
-  "name": "TheBigDipper",
+  "name": "@forbole/big-dipper",
   "private": true,
   "scripts": {
     "start": "meteor run",
