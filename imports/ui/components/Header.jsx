@@ -46,6 +46,7 @@ export default class Header extends Component {
         super(props);
 
         this.toggle = this.toggle.bind(this);
+
         this.state = {
             isOpen: false,
             networks: "",
@@ -112,7 +113,7 @@ export default class Header extends Component {
         })
     }
 
-    signOut () {
+    signOut = () => {
         localStorage.removeItem(CURRENTUSERADDR);
         localStorage.removeItem(CURRENTUSERPUBKEY);
         this.props.refreshApp();
@@ -199,7 +200,7 @@ export default class Header extends Component {
                                     <span className="d-lg-none">
                                         <i className="material-icons large d-inline">account_circle</i>
                                         <Link to={`/account/${signedInAddress}`}> {signedInAddress}</Link>
-                                        <Button className="float-right" color="link" size="sm" onClick={this.signOut.bind(this)}><i className="material-icons">exit_to_app</i></Button>
+                                        <Button className="float-right" color="link" size="sm" onClick={this.signOut}><i className="material-icons">exit_to_app</i></Button>
                                     </span>
                                     <span className="d-none d-lg-block">
                                         <i className="material-icons large">account_circle</i>
@@ -208,7 +209,7 @@ export default class Header extends Component {
                                                 <div className="text-center"> 
                                                     <p><T>accounts.signInText</T></p>
                                                     <p><Link className="text-nowrap" to={`/account/${signedInAddress}`}>{signedInAddress}</Link></p>
-                                                    <Button className="float-right" color="link" onClick={this.signOut.bind(this)}><i className="material-icons">exit_to_app</i><span> <T>accounts.signOut</T></span></Button>
+                                                    <Button className="float-right" color="link" onClick={this.signOut}><i className="material-icons">exit_to_app</i><span> <T>accounts.signOut</T></span></Button>
                                                 </div>
                                             </PopoverBody>
                                         </UncontrolledPopover>

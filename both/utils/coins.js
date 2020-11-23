@@ -51,7 +51,7 @@ get stakingAmount () {
 
 toString (precision) {
     // default to display in mint denom if it has more than 4 decimal places
-    let minStake = Coin.StakingCoin.fraction/(precision?Math.pow(10, precision):10000)
+    let minStake = Coin.StakingCoin.fraction/(precision?(10 ** precision):10000)
     if (this.amount < minStake) {
         return `${numbro(this.amount).format('0,0.0000' )} ${this._coin.denom}`;
     } else {

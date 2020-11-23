@@ -525,6 +525,7 @@ Meteor.methods({
                         // fetching keybase every 14400 blocks(~1 day)
                         if (height % 14400 == 1){
                             console.log('Fetching keybase...')
+                            // eslint-disable-next-line no-loop-func
                             Validators.find({}).forEach((validator) => {
                                 try {
                                     let profileUrl =  getValidatorProfileUrl(validator.description.identity)

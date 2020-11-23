@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unused-prop-types */
 import qs from 'querystring';
 import Cosmos from "@lunie/cosmos-js"
 import React, { Component } from 'react';
@@ -395,8 +396,8 @@ class LedgerButton extends Component {
     }
 
     getSimulateBody (txMsg) {
-        return txMsg && txMsg.value && txMsg.value.msg &&
-            txMsg.value.msg.length && txMsg.value.msg[0].value || {}
+        return (txMsg && txMsg.value && txMsg.value.msg &&
+            txMsg.value.msg.length && txMsg.value.msg[0].value) || {}
     }
 
     getPath = () => {
@@ -895,8 +896,8 @@ class SubmitProposalButton extends LedgerButton {
     }
 
     getSimulateBody (txMsg) {
-        txMsg = txMsg && txMsg.value && txMsg.value.msg &&
-            txMsg.value.msg.length && txMsg.value.msg[0].value || {}
+        txMsg = (txMsg && txMsg.value && txMsg.value.msg &&
+            txMsg.value.msg.length && txMsg.value.msg[0].value) || {}
         return {...txMsg.content.value,
             initial_deposit: txMsg.initial_deposit,
             proposer: txMsg.proposer,
