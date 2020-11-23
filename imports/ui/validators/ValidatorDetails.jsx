@@ -3,7 +3,7 @@ import { Row, Col } from 'reactstrap';
 import { Route, Switch } from 'react-router-dom';
 import Validator from './ValidatorContainer.js';
 import MissedBlocks from './MissedBlocksContainer.js';
-// import ChainStates from '../components/ChainStatesContainer.js'
+import ChainStates from '../components/ChainStatesContainer.js'
 import i18n from 'meteor/universe:i18n';
 
 const T = i18n.createComponent();
@@ -17,6 +17,7 @@ export default class ValidatorDetails extends Component{
         return <div>
             <Row>
                 <Col lg={3} xs={12}><h1 className="d-none d-lg-block"><T>validators.validatorDetails</T></h1></Col>
+                <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
             </Row>
             <Row>
                 <Col md={12}>

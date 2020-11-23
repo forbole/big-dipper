@@ -7,7 +7,7 @@ import { LoadMore } from '../components/LoadMore.jsx';
 import { Route, Switch } from 'react-router-dom';
 import Sidebar from "react-sidebar";
 import Block from './BlockContainer.js';
-// import ChainStates from '../components/ChainStatesContainer.js'
+import ChainStates from '../components/ChainStatesContainer.js'
 import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
 
@@ -82,7 +82,7 @@ export default class BlocksTable extends Component {
             </Helmet>
             <Row>
                 <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>blocks.latestBlocks</T></h1></Col>
-                {/* <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col> */}
+                <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
             </Row>
             <Switch>
                 <Route path="/blocks/:blockId" render={(props)=> <Sidebar 
