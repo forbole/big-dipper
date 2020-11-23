@@ -1,5 +1,9 @@
 # Changelog
 
+* Sif gold color style client/styles
+* server/methods.js fix for missing Sif (monkey-bars) genesis values
+* testnet-settings
+
 ## [Unreleased]
 
 * Bump Meteor to v1.10.2 and update some dependency pcakges with security issues
