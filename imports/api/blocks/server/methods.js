@@ -79,6 +79,7 @@ getValidatorUptime = (validatorSet) => {
                     valData.index_offset = signingInfo.index_offset
                     valData.start_height = signingInfo.start_height
                     valData.uptime = (slashingParams.signed_blocks_window - parseInt(signingInfo.missed_blocks_counter))/slashingParams.signed_blocks_window * 100;
+                    Validators.upsert({consensus_pubkey:validatorSet[key].consensus_pubkey}, {$set:valData})
                 }
             }
             catch(e){
@@ -88,7 +89,6 @@ getValidatorUptime = (validatorSet) => {
                 // }
                 console.log("Getting signing info of %o: %o", validatorSet[key].consensus_pubkey, e.response.statusCode);
             }
-            Validators.upsert({consensus_pubkey:validatorSet[key].consensus_pubkey}, {$set:valData})
         }
         catch(e){
             console.log(e);
