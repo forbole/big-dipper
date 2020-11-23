@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+* [435] Show inflation as 0% if there is no inflation (no minting module integrated)
+* [433] Create tx index for MsgCreateValidator
+
 ## v0.39.x-3
 
 * [431] Create correct index for trasaction events

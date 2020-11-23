@@ -29,7 +29,7 @@ export default class ChainStates extends Component{
                 },)   
                 this.setState({
                     communityPool: [...commPool],
-                    inflation: numbro(this.props.chainStates.inflation).format("0.00%")
+                    inflation: this.props.chainStates.inflation?numbro(this.props.chainStates.inflation).format("0.00%"):'0%'
                 })
             }
 
@@ -53,7 +53,7 @@ export default class ChainStates extends Component{
                 },)   
                 this.setState({
                     communityPool: [...communityPools],
-                    inflation: numbro(this.props.chainStates.inflation).format("0.00%")
+                    inflation: this.props.chainStates.inflation?numbro(this.props.chainStates.inflation).format("0.00%"):'0%'
                 })
             }
         }
