@@ -56,6 +56,38 @@ getValidatorProfileUrl = (identity) => {
     }
 }
 
+getValidatorUptime = (validatorSet) => {
+
+    // get validator uptime
+    let url = LCD+'/slashing/parameters';
+    let response = HTTP.get(url);
+
+    const slashingParams = JSON.parse(response.content).result;
+
+    Chain.upsert({chainId:Meteor.settings.public.chainId}, {$set:{"slashing.params":slashingParams}});
+
+    for(let key in validatorSet){
+        try{
+            try {
+                let url = LCD+'/slashing/validators/'+validatorSet[key].consensus_pubkey+'/signing_info';
+                let response = HTTP.get(url);
+                let signingInfo = JSON.parse(response.content).result;
+                if (signingInfo){
+                    validatorSet[key].tombstoned = signingInfo.tombstoned
+                    validatorSet[key].uptime = (slashingParams.signed_blocks_window - parseInt(signingInfo.missed_blocks_counter))/slashingParams.signed_blocks_window * 100;
+                }
+            }
+            catch(e){
+                console.log(e.response.data);
+            }
+            Validators.upsert({consensus_pubkey:validatorSet[key].consensus_pubkey}, {$set:validatorSet[key]})
+        }
+        catch(e){
+            console.log(e);
+        }
+    }
+}
+
 // var filtered = [1, 2, 3, 4, 5].filter(notContainedIn([1, 2, 3, 5]));
 // console.log(filtered); // [4]
 
@@ -170,6 +202,10 @@ Meteor.methods({
                 console.log(url);
                 console.log(e);
             }
+
+            // update validator uptime and tomestone status
+            getValidatorUptime(validatorSet);
+
             let totalValidators = Object.keys(validatorSet).length;
             console.log("all validators: "+ totalValidators);
             for (let height = curr+1 ; height <= until ; height++) {
@@ -283,37 +319,6 @@ Meteor.methods({
                                     }
                                 }
 
-                                // calculate the uptime based on the records stored in previous blocks
-                                // only do this every 15 blocks ~
-
-                                if ((height % 15) == 0){
-                                    // let startAggTime = new Date();
-                                    let numBlocks = Meteor.call('blocks.findUpTime', address);
-                                    let uptime = 0;
-                                    // let endAggTime = new Date();
-                                    // console.log("Get aggregated uptime for "+existingValidators[i].address+": "+((endAggTime-startAggTime)/1000)+"seconds.");
-                                    if ((numBlocks[0] != null) && (numBlocks[0].uptime != null)){
-                                        uptime = numBlocks[0].uptime;
-                                    }
-
-                                    let base = Meteor.settings.public.uptimeWindow;
-                                    if (height < base){
-                                        base = height;
-                                    }
-
-                                    if (record.exists){
-                                        if (uptime < base){
-                                            uptime++;
-                                        }
-                                        uptime = (uptime / base)*100;
-                                        bulkValidators.find({address:address}).upsert().updateOne({$set:{uptime:uptime, lastSeen:blockData.time}});
-                                    }
-                                    else{
-                                        uptime = (uptime / base)*100;
-                                        bulkValidators.find({address:address}).upsert().updateOne({$set:{uptime:uptime}});
-                                    }
-                                }
-
                                 bulkValidatorRecords.insert(record);
                                 // ValidatorRecords.update({height:height,address:record.address},record);
                             }
@@ -406,21 +411,6 @@ Meteor.methods({
                                         block_time: blockData.time
                                     });
 
-                                    // Meteor.call('runCode', command, function(error, result){
-                                    // validator.address = result.match(/\s[0-9A-F]{40}$/igm);
-                                    // validator.address = validator.address[0].trim();
-                                    // validator.hex = result.match(/\s[0-9A-F]{64}$/igm);
-                                    // validator.hex = validator.hex[0].trim();
-                                    // validator.cosmosaccpub = result.match(/cosmospub.*$/igm);
-                                    // validator.cosmosaccpub = validator.cosmosaccpub[0].trim();
-                                    // validator.operator_pubkey = result.match(/cosmosvaloperpub.*$/igm);
-                                    // validator.operator_pubkey = validator.operator_pubkey[0].trim();
-                                    // validator.consensus_pubkey = result.match(/cosmosvalconspub.*$/igm);
-                                    // validator.consensus_pubkey = validator.consensus_pubkey[0].trim();
-
-
-
-                                    // });
                                 }
                                 else{
                                     let validatorData = validatorSet[valExist.consensus_pubkey]
@@ -441,9 +431,8 @@ Meteor.methods({
                                         // calculate self delegation percentage every 30 blocks
 
                                         if (height % 30 == 1){
-                                            let url = LCD + '/staking/delegators/'+valExist.delegator_address+'/delegations/'+valExist.operator_address
                                             try{
-                                                let response = HTTP.get(url);
+                                                let response = HTTP.get(LCD + '/staking/delegators/'+valExist.delegator_address+'/delegations/'+valExist.operator_address);
 
                                                 if (response.statusCode == 200){
                                                     let selfDelegation = JSON.parse(response.content).result;
@@ -453,7 +442,7 @@ Meteor.methods({
                                                 }
                                             }
                                             catch(e){
-                                                console.log("Get error: %o when fetching %o", e, url);
+                                                // console.log(e);
                                             }
                                         }
 

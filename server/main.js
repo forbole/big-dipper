@@ -199,11 +199,11 @@ Meteor.startup(function(){
 
                 if (Meteor.settings.params.proposalInterval >= 0) {
                     timerProposal = Meteor.setInterval(function () {
-                      getProposals();
+                        getProposals();
                     }, Meteor.settings.params.proposalInterval);
 
                     timerProposalsResults = Meteor.setInterval(function () {
-                      getProposalsResults();
+                        getProposalsResults();
                     }, Meteor.settings.params.proposalInterval);
                 }
 
