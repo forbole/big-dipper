@@ -406,14 +406,16 @@ Meteor.methods({
 
                                     let prevVotingPower = VotingPowerHistory.findOne({address:valExist.address}, {height:-1, limit:1});
 
-                                    bulkVPHistory.insert({
-                                        address: valExist.address,
-                                        prev_voting_power: prevVotingPower?prevVotingPower.voting_power:0,
-                                        voting_power: 0,
-                                        type: 'remove',
-                                        height: blockData.height,
-                                        block_time: blockData.time
-                                    });
+                                    if (prevVotingPower && (prevVotingPower.voting_power > 0)){
+                                        bulkVPHistory.insert({
+                                            address: valExist.address,
+                                            prev_voting_power: prevVotingPower,
+                                            voting_power: 0,
+                                            type: 'remove',
+                                            height: blockData.height,
+                                            block_time: blockData.time
+                                        });
+                                    }
                                 }
                             }
 
