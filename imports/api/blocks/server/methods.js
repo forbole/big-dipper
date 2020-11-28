@@ -240,6 +240,7 @@ Meteor.methods({
 
             let totalValidators = Object.keys(validatorSet).length;
             console.log("all validators: "+ totalValidators);
+
             for (let height = curr+1 ; height <= until ; height++) {
                 let startBlockTime = new Date();
                 // add timeout here? and outside this loop (for catched up and keep fetching)?
@@ -247,12 +248,13 @@ Meteor.methods({
                 let url = RPC+'/block?height=' + height;
                 let analyticsData = {};
 
+                const bulkValidators = Validators.rawCollection().initializeUnorderedBulkOp();
+                const bulkValidatorRecords = ValidatorRecords.rawCollection().initializeUnorderedBulkOp();
+                const bulkVPHistory = VotingPowerHistory.rawCollection().initializeUnorderedBulkOp();
+                const bulkTransactions = Transactions.rawCollection().initializeUnorderedBulkOp();
+
                 console.log(url);
                 try{
-                    const bulkValidators = Validators.rawCollection().initializeUnorderedBulkOp();
-                    const bulkValidatorRecords = ValidatorRecords.rawCollection().initializeUnorderedBulkOp();
-                    const bulkVPHistory = VotingPowerHistory.rawCollection().initializeUnorderedBulkOp();
-
                     let startGetHeightTime = new Date();
                     let response = HTTP.get(url);
                     if (response.statusCode == 200){
@@ -286,16 +288,22 @@ Meteor.methods({
                         // save txs in database
                         if (block.block.data.txs && block.block.data.txs.length > 0){
                             for (t in block.block.data.txs){
-                                // Meteor.call('Transactions.index', sha256(Buffer.from(block.block.data.txs[t], 'base64')), blockData.time, (err) => {
-                                //     if (err){
-                                //         console.log(err);
-                                //     }
-                                // });
-
-                                Transactions.insert({
+                                bulkTransactions.insert({
                                     txhash: sha256(Buffer.from(block.block.data.txs[t], 'base64')),
                                     processed: false
                                 })
+                            }
+
+                            if (bulkTransactions.length > 0){
+                                // console.log(bulkValidators.length);
+                                bulkTransactions.execute((err, result) => {
+                                    if (err){
+                                        console.log(err);
+                                    }
+                                    if (result){
+                                        // console.log(result);
+                                    }
+                                });
                             }
                         }
 
@@ -346,37 +354,6 @@ Meteor.methods({
                         let endBlockInsertTime = new Date();
                         console.log("Block insert time: "+((endBlockInsertTime-startBlockInsertTime)/1000)+"seconds.");
 
-                        // store valdiators exist records
-                        // let existingValidators = Validators.find({address:{$exists:true}}).fetch();
-
-                        if (height > 1){
-                            // record precommits and calculate uptime
-                            // only record from block 2
-                            for (i in validators){
-                                let address = validators[i].address;
-                                let record = {
-                                    height: height,
-                                    address: address,
-                                    exists: false,
-                                    voting_power: parseInt(validators[i].voting_power)//getValidatorVotingPower(existingValidators, address)
-                                }
-
-                                for (j in precommits){
-                                    if (precommits[j] != null){
-                                        if (address == precommits[j].validator_address){
-                                            record.exists = true;
-                                            bulkValidators.find({address:precommits[j].validator_address}).upsert().updateOne({$set:{lastSeen:blockData.time}});
-                                            precommits.splice(j,1);
-                                            break;
-                                        }
-                                    }
-                                }
-
-                                bulkValidatorRecords.insert(record);
-                                // ValidatorRecords.update({height:height,address:record.address},record);
-                            }
-                        }
-
                         let chainStatus = Chain.findOne({chainId:block.block.header.chain_id});
                         let lastSyncedTime = chainStatus?chainStatus.lastSyncedTime:0;
                         let timeDiff;
@@ -411,17 +388,17 @@ Meteor.methods({
                             let valExist = Validators.findOne({consensus_pubkey:v});
                             let val = getValidatorFromConsensusKey(validators, v);
                             valData.delegator_address = Meteor.call('getDelegator', valData.operator_address);
-                            if (!valExist){
+                            let pubkeyType = Meteor.settings.public.secp256k1?'tendermint/PubKeySecp256k1':'tendermint/PubKeyEd25519';
+
+                            valData.pub_key = {
+                                type: pubkeyType,
+                                value: Meteor.call('bech32ToPubkey', valData.consensus_pubkey, pubkeyType)
+                            }
+
+                            valData.address = getAddress(valData.pub_key);
+
+                            if (!valExist && valData.consensus_pubkey){
                                 // valData.delegator_address = Meteor.call('getDelegator', valData.operator_address);
-
-                                let pubkeyType = Meteor.settings.public.secp256k1?'tendermint/PubKeySecp256k1':'tendermint/PubKeyEd25519';
-
-                                valData.pub_key = {
-                                    type: pubkeyType,
-                                    value: Meteor.call('bech32ToPubkey', valData.consensus_pubkey, pubkeyType)
-                                }
-
-                                valData.address = getAddress(valData.pub_key);
 
                                 if (valData.description.identity)
                                     valData.profile_url =  getValidatorProfileUrl(valData.description.identity)
@@ -501,7 +478,38 @@ Meteor.methods({
                                     console.log("Getting self delegation: %o, \nurl: %o", e.response, url)
                                 }
                             }
-                            bulkValidators.find({consensus_pubkey: valData.consensus_pubkey}).upsert().updateOne({$set:valData});
+                            bulkValidators.find({address: valData.address}).upsert().updateOne({$set:valData});
+                        }
+
+                        // store valdiators exist records
+                        // let existingValidators = Validators.find({address:{$exists:true}}).fetch();
+
+                        if (height > 1){
+                            // record precommits and calculate uptime
+                            // only record from block 2
+                            for (i in validators){
+                                let address = validators[i].address;
+                                let record = {
+                                    height: height,
+                                    address: address,
+                                    exists: false,
+                                    voting_power: parseInt(validators[i].voting_power)//getValidatorVotingPower(existingValidators, address)
+                                }
+
+                                for (j in precommits){
+                                    if (precommits[j] != null){
+                                        if (address == precommits[j].validator_address){
+                                            record.exists = true;
+                                            bulkValidators.find({address:precommits[j].validator_address}).upsert().updateOne({$set:{lastSeen:blockData.time}});
+                                            precommits.splice(j,1);
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                bulkValidatorRecords.insert(record);
+                                // ValidatorRecords.update({height:height,address:record.address},record);
+                            }
                         }
 
                         // update uptime every 15 blocks
@@ -575,7 +583,7 @@ Meteor.methods({
                             // console.log(bulkValidators.length);
                             bulkValidators.execute((err, result) => {
                                 if (err){
-                                    console.log(err);
+                                    console.log("Error while bulk insert validators: %o",err);
                                 }
                                 if (result){
                                     // console.log(result);

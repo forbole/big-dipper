@@ -5,24 +5,27 @@ import { Validators } from '../../validators/validators.js';
 
 const AddressLength = 40;
 
+const bulkTransactions = Transactions.rawCollection().initializeUnorderedBulkOp();
+
 getTransaction = async (hash) => {
     hash = hash.toUpperCase();
-    console.log("Get tx: "+hash)
+    // console.log("Get tx: "+hash)
     try {
         let url = LCD+ '/txs/'+hash;
         let response = HTTP.get(url);
         let tx = JSON.parse(response.content);
 
-        console.log(hash);
+        // console.log(hash);
 
         tx.height = parseInt(tx.height);
         tx.processed = true;
 
-        let txId = Transactions.upsert({txhash:hash}, {$set:tx});
-        if (txId){
-            return txId;
-        }
-        else return false;
+        // let txId = Transactions.upsert({txhash:hash}, {$set:tx});
+        bulkTransactions.find({txhash:hash}).upsert().updateOne({$set:tx});
+        // if (txId){
+        //     return txId;
+        // }
+        // else return false;
 
     }
     catch(e) {
@@ -42,9 +45,20 @@ Meteor.methods({
                 // console.log(transactions[i]);
                 getTransaction(transactions[i].txhash)
             }
+            if (bulkTransactions.length > 0){
+                bulkTransactions.execute((err, result) => {
+                    if (err){
+                        console.log(err);
+                    }
+                    if (result){
+                        // console.log(result);
+                    }
+                });
+            }
         }
         catch (e) {
-
+            TXSYNCING = false;
+            return e
         }
         TXSYNCING = false;
     },
