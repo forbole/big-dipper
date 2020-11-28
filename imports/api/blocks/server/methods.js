@@ -122,9 +122,6 @@ calculateVPDist = async (analyticsData, blockData) => {
         }
     }
 
-    // console.log(topTwentyPower)
-    // console.log(bottomEightyPower)
-
     bottomSixtySixPercent = 1 - topThirtyFourPercent;
     numBottomSixtySix = activeValidators.length - numTopThirtyFour;
 
