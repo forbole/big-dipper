@@ -263,7 +263,7 @@ Meteor.methods({
 
                         let startGetValidatorsTime = new Date();
                         // update chain status
-                        url = RPC+`/validators?height=${height}&page=1&per_page=100`;
+                        url = RPC+`/validators?height=${height}&page=1&per_page=300`;
                         response = HTTP.get(url);
                         console.log(url);
                         let validators = JSON.parse(response.content);
