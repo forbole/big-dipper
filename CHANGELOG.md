@@ -9,6 +9,7 @@
 * [280] Remove reading genesis file
 * Remove plural denom
 * Simplify validator storing
+* Get data and show proposal based on enabled modules
 
 ## v0.39.x-3
 
