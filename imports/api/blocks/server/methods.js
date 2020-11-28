@@ -490,7 +490,7 @@ Meteor.methods({
                             }
 
                             // get self delegation every 30 blocks
-                            if (height % 50 == 2){
+                            if (height == curr){ //if (height % 50 == 2){
                                 let url = LCD+`/staking/delegators/${valData.delegator_address}/delegations/${valData.operator_address}`
                                 try{
                                     let response = HTTP.get(url);
@@ -544,7 +544,7 @@ Meteor.methods({
                         }
 
                         // fetching keybase every 500 blocks
-                        if (height % 500 == 1){
+                        if (height == curr){ //if (height % 500 == 1){
                             console.log('Fetching keybase...')
                             // eslint-disable-next-line no-loop-func
                             Validators.find({}).forEach((validator) => {
