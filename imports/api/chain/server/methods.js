@@ -88,64 +88,70 @@ Meteor.methods({
                 }
                 catch(e){
                     console.log(url);
-                    console.log(e.response.content);
+                    console.log(e);
                 }
 
                 if ( Coin.StakingCoin.denom ) {
-                    url = LCD + '/supply/total/'+ Coin.StakingCoin.denom;
-                    try{
-                        response = HTTP.get(url);
-                        let supply = JSON.parse(response.content).result;
-                        chainStates.totalSupply = parseInt(supply);
-                    }
-                    catch(e){
-                        console.log(url);
-                        console.log(e.response.content);
+                    if (Meteor.settings.public.modules.supply){
+                        url = LCD + '/supply/total/'+ Coin.StakingCoin.denom;
+                        try{
+                            response = HTTP.get(url);
+                            let supply = JSON.parse(response.content).result;
+                            chainStates.totalSupply = parseInt(supply);
+                        }
+                        catch(e){
+                            console.log(url);
+                            console.log(e);
+                        }
                     }
 
-                    url = LCD + '/distribution/community_pool';
-                    try {
-                        response = HTTP.get(url);
-                        let pool = JSON.parse(response.content).result;
-                        if (pool && pool.length > 0){
-                            chainStates.communityPool = [];
-                            pool.forEach((amount) => {
-                                chainStates.communityPool.push({
-                                    denom: amount.denom,
-                                    amount: parseFloat(amount.amount)
+                    if (Meteor.settings.public.modules.distribution){
+                        url = LCD + '/distribution/community_pool';
+                        try {
+                            response = HTTP.get(url);
+                            let pool = JSON.parse(response.content).result;
+                            if (pool && pool.length > 0){
+                                chainStates.communityPool = [];
+                                pool.forEach((amount) => {
+                                    chainStates.communityPool.push({
+                                        denom: amount.denom,
+                                        amount: parseFloat(amount.amount)
+                                    })
                                 })
-                            })
+                            }
                         }
-                    }
-                    catch (e){
-                        console.log(url);
-                        console.log(e.response.content)
+                        catch (e){
+                            console.log(url);
+                            console.log(e.response.content)
+                        }
                     }
 
-                    url = LCD + '/minting/inflation';
-                    try{
-                        response = HTTP.get(url);
-                        let inflation = JSON.parse(response.content).result;
-                        if (inflation){
-                            chainStates.inflation = parseFloat(inflation)
+                    if (Meteor.settings.public.modules.minting){
+                        url = LCD + '/minting/inflation';
+                        try{
+                            response = HTTP.get(url);
+                            let inflation = JSON.parse(response.content).result;
+                            if (inflation){
+                                chainStates.inflation = parseFloat(inflation)
+                            }
                         }
-                    }
-                    catch(e){
-                        console.log(url);
-                        console.log(e.response.content);
-                    }
+                        catch(e){
+                            console.log(url);
+                            console.log(e.response.content);
+                        }
 
-                    url = LCD + '/minting/annual-provisions';
-                    try{
-                        response = HTTP.get(url);
-                        let provisions = JSON.parse(response.content);
-                        if (provisions){
-                            chainStates.annualProvisions = parseFloat(provisions.result)
+                        url = LCD + '/minting/annual-provisions';
+                        try{
+                            response = HTTP.get(url);
+                            let provisions = JSON.parse(response.content);
+                            if (provisions){
+                                chainStates.annualProvisions = parseFloat(provisions.result)
+                            }
                         }
-                    }
-                    catch(e){
-                        console.log(url);
-                        console.log(e.response.content);
+                        catch(e){
+                            console.log(url);
+                            console.log(e.response.content);
+                        }
                     }
                 }
 
