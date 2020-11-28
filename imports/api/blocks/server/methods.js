@@ -202,7 +202,6 @@ Meteor.methods({
                     const bulkValidators = Validators.rawCollection().initializeUnorderedBulkOp();
                     const bulkValidatorRecords = ValidatorRecords.rawCollection().initializeUnorderedBulkOp();
                     const bulkVPHistory = VotingPowerHistory.rawCollection().initializeUnorderedBulkOp();
-                    const bulkTransations = Transactions.rawCollection().initializeUnorderedBulkOp();
 
                     let startGetHeightTime = new Date();
                     let response = HTTP.get(url);
@@ -528,14 +527,6 @@ Meteor.methods({
 
                         if (bulkVPHistory.length > 0){
                             bulkVPHistory.execute((err, result) => {
-                                if (err){
-                                    console.log(err);
-                                }
-                            });
-                        }
-
-                        if (bulkTransations.length > 0){
-                            bulkTransations.execute((err, result) => {
                                 if (err){
                                     console.log(err);
                                 }
