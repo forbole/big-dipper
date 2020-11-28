@@ -82,7 +82,7 @@ getValidatorUptime = (validatorSet) => {
                 }
             }
             catch(e){
-                console.log("Getting signing info of %o: %o", validatorSet[key].consensus_pubkey, e.response.statusCode);
+                console.log("Getting signing info of %o: %o", validatorSet[key].consensus_pubkey, e);
             }
         }
         catch(e){
@@ -489,16 +489,18 @@ Meteor.methods({
                                 }
                             }
 
-                            let url = LCD+`/staking/delegators/${valData.delegator_address}/delegations/${valData.operator_address}`
-                            try{
-                                let response = HTTP.get(url);
-                                let selfDelegation = JSON.parse(response.content).result;
-                                valData.self_delegation = (selfDelegation && selfDelegation.shares)?parseFloat(selfDelegation.shares)/parseFloat(valData.delegator_shares):0;
+                            // get self delegation every 30 blocks
+                            if (height % 50 == 2){
+                                let url = LCD+`/staking/delegators/${valData.delegator_address}/delegations/${valData.operator_address}`
+                                try{
+                                    let response = HTTP.get(url);
+                                    let selfDelegation = JSON.parse(response.content).result;
+                                    valData.self_delegation = (selfDelegation && selfDelegation.shares)?parseFloat(selfDelegation.shares)/parseFloat(valData.delegator_shares):0;
+                                }
+                                catch(e){
+                                    console.log("Getting self delegation: %o, \nurl: %o", e.response, url)
+                                }
                             }
-                            catch(e){
-                                console.log("Getting self delegation: %o, \nurl: %o", e.response, url)
-                            }
-
                             bulkValidators.find({consensus_pubkey: valData.consensus_pubkey}).upsert().updateOne({$set:valData});
                         }
 
