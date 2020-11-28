@@ -27,9 +27,15 @@ getRemovedValidators = (prevValidators, validators) => {
 
 getValidatorFromConsensusKey = (validators, consensusKey) => {
     for (v in validators){
-        let pubkeyType = Meteor.settings.public.secp256k1?'tendermint/PubKeySecp256k1':'tendermint/PubKeyEd25519';
-        if (validators[v].pub_key.value == Meteor.call('bech32ToPubkey', consensusKey, pubkeyType)){
-            return validators[v]
+        try {
+            let pubkeyType = Meteor.settings.public.secp256k1?'tendermint/PubKeySecp256k1':'tendermint/PubKeyEd25519';
+            let pubkey = Meteor.call('bech32ToPubkey', consensusKey, pubkeyType);
+            if (validators[v].pub_key.value == pubkey){
+                return validators[v]
+            }
+        }
+        catch (e){
+            console.log("Error converting pubkey: %o\n%o", consensusKey, e)
         }
     }
     return null;
