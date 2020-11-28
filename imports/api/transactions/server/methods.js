@@ -2,12 +2,11 @@ import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 import { Transactions } from '../../transactions/transactions.js';
 import { Validators } from '../../validators/validators.js';
-import { VotingPowerHistory } from '../../voting-power/history.js';
 
 const AddressLength = 40;
 
 Meteor.methods({
-    'Transactions.index': function(hash, blockTime){
+    'Transactions.index': function(hash){
         this.unblock();
         hash = hash.toUpperCase();
         console.log("Get tx: "+hash)
@@ -19,6 +18,7 @@ Meteor.methods({
             console.log(hash);
     
             tx.height = parseInt(tx.height);
+            tx.processed = true;
     
             let txId = Transactions.insert(tx);
             if (txId){

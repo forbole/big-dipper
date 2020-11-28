@@ -1,6 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
-import { Promise } from "meteor/promise";
 import { Blockscon } from '/imports/api/blocks/blocks.js';
 import { Chain } from '/imports/api/chain/chain.js';
 import { ValidatorSets } from '/imports/api/validator-sets/validator-sets.js';
@@ -153,7 +152,7 @@ calculateVPDist = async () => {
 Meteor.methods({
     'blocks.averageBlockTime'(address){
         let blocks = Blockscon.find({proposerAddress:address}).fetch();
-        let heights = blocks.map((block, i) => {
+        let heights = blocks.map((block) => {
             return block.height;
         });
         let blocksStats = Analytics.find({height:{$in:heights}}).fetch();
@@ -287,11 +286,16 @@ Meteor.methods({
                         // save txs in database
                         if (block.block.data.txs && block.block.data.txs.length > 0){
                             for (t in block.block.data.txs){
-                                Meteor.call('Transactions.index', sha256(Buffer.from(block.block.data.txs[t], 'base64')), blockData.time, (err, result) => {
-                                    if (err){
-                                        console.log(err);
-                                    }
-                                });
+                                // Meteor.call('Transactions.index', sha256(Buffer.from(block.block.data.txs[t], 'base64')), blockData.time, (err) => {
+                                //     if (err){
+                                //         console.log(err);
+                                //     }
+                                // });
+
+                                Transactions.insert({
+                                    txhash: sha256(Buffer.from(block.block.data.txs[t], 'base64')),
+                                    processed: false
+                                })
                             }
                         }
 
@@ -313,14 +317,30 @@ Meteor.methods({
 
                         let startGetValidatorsTime = new Date();
                         // update chain status
-                        url = RPC+`/validators?height=${height}&page=1&per_page=300`;
-                        response = HTTP.get(url);
-                        console.log(url);
-                        let validators = JSON.parse(response.content);
-                        validators.result.block_height = parseInt(validators.result.block_height);
-                        ValidatorSets.insert(validators.result);
 
-                        blockData.validatorsCount = validators.result.validators.length;
+                        let validators = []
+                        let page = 0;
+                        try {
+                            let result = {}
+                            do {
+                                url = RPC+`/validators?height=${height}&page=${++page}&per_page=100`;
+                                response = HTTP.get(url);
+                                console.log(url);
+                                result = JSON.parse(response.content);
+                                validators = [...validators, ...result.result.validators];
+                            }
+                            while (result.result.count == 100 && result.result.total > 100)
+                        }
+                        catch(e){
+                            console.log("Getting validator set at height %o: %o", height, e)
+                        }
+                        
+                        ValidatorSets.insert({
+                            block_height: height,
+                            validators: validators
+                        })
+
+                        blockData.validatorsCount = validators.length;
                         let startBlockInsertTime = new Date();
                         Blockscon.insert(blockData);
                         let endBlockInsertTime = new Date();
@@ -332,13 +352,13 @@ Meteor.methods({
                         if (height > 1){
                             // record precommits and calculate uptime
                             // only record from block 2
-                            for (i in validators.result.validators){
-                                let address = validators.result.validators[i].address;
+                            for (i in validators){
+                                let address = validators[i].address;
                                 let record = {
                                     height: height,
                                     address: address,
                                     exists: false,
-                                    voting_power: parseInt(validators.result.validators[i].voting_power)//getValidatorVotingPower(existingValidators, address)
+                                    voting_power: parseInt(validators[i].voting_power)//getValidatorVotingPower(existingValidators, address)
                                 }
 
                                 for (j in precommits){
@@ -389,7 +409,7 @@ Meteor.methods({
                         for (v in validatorSet){
                             let valData = validatorSet[v];
                             let valExist = Validators.findOne({consensus_pubkey:v});
-                            let val = getValidatorFromConsensusKey(validators.result.validators, v);
+                            let val = getValidatorFromConsensusKey(validators, v);
                             valData.delegator_address = Meteor.call('getDelegator', valData.operator_address);
                             if (!valExist){
                                 // valData.delegator_address = Meteor.call('getDelegator', valData.operator_address);
@@ -566,7 +586,7 @@ Meteor.methods({
 
                         let startVRTime = new Date();
                         if (bulkValidatorRecords.length > 0){
-                            bulkValidatorRecords.execute((err, result) => {
+                            bulkValidatorRecords.execute((err) => {
                                 if (err){
                                     console.log(err);
                                 }
@@ -577,7 +597,7 @@ Meteor.methods({
                         console.log("Validator records update time: "+((endVRTime-startVRTime)/1000)+"seconds.");
 
                         if (bulkVPHistory.length > 0){
-                            bulkVPHistory.execute((err, result) => {
+                            bulkVPHistory.execute((err) => {
                                 if (err){
                                     console.log(err);
                                 }
