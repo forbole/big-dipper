@@ -88,7 +88,7 @@ Meteor.methods({
                 }
                 catch(e){
                     console.log(url);
-                    console.log(e.response.content);
+                    console.log(e);
                 }
 
                 if ( Coin.StakingCoin.denom ) {
