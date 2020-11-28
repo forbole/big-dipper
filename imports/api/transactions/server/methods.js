@@ -5,32 +5,48 @@ import { Validators } from '../../validators/validators.js';
 
 const AddressLength = 40;
 
+getTransaction = async (hash) => {
+    hash = hash.toUpperCase();
+    console.log("Get tx: "+hash)
+    try {
+        let url = LCD+ '/txs/'+hash;
+        let response = HTTP.get(url);
+        let tx = JSON.parse(response.content);
+
+        console.log(hash);
+
+        tx.height = parseInt(tx.height);
+        tx.processed = true;
+
+        let txId = Transactions.upsert({txhash:hash}, {$set:tx});
+        if (txId){
+            return txId;
+        }
+        else return false;
+
+    }
+    catch(e) {
+        console.log("Getting transaction %o: %o", hash, e);
+    }
+}
+
 Meteor.methods({
-    'Transactions.index': function(hash){
+    'Transactions.updateTransactions': function(){
+        if (TXSYNCING)
+            return "Syncing transactions...";
         this.unblock();
-        hash = hash.toUpperCase();
-        console.log("Get tx: "+hash)
-        try {
-            let url = LCD+ '/txs/'+hash;
-            let response = HTTP.get(url);
-            let tx = JSON.parse(response.content);
-    
-            console.log(hash);
-    
-            tx.height = parseInt(tx.height);
-            tx.processed = true;
-    
-            let txId = Transactions.insert(tx);
-            if (txId){
-                return txId;
+        const transactions = Transactions.find({processed:false}).fetch();
+        try{
+            TXSYNCING = true;
+            for (let i in transactions){
+                // console.log(transactions[i]);
+                getTransaction(transactions[i].txhash)
             }
-            else return false;
-    
         }
-        catch(e) {
-            console.log(url);
-            console.log(e)
+        catch (e) {
+
         }
+        TXSYNCING = false;
     },
     'Transactions.findDelegation': function(address, height){
         // following cosmos-sdk/x/slashing/spec/06_events.md and cosmos-sdk/x/staking/spec/06_events.md

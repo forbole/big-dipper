@@ -6,6 +6,7 @@ import '/imports/startup/both';
 // import '/imports/api/blocks/blocks.js';
 
 SYNCING = false;
+TXSYNCING = false;
 COUNTMISSEDBLOCKS = false;
 COUNTMISSEDBLOCKSSTATS = false;
 RPC = Meteor.settings.remote.rpc;
@@ -39,6 +40,17 @@ updateBlock = () => {
         }
         else{
             console.log("updateBlocks: "+result);
+        }
+    })
+}
+
+updateTransactions = () => {
+    Meteor.call('Transactions.updateTransactions', (error, result) => {
+        if (error){
+            console.log("updateTransactions: "+error);
+        }
+        else{
+            console.log("updateTransactions: "+result);
         }
     })
 }
@@ -82,16 +94,6 @@ updateMissedBlocks = () => {
             console.log("missed blocks ok:" + result);
         }
     });
-/*
-    Meteor.call('ValidatorRecords.calculateMissedBlocksStats', (error, result) =>{
-        if (error){
-            console.log("missed blocks stats error: "+ error)
-        }
-        if (result){
-            console.log("missed blocks stats ok:" + result);
-        }
-    });
-*/
 }
 
 getDelegations = () => {
@@ -186,13 +188,14 @@ Meteor.startup(function(){
 
         timerBlocks = Meteor.setInterval(function(){
             updateBlock();
+            updateTransactions();
         }, Meteor.settings.params.blockInterval);
 
         timerChain = Meteor.setInterval(function(){
             updateChainStatus();
         }, Meteor.settings.params.statusInterval);
 
-        if (Meteor.settings.modules.gov) {
+        if (Meteor.settings.public.modules.gov) {
             timerProposal = Meteor.setInterval(function () {
                 getProposals();
             }, Meteor.settings.params.proposalInterval);
