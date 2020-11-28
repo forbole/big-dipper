@@ -192,7 +192,7 @@ Meteor.startup(function(){
             updateChainStatus();
         }, Meteor.settings.params.statusInterval);
 
-        if (Meteor.settings.params.proposalInterval >= 0) {
+        if (Meteor.settings.modules.gov) {
             timerProposal = Meteor.setInterval(function () {
                 getProposals();
             }, Meteor.settings.params.proposalInterval);
