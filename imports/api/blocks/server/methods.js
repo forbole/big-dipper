@@ -403,7 +403,8 @@ Meteor.methods({
                             analyticsData.voting_power += valData.voting_power
 
                             if (!valExist && valData.consensus_pubkey){
-
+                                
+                                // let val = getValidatorFromConsensusKey(validators, v);
                                 // get the validator hex address and other bech32 addresses.
 
                                 valData.delegator_address = Meteor.call('getDelegator', valData.operator_address);
