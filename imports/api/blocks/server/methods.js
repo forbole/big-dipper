@@ -88,7 +88,7 @@ getValidatorUptime = (validatorSet) => {
                 }
             }
             catch(e){
-                console.log("Getting signing info of %o: %o", validatorSet[key].consensus_pubkey, e);
+                console.log("Getting signing info of %o: %o", validatorSet[key].consensus_pubkey, e.response.statusCode);
             }
         }
         catch(e){
