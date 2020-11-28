@@ -83,10 +83,6 @@ getValidatorUptime = (validatorSet) => {
                 }
             }
             catch(e){
-                // if (!e.response.data){
-                //     validatorSet[key].tombstoned = false;
-                //     validatorSet[key].uptime = 0;
-                // }
                 console.log("Getting signing info of %o: %o", validatorSet[key].consensus_pubkey, e.response.statusCode);
             }
         }
@@ -94,6 +90,61 @@ getValidatorUptime = (validatorSet) => {
             console.log(e);
         }
     }
+}
+
+calculateVPDist = async () => {
+    console.log("===== calculate voting power distribution =====");
+    let activeValidators = Validators.find({status:2,jailed:false},{sort:{voting_power:-1}}).fetch();
+    let numTopTwenty = Math.ceil(activeValidators.length*0.2);
+    let numBottomEighty = activeValidators.length - numTopTwenty;
+
+    let topTwentyPower = 0;
+    let bottomEightyPower = 0;
+
+    let numTopThirtyFour = 0;
+    let numBottomSixtySix = 0;
+    let topThirtyFourPercent = 0;
+    let bottomSixtySixPercent = 0;
+
+
+
+    for (v in activeValidators){
+        if (v < numTopTwenty){
+            topTwentyPower += activeValidators[v].voting_power;
+        }
+        else{
+            bottomEightyPower += activeValidators[v].voting_power;
+        }
+
+
+        if (topThirtyFourPercent < 0.34){
+            topThirtyFourPercent += activeValidators[v].voting_power / analyticsData.voting_power;
+            numTopThirtyFour++;
+        }
+    }
+
+    bottomSixtySixPercent = 1 - topThirtyFourPercent;
+    numBottomSixtySix = activeValidators.length - numTopThirtyFour;
+
+    let vpDist = {
+        height: height,
+        numTopTwenty: numTopTwenty,
+        topTwentyPower: topTwentyPower,
+        numBottomEighty: numBottomEighty,
+        bottomEightyPower: bottomEightyPower,
+        numTopThirtyFour: numTopThirtyFour,
+        topThirtyFourPercent: topThirtyFourPercent,
+        numBottomSixtySix: numBottomSixtySix,
+        bottomSixtySixPercent: bottomSixtySixPercent,
+        numValidators: activeValidators.length,
+        totalVotingPower: analyticsData.voting_power,
+        blockTime: blockData.time,
+        createAt: new Date()
+    }
+
+    console.log(vpDist);
+
+    VPDistributions.insert(vpDist);
 }
 
 // var filtered = [1, 2, 3, 4, 5].filter(notContainedIn([1, 2, 3, 5]));
@@ -536,58 +587,7 @@ Meteor.methods({
                         // calculate voting power distribution every 60 blocks ~ 5mins
 
                         if (height % 60 == 1){
-                            console.log("===== calculate voting power distribution =====");
-                            let activeValidators = Validators.find({status:2,jailed:false},{sort:{voting_power:-1}}).fetch();
-                            let numTopTwenty = Math.ceil(activeValidators.length*0.2);
-                            let numBottomEighty = activeValidators.length - numTopTwenty;
-
-                            let topTwentyPower = 0;
-                            let bottomEightyPower = 0;
-
-                            let numTopThirtyFour = 0;
-                            let numBottomSixtySix = 0;
-                            let topThirtyFourPercent = 0;
-                            let bottomSixtySixPercent = 0;
-
-
-
-                            for (v in activeValidators){
-                                if (v < numTopTwenty){
-                                    topTwentyPower += activeValidators[v].voting_power;
-                                }
-                                else{
-                                    bottomEightyPower += activeValidators[v].voting_power;
-                                }
-
-
-                                if (topThirtyFourPercent < 0.34){
-                                    topThirtyFourPercent += activeValidators[v].voting_power / analyticsData.voting_power;
-                                    numTopThirtyFour++;
-                                }
-                            }
-
-                            bottomSixtySixPercent = 1 - topThirtyFourPercent;
-                            numBottomSixtySix = activeValidators.length - numTopThirtyFour;
-
-                            let vpDist = {
-                                height: height,
-                                numTopTwenty: numTopTwenty,
-                                topTwentyPower: topTwentyPower,
-                                numBottomEighty: numBottomEighty,
-                                bottomEightyPower: bottomEightyPower,
-                                numTopThirtyFour: numTopThirtyFour,
-                                topThirtyFourPercent: topThirtyFourPercent,
-                                numBottomSixtySix: numBottomSixtySix,
-                                bottomSixtySixPercent: bottomSixtySixPercent,
-                                numValidators: activeValidators.length,
-                                totalVotingPower: analyticsData.voting_power,
-                                blockTime: blockData.time,
-                                createAt: new Date()
-                            }
-
-                            console.log(vpDist);
-
-                            VPDistributions.insert(vpDist);
+                            calculateVPDist()
                         }
                     }
                 }
