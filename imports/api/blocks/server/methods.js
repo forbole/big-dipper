@@ -393,11 +393,9 @@ Meteor.methods({
                             let valData = validatorSet[v];
                             let valExist = Validators.findOne({consensus_pubkey:v});
                             let val = getValidatorFromConsensusKey(validators, v);
-                            valData.delegator_address = Meteor.call('getDelegator', valData.operator_address);
-
 
                             if (!valExist && valData.consensus_pubkey){
-                                // valData.delegator_address = Meteor.call('getDelegator', valData.operator_address);
+                                valData.delegator_address = Meteor.call('getDelegator', valData.operator_address);
 
                                 let pubkeyType = Meteor.settings.public.secp256k1?'tendermint/PubKeySecp256k1':'tendermint/PubKeyEd25519';
 
