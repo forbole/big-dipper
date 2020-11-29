@@ -302,7 +302,6 @@ Meteor.methods({
                             }
 
                             if (bulkTransactions.length > 0){
-                                // console.log(bulkValidators.length);
                                 bulkTransactions.execute((err, result) => {
                                     if (err){
                                         console.log(err);
@@ -487,7 +486,7 @@ Meteor.methods({
                                     console.log("Getting self delegation: %o, \nurl: %o", e.response, url)
                                 }
                             }
-                            bulkValidators.find({address: valData.address}).upsert().updateOne({$set:valData});
+                            bulkValidators.find({consensus_pubkey: valData.consensus_pubkey}).upsert().updateOne({$set:valData});
                         }
 
                         // store valdiators exist records
@@ -568,8 +567,7 @@ Meteor.methods({
                                 try {
                                     let profileUrl =  getValidatorProfileUrl(validator.description.identity)
                                     if (profileUrl) {
-                                        bulkValidators.find({address: validator.address}
-                                        ).upsert().updateOne({$set:{'profile_url':profileUrl}});
+                                        bulkValidators.find({address: validator.address}).upsert().updateOne({$set:{'profile_url':profileUrl}});
                                     }
                                 } catch (e) {
                                     console.log(profileUrl);
