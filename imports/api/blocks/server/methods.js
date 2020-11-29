@@ -255,6 +255,7 @@ Meteor.methods({
                 let analyticsData = {};
 
                 const bulkValidators = Validators.rawCollection().initializeUnorderedBulkOp();
+                const bulkUpdateLastSeen = Validators.rawCollection().initializeUnorderedBulkOp();
                 const bulkValidatorRecords = ValidatorRecords.rawCollection().initializeUnorderedBulkOp();
                 const bulkVPHistory = VotingPowerHistory.rawCollection().initializeUnorderedBulkOp();
                 const bulkTransactions = Transactions.rawCollection().initializeUnorderedBulkOp();
@@ -394,18 +395,20 @@ Meteor.methods({
                             let valExist = Validators.findOne({consensus_pubkey:v});
                             let val = getValidatorFromConsensusKey(validators, v);
                             valData.delegator_address = Meteor.call('getDelegator', valData.operator_address);
-                            let pubkeyType = Meteor.settings.public.secp256k1?'tendermint/PubKeySecp256k1':'tendermint/PubKeyEd25519';
 
-                            valData.pub_key = {
-                                type: pubkeyType,
-                                value: Meteor.call('bech32ToPubkey', valData.consensus_pubkey, pubkeyType)
-                            }
-
-                            valData.address = getAddress(valData.pub_key);
 
                             if (!valExist && valData.consensus_pubkey){
                                 // valData.delegator_address = Meteor.call('getDelegator', valData.operator_address);
 
+                                let pubkeyType = Meteor.settings.public.secp256k1?'tendermint/PubKeySecp256k1':'tendermint/PubKeyEd25519';
+
+                                valData.pub_key = {
+                                    type: pubkeyType,
+                                    value: Meteor.call('bech32ToPubkey', valData.consensus_pubkey, pubkeyType)
+                                }
+
+                                valData.address = getAddress(valData.pub_key);
+                                
                                 if (valData.description.identity)
                                     valData.profile_url =  getValidatorProfileUrl(valData.description.identity)
 
@@ -506,7 +509,7 @@ Meteor.methods({
                                     if (precommits[j] != null){
                                         if (address == precommits[j].validator_address){
                                             record.exists = true;
-                                            bulkValidators.find({address:precommits[j].validator_address}).upsert().updateOne({$set:{lastSeen:blockData.time}});
+                                            bulkUpdateLastSeen.find({address:precommits[j].validator_address}).upsert().updateOne({$set:{lastSeen:blockData.time}});
                                             precommits.splice(j,1);
                                             break;
                                         }
@@ -593,6 +596,13 @@ Meteor.methods({
                                 }
                                 if (result){
                                     // console.log(result);
+                                    bulkUpdateLastSeen.execute((err, result) => {
+                                        if (err){
+                                            console.log("Error while bulk update validator last seen: %o",err);
+                                        }
+                                        if (result){
+                                        }
+                                    })
                                 }
                             });
                         }
