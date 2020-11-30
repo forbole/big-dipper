@@ -45,7 +45,7 @@ getValidatorProfileUrl = (identity) => {
     }
 }
 
-getValidatorUptime = (validatorSet) => {
+getValidatorUptime = async (validatorSet) => {
 
     // get validator uptime
     let url = LCD+'/slashing/parameters';
@@ -480,7 +480,10 @@ Meteor.methods({
                                     console.log("Getting self delegation: %o, \nurl: %o", e.response, url)
                                 }
                             }
-                            bulkValidators.find({consensus_pubkey: valData.consensus_pubkey}).upsert().updateOne({$set:valData});
+
+                            if ((height == curr) || (height == until)){
+                                bulkValidators.find({consensus_pubkey: valData.consensus_pubkey}).upsert().updateOne({$set:valData});
+                            }
                         }
 
                         // store valdiators exist records
