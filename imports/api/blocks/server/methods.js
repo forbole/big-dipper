@@ -517,8 +517,8 @@ Meteor.methods({
                             }
                         }
 
-                        // update uptime every 15 blocks
-                        if (height % 15 == 0){
+                        // update uptime by the end of the crawl or update window
+                        if ((height % Meteor.settings.params.validatorUpdateWindow == 0) || (height == until)){
                             getValidatorUptime(validatorSet)
                         }
                         // check if there's any validator not in db 14400 blocks
