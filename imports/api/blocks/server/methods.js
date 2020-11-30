@@ -25,22 +25,6 @@ getRemovedValidators = (prevValidators, validators) => {
     return prevValidators;
 }
 
-getValidatorFromConsensusKey = (validators, consensusKey) => {
-    for (v in validators){
-        try {
-            let pubkeyType = Meteor.settings.public.secp256k1?'tendermint/PubKeySecp256k1':'tendermint/PubKeyEd25519';
-            let pubkey = Meteor.call('bech32ToPubkey', consensusKey, pubkeyType);
-            if (validators[v].pub_key.value == pubkey){
-                return validators[v]
-            }
-        }
-        catch (e){
-            console.log("Error converting pubkey: %o\n%o", consensusKey, e)
-        }
-    }
-    return null;
-}
-
 getValidatorProfileUrl = (identity) => {
     if (identity.length == 16){
         let response = HTTP.get(`https://keybase.io/_/api/1.0/user/lookup.json?key_suffix=${identity}&fields=pictures`)
@@ -343,12 +327,20 @@ Meteor.methods({
                                 result = JSON.parse(response.content);
                                 validators = [...validators, ...result.result.validators];
                             }
-                            while (result.result.count == 100 && result.result.total > 100)
+                            while (result.result.count == 100 && (result.result.count*page < result.result.total) )
                         }
                         catch(e){
                             console.log("Getting validator set at height %o: %o", height, e)
                         }
                         
+                        // temporarily add bech32 concensus keys to the validator set list
+                        let tempValidators = [];
+                        for (let v in validators){
+                            validators[v].consensus_pubkey = Meteor.call('pubkeyToBech32', validators[v].pub_key, Meteor.settings.public.bech32PrefixConsPub);
+                            tempValidators[validators[v].consensus_pubkey] = validators[v];
+                        }
+                        validators = tempValidators;
+
                         ValidatorSets.insert({
                             block_height: height,
                             validators: validators
@@ -392,9 +384,12 @@ Meteor.methods({
                         for (v in validatorSet){
                             let valData = validatorSet[v];
                             let valExist = Validators.findOne({consensus_pubkey:v});
-                            let val = getValidatorFromConsensusKey(validators, v);
+                            
 
                             if (!valExist && valData.consensus_pubkey){
+
+                                // get the validator hex address and other bech32 addresses.
+
                                 valData.delegator_address = Meteor.call('getDelegator', valData.operator_address);
 
                                 let pubkeyType = Meteor.settings.public.secp256k1?'tendermint/PubKeySecp256k1':'tendermint/PubKeyEd25519';
@@ -412,32 +407,33 @@ Meteor.methods({
                                 valData.accpub = Meteor.call('pubkeyToBech32', valData.pub_key, Meteor.settings.public.bech32PrefixAccPub);
                                 valData.operator_pubkey = Meteor.call('pubkeyToBech32', valData.pub_key, Meteor.settings.public.bech32PrefixValPub);
 
-                                if (val){
-                                    valData.voting_power = val?parseInt(val.voting_power):0;
-                                    valData.proposer_priority = val?parseInt(val.proposer_priority):0;
-                                    bulkVPHistory.insert({
-                                        address: valData.address,
-                                        prev_voting_power: 0,
-                                        voting_power: valData.voting_power,
-                                        type: 'add',
-                                        height: blockData.height,
-                                        block_time: blockData.time
-                                    });
-                                }
+                                // insert first power change history 
+
+                                valData.voting_power = validators[valData.consensus_pubkey]?parseInt(validators[valData.consensus_pubkey].voting_power):0;
+                                valData.proposer_priority = validators[valData.consensus_pubkey]?parseInt(validators[valData.consensus_pubkey].proposer_priority):0;
+                                bulkVPHistory.insert({
+                                    address: valData.address,
+                                    prev_voting_power: 0,
+                                    voting_power: valData.voting_power,
+                                    type: 'add',
+                                    height: blockData.height,
+                                    block_time: blockData.time
+                                });
+                                // }
                             }
                             else{
-                                if (val){
+                                if (validators[valData.consensus_pubkey]){
                                     // Validator exists and is in validator set, update voitng power.
                                     // If voting power is different from before, add voting power history
-                                    valData.voting_power = parseInt(val.voting_power);
-                                    valData.proposer_priority = parseInt(val.proposer_priority);
-                                    let prevVotingPower = VotingPowerHistory.findOne({address:val.address}, {height:-1, limit:1});
+                                    valData.voting_power = parseInt(validators[valData.consensus_pubkey].voting_power);
+                                    valData.proposer_priority = parseInt(validators[valData.consensus_pubkey].proposer_priority);
+                                    let prevVotingPower = VotingPowerHistory.findOne({address:valExist.address}, {height:-1, limit:1});
 
                                     if (prevVotingPower){
                                         if (prevVotingPower.voting_power != valData.voting_power){
                                             let changeType = (prevVotingPower.voting_power > valData.voting_power)?'down':'up';
                                             let changeData = {
-                                                address: val.address,
+                                                address: valExist.address,
                                                 prev_voting_power: prevVotingPower.voting_power,
                                                 voting_power: valData.voting_power,
                                                 type: changeType,
