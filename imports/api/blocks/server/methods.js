@@ -481,7 +481,7 @@ Meteor.methods({
                                 }
                             }
 
-                            if ((height == curr) || (height == until)){
+                            if ((height == curr) || (height == until) || (height % Meteor.settings.params.validatorUpdateWindow == 0)){
                                 bulkValidators.find({consensus_pubkey: valData.consensus_pubkey}).upsert().updateOne({$set:valData});
                             }
                         }
