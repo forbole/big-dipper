@@ -10,6 +10,7 @@
 * Remove plural denom
 * Simplify validator storing
 * Get data and show proposal based on enabled modules
+* Calculate validator uptime in async
 
 ## v0.39.x-3
 
