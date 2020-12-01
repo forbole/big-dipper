@@ -422,6 +422,8 @@ Meteor.methods({
                                 // }
                             }
                             else{
+                                valData.delegator_address = valExist.delegator_address;
+
                                 if (validators[valData.consensus_pubkey]){
                                     // Validator exists and is in validator set, update voitng power.
                                     // If voting power is different from before, add voting power history
@@ -522,39 +524,39 @@ Meteor.methods({
                             getValidatorUptime(validatorSet)
                         }
                         // check if there's any validator not in db 14400 blocks
-                        if (height % 14400 == 0){
-                            try {
-                                console.log('Checking all validators against db...')
-                                let dbValidators = {}
-                                Validators.find({}, {fields: {consensus_pubkey: 1, status: 1}}
-                                ).forEach((v) => dbValidators[v.consensus_pubkey] = v.status)
-                                Object.keys(validatorSet).forEach((conPubKey) => {
-                                    let validatorData = validatorSet[conPubKey];
-                                    // Active validators should have been updated in previous steps
-                                    if (validatorData.status === 2)
-                                        return
+                        // if (height % 14400 == 0){
+                        //     try {
+                        //         console.log('Checking all validators against db...')
+                        //         let dbValidators = {}
+                        //         Validators.find({}, {fields: {consensus_pubkey: 1, status: 1}}
+                        //         ).forEach((v) => dbValidators[v.consensus_pubkey] = v.status)
+                        //         Object.keys(validatorSet).forEach((conPubKey) => {
+                        //             let validatorData = validatorSet[conPubKey];
+                        //             // Active validators should have been updated in previous steps
+                        //             if (validatorData.status === 2)
+                        //                 return
 
-                                    if (dbValidators[conPubKey] == undefined) {
-                                        console.log(`validator with consensus_pubkey ${conPubKey} not in db`);
-                                        let pubkeyType = Meteor.settings.public.secp256k1?'tendermint/PubKeySecp256k1':'tendermint/PubKeyEd25519';
-                                        validatorData.pub_key = {
-                                            "type" : pubkeyType,
-                                            "value": Meteor.call('bech32ToPubkey', conPubKey, pubkeyType)
-                                        }
-                                        validatorData.address = getAddress(validatorData.pub_key);
-                                        validatorData.delegator_address = Meteor.call('getDelegator', validatorData.operator_address);
-                                        validatorData.accpub = Meteor.call('pubkeyToBech32', validatorData.pub_key, Meteor.settings.public.bech32PrefixAccPub);
-                                        validatorData.operator_pubkey = Meteor.call('pubkeyToBech32', validatorData.pub_key, Meteor.settings.public.bech32PrefixValPub);
-                                        console.log(JSON.stringify(validatorData))
-                                        bulkValidators.find({consensus_pubkey: conPubKey}).upsert().updateOne({$set:validatorData});
-                                    } else if (dbValidators[conPubKey] == 2) {
-                                        bulkValidators.find({consensus_pubkey: conPubKey}).upsert().updateOne({$set:validatorData});
-                                    }
-                                })
-                            } catch (e){
-                                console.log(e)
-                            }
-                        }
+                        //             if (dbValidators[conPubKey] == undefined) {
+                        //                 console.log(`validator with consensus_pubkey ${conPubKey} not in db`);
+                        //                 let pubkeyType = Meteor.settings.public.secp256k1?'tendermint/PubKeySecp256k1':'tendermint/PubKeyEd25519';
+                        //                 validatorData.pub_key = {
+                        //                     "type" : pubkeyType,
+                        //                     "value": Meteor.call('bech32ToPubkey', conPubKey, pubkeyType)
+                        //                 }
+                        //                 validatorData.address = getAddress(validatorData.pub_key);
+                        //                 validatorData.delegator_address = Meteor.call('getDelegator', validatorData.operator_address);
+                        //                 validatorData.accpub = Meteor.call('pubkeyToBech32', validatorData.pub_key, Meteor.settings.public.bech32PrefixAccPub);
+                        //                 validatorData.operator_pubkey = Meteor.call('pubkeyToBech32', validatorData.pub_key, Meteor.settings.public.bech32PrefixValPub);
+                        //                 console.log(JSON.stringify(validatorData))
+                        //                 bulkValidators.find({consensus_pubkey: conPubKey}).upsert().updateOne({$set:validatorData});
+                        //             } else if (dbValidators[conPubKey] == 2) {
+                        //                 bulkValidators.find({consensus_pubkey: conPubKey}).upsert().updateOne({$set:validatorData});
+                        //             }
+                        //         })
+                        //     } catch (e){
+                        //         console.log(e)
+                        //     }
+                        // }
 
                         // fetching keybase every 500 blocks
                         if (height == curr+1){ //if (height % 500 == 1){
