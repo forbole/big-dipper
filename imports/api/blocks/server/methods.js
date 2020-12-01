@@ -469,7 +469,7 @@ Meteor.methods({
                             }
 
                             // get self delegation every 30 blocks
-                            if (height == curr){ //if (height % 50 == 2){
+                            if (height == curr+1){ //if (height % 50 == 2){
                                 let url = LCD+`/staking/delegators/${valData.delegator_address}/delegations/${valData.operator_address}`
                                 try{
                                     let response = HTTP.get(url);
@@ -481,7 +481,7 @@ Meteor.methods({
                                 }
                             }
 
-                            if ((height == curr) || (height == until) || (height % Meteor.settings.params.validatorUpdateWindow == 0)){
+                            if ((height == curr+1) || (height == until) || (height % Meteor.settings.params.validatorUpdateWindow == 0)){
                                 bulkValidators.find({consensus_pubkey: valData.consensus_pubkey}).upsert().updateOne({$set:valData});
                             }
                         }
@@ -557,7 +557,7 @@ Meteor.methods({
                         }
 
                         // fetching keybase every 500 blocks
-                        if (height == curr){ //if (height % 500 == 1){
+                        if (height == curr+1){ //if (height % 500 == 1){
                             console.log('Fetching keybase...')
                             // eslint-disable-next-line no-loop-func
                             Validators.find({}).forEach((validator) => {
