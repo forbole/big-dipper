@@ -56,30 +56,52 @@ getValidatorUptime = async (validatorSet) => {
 
     Chain.upsert({chainId:Meteor.settings.public.chainId}, {$set:{"slashing.params":slashingParams}});
 
-    for(let key in validatorSet){
-        try{
-            try {
-                let url = LCD+'/slashing/validators/'+validatorSet[key].bech32ConsensusPubKey+'/signing_info';
-                let response = HTTP.get(url);
-                let signingInfo = JSON.parse(response.content).result;
-                if (signingInfo){
-                    let valData = validatorSet[key]
-                    valData.tombstoned = signingInfo.tombstoned
-                    valData.jailed_until = signingInfo.jailed_until
-                    valData.index_offset = signingInfo.index_offset
-                    valData.start_height = signingInfo.start_height
-                    valData.uptime = (slashingParams.signed_blocks_window - parseInt(signingInfo.missed_blocks_counter))/slashingParams.signed_blocks_window * 100;
-                    Validators.upsert({bech32ConsensusPubKey:validatorSet[key].bech32ConsensusPubKey}, {$set:valData})
+    try {
+        let url = LCD+'/slashing/signing_infos';
+        let response = HTTP.get(url);
+        let signingInfos = JSON.parse(response.content).result;
+        if (signingInfos){
+            for (let s in signingInfos){
+                for (let v in validatorSet){
+                    if (signingInfos[s].address == Meteor.call('getConsAddress', getAddress(validatorSet[v].consensus_pubkey))){
+                        let valData = validatorSet[v];
+                        valData.tombstoned = signingInfos[s].tombstoned?signingInfos[s].tombstoned:false
+                        valData.jailed_until = signingInfos[s].jailed_until?signingInfos[s].jailed_until:0
+                        valData.index_offset = signingInfos[s].index_offset?signingInfos[s].index_offset:0
+                        valData.start_height = signingInfos[s].start_height?signingInfos[s].start_height:0
+                        valData.uptime = signingInfos[s].missed_blocks_counter?((slashingParams.signed_blocks_window - parseInt(signingInfos[s].missed_blocks_counter))/slashingParams.signed_blocks_window * 100):100;
+                        Validators.update({operator_address:validatorSet[v].operator_address}, {$set:valData})
+                    }
                 }
             }
-            catch(e){
-                console.log("Getting signing info of %o: %o", validatorSet[key].bech32ConsensusPubKey, e.response.statusCode);
-            }
         }
-        catch(e){
-            console.log(e);
-        }
+        
     }
+    catch (e){
+        console.log("Error getting signing info: %o", e)
+    }
+
+    // for(let key in validatorSet){
+    //     try{
+    //         try {
+    //             if (signingInfo){
+    //                 let valData = validatorSet[key]
+    //                 valData.tombstoned = signingInfo.tombstoned
+    //                 valData.jailed_until = signingInfo.jailed_until
+    //                 valData.index_offset = signingInfo.index_offset
+    //                 valData.start_height = signingInfo.start_height
+    //                 valData.uptime = (slashingParams.signed_blocks_window - parseInt(signingInfo.missed_blocks_counter))/slashingParams.signed_blocks_window * 100;
+    //                 Validators.upsert({bech32ConsensusPubKey:validatorSet[key].bech32ConsensusPubKey}, {$set:valData})
+    //             }
+    //         }
+    //         catch(e){
+    //             console.log("Getting signing info of %o: %o", validatorSet[key].bech32ConsensusPubKey, e.response.statusCode);
+    //         }
+    //     }
+    //     catch(e){
+    //         console.log(e);
+    //     }
+    // }
 }
 
 calculateVPDist = async () => {
@@ -436,7 +458,7 @@ Meteor.methods({
                                 valData.bech32ConsensusPubKey = Meteor.call('pubkeyToBech32', valData.consensus_pubkey, Meteor.settings.public.bech32PrefixConsPub);
 
                                 // assign back to the validator set so that we can use it to find the uptime
-                                validatorSet[v].bech32ConsensusPubKey = valData.bech32ConsensusPubKey;
+                                // validatorSet[v].bech32ConsensusPubKey = valData.bech32ConsensusPubKey;
 
                                 if (valData.description.identity)
                                     valData.profile_url =  getValidatorProfileUrl(valData.description.identity)
@@ -464,6 +486,9 @@ Meteor.methods({
 
                                 // assign to valData for getting self delegation
                                 valData.delegator_address = valExist.delegator_address;
+
+                                // assign back to the validator set so that we can use it to find the uptime
+                                // validatorSet[v].bech32ConsensusPubKey = valExist.bech32ConsensusPubKey;
 
                                 if (validators[valData.consensus_pubkey.value]){
                                     // Validator exists and is in validator set, update voitng power.

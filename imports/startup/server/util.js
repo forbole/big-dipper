@@ -77,6 +77,10 @@ Meteor.methods({
         let address = bech32.decode(operatorAddr);
         return bech32.encode(Meteor.settings.public.bech32PrefixAccAddr, address.words);
     },
+    getConsAddress: function(address){
+        let buffer = Buffer.from(address, 'hex')
+        return bech32.encode(Meteor.settings.public.bech32PrefixConsAddr, bech32.toWords(buffer))
+    },
     getKeybaseTeamPic: function(keybaseUrl){
         let teamPage = HTTP.get(keybaseUrl);
         if (teamPage.statusCode == 200){
