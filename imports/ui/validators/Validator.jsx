@@ -210,7 +210,7 @@ export default class Validator extends Component{
                             <SentryBoundary>
                                 <CardBody>
                                     <Row>
-                                        <Col xs={8} className="label"><T numBlocks={Meteor.settings.public.uptimeWindow}>validators.lastNumBlocks</T></Col>
+                                        <Col xs={8} className="label"><T numBlocks={Meteor.settings.public.slashingWindow}>validators.lastNumBlocks</T></Col>
                                         <Col xs={4} className="value text-right">{this.props.validator.uptime}%</Col>
                                         <Col md={12} className="blocks-list">{this.state.records}</Col>
                                     </Row>
