@@ -516,13 +516,13 @@ Meteor.methods({
 
                             // get self delegation every 30 blocks
                             if (height == curr+1){ //if (height % 50 == 2){
-                                console.log("Get self delegation.")
                                 let url = LCD+`/staking/delegators/${valData.delegator_address}/delegations/${valData.operator_address}`
                                 try{
                                     console.log("Getting self delegation");
                                     let response = HTTP.get(url);
+                                    // console.log(url)
                                     let selfDelegation = JSON.parse(response.content).result;
-                                    valData.self_delegation = (selfDelegation && selfDelegation.shares)?parseFloat(selfDelegation.shares)/parseFloat(valData.delegator_shares):0;
+                                    valData.self_delegation = (selfDelegation.delegation && selfDelegation.delegation.shares)?parseFloat(selfDelegation.delegation.shares)/parseFloat(valData.delegator_shares):0;
                                 }
                                 catch(e){
                                     console.log("Getting self delegation: %o, \nurl: %o", e.response, url)
