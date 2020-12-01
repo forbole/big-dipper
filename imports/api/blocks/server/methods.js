@@ -549,8 +549,9 @@ Meteor.methods({
                                 try{
                                     console.log("Getting self delegation");
                                     let response = HTTP.get(url);
+                                    // console.log(url)
                                     let selfDelegation = JSON.parse(response.content).result;
-                                    valData.self_delegation = (selfDelegation && selfDelegation.shares)?parseFloat(selfDelegation.shares)/parseFloat(valData.delegator_shares):0;
+                                    valData.self_delegation = (selfDelegation.delegation && selfDelegation.delegation.shares)?parseFloat(selfDelegation.delegation.shares)/parseFloat(valData.delegator_shares):0;
                                 }
                                 catch(e){
                                     console.log("Getting self delegation: %o, \nurl: %o", e.response, url)
