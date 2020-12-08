@@ -109,35 +109,35 @@ export default class CDP extends Component {
             }
         }),
 
-            Meteor.call('cdp.getCDPPrice', 'bnb:usd', (error, result) => {
-                if (error) {
-                    console.warn(error);
-                    this.setState({
-                        loading: false
-                    })
-                }
+        Meteor.call('cdp.getCDPPrice', 'bnb:usd', (error, result) => {
+            if (error) {
+                console.warn(error);
+                this.setState({
+                    loading: false
+                })
+            }
 
-                if (result) {
-                    this.setState({
-                        BNB_USD: result
-                    })
-                }
-            }),
-            Meteor.call('cdp.getCDPPrice', 'bnb:usd:30', (error, result) => {
-                if (error) {
-                    console.warn(error);
-                    this.setState({
-                        loading: false
-                    })
-                }
+            if (result) {
+                this.setState({
+                    BNB_USD: result
+                })
+            }
+        }),
+        Meteor.call('cdp.getCDPPrice', 'bnb:usd:30', (error, result) => {
+            if (error) {
+                console.warn(error);
+                this.setState({
+                    loading: false
+                })
+            }
 
-                if (result) {
-                    this.setState({
-                        BNB_USD_30: result
-                    })
-                }
-            }),
-            this.updateCDP();
+            if (result) {
+                this.setState({
+                    BNB_USD_30: result
+                })
+            }
+        }),
+        this.updateCDP();
         this.updateDeposits();
         this.getUserBalances();
 
@@ -288,6 +288,7 @@ export default class CDP extends Component {
                         collateral={this.state.cdpParams ? this.state.cdpParams.collateral_params[0].denom : null}
                         price={this.state.BNB_USD ? this.state.BNB_USD : null}
                         bnbTotalValue={this.state.total ? this.findTotalValue(this.state.total, 'bnb') : null}
+                        accountTokensAvailable={this.state.total}
                     />
                 </div>
             </div >
