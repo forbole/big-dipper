@@ -43,7 +43,7 @@ export default class Proposal extends Component {
             proposalValid: false,
             orderDir: -1,
             breakDownSelection: 'Bar',
-            quorum: props.chain && props.chain.gov && props.chain.gov.tallyParams && props.chain.gov.tallyParams.quorum ? this.state.quorum : 0.40
+            quorum: this.props && this.props.chainStates ? this.props.chainStates.tallyParams.quorum : 0.40
         }
 
         if (Meteor.isServer) {
