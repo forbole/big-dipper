@@ -27,6 +27,16 @@ const maxHeightModifier = {
     }
 }
 
+const coinSelectionModifier = {
+    setMaxHeight: {
+        enabled: true,
+        fn: (data) => {
+            return { ...data, styles: { ...data.styles, 'overflowY': 'auto', maxHeight: '30vh' } };
+        }
+    }
+}
+
+
 const T = i18n.createComponent();
 let coinMaxAvailable = 0;
 
@@ -275,6 +285,7 @@ class LedgerButton extends Component {
             collateral: 0,
             debt: 0,
             collateralAmount: 0,
+            collateralDenom: '',
             debtAmount: 0,
 
 
@@ -438,99 +449,99 @@ class LedgerButton extends Component {
     createMessage = (callback) => {
         let txMsg
         switch (this.state.actionType) {
-            case Types.DELEGATE:
-                txMsg = Ledger.createDelegate(
-                    this.getTxContext(),
-                    this.props.validator.operator_address,
-                    this.state.delegateAmount.amount)
-                break;
-            case Types.REDELEGATE:
-                txMsg = Ledger.createRedelegate(
-                    this.getTxContext(),
-                    this.props.validator.operator_address,
-                    this.state.targetValidator.operator_address,
-                    this.state.delegateAmount.amount)
-                break;
-            case Types.UNDELEGATE:
-                txMsg = Ledger.createUndelegate(
-                    this.getTxContext(),
-                    this.props.validator.operator_address,
-                    this.state.delegateAmount.amount);
-                break;
-            case Types.SEND:
-                txMsg = Ledger.createTransfer(
-                    this.getTxContext(),
-                    this.state.transferTarget,
-                    this.state.transferAmount.amount);
-                break;
-            case Types.SUBMITPROPOSAL:
-                txMsg = Ledger.createSubmitProposal(
-                    this.getTxContext(),
-                    this.state.proposalTitle,
-                    this.state.proposalDescription,
-                    this.state.depositAmount.amount);
-                break;
-            case Types.VOTE:
-                txMsg = Ledger.createVote(
-                    this.getTxContext(),
-                    this.props.proposalId,
-                    this.state.voteOption);
-                break;
-            case Types.DEPOSIT:
-                txMsg = Ledger.createDeposit(
-                    this.getTxContext(),
-                    this.props.proposalId,
-                    this.state.depositAmount.amount);
-                break;
-            case Types.CLAIMSWAP:
-                txMsg = Ledger.claimSwap(
-                    this.getTxContext(),
-                    this.state.swapID,
-                    this.state.swapRandomNumber);
-                break;
-            case Types.CREATECDP:
-                txMsg = Ledger.createCDP(
-                    this.getTxContext(),
-                    this.state.collateral,
-                    this.state.debt);
-                break;
-            case Types.DEPOSITCDP:
-                txMsg = Ledger.depositCDP(
-                    this.getTxContext(),
-                    this.state.collateral,
-                    this.state.collateralDenom,
-                    this.state.cdpOwner);
-                break;
-            case Types.WITHDRAWCDP:
-                txMsg = Ledger.withdrawCDP(
-                    this.getTxContext(),
-                    this.state.collateral,
-                    this.state.collateralDenom,
-                    this.state.cdpOwner);
-                break;
-            case Types.DRAWDEBT:
-                txMsg = Ledger.drawDebt(
-                    this.getTxContext(),
-                    this.state.draw,
-                    this.state.collateralDenom);
-                break;
-            case Types.REPAYDEBT:
-                txMsg = Ledger.repayDebt(
-                    this.getTxContext(),
-                    this.state.debt,
-                    this.state.collateralDenom);
-                break;
-            case Types.CLAIMINCENTIVEREWARDS:
-                txMsg = Ledger.claimIncentiveRewards(
-                    this.getTxContext(),
-                    this.state.denom);
-                break;
-            case Types.AUCTIONBID:
-                txMsg = Ledger.auctionBid(
-                    this.getTxContext(),
-                    this.state.auctionID,
-                    this.state.bid);
-                break;
+        case Types.DELEGATE:
+            txMsg = Ledger.createDelegate(
+                this.getTxContext(),
+                this.props.validator.operator_address,
+                this.state.delegateAmount.amount)
+            break;
+        case Types.REDELEGATE:
+            txMsg = Ledger.createRedelegate(
+                this.getTxContext(),
+                this.props.validator.operator_address,
+                this.state.targetValidator.operator_address,
+                this.state.delegateAmount.amount)
+            break;
+        case Types.UNDELEGATE:
+            txMsg = Ledger.createUndelegate(
+                this.getTxContext(),
+                this.props.validator.operator_address,
+                this.state.delegateAmount.amount);
+            break;
+        case Types.SEND:
+            txMsg = Ledger.createTransfer(
+                this.getTxContext(),
+                this.state.transferTarget,
+                this.state.transferAmount.amount);
+            break;
+        case Types.SUBMITPROPOSAL:
+            txMsg = Ledger.createSubmitProposal(
+                this.getTxContext(),
+                this.state.proposalTitle,
+                this.state.proposalDescription,
+                this.state.depositAmount.amount);
+            break;
+        case Types.VOTE:
+            txMsg = Ledger.createVote(
+                this.getTxContext(),
+                this.props.proposalId,
+                this.state.voteOption);
+            break;
+        case Types.DEPOSIT:
+            txMsg = Ledger.createDeposit(
+                this.getTxContext(),
+                this.props.proposalId,
+                this.state.depositAmount.amount);
+            break;
+        case Types.CLAIMSWAP:
+            txMsg = Ledger.claimSwap(
+                this.getTxContext(),
+                this.state.swapID,
+                this.state.swapRandomNumber);
+            break;
+        case Types.CREATECDP:
+            txMsg = Ledger.createCDP(
+                this.getTxContext(),
+                this.state.collateral,
+                this.state.debt);
+            break;
+        case Types.DEPOSITCDP:
+            txMsg = Ledger.depositCDP(
+                this.getTxContext(),
+                this.state.collateral,
+                this.state.collateralDenom,
+                this.state.cdpOwner);
+            break;
+        case Types.WITHDRAWCDP:
+            txMsg = Ledger.withdrawCDP(
+                this.getTxContext(),
+                this.state.collateral,
+                this.state.collateralDenom,
+                this.state.cdpOwner);
+            break;
+        case Types.DRAWDEBT:
+            txMsg = Ledger.drawDebt(
+                this.getTxContext(),
+                this.state.draw,
+                this.state.collateralDenom);
+            break;
+        case Types.REPAYDEBT:
+            txMsg = Ledger.repayDebt(
+                this.getTxContext(),
+                this.state.debt,
+                this.state.collateralDenom);
+            break;
+        case Types.CLAIMINCENTIVEREWARDS:
+            txMsg = Ledger.claimIncentiveRewards(
+                this.getTxContext(),
+                this.state.denom);
+            break;
+        case Types.AUCTIONBID:
+            txMsg = Ledger.auctionBid(
+                this.getTxContext(),
+                this.state.auctionID,
+                this.state.bid);
+            break;
 
         }
         callback(txMsg, this.getSimulateBody(txMsg))
@@ -549,9 +560,12 @@ class LedgerButton extends Component {
     simulate = () => {
         if (this.state.simulating) return
         this.initStateOnLoad('simulating')
+        console.log(this.initStateOnLoad('simulating'))
         try {
             this.createMessage(this.runSimulatation);
+            console.log(this.createMessage(this.runSimulatation))
         } catch (e) {
+            console.log(e)
             this.setStateOnError('simulating', e.message)
         }
     }
@@ -563,6 +577,7 @@ class LedgerButton extends Component {
                 if (res === '0') {
                     res = '300000'
                 }
+                console.log(Ledger.applyGas(txMsg, res, Meteor.settings.public.gasPrice, Coin.StakingCoin.denom))
                 Ledger.applyGas(txMsg, res, Meteor.settings.public.gasPrice, Coin.StakingCoin.denom);
                 this.setStateOnSuccess('simulating', {
                     gasEstimate: res,
@@ -583,6 +598,7 @@ class LedgerButton extends Component {
             let txMsg = this.state.txMsg;
             const txContext = this.getTxContext();
             const bytesToSign = Ledger.getBytesToSign(txMsg, txContext);
+            console.log(bytesToSign)
             this.ledger.sign(bytesToSign).then((sig) => {
                 try {
                     Ledger.applySignature(txMsg, txContext, sig);
@@ -610,19 +626,22 @@ class LedgerButton extends Component {
         let target = e.currentTarget;
         let dataset = target.dataset;
         let value;
-
+               
         switch (dataset.type) {
-            case 'validator':
-                value = { moniker: dataset.moniker, operator_address: dataset.address }
-                break;
-            case 'coin':
-                value = new Coin(target.value, target.nextSibling.innerText)
-                break;
-            case 'hash':
-                value = target.value.toUpperCase()
-                break;
-            default:
-                value = target.value;
+        case 'validator':
+            value = { moniker: dataset.moniker, operator_address: dataset.address }
+            break;
+        case 'coin':
+            value = new Coin(target.value, target.nextSibling.innerText)
+            break;
+        case 'hash':
+            value = target.value.toUpperCase()
+            break;
+        case 'tokenSelection':
+            value = target.innerText;
+            break;
+        default:
+            value = target.value;
         }
         this.setState({ [target.name]: value })
     }
@@ -809,23 +828,23 @@ class DelegationButtons extends LedgerButton {
         let moniker = this.props.validator.description && this.props.validator.description.moniker;
         let validatorAddress = <span className='ellipic'>this.props.validator.operator_address</span>;
         switch (this.state.actionType) {
-            case Types.DELEGATE:
-                action = 'Delegate to';
-                //maxAmount = this.state.currentUser.availableCoin;
-                maxAmount = getTotalValue(this.state.currentUser.coinList, Meteor.settings.public.bondDenom);
-                availableStatement = 'Available balance:'
-                break;
-            case Types.REDELEGATE:
-                action = 'Redelegate from';
-                target = this.getValidatorOptions();
-                maxAmount = this.getDelegatedToken(this.props.currentDelegation);
-                availableStatement = 'your delegated tokens:'
-                break;
-            case Types.UNDELEGATE:
-                action = 'Undelegate from';
-                maxAmount = this.getDelegatedToken(this.props.currentDelegation);
-                availableStatement = 'your delegated tokens:'
-                break;
+        case Types.DELEGATE:
+            action = 'Delegate to';
+            //maxAmount = this.state.currentUser.availableCoin;
+            maxAmount = getTotalValue(this.state.currentUser.coinList, Meteor.settings.public.bondDenom);
+            availableStatement = 'Available balance:'
+            break;
+        case Types.REDELEGATE:
+            action = 'Redelegate from';
+            target = this.getValidatorOptions();
+            maxAmount = this.getDelegatedToken(this.props.currentDelegation);
+            availableStatement = 'your delegated tokens:'
+            break;
+        case Types.UNDELEGATE:
+            action = 'Undelegate from';
+            maxAmount = this.getDelegatedToken(this.props.currentDelegation);
+            availableStatement = 'your delegated tokens:'
+            break;
         }
         return <TabPane tabId="2" className="modal-body">
             <h3 className="text-center pb-4 pt-3">{action} {moniker ? moniker : validatorAddress} {target ? 'to' : ''} {target}</h3>
@@ -863,12 +882,12 @@ class DelegationButtons extends LedgerButton {
 
     getConfirmationMessage = () => {
         switch (this.state.actionType) {
-            case Types.DELEGATE:
-                return <span>You are going to <span className='action'>delegate</span> <Amount coin={this.state.delegateAmount} /> to <AccountTooltip address={this.props.validator.operator_address} sync /> with <Fee gas={this.state.gasEstimate} />.</span>
-            case Types.REDELEGATE:
-                return <span>You are going to <span className='action'>redelegate</span> <Amount coin={this.state.delegateAmount} /> from <AccountTooltip address={this.props.validator.operator_address} sync /> to <AccountTooltip address={this.state.targetValidator && this.state.targetValidator.operator_address} sync /> with <Fee gas={this.state.gasEstimate} />.</span>
-            case Types.UNDELEGATE:
-                return <span>You are going to <span className='action'>undelegate</span> <Amount coin={this.state.delegateAmount} /> from <AccountTooltip address={this.props.validator.operator_address} sync /> with <Fee gas={this.state.gasEstimate} />.</span>
+        case Types.DELEGATE:
+            return <span>You are going to <span className='action'>delegate</span> <Amount coin={this.state.delegateAmount} /> to <AccountTooltip address={this.props.validator.operator_address} sync /> with <Fee gas={this.state.gasEstimate} />.</span>
+        case Types.REDELEGATE:
+            return <span>You are going to <span className='action'>redelegate</span> <Amount coin={this.state.delegateAmount} /> from <AccountTooltip address={this.props.validator.operator_address} sync /> to <AccountTooltip address={this.state.targetValidator && this.state.targetValidator.operator_address} sync /> with <Fee gas={this.state.gasEstimate} />.</span>
+        case Types.UNDELEGATE:
+            return <span>You are going to <span className='action'>undelegate</span> <Amount coin={this.state.delegateAmount} /> from <AccountTooltip address={this.props.validator.operator_address} sync /> with <Fee gas={this.state.gasEstimate} />.</span>
         }
     }
 
@@ -1176,38 +1195,38 @@ class ProposalActionButtons extends LedgerButton {
         let inputs;
         let title;
         switch (this.state.actionType) {
-            case Types.VOTE:
-                title = `Vote on Proposal ${this.props.proposalId}`
-                inputs = (<FormGroup>
-                    <Label for="proposalTitle" className="mb-n4"><T>proposals.vote</T></Label>
-                    <InputGroup className="modal-for-ledger py-n5">
-                        <Input type="select" name="voteOption" onChange={this.handleInputChange} defaultValue='' placeholder="Vote" className="modal-for-ledger">
-                            <option value='' disabled>Vote Option</option>
-                            <option value='Yes'>Yes</option>
-                            <option value='Abstain'>Abstain</option>
-                            <option value='No'>No</option>
-                            <option value='NoWithVeto'>No with veto</option>
-                        </Input>
-                    </InputGroup>
-                </FormGroup>
-                )
-                break;
-            case Types.DEPOSIT:
-                title = (<div>Deposit <img src="/img/kava-symbol.png" className="symbol-img mb-1" /> KAVA to Proposal {this.props.proposalId} </div>)
-                inputs = (<FormGroup>
-                    <Label for="depositAmount" className="mb-n4"><T>proposals.amount</T></Label>
-                    <FormText className="coin-available mb-n5 float-right">Max {(new Coin(coinMaxAvailable)).toString(4)}</FormText>
-                    <InputGroup className="modal-for-ledger py-n5">
-                        <Input name="depositAmount" onChange={this.handleInputChange}
-                            data-type='coin' placeholder="Amount"
-                            min={Coin.MinStake} max={coinMaxAvailable} type="number"
-                            invalid={this.state.depositAmount != null && !isBetween(this.state.depositAmount, 1, coinMaxAvailable)} className="modal-for-ledger" />
-                        <InputGroupAddon addonType="append">
-                            <InputGroupText className=" modal-for-ledger font-weight-bold">{Coin.StakingCoin.displayName}</InputGroupText>
-                        </InputGroupAddon>
-                    </InputGroup>
-                </FormGroup>)
-                break;
+        case Types.VOTE:
+            title = `Vote on Proposal ${this.props.proposalId}`
+            inputs = (<FormGroup>
+                <Label for="proposalTitle" className="mb-n4"><T>proposals.vote</T></Label>
+                <InputGroup className="modal-for-ledger py-n5">
+                    <Input type="select" name="voteOption" onChange={this.handleInputChange} defaultValue='' placeholder="Vote" className="modal-for-ledger">
+                        <option value='' disabled>Vote Option</option>
+                        <option value='Yes'>Yes</option>
+                        <option value='Abstain'>Abstain</option>
+                        <option value='No'>No</option>
+                        <option value='NoWithVeto'>No with veto</option>
+                    </Input>
+                </InputGroup>
+            </FormGroup>
+            )
+            break;
+        case Types.DEPOSIT:
+            title = (<div>Deposit <img src="/img/kava-symbol.png" className="symbol-img mb-1" /> KAVA to Proposal {this.props.proposalId} </div>)
+            inputs = (<FormGroup>
+                <Label for="depositAmount" className="mb-n4"><T>proposals.amount</T></Label>
+                <FormText className="coin-available mb-n5 float-right">Max {(new Coin(coinMaxAvailable)).toString(4)}</FormText>
+                <InputGroup className="modal-for-ledger py-n5">
+                    <Input name="depositAmount" onChange={this.handleInputChange}
+                        data-type='coin' placeholder="Amount"
+                        min={Coin.MinStake} max={coinMaxAvailable} type="number"
+                        invalid={this.state.depositAmount != null && !isBetween(this.state.depositAmount, 1, coinMaxAvailable)} className="modal-for-ledger" />
+                    <InputGroupAddon addonType="append">
+                        <InputGroupText className=" modal-for-ledger font-weight-bold">{Coin.StakingCoin.displayName}</InputGroupText>
+                    </InputGroupAddon>
+                </InputGroup>
+            </FormGroup>)
+            break;
         }
         return <TabPane tabId="2" className="modal-body">
             <h3 className="text-center pb-4 pt-3">{title}</h3>
@@ -1254,16 +1273,16 @@ class ProposalActionButtons extends LedgerButton {
 
     getConfirmationMessage = () => {
         switch (this.state.actionType) {
-            case Types.VOTE:
-                return <span>You are <span className='action'>voting</span> <strong>{this.state.voteOption}</strong> on proposal {this.props.proposalId}
-                    <span> with <Fee gas={this.state.gasEstimate} />.</span>
-                </span>
-                break;
-            case Types.DEPOSIT:
-                return <span>You are going to <span className='action'>deposit</span> <Amount coin={this.state.depositAmount} /> to proposal {this.props.proposalId}
-                    <span> with <Fee gas={this.state.gasEstimate} />.</span>
-                </span>
-                break;
+        case Types.VOTE:
+            return <span>You are <span className='action'>voting</span> <strong>{this.state.voteOption}</strong> on proposal {this.props.proposalId}
+                <span> with <Fee gas={this.state.gasEstimate} />.</span>
+            </span>
+            break;
+        case Types.DEPOSIT:
+            return <span>You are going to <span className='action'>deposit</span> <Amount coin={this.state.depositAmount} /> to proposal {this.props.proposalId}
+                <span> with <Fee gas={this.state.gasEstimate} />.</span>
+            </span>
+            break;
         }
     }
 
@@ -1362,6 +1381,7 @@ class CreateCDPButton extends LedgerButton {
             collateral: 0,
             debt: 0,
             maxAmount: props.bnbTotalValue / Meteor.settings.public.coins[1].fraction,
+            collateralDenom: 'Select a Token'
         }
     }
 
@@ -1386,24 +1406,53 @@ class CreateCDPButton extends LedgerButton {
             })
         });
     }
+    
+
+    tokenDropdown = () => {
+        if (this.props.accountTokensAvailable){
+            return (
+                <UncontrolledDropdown >
+                    <DropdownToggle caret style={{padding: "0.3rem", textTransform: "none"}}>
+                        {this.state.collateralDenom}
+                    </DropdownToggle>
+                    <DropdownMenu modifiers={coinSelectionModifier}>
+                        { this.props.accountTokensAvailable.map((item, index) => {
+                            return(
+                                <>
+                                    <DropdownItem name='collateralDenom' data-type='tokenSelection' onClick={this.handleInputChange}>{item.denom === 'ukava' ? 'KAVA' : item.denom.toUpperCase()}</DropdownItem>
+                             <DropdownItem divider />
+                            </>
+                            )
+                        })}
+                    </DropdownMenu>
+                </UncontrolledDropdown>
+            );
+        }
+         
+    }
+
+    iconChange = () => {
+        <img src={`/img/${this.state.collateralDenom}-symbol.svg`} className="symbol-img" /> 
+    }
 
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         return <TabPane tabId="2" className="modal-body">
-            <h3 className="text-center pb-4 pt-3">Create CDP with <img src="/img/bnb-symbol.svg" className="symbol-img" /> BNB</h3>
+            <h3 className="text-center pb-4 pt-3">Create CDP</h3>
             <FormGroup>
                 <Label for="collateral" className="mb-n4"><T>cdp.collateral</T></Label>
                 <FormText className="coin-available mb-n5 float-right">Max {new Coin(this.state.maxAmount, this.props.collateral).convertToString()}</FormText>
                 <InputGroup className="modal-for-ledger py-n5">
-                    <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="modal-for-ledger"><img src="/img/bnb-symbol.svg" className="symbol-img" /> </InputGroupText>
-                    </InputGroupAddon>
-
+                    {this.state.collateralDenom != 'Select a Token' ? 
+                        <InputGroupAddon addonType="prepend">
+                            <InputGroupText className="modal-for-ledger"> <img src={`/img/${this.state.collateralDenom}-symbol.svg`} className="symbol-img" /> </InputGroupText>
+                        </InputGroupAddon>
+                        : null}
                     <Input placeholder="Collateral Amount" name="collateral" value={this.state.collateral} onChange={this.handleChange} type="number"
                         min={Coin.MinStake} max={this.state.maxAmount}
                         invalid={this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount)} className="modal-for-ledger " />
                     <InputGroupAddon addonType="append">
-                        <InputGroupText className=" modal-for-ledger font-weight-bold">BNB</InputGroupText>
+                        {this.tokenDropdown()}
                     </InputGroupAddon>
                 </InputGroup>
             </FormGroup>
@@ -1475,6 +1524,7 @@ class CreateCDPButton extends LedgerButton {
 
     getPath = () => {
         let meta = TypeMeta[this.state.actionType];
+        console.log(meta)
         return `${meta.pathPreFix}`;
     }
 
