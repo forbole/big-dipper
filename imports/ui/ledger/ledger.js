@@ -213,7 +213,7 @@ export class Ledger {
             msgs: tx.value.msg,
             sequence: txContext.sequence.toString(),
         };
-
+        console.log(JSON.stringify(canonicalizeJson(txFieldsToSign)))
         return JSON.stringify(canonicalizeJson(txFieldsToSign));
     }
 
@@ -233,6 +233,7 @@ export class Ledger {
             }],
             gas: gas.toString(),
         };
+        console.log(unsignedTx)
         return unsignedTx;
     }
 
@@ -266,6 +267,7 @@ export class Ledger {
                 },
             },
         ];
+        console.log(tmpCopy)
         return tmpCopy;
     }
 
@@ -297,6 +299,7 @@ export class Ledger {
                 }],
             },
         };
+        console.log(txSkeleton)
         //return Ledger.applyGas(txSkeleton, DEFAULT_GAS);
         return txSkeleton
     }
@@ -482,14 +485,14 @@ export class Ledger {
             value: {
                 collateral: {
                     amount: (parseFloat(collateral) * Meteor.settings.public.coins[1].fraction).toString(),
-                    denom: 'bnb'
+                    denom: 'xrpb'
                 },
+                collateral_type: 'xrpb-a',
                 principal: {
                     amount: (parseFloat(debt) * Meteor.settings.public.coins[5].fraction).toString(),
                     denom: 'usdx'
                 },
                 sender: txContext.bech32,
-
             },
         };
         return Ledger.createSkeleton(txContext, [txMsg]);
