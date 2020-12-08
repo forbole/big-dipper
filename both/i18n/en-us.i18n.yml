@@ -302,7 +302,7 @@ auction:
     auctions: 'Auctions '
     auctionID: 'Auction ID'
     bidValue: 'Bid Value'
-    lootValue: 'Lot Value'
+    lotValue: 'Lot Value'
     bidder: 'Bidder '
     bidsReceived: 'Received Bid(s)'
     endTime: 'Bid End Time'
