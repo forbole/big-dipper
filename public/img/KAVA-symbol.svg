@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="233.38" height="244.56" viewBox="0 0 233.38 244.56">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        isolation: isolate;
+      }
+
+      .cls-2 {
+        fill: #d24d34;
+      }
+
+      .cls-2, .cls-6 {
+        fill-rule: evenodd;
+      }
+
+      .cls-3 {
+        fill: #fcd3cd;
+      }
+
+      .cls-4 {
+        fill: #b02e25;
+      }
+
+      .cls-5 {
+        fill: #ff564f;
+      }
+
+      .cls-6, .cls-7 {
+        fill: #fff;
+      }
+
+      .cls-6 {
+        opacity: 0.4;
+        mix-blend-mode: soft-light;
+      }
+    </style>
+  </defs>
+  <g class="cls-1">
+    <g id="Layer_2" data-name="Layer 2">
+      <g id="Layer_1-2" data-name="Layer 1">
+        <g>
+          <path class="cls-2" d="M231.62,132.61c0,61.83-51.85,112-115.81,112S0,194.44,0,132.61v-19C0,51.8,51.85,1.68,115.81,1.68s115.81,50.12,115.81,112Z"/>
+          <ellipse class="cls-3" cx="116.7" cy="112.79" rx="116.68" ry="112.79"/>
+          <ellipse class="cls-4" cx="115.82" cy="113.76" rx="101.37" ry="97.99"/>
+          <ellipse class="cls-5" cx="115.82" cy="117.32" rx="95.77" ry="95.8"/>
+          <path class="cls-6" d="M14.45,113.76c0-54.12,45.39-98,101.37-98s101.37,43.87,101.37,98l-26.44-8.65a239.29,239.29,0,0,0-146.4-.78Z"/>
+          <g>
+            <rect class="cls-7" x="75.52" y="69.84" width="16.93" height="97"/>
+            <polygon class="cls-7" points="138.73 166.84 101.65 118.34 138.73 69.84 159.97 69.84 123.37 118.34 159.97 166.84 138.73 166.84"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
