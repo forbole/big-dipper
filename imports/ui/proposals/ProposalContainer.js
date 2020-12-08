@@ -2,6 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Proposals } from '/imports/api/proposals/proposals.js';
 import { Chain } from '/imports/api/chain/chain.js';
+import { ChainStates } from '/imports/api/chain/chain.js';
+
 import Proposal from './Proposal.jsx';
 
 export default ProposalContainer = withTracker((props) => {
@@ -10,7 +12,7 @@ export default ProposalContainer = withTracker((props) => {
         proposalId = parseInt(props.match.params.id);
     }
 
-    let chainHandle, proposalHandle, proposalListHandle, proposal, proposalCount, chain, proposalExist;
+    let chainHandle, proposalHandle, proposalListHandle, proposal, proposalCount, chain, chainStates, proposalExist;
     let loading = true;
 
     if (Meteor.isClient){
@@ -24,7 +26,7 @@ export default ProposalContainer = withTracker((props) => {
         proposal = Proposals.findOne({proposalId:proposalId});
         proposalCount = Proposals.find({}).count();
         chain = Chain.findOne({chainId:Meteor.settings.public.chainId});
-
+        chainStates = ChainStates.findOne({})
         if (Meteor.isServer){
             // loading = false;
             proposalExist = !!proposal;
@@ -39,6 +41,7 @@ export default ProposalContainer = withTracker((props) => {
         proposalExist,
         proposal: proposalExist ? proposal : {},
         chain: proposalExist ? chain : {},
+        chainStates: chainStates,
         proposalCount: proposalExist? proposalCount: 0
     };
 })(Proposal);
