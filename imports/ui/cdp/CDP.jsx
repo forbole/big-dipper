@@ -289,6 +289,7 @@ export default class CDP extends Component {
                         price={this.state.BNB_USD ? this.state.BNB_USD : null}
                         bnbTotalValue={this.state.total ? this.findTotalValue(this.state.total, 'bnb') : null}
                         accountTokensAvailable={this.state.total}
+                        CDPParameters={this.state.cdpParams ? this.state.cdpParams : null}
                     />
                 </div>
             </div >

@@ -478,16 +478,20 @@ export class Ledger {
     static createCDP(
         txContext,
         collateral,
-        debt
+        debt,
+        denom,
+        denomFraction,
+        collateralType,
+        
     ) {
         const txMsg = {
             type: 'cdp/MsgCreateCDP',
             value: {
                 collateral: {
-                    amount: (parseFloat(collateral) * Meteor.settings.public.coins[1].fraction).toString(),
-                    denom: 'xrpb'
+                    amount: (parseFloat(collateral) * (10 ** denomFraction)).toString(),
+                    denom: denom
                 },
-                collateral_type: 'xrpb-a',
+                collateral_type: collateralType,
                 principal: {
                     amount: (parseFloat(debt) * Meteor.settings.public.coins[5].fraction).toString(),
                     denom: 'usdx'
