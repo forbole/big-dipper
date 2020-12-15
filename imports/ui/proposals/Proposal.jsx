@@ -43,7 +43,7 @@ export default class Proposal extends Component {
             proposalValid: false,
             orderDir: -1,
             breakDownSelection: 'Bar',
-            quorum: this.props && this.props.chainStates ? this.props.chainStates.tallyParams.quorum : 0.40
+            quorum: this.props && this.props.chainStates && this.props.chainStates.tallyParams &&  this.props.chainStates.tallyParams.quorum ? this.props.chainStates.tallyParams.quorum : 0.4
         }
 
         if (Meteor.isServer) {
@@ -58,13 +58,15 @@ export default class Proposal extends Component {
         return null;
     }
 
+
     componentDidUpdate(prevProps) {
         if (this.props.proposal != prevProps.proposal) {
             this.setState({
                 proposal: this.props.proposal,
                 deposit: <div>{this.props.proposal.total_deposit ? this.props.proposal.total_deposit.map((deposit, i) => {
                     return <div key={i}>{new Coin(deposit.amount, deposit.denom).toString()}</div>
-                }) : ''} </div>
+                }) : ''} </div>,
+                quorum: this.props && this.props.chainStates && this.props.chainStates.tallyParams && this.props.chainStates.tallyParams.quorum ? this.props.chainStates.tallyParams.quorum : 0.4
             });
 
             let now = moment();
