@@ -103,14 +103,4 @@ export default class Coin {
 	    return `${amount} ${Coin.StakingCoin.displayName}`;
 	}
 
-    // getRawStakeValue(formatter) {
-    //     let amount = this.stakingAmount
-    //     if (formatter) {
-    //         amount = numbro(this.amount).format(formatter)
-    //     }
-    //     else{
-    //         amount = new BigNumber(this.amount).dividedBy(this._coin.fraction).toFormat()
-    //     }
-    //     return `${amount} ${this._coin.displayName}`;
-    // }
 }

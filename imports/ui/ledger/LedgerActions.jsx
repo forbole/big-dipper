@@ -565,12 +565,9 @@ class LedgerButton extends Component {
     simulate = () => {
         if (this.state.simulating) return
         this.initStateOnLoad('simulating')
-        console.log(this.initStateOnLoad('simulating'))
         try {
             this.createMessage(this.runSimulatation);
-            console.log(this.createMessage(this.runSimulatation))
         } catch (e) {
-            console.log(e)
             this.setStateOnError('simulating', e.message)
         }
     }
@@ -602,7 +599,6 @@ class LedgerButton extends Component {
             let txMsg = this.state.txMsg;
             const txContext = this.getTxContext();
             const bytesToSign = Ledger.getBytesToSign(txMsg, txContext);
-            console.log(bytesToSign)
             this.ledger.sign(bytesToSign).then((sig) => {
                 try {
                     Ledger.applySignature(txMsg, txContext, sig);
@@ -1619,7 +1615,6 @@ class CreateCDPButton extends LedgerButton {
 
     getPath = () => {
         let meta = TypeMeta[this.state.actionType];
-        console.log(meta)
         return `${meta.pathPreFix}`;
     }
 
@@ -1764,7 +1759,6 @@ class WithdrawCDPButton extends LedgerButton {
             depositedValue: props.depositValue / Meteor.settings.public.coins[1].fraction,
             isDepositor: props.isDepositor
         }
-        //console.log(this.state.isDepositor)
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {

@@ -44,8 +44,6 @@ Meteor.methods({
                 "simulate": true
             }
         };
-        console.log("URL - > " + url)
-        console.log("data - > " + JSON.stringify(data))
         let response = HTTP.post(url, { data });
 
         if (response.statusCode == 200) {
