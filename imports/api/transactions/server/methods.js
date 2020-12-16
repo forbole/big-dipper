@@ -38,7 +38,7 @@ Meteor.methods({
         if (TXSYNCING)
             return "Syncing transactions...";
         this.unblock();
-        const transactions = Transactions.find({processed:false},{sort: {height: -1}, limit: 50}).fetch();
+        const transactions = Transactions.find({processed:false},{limit: 30}).fetch();
         try{
             TXSYNCING = true;
             for (let i in transactions){
