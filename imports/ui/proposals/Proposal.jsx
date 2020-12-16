@@ -343,7 +343,7 @@ export default class Proposal extends Component {
                         {/* Parameter Change Proposal */}
                         {(this.props.proposal.content.type === 'cosmos-sdk/ParameterChangeProposal') ? <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.changes</T></Col>
-                            <Col md={6} className="value-table text-center">
+                            <Col md={9} className="value-table text-center">
                                 <Table bordered responsive="sm">
                                     <thead>
                                         <tr bgcolor="#ededed">
@@ -359,7 +359,7 @@ export default class Proposal extends Component {
                                             <td>{this.props.proposal.content.value.changes ? this.props.proposal.content.value.changes.map((changesItem, i) => {
                                                 return <div key={i}>{changesItem.key.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</div> }): ''}</td>
                                             <td> {this.props.proposal.content.value.changes ? this.props.proposal.content.value.changes.map((changesItem, i) => {
-                                                return   parseFloat(changesItem.value.replace(/"/g, "")) ?  <div key={i}>{numbro(changesItem.value.replace(/"/g, "")).format("0,000")}</div> : <div key={i}>{changesItem.value.replace(/"|}|{/g, "")}</div>}): ''}</td>
+                                                return parseFloat(changesItem.value.replace(/"/g, "")) ? <div key={i}>{numbro(changesItem.value.replace(/"/g, "")).format("0,000")}</div> : <div key={i}>{changesItem.value.split(",").join("\n")}</div>}): ''}</td>
                                         </tr>
                                     </tbody>
                                 </Table>
