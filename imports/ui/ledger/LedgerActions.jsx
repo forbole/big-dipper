@@ -103,7 +103,7 @@ const TypeMeta = {
         pathPreFix: 'distribution/delegators',
         pathSuffix: 'rewards',
         warning: '',
-        gasAdjustment: '1.6'
+        gasAdjustment: '2.0'
     },
     [Types.SEND]: {
         button: 'transfer',
@@ -582,7 +582,6 @@ class LedgerButton extends Component {
                 if (res === '0') {
                     res = '300000'
                 }
-                console.log(Ledger.applyGas(txMsg, res, Meteor.settings.public.gasPrice, Coin.StakingCoin.denom))
                 Ledger.applyGas(txMsg, res, Meteor.settings.public.gasPrice, Coin.StakingCoin.denom);
                 this.setStateOnSuccess('simulating', {
                     gasEstimate: res,
@@ -940,10 +939,47 @@ class DelegationButtons extends LedgerButton {
 
 class WithdrawButton extends LedgerButton {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            ...this.state,
+            allRewards: [],
+            allCommission: [],
+            userHasCommission: false
+        }
+    }
+
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+        let allRewards = [];
+        let allCommission = [];
+        let hasCommission = false;
+
+        if(nextProps.rewards){
+            nextProps.rewards.forEach((row, index) =>
+                allRewards[index] = new Coin(row.amount, row.denom).convertToString()
+            )
+        }
+        if(nextProps.commission[0]){
+            nextProps.commission[0].forEach((row, index) =>
+               
+                allCommission[index] = new Coin(row.amount, row.denom).convertToString()
+            )
+        }
+
+        if (nextProps.commission[0]) {
+            nextProps.commission[0].forEach((row, index) =>
+                (row.amount > 0 ? hasCommission = true : hasCommission = false)
+            )
+        }
+        return { allRewards: allRewards, allCommission: allCommission, userHasCommission: hasCommission}
+      
+    }
+
     createMessage = (callback) => {
         Meteor.call('transaction.execute', { from: this.state.user }, this.getPath(), (err, res) => {
             if (res) {
-                if (this.props.address) {
+                if (this.props.address && this.state.userHasCommission) {
                     res.value.msg.push({
                         type: 'cosmos-sdk/MsgWithdrawValidatorCommission',
                         value: { validator_address: this.props.address }
@@ -969,14 +1005,14 @@ class WithdrawButton extends LedgerButton {
         return <TabPane tabId="2" className="modal-body">
             <h3 className="text-center pt-3">Withdraw <img src="/img/kava-symbol.png" className="symbol-img mb-1" /> KAVA rewards from </h3>
             <h3 className="text-center pb-4"> all delegations</h3>
-            {this.props.rewards ? <div className="px-4">Your current rewards amount is: <CoinAmount amount={this.props.rewards} denom={this.props.denom} /></div> : ''}
-            {this.props.commission ? <div className="px-4">Your current commission amount is: <CoinAmount amount={this.props.commission} denom={this.props.denom} /></div> : ''}
+            {this.props.rewards ? <div className="px-4">Your current rewards amount is: <span className="coin">{Array(this.state.allRewards).toString().split(",").join("\n")} </span></div> : ''}
+            {this.state.userHasCommission ? <div className="px-4">Your current commission amount is: <span className="coin">{Array(this.state.allCommission).toString().split(",").join("\n")} </span></div> : ''}
         </TabPane>
     }
 
     getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>withdraw</span> rewards <CoinAmount amount={this.props.rewards} denom={this.props.denom} />
-            {this.props.commission ? <span> and commission <CoinAmount amount={this.props.commission} denom={this.props.denom} /></span> : null}
+        return <span>You are going to <span className='action'>withdraw</span> rewards <span className="coin">{Array(this.state.allRewards).toString().split(",").join("\n")} </span>
+            {this.state.userHasCommission ? <span> and commission <span className="coin">{Array(this.state.allCommission).toString().split(",").join("\n")} </span></span> : null}
             <span> with  <Fee gas={this.state.gasEstimate} />.</span>
         </span>
     }
@@ -1312,7 +1348,7 @@ class ClaimSwapButton extends LedgerButton {
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         return <TabPane tabId="2" className="modal-body">
-            <h3 className="text-center pb-4 pt-3">Claim <img src="/img/bnb-symbol.svg" className="symbol-img mb-1" /> BNB Swap</h3>
+            <h3 className="text-center pb-4 pt-3">Claim <img src="/img/BNB-symbol.svg" className="symbol-img mb-1" /> BNB Swap</h3>
             <FormGroup>
                 <Label for="swapID" className="mb-n4"><T>cdp.swapID</T></Label>
                 <InputGroup className="modal-for-ledger py-n5">
@@ -1479,7 +1515,7 @@ class CreateCDPButton extends LedgerButton {
                         { this.props.accountTokensAvailable.map((item, index) => {
                             return(
                                 <>
-                                    <DropdownItem name='collateralDenom' data-type='tokenSelection' onClick={this.handleTokenSelection}>{item.denom === 'ukava' ? 'KAVA' : item.denom.toUpperCase()}</DropdownItem>
+                                    <DropdownItem name='collateralDenom' data-type='tokenSelection' key={index} onClick={this.handleTokenSelection}>{item.denom === 'ukava' ? 'KAVA' : item.denom.toUpperCase()}</DropdownItem>
                              <DropdownItem divider />
                             </>
                             )
