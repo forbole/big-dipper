@@ -30,6 +30,7 @@ let timer = 0;
 const coin1 = 'ukava'
 const coin2 = 'bnb'
 const coin3 = 'usdx'
+const coin4 = 'hard'
 
 const cloneDeep = require('lodash/cloneDeep');
 
@@ -70,6 +71,7 @@ export default class AccountDetails extends Component {
             cdpCollateralizationRatio: 0,
             bnbPrice: 0,
             usdxPrice: 1,
+            hardPrice: 0,
             totalKavaInUSD: 0,
             totalBNBInUSD: 0,
             totalUSDXInUSD: 0,
@@ -332,6 +334,7 @@ export default class AccountDetails extends Component {
                 let calculateKavaInUSD = this.findValue(this.state.total, coin1) * this.state.price;
                 let calculateBNBInUSD = this.findValue(this.state.total, coin2) * this.state.bnbPrice;
                 let calculateUSDXInUSD = this.findValue(this.state.total, coin3) * this.state.usdxPrice
+                let calculateHARDInUSD = this.findValue(this.state.total, coin4) * this.state.hardPrice
                 let calculateTotalValueInUSD = calculateKavaInUSD + calculateBNBInUSD + calculateUSDXInUSD;
 
                 this.setState({
@@ -340,6 +343,7 @@ export default class AccountDetails extends Component {
                     totalKavaInUSD: calculateKavaInUSD,
                     totalBNBInUSD: calculateBNBInUSD,
                     totalUSDXInUSD: calculateUSDXInUSD,
+                    totalHARDInUSD: calculateHARDInUSD,
                     totalValueInUSD: calculateTotalValueInUSD,
                 })
 
@@ -357,6 +361,23 @@ export default class AccountDetails extends Component {
             if (result) {
                 this.setState({
                     bnbPrice: result
+                })
+            }
+
+        });
+
+
+        Meteor.call('cdp.getCDPPrice', 'hard:usd', (error, result) => {
+            if (error) {
+                console.warn(error);
+                this.setState({
+                    loading: false
+                })
+            }
+
+            if (result) {
+                this.setState({
+                    hardPrice: result
                 })
             }
 
@@ -606,11 +627,14 @@ export default class AccountDetails extends Component {
                                         <Progress bar className="available_3rd" value={this.findValue(this.state.available, coin3) * this.state.usdxPrice / this.state.totalValueInUSD * 100} />
                                         <Progress bar className="rewards_3rd" value={this.findValue(this.state.rewards, coin3) * this.state.usdxPrice / this.state.totalValueInUSD * 100} />
                                         <Progress bar className="commission_3rd" value={this.findValue(this.state.commission, coin3) * this.state.usdxPrice / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="available_4th" value={this.findValue(this.state.available, coin4) * this.state.hardPrice / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="rewards_4th" value={this.findValue(this.state.rewards, coin4) * this.state.hardPrice / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="commission_4th" value={this.findValue(this.state.commission, coin4) * this.state.hardPrice / this.state.totalValueInUSD * 100} />
                                     </Progress>
                                 </Col>
                             </Row>
                             <Row>
-                                <Col xs={2} >
+                                <Col xs={2} md={1} >
                                     <Row>
                                         <Col xs={12} className="label text-nowrap"><T>accounts.available</T></Col>
                                     </Row>
@@ -682,7 +706,27 @@ export default class AccountDetails extends Component {
                                     </Row> : null}
                                 </Col>
 
-                                <Col xs={4} className="total d-flex flex-column justify-content-end">
+                                <Col xs={3} md={2} >
+
+                                    <Row>
+                                        <Col xs={12} className="value text-left"> <div className="available_4th infinity" />{this.findCoin(this.state.available, coin4)}</Col>
+                                    </Row>
+                                    <Row>
+                                        <Col xs={12} className="value text-left"><div className="infinity" />{'  '}</Col>
+                                    </Row>
+                                    <Row>
+                                        <Col xs={12} className="value text-left"><div className="infinity" />{'  '}</Col>
+                                    </Row>
+                                    <Row>
+                                        <Col xs={12} className="value text-left"><div className="rewards_4th infinity" />{this.findCoin(this.state.rewards, coin4)}</Col>
+                                    </Row>
+                                    {this.state.commission ? <Row>
+                                        <Col xs={12} className="value text-left
+                                        "><div className="commission_4th infinity" />{this.findCoin(this.state.commission, coin4)}</Col>
+                                    </Row> : null}
+                                </Col>
+
+                                <Col xs={3} className="total d-flex flex-column justify-content-end">
                                     <Row >
                                         <Col xs={12} className="label  text-right"><div className="infinity" /><T>accounts.total</T></Col>
                                     </Row>
@@ -695,9 +739,14 @@ export default class AccountDetails extends Component {
                                         <Col xs={12} className="dollar-value-2 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin2)) * this.state.bnbPrice).format("$0,0.0000a")} ({numbro(this.state.bnbPrice).format("$0,0.00")}/{Meteor.settings.public.coins[1].displayName})</Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={12} className="value-3 text-right">{this.findCoin(this.state.total, coin3)}</Col>
-                                        <Col xs={12} className="dollar-value-3 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin3)) * this.state.usdxPrice).format("$0,0.0000a")} ({numbro(this.state.usdxPrice).format("$0,0.00")}/{Meteor.settings.public.coins[5].displayName})</Col>
+                                        <Col xs={12} className="value-3 text-right">{this.findCoin(this.state.total, coin4)}</Col>
+                                        <Col xs={12} className="dollar-value-3 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin4)) * this.state.hardPrice).format("$0,0.0000a")} ({numbro(this.state.hardPrice).format("$0,0.00")}/{Meteor.settings.public.coins[8].displayName})</Col>
                                     </Row>
+                                    <Row>
+                                        <Col xs={12} className="value-4 text-right">{this.findCoin(this.state.total, coin3)}</Col>
+                                        <Col xs={12} className="dollar-value-4 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin3)) * this.state.usdxPrice).format("$0,0.0000a")} ({numbro(this.state.usdxPrice).format("$0,0.00")}/{Meteor.settings.public.coins[5].displayName})</Col>
+                                    </Row>
+                                   
                                 </Col>
                                 <Col xs={12} className="total d-flex flex-column justify-content-end text-nowrap pt-3">
                                     {this.state.user ? <Row>

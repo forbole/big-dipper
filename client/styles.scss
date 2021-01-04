@@ -511,17 +511,17 @@ body {
       background-repeat: no-repeat;
 
       &.bnb {
-        background-image: url(/img/bnb-symbol.svg);
+        background-image: url(/img/BNB-symbol.svg);
         padding-bottom: 0.44em;
       }
       &.btc {
-        background-image: url(/img/bitcoin-symbol.svg);
+        background-image: url(/img/BTC-symbol.svg);
       }
       &.xrp {
-        background-image: url(/img/xrp-symbol.svg);
+        background-image: url(/img/XRP-symbol.svg);
       }
       &.atom {
-        background-image: url(/img/atom-symbol.svg);
+        background-image: url(/img/ATOM-symbol.svg);
       }
     }
   
@@ -567,6 +567,19 @@ body {
 
     .commission_3rd{
       background-color: rgb(34,139,34)
+    }
+
+     .available_4th{
+      background-color: rgb(255, 154, 53)
+    }
+
+    .rewards_4th{
+      background-color: rgb(56, 255, 255)
+    }
+
+    .commission_4th{
+      background-color: rgb(179, 241, 45)
+
     }
 
   
