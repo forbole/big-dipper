@@ -1533,7 +1533,7 @@ class CreateCDPButton extends LedgerButton {
             <h3 className="text-center pb-4 pt-3">Create CDP</h3>
             <FormGroup>
                 <Label for="collateral" className="mb-n4"><T>cdp.collateral</T></Label>
-                <FormText className="coin-available mb-n5 float-right"> {this.state.denom != '' ? 'Max ' + new Coin(this.state.maxAmount, this.state.denom).convertToString() : null}</FormText>
+                <FormText className="coin-available mb-n5 float-right"> {this.state.denom != '' ? `Max ${this.state.maxAmount} ${this.state.collateralDenom}` : null}</FormText>
                 <InputGroup className="modal-for-ledger py-n5">
                     {this.state.collateralDenom != '' ? 
                         <InputGroupAddon addonType="prepend">

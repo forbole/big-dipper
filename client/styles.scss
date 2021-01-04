@@ -505,24 +505,16 @@ body {
 
     .cdp-logo {
       display: block;
-      padding-left: 30px;
       background-size: 24px;
       background-position: top left;
       background-repeat: no-repeat;
 
-      &.bnb {
-        background-image: url(/img/BNB-symbol.svg);
-        padding-bottom: 0.44em;
+      &.create {
+        background-image: url(/img/money-exchange.svg);
+        background-position: right;
+        padding-right: 30px;
       }
-      &.btc {
-        background-image: url(/img/BTC-symbol.svg);
-      }
-      &.xrp {
-        background-image: url(/img/XRP-symbol.svg);
-      }
-      &.atom {
-        background-image: url(/img/ATOM-symbol.svg);
-      }
+    
     }
   
     .available {

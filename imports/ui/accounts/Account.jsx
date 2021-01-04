@@ -60,7 +60,7 @@ export default class AccountDetails extends Component {
             rewardsForEachDel: [defaultCoin],
             rewardDenomType: [defaultCoin],
             bondActiveTab: 'delegations',
-            cdpActiveTab: 'cdp-bnb',
+            cdpActiveTab: 'cdp-create',
             cdpID: 0,
             cdpOwner: '',
             cdpCollateral: [],
@@ -827,10 +827,10 @@ export default class AccountDetails extends Component {
                                 <Nav tabs className="mb-2">
                                     <NavItem>
                                         <NavLink
-                                            className={classnames({ active: this.state.cdpActiveTab === 'cdp-bnb' })}
-                                            onClick={() => { this.toggleCDP('cdp-bnb'); }}
+                                            className={classnames({ active: this.state.cdpActiveTab === 'cdp-create' })}
+                                            onClick={() => { this.toggleCDP('cdp-create'); }}
                                         >
-                                            <span className="cdp-logo bnb">BNB</span>
+                                            <span className="cdp-logo create">Create CDP</span>
                                         </NavLink>
                                     </NavItem>
                                     {this.state.hasIncentive ?
@@ -847,7 +847,7 @@ export default class AccountDetails extends Component {
                                         </NavItem> : null}
                                 </Nav>
                                 <TabContent activeTab={this.state.cdpActiveTab}>
-                                    <TabPane tabId="cdp-bnb">
+                                    <TabPane tabId="cdp-create">
                                         <CDP
                                             owner={this.state.address}
                                             collateral='bnb'
