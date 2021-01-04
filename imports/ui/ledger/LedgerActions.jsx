@@ -1669,7 +1669,7 @@ class DepositCDPButton extends LedgerButton {
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         return <TabPane tabId="2" className="modal-body">
-            <h3 className="text-center pb-4">Deposit into CDP with <img src="/img/bnb-symbol.svg" className="symbol-img" /> BNB</h3>
+            <h3 className="text-center pb-4">Deposit into CDP with <img src="/img/BNB-symbol.svg" className="symbol-img" /> BNB</h3>
             <FormGroup>
                 <Label for="deposit" className="mb-n4"><T>cdp.deposit</T></Label>
                 <FormText className="coin-available mb-n5 float-right">Max {new Coin(this.state.maxAmount, this.props.collateral).convertToString()}</FormText>
@@ -1677,7 +1677,7 @@ class DepositCDPButton extends LedgerButton {
                     <FormFeedback className="coin-available mb-n5 float-right">Max {new Coin(this.state.maxAmount, this.props.collateral).convertToString()}</FormFeedback>
 
                     <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="modal-for-ledger"><img src="/img/bnb-symbol.svg" className="symbol-img" /> </InputGroupText>
+                        <InputGroupText className="modal-for-ledger"><img src="/img/BNB-symbol.svg" className="symbol-img" /> </InputGroupText>
                     </InputGroupAddon>
                     <Input placeholder="Collateral Amount" name="collateral" value={this.state.collateral} onChange={this.handleChange}
                         min={Coin.MinStake} max={this.state.maxAmount}
@@ -1791,13 +1791,13 @@ class WithdrawCDPButton extends LedgerButton {
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         return <TabPane tabId="2" className="modal-body">
-            <h3 className="text-center pb-4">Withdraw <img src="/img/bnb-symbol.svg" className="symbol-img" /> BNB from CDP </h3>
+            <h3 className="text-center pb-4">Withdraw <img src="/img/BNB-symbol.svg" className="symbol-img" /> BNB from CDP </h3>
             <FormGroup>
                 <Label for="withdraw" className="mb-n4"><T>cdp.withdraw</T></Label>
                 <FormText className="coin-available mb-n5 float-right">Max {this.state.isDepositor ? new Coin(this.state.depositedValue, this.props.collateral).convertToString() : new Coin(this.state.maxAmount, this.props.collateral).convertToString()}</FormText>
                 <InputGroup className="modal-for-ledger py-n5">
                     <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="modal-for-ledger"><img src="/img/bnb-symbol.svg" className="symbol-img" /> </InputGroupText>
+                        <InputGroupText className="modal-for-ledger"><img src="/img/BNB-symbol.svg" className="symbol-img" /> </InputGroupText>
                     </InputGroupAddon>
 
                     <Input placeholder="Collateral Amount" name="collateral" type="number" value={this.state.collateral} onChange={this.handleChange}
