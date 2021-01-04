@@ -285,7 +285,7 @@ Meteor.methods({
 
     'cdp.getCDPList': function () {
         this.unblock();
-        let url = LCD + '/cdp/cdps/denom/bnb';
+        let url = LCD + '/cdp/cdps';
         try {
             let result = HTTP.get(url);
             if (result.statusCode == 200) {
