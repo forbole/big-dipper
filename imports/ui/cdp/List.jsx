@@ -41,8 +41,12 @@ export default class List extends Component {
         this.getCDPList();
     }
 
+    componentDidUpdate() {
+        this.getCDPList();
+    }
+
     getCDPList = () => {
-        Meteor.call('cdp.getCDPList', (error, result) => {
+        Meteor.call('cdp.getCDPList', this.props.collateralType, (error, result) => {
             if (result && result.length > 0) {
                 this.setState({
                     cdpList: result.map((cdpList, i) => {

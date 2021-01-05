@@ -5,22 +5,49 @@ import List from '/imports/ui/cdp/List.jsx';
 import ChainStates from '../components/ChainStatesContainer.js'
 import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
+import {
+    TabContent, TabPane,
+    Nav, NavItem, NavLink,
+    
+} from 'reactstrap';
+import classnames from 'classnames';
 
 const T = i18n.createComponent();
 
-const CDPList = (props) => {
-    return <div>
-        <p className="lead"><T>cdp.cdpList</T></p>
-        <Row>
-            <Col md={12}>
-                <List {...props}/>
-            </Col>
-        </Row>
-    </div>
-}
+
 export default class CDPs extends Component{
     constructor(props){
         super(props);
+        this.state = {
+            cdpActiveTab: 'cdp-kava',
+            collateralType: 'ukava-a'
+        }
+    }
+
+
+    toggleTab = (tab, newCollateralType) => {
+        if (this.state.cdpActiveTab !== tab) {
+            this.setState({
+                cdpActiveTab: tab,
+                collateralType: newCollateralType
+            });
+        }
+    }
+
+    componentDidMount() {
+        this.CDPList();
+    }
+
+
+    CDPList = (props) => {
+        return <div>
+            <p className="lead"><T>cdp.cdpList</T></p>
+            <Row>
+                <Col md={12}>
+                    <List {...props} collateralType={this.state.collateralType}/>
+                </Col>
+            </Row>
+        </div>
     }
 
     render() {
@@ -33,9 +60,89 @@ export default class CDPs extends Component{
                 <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>cdp.cdps</T></h1></Col>
                 <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
             </Row>
-            <Switch>
-                <Route exact path="/cdps" component={CDPList} />
-            </Switch>
+            <Nav tabs className="mb-2">
+                <NavItem>
+                    <NavLink
+                        className={classnames({ active: this.state.cdpActiveTab === 'cdp-kava' })}
+                        onClick={() => { this.toggleTab('cdp-kava', 'kava-a'); }}
+                    >
+                        <span className="cdp-logo"> <img src="/img/KAVA-symbol.svg" className="symbol-img" /> KAVA</span>
+                    </NavLink>
+                </NavItem>
+                <NavItem>
+                    <NavLink
+                        className={classnames({ active: this.state.cdpActiveTab === 'cdp-bnb' })}
+                        onClick={() => { this.toggleTab('cdp-bnb', 'bnb-a'); }}
+                    >
+                        <span className="cdp-logo"><img src="/img/BNB-symbol.svg" className="symbol-img" /> BNB</span>
+
+                    </NavLink>
+                </NavItem>
+                <NavItem>
+                    <NavLink
+                        className={classnames({ active: this.state.cdpActiveTab === 'cdp-hard' })}
+                        onClick={() => { this.toggleTab('cdp-hard', 'hard-a'); }}
+                    >
+                        <span className="cdp-logo"><img src="/img/HARD-symbol.svg" className="symbol-img" /> HARD</span>
+                    </NavLink>
+                </NavItem> 
+                <NavItem>
+                    <NavLink
+                        className={classnames({ active: this.state.cdpActiveTab === 'cdp-btcb' })}
+                        onClick={() => { this.toggleTab('cdp-btcb', 'btcb-a'); }}
+                    >
+                        <span className="cdp-logo"><img src="/img/BTCB-symbol.svg" className="symbol-img" /> BTCB</span>
+                    </NavLink>
+                </NavItem> 
+                <NavItem>
+                    <NavLink
+                        className={classnames({ active: this.state.cdpActiveTab === 'cdp-xrpb' })}
+                        onClick={() => { this.toggleTab('cdp-xrpb', 'xrpb-a'); }}
+                    >
+                        <span className="cdp-logo"><img src="/img/XRP-symbol.svg" className="symbol-img" /> XRPB</span>
+                    </NavLink>
+                </NavItem>   
+                <NavItem>
+                    <NavLink
+                        className={classnames({ active: this.state.cdpActiveTab === 'cdp-busd' })}
+                        onClick={() => { this.toggleTab('cdp-busd', 'busd-a'); }}
+                    >
+                        <span className="cdp-logo"><img src="/img/BUSD-symbol.svg" className="symbol-img" /> BUSD</span>
+                    </NavLink>
+                </NavItem>    
+            </Nav>
+            <TabContent activeTab={this.state.cdpActiveTab}>
+                <TabPane tabId="cdp-kava">
+                    <Switch>
+                        <Route exact path="/cdps" component={this.CDPList} />
+                    </Switch>
+                </TabPane>
+                <TabPane tabId="cdp-bnb">
+                    <Switch>
+                        <Route exact path="/cdps" component={this.CDPList} />
+                    </Switch>
+                </TabPane>
+                <TabPane tabId="cdp-hard">
+                    <Switch>
+                        <Route exact path="/cdps" component={this.CDPList} />
+                    </Switch>
+                </TabPane>
+                <TabPane tabId="cdp-btcb">
+                    <Switch>
+                        <Route exact path="/cdps" component={this.CDPList} />
+                    </Switch>
+                </TabPane>
+                <TabPane tabId="cdp-xrpb">
+                    <Switch>
+                        <Route exact path="/cdps" component={this.CDPList} />
+                    </Switch>
+                </TabPane>
+                <TabPane tabId="cdp-busd">
+                    <Switch>
+                        <Route exact path="/cdps" component={this.CDPList} />
+                    </Switch>
+                </TabPane>
+            </TabContent>
         </div>
     }
 
