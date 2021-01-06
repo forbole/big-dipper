@@ -182,50 +182,50 @@ Meteor.startup(function(){
     }
 
     if (Meteor.settings.debug.startTimer){
-        // timerConsensus = Meteor.setInterval(function(){
-        //     getConsensusState();
-        // }, Meteor.settings.params.consensusInterval);
+        timerConsensus = Meteor.setInterval(function(){
+            getConsensusState();
+        }, Meteor.settings.params.consensusInterval);
 
         timerBlocks = Meteor.setInterval(function(){
-            // updateBlock();
+            updateBlock();
             updateTransactions();
         }, Meteor.settings.params.blockInterval);
 
-        // timerChain = Meteor.setInterval(function(){
-        //     updateChainStatus();
-        // }, Meteor.settings.params.statusInterval);
+        timerChain = Meteor.setInterval(function(){
+            updateChainStatus();
+        }, Meteor.settings.params.statusInterval);
 
-        // if (Meteor.settings.public.modules.gov) {
-        //     timerProposal = Meteor.setInterval(function () {
-        //         getProposals();
-        //     }, Meteor.settings.params.proposalInterval);
+        if (Meteor.settings.public.modules.gov) {
+            timerProposal = Meteor.setInterval(function () {
+                getProposals();
+            }, Meteor.settings.params.proposalInterval);
 
-        //     timerProposalsResults = Meteor.setInterval(function () {
-        //         getProposalsResults();
-        //     }, Meteor.settings.params.proposalInterval);
-        // }
+            timerProposalsResults = Meteor.setInterval(function () {
+                getProposalsResults();
+            }, Meteor.settings.params.proposalInterval);
+        }
 
-        // timerMissedBlock = Meteor.setInterval(function(){
-        //     updateMissedBlocks();
-        // }, Meteor.settings.params.missedBlocksInterval);
+        timerMissedBlock = Meteor.setInterval(function(){
+            updateMissedBlocks();
+        }, Meteor.settings.params.missedBlocksInterval);
 
-        // timerDelegation = Meteor.setInterval(function(){
-        //     getDelegations();
-        // }, Meteor.settings.params.delegationInterval);
+        timerDelegation = Meteor.setInterval(function(){
+            getDelegations();
+        }, Meteor.settings.params.delegationInterval);
 
-        // timerAggregate = Meteor.setInterval(function(){
-        //     let now = new Date();
-        //     if ((now.getUTCSeconds() == 0)){
-        //         aggregateMinutely();
-        //     }
+        timerAggregate = Meteor.setInterval(function(){
+            let now = new Date();
+            if ((now.getUTCSeconds() == 0)){
+                aggregateMinutely();
+            }
 
-        //     if ((now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)){
-        //         aggregateHourly();
-        //     }
+            if ((now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)){
+                aggregateHourly();
+            }
 
-        //     if ((now.getUTCHours() == 0) && (now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)){
-        //         aggregateDaily();
-        //     }
-        // }, 1000)
+            if ((now.getUTCHours() == 0) && (now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)){
+                aggregateDaily();
+            }
+        }, 1000)
     }
 });
