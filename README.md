@@ -20,7 +20,6 @@ Block Explorer for Cosmos
 
 [Explore LikeCoin Chain with Big Dipper](http://likecoin.bigdipper.live/)
 
-
 ## Projects with testnets
 
 [Agoric](https://explorer.testnet.agoric.com/)
@@ -42,7 +41,7 @@ Block Explorer for Cosmos
 
 ### Requirements
 
-* [Meteor v1.11.x](https://www.meteor.com/install)
+* [Meteor v1.12.x](https://www.meteor.com/install)
 
 ### Run in local
 
@@ -68,7 +67,7 @@ You will need to have [MongoDB >= 4.x](https://docs.mongodb.com/manual/administr
 
 ### Docker builds
 
-big-dipper docker image is a multi stage build that is based on [disney/meteor-base](https://github.com/disney/meteor-base/). When you change the meteor or node version, change the lines `FROM geoffreybooth/meteor-base:1.11.1` and `FROM node:12.16.1-alpine` respectively. When running the image follow the same [environment variable principles](https://guide.meteor.com/deployment.html#environment) mentioned above. If you get an `non-zero exit (137)` error during the build phase, increase docker container memory and swap limit. Ideally you can set up [remote docker host](https://www.digitalocean.com/community/tutorials/how-to-provision-and-manage-remote-docker-hosts-with-docker-machine-on-ubuntu-18-04) to prevent your computer's fan going brrrrrr.
+big-dipper docker image is a multi stage build that is based on [disney/meteor-base](https://github.com/disney/meteor-base/). When you change the meteor or node version, change the lines `FROM geoffreybooth/meteor-base:1.12` and `FROM node:12.16.1-alpine` respectively. When running the image follow the same [environment variable principles](https://guide.meteor.com/deployment.html#environment) mentioned above. If you get an `non-zero exit (137)` error during the build phase, increase docker container memory and swap limit. Ideally you can set up [remote docker host](https://www.digitalocean.com/community/tutorials/how-to-provision-and-manage-remote-docker-hosts-with-docker-machine-on-ubuntu-18-04) to prevent your computer's fan going brrrrrr.
 
 ---
 ## Donations :pray:
