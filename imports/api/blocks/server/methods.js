@@ -141,6 +141,7 @@ calculateVPDist = async () => {
 
 Meteor.methods({
     'blocks.averageBlockTime'(address){
+        this.unblock();
         let blocks = Blockscon.find({proposerAddress:address}).fetch();
         let heights = blocks.map((block) => {
             return block.height;
@@ -179,6 +180,7 @@ Meteor.methods({
         return startHeight
     },
     'blocks.blocksUpdate': function() {
+        this.unblock();
         if (SYNCING)
             return "Syncing...";
         else console.log("start to sync");

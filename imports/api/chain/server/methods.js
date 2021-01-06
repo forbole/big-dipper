@@ -171,6 +171,7 @@ Meteor.methods({
         }
     },
     'chain.getLatestStatus': function(){
+        this.unblock();
         Chain.find().sort({created:-1}).limit(1);
     },
 })

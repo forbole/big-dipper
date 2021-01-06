@@ -63,6 +63,7 @@ Meteor.methods({
         TXSYNCING = false;
     },
     'Transactions.findDelegation': function(address, height){
+        this.unblock();
         // following cosmos-sdk/x/slashing/spec/06_events.md and cosmos-sdk/x/staking/spec/06_events.md
         return Transactions.find({
             $or: [{$and: [
@@ -94,6 +95,7 @@ Meteor.methods({
         ).fetch();
     },
     'Transactions.findUser': function(address, fields=null){
+        this.unblock();
         // address is either delegator address or validator operator address
         let validator;
         if (!fields)
