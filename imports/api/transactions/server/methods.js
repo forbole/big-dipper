@@ -38,7 +38,7 @@ Meteor.methods({
         if (TXSYNCING)
             return "Syncing transactions...";
         this.unblock();
-        const transactions = Transactions.find({processed:false},{limit: 30}).fetch();
+        const transactions = Transactions.find({processed:false},{limit: 100}).fetch();
         try{
             TXSYNCING = true;
             for (let i in transactions){
@@ -51,7 +51,7 @@ Meteor.methods({
                         console.log(err);
                     }
                     if (result){
-                        // console.log(result);
+                        console.log(result.result.ok);
                     }
                 });
             }
@@ -61,6 +61,7 @@ Meteor.methods({
             return e
         }
         TXSYNCING = false;
+        return transactions.length
     },
     'Transactions.findDelegation': function(address, height){
         this.unblock();
