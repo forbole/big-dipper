@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+* [436] Index transactions in a separate process
 * Update to Meteor 1.12
 * [435] Show inflation as 0% if there is no inflation (no minting module integrated)
 * [433] Create tx index for MsgCreateValidator
