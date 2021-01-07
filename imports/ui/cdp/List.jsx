@@ -33,6 +33,7 @@ export default class List extends Component {
             pagesCount: 0,
             minCollateralRatio: 0,
             collateralParams: [],
+            loading: true,
         }
     }
 
@@ -53,13 +54,14 @@ export default class List extends Component {
                         return <CDPRow key={i} index={i} cdpList={cdpList} />
                     }),
                     pagesCount: Math.ceil(result.length / this.state.pageSize),
-
+                    loading: false
                 })
             }
             else {
                 this.setState({
                     cdpList: undefined,
                     pagesCount: 0,
+                    loading: true
 
                 })
             }
@@ -95,7 +97,7 @@ export default class List extends Component {
 
     render() {
 
-        if (this.props.loading) {
+        if (this.state.loading) {
             return <Spinner type="grow" color="primary" />
         }
         else {

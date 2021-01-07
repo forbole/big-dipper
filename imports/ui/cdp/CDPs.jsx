@@ -39,12 +39,11 @@ export default class CDPs extends Component{
     }
 
 
-    CDPList = (props) => {
+    CDPList = () => {
         return <div>
-            <p className="lead"><T>cdp.cdpList</T></p>
             <Row>
                 <Col md={12}>
-                    <List {...props} collateralType={this.state.collateralType}/>
+                    <List collateralType={this.state.collateralType}/>
                 </Col>
             </Row>
         </div>
@@ -60,11 +59,12 @@ export default class CDPs extends Component{
                 <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>cdp.cdps</T></h1></Col>
                 <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
             </Row>
+            <p className="lead"><T>cdp.cdpList</T></p>
             <Nav tabs className="mb-2">
                 <NavItem>
                     <NavLink
                         className={classnames({ active: this.state.cdpActiveTab === 'cdp-kava' })}
-                        onClick={() => { this.toggleTab('cdp-kava', 'kava-a'); }}
+                        onClick={() => { this.toggleTab('cdp-kava', 'ukava-a'); }}
                     >
                         <span className="cdp-logo"> <img src="/img/KAVA-symbol.svg" className="symbol-img" /> KAVA</span>
                     </NavLink>
@@ -112,37 +112,13 @@ export default class CDPs extends Component{
                 </NavItem>    
             </Nav>
             <TabContent activeTab={this.state.cdpActiveTab}>
-                <TabPane tabId="cdp-kava">
-                    <Switch>
-                        <Route exact path="/cdps" component={this.CDPList} />
-                    </Switch>
-                </TabPane>
-                <TabPane tabId="cdp-bnb">
-                    <Switch>
-                        <Route exact path="/cdps" component={this.CDPList} />
-                    </Switch>
-                </TabPane>
-                <TabPane tabId="cdp-hard">
-                    <Switch>
-                        <Route exact path="/cdps" component={this.CDPList} />
-                    </Switch>
-                </TabPane>
-                <TabPane tabId="cdp-btcb">
-                    <Switch>
-                        <Route exact path="/cdps" component={this.CDPList} />
-                    </Switch>
-                </TabPane>
-                <TabPane tabId="cdp-xrpb">
-                    <Switch>
-                        <Route exact path="/cdps" component={this.CDPList} />
-                    </Switch>
-                </TabPane>
-                <TabPane tabId="cdp-busd">
-                    <Switch>
-                        <Route exact path="/cdps" component={this.CDPList} />
-                    </Switch>
+                <TabPane tabId="cdp-list-tab-pane">
+                    {this.CDPList}
                 </TabPane>
             </TabContent>
+            <Switch>
+                <Route exact path="/cdps" component={this.CDPList} />
+            </Switch>
         </div>
     }
 
