@@ -18,13 +18,13 @@ getTransaction = async (hash) => {
         tx.height = parseInt(tx.height);
         tx.processed = true;
 
-        // let txId = await Transactions.update({txhash:hash.toLowerCase()}, {$set:tx});
-        bulkTransactions.find({txhash:hash}).updateOne({$set:tx});
+        let txId = Transactions.update({txhash:hash}, {$set:tx});
+        // bulkTransactions.find({txhash:hash}).updateOne({$set:tx});
         // console.log(bulkTransactions.length)
-        // if (txId){
-        //     return txId;
-        // }
-        // else return false;
+        if (txId){
+            return txId;
+        }
+        else return false;
 
     }
     catch(e) {
@@ -44,17 +44,17 @@ Meteor.methods({
                 // console.log(transactions[i]);
                 getTransaction(transactions[i].txhash)
             }
-            if (bulkTransactions.length > 0){
-                // console.log("aaa: %o",bulkTransactions.length)
-                bulkTransactions.execute((err, result) => {
-                    if (err){
-                        console.log(err);
-                    }
-                    if (result){
-                        console.log(result);
-                    }
-                });
-            }
+            // if (bulkTransactions.length > 0){
+            //     // console.log("aaa: %o",bulkTransactions.length)
+            //     bulkTransactions.execute((err, result) => {
+            //         if (err){
+            //             console.log(err);
+            //         }
+            //         if (result){
+            //             console.log(result);
+            //         }
+            //     });
+            // }
         }
         catch (e) {
             TXSYNCING = false;
