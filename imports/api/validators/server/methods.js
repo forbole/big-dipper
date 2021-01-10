@@ -1,10 +1,10 @@
 import { Meteor } from 'meteor/meteor';
 import { Transactions } from '../../transactions/transactions.js';
 import { Blockscon } from '../../blocks/blocks.js';
-import { Delegations } from '../../delegations/delegations.js';
 
 Meteor.methods({
     'Validators.findCreateValidatorTime': function(address){
+        this.unblock();
         // look up the create validator time to consider if the validator has never updated the commission
         let tx = Transactions.findOne({$and:[
             {"tx.value.msg.value.delegator_address":address},
@@ -25,6 +25,7 @@ Meteor.methods({
     },
     // async 'Validators.getAllDelegations'(address){
     'Validators.getAllDelegations'(address){
+        this.unblock();
         let url = LCD + '/staking/validators/'+address+'/delegations';
 
         try{
@@ -40,8 +41,7 @@ Meteor.methods({
             };
         }
         catch (e){
-            console.log(url);
-            console.log(e);
+            console.log("Getting error: %o when fetching from %o", e, url);
         }
     }
 });

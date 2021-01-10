@@ -1,5 +1,19 @@
 # Changelog
 
+## [Unreleased]
+
+* [436] Index transactions in a separate process
+* Update to Meteor 1.12
+* [435] Show inflation as 0% if there is no inflation (no minting module integrated)
+* [433] Create tx index for MsgCreateValidator
+* Use react-json-view instead of JSONPretty
+* Update uptime with signing info
+* [280] Remove reading genesis file
+* Remove plural denom
+* Simplify validator storing
+* Get data and show proposal based on enabled modules
+* Calculate validator uptime in async
+
 ## v0.39.x-3
 
 * [431] Create correct index for trasaction events

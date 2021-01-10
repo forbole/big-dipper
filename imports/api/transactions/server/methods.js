@@ -2,37 +2,69 @@ import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 import { Transactions } from '../../transactions/transactions.js';
 import { Validators } from '../../validators/validators.js';
-import { VotingPowerHistory } from '../../voting-power/history.js';
 
 const AddressLength = 40;
 
+const bulkTransactions = Transactions.rawCollection().initializeUnorderedBulkOp();
+
+getTransaction = async (hash) => {
+    // hash = hash.toUpperCase();
+    // console.log("Get tx: "+hash)
+    try {
+        let url = LCD+ '/txs/'+hash;
+        let response = HTTP.get(url);
+        let tx = JSON.parse(response.content);
+
+        tx.height = parseInt(tx.height);
+        tx.processed = true;
+
+        let txId = Transactions.update({txhash:hash}, {$set:tx});
+        // bulkTransactions.find({txhash:hash}).updateOne({$set:tx});
+        // console.log(bulkTransactions.length)
+        if (txId){
+            return txId;
+        }
+        else return false;
+
+    }
+    catch(e) {
+        console.log("Getting transaction %o: %o", hash, e);
+    }
+}
+
 Meteor.methods({
-    'Transactions.index': function(hash, blockTime){
+    'Transactions.updateTransactions': async function(){
         this.unblock();
-        hash = hash.toUpperCase();
-        console.log("Get tx: "+hash)
-        try {
-            let url = LCD+ '/txs/'+hash;
-            let response = HTTP.get(url);
-            let tx = JSON.parse(response.content);
-    
-            console.log(hash);
-    
-            tx.height = parseInt(tx.height);
-    
-            let txId = Transactions.insert(tx);
-            if (txId){
-                return txId;
+        if (TXSYNCING)
+            return "Syncing transactions...";
+        const transactions = Transactions.find({processed:false},{limit: 300}).fetch();
+        try{
+            TXSYNCING = true;
+            for (let i in transactions){
+                // console.log(transactions[i]);
+                getTransaction(transactions[i].txhash)
             }
-            else return false;
-    
+            // if (bulkTransactions.length > 0){
+            //     // console.log("aaa: %o",bulkTransactions.length)
+            //     bulkTransactions.execute((err, result) => {
+            //         if (err){
+            //             console.log(err);
+            //         }
+            //         if (result){
+            //             console.log(result);
+            //         }
+            //     });
+            // }
         }
-        catch(e) {
-            console.log(url);
-            console.log(e)
+        catch (e) {
+            TXSYNCING = false;
+            return e
         }
+        TXSYNCING = false;
+        return transactions.length
     },
     'Transactions.findDelegation': function(address, height){
+        this.unblock();
         // following cosmos-sdk/x/slashing/spec/06_events.md and cosmos-sdk/x/staking/spec/06_events.md
         return Transactions.find({
             $or: [{$and: [
@@ -64,6 +96,7 @@ Meteor.methods({
         ).fetch();
     },
     'Transactions.findUser': function(address, fields=null){
+        this.unblock();
         // address is either delegator address or validator operator address
         let validator;
         if (!fields)

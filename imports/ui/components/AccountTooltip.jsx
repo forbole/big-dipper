@@ -48,7 +48,7 @@ export default class AccountTooltip extends Account{
         if (!this.state.validator)
             return
         let validator = this.state.validator;
-        let moniker = validator.description && validator.description.moniker || validator.address;
+        let moniker = (validator.description && validator.description.moniker) || validator.address;
         let isActive = validator.status == 2 && !validator.jailed;
 
         return <UncontrolledPopover className='validator-popover' trigger="hover" placement="right" target={this.ref} key={this.ref}>

@@ -19,31 +19,33 @@
             {
                 "denom": "uatom",
                 "displayName": "ATOM",
-                "displayNamePlural": "ATOMS",
                 "fraction": 1000000
             }, 
             {
                 "denom": "umuon",
                 "displayName": "MUON",
-                "displayNamePlural": "MUONS",
                 "fraction": 1000000
             } 
         ],
+        "modules": {
+            "supply": true,
+            "minting": false,
+            "gov": true
+        },
         "gasPrice": 0.02,
         "coingeckoId": "cosmos"
     },
-    "genesisFile": "{Replace the address of the genesis file of the chain}",
     "remote":{
         "rpc":"https://gaia-seeds.interblock.io",
         "lcd":"https://gaia-seeds.interblock.io:1317"
     },
     "debug": {
-        "startTimer": true,
-        "readGenesis": true
+        "startTimer": true
     },
     "params":{
         "startHeight": 0,
         "defaultBlockTime": 5000,
+        "validatorUpdateWindow": 300,
         "blockInterval": 15000,
         "consensusInterval": 1000,
         "statusInterval":7500,
