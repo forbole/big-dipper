@@ -6,7 +6,7 @@ import { Blockscon } from '../../blocks/blocks.js';
 publishComposite('transactions.list', function(limit = 30){
     return {
         find(){
-            return Transactions.find({height: { $exists: true }},{sort:{height:-1}, limit:limit})
+            return Transactions.find({height: { $exists: true}, processed: {$ne: false}},{sort:{height:-1}, limit:limit})
         },
         children: [
             {

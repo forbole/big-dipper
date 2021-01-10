@@ -283,7 +283,9 @@ Meteor.methods({
                         if (block.block.data.txs && block.block.data.txs.length > 0){
                             for (t in block.block.data.txs){
                                 bulkTransactions.insert({
+                                    // hash has to be in uppercase
                                     txhash: sha256(Buffer.from(block.block.data.txs[t], 'base64')).toUpperCase(),
+                                    height: height,
                                     processed: false
                                 })
                             }

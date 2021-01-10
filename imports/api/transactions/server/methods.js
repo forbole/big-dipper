@@ -5,20 +5,15 @@ import { Validators } from '../../validators/validators.js';
 
 const AddressLength = 40;
 
-// const bulkTransactions = Transactions.rawCollection().initializeUnorderedBulkOp();
+const bulkTransactions = Transactions.rawCollection().initializeUnorderedBulkOp();
 
 getTransaction = async (hash) => {
     // hash = hash.toUpperCase();
     // console.log("Get tx: "+hash)
     try {
-        if (/[a-f]/.test(hash)){
-            await Transactions.update({txhash:hash}, {$set:{txhash:hash.toUpperCase()}})
-        }
         let url = LCD+ '/txs/'+hash;
         let response = HTTP.get(url);
         let tx = JSON.parse(response.content);
-
-        // console.log(hash);
 
         tx.height = parseInt(tx.height);
         tx.processed = true;
@@ -26,10 +21,10 @@ getTransaction = async (hash) => {
         // let txId = await Transactions.update({txhash:hash.toLowerCase()}, {$set:tx});
         bulkTransactions.find({txhash:hash}).updateOne({$set:tx});
         // console.log(bulkTransactions.length)
-        if (txId){
-            return txId;
-        }
-        else return false;
+        // if (txId){
+        //     return txId;
+        // }
+        // else return false;
 
     }
     catch(e) {
@@ -39,9 +34,9 @@ getTransaction = async (hash) => {
 
 Meteor.methods({
     'Transactions.updateTransactions': async function(){
+        this.unblock();
         if (TXSYNCING)
             return "Syncing transactions...";
-        this.unblock();
         const transactions = Transactions.find({processed:false},{limit: 300}).fetch();
         try{
             TXSYNCING = true;
