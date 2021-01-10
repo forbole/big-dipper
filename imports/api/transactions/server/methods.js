@@ -11,6 +11,9 @@ getTransaction = async (hash) => {
     // hash = hash.toUpperCase();
     // console.log("Get tx: "+hash)
     try {
+        if (/[a-f]/.test(hash)){
+            await Transactions.update({txhash:hash}, {$set:{txhash:hash.toUpperCase()}})
+        }
         let url = LCD+ '/txs/'+hash;
         let response = HTTP.get(url);
         let tx = JSON.parse(response.content);
@@ -21,7 +24,7 @@ getTransaction = async (hash) => {
         tx.processed = true;
 
         // let txId = await Transactions.update({txhash:hash.toLowerCase()}, {$set:tx});
-        bulkTransactions.find({txhash:hash}).replaceOne({$set:tx});
+        bulkTransactions.find({txhash:hash}).updateOne({$set:tx});
         // console.log(bulkTransactions.length)
         if (txId){
             return txId;
@@ -46,17 +49,17 @@ Meteor.methods({
                 // console.log(transactions[i]);
                 getTransaction(transactions[i].txhash)
             }
-            // if (bulkTransactions.length > 0){
-            //     console.log("aaa: %o",bulkTransactions.length)
-            //     bulkTransactions.execute((err, result) => {
-            //         if (err){
-            //             console.log(err);
-            //         }
-            //         if (result){
-            //             console.log(result);
-            //         }
-            //     });
-            // }
+            if (bulkTransactions.length > 0){
+                // console.log("aaa: %o",bulkTransactions.length)
+                bulkTransactions.execute((err, result) => {
+                    if (err){
+                        console.log(err);
+                    }
+                    if (result){
+                        console.log(result);
+                    }
+                });
+            }
         }
         catch (e) {
             TXSYNCING = false;
