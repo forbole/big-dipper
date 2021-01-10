@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## v0.39.x-4
 
 * [436] Index transactions in a separate process
 * Update to Meteor 1.12
