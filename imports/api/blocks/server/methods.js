@@ -579,8 +579,7 @@ Meteor.methods({
                                         bulkValidators.find({address: validator.address}).upsert().updateOne({$set:{'profile_url':profileUrl}});
                                     }
                                 } catch (e) {
-                                    console.log(profileUrl);
-                                    console.log(e)
+                                    console.log("Error fetching Keybase for %o: %o", validator.address, e)
                                 }
                             })
                         }
