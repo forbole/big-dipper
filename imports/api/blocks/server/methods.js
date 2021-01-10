@@ -574,9 +574,11 @@ Meteor.methods({
                             // eslint-disable-next-line no-loop-func
                             Validators.find({}).forEach((validator) => {
                                 try {
-                                    let profileUrl =  getValidatorProfileUrl(validator.description.identity)
-                                    if (profileUrl) {
-                                        bulkValidators.find({address: validator.address}).upsert().updateOne({$set:{'profile_url':profileUrl}});
+                                    if (validator.description && validator.description.identity){
+                                        let profileUrl = getValidatorProfileUrl(validator.description.identity)
+                                        if (profileUrl) {
+                                            bulkValidators.find({address: validator.address}).upsert().updateOne({$set:{'profile_url':profileUrl}});
+                                        }    
                                     }
                                 } catch (e) {
                                     console.log("Error fetching Keybase for %o: %o", validator.address, e)
