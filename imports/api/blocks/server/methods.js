@@ -232,6 +232,7 @@ Meteor.methods({
 
             let totalValidators = Object.keys(validatorSet).length;
             console.log("all validators: "+ totalValidators);
+            Chain.update({chainId:Meteor.settings.public.chainId}, {$set:{totalValidators:totalValidators}});
 
             for (let height = curr+1 ; height <= until ; height++) {
                 let startBlockTime = new Date();
@@ -653,7 +654,7 @@ Meteor.methods({
                 console.log("This block used: "+((endBlockTime-startBlockTime)/1000)+"seconds.");
             }
             SYNCING = false;
-            Chain.update({chainId:Meteor.settings.public.chainId}, {$set:{lastBlocksSyncedTime:new Date(), totalValidators:totalValidators}});
+            Chain.update({chainId:Meteor.settings.public.chainId}, {$set:{lastBlocksSyncedTime:new Date()}});
         }
 
         return until;
