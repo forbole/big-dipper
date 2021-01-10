@@ -403,8 +403,15 @@ Meteor.methods({
 
                                 valData.address = getAddress(valData.pub_key);
                                 
-                                if (valData.description.identity)
-                                    valData.profile_url =  getValidatorProfileUrl(valData.description.identity)
+                                if (valData.description.identity){
+                                    try{
+                                        valData.profile_url =  getValidatorProfileUrl(valData.description.identity)
+                                    }
+                                    catch (e){
+                                        console.log("Error fetching keybase: %o", e)
+                                    }
+                                }
+                                    
 
                                 valData.accpub = Meteor.call('pubkeyToBech32', valData.pub_key, Meteor.settings.public.bech32PrefixAccPub);
                                 valData.operator_pubkey = Meteor.call('pubkeyToBech32', valData.pub_key, Meteor.settings.public.bech32PrefixValPub);
