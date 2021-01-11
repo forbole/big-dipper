@@ -762,6 +762,15 @@ body {
       cursor: pointer;
     }
   }
+
+  .pagination-item{
+    padding: 0.5rem 0.5rem 0rem 0.5rem;
+    border: solid 0.1px #DDDDDD
+  }
+
+  .pagination-active{
+    background-color: #ff554f6b
+  }
   
   @media only screen and (max-width: 767px) {
     div {
