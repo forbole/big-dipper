@@ -42,27 +42,33 @@ export default class List extends Component {
         this.getCDPList();
     }
 
-    componentDidUpdate() {
-        this.getCDPList();
+    componentDidUpdate(prevProps) {
+        if (!_.isEqual(prevProps.collateralType, this.props.collateralType)) {
+            this.setState({
+                loading: true
+            })
+            this.getCDPList();
+        }
+        
     }
 
     getCDPList = () => {
         Meteor.call('cdp.getCDPList', this.props.collateralType, (error, result) => {
-            if (result && result.length > 0) {
+            if(error){
+                this.setState({
+                    cdpList: undefined,
+                    pagesCount: 0,
+                    loading: true
+
+                })
+            }
+            else {
                 this.setState({
                     cdpList: result.map((cdpList, i) => {
                         return <CDPRow key={i} index={i} cdpList={cdpList} />
                     }),
                     pagesCount: Math.ceil(result.length / this.state.pageSize),
                     loading: false
-                })
-            }
-            else {
-                this.setState({
-                    cdpList: undefined,
-                    pagesCount: 0,
-                    loading: true
-
                 })
             }
         })
@@ -96,7 +102,6 @@ export default class List extends Component {
     }
 
     render() {
-
         if (this.state.loading) {
             return <Spinner type="grow" color="primary" />
         }
