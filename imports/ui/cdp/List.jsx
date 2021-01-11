@@ -5,7 +5,7 @@ import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
 import TimeStamp from '../components/TimeStamp.jsx';
 import Coin from '/both/utils/coins.js'
-import { Pagination, PaginationItem, PaginationLink } from 'reactstrap';
+import Pagination from "react-js-pagination";
 
 const T = i18n.createComponent();
 let minCollateralRatio = 0;
@@ -28,7 +28,7 @@ export default class List extends Component {
         super(props);
         this.state = {
             cdpList: [],
-            currentPage: 0,
+            currentPage: 1,
             pageSize: 15,
             pagesCount: 0,
             minCollateralRatio: 0,
@@ -59,7 +59,6 @@ export default class List extends Component {
                     cdpList: undefined,
                     pagesCount: 0,
                     loading: true
-
                 })
             }
             else {
@@ -68,6 +67,7 @@ export default class List extends Component {
                         return <CDPRow key={i} index={i} cdpList={cdpList} />
                     }),
                     pagesCount: Math.ceil(result.length / this.state.pageSize),
+                    currentPage: 1,
                     loading: false
                 })
             }
@@ -87,18 +87,13 @@ export default class List extends Component {
                 minCollateralRatio = result.collateral_params[0].liquidation_ratio
                 this.setState({
                     collateralParams: result.collateral_params[0]
-
                 })
-
             }
         })
     }
 
-    handleClick(e, index) {
-        e.preventDefault();
-        this.setState({
-            currentPage: index
-        });
+    handlePageChange(pageNumber) {
+        this.setState({ currentPage: pageNumber });
     }
 
     render() {
@@ -125,31 +120,20 @@ export default class List extends Component {
                         </tbody>
                     </Table>
                 </div>
-                <Pagination aria-label="CDP List Pagination" >
-                    <PaginationItem disabled={this.state.currentPage <= 0}>
-                        <PaginationLink
-                            onClick={e => this.handleClick(e, this.state.currentPage - 1)}
-                            previous
-                            href="#"
-                        />
-                    </PaginationItem>
-
-                    {[...Array(this.state.pagesCount)].map((page, i) =>
-                        <PaginationItem active={i === this.state.currentPage} key={i}>
-                            <PaginationLink onClick={e => this.handleClick(e, i)} href="#">
-                                {i + 1}
-                            </PaginationLink>
-                        </PaginationItem>
-                    )}
-
-                    <PaginationItem disabled={this.state.currentPage >= this.state.pagesCount - 1}>
-                        <PaginationLink
-                            onClick={e => this.handleClick(e, currentPage + 1)}
-                            next
-                            href="#"
-                        />
-                    </PaginationItem>
-                </Pagination>
+                <Pagination
+                    firstPageText={<i className="material-icons">first_page</i>}
+                    lastPageText={<i className="material-icons">last_page</i>}
+                    prevPageText={<i className="material-icons">navigate_before</i>}
+                    nextPageText={<i className="material-icons">navigate_next</i>}
+                    activePage={this.state.currentPage}
+                    itemsCountPerPage={this.state.pageSize}
+                    totalItemsCount={this.state.cdpList.length - (this.state.cdpList.length % this.state.pageSize)}
+                    pageRangeDisplayed={10}
+                    // eslint-disable-next-line react/jsx-no-bind
+                    onChange={this.handlePageChange.bind(this)}
+                    itemClass="pagination-item"
+                    activeClass="pagination-active"
+                />
             </div>)
         }
     }
