@@ -1,7 +1,8 @@
 # Changelog
 
-## [Unreleased]
-* [#438] Fixed Proposal Details Page, Create CDP Button and CDP List 
+## kava-4-v1.1
+
+* [#438] Fixed Proposal Details Page, Create CDP Button and CDP List
 
 ## kava-4-v1
 
