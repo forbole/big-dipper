@@ -16,7 +16,7 @@ const AuctionRow = (props) => {
     return <tr>
         <th className="d-none d-sm-table-cell counter ">{(rowItem.base_auction.id)}</th>
         <td className="bidder"><Link to={"/account/" + rowItem.base_auction.bidder}>{rowItem.base_auction.bidder}</Link></td>
-        <td className="lot-value bold-text">{rowItem.base_auction.lot ? <div>{new Coin(rowItem.base_auction.lot.amount, rowItem.base_auction.lot.denom).toString(4)}</div> : '0'}</td>
+        <td className="lot-value bold-text">{rowItem.base_auction.lot && rowItem.base_auction.lot.amount && rowItem.base_auction.lot.denom ? <div>{new Coin(rowItem.base_auction.lot.amount, rowItem.base_auction.lot.denom).toString(4)}</div> : '0'}</td>
         <td className="bid-value bold-text">{rowItem.base_auction.bid ? <div>{new Coin(rowItem.base_auction.bid.amount, rowItem.base_auction.bid.denom).toString(4)}</div> : '0 usdx'}</td>
         <td className="bids-received">{rowItem.base_auction.has_received_bids ? <div> <i className="material-icons greenColor mx-1">check_circle_outline</i> <span className="d-none d-sm-inline">Yes</span> </div> : <div><i className="material-icons redColor mx-1 ">highlight_off</i><span className="d-none d-sm-inline">No</span> </div>}</td>
         <td className="end-time"><TimeStamp time={rowItem.base_auction.end_time} /></td>
@@ -87,7 +87,7 @@ export default class List extends Component {
                             <tr>
                                 <th className="d-none d-sm-table-cell counter "><i className="material-icons">sort</i> <T>auction.auctionID</T></th>
                                 <th className="d-none d-sm-table-cell bidder"><i className="material-icons">account_circle</i> <span className="d-none d-sm-inline"><T>auction.bidder</T></span></th>
-                                <th className="loot-value"><i className="material-icons">attach_money</i> <span className="d-none d-sm-inline"><T>auction.lootValue</T></span></th>
+                                <th className="lot-value"><i className="material-icons">attach_money</i> <span className="d-none d-sm-inline"><T>auction.lotValue</T></span></th>
                                 <th className="bid-value"><i className="material-icons">attach_money</i> <span className="d-none d-sm-inline"><T>auction.bidValue</T></span></th>
                                 <th className="bids-received"><i className="material-icons">attach_money</i> <span className="d-none d-sm-inline"><T>auction.bidsReceived</T></span></th>
                                 <th className="end-time"><i className="material-icons">update</i> <span className="d-none d-sm-inline"><T>auction.endTime</T> (UTC)</span></th>

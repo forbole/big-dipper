@@ -283,9 +283,9 @@ Meteor.methods({
         return cdp
     },
 
-    'cdp.getCDPList': function () {
+    'cdp.getCDPList': function (collateralType) {
         this.unblock();
-        let url = LCD + '/cdp/cdps/denom/bnb';
+        let url = LCD + '/cdp/cdps/collateralType/' + collateralType;
         try {
             let result = HTTP.get(url);
             if (result.statusCode == 200) {

@@ -1,5 +1,8 @@
 # Changelog
 
+## [Unreleased]
+* [#438] Fixed Proposal Details Page, Create CDP Button and CDP List 
+
 ## kava-4-v1
 
 Compatibilty fix with SDK v0.39.x

@@ -150,8 +150,21 @@ Meteor.methods({
                         console.log(url);
                         console.log(e);
                     }
-            		}
 
+                    url = LCD + '/gov/parameters/tallying';
+                    try {
+                        response = HTTP.get(url);
+                        let tallying = JSON.parse(response.content);
+                        if (tallying) {
+                            chainStates.tallyParams = (tallying.result)
+                        }
+                    }
+                    catch (e) {
+                        console.log(url);
+                        console.log(e);
+                    }
+
+            		}
                 ChainStates.insert(chainStates);
             }
 
