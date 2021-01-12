@@ -338,6 +338,10 @@ class LedgerButton extends Component {
                 this.tryConnect();
             this.getBalance();
         }
+
+        if(prevState.collateralDenom != this.state.collateralDenom){
+            this.getUSDPrice();
+        }
     }
 
     componentDidMount() {
@@ -1420,7 +1424,8 @@ class CreateCDPButton extends LedgerButton {
             CDPParameters: props.CDPParameters,
             collateralType: '',
             denomFraction: 1,
-            denomColletralizationRatio: 0
+            denomColletralizationRatio: 0,
+            price: 0
         }
     }
 
@@ -1449,7 +1454,7 @@ class CreateCDPButton extends LedgerButton {
             CDPParameters: this.props.CDPParameters,
         }, () => {
             this.setState({
-                ratio: this.state.collateral * this.props.price / this.state.debt
+                ratio: this.state.collateral * this.state.price / this.state.debt
             })
         });
         this.findDenomType();
@@ -1485,7 +1490,7 @@ class CreateCDPButton extends LedgerButton {
         let target = e.currentTarget;
         let value = target.innerText;
 
-        this.setState({ collateralDenom: value })
+        this.setState({ collateralDenom: value, loading: true })
 
         if (target.innerText=== 'KAVA') {
             this.setState({
@@ -1498,6 +1503,24 @@ class CreateCDPButton extends LedgerButton {
             })
         }
 
+    }
+
+    getUSDPrice = () =>{
+        Meteor.call('cdp.getCDPPrice', `${this.state.collateralDenom.toLowerCase()}:usd`, (error, result) => {
+            if (error) {
+                console.warn(error);
+                this.setState({
+                    loading: true
+                })
+            }
+
+            if (result) {
+                this.setState({
+                    price: result,
+                    loading: false
+                })
+            }
+        });
     }
 
     tokenDropdown = () => {
@@ -1533,6 +1556,8 @@ class CreateCDPButton extends LedgerButton {
             <h3 className="text-center pb-4 pt-3">Create CDP</h3>
             <FormGroup>
                 <Label for="collateral" className="mb-n4"><T>cdp.collateral</T></Label>
+                {this.state.price != 0 ?
+                    <FormText className="coin-available ml-5"> 1 {this.state.collateralDenom} <i className="material-icons" style={{fontSize: '18px'}}>sync_alt</i> {numbro(this.state.price).format('0.0000')} USD</FormText> : null }
                 <FormText className="coin-available mb-n5 float-right"> {this.state.denom != '' ? `Max ${this.state.maxAmount} ${this.state.collateralDenom}` : null}</FormText>
                 <InputGroup className="modal-for-ledger py-n5">
                     {this.state.collateralDenom != '' ? 
@@ -1554,7 +1579,6 @@ class CreateCDPButton extends LedgerButton {
                 <Label for="debt" className="mb-n4"><T>cdp.debt</T></Label>
                 <FormText invalid={true} className="coin-available mb-n5 float-right">The minimum debt is {this.props.debtFloor / Meteor.settings.public.coins[5].fraction} USDX </FormText>
                 <InputGroup className="modal-for-ledger py-n5">
-                    <FormFeedback invalid className="coin-available ">The minimum debt is {this.props.debtFloor / Meteor.settings.public.coins[5].fraction} USDX </FormFeedback>
                     <InputGroupAddon addonType="prepend">
                         <InputGroupText className="modal-for-ledger"><img src="/img/usdx-symbol.svg" className="symbol-img" /> </InputGroupText>
                     </InputGroupAddon>
@@ -1563,7 +1587,6 @@ class CreateCDPButton extends LedgerButton {
                     <InputGroupAddon addonType="append">
                         <InputGroupText className="modal-for-ledger font-weight-bold">USDX</InputGroupText>
                     </InputGroupAddon>
-                    {/* <FormFeedback invalid={true} className="coin-available mb-n5 float-right">The minimum debt is {this.props.debtFloor / Meteor.settings.public.coins[5].fraction} USDX </FormFeedback> */}
 
                 </InputGroup>
 
@@ -1581,7 +1604,6 @@ class CreateCDPButton extends LedgerButton {
                         className={((this.state.ratio !== Infinity) && (this.state.ratio >= this.state.denomColletralizationRatio)) ? 'modal-for-ledger text-success text-right mt-2' : 'modal-for-ledger text-danger text-right mt-2 pr-5'}
                         value={((this.state.ratio !== Infinity) && (this.state.ratio > 0)) ? numbro(this.state.ratio).format({ mantissa: 6 }) : numbro(this.state.ratio).format({ mantissa: 6 })}
                         disabled={true} />
-                    {/* <FormFeedback className="coin-available mb-n5 float-right">The minimum debt is {this.props.debtFloor / Meteor.settings.public.coins[5].fraction} USDX </FormFeedback> */}
 
                 </InputGroup>
 
@@ -1603,7 +1625,7 @@ class CreateCDPButton extends LedgerButton {
 
     isDataValid = () => {
         if (!this.state.currentUser) return false
-        return isBetween(this.state.collateral, 0.00000001, this.state.maxAmount) && isBetween(this.state.debt, this.props.debtFloor / Meteor.settings.public.coins[5].fraction, numbro(this.state.collateral * this.props.price / this.state.denomColletralizationRatio));
+        return isBetween(this.state.collateral, 0.00000001, this.state.maxAmount) && isBetween(this.state.debt, this.props.debtFloor / Meteor.settings.public.coins[5].fraction, numbro(this.state.collateral * this.state.price / this.state.denomColletralizationRatio));
 
     }
 
