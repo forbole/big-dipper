@@ -1,14 +1,19 @@
 # Changelog
 
+## [Unreleased]
+
+* [#444] Fetch keybase in async function with query interval contolled by settings
+* Fix missing value in VP distribution
+
 ## v0.39.x-4
 
-* [436] Index transactions in a separate process
+* [#436] Index transactions in a separate process
 * Update to Meteor 1.12
-* [435] Show inflation as 0% if there is no inflation (no minting module integrated)
-* [433] Create tx index for MsgCreateValidator
+* [#435] Show inflation as 0% if there is no inflation (no minting module integrated)
+* [#433] Create tx index for MsgCreateValidator
 * Use react-json-view instead of JSONPretty
 * Update uptime with signing info
-* [280] Remove reading genesis file
+* [#280] Remove reading genesis file
 * Remove plural denom
 * Simplify validator storing
 * Get data and show proposal based on enabled modules
@@ -16,12 +21,12 @@
 
 ## v0.39.x-3
 
-* [431] Create correct index for trasaction events
+* [#431] Create correct index for trasaction events
 
 ## v0.39.x-2
 
-* [392] Fixed account page not rendering when the account is empty
-* [413] Fixed validator page error after logging in with Ledger
+* [#392] Fixed account page not rendering when the account is empty
+* [#413] Fixed validator page error after logging in with Ledger
 
 ## v0.39.x-1
 

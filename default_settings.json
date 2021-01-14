@@ -30,7 +30,8 @@
         "modules": {
             "supply": true,
             "minting": false,
-            "gov": true
+            "gov": true,
+            "distribution": false
         },
         "gasPrice": 0.02,
         "coingeckoId": "cosmos"

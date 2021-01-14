@@ -13,7 +13,6 @@ export default ValidatorDetailsContainer = withTracker((props) => {
 
         if (!loading) {
             transactions = Transactions.find({}, {sort:{height:-1}}).fetch();
-            console.log(transactions.length)
             transactionsExist = !loading && !!transactions;
         }
     }

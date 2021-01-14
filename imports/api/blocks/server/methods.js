@@ -81,7 +81,7 @@ getValidatorUptime = async (validatorSet) => {
     }
 }
 
-calculateVPDist = async () => {
+calculateVPDist = async (analyticsData, blockData) => {
     console.log("===== calculate voting power distribution =====");
     let activeValidators = Validators.find({status:2,jailed:false},{sort:{voting_power:-1}}).fetch();
     let numTopTwenty = Math.ceil(activeValidators.length*0.2);
@@ -116,7 +116,7 @@ calculateVPDist = async () => {
     numBottomSixtySix = activeValidators.length - numTopThirtyFour;
 
     let vpDist = {
-        height: height,
+        height: blockData.height,
         numTopTwenty: numTopTwenty,
         topTwentyPower: topTwentyPower,
         numBottomEighty: numBottomEighty,
@@ -406,7 +406,10 @@ Meteor.methods({
 
                                 valData.address = getAddress(valData.pub_key);
                                 
-                                if (valData.description.identity){
+                                // First time adding validator to the database.
+                                // Fetch profile picture from Keybase
+
+                                if (valData.description && valData.description.identity){
                                     try{
                                         valData.profile_url =  getValidatorProfileUrl(valData.description.identity)
                                     }
@@ -535,57 +538,38 @@ Meteor.methods({
                         if ((height % Meteor.settings.params.validatorUpdateWindow == 0) || (height == until)){
                             getValidatorUptime(validatorSet)
                         }
-                        // check if there's any validator not in db 14400 blocks
-                        // if (height % 14400 == 0){
-                        //     try {
-                        //         console.log('Checking all validators against db...')
-                        //         let dbValidators = {}
-                        //         Validators.find({}, {fields: {consensus_pubkey: 1, status: 1}}
-                        //         ).forEach((v) => dbValidators[v.consensus_pubkey] = v.status)
-                        //         Object.keys(validatorSet).forEach((conPubKey) => {
-                        //             let validatorData = validatorSet[conPubKey];
-                        //             // Active validators should have been updated in previous steps
-                        //             if (validatorData.status === 2)
-                        //                 return
 
-                        //             if (dbValidators[conPubKey] == undefined) {
-                        //                 console.log(`validator with consensus_pubkey ${conPubKey} not in db`);
-                        //                 let pubkeyType = Meteor.settings.public.secp256k1?'tendermint/PubKeySecp256k1':'tendermint/PubKeyEd25519';
-                        //                 validatorData.pub_key = {
-                        //                     "type" : pubkeyType,
-                        //                     "value": Meteor.call('bech32ToPubkey', conPubKey, pubkeyType)
-                        //                 }
-                        //                 validatorData.address = getAddress(validatorData.pub_key);
-                        //                 validatorData.delegator_address = Meteor.call('getDelegator', validatorData.operator_address);
-                        //                 validatorData.accpub = Meteor.call('pubkeyToBech32', validatorData.pub_key, Meteor.settings.public.bech32PrefixAccPub);
-                        //                 validatorData.operator_pubkey = Meteor.call('pubkeyToBech32', validatorData.pub_key, Meteor.settings.public.bech32PrefixValPub);
-                        //                 console.log(JSON.stringify(validatorData))
-                        //                 bulkValidators.find({consensus_pubkey: conPubKey}).upsert().updateOne({$set:validatorData});
-                        //             } else if (dbValidators[conPubKey] == 2) {
-                        //                 bulkValidators.find({consensus_pubkey: conPubKey}).upsert().updateOne({$set:validatorData});
-                        //             }
-                        //         })
-                        //     } catch (e){
-                        //         console.log(e)
-                        //     }
-                        // }
+                        // fetching keybase every base on keybaseFetchingInterval settings
+                        // default to every 5 hours 
 
-                        // fetching keybase every 500 blocks
-                        if (height == curr+1){ //if (height % 500 == 1){
-                            console.log('Fetching keybase...')
-                            // eslint-disable-next-line no-loop-func
-                            Validators.find({}).forEach((validator) => {
-                                try {
-                                    if (validator.description && validator.description.identity){
-                                        let profileUrl = getValidatorProfileUrl(validator.description.identity)
-                                        if (profileUrl) {
-                                            bulkValidators.find({address: validator.address}).upsert().updateOne({$set:{'profile_url':profileUrl}});
-                                        }    
+                        if (height == curr+1){
+
+                            // check the last fetching time
+
+                            let now = Date.now();
+                            let lastKeybaseFetchTime = Date.parse(chainStatus.lastKeybaseFetchTime) || 0
+                            console.log("Now: %o", now)
+                            console.log("Last fetch time: %o", lastKeybaseFetchTime)
+
+                            if (!lastKeybaseFetchTime || (now - lastKeybaseFetchTime) > Meteor.settings.params.keybaseFetchingInterval ){
+                                console.log('Fetching keybase...')
+                                // eslint-disable-next-line no-loop-func
+                                Validators.find({}).forEach(async (validator) => {
+                                    try {
+                                        if (validator.description && validator.description.identity){
+                                            let profileUrl = getValidatorProfileUrl(validator.description.identity)
+                                            if (profileUrl) {
+                                                bulkValidators.find({address: validator.address}).upsert().updateOne({$set:{'profile_url':profileUrl}});
+                                            }    
+                                        }
+                                    } catch (e) {
+                                        console.log("Error fetching Keybase for %o: %o", validator.address, e)
                                     }
-                                } catch (e) {
-                                    console.log("Error fetching Keybase for %o: %o", validator.address, e)
-                                }
-                            })
+                                })
+
+                                Chain.update({chainId:block.block.header.chain_id}, {$set:{lastKeybaseFetchTime:new Date().toUTCString()}});
+                            }
+
                         }
 
                         let endFindValidatorsNameTime = new Date();
@@ -643,7 +627,7 @@ Meteor.methods({
                         // calculate voting power distribution every 60 blocks ~ 5mins
 
                         if (height % 60 == 1){
-                            calculateVPDist()
+                            calculateVPDist(analyticsData, blockData)
                         }
                     }
                 }
