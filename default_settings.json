@@ -48,6 +48,7 @@
         "defaultBlockTime": 5000,
         "validatorUpdateWindow": 300,
         "blockInterval": 15000,
+        "keybaseFetchingInterval": 18000000,
         "consensusInterval": 1000,
         "statusInterval":7500,
         "signingInfoInterval": 1800000,
