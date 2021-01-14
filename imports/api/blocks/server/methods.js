@@ -81,7 +81,7 @@ getValidatorUptime = async (validatorSet) => {
     }
 }
 
-calculateVPDist = async () => {
+calculateVPDist = async (analyticsData, blockData) => {
     console.log("===== calculate voting power distribution =====");
     let activeValidators = Validators.find({status:2,jailed:false},{sort:{voting_power:-1}}).fetch();
     let numTopTwenty = Math.ceil(activeValidators.length*0.2);
@@ -116,7 +116,7 @@ calculateVPDist = async () => {
     numBottomSixtySix = activeValidators.length - numTopThirtyFour;
 
     let vpDist = {
-        height: height,
+        height: blockData.height,
         numTopTwenty: numTopTwenty,
         topTwentyPower: topTwentyPower,
         numBottomEighty: numBottomEighty,
@@ -627,7 +627,7 @@ Meteor.methods({
                         // calculate voting power distribution every 60 blocks ~ 5mins
 
                         if (height % 60 == 1){
-                            calculateVPDist()
+                            calculateVPDist(analyticsData, blockData)
                         }
                     }
                 }
