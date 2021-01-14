@@ -12,6 +12,7 @@ COUNTMISSEDBLOCKSSTATS = false;
 RPC = Meteor.settings.remote.rpc;
 LCD = Meteor.settings.remote.lcd;
 timerBlocks = 0;
+timerTransactions = 0;
 timerChain = 0;
 timerConsensus = 0;
 timerProposal = 0;
@@ -188,8 +189,11 @@ Meteor.startup(function(){
 
         timerBlocks = Meteor.setInterval(function(){
             updateBlock();
-            updateTransactions();
         }, Meteor.settings.params.blockInterval);
+
+        timerTransactions = Meteor.setInterval(function(){
+            updateTransactions();
+        }, Meteor.settings.params.transactionsInterval);
 
         timerChain = Meteor.setInterval(function(){
             updateChainStatus();
