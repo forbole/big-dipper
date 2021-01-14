@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## v0.39.x-5
 
 * [#444] Fetch keybase in async function with query interval contolled by settings
 * Fix missing value in VP distribution
