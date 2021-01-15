@@ -5,56 +5,44 @@ import { Validators } from '../../validators/validators.js';
 
 const AddressLength = 40;
 
-const bulkTransactions = Transactions.rawCollection().initializeUnorderedBulkOp();
-
-getTransaction = async (hash) => {
-    // hash = hash.toUpperCase();
-    // console.log("Get tx: "+hash)
-    try {
-        let url = LCD+ '/txs/'+hash;
-        let response = HTTP.get(url);
-        let tx = JSON.parse(response.content);
-
-        tx.height = parseInt(tx.height);
-        tx.processed = true;
-
-        let txId = Transactions.update({txhash:hash}, {$set:tx});
-        // bulkTransactions.find({txhash:hash}).updateOne({$set:tx});
-        // console.log(bulkTransactions.length)
-        if (txId){
-            return txId;
-        }
-        else return false;
-
-    }
-    catch(e) {
-        console.log("Getting transaction %o: %o", hash, e);
-    }
-}
-
 Meteor.methods({
     'Transactions.updateTransactions': async function(){
         this.unblock();
         if (TXSYNCING)
             return "Syncing transactions...";
-        const transactions = Transactions.find({processed:false},{limit: 300}).fetch();
+
+        const transactions = Transactions.find({processed:false},{limit: 500}).fetch();
         try{
             TXSYNCING = true;
+            const bulkTransactions = Transactions.rawCollection().initializeUnorderedBulkOp();
             for (let i in transactions){
-                // console.log(transactions[i]);
-                getTransaction(transactions[i].txhash)
+                try {
+                    let url = LCD+ '/txs/'+transactions[i].txhash;
+                    let response = HTTP.get(url);
+                    let tx = JSON.parse(response.content);
+            
+                    tx.height = parseInt(tx.height);
+                    tx.processed = true;
+
+                    bulkTransactions.find({txhash:transactions[i].txhash}).updateOne({$set:tx});
+
+            
+                }
+                catch(e) {
+                    console.log("Getting transaction %o: %o", hash, e);
+                }
             }
-            // if (bulkTransactions.length > 0){
-            //     // console.log("aaa: %o",bulkTransactions.length)
-            //     bulkTransactions.execute((err, result) => {
-            //         if (err){
-            //             console.log(err);
-            //         }
-            //         if (result){
-            //             console.log(result);
-            //         }
-            //     });
-            // }
+            if (bulkTransactions.length > 0){
+                console.log("aaa: %o",bulkTransactions.length)
+                bulkTransactions.execute((err, result) => {
+                    if (err){
+                        console.log(err);
+                    }
+                    if (result){
+                        console.log(result);
+                    }
+                });
+            }
         }
         catch (e) {
             TXSYNCING = false;
