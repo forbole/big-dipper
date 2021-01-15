@@ -5,31 +5,6 @@ import { Validators } from '../../validators/validators.js';
 
 const AddressLength = 40;
 
-// getTransaction = async (hash) => {
-//     // hash = hash.toUpperCase();
-//     // console.log("Get tx: "+hash)
-//     try {
-//         let url = LCD+ '/txs/'+hash;
-//         let response = HTTP.get(url);
-//         let tx = JSON.parse(response.content);
-
-//         tx.height = parseInt(tx.height);
-//         tx.processed = true;
-
-//         let txId = Transactions.update({txhash:hash}, {$set:tx});
-//         // bulkTransactions.find({txhash:hash}).updateOne({$set:tx});
-//         // console.log(bulkTransactions.length)
-//         if (txId){
-//             return txId;
-//         }
-//         else return false;
-
-//     }
-//     catch(e) {
-//         console.log("Getting transaction %o: %o", hash, e);
-//     }
-// }
-
 Meteor.methods({
     'Transactions.updateTransactions': async function(){
         this.unblock();
@@ -41,27 +16,16 @@ Meteor.methods({
             TXSYNCING = true;
             const bulkTransactions = Transactions.rawCollection().initializeUnorderedBulkOp();
             for (let i in transactions){
-                // console.log(transactions[i]);
-                // getTransaction(transactions[i].txhash)
                 try {
                     let url = LCD+ '/txs/'+transactions[i].txhash;
                     let response = HTTP.get(url);
-                    console.log(url)
                     let tx = JSON.parse(response.content);
             
                     tx.height = parseInt(tx.height);
                     tx.processed = true;
 
-                    // console.log(tx)
-
                     bulkTransactions.find({txhash:transactions[i].txhash}).updateOne({$set:tx});
 
-                    // let txId = Transactions.update({txhash:hash}, {$set:tx});
-                    // console.log(bulkTransactions.length)
-                    // if (txId){
-                    //     return txId;
-                    // }
-                    // else return false;
             
                 }
                 catch(e) {
