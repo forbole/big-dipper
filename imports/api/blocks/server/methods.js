@@ -112,6 +112,9 @@ calculateVPDist = async (analyticsData, blockData) => {
         }
     }
 
+    // console.log(topTwentyPower)
+    // console.log(bottomEightyPower)
+
     bottomSixtySixPercent = 1 - topThirtyFourPercent;
     numBottomSixtySix = activeValidators.length - numTopThirtyFour;
 
@@ -390,6 +393,7 @@ Meteor.methods({
                             let valData = validatorSet[v];
                             let valExist = Validators.findOne({consensus_pubkey:v});
                             
+                            analyticsData.voting_power += valData.voting_power
 
                             if (!valExist && valData.consensus_pubkey){
 
