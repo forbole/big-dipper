@@ -77,7 +77,7 @@ Meteor.methods({
                 chainStates.height = parseInt(status.sync_info.latest_block_height);
                 chainStates.time = new Date(status.sync_info.latest_block_time);
 
-                url = LCD + '/staking/pool';
+                url = LCD + '/cosmos/staking/v1beta1/pool';
                 try{
                     response = HTTP.get(url);
                     let bonding = JSON.parse(response.content).result;
@@ -93,7 +93,7 @@ Meteor.methods({
 
                 if ( Coin.StakingCoin.denom ) {
                     if (Meteor.settings.public.modules.bank){
-                        url = LCD + '/bank/total/'+ Coin.StakingCoin.denom;
+                        url = LCD + '/cosmos/bank/v1beta1/supply/'+ Coin.StakingCoin.denom;
                         try{
                             response = HTTP.get(url);
                             let supply = JSON.parse(response.content).result;
@@ -106,7 +106,7 @@ Meteor.methods({
                     }
 
                     if (Meteor.settings.public.modules.distribution){
-                        url = LCD + '/distribution/community_pool';
+                        url = LCD + '/cosmos/distribution/v1beta1/community_pool';
                         try {
                             response = HTTP.get(url);
                             let pool = JSON.parse(response.content).result;
@@ -127,7 +127,7 @@ Meteor.methods({
                     }
 
                     if (Meteor.settings.public.modules.minting){
-                        url = LCD + '/minting/inflation';
+                        url = LCD + '/cosmos/minting/v1beta1/inflation';
                         try{
                             response = HTTP.get(url);
                             let inflation = JSON.parse(response.content).result;
@@ -140,7 +140,7 @@ Meteor.methods({
                             console.log(e.response.content);
                         }
 
-                        url = LCD + '/minting/annual-provisions';
+                        url = LCD + '/cosmos/minting/v1beta1/annual_provisions';
                         try{
                             response = HTTP.get(url);
                             let provisions = JSON.parse(response.content);

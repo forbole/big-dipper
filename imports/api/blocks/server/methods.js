@@ -65,7 +65,7 @@ getValidatorProfileUrl = (identity) => {
 getValidatorUptime = async (validatorSet) => {
 
     // get validator uptime
-    let url = LCD+'/slashing/parameters';
+    let url = LCD+'/cosmos/slashing/v1beta1/params';
     let response = HTTP.get(url);
 
     const slashingParams = JSON.parse(response.content).result;
@@ -75,7 +75,7 @@ getValidatorUptime = async (validatorSet) => {
     for(let key in validatorSet){
         try{
             try {
-                let url = LCD+'/slashing/validators/'+validatorSet[key].bech32ConsensusPubKey+'/signing_info';
+                let url = LCD+'/cosmos/slashing/v1beta1/signing_infos/'+validatorSet[key].bech32ConsensusPubKey;
                 let response = HTTP.get(url);
                 let signingInfo = JSON.parse(response.content).result;
                 if (signingInfo){
@@ -214,7 +214,7 @@ Meteor.methods({
 
             let validatorSet = {}
             // get latest validator candidate information
-            url = LCD+'/staking/validators';
+            url = LCD+'/cosmos/staking/v1beta1/validators';
 
             try{
                 response = HTTP.get(url);
@@ -225,7 +225,7 @@ Meteor.methods({
                 console.log(e);
             }
 
-            url = LCD+'/staking/validators?status=unbonding';
+            url = LCD+'/cosmos/staking/v1beta1/validators?status=unbonding';
 
             try{
                 response = HTTP.get(url);
@@ -236,7 +236,7 @@ Meteor.methods({
                 console.log(e);
             }
 
-            url = LCD+'/staking/validators?status=unbonded';
+            url = LCD+'/cosmos/staking/v1beta1/validators?status=unbonded';
 
             try{
                 response = HTTP.get(url);
@@ -545,7 +545,7 @@ Meteor.methods({
 
                             // get self delegation every 30 blocks
                             if (height == curr+1){ //if (height % 50 == 2){
-                                let url = LCD+`/staking/delegators/${valData.delegator_address}/delegations/${valData.operator_address}`
+                                let url = LCD+`/cosmos/staking/v1beta1/delegators/${valData.delegator_address}/delegations/${valData.operator_address}`
                                 try{
                                     console.log("Getting self delegation");
                                     let response = HTTP.get(url);

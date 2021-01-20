@@ -10,7 +10,7 @@ Meteor.methods({
         console.log("=== Getting delegations ===");
         for (v in validators){
             if (validators[v].operator_address){
-                let url = LCD + '/staking/validators/'+validators[v].operator_address+"/delegations";
+                let url = LCD + '/cosmos/staking/v1beta1/validators/'+validators[v].operator_address+"/delegations";
                 try{
                     let response = HTTP.get(url);
                     if (response.statusCode == 200){
