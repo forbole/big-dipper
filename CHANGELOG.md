@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.39.x-7
+
+* [#452] Fix VP Chart not being shown
+
 ## v0.39.x-6
 
 * Index transactions with timer settings
