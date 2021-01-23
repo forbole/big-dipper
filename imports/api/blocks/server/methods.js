@@ -11,6 +11,8 @@ import { Evidences } from '../../evidences/evidences.js';
 import { sha256 } from 'js-sha256';
 import { getAddress } from 'tendermint/lib/pubkey';
 import * as cheerio from 'cheerio';
+import * as cosmospb from '@forbole/cosmos-protobuf-js'
+import unary from '../../../both/utils/unary'
 
 getRemovedValidators = (prevValidators, validators) => {
     // let removeValidators = [];

@@ -37,8 +37,7 @@
         "coingeckoId": "cosmos"
     },
     "remote":{
-        "rpc":"https://gaia-seeds.interblock.io",
-        "lcd":"https://gaia-seeds.interblock.io:1317"
+        "grpc":"http://grpc.cosmoshub.forbole.com:80"
     },
     "debug": {
         "startTimer": true
