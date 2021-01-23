@@ -11,10 +11,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.12.5",
-    "@forbole/cosmos-protobuf-js": "^1.0.1",
-    "@grpc/grpc-js": "^1.2.4",
-    "@grpc/proto-loader": "^0.5.6",
-    "@improbable-eng/grpc-web": "^0.13.0",
+    "@forbole/cosmos-protobuf-js": "^1.0.2",
     "@ledgerhq/hw-transport-webusb": "^4.78.0",
     "@lunie/cosmos-js": "0.0.22",
     "@types/meteor-universe-i18n": "^1.14.5",
