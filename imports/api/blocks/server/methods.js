@@ -12,7 +12,7 @@ import { sha256 } from 'js-sha256';
 import { getAddress } from 'tendermint/lib/pubkey';
 import * as cheerio from 'cheerio';
 import * as cosmospb from '@forbole/cosmos-protobuf-js'
-import unary from '../../../both/utils/unary'
+import unary from '../../../../both/utils/unary'
 
 getRemovedValidators = (prevValidators, validators) => {
     // let removeValidators = [];
@@ -198,7 +198,7 @@ Meteor.methods({
         }
         return startHeight
     },
-    'blocks.blocksUpdate': function() {
+    'blocks.blocksUpdate': async function() {
         this.unblock();
         if (SYNCING)
             return "Syncing...";
@@ -218,6 +218,15 @@ Meteor.methods({
             // get latest validator candidate information
             url = LCD+'/cosmos/staking/v1beta1/validators';
 
+            const req = new cosmospb.staking.query.QueryValidatorsRequest()
+            // req.setStatus("BONDED")
+            // console.log("Get validators: %o", height)
+            const res = await unary(cosmospb.staking.query.Validators, req)
+
+            console.log("Get validators: %o", res);
+
+            console.log("=========")
+
             try{
                 response = HTTP.get(url);
                 JSON.parse(response.content).result.forEach((validator) => validatorSet[validator.consensus_pubkey.value] = validator);
@@ -228,6 +237,7 @@ Meteor.methods({
             }
 
             url = LCD+'/cosmos/staking/v1beta1/validators?status=unbonding';
+
 
             try{
                 response = HTTP.get(url);

@@ -2,6 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 import { Chain, ChainStates } from '../chain.js';
 import Coin from '../../../../both/utils/coins.js';
+import cosmospb from '@forbole/cosmos-protobuf-js'
+import { unary }from '../../../../both/utils/unary';
 
 findVotingPower = (validator, genValidators) => {
     for (let v in genValidators){
@@ -39,7 +41,7 @@ Meteor.methods({
             console.log(e);
         }
     },
-    'chain.updateStatus': function(){
+    'chain.updateStatus': async function(){
         this.unblock();
         let url = RPC+'/status';
         try{
@@ -58,6 +60,14 @@ Meteor.methods({
 
             // Since Tendermint v0.33, validator page default set to return 30 validators.
             // Query latest height with page 1 and 100 validators per page.
+            // const req = new cosmospb.base.tendermint.GetLatestValidatorSetRequest()
+            // // req.setStatus("BONDED")
+            // // console.log("Get validators: %o", height)
+            // console.log(req)
+
+            // const res = await unary(cosmospb.base.tendermint.GetLatestValidatorSet, req)
+            // console.log("gRPC validator set: %o", res)
+    
             url = RPC+`/validators?page=1&per_page=100`;
             response = HTTP.get(url);
             let validators = JSON.parse(response.content);
@@ -78,6 +88,18 @@ Meteor.methods({
                 chainStates.time = new Date(status.sync_info.latest_block_time);
 
                 url = LCD + '/cosmos/staking/v1beta1/pool';
+
+                const req = new cosmospb.staking.query.QueryPoolRequest()
+                const res = await unary(cosmospb.staking.query.Query.Pool, req)
+                console.log(res)
+            // // req.setStatus("BONDED")
+            // // console.log("Get validators: %o", height)
+            // console.log(req)
+
+            // const res = await unary(cosmospb.base.tendermint.GetLatestValidatorSet, req)
+            // console.log("gRPC validator set: %o", res)
+
+
                 try{
                     response = HTTP.get(url);
                     let bonding = JSON.parse(response.content).result;

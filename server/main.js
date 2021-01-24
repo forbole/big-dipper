@@ -232,9 +232,4 @@ Meteor.startup(function(){
             }
         }, 1000)
     }
-
-    // const req = new proto.cosmos.base.tendermint.v1beta1.GetBlockByHeightRequest()
-    // req.setHeight(10000)
-    // console.log("Get block height: %o", height)
-    // const res = await unary(AccessAPI.GetBlockByHeight, req)
 });
