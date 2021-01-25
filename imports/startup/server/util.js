@@ -18,7 +18,7 @@ Meteor.methods({
         let buffer;
 
         try {
-            if (pubkey.type.indexOf("PubKeyEd25519") > 0){
+            if (pubkey.typeUrl.indexOf("ed25519") > 0){
             // '1624DE6420' is ed25519 pubkey prefix
                 let pubkeyAminoPrefix = Buffer.from('1624DE6420', 'hex');
                 buffer = Buffer.alloc(37);
@@ -26,7 +26,7 @@ Meteor.methods({
                 pubkeyAminoPrefix.copy(buffer, 0)
                 Buffer.from(pubkey.value, 'base64').copy(buffer, pubkeyAminoPrefix.length)
             }
-            else if (pubkey.type.indexOf("PubKeySecp256k1") > 0){
+            else if (pubkey.typeUrl.indexOf("secp256k1") > 0){
             // 'EB5AE98721' is secp256k1 pubkey prefix
                 let pubkeyAminoPrefix = Buffer.from('EB5AE98721', 'hex');
                 buffer = Buffer.alloc(38);
