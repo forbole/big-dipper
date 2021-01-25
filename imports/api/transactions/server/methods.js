@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 import { Transactions } from '../../transactions/transactions.js';
 import { Validators } from '../../validators/validators.js';
+import { Cosmos } from '@forbole/cosmos-protobuf-js'
 
 const AddressLength = 40;
 
@@ -17,11 +18,16 @@ Meteor.methods({
             const bulkTransactions = Transactions.rawCollection().initializeUnorderedBulkOp();
             for (let i in transactions){
                 try {
-                    let url = LCD+ '/cosmos/tx/v1beta1/txs/'+transactions[i].txhash;
-                    let response = HTTP.get(url);
-                    let tx = JSON.parse(response.content);
+                    // let url = LCD+ '/cosmos/tx/v1beta1/txs/'+transactions[i].txhash;
+                    // let response = HTTP.get(url);
+                    // let tx = JSON.parse(response.content);
+
+                    let req = new Cosmos.Tx.GetTxRequest();
+                    req.setHash(transactions[i].txhash);
+                    let tx = await Cosmos.gRPC.unary(Cosmos.Tx.Service.GetTx, req, GRPC);
+                    console.log(tx);
             
-                    tx.height = parseInt(tx.height);
+                    // tx.height = parseInt(tx.height);
                     tx.processed = true;
 
                     bulkTransactions.find({txhash:transactions[i].txhash}).updateOne({$set:tx});
