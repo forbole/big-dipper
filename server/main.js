@@ -5,12 +5,16 @@ import '/imports/startup/both';
 // import moment from 'moment';
 // import '/imports/api/blocks/blocks.js';
 
+import { Cosmos } from '@forbole/cosmos-protobuf-js'
+
 SYNCING = false;
 TXSYNCING = false;
 COUNTMISSEDBLOCKS = false;
 COUNTMISSEDBLOCKSSTATS = false;
 RPC = Meteor.settings.remote.rpc;
 LCD = Meteor.settings.remote.lcd;
+GRPC = Meteor.settings.remote.grpc;
+
 timerBlocks = 0;
 timerTransactions = 0;
 timerChain = 0;
@@ -164,7 +168,7 @@ aggregateDaily = () =>{
 
 
 
-Meteor.startup(function(){
+Meteor.startup(async function(){
     if (Meteor.isDevelopment){
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
         import DEFAULTSETTINGSJSON from '../default_settings.json'
