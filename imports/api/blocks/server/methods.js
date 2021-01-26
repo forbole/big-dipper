@@ -68,38 +68,36 @@ getValidatorProfileUrl = (identity) => {
 getValidatorUptime = async (validatorSet) => {
 
     // get validator uptime
-    let url = LCD+'/cosmos/slashing/v1beta1/params';
-    let response = HTTP.get(url);
+    // let url = LCD+'/cosmos/slashing/v1beta1/params';
+    // let response = HTTP.get(url);
 
     let req = new Cosmos.Slashing.QueryParamsRequest();
     const slashingParams = await Cosmos.gRPC.unary(Cosmos.Slashing.Query.Params, req, GRPC);
 
-    // const slashingParams = JSON.parse(response.content).result;
-
-    Chain.upsert({chainId:Meteor.settings.public.chainId}, {$set:{"slashing.params":slashingParams}});
+    Chain.upsert({chainId:Meteor.settings.public.chainId}, {$set:{"slashing":slashingParams}});
 
     for(let key in validatorSet){
-        try{
-            try {
-                let url = LCD+'/cosmos/slashing/v1beta1/signing_infos/'+validatorSet[key].bech32ValConsAddress;
-                let response = HTTP.get(url);
-                let signingInfo = JSON.parse(response.content).result;
-                if (signingInfo){
-                    let valData = validatorSet[key]
-                    valData.tombstoned = signingInfo.tombstoned
-                    valData.jailed_until = signingInfo.jailed_until
-                    valData.index_offset = signingInfo.index_offset
-                    valData.start_height = signingInfo.start_height
-                    valData.uptime = (slashingParams.signed_blocks_window - parseInt(signingInfo.missed_blocks_counter))/slashingParams.signed_blocks_window * 100;
-                    Validators.upsert({bech32ConsensusPubKey:validatorSet[key].bech32ConsensusPubKey}, {$set:valData})
-                }
-            }
-            catch(e){
-                console.log("Getting signing info of %o: %o", validatorSet[key].bech32ConsensusPubKey, e.response.statusCode);
+        // console.log("Getting uptime validator: %o", validatorSet[key]);
+        try {
+            // let url = LCD+'/cosmos/slashing/v1beta1/signing_infos/'+validatorSet[key].bech32ValConsAddress;
+            // let response = HTTP.get(url);
+            // let signingInfo = JSON.parse(response.content).result;
+            req = new Cosmos.Slashing.QuerySigningInfoRequest();
+            req.setConsAddress(validatorSet[key].bech32ValConsAddress);
+            let signingInfo = await Cosmos.gRPC.unary(Cosmos.Slashing.Query.SigningInfo, req, GRPC);
+            console.log("=== Signing Info ===: %o", signingInfo)
+            if (signingInfo){
+                let valData = validatorSet[key]
+                valData.tombstoned = signingInfo.valSigningInfo.tombstoned
+                valData.jailed_until = goTimeToISOString(signingInfo.valSigningInfo.jailedUntil);
+                valData.index_offset = signingInfo.valSigningInfo.indexOffset
+                valData.start_height = signingInfo.valSigningInfo.startHeight
+                valData.uptime = (slashingParams.params.signedBlocksWindow - parseInt(signingInfo.valSigningInfo.missedBlocksCounter))/slashingParams.params.signedBlocksWindow * 100;
+                Validators.upsert({bech32ValConsAddress:validatorSet[key].bech32ValConsAddress}, {$set:valData})
             }
         }
         catch(e){
-            console.log(e);
+            console.log("Getting signing info of %o: %o", validatorSet[key].bech32ValConsAddress, e);
         }
     }
 }
@@ -476,11 +474,11 @@ Meteor.methods({
                                 valData.bech32ConsensusPubKey = Meteor.call('pubkeyToBech32', valData.consensusPubkey, Meteor.settings.public.bech32PrefixConsPub);
 
                             
-                                // assign back to the validator set so that we can use it to find the uptime
-                                validatorSet[v].bech32ConsensusPubKey = valData.bech32ConsensusPubKey;
-
                                 valData.address = Meteor.call('getAddressFromPubkey', valData.consensusPubkey);
                                 valData.bech32ValConsAddress = Meteor.call('hexToBech32', valData.address, Meteor.settings.public.bech32PrefixConsAddr);
+
+                                // assign back to the validator set so that we can use it to find the uptime
+                                validatorSet[v].bech32ValConsAddress = valData.bech32ValConsAddress;
 
                                 
                                 // First time adding validator to the database.
@@ -519,6 +517,8 @@ Meteor.methods({
 
                                 // assign to valData for getting self delegation
                                 valData.delegatorAddress = valExist.delegatorAddress;
+
+                                validatorSet[v].bech32ValConsAddress = valExist.bech32ValConsAddress;
 
                                 if (validators[valData.consensusPubkey.value]){
                                     // Validator exists and is in validator set, update voitng power.
