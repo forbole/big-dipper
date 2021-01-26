@@ -1,19 +1,15 @@
 import bech32 from 'bech32'
 import { HTTP } from 'meteor/http';
 import * as cheerio from 'cheerio';
-
-// Load future from fibers
-var Future = Npm.require("fibers/future");
-// Load exec
-var exec = Npm.require("child_process").exec;
-
-function toHexString(byteArray) {
-    return byteArray.map(function(byte) {
-        return ('0' + (byte & 0xFF).toString(16)).slice(-2);
-    }).join('')
-}
+import { tmhash } from 'tendermint/lib/hash'
 
 Meteor.methods({
+    hexToBech32: function(address, prefix) {
+        let addressBuffer = Buffer.from(address, 'hex');
+        // let buffer = Buffer.alloc(37)
+        // addressBuffer.copy(buffer);
+        return bech32.encode(prefix, bech32.toWords(addressBuffer));
+    },
     pubkeyToBech32: function(pubkey, prefix) {
         let buffer;
 
@@ -51,12 +47,12 @@ Meteor.methods({
         let pubkeyAminoPrefix, buffer;
 
         try {
-            if (type.indexOf("PubKeyEd25519") > 0){
+            if (type.indexOf("ed25519") > 0){
             // '1624DE6420' is ed25519 pubkey prefix
                 pubkeyAminoPrefix = Buffer.from('1624DE6420', 'hex')
                 buffer = Buffer.from(bech32.fromWords(bech32.decode(pubkey).words));
             }
-            else if (type.indexOf("PubKeySecp256k1") > 0){
+            else if (type.indexOf("secp256k1") > 0){
             // 'EB5AE98721' is secp256k1 pubkey prefix
                 pubkeyAminoPrefix = Buffer.from('EB5AE98721', 'hex')
                 buffer = Buffer.from(bech32.fromWords(bech32.decode(pubkey).words));
@@ -72,6 +68,11 @@ Meteor.methods({
             console.log("Error converting from bech32 to pubkey: %o\n %o", pubkey, e);
             return false
         }
+    },
+    getAddressFromPubkey: function(pubkey){
+        var bytes = Buffer.from(pubkey.value, 'base64');
+        // there are two extra byte in the protobuf result
+        return tmhash(bytes.slice(2)).slice(0, 20).toString('hex').toUpperCase();
     },
     getDelegator: function(operatorAddr){
         let address = bech32.decode(operatorAddr);

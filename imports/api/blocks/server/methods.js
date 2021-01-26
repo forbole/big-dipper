@@ -9,7 +9,7 @@ import { VotingPowerHistory } from '/imports/api/voting-power/history.js';
 import { Transactions } from '../../transactions/transactions.js';
 import { Evidences } from '../../evidences/evidences.js';
 import { sha256 } from 'js-sha256';
-import { getAddress } from 'tendermint/lib/pubkey';
+// import { getAddress } from 'tendermint/lib/pubkey';
 import * as cheerio from 'cheerio';
 import { Cosmos } from '@forbole/cosmos-protobuf-js'
 import { goTimeToISOString } from '../../../../both/utils/time';
@@ -376,9 +376,13 @@ Meteor.methods({
                         let tempValidators = [];
                         for (let v in validators){
                             // validators[v].consensus_pubkey = Meteor.call('pubkeyToBech32', validators[v].pub_key, Meteor.settings.public.bech32PrefixConsPub);
+                            validators[v].valconsAddress = validators[v].address;
+                            validators[v].address = Meteor.call('getAddressFromPubkey', validators[v].pubKey);
                             tempValidators[validators[v].pubKey.value] = validators[v];
                         }
                         validators = tempValidators;
+
+                        console.log("before comparing precommits: %o", validators);
 
                         // Tendermint v0.33 start using "signatures" in last block instead of "precommits"
                         let precommits = block.block.lastCommit.signaturesList; 
@@ -386,7 +390,7 @@ Meteor.methods({
                             // console.log(precommits);
                             for (let i=0; i<precommits.length; i++){
                                 if (precommits[i] != null){
-                                    blockData.validators.push(precommits[i].validatorAddress);
+                                    blockData.validators.push(Buffer.from(precommits[i].validatorAddress, 'base64').toString('hex').toUpperCase());
                                 }
                             }
 
@@ -460,8 +464,8 @@ Meteor.methods({
 
                         let startFindValidatorsNameTime = new Date();
                         for (v in validatorSet){
-                            // console.log(v)
-                            // console.log(validatorSet[v])
+                            // console.log(validators)
+                            // console.log(validatorSet[v]);
                             let valData = validatorSet[v];
                             let valExist = Validators.findOne({"consensusPubkey.value":v});
                             
@@ -477,15 +481,14 @@ Meteor.methods({
                                 // console.log("get hex address")
                                 // valData.address = getAddress(valData.consensusPubkey);
                                 console.log("get bech32 consensus pubkey");
-                                valData.address = Meteor.call('pubkeyToBech32', valData.consensusPubkey, Meteor.settings.public.bech32PrefixConsPub);
+                                valData.bech32ConsensusPubKey = Meteor.call('pubkeyToBech32', valData.consensusPubkey, Meteor.settings.public.bech32PrefixConsPub);
 
-                                
-                                // valData.bech32ConsensusPubKey = 
-
+                            
                                 // assign back to the validator set so that we can use it to find the uptime
-                                // validatorSet[v].bech32ConsensusPubKey = valData.bech32ConsensusPubKey;
+                                validatorSet[v].bech32ConsensusPubKey = valData.bech32ConsensusPubKey;
 
-                                // valData.address = getAddress(valData.pubKey);
+                                valData.address = Meteor.call('getAddressFromPubkey', valData.consensusPubkey);
+
                                 
                                 // First time adding validator to the database.
                                 // Fetch profile picture from Keybase
