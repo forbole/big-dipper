@@ -44,7 +44,7 @@ Transactions.rawCollection().createIndex({processed:1});
 Transactions.rawCollection().createIndex({"logs.events.attributes.key":1});
 Transactions.rawCollection().createIndex({"logs.events.attributes.value":1});
 Transactions.rawCollection().createIndex({
-    "tx.value.msg.value.delegator_address":1,
+    "tx.value.msg.value.delegatorAddress":1,
     "tx.value.msg.type":1,
     "code": 1
 },{partialFilterExpression: {code:{$exists: true}}})

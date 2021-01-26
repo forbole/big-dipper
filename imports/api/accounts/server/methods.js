@@ -98,10 +98,10 @@ Meteor.methods({
 
         // get commission
         let validator = Validators.findOne(
-            {$or: [{operator_address:address}, {delegator_address:address}, {address:address}]})
+            {$or: [{operatorAddress:address}, {delegatorAddress:address}, {address:address}]})
         if (validator) {
-            let url = LCD + '/cosmos/distribution/v1beta1/validators/' + validator.operator_address;
-            balance.operator_address = validator.operator_address;
+            let url = LCD + '/cosmos/distribution/v1beta1/validators/' + validator.operatorAddress;
+            balance.operatorAddress = validator.operatorAddress;
             try {
                 let rewards = HTTP.get(url);
                 if (rewards.statusCode == 200){

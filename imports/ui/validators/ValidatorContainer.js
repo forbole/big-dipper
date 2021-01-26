@@ -27,7 +27,7 @@ export default ValidatorDetailsContainer = withTracker((props) => {
 
     if (Meteor.isServer || !loading){
         if (props.address.indexOf(Meteor.settings.public.bech32PrefixValAddr) != -1){
-            options = {operator_address:props.address}
+            options = {operatorAddress:props.address}
         }
         validator = Validators.findOne(options);
 

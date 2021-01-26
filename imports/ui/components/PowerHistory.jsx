@@ -33,7 +33,7 @@ export default class PowerHistory extends React.Component {
                                             <Col xs={12}>
                                                 <Row>
                                                     <Col xs={4}><T>validators.delegator</T></Col>
-                                                    <Col xs={8} className="address" data-delegator-address={m.value.delegator_address}><Account address={m.value.delegator_address} /></Col>
+                                                    <Col xs={8} className="address" data-delegator-address={m.value.delegatorAddress}><Account address={m.value.delegatorAddress} /></Col>
                                                 </Row>
                                             </Col>
                                             <Col xs={12}>
@@ -56,7 +56,7 @@ export default class PowerHistory extends React.Component {
                                                 <Col xs={12}>
                                                     <Row>
                                                         <Col xs={4}><T>validators.delegator</T></Col>
-                                                        <Col xs={8} className="address" data-delegator-address={m.value.delegator_address}><Account address={m.value.delegator_address} /></Col>
+                                                        <Col xs={8} className="address" data-delegator-address={m.value.delegatorAddress}><Account address={m.value.delegatorAddress} /></Col>
                                                     </Row>
                                                 </Col>
                                                 <Col xs={12}>
@@ -75,7 +75,7 @@ export default class PowerHistory extends React.Component {
                                             <Col xs={12}>
                                                 <Row>
                                                     <Col xs={4}><T>validators.delegator</T></Col>
-                                                    <Col xs={8} className="address" data-delegator-address={m.value.delegator_address}><Account address={m.value.delegator_address} /></Col>
+                                                    <Col xs={8} className="address" data-delegator-address={m.value.delegatorAddress}><Account address={m.value.delegatorAddress} /></Col>
                                                 </Row>
                                             </Col>
                                             <Col xs={12}>
@@ -90,7 +90,7 @@ export default class PowerHistory extends React.Component {
                                             <Col xs={12}>
                                                 <Row>
                                                     <Col xs={4}><T>validators.delegator</T></Col>
-                                                    <Col xs={8} className="address" data-delegator-address={m.value.delegator_address}><Account address={m.value.delegator_address} /></Col>
+                                                    <Col xs={8} className="address" data-delegator-address={m.value.delegatorAddress}><Account address={m.value.delegatorAddress} /></Col>
                                                 </Row>
                                             </Col>
                                             <Col xs={12}>

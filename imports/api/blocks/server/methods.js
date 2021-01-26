@@ -569,7 +569,7 @@ Meteor.methods({
 
                             // get self delegation every 30 blocks
                             if (height == curr+1){ //if (height % 50 == 2){
-                                // let url = LCD+`/cosmos/staking/v1beta1/delegators/${valData.delegator_address}/delegations/${valData.operatorAddress}`
+                                // let url = LCD+`/cosmos/staking/v1beta1/delegators/${valData.delegatorAddress}/delegations/${valData.operatorAddress}`
                                 req = new Cosmos.Staking.QueryDelegationRequest();
                                 req.setValidatorAddr(valData.operatorAddress);
                                 req.setDelegatorAddr(valData.delegatorAddress);

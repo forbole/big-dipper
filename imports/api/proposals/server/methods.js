@@ -106,15 +106,15 @@ const getVoteDetail = (votes) => {
     let voters = votes.map((vote) => vote.voter);
     let votingPowerMap = {};
     let validatorAddressMap = {};
-    Validators.find({delegator_address: {$in: voters}}).forEach((validator) => {
-        votingPowerMap[validator.delegator_address] = {
+    Validators.find({delegatorAddress: {$in: voters}}).forEach((validator) => {
+        votingPowerMap[validator.delegatorAddress] = {
             moniker: validator.description.moniker,
             address: validator.address,
             tokens: parseFloat(validator.tokens),
-            delegatorShares: parseFloat(validator.delegator_shares),
-            deductedShares: parseFloat(validator.delegator_shares)
+            delegatorShares: parseFloat(validator.delegatorShares),
+            deductedShares: parseFloat(validator.delegatorShares)
         }
-        validatorAddressMap[validator.operator_address] = validator.delegator_address;
+        validatorAddressMap[validator.operatorAddress] = validator.delegatorAddress;
     });
     voters.forEach((voter) => {
         if (!votingPowerMap[voter]) {
@@ -133,14 +133,14 @@ const getVoteDetail = (votes) => {
                                 // deduct delegated shareds from validator if a delegator votes
                                 let validator = votingPowerMap[validatorAddressMap[delegation.validator_address]];
                                 validator.deductedShares -= shares;
-                                if (validator.delegator_shares != 0){ // avoiding division by zero
+                                if (validator.delegatorShares != 0){ // avoiding division by zero
                                     votingPower += (shares/validator.delegatorShares) * validator.tokens;
                                 }
 
                             } else {
-                                let validator = Validators.findOne({operator_address: delegation.validator_address});
-                                if (validator && validator.delegator_shares != 0){ // avoiding division by zero
-                                    votingPower += (shares/parseFloat(validator.delegator_shares)) * parseFloat(validator.tokens);
+                                let validator = Validators.findOne({operatorAddress: delegation.validator_address});
+                                if (validator && validator.delegatorShares != 0){ // avoiding division by zero
+                                    votingPower += (shares/parseFloat(validator.delegatorShares)) * parseFloat(validator.tokens);
                                 }
                             }
                         });

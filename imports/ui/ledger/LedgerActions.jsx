@@ -270,7 +270,7 @@ class LedgerButton extends Component {
         });
 
         if (this.state.actionType === Types.REDELEGATE) {
-            Meteor.call('accounts.getAllRedelegations', this.state.user, this.props.validator.operator_address, (error, result) => {
+            Meteor.call('accounts.getAllRedelegations', this.state.user, this.props.validator.operatorAddress, (error, result) => {
                 try{
                     if (result)
                         this.setStateOnSuccess('loadingRedelegations', {redelegations: result})
@@ -348,20 +348,20 @@ class LedgerButton extends Component {
         case Types.DELEGATE:
             txMsg = Ledger.createDelegate(
                 this.getTxContext(),
-                this.props.validator.operator_address,
+                this.props.validator.operatorAddress,
                 this.state.delegateAmount.amount)
             break;
         case Types.REDELEGATE:
             txMsg = Ledger.createRedelegate(
                 this.getTxContext(),
-                this.props.validator.operator_address,
-                this.state.targetValidator.operator_address,
+                this.props.validator.operatorAddress,
+                this.state.targetValidator.operatorAddress,
                 this.state.delegateAmount.amount)
             break;
         case Types.UNDELEGATE:
             txMsg = Ledger.createUndelegate(
                 this.getTxContext(),
-                this.props.validator.operator_address,
+                this.props.validator.operatorAddress,
                 this.state.delegateAmount.amount);
             break;
         case Types.SEND:
@@ -467,7 +467,7 @@ class LedgerButton extends Component {
         let value;
         switch (dataset.type) {
         case 'validator':
-            value = { moniker: dataset.moniker, operator_address: dataset.address}
+            value = { moniker: dataset.moniker, operatorAddress: dataset.address}
             break;
         case 'coin':
             value = new Coin(target.value, target.nextSibling.innerText)
@@ -537,14 +537,14 @@ class LedgerButton extends Component {
                 {activeValidators.map((validator, i) => {
                     if (validator.address === this.props.validator.address) return null
 
-                    let redelegation = redelegations[validator.operator_address]
+                    let redelegation = redelegations[validator.operatorAddress]
                     let disabled = redelegation && (redelegation.count >= maxEntries);
                     let completionTime = disabled?<TimeStamp time={redelegation.completionTime}/>:null;
                     let id = `validator-option${i}`
                     return <div id={id} className={`validator disabled-btn-wrapper${disabled?' disabled':''}`}  key={i}>
                         <DropdownItem name='targetValidator'
                             onClick={this.handleInputChange} data-type='validator' disabled={disabled}
-                            data-moniker={validator.description.moniker} data-address={validator.operator_address}>
+                            data-moniker={validator.description.moniker} data-address={validator.operatorAddress}>
                             <Row>
                                 <Col xs='12' className='moniker'>{validator.description.moniker}</Col>
                                 <Col xs='3' className="voting-power data">
@@ -644,8 +644,8 @@ class DelegationButtons extends LedgerButton {
 
         if (this.state.actionType === Types.REDELEGATE)
             isValid = isValid || (this.state.targetValidator &&
-                this.state.targetValidator.operator_address &&
-                isValidatorAddress(this.state.targetValidator.operator_address))
+                this.state.targetValidator.operatorAddress &&
+                isValidatorAddress(this.state.targetValidator.operatorAddress))
         return isValid
     }
 
@@ -657,7 +657,7 @@ class DelegationButtons extends LedgerButton {
         let availableStatement;
 
         let moniker = this.props.validator.description && this.props.validator.description.moniker;
-        let validatorAddress = <span className='ellipic'>this.props.validator.operator_address</span>;
+        let validatorAddress = <span className='ellipic'>this.props.validator.operatorAddress</span>;
         switch (this.state.actionType) {
         case Types.DELEGATE:
             action = 'Delegate to';
@@ -700,11 +700,11 @@ class DelegationButtons extends LedgerButton {
     getConfirmationMessage = () => {
         switch (this.state.actionType) {
         case Types.DELEGATE:
-            return <span>You are going to <span className='action'>delegate</span> <Amount coin={this.state.delegateAmount}/> to <AccountTooltip address={this.props.validator.operator_address} sync/> with <Fee gas={this.state.gasEstimate}/>.</span>
+            return <span>You are going to <span className='action'>delegate</span> <Amount coin={this.state.delegateAmount}/> to <AccountTooltip address={this.props.validator.operatorAddress} sync/> with <Fee gas={this.state.gasEstimate}/>.</span>
         case Types.REDELEGATE:
-            return <span>You are going to <span className='action'>redelegate</span> <Amount coin={this.state.delegateAmount}/> from <AccountTooltip address={this.props.validator.operator_address} sync/> to <AccountTooltip address={this.state.targetValidator && this.state.targetValidator.operator_address} sync/> with <Fee gas={this.state.gasEstimate}/>.</span>
+            return <span>You are going to <span className='action'>redelegate</span> <Amount coin={this.state.delegateAmount}/> from <AccountTooltip address={this.props.validator.operatorAddress} sync/> to <AccountTooltip address={this.state.targetValidator && this.state.targetValidator.operatorAddress} sync/> with <Fee gas={this.state.gasEstimate}/>.</span>
         case Types.UNDELEGATE:
-            return <span>You are going to <span className='action'>undelegate</span> <Amount coin={this.state.delegateAmount}/> from <AccountTooltip address={this.props.validator.operator_address} sync/> with <Fee gas={this.state.gasEstimate}/>.</span>
+            return <span>You are going to <span className='action'>undelegate</span> <Amount coin={this.state.delegateAmount}/> from <AccountTooltip address={this.props.validator.operatorAddress} sync/> with <Fee gas={this.state.gasEstimate}/>.</span>
         }
     }
 
@@ -1077,7 +1077,7 @@ DelegationButtons.propTypes = {
             details: PropTypes.string,
         }),
         jailed: PropTypes.bool,
-        operator_address: PropTypes.string,
+        operatorAddress: PropTypes.string,
         profile_url: PropTypes.string,
         status: PropTypes.number
     }),

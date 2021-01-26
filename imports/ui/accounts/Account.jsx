@@ -171,7 +171,7 @@ export default class AccountDetails extends Component{
                             this.state.total[i].amount = parseFloat(this.state.total[i].amount) + parseFloat(commissions.amount);
 
                         this.setState({
-                            operator_address: result.operator_address,
+                            operatorAddress: result.operatorAddress,
                             commission: [...this.state.commission, commissionAmount],
                             total: [...this.state.total]
                         })
@@ -337,7 +337,7 @@ export default class AccountDetails extends Component{
                                 <Col md={6} lg={4} className="total d-flex flex-column justify-content-end">
                                     {this.state.user?<Row>
                                         <Col xs={12}><TransferButton history={this.props.history} address={this.state.address} denom={this.state.denom}/></Col>
-                                        {this.state.user===this.state.address?<Col xs={12}><WithdrawButton  history={this.props.history} rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address} denom={this.state.denom}/></Col>:null}
+                                        {this.state.user===this.state.address?<Col xs={12}><WithdrawButton  history={this.props.history} rewards={this.state.rewards} commission={this.state.commission} address={this.state.operatorAddress} denom={this.state.denom}/></Col>:null}
                                     </Row>:null}
                                     <Row>
                                         <Col xs={4} className="label d-flex align-self-end"><div className="infinity" /><T>accounts.total</T></Col>
