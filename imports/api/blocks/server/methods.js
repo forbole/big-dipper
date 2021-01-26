@@ -283,10 +283,6 @@ Meteor.methods({
                     let startGetHeightTime = new Date();
                     // let response = HTTP.get(url);
                     let block = await Cosmos.gRPC.unary(Cosmos.Base.Tendermint.Service.GetBlockByHeight, req, GRPC);
-                    // console.log(block.block.header);
-                    // if (response.statusCode == 200){
-                        // let block = JSON.parse(response.content);
-                        // block = block.result;
                         // store height, hash, numtransaction and time in db
                         let blockData = {};
                         blockData.height = height;
@@ -412,9 +408,10 @@ Meteor.methods({
 
                                 for (j in precommits){
                                     if (precommits[j] != null){
-                                        if (address == precommits[j].validatorAddress){
+                                        let precommitAddress = Buffer.from(precommits[j].validatorAddress, 'base64').toString('hex').toUpperCase();
+                                        if (address == precommitAddress){
                                             record.exists = true;
-                                            bulkUpdateLastSeen.find({address:precommits[j].validatorAddress}).upsert().updateOne({$set:{lastSeen:blockData.time}});
+                                            bulkUpdateLastSeen.find({address:precommitAddress}).upsert().updateOne({$set:{lastSeen:blockData.time}});
                                             precommits.splice(j,1);
                                             break;
                                         }
