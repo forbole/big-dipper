@@ -81,7 +81,7 @@ getValidatorUptime = async (validatorSet) => {
     for(let key in validatorSet){
         try{
             try {
-                let url = LCD+'/cosmos/slashing/v1beta1/signing_infos/'+validatorSet[key].bech32ConsensusPubKey;
+                let url = LCD+'/cosmos/slashing/v1beta1/signing_infos/'+validatorSet[key].bech32ValConsAddress;
                 let response = HTTP.get(url);
                 let signingInfo = JSON.parse(response.content).result;
                 if (signingInfo){
@@ -290,11 +290,11 @@ Meteor.methods({
                         // store height, hash, numtransaction and time in db
                         let blockData = {};
                         blockData.height = height;
-                        blockData.hash = block.blockId.hash;
+                        blockData.hash = Buffer.from(block.blockId.hash, 'base64').toString('hex').toUpperCase();
                         blockData.transNum = block.block.data.txsList?block.block.data.txsList.length:0;
                         blockData.time = new Date(goTimeToISOString(block.block.header.time));
-                        blockData.lastBlockHash = block.block.header.lastBlockId.hash;
-                        blockData.proposerAddress = block.block.header.proposerAddress;
+                        blockData.lastBlockHash = Buffer.from(block.block.header.lastBlockId.hash, 'base64').toString('hex').toUpperCase();
+                        blockData.proposerAddress = Buffer.from(block.block.header.proposerAddress, 'base64').toString('hex').toUpperCase();
                         blockData.validators = [];
 
 
@@ -353,10 +353,6 @@ Meteor.methods({
                                 req = new Cosmos.Base.Tendermint.GetValidatorSetByHeightRequest()
                                 req.setHeight(height);
                                 validatorSetResult = await Cosmos.gRPC.unary(Cosmos.Base.Tendermint.Service.GetValidatorSetByHeight, req, GRPC);
-                                // response = HTTP.get(url);
-                                // console.log(url);
-                                // result = JSON.parse(response.content);
-                                // console.log(validatorSetResult);
                                 validators = [...validators, ...validatorSetResult.validatorsList];
                             }
                             while (validatorSetResult.validatorsList.length == 100 && (validatorSetResult.validatorsList.length*page < validatorSetResult.pagination?.total) )
@@ -372,6 +368,8 @@ Meteor.methods({
                             validators: validators
                         })
 
+                        blockData.validatorsCount = validators.length;
+
                         // temporarily add bech32 concensus keys to the validator set list
                         let tempValidators = [];
                         for (let v in validators){
@@ -382,7 +380,7 @@ Meteor.methods({
                         }
                         validators = tempValidators;
 
-                        console.log("before comparing precommits: %o", validators);
+                        // console.log("before comparing precommits: %o", validators);
 
                         // Tendermint v0.33 start using "signatures" in last block instead of "precommits"
                         let precommits = block.block.lastCommit.signaturesList; 
@@ -428,7 +426,6 @@ Meteor.methods({
                             }
                         }
                         
-                        blockData.validatorsCount = validators.length;
                         let startBlockInsertTime = new Date();
                         Blockscon.insert(blockData);
                         let endBlockInsertTime = new Date();
@@ -464,8 +461,6 @@ Meteor.methods({
 
                         let startFindValidatorsNameTime = new Date();
                         for (v in validatorSet){
-                            // console.log(validators)
-                            // console.log(validatorSet[v]);
                             let valData = validatorSet[v];
                             let valExist = Validators.findOne({"consensusPubkey.value":v});
                             
@@ -488,6 +483,7 @@ Meteor.methods({
                                 validatorSet[v].bech32ConsensusPubKey = valData.bech32ConsensusPubKey;
 
                                 valData.address = Meteor.call('getAddressFromPubkey', valData.consensusPubkey);
+                                valData.bech32ValConsAddress = Meteor.call('hexToBech32', valData.address, Meteor.settings.public.bech32PrefixConsAddr);
 
                                 
                                 // First time adding validator to the database.
@@ -546,8 +542,6 @@ Meteor.methods({
                                                 height: blockData.height,
                                                 block_time: blockData.time
                                             };
-                                            // console.log('voting power changed.');
-                                            // console.log(changeData);
                                             bulkVPHistory.insert(changeData);
                                         }
                                     }
@@ -585,12 +579,8 @@ Meteor.methods({
 
                                 try{
                                     console.log("Getting self delegation");
-                                    // let response = HTTP.get(url);
-                                    // console.log(url)
 
                                     let selfDelegation = await Cosmos.gRPC.unary(Cosmos.Staking.Query.Delegation, req, GRPC);
-
-                                    console.log(selfDelegation)
 
                                     valData.self_delegation = (selfDelegation.delegationResponse.delegation && selfDelegation.delegationResponse.delegation.shares)?parseFloat(selfDelegation.delegationResponse.delegation.shares)/parseFloat(valData.delegatorShares):0;
                                 }
@@ -661,13 +651,11 @@ Meteor.methods({
 
                         let startVUpTime = new Date();
                         if (bulkValidators.length > 0){
-                            // console.log(bulkValidators.length);
                             bulkValidators.execute((err, result) => {
                                 if (err){
                                     console.log("Error while bulk insert validators: %o",err);
                                 }
                                 if (result){
-                                    // console.log(result);
                                     bulkUpdateLastSeen.execute((err, result) => {
                                         if (err){
                                             console.log("Error while bulk update validator last seen: %o",err);
