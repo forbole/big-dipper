@@ -122,7 +122,6 @@ Meteor.methods({
                     }
 
                     if (Meteor.settings.public.modules.minting){
-                        // url = LCD + '/cosmos/minting/v1beta1/inflation';
                         try{
                             req = new Cosmos.Mint.QueryInflationRequest()
                             let inflation = await Cosmos.gRPC.unary(Cosmos.Mint.Query.Inflation, req, GRPC);
@@ -137,7 +136,6 @@ Meteor.methods({
                             console.log(e);
                         }
 
-                        // url = LCD + '/cosmos/minting/v1beta1/annual_provisions';
                         try{
                             req = new Cosmos.Mint.QueryAnnualProvisionsRequest();
                             let provisions = await Cosmos.gRPC.unary(Cosmos.Mint.Query.AnnualProvisions, req, GRPC)

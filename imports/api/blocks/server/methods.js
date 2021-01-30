@@ -68,8 +68,6 @@ getValidatorProfileUrl = (identity) => {
 getValidatorUptime = async (validatorSet) => {
 
     // get validator uptime
-    // let url = LCD+'/cosmos/slashing/v1beta1/params';
-    // let response = HTTP.get(url);
 
     let req = new Cosmos.Slashing.QueryParamsRequest();
     const slashingParams = await Cosmos.gRPC.unary(Cosmos.Slashing.Query.Params, req, GRPC);
@@ -79,9 +77,6 @@ getValidatorUptime = async (validatorSet) => {
     for(let key in validatorSet){
         // console.log("Getting uptime validator: %o", validatorSet[key]);
         try {
-            // let url = LCD+'/cosmos/slashing/v1beta1/signing_infos/'+validatorSet[key].bech32ValConsAddress;
-            // let response = HTTP.get(url);
-            // let signingInfo = JSON.parse(response.content).result;
             req = new Cosmos.Slashing.QuerySigningInfoRequest();
             req.setConsAddress(validatorSet[key].bech32ValConsAddress);
             let signingInfo = await Cosmos.gRPC.unary(Cosmos.Slashing.Query.SigningInfo, req, GRPC);
@@ -218,7 +213,6 @@ Meteor.methods({
 
             let validatorSet = {}
             // get latest validator candidate information
-            // url = LCD+'/cosmos/staking/v1beta1/validators';
 
             let req = new Cosmos.Staking.QueryValidatorsRequest()
             let res;
@@ -233,7 +227,6 @@ Meteor.methods({
                 console.log(e);
             }
 
-            // url = LCD+'/cosmos/staking/v1beta1/validators?status=unbonding';
             try{
                 // response = HTTP.get(url);
                 req.setStatus("BOND_STATUS_UNBONDING")
@@ -244,7 +237,6 @@ Meteor.methods({
                 console.log(e);
             }
 
-            // url = LCD+'/cosmos/staking/v1beta1/validators?status=unbonded';
             try{
                 req.setStatus("BOND_STATUS_UNBONDED")
                 res = await Cosmos.gRPC.unary(Cosmos.Staking.Query.Validators, req, GRPC); 
@@ -570,7 +562,6 @@ Meteor.methods({
                             // only update validator infor during start of crawling, end of crawling or every validator update window
                             // get self delegation every 30 blocks
                             if ((height == Meteor.settings.params.startHeight) || (height == until) || (height % Meteor.settings.params.validatorUpdateWindow == 0)){
-                                // let url = LCD+`/cosmos/staking/v1beta1/delegators/${valData.delegatorAddress}/delegations/${valData.operatorAddress}`
                                 req = new Cosmos.Staking.QueryDelegationRequest();
                                 req.setValidatorAddr(valData.operatorAddress);
                                 req.setDelegatorAddr(valData.delegatorAddress);
