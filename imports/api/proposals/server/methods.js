@@ -2,28 +2,24 @@ import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 import { Proposals } from '../proposals.js';
 import { Validators } from '../../validators/validators.js';
+import { Cosmos } from '@forbole/cosmos-protobuf-js'
 // import { Promise } from 'meteor/promise';
 
 Meteor.methods({
-    'proposals.getProposals': function(){
+    'proposals.getProposals': async function(){
         this.unblock();
         try{
-            let url = LCD + '/cosmos/gov/v1beta1/proposals';
-            let response = HTTP.get(url);
-            let proposals = JSON.parse(response.content).result;
-            // console.log(proposals);
-
+            let req = new Cosmos.Gov.QueryProposalsRequest();
+            let proposals = await Cosmos.gRPC.unary(Cosmos.Gov.Query.Proposals, req, GRPC);
             let finishedProposalIds = new Set(Proposals.find(
                 {"proposal_status":{$in:["Passed", "Rejected", "Removed"]}}
             ).fetch().map((p)=> p.proposalId));
 
             let proposalIds = [];
-            if (proposals.length > 0){
-                // Proposals.upsert()
+            if (proposals.proposalsList.length > 0){
                 const bulkProposals = Proposals.rawCollection().initializeUnorderedBulkOp();
-                for (let i in proposals){
-                    let proposal = proposals[i];
-                    proposal.proposalId = parseInt(proposal.id);
+                for (let i in proposals.proposalsList){
+                    let proposal = proposals.proposalsList[i];
                     if (proposal.proposalId > 0 && !finishedProposalIds.has(proposal.proposalId)) {
                         try{
                             let url = LCD + '/cosmos/gov/v1beta1/proposals/'+proposal.proposalId+'/proposer';

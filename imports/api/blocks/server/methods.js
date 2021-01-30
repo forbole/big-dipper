@@ -509,6 +509,7 @@ Meteor.methods({
 
                                 // assign to valData for getting self delegation
                                 valData.delegatorAddress = valExist.delegatorAddress;
+                                valData.bech32ValConsAddress = valExist.bech32ValConsAddress;
 
                                 validatorSet[v].bech32ValConsAddress = valExist.bech32ValConsAddress;
 
