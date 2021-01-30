@@ -567,8 +567,9 @@ Meteor.methods({
                                 }
                             }
 
+                            // only update validator infor during start of crawling, end of crawling or every validator update window
                             // get self delegation every 30 blocks
-                            if (height == curr+1){ //if (height % 50 == 2){
+                            if ((height == Meteor.settings.params.startHeight) || (height == until) || (height % Meteor.settings.params.validatorUpdateWindow == 0)){
                                 // let url = LCD+`/cosmos/staking/v1beta1/delegators/${valData.delegatorAddress}/delegations/${valData.operatorAddress}`
                                 req = new Cosmos.Staking.QueryDelegationRequest();
                                 req.setValidatorAddr(valData.operatorAddress);
@@ -584,13 +585,12 @@ Meteor.methods({
                                 catch(e){
                                     console.log("Getting self delegation: %o", e)
                                 }
-                            }
 
-                            // only update validator infor during start of crawling, end of crawling or every validator update window
-                            if ((height == curr+1) || (height == until) || (height % Meteor.settings.params.validatorUpdateWindow == 0)){
                                 console.log("Add validator upsert to bulk operations.")
                                 bulkValidators.find({"consensusPubkey.value": valData.consensusPubkey.value}).upsert().updateOne({$set:valData});
+
                             }
+
                         }
 
                         // store valdiators exist records
