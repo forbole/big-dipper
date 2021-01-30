@@ -15,6 +15,7 @@
         "bech32PrefixConsPub": "cosmosvalconspub",
         "bondDenom": "uatom",
         "powerReduction": 1000000,
+        "humanizeReduction": 1000000000000000000,
         "coins": [
             {
                 "denom": "uatom",
@@ -28,6 +29,7 @@
             } 
         ],
         "modules": {
+            "bank": true,
             "supply": true,
             "minting": false,
             "gov": true,
