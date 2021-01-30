@@ -28,20 +28,20 @@ Meteor.methods({
                     console.log("delegations: %o", delegations);
                 }
                 catch (e){
-                    console.log(url);
+                    // console.log(url);
                     console.log(e);
                 }    
             }
         }
 
-        for (i in delegations){
-            if (delegations[i] && delegations[i].shares)
-                delegations[i].shares = parseFloat(delegations[i].shares);
+        for (i in delegations.delegationResponsesList){
+            if (delegations.delegationResponsesList[i].delegation && delegations.delegationResponsesList[i].delegation.shares)
+                delegations.delegationResponsesList[i].delegation.shares = parseFloat(delegations.delegationResponsesList[i].delegation.shares);
         }
 
         // console.log(delegations);
         let data = {
-            delegations: delegations,
+            delegations: delegations.delegationResponsesList,
             createdAt: new Date(),
         }
 
