@@ -562,7 +562,7 @@ Meteor.methods({
 
                             // only update validator infor during start of crawling, end of crawling or every validator update window
                             // get self delegation every 30 blocks
-                            if ((height == Meteor.settings.params.startHeight) || (height == until) || (height % Meteor.settings.params.validatorUpdateWindow == 0)){
+                            if ((height == Meteor.settings.params.startHeight+1) || (height == until) || (height % Meteor.settings.params.validatorUpdateWindow == 0)){
                                 req = new Cosmos.Staking.QueryDelegationRequest();
                                 req.setValidatorAddr(valData.operatorAddress);
                                 req.setDelegatorAddr(valData.delegatorAddress);
