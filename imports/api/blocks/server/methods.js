@@ -511,7 +511,9 @@ Meteor.methods({
                                 valData.delegatorAddress = valExist.delegatorAddress;
                                 valData.bech32ValConsAddress = valExist.bech32ValConsAddress;
 
-                                validatorSet[v].bech32ValConsAddress = valExist.bech32ValConsAddress;
+                                if (validatorSet[v]){
+                                    validatorSet[v].bech32ValConsAddress = valExist.bech32ValConsAddress;
+                                }
 
                                 if (validators[valData.consensusPubkey.value]){
                                     // Validator exists and is in validator set, update voitng power.
