@@ -88,14 +88,14 @@ Meteor.methods({
         // address is either delegator address or validator operator address
         let validator;
         if (!fields)
-            fields = {address:1, description:1, operator_address:1, delegator_address:1};
+            fields = {address:1, description:1, operatorAddress:1, delegatorAddress:1};
         if (address.includes(Meteor.settings.public.bech32PrefixValAddr)){
             // validator operator address
-            validator = Validators.findOne({operator_address:address}, {fields});
+            validator = Validators.findOne({operatorAddress:address}, {fields});
         }
         else if (address.includes(Meteor.settings.public.bech32PrefixAccAddr)){
             // delegator address
-            validator = Validators.findOne({delegator_address:address}, {fields});
+            validator = Validators.findOne({delegatorAddress:address}, {fields});
         }
         else if (address.length === AddressLength) {
             validator = Validators.findOne({address:address}, {fields});
