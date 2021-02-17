@@ -20,15 +20,16 @@ Meteor.methods({
         try{
             let available = HTTP.get(url);
             if (available.statusCode == 200){
-                let response = JSON.parse(available.content).result;
-                let account;
-                if (response.type === 'cosmos-sdk/Account')
-                    account = response.value;
-                else if (response.type === 'cosmos-sdk/DelayedVestingAccount' || response.type === 'cosmos-sdk/ContinuousVestingAccount')
-                    account = response.value.BaseVestingAccount.BaseAccount
-                if (account && account.account_number != null)
-                    return account
-                return null
+                return JSON.parse(available.content).account
+                // let response = JSON.parse(available.content).result;
+                // let account;
+                // if (response.type === 'cosmos-sdk/Account')
+                //     account = response.value;
+                // else if (response.type === 'cosmos-sdk/DelayedVestingAccount' || response.type === 'cosmos-sdk/ContinuousVestingAccount')
+                //     account = response.value.BaseVestingAccount.BaseAccount
+                // if (account && account.account_number != null)
+                //     return account
+                // return null
             }
         }
         catch (e){
@@ -45,7 +46,7 @@ Meteor.methods({
         try{
             let available = HTTP.get(url);
             if (available.statusCode == 200){
-                balance.available = JSON.parse(available.content).result;
+                balance.available = JSON.parse(available.content).balances;
 
             }
         }
@@ -55,11 +56,11 @@ Meteor.methods({
         }
 
         // get delegated amnounts
-        url = API + '/cosmos/staking/v1beta1/delegators/'+address+'/delegations';
+        url = API + '/cosmos/staking/v1beta1/delegations/'+address;
         try{
             let delegations = HTTP.get(url);
             if (delegations.statusCode == 200){
-                balance.delegations = JSON.parse(delegations.content).result;
+                balance.delegations = JSON.parse(delegations.content).delegation_responses;
             }
         }
         catch (e){
@@ -71,7 +72,7 @@ Meteor.methods({
         try{
             let unbonding = HTTP.get(url);
             if (unbonding.statusCode == 200){
-                balance.unbonding = JSON.parse(unbonding.content).result;
+                balance.unbonding = JSON.parse(unbonding.content).unbonding_responses;
             }
         }
         catch (e){
@@ -80,14 +81,14 @@ Meteor.methods({
         }
 
         // get rewards
-        url = API + '/cosmos/distribution/v1beta1/v1beta1/delegators/'+address+'/rewards';
+        url = API + '/cosmos/distribution/v1beta1/delegators/'+address+'/rewards';
         try{
             let rewards = HTTP.get(url);
             if (rewards.statusCode == 200){
                 //get seperate rewards value
-                balance.rewards = JSON.parse(rewards.content).result.rewards;
+                balance.rewards = JSON.parse(rewards.content).rewards;
                 //get total rewards value
-                balance.total_rewards= JSON.parse(rewards.content).result.total;
+                balance.total_rewards= JSON.parse(rewards.content).total;
                 
             }
         }
@@ -100,14 +101,14 @@ Meteor.methods({
         let validator = Validators.findOne(
             {$or: [{operatorAddress:address}, {delegatorAddress:address}, {address:address}]})
         if (validator) {
-            let url = API + '/cosmos/distribution/v1beta1/validators/' + validator.operatorAddress;
+            let url = API + '/cosmos/distribution/v1beta1/validators/'+validator.operatorAddress+'/commission';
             balance.operatorAddress = validator.operatorAddress;
             try {
                 let rewards = HTTP.get(url);
                 if (rewards.statusCode == 200){
-                    let content = JSON.parse(rewards.content).result;
-                    if (content.val_commission && content.val_commission.length > 0)
-                        balance.commission = content.val_commission;
+                    let content = JSON.parse(rewards.content).commission;
+                    if (content.commission && content.commission.length > 0)
+                        balance.commission = content.commission;
 
                 }
 
