@@ -3,7 +3,7 @@ import { HTTP } from 'meteor/http';
 import { Validators } from '/imports/api/validators/validators.js';
 const fetchFromUrl = (url) => {
     try{
-        let res = HTTP.get(LCD + url);
+        let res = HTTP.get(API + url);
         if (res.statusCode == 200){
             return res
         };
@@ -16,7 +16,7 @@ const fetchFromUrl = (url) => {
 Meteor.methods({
     'accounts.getAccountDetail': function(address){
         this.unblock();
-        let url = LCD + '/cosmos/auth/v1beta1/accounts/'+ address;
+        let url = API + '/cosmos/auth/v1beta1/accounts/'+ address;
         try{
             let available = HTTP.get(url);
             if (available.statusCode == 200){
@@ -41,7 +41,7 @@ Meteor.methods({
         let balance = {}
 
         // get available atoms
-        let url = LCD + '/cosmos/bank/v1beta1/balances/'+ address;
+        let url = API + '/cosmos/bank/v1beta1/balances/'+ address;
         try{
             let available = HTTP.get(url);
             if (available.statusCode == 200){
@@ -55,7 +55,7 @@ Meteor.methods({
         }
 
         // get delegated amnounts
-        url = LCD + '/cosmos/staking/v1beta1/delegators/'+address+'/delegations';
+        url = API + '/cosmos/staking/v1beta1/delegators/'+address+'/delegations';
         try{
             let delegations = HTTP.get(url);
             if (delegations.statusCode == 200){
@@ -67,7 +67,7 @@ Meteor.methods({
             console.log(e);
         }
         // get unbonding
-        url = LCD + '/cosmos/staking/v1beta1/delegators/'+address+'/unbonding_delegations';
+        url = API + '/cosmos/staking/v1beta1/delegators/'+address+'/unbonding_delegations';
         try{
             let unbonding = HTTP.get(url);
             if (unbonding.statusCode == 200){
@@ -80,7 +80,7 @@ Meteor.methods({
         }
 
         // get rewards
-        url = LCD + '/cosmos/distribution/v1beta1/v1beta1/delegators/'+address+'/rewards';
+        url = API + '/cosmos/distribution/v1beta1/v1beta1/delegators/'+address+'/rewards';
         try{
             let rewards = HTTP.get(url);
             if (rewards.statusCode == 200){
@@ -100,7 +100,7 @@ Meteor.methods({
         let validator = Validators.findOne(
             {$or: [{operatorAddress:address}, {delegatorAddress:address}, {address:address}]})
         if (validator) {
-            let url = LCD + '/cosmos/distribution/v1beta1/validators/' + validator.operatorAddress;
+            let url = API + '/cosmos/distribution/v1beta1/validators/' + validator.operatorAddress;
             balance.operatorAddress = validator.operatorAddress;
             try {
                 let rewards = HTTP.get(url);
@@ -153,7 +153,7 @@ Meteor.methods({
     },
     'accounts.getAllDelegations'(address){
         this.unblock();
-        let url = LCD + '/cosmos/staking/v1beta1/delegators/'+address+'/delegations';
+        let url = API + '/cosmos/staking/v1beta1/delegators/'+address+'/delegations';
 
         try{
             let delegations = HTTP.get(url);
@@ -176,7 +176,7 @@ Meteor.methods({
     },
     'accounts.getAllUnbondings'(address){
         this.unblock();
-        let url = LCD + '/cosmos/staking/v1beta1/delegators/'+address+'/unbonding_delegations';
+        let url = API + '/cosmos/staking/v1beta1/delegators/'+address+'/unbonding_delegations';
 
         try{
             let unbondings = HTTP.get(url);
@@ -208,7 +208,7 @@ Meteor.methods({
     },
     'accounts.getRedelegations'(address) {
         this.unblock();
-        let url = LCD + '/cosmos/staking/v1beta1/v1beta1/delegators/' + address +'/redelegations';
+        let url = API + '/cosmos/staking/v1beta1/v1beta1/delegators/' + address +'/redelegations';
 
         try {
             let userRedelegations = HTTP.get(url);

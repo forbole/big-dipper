@@ -11,7 +11,7 @@ Meteor.methods({
         console.log("=== Getting delegations ===");
         for (v in validators){
             if (validators[v].operatorAddress){
-                // let url = LCD + '/cosmos/staking/v1beta1/validators/'+validators[v].operatorAddress+"/delegations";
+                // let url = API + '/cosmos/staking/v1beta1/validators/'+validators[v].operatorAddress+"/delegations";
                 try{
                     // let response = HTTP.get(url);
                     // if (response.statusCode == 200){

@@ -12,7 +12,7 @@ TXSYNCING = false;
 COUNTMISSEDBLOCKS = false;
 COUNTMISSEDBLOCKSSTATS = false;
 RPC = Meteor.settings.remote.rpc;
-LCD = Meteor.settings.remote.lcd;
+API = Meteor.settings.remote.api;
 GRPC = Meteor.settings.remote.grpc;
 
 timerBlocks = 0;

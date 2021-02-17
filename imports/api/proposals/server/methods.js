@@ -22,7 +22,7 @@ Meteor.methods({
                     let proposal = proposals.proposalsList[i];
                     if (proposal.proposalId > 0 && !finishedProposalIds.has(proposal.proposalId)) {
                         try{
-                            let url = LCD + '/cosmos/gov/v1beta1/proposals/'+proposal.proposalId+'/proposer';
+                            let url = API + '/cosmos/gov/v1beta1/proposals/'+proposal.proposalId+'/proposer';
                             let response = HTTP.get(url);
                             if (response.statusCode == 200){
                                 let proposer = JSON.parse(response.content).result;
@@ -59,7 +59,7 @@ Meteor.methods({
                 if (parseInt(proposals[i].proposalId) > 0){
                     try{
                         // get proposal deposits
-                        let url = LCD + '/cosmos/gov/v1beta1/proposals/'+proposals[i].proposalId+'/deposits';
+                        let url = API + '/cosmos/gov/v1beta1/proposals/'+proposals[i].proposalId+'/deposits';
                         let response = HTTP.get(url);
                         let proposal = {proposalId: proposals[i].proposalId};
                         if (response.statusCode == 200){
@@ -67,14 +67,14 @@ Meteor.methods({
                             proposal.deposits = deposits;
                         }
 
-                        url = LCD + '/cosmos/gov/v1beta1/proposals/'+proposals[i].proposalId+'/votes';
+                        url = API + '/cosmos/gov/v1beta1/proposals/'+proposals[i].proposalId+'/votes';
                         response = HTTP.get(url);
                         if (response.statusCode == 200){
                             let votes = JSON.parse(response.content).result;
                             proposal.votes = getVoteDetail(votes);
                         }
 
-                        url = LCD + '/cosmos/gov/v1beta1/proposals/'+proposals[i].proposalId+'/tally';
+                        url = API + '/cosmos/gov/v1beta1/proposals/'+proposals[i].proposalId+'/tally';
                         response = HTTP.get(url);
                         if (response.statusCode == 200){
                             let tally = JSON.parse(response.content).result;

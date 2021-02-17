@@ -26,7 +26,7 @@ Meteor.methods({
     // async 'Validators.getAllDelegations'(address){
     'Validators.getAllDelegations'(address){
         this.unblock();
-        let url = LCD + '/cosmos/staking/v1beta1/validators/'+address+'/delegations';
+        let url = API + '/cosmos/staking/v1beta1/validators/'+address+'/delegations';
 
         try{
             let delegations = HTTP.get(url);
