@@ -56,26 +56,26 @@ Meteor.methods({
         // following cosmos-sdk/x/slashing/spec/06_events.md and cosmos-sdk/x/staking/spec/06_events.md
         return Transactions.find({
             $or: [{$and: [
-                {"logs.events.type": "delegate"},
-                {"logs.events.attributes.key": "validator"},
-                {"logs.events.attributes.value": address}
+                {"tx_response.logs.events.type": "delegate"},
+                {"tx_response.logs.events.attributes.key": "validator"},
+                {"tx_response.logs.events.attributes.value": address}
             ]}, {$and:[
-                {"logs.events.attributes.key": "action"},
-                {"logs.events.attributes.value": "unjail"},
-                {"logs.events.attributes.key": "sender"},
-                {"logs.events.attributes.value": address}
+                {"tx_response.logs.events.attributes.key": "action"},
+                {"tx_response.logs.events.attributes.value": "unjail"},
+                {"tx_response.logs.events.attributes.key": "sender"},
+                {"tx_response.logs.events.attributes.value": address}
             ]}, {$and:[
-                {"logs.events.type": "create_validator"},
-                {"logs.events.attributes.key": "validator"},
-                {"logs.events.attributes.value": address}
+                {"tx_response.logs.events.type": "create_validator"},
+                {"tx_response.logs.events.attributes.key": "validator"},
+                {"tx_response.logs.events.attributes.value": address}
             ]}, {$and:[
-                {"logs.events.type": "unbond"},
-                {"logs.events.attributes.key": "validator"},
-                {"logs.events.attributes.value": address}
+                {"tx_response.logs.events.type": "unbond"},
+                {"tx_response.logs.events.attributes.key": "validator"},
+                {"tx_response.logs.events.attributes.value": address}
             ]}, {$and:[
-                {"logs.events.type": "redelegate"},
-                {"logs.events.attributes.key": "destination_validator"},
-                {"logs.events.attributes.value": address}
+                {"tx_response.logs.events.type": "redelegate"},
+                {"tx_response.logs.events.attributes.key": "destination_validator"},
+                {"tx_response.logs.events.attributes.value": address}
             ]}],
             "code": {$exists: false},
             height:{$lt:height}},
