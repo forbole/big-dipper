@@ -528,10 +528,12 @@ Meteor.methods({
                                 // insert first power change history 
 
                                 // valData.voting_power = validators[valData.consensusPubkey.value]?parseInt(validators[valData.consensusPubkey.value].votingPower):0;
-                                valData.voting_power = validators[valData.address]?parseInt(validators[valData.address].votingPower):0;
-                                valData.proposer_priority = validators[valData.address]?parseInt(validators[valData.address].proposerPriority):0;
+                                valData.voting_power = validators[valData.address]?parseInt(validators[valData.address].voting_power):0;
+                                valData.proposer_priority = validators[valData.address]?parseInt(validators[valData.address].proposer_priority):0;
 
                                 console.log("Validator not found. Insert first VP change record.")
+
+                                // console.log("first voting power: %o", valData.voting_power);
                                 bulkVPHistory.insert({
                                     address: valData.address,
                                     prev_voting_power: 0,
