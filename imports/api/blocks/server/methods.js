@@ -80,7 +80,7 @@ getValidatorUptime = async (validatorSet) => {
             req = new Cosmos.Slashing.QuerySigningInfoRequest();
             req.setConsAddress(validatorSet[key].bech32ValConsAddress);
             let signingInfo = await Cosmos.gRPC.unary(Cosmos.Slashing.Query.SigningInfo, req, GRPC);
-            console.log("=== Signing Info ===: %o", signingInfo)
+            // console.log("=== Signing Info ===: %o", signingInfo)
             if (signingInfo){
                 let valData = validatorSet[key]
                 valData.tombstoned = signingInfo.valSigningInfo.tombstoned
@@ -99,7 +99,7 @@ getValidatorUptime = async (validatorSet) => {
 
 calculateVPDist = async (analyticsData, blockData) => {
     console.log("===== calculate voting power distribution =====");
-    let activeValidators = Validators.find({status:2,jailed:false},{sort:{voting_power:-1}}).fetch();
+    let activeValidators = Validators.find({status:3,jailed:false},{sort:{voting_power:-1}}).fetch();
     let numTopTwenty = Math.ceil(activeValidators.length*0.2);
     let numBottomEighty = activeValidators.length - numTopTwenty;
 
@@ -483,8 +483,10 @@ Meteor.methods({
                             let valData = validatorSet[v];
                             let valExist = Validators.findOne({"consensusPubkey.value":v});
                             
+                            // console.log("===== voting power ======: %o", valData)
                             analyticsData.voting_power += valData.voting_power
 
+                            // console.log(analyticsData.voting_power);
                             if (!valExist && valData.consensusPubkey){
                                 
                                 // let val = getValidatorFromConsensusKey(validators, v);
@@ -680,6 +682,12 @@ Meteor.methods({
                         let endAnalyticsInsertTime = new Date();
                         console.log("Analytics insert time: "+((endAnalyticsInsertTime-startAnayticsInsertTime)/1000)+"seconds.");
 
+                        // calculate voting power distribution every 60 blocks ~ 5mins
+
+                        if (height % 60 == 1){
+                            calculateVPDist(analyticsData, blockData)
+                        }
+
                         let startVUpTime = new Date();
                         if (bulkValidators.length > 0){
                             console.log("############ Update validators ############");
@@ -722,11 +730,7 @@ Meteor.methods({
                             });
                         }
 
-                        // calculate voting power distribution every 60 blocks ~ 5mins
 
-                        if (height % 60 == 1){
-                            calculateVPDist(analyticsData, blockData)
-                        }
                     // }
                 }
                 catch (e){
