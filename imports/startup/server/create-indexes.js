@@ -41,13 +41,13 @@ Transactions.rawCollection().createIndex({txhash:1},{unique:true});
 Transactions.rawCollection().createIndex({height:-1});
 Transactions.rawCollection().createIndex({processed:1});
 // Transactions.rawCollection().createIndex({action:1});
-Transactions.rawCollection().createIndex({"logs.events.attributes.key":1});
-Transactions.rawCollection().createIndex({"logs.events.attributes.value":1});
+Transactions.rawCollection().createIndex({"tx_response.logs.events.attributes.key":1});
+Transactions.rawCollection().createIndex({"tx_response.logs.events.attributes.value":1});
 Transactions.rawCollection().createIndex({
-    "tx.value.msg.delegatorAddress":1,
-    "tx.value.msg.type":1,
-    "code": 1
-},{partialFilterExpression: {code:{$exists: true}}})
+    "tx.body.messages.delegator_address":1,
+    "tx.body.messages.@type":1,
+    "tx_response.code": 1
+},{partialFilterExpression: {"tx_response.code":{$exists: true}}})
 
 ValidatorSets.rawCollection().createIndex({block_height:-1});
 
