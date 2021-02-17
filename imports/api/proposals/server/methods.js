@@ -1,17 +1,25 @@
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 import { Proposals } from '../proposals.js';
+import { Chain } from '../../chain/chain.js';
 import { Validators } from '../../validators/validators.js';
-// import { Promise } from 'meteor/promise';
 
 Meteor.methods({
     'proposals.getProposals': function(){
         this.unblock();
         try{
-            let url = API + '/cosmos/gov/v1beta1/proposals';
+
+            // get gov tally prarams
+            let url = API + '/cosmos/gov/v1beta1/params/tallying';
             let response = HTTP.get(url);
+            let params = JSON.parse(response.content);
+
+            Chain.update({chainId: Meteor.settings.public.chainId}, {$set:{"gov.tallyParams":params.tally_params}});
+
+            url = API + '/cosmos/gov/v1beta1/proposals';
+            response = HTTP.get(url);
             let proposals = JSON.parse(response.content).proposals;
-            console.log(proposals);
+            // console.log(proposals);
 
             let finishedProposalIds = new Set(Proposals.find(
                 {"proposal_status":{$in:["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_REJECTED", "PROPOSAL_STATUS_REMOVED"]}}

@@ -272,10 +272,13 @@ export default class Proposal extends Component{
                 const proposalId = Number(this.props.proposal.proposalId), maxProposalId = Number(this.props.proposalCount);
                 const powerReduction = Meteor.settings.public.powerReduction || Coin.StakingCoin.fraction;
                 let totalVotingPower = this.props.chain.activeVotingPower * powerReduction;
+                let proposalType = this.props.proposal.content["@type"].split('.');
+                proposalType = proposalType[proposalType.length-1].match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ");
+
                 return <div>
                     <Helmet>
-                        <title>{this.props.proposal.content.value.title} | The Big Dipper</title>
-                        <meta name="description" content={this.props.proposal.content.value.description} />
+                        <title>{this.props.proposal.content.title} | The Big Dipper</title>
+                        <meta name="description" content={this.props.proposal.content.description} />
                     </Helmet>
 
                     <div className="proposal bg-light">
@@ -290,30 +293,30 @@ export default class Proposal extends Component{
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.title</T></Col>
-                            <Col md={9} className="value">{this.props.proposal.content.value.title}</Col>
+                            <Col md={9} className="value">{this.props.proposal.content.title}</Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.description</T></Col>
-                            <Col md={9} className="value"><Markdown markup={this.props.proposal.content.value.description} /></Col>
+                            <Col md={9} className="value"><Markdown markup={this.props.proposal.content.description} /></Col>
                         </Row>
                         {/* Community Pool Spend Proposal */}
                         {(this.props.proposal.content.type === 'cosmos-sdk/CommunityPoolSpendProposal')?<Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.recipient</T></Col>
-                            <Col md={9} className="value"> <Account address={this.props.proposal.content.value.recipient}/></Col> 
+                            <Col md={9} className="value"> <Account address={this.props.proposal.content.recipient}/></Col> 
                         </Row>:null}
                         {(this.props.proposal.content.type === 'cosmos-sdk/CommunityPoolSpendProposal')?<Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.amount</T></Col>
-                            <Col md={9} className="value"> {this.props.proposal.content.value.amount.map((amount, j) => {
+                            <Col md={9} className="value"> {this.props.proposal.content.amount.map((amount, j) => {
                                 return <div key={j}>{new Coin(amount.amount, amount.denom).toString()}</div>
                             })}</Col> 
                         </Row>:null}
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposalType</T></Col>
-                            <Col md={9} className="value">{this.props.proposal.content.type.substr(11).match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</Col>
+                            <Col md={9} className="value">{proposalType}</Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposalStatus</T></Col>
-                            <Col md={9} className="value"><ProposalStatusIcon status={this.props.proposal.proposal_status} /> {(this.props.proposal.proposal_status)?this.props.proposal.proposal_status.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" "):''}</Col>
+                            <Col md={9} className="value"><ProposalStatusIcon status={this.props.proposal.status} /> {(this.props.proposal.status)?this.props.proposal.status.substr(16):''}</Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.deposit</T></Col>
@@ -335,7 +338,7 @@ export default class Proposal extends Component{
                             </Col>
                         </Row>
                         {/* Parameter Change Proposal */}
-                        {(this.props.proposal.content.type === 'cosmos-sdk/ParameterChangeProposal')?<Row className="mb-2 border-top">
+                        {(this.props.proposal.content["@type"] === '/cosmos.params.v1beta1.ParameterChangeProposal')?<Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.changes</T></Col>
                             <Col md={6} className="value-table text-center">
                                 <Table bordered responsive="sm">
@@ -348,11 +351,11 @@ export default class Proposal extends Component{
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>{this.props.proposal.content.value.changes ? this.props.proposal.content.value.changes.map((changesItem, i) => {
+                                            <td>{this.props.proposal.content.changes ? this.props.proposal.content.changes.map((changesItem, i) => {
                                                 return <div key={i}>{changesItem.subspace.charAt(0).toUpperCase() + changesItem.subspace.slice(1)} </div> }): ''}</td>
-                                            <td>{this.props.proposal.content.value.changes ? this.props.proposal.content.value.changes.map((changesItem, i) => {
+                                            <td>{this.props.proposal.content.changes ? this.props.proposal.content.changes.map((changesItem, i) => {
                                                 return <div key={i}>{changesItem.key.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</div> }): ''}</td>
-                                            <td> {this.props.proposal.content.value.changes ? this.props.proposal.content.value.changes.map((changesItem, i) => {
+                                            <td> {this.props.proposal.content.changes ? this.props.proposal.content.changes.map((changesItem, i) => {
                                                 return   parseFloat(changesItem.value.replace(/"/g, "")) ?  <div key={i}>{numbro(changesItem.value.replace(/"/g, "")).format("0,000")}</div> : <div key={i}>{changesItem.value.replace(/"|}|{/g, "")}</div>}): ''}</td>
                                         </tr>
                                     </tbody>
