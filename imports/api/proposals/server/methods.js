@@ -2,24 +2,28 @@ import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 import { Proposals } from '../proposals.js';
 import { Validators } from '../../validators/validators.js';
-import { Cosmos } from '@forbole/cosmos-protobuf-js'
 // import { Promise } from 'meteor/promise';
 
 Meteor.methods({
-    'proposals.getProposals': async function(){
+    'proposals.getProposals': function(){
         this.unblock();
         try{
-            let req = new Cosmos.Gov.QueryProposalsRequest();
-            let proposals = await Cosmos.gRPC.unary(Cosmos.Gov.Query.Proposals, req, GRPC);
+            let url = API + '/cosmos/gov/v1beta1/proposals';
+            let response = HTTP.get(url);
+            let proposals = JSON.parse(response.content).proposals;
+            console.log(proposals);
+
             let finishedProposalIds = new Set(Proposals.find(
-                {"proposal_status":{$in:["Passed", "Rejected", "Removed"]}}
+                {"proposal_status":{$in:["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_REJECTED", "PROPOSAL_STATUS_REMOVED"]}}
             ).fetch().map((p)=> p.proposalId));
 
             let proposalIds = [];
-            if (proposals.proposalsList.length > 0){
+            if (proposals.length > 0){
+                // Proposals.upsert()
                 const bulkProposals = Proposals.rawCollection().initializeUnorderedBulkOp();
-                for (let i in proposals.proposalsList){
-                    let proposal = proposals.proposalsList[i];
+                for (let i in proposals){
+                    let proposal = proposals[i];
+                    proposal.proposalId = parseInt(proposal.proposal_id);
                     if (proposal.proposalId > 0 && !finishedProposalIds.has(proposal.proposalId)) {
                         try{
                             let url = API + '/cosmos/gov/v1beta1/proposals/'+proposal.proposalId+'/proposer';
@@ -40,8 +44,8 @@ Meteor.methods({
                         }
                     }
                 }
-                bulkProposals.find({proposalId:{$nin:proposalIds}, proposal_status:{$nin:["Passed", "Rejected", "Removed"]}})
-                    .update({$set: {"proposal_status": "Removed"}});
+                bulkProposals.find({proposalId:{$nin:proposalIds}, status:{$nin:["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_REJECTED", "PROPOSAL_STATUS_REMOVED"]}})
+                    .update({$set: {"status": "PROPOSAL_STATUS_REMOVED"}});
                 bulkProposals.execute();
             }
             return true
@@ -52,7 +56,7 @@ Meteor.methods({
     },
     'proposals.getProposalResults': function(){
         this.unblock();
-        let proposals = Proposals.find({"proposal_status":{$nin:["Passed", "Rejected", "Removed"]}}).fetch();
+        let proposals = Proposals.find({"status":{$nin:["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_REJECTED", "PROPOSAL_STATUS_REMOVED"]}}).fetch();
 
         if (proposals && (proposals.length > 0)){
             for (let i in proposals){
@@ -115,7 +119,7 @@ const getVoteDetail = (votes) => {
     voters.forEach((voter) => {
         if (!votingPowerMap[voter]) {
             // voter is not a validator
-            let url = `${LCD}/cosmos/staking/v1beta1/delegators/${voter}/delegations`;
+            let url = `${API}/cosmos/staking/v1beta1/delegators/${voter}/delegations`;
             let delegations;
             let votingPower = 0;
             try{
