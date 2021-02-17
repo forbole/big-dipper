@@ -17,7 +17,7 @@ Meteor.methods({
             const bulkTransactions = Transactions.rawCollection().initializeUnorderedBulkOp();
             for (let i in transactions){
                 try {
-                    let url = LCD+ '/cosmos/tx/v1beta1/txs/'+transactions[i].txhash;
+                    let url = LCD+ '/txs/'+transactions[i].txhash;
                     let response = HTTP.get(url);
                     let tx = JSON.parse(response.content);
             
