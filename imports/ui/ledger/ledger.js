@@ -403,7 +403,7 @@ export class Ledger {
             type: 'cosmos-sdk/MsgSubmitProposal',
             value: {
                 content: {
-                    type: "cosmos-sdk/TextProposal",
+                    type: "/cosmos.TextProposal",
                     value: {
                         description: description,
                         title: title
