@@ -58,15 +58,30 @@ Meteor.methods({
 
             // Since Tendermint v0.33, validator page default set to return 30 validators.
             // Query latest height with page 1 and 100 validators per page.
-            req = new Cosmos.Base.Tendermint.GetLatestValidatorSetRequest()
-            let validators = await Cosmos.gRPC.unary(Cosmos.Base.Tendermint.Service.GetLatestValidatorSet, req, GRPC)
+            // req = new Cosmos.Base.Tendermint.GetLatestValidatorSetRequest()
+            // let validators = await Cosmos.gRPC.unary(Cosmos.Base.Tendermint.Service.GetLatestValidatorSet, req, GRPC)
             // console.log(validators)
 
-            validators = validators.validatorsList;
+            // validators = validators.validatorsList;
+            // chain.validators = validators.length;
+
+            let validators = []
+            let page = 0;
+
+            do {
+                let url = RPC+`/validators?page=${++page}&per_page=100`;
+                let response = HTTP.get(url);
+                result = JSON.parse(response.content).result;
+                // console.log("========= validator result ==========: %o", result)
+                validators = [...validators, ...result.validators];
+                
+            }
+            while (validators.length < parseInt(result.total))
+
             chain.validators = validators.length;
             let activeVP = 0;
             for (v in validators){
-                activeVP += parseInt(validators[v].votingPower);
+                activeVP += parseInt(validators[v].voting_power);
             }
             chain.activeVotingPower = activeVP;
 
