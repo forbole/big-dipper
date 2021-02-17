@@ -17,11 +17,11 @@ Meteor.methods({
             const bulkTransactions = Transactions.rawCollection().initializeUnorderedBulkOp();
             for (let i in transactions){
                 try {
-                    let url = LCD+ '/cosmos/tx/v1beta1/txs/'+transactions[i].txhash;
+                    let url = API+ '/cosmos/tx/v1beta1/txs/'+transactions[i].txhash;
                     let response = HTTP.get(url);
                     let tx = JSON.parse(response.content);
             
-                    tx.height = parseInt(tx.height);
+                    tx.height = parseInt(tx.tx_response.height);
                     tx.processed = true;
 
                     bulkTransactions.find({txhash:transactions[i].txhash}).updateOne({$set:tx});
