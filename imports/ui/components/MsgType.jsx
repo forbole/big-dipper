@@ -35,7 +35,7 @@ export const MsgType = (props) => {
         // distribution
     case "/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission":
         return <Badge color="secondary"><T>messageTypes.withdrawComission</T></Badge>;
-    case "/cosmos.distribution.v1beta1.MsgWithdrawDelegationReward":
+    case "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward":
         return <Badge color="secondary"><T>messageTypes.withdrawReward</T></Badge>;
     case "/cosmos.distribution.v1beta1.MsgModifyWithdrawAddress":
         return <Badge color="secondary"><T>messageTypes.modifyWithdrawAddress</T></Badge>;

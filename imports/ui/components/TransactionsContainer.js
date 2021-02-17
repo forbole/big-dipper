@@ -45,7 +45,7 @@ export default TransactionsContainer = withTracker((props) => {
         distributionTxs: transactionsExist ? Transactions.find({
             $or: [
                 {"tx.body.messages.@type":"/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission"},
-                {"tx.body.messages.@type":"/cosmos.distribution.v1beta1.MsgWithdrawDelegationReward"},
+                {"tx.body.messages.@type":"/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward"},
                 {"tx.body.messages.@type":"/cosmos.distribution.v1beta1.MsgModifyWithdrawAddress"}
             ]
         }).fetch() : {},
