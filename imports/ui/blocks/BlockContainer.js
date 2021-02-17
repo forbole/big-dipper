@@ -39,42 +39,42 @@ export default BlockContainer = withTracker((props) => {
         block: blockExist ? block : {},
         transferTxs: transactionsExist ? Transactions.find({
             $or: [
-                {"tx.body.messages.type":"/cosmos.v1beta1.MsgSend"},
-                {"tx.body.messages.type":"/cosmos.v1beta1.MsgMultiSend"}
+                {"tx.body.messages.@type":"/cosmos.bank.v1beta1.MsgSend"},
+                {"tx.body.messages.@type":"/cosmos.bank.v1beta1.MsgMultiSend"}
             ]
         }).fetch() : {},
         stakingTxs: transactionsExist ? Transactions.find({
             $or: [
-                {"tx.body.messages.type":"/cosmos.v1beta1.MsgCreateValidator"},
-                {"tx.body.messages.type":"/cosmos.v1beta1.MsgEditValidator"},
-                {"tx.body.messages.type":"/cosmos.v1beta1.MsgDelegate"},
-                {"tx.body.messages.type":"/cosmos.v1beta1.MsgUndelegate"},
-                {"tx.body.messages.type":"/cosmos.v1beta1.MsgBeginRedelegate"}
+                {"tx.body.messages.@type":"/cosmos.staking.v1beta1.MsgCreateValidator"},
+                {"tx.body.messages.@type":"/cosmos.staking.v1beta1.MsgEditValidator"},
+                {"tx.body.messages.@type":"/cosmos.staking.v1beta1.MsgDelegate"},
+                {"tx.body.messages.@type":"/cosmos.staking.v1beta1.MsgUndelegate"},
+                {"tx.body.messages.@type":"/cosmos.staking.v1beta1.MsgBeginRedelegate"}
             ]
         }).fetch() : {},
         distributionTxs: transactionsExist ? Transactions.find({
             $or: [
-                {"tx.body.messages.type":"/cosmos.v1beta1.MsgWithdrawValidatorCommission"},
-                {"tx.body.messages.type":"/cosmos.v1beta1.MsgWithdrawDelegationReward"},
-                {"tx.body.messages.type":"/cosmos.v1beta1.MsgModifyWithdrawAddress"}
+                {"tx.body.messages.@type":"/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission"},
+                {"tx.body.messages.@type":"/cosmos.distribution.v1beta1.MsgWithdrawDelegationReward"},
+                {"tx.body.messages.@type":"/cosmos.distribution.v1beta1.MsgModifyWithdrawAddress"}
             ]
         }).fetch() : {},
         governanceTxs: transactionsExist ? Transactions.find({
             $or: [
-                {"tx.body.messages.type":"/cosmos.v1beta1.MsgSubmitProposal"},
-                {"tx.body.messages.type":"/cosmos.v1beta1.MsgDeposit"},
-                {"tx.body.messages.type":"/cosmos.v1beta1.MsgVote"}
+                {"tx.body.messages.@type":"/cosmos.gov.v1beta1.MsgSubmitProposal"},
+                {"tx.body.messages.@type":"/cosmos.gov.v1beta1.MsgDeposit"},
+                {"tx.body.messages.@type":"/cosmos.gov.v1beta1.MsgVote"}
             ]
         }).fetch() : {},
         slashingTxs: transactionsExist ? Transactions.find({
             $or: [
-                {"tx.body.messages.type":"/cosmos.v1beta1.MsgUnjail"}
+                {"tx.body.messages.@type":"/cosmos.slashing.v1beta1.MsgUnjail"}
             ]
         }).fetch() : {},
         IBCTxs: transactionsExist ? Transactions.find({
             $or: [
-                {"tx.body.messages.type":"/cosmos.IBCTransferMsg"},
-                {"tx.body.messages.type":"/cosmos.IBCReceiveMsg"}
+                {"tx.body.messages.@type":"/cosmos.IBCTransferMsg"},
+                {"tx.body.messages.@type":"/cosmos.IBCReceiveMsg"}
             ]
         }).fetch() : {},
     };
