@@ -77,7 +77,7 @@ Meteor.methods({
                 {"tx_response.logs.events.attributes.key": "destination_validator"},
                 {"tx_response.logs.events.attributes.value": address}
             ]}],
-            "code": {$exists: false},
+            "tx_response.code": 0,
             height:{$lt:height}},
         {sort:{height:-1},
             limit: 1}
