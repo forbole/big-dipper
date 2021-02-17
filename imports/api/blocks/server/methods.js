@@ -215,12 +215,16 @@ Meteor.methods({
             // get latest validator candidate information
 
             let req = new Cosmos.Staking.QueryValidatorsRequest()
+            let pageReq = new Cosmos.Base.Query.PageRequest();
+            pageReq.setCountTotal(true);
+            pageReq.setLimit(2000);
+            req.setPagination(pageReq)
             let res;
 
             try{
-                // bonded validators
                 req.setStatus("BOND_STATUS_BONDED")
-                res = await Cosmos.gRPC.unary(Cosmos.Staking.Query.Validators, req, GRPC);    
+                // bonded validators
+                res = await Cosmos.gRPC.unary(Cosmos.Staking.Query.Validators, req, GRPC);
                 res.validatorsList.forEach((validator) => validatorSet[validator.consensusPubkey.value] = validator);
             }
             catch(e){
@@ -228,8 +232,7 @@ Meteor.methods({
             }
 
             try{
-                // response = HTTP.get(url);
-                req.setStatus("BOND_STATUS_UNBONDING")
+                req.setStatus("BOND_STATUS_UNBONDING");
                 res = await Cosmos.gRPC.unary(Cosmos.Staking.Query.Validators, req, GRPC);
                 res.validatorsList.forEach((validator) => validatorSet[validator.consensusPubkey.value] = validator)
             }
@@ -239,7 +242,7 @@ Meteor.methods({
 
             try{
                 req.setStatus("BOND_STATUS_UNBONDED")
-                res = await Cosmos.gRPC.unary(Cosmos.Staking.Query.Validators, req, GRPC); 
+                res = await Cosmos.gRPC.unary(Cosmos.Staking.Query.Validators, req, GRPC);
                 res.validatorsList.forEach((validator) => validatorSet[validator.consensusPubkey.value] = validator)
             }
             catch(e){
@@ -252,7 +255,8 @@ Meteor.methods({
             Chain.update({chainId:Meteor.settings.public.chainId}, {$set:{totalValidators:totalValidators}});
 
             for (let height = curr+1 ; height <= until ; height++) {
-                let startBlockTime = new Date();
+            // for (let height = curr+1 ; height <= curr+1 ; height++) {
+                    let startBlockTime = new Date();
                 // add timeout here? and outside this loop (for catched up and keep fetching)?
                 this.unblock();
                 // let url = RPC+'/block?height=' + height;
@@ -333,15 +337,41 @@ Meteor.methods({
                         // let nextKey = 0;
                         try {
                             let validatorSetResult = {}
+
+                            let result;
+
                             do {
-                                // url = RPC+`/validators?height=${height}&page=${++page}&per_page=100`;
-                                page++;
-                                req = new Cosmos.Base.Tendermint.GetValidatorSetByHeightRequest()
-                                req.setHeight(height);
-                                validatorSetResult = await Cosmos.gRPC.unary(Cosmos.Base.Tendermint.Service.GetValidatorSetByHeight, req, GRPC);
-                                validators = [...validators, ...validatorSetResult.validatorsList];
+                                let url = RPC+`/validators?height=${height}&page=${++page}&per_page=100`;
+                                let response = HTTP.get(url);
+                                result = JSON.parse(response.content).result;
+                                // console.log("========= validator result ==========: %o", result)
+                                validators = [...validators, ...result.validators];
+                                
+                                // console.log(validators.length);
+                                // console.log(parseInt(result.total));
                             }
-                            while (validatorSetResult.validatorsList.length == 100 && (validatorSetResult.validatorsList.length*page < validatorSetResult.pagination?.total) )
+                            while (validators.length < parseInt(result.total))
+
+
+                            // do {
+                            //     // url = RPC+`/validators?height=${height}&page=${++page}&per_page=100`;
+                                
+                            //     req = new Cosmos.Base.Tendermint.GetValidatorSetByHeightRequest()
+                            //     req.setHeight(height);
+
+                            //     let pageReq = new Cosmos.Base.Query.PageRequest();
+                            //     pageReq.setOffset(page*100);
+                            //     pageReq.setLimit(2000);
+                            //     pageReq.setCountTotal(true);
+
+                            //     req.setPagination(pageReq)
+                            //     console.log(req.getPagination())
+                            //     validatorSetResult = await Cosmos.gRPC.unary(Cosmos.Base.Tendermint.Service.GetValidatorSetByHeight, req, GRPC);
+                            //     console.log(validatorSetResult.validatorsList.length);
+                            //     validators = [...validators, ...validatorSetResult.validatorsList];
+                            //     page++;
+                            // }
+                            // while (validatorSetResult.validatorsList.length == 100 && (validatorSetResult.validatorsList.length*page < validatorSetResult.pagination?.total) )
                         }
                         catch(e){
                             console.log("Getting validator set at height %o: %o", height, e)
@@ -359,10 +389,12 @@ Meteor.methods({
                         // temporarily add bech32 concensus keys to the validator set list
                         let tempValidators = [];
                         for (let v in validators){
-                            // validators[v].consensus_pubkey = Meteor.call('pubkeyToBech32', validators[v].pub_key, Meteor.settings.public.bech32PrefixConsPub);
-                            validators[v].valconsAddress = validators[v].address;
-                            validators[v].address = Meteor.call('getAddressFromPubkey', validators[v].pubKey);
-                            tempValidators[validators[v].pubKey.value] = validators[v];
+                            // validators[v].consensus_pubkey = Meteor.call('pubkeyToBech32Old', validators[v].pub_key, Meteor.settings.public.bech32PrefixConsPub);
+                            // validators[v].valconsAddress = validators[v].address;
+                            validators[v].valconsAddress = Meteor.call('hexToBech32', validators[v].address, Meteor.settings.public.bech32PrefixConsAddr);
+                            // validators[v].address = Meteor.call('getAddressFromPubkey', validators[v].pubKey);
+                            // tempValidators[validators[v].pubKey.value] = validators[v];
+                            tempValidators[validators[v].address] = validators[v];
                         }
                         validators = tempValidators;
 
@@ -470,7 +502,9 @@ Meteor.methods({
                                 valData.bech32ValConsAddress = Meteor.call('hexToBech32', valData.address, Meteor.settings.public.bech32PrefixConsAddr);
 
                                 // assign back to the validator set so that we can use it to find the uptime
-                                validatorSet[v].bech32ValConsAddress = valData.bech32ValConsAddress;
+
+                                if (validatorSet[v])
+                                    validatorSet[v].bech32ValConsAddress = valData.bech32ValConsAddress;
 
                                 
                                 // First time adding validator to the database.
@@ -491,8 +525,9 @@ Meteor.methods({
 
                                 // insert first power change history 
 
-                                valData.voting_power = validators[valData.consensusPubkey.value]?parseInt(validators[valData.consensusPubkey.value].votingPower):0;
-                                valData.proposer_priority = validators[valData.consensusPubkey.value]?parseInt(validators[valData.consensusPubkey.value].proposerPriority):0;
+                                // valData.voting_power = validators[valData.consensusPubkey.value]?parseInt(validators[valData.consensusPubkey.value].votingPower):0;
+                                valData.voting_power = validators[valData.address]?parseInt(validators[valData.address].votingPower):0;
+                                valData.proposer_priority = validators[valData.address]?parseInt(validators[valData.address].proposerPriority):0;
 
                                 console.log("Validator not found. Insert first VP change record.")
                                 bulkVPHistory.insert({
@@ -507,6 +542,8 @@ Meteor.methods({
                             }
                             else{
 
+                                valData.address = valExist.address;
+
                                 // assign to valData for getting self delegation
                                 valData.delegatorAddress = valExist.delegatorAddress;
                                 valData.bech32ValConsAddress = valExist.bech32ValConsAddress;
@@ -514,12 +551,14 @@ Meteor.methods({
                                 if (validatorSet[v]){
                                     validatorSet[v].bech32ValConsAddress = valExist.bech32ValConsAddress;
                                 }
-
-                                if (validators[valData.consensusPubkey.value]){
+                                // console.log(valExist);
+                                // console.log(validators[valExist.address])
+                                // if (validators[valData.consensusPubkey.value]){
+                                if (validators[valExist.address]){
                                     // Validator exists and is in validator set, update voitng power.
                                     // If voting power is different from before, add voting power history
-                                    valData.voting_power = parseInt(validators[valData.consensusPubkey.value].votingPower);
-                                    valData.proposer_priority = parseInt(validators[valData.consensusPubkey.value].proposerPriority);
+                                    valData.voting_power = parseInt(validators[valExist.address].voting_power);
+                                    valData.proposer_priority = parseInt(validators[valExist.address].proposer_priority);
                                     let prevVotingPower = VotingPowerHistory.findOne({address:valExist.address}, {height:-1, limit:1});
 
                                     console.log("Validator already in DB. Check if VP changed.");
@@ -542,7 +581,7 @@ Meteor.methods({
                                     // Validator is not in the set and it has been removed.
                                     // Set voting power to zero and add voting power history.
 
-
+                                    valData.address = valExist.address;
                                     valData.voting_power = 0;
                                     valData.proposer_priority = 0;
 
@@ -564,7 +603,8 @@ Meteor.methods({
 
                             // only update validator infor during start of crawling, end of crawling or every validator update window
                             // get self delegation every 30 blocks
-                            if ((height == Meteor.settings.params.startHeight+1) || (height == until) || (height % Meteor.settings.params.validatorUpdateWindow == 0)){
+                            // if ((height == Meteor.settings.params.startHeight+1) || (height == until) || (height % Meteor.settings.params.validatorUpdateWindow == 0)){
+                            if ((height == curr+1) || (height == until) || (height % Meteor.settings.params.validatorUpdateWindow == 0)){    
                                 req = new Cosmos.Staking.QueryDelegationRequest();
                                 req.setValidatorAddr(valData.operatorAddress);
                                 req.setDelegatorAddr(valData.delegatorAddress);
@@ -579,12 +619,12 @@ Meteor.methods({
                                 catch(e){
                                     console.log("Getting self delegation: %o", e)
                                 }
-
-                                console.log("Add validator upsert to bulk operations.")
-                                bulkValidators.find({"consensusPubkey.value": valData.consensusPubkey.value}).upsert().updateOne({$set:valData});
-
                             }
 
+                            console.log("Add validator upsert to bulk operations.")
+
+                            bulkValidators.find({"address": valData.address}).upsert().updateOne({$set:valData});
+    
                         }
 
                         // store valdiators exist records
@@ -642,6 +682,7 @@ Meteor.methods({
 
                         let startVUpTime = new Date();
                         if (bulkValidators.length > 0){
+                            console.log("############ Update validators ############");
                             bulkValidators.execute((err, result) => {
                                 if (err){
                                     console.log("Error while bulk insert validators: %o",err);
