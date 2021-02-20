@@ -43,6 +43,7 @@ Meteor.methods({
     },
     'chain.updateStatus': async function(){
         this.unblock();
+        let url = "";
         try{
             let req = new Cosmos.Base.Tendermint.GetLatestBlockRequest();
             let latestBlock = await Cosmos.gRPC.unary(Cosmos.Base.Tendermint.Service.GetLatestBlock, req, GRPC);
@@ -69,7 +70,7 @@ Meteor.methods({
             let page = 0;
 
             do {
-                let url = RPC+`/validators?page=${++page}&per_page=100`;
+                url = RPC+`/validators?page=${++page}&per_page=100`;
                 let response = HTTP.get(url);
                 result = JSON.parse(response.content).result;
                 // console.log("========= validator result ==========: %o", result)

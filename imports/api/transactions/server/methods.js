@@ -21,17 +21,19 @@ Meteor.methods({
                     url = API+ '/cosmos/tx/v1beta1/txs/'+transactions[i].txhash;
                     let response = HTTP.get(url);
                     let tx = JSON.parse(response.content);
-            
+
+                    // console.log(tx);
+                    
                     tx.height = parseInt(tx.tx_response.height);
                     tx.processed = true;
 
                     bulkTransactions.find({txhash:transactions[i].txhash}).updateOne({$set:tx});
 
-            
                 }
-                catch(e) {
-                    console.log(url);
-                    console.log("Getting transaction %o: %o", hash, e);
+                catch(error) {
+                    // console.log(url);
+                    // console.log("tx not found: %o")
+                    console.log("Getting transaction %o: %o", transactions[i].txhash, error);
                 }
             }
             if (bulkTransactions.length > 0){
