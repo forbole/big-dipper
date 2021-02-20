@@ -21,38 +21,36 @@ Meteor.methods({
             let proposals = JSON.parse(response.content).proposals;
             // console.log(proposals);
 
-            // let finishedProposalIds = new Set(Proposals.find(
-            //     {"proposal_status":{$in:["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_REJECTED", "PROPOSAL_STATUS_REMOVED"]}}
-            // ).fetch().map((p)=> p.proposalId));
+            let finishedProposalIds = new Set(Proposals.find(
+                {"proposal_status":{$in:["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_REJECTED", "PROPOSAL_STATUS_REMOVED"]}}
+            ).fetch().map((p)=> p.proposalId));
 
             let proposalIds = [];
             if (proposals.length > 0){
                 // Proposals.upsert()
                 const bulkProposals = Proposals.rawCollection().initializeUnorderedBulkOp();
                 for (let i in proposals){
-                    proposalIds.push(proposals[i].proposalId);
-
-                    // let proposal = proposals[i];
-                    // proposal.proposalId = parseInt(proposal.proposal_id);
-                    // if (proposal.proposalId > 0 && !finishedProposalIds.has(proposal.proposalId)) {
-                    //     try{
-                    //         url = API + '/cosmos/gov/v1beta1/proposals/'+proposal.proposalId+'/proposer';
-                    //         let response = HTTP.get(url);
-                    //         if (response.statusCode == 200){
-                    //             let proposer = JSON.parse(response.content).result;
-                    //             if (proposer.proposal_id && (proposer.proposal_id == proposal.id)){
-                    //                 proposal.proposer = proposer.proposer;
-                    //             }
-                    //         }
-                    //         bulkProposals.find({proposalId: proposal.proposalId}).upsert().updateOne({$set:proposal});
-                    //     }
-                    //     catch(e){
-                    //         bulkProposals.find({proposalId: proposal.proposalId}).upsert().updateOne({$set:proposal});
-                    //         proposalIds.push(proposal.proposalId);
-                    //         console.log(url);
-                    //         console.log(e.response.content);
-                    //     }
-                    // }
+                    let proposal = proposals[i];
+                    proposal.proposalId = parseInt(proposal.proposal_id);
+                    if (proposal.proposalId > 0 && !finishedProposalIds.has(proposal.proposalId)) {
+                        try{
+                            // url = API + '/cosmos/gov/v1beta1/proposals/'+proposal.proposalId+'/proposer';
+                            // let response = HTTP.get(url);
+                            // if (response.statusCode == 200){
+                            //     let proposer = JSON.parse(response.content).result;
+                            //     if (proposer.proposal_id && (proposer.proposal_id == proposal.id)){
+                            //         proposal.proposer = proposer.proposer;
+                            //     }
+                            // }
+                            bulkProposals.find({proposalId: proposal.proposalId}).upsert().updateOne({$set:proposal});
+                        }
+                        catch(e){
+                            bulkProposals.find({proposalId: proposal.proposalId}).upsert().updateOne({$set:proposal});
+                            proposalIds.push(proposal.proposalId);
+                            console.log(url);
+                            console.log(e.response.content);
+                        }
+                    }
                 }
                 bulkProposals.find({proposalId:{$nin:proposalIds}, status:{$nin:["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_REJECTED", "PROPOSAL_STATUS_REMOVED"]}})
                     .update({$set: {"status": "PROPOSAL_STATUS_REMOVED"}});
