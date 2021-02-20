@@ -22,18 +22,17 @@ Meteor.methods({
                     let response = HTTP.get(url);
                     let tx = JSON.parse(response.content);
 
-                    // console.log(tx);
-                    
                     tx.height = parseInt(tx.tx_response.height);
                     tx.processed = true;
 
                     bulkTransactions.find({txhash:transactions[i].txhash}).updateOne({$set:tx});
 
                 }
-                catch(error) {
+                catch(e) {
                     // console.log(url);
                     // console.log("tx not found: %o")
-                    console.log("Getting transaction %o: %o", transactions[i].txhash, error);
+                    console.log("Getting transaction %o: %o", transactions[i].txhash, e);
+                    bulkTransactions.find({txhash:transactions[i].txhash}).updateOne({$set:{processed:true, missing:true}});                    
                 }
             }
             if (bulkTransactions.length > 0){
