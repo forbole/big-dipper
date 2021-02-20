@@ -136,33 +136,33 @@ Meteor.methods({
                         }
                     }
 
-                    if (Meteor.settings.public.modules.minting){
-                        try{
-                            req = new Cosmos.Mint.QueryInflationRequest()
-                            let inflation = await Cosmos.gRPC.unary(Cosmos.Mint.Query.Inflation, req, GRPC);
-                            console.log(inflation);
-                            // response = HTTP.get(url);
-                            // let inflation = JSON.parse(response.content).result;
-                            if (inflation){
-                                chainStates.inflation = parseFloat(inflation)
-                            }
-                        }
-                        catch(e){
-                            console.log(e);
-                        }
+                    // if (Meteor.settings.public.modules.minting){
+                    //     try{
+                    //         req = new Cosmos.Mint.QueryInflationRequest()
+                    //         let inflation = await Cosmos.gRPC.unary(Cosmos.Mint.Query.Inflation, req, GRPC);
+                    //         console.log(inflation);
+                    //         // response = HTTP.get(url);
+                    //         // let inflation = JSON.parse(response.content).result;
+                    //         if (inflation){
+                    //             chainStates.inflation = parseFloat(inflation)
+                    //         }
+                    //     }
+                    //     catch(e){
+                    //         console.log(e);
+                    //     }
 
-                        try{
-                            req = new Cosmos.Mint.QueryAnnualProvisionsRequest();
-                            let provisions = await Cosmos.gRPC.unary(Cosmos.Mint.Query.AnnualProvisions, req, GRPC)
-                            console.log(provisions)
-                            if (provisions){
-                                chainStates.annualProvisions = parseFloat(provisions)
-                            }
-                        }
-                        catch(e){
-                            console.log(e);
-                        }
-                    }
+                    //     try{
+                    //         req = new Cosmos.Mint.QueryAnnualProvisionsRequest();
+                    //         let provisions = await Cosmos.gRPC.unary(Cosmos.Mint.Query.AnnualProvisions, req, GRPC)
+                    //         console.log(provisions)
+                    //         if (provisions){
+                    //             chainStates.annualProvisions = parseFloat(provisions)
+                    //         }
+                    //     }
+                    //     catch(e){
+                    //         console.log(e);
+                    //     }
+                    // }
                 }
 
                 ChainStates.insert(chainStates);
