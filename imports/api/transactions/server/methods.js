@@ -16,8 +16,9 @@ Meteor.methods({
             TXSYNCING = true;
             const bulkTransactions = Transactions.rawCollection().initializeUnorderedBulkOp();
             for (let i in transactions){
+                let url = "";
                 try {
-                    let url = API+ '/cosmos/tx/v1beta1/txs/'+transactions[i].txhash;
+                    url = API+ '/cosmos/tx/v1beta1/txs/'+transactions[i].txhash;
                     let response = HTTP.get(url);
                     let tx = JSON.parse(response.content);
             
@@ -29,6 +30,7 @@ Meteor.methods({
             
                 }
                 catch(e) {
+                    console.log(url);
                     console.log("Getting transaction %o: %o", hash, e);
                 }
             }

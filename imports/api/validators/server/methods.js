@@ -41,6 +41,7 @@ Meteor.methods({
             };
         }
         catch (e){
+            console.log(url);
             console.log("Getting error: %o when fetching from %o", e, url);
         }
     }

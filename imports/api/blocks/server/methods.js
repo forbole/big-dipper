@@ -736,7 +736,7 @@ Meteor.methods({
                     // }
                 }
                 catch (e){
-                    console.log(e);
+                    console.log("Block syncing stopped: %o", e);
                     SYNCING = false;
                     return "Stopped";
                 }

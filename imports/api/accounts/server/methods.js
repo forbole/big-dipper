@@ -9,6 +9,7 @@ const fetchFromUrl = (url) => {
         };
     }
     catch (e){
+        console.log(url);
         console.log(e);
     }
 }
@@ -192,19 +193,25 @@ Meteor.methods({
         }
     },
     'accounts.getAllRedelegations'(address, validator){
-        this.unblock();
+        this.unblock();        
         let url = `/cosmos/staking/v1beta1/v1beta1/delegators/${address}/redelegations&src_validator_addr=${validator}`;
-        let result = fetchFromUrl(url);
-        if (result && result.data) {
-            let redelegations = {}
-            result.data.forEach((redelegation) => {
-                let entries = redelegation.entries;
-                redelegations[redelegation.validator_dst_address] = {
-                    count: entries.length,
-                    completionTime: entries[0].completion_time
-                }
-            })
-            return redelegations
+        try{
+            let result = fetchFromUrl(url);
+            if (result && result.data) {
+                let redelegations = {}
+                result.data.forEach((redelegation) => {
+                    let entries = redelegation.entries;
+                    redelegations[redelegation.validator_dst_address] = {
+                        count: entries.length,
+                        completionTime: entries[0].completion_time
+                    }
+                })
+                return redelegations
+            }
+        }
+        catch(e){
+            console.log(url);
+            console.log(e);
         }
     },
     'accounts.getRedelegations'(address) {

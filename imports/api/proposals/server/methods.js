@@ -7,10 +7,10 @@ import { Validators } from '../../validators/validators.js';
 Meteor.methods({
     'proposals.getProposals': function(){
         this.unblock();
-        try{
 
-            // get gov tally prarams
-            let url = API + '/cosmos/gov/v1beta1/params/tallying';
+        // get gov tally prarams
+        let url = API + '/cosmos/gov/v1beta1/params/tallying';
+        try{
             let response = HTTP.get(url);
             let params = JSON.parse(response.content);
 
@@ -21,36 +21,38 @@ Meteor.methods({
             let proposals = JSON.parse(response.content).proposals;
             // console.log(proposals);
 
-            let finishedProposalIds = new Set(Proposals.find(
-                {"proposal_status":{$in:["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_REJECTED", "PROPOSAL_STATUS_REMOVED"]}}
-            ).fetch().map((p)=> p.proposalId));
+            // let finishedProposalIds = new Set(Proposals.find(
+            //     {"proposal_status":{$in:["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_REJECTED", "PROPOSAL_STATUS_REMOVED"]}}
+            // ).fetch().map((p)=> p.proposalId));
 
             let proposalIds = [];
             if (proposals.length > 0){
                 // Proposals.upsert()
                 const bulkProposals = Proposals.rawCollection().initializeUnorderedBulkOp();
                 for (let i in proposals){
-                    let proposal = proposals[i];
-                    proposal.proposalId = parseInt(proposal.proposal_id);
-                    if (proposal.proposalId > 0 && !finishedProposalIds.has(proposal.proposalId)) {
-                        try{
-                            let url = API + '/cosmos/gov/v1beta1/proposals/'+proposal.proposalId+'/proposer';
-                            let response = HTTP.get(url);
-                            if (response.statusCode == 200){
-                                let proposer = JSON.parse(response.content).result;
-                                if (proposer.proposal_id && (proposer.proposal_id == proposal.id)){
-                                    proposal.proposer = proposer.proposer;
-                                }
-                            }
-                            bulkProposals.find({proposalId: proposal.proposalId}).upsert().updateOne({$set:proposal});
-                            proposalIds.push(proposal.proposalId);
-                        }
-                        catch(e){
-                            bulkProposals.find({proposalId: proposal.proposalId}).upsert().updateOne({$set:proposal});
-                            proposalIds.push(proposal.proposalId);
-                            console.log(e.response.content);
-                        }
-                    }
+                    proposalIds.push(proposals[i].proposalId);
+
+                    // let proposal = proposals[i];
+                    // proposal.proposalId = parseInt(proposal.proposal_id);
+                    // if (proposal.proposalId > 0 && !finishedProposalIds.has(proposal.proposalId)) {
+                    //     try{
+                    //         url = API + '/cosmos/gov/v1beta1/proposals/'+proposal.proposalId+'/proposer';
+                    //         let response = HTTP.get(url);
+                    //         if (response.statusCode == 200){
+                    //             let proposer = JSON.parse(response.content).result;
+                    //             if (proposer.proposal_id && (proposer.proposal_id == proposal.id)){
+                    //                 proposal.proposer = proposer.proposer;
+                    //             }
+                    //         }
+                    //         bulkProposals.find({proposalId: proposal.proposalId}).upsert().updateOne({$set:proposal});
+                    //     }
+                    //     catch(e){
+                    //         bulkProposals.find({proposalId: proposal.proposalId}).upsert().updateOne({$set:proposal});
+                    //         proposalIds.push(proposal.proposalId);
+                    //         console.log(url);
+                    //         console.log(e.response.content);
+                    //     }
+                    // }
                 }
                 bulkProposals.find({proposalId:{$nin:proposalIds}, status:{$nin:["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_REJECTED", "PROPOSAL_STATUS_REMOVED"]}})
                     .update({$set: {"status": "PROPOSAL_STATUS_REMOVED"}});
@@ -59,6 +61,7 @@ Meteor.methods({
             return true
         }
         catch (e){
+            console.log(url);
             console.log(e);
         }
     },
@@ -69,9 +72,10 @@ Meteor.methods({
         if (proposals && (proposals.length > 0)){
             for (let i in proposals){
                 if (parseInt(proposals[i].proposalId) > 0){
+                    let url = "";
                     try{
                         // get proposal deposits
-                        let url = API + '/cosmos/gov/v1beta1/proposals/'+proposals[i].proposalId+'/deposits';
+                        url = API + '/cosmos/gov/v1beta1/proposals/'+proposals[i].proposalId+'/deposits';
                         let response = HTTP.get(url);
                         let proposal = {proposalId: proposals[i].proposalId};
                         if (response.statusCode == 200){
@@ -97,7 +101,8 @@ Meteor.methods({
                         Proposals.update({proposalId: proposals[i].proposalId}, {$set:proposal});
                     }
                     catch(e){
-
+                        console.log(url);
+                        console.log(e);
                     }
                 }
             }
@@ -156,6 +161,7 @@ const getVoteDetail = (votes) => {
                 }
             }
             catch (e){
+                console.log(url);
                 console.log(e.response.content);
             }
             votingPowerMap[voter] = {votingPower: votingPower};
