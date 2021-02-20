@@ -126,7 +126,7 @@ Meteor.methods({
                                 pool.forEach((amount) => {
                                     chainStates.communityPool.push({
                                         denom: amount.denom,
-                                        amount: parseFloat(amount.amount)
+                                        amount: parseFloat(amount.amount)/Meteor.settings.public.humanizeReduction
                                     })
                                 })
                             }
