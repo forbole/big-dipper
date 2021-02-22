@@ -2,8 +2,6 @@ import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 import { Chain, ChainStates } from '../chain.js';
 import Coin from '../../../../both/utils/coins.js';
-import { goTimeToISOString } from '../../../../both/utils/time';
-import { Cosmos } from '@forbole/cosmos-protobuf-js'
 
 findVotingPower = (validator, genValidators) => {
     for (let v in genValidators){
@@ -45,13 +43,14 @@ Meteor.methods({
         this.unblock();
         let url = "";
         try{
-            let req = new Cosmos.Base.Tendermint.GetLatestBlockRequest();
-            let latestBlock = await Cosmos.gRPC.unary(Cosmos.Base.Tendermint.Service.GetLatestBlock, req, GRPC);
-            // console.log(JSON.stringify(latestBlock));
+            url = API + '/blocks/latest';
+            let response = HTTP.get(url);
+            let latestBlock = JSON.parse(response.content);
+
             let chain = {};
-            chain.chainId = latestBlock.block.header.chainId;
-            chain.latestBlockHeight = latestBlock.block.header.height;
-            chain.latestBlockTime = goTimeToISOString(latestBlock.block.header.time)
+            chain.chainId = latestBlock.block.header.chain_id;
+            chain.latestBlockHeight = parseInt(latestBlock.block.header.height);
+            chain.latestBlockTime = latestBlock.block.header.time;
             let latestState = ChainStates.findOne({}, {sort: {height: -1}})
             if (latestState && latestState.height >= chain.latestBlockHeight) {
                 return `no updates (getting block ${chain.latestBlockHeight} at block ${latestState.height})`
@@ -73,7 +72,6 @@ Meteor.methods({
                 url = RPC+`/validators?page=${++page}&per_page=100`;
                 let response = HTTP.get(url);
                 result = JSON.parse(response.content).result;
-                // console.log("========= validator result ==========: %o", result)
                 validators = [...validators, ...result.validators];
                 
             }
@@ -95,10 +93,11 @@ Meteor.methods({
                 chainStates.time = new Date(chain.latestBlockTime);
 
                 try{
-                    req = new Cosmos.Staking.QueryPoolRequest();
-                    let bonding = await Cosmos.gRPC.unary(Cosmos.Staking.Query.Pool, req, GRPC);
-                    chainStates.bondedTokens = parseInt(bonding.pool.bondedTokens);
-                    chainStates.notBondedTokens = parseInt(bonding.pool.notBondedTokens);
+                    url = API + '/cosmos/staking/v1beta1/pool';
+                    let response = HTTP.get(url);
+                    let bonding = JSON.parse(response.content).pool;
+                    chainStates.bondedTokens = parseInt(bonding.bonded_tokens);
+                    chainStates.notBondedTokens = parseInt(bonding.not_bonded_tokens);
                 }
                 catch(e){
                     console.log(e);
@@ -107,9 +106,9 @@ Meteor.methods({
                 if ( Coin.StakingCoin.denom ) {
                     if (Meteor.settings.public.modules.bank){
                         try{
-                            req = new Cosmos.Bank.QuerySupplyOfRequest();
-                            req.setDenom(Coin.StakingCoin.denom);
-                            let supply = await Cosmos.gRPC.unary(Cosmos.Bank.Query.SupplyOf, req, GRPC);
+                            url = API + '/cosmos/bank/v1beta1/supply/' + Coin.StakingCoin.denom;
+                            let response = HTTP.get(url);
+                            let supply = JSON.parse(response.content);
                             chainStates.totalSupply = parseInt(supply.amount.amount);
                         }
                         catch(e){
@@ -119,15 +118,17 @@ Meteor.methods({
 
                     if (Meteor.settings.public.modules.distribution){
                         try {
-                            req = new Cosmos.Distribution.QueryCommunityPoolRequest();
-                            let pool = await Cosmos.gRPC.unary(Cosmos.Distribution.Query.CommunityPool, req, GRPC);
-                            pool = pool.poolList;
+                            // req = new Cosmos.Distribution.QueryCommunityPoolRequest();
+                            // let pool = await Cosmos.gRPC.unary(Cosmos.Distribution.Query.CommunityPool, req, GRPC);
+                            url = API + '/cosmos/distribution/v1beta1/community_pool';
+                            let response = HTTP.get(url);
+                            let pool = JSON.parse(response.content).pool;
                             if (pool && pool.length > 0){
                                 chainStates.communityPool = [];
                                 pool.forEach((amount) => {
                                     chainStates.communityPool.push({
                                         denom: amount.denom,
-                                        amount: parseFloat(amount.amount)/Meteor.settings.public.humanizeReduction
+                                        amount: parseFloat(amount.amount)
                                     })
                                 })
                             }
@@ -137,33 +138,36 @@ Meteor.methods({
                         }
                     }
 
-                    // if (Meteor.settings.public.modules.minting){
-                    //     try{
-                    //         req = new Cosmos.Mint.QueryInflationRequest()
-                    //         let inflation = await Cosmos.gRPC.unary(Cosmos.Mint.Query.Inflation, req, GRPC);
-                    //         console.log(inflation);
-                    //         // response = HTTP.get(url);
-                    //         // let inflation = JSON.parse(response.content).result;
-                    //         if (inflation){
-                    //             chainStates.inflation = parseFloat(inflation)
-                    //         }
-                    //     }
-                    //     catch(e){
-                    //         console.log(e);
-                    //     }
+                    if (Meteor.settings.public.modules.minting){
+                        try{
+                            url = API + '/cosmos/mint/v1beta1/inflation';
+                            let response = HTTP.get(url);
+                            let inflation = JSON.parse(response.content).inflation;
+                            // response = HTTP.get(url);
+                            // let inflation = JSON.parse(response.content).result;
+                            if (inflation){
+                                chainStates.inflation = parseFloat(inflation)
+                            }
+                        }
+                        catch(e){
+                            console.log(e);
+                        }
 
-                    //     try{
-                    //         req = new Cosmos.Mint.QueryAnnualProvisionsRequest();
-                    //         let provisions = await Cosmos.gRPC.unary(Cosmos.Mint.Query.AnnualProvisions, req, GRPC)
-                    //         console.log(provisions)
-                    //         if (provisions){
-                    //             chainStates.annualProvisions = parseFloat(provisions)
-                    //         }
-                    //     }
-                    //     catch(e){
-                    //         console.log(e);
-                    //     }
-                    // }
+                        try{
+                            // req = new Cosmos.Mint.QueryAnnualProvisionsRequest();
+                            // let provisions = await Cosmos.gRPC.unary(Cosmos.Mint.Query.AnnualProvisions, req, GRPC)
+                            url = API + '/cosmos/mint/v1beta1/annual_provisions';
+                            let response = HTTP.get(url);
+                            let provisions = JSON.parse(response.content).annual_provisions;
+                            console.log(provisions)
+                            if (provisions){
+                                chainStates.annualProvisions = parseFloat(provisions)
+                            }
+                        }
+                        catch(e){
+                            console.log(e);
+                        }
+                    }
                 }
 
                 ChainStates.insert(chainStates);
