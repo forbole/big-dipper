@@ -217,9 +217,9 @@ Meteor.startup(async function(){
             updateMissedBlocks();
         }, Meteor.settings.params.missedBlocksInterval);
 
-        timerDelegation = Meteor.setInterval(function(){
-            getDelegations();
-        }, Meteor.settings.params.delegationInterval);
+        // timerDelegation = Meteor.setInterval(function(){
+        //     getDelegations();
+        // }, Meteor.settings.params.delegationInterval);
 
         timerAggregate = Meteor.setInterval(function(){
             let now = new Date();
