@@ -31,7 +31,7 @@ export const MsgType = (props) => {
         return <Badge color="success"><T>messageTypes.repayDebt</T></Badge>  
     
     // incentive
-    case "incentive/MsgClaimReward":
+    case "incentive/MsgClaimUSDXMintingReward":
         return <Badge color="success"><T>messageTypes.claimIncentive</T></Badge>
     
     // auctions

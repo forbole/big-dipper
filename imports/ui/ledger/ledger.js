@@ -594,7 +594,7 @@ export class Ledger {
 
     ) {
         const txMsg = {
-            type: 'incentive/MsgClaimReward',
+            type: 'incentive/MsgClaimUSDXMintingReward',
             value: {
                 denom: denom,
                 sender: txContext.bech32,

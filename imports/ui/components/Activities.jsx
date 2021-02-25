@@ -106,7 +106,7 @@ export default class Activites extends Component {
             </div>
 
             // Incentive
-        case "incentive/MsgClaimReward":
+        case "incentive/MsgClaimUSDXMintingReward":
             return <div>
                 <Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} />
                 <Table striped className="mt-3">
