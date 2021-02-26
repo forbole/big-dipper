@@ -61,6 +61,7 @@ export default BlockContainer = withTracker((props) => {
         incentiveTxs: transactionsExist ? Transactions.find({
             $or: [
                 { "tx.value.msg.type": "incentive/MsgClaimUSDXMintingReward" },
+                { "tx.value.msg.type": "incentive/MsgClaimHardLiquidityProivderReward" }
             ]
         }).fetch() : {},
         auctionTxs: transactionsExist ? Transactions.find({

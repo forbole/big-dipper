@@ -587,20 +587,23 @@ export class Ledger {
     }
 
 
-    static claimIncentiveRewards(
-        txContext,
-        denom
-
-
-    ) {
-        const txMsg = {
+    static claimIncentiveRewards(txContext,denom) {
+        const txMsg = [{
             type: 'incentive/MsgClaimUSDXMintingReward',
             value: {
                 denom: denom,
                 sender: txContext.bech32,
 
             },
-        };
+        },
+        {
+            type: 'incentive/MsgClaimHardLiquidityProivderReward',
+            value: {
+                denom: denom,
+                sender: txContext.bech32,
+
+            },
+        }]
         return Ledger.createSkeleton(txContext, [txMsg]);
     }
 

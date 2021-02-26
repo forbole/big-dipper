@@ -105,13 +105,14 @@ export default class Activites extends Component {
                 <RepayDebt sender={msg.value.sender} cdp_denom={msg.value.cdp_denom} payment={msg.value.payment} />
             </div>
 
-            // Incentive
+            // incentive 
+            // USDX rewards
         case "incentive/MsgClaimUSDXMintingReward":
             return <div>
                 <Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} />
                 <Table striped className="mt-3">
                     <tbody>
-                        {events['claim_reward'].map((reward, i) => {
+                        {events['claim_reward_USDX'].map((reward, i) => {
                             if (i % 2 == 1) {
                                 return <tr key={i}>
                                     <th>{voca.chain(reward.key).replace("_", " ").titleCase().value()}</th>
@@ -122,7 +123,25 @@ export default class Activites extends Component {
                     </tbody>
                 </Table>
             </div>
-            // Pricefeed
+            // HARD rewards
+        case "incentive/MsgClaimHardLiquidityProivderReward":
+            return <div>
+                <Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} />
+                <Table striped className="mt-3">
+                    <tbody>
+                        {events['claim_reward_HARD'].map((reward, i) => {
+                            if (i % 2 == 1) {
+                                return <tr key={i}>
+                                    <th>{voca.chain(reward.key).replace("_", " ").titleCase().value()}</th>
+                                    <td>{new Coin(parseInt(reward.value), reward.value.match(/[a-z]*$/)[0]).toString()}</td>
+                                </tr>
+                            }
+                        })}
+                    </tbody>
+                </Table>
+            </div>
+
+            // pricefeed
         case "pricefeed/MsgPostPrice":
             return <div>
                 <Account address={msg.value.from} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} />
@@ -141,7 +160,8 @@ export default class Activites extends Component {
                     </tbody>
                 </Table>
             </div>
-            //Auctions
+
+            // auction
         case "auction/MsgPlaceBid":
             return <div>
                 <Account address={msg.value.from} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} />
