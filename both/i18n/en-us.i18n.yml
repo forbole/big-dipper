@@ -23,6 +23,7 @@ common:
     cancel: 'Cancel'
     retry: 'Retry'
     rewards: 'Rewards'
+    bondedTokens: 'Bonded Tokens'
 navbar:
     siteName: 'BIG DIPPER'
     version: '-'
