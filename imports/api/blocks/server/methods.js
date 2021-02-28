@@ -463,6 +463,7 @@ Meteor.methods({
                             let valData = validatorSet[v];
 
                             valData.tokens = parseInt(valData.tokens);
+                            valData.unbonding_height = parseInt(valData.unbonding_height)
 
                             let valExist = Validators.findOne({"consensus_pubkey.key":v});
                             

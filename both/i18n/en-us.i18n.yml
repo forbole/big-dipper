@@ -103,6 +103,7 @@ validators:
     tokens: 'Tokens'
     unbondingHeight: 'Unbonding Height'
     unbondingTime: 'Unbonding Time'
+    jailedUntil: 'Jailed Until'
     powerChange: 'Power Change'
     delegations: 'Delegations'
     transactions: 'Transactions'

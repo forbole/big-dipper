@@ -101,6 +101,7 @@ validators:
     tokens: '代幣數量'
     unbondingHeight: '解綁高度'
     unbondingTime: '解綁時間'
+    jailedUntil: '被禁制至'
     powerChange: '投票權變更'
     delegations: '委托'
     transactions: '交易'

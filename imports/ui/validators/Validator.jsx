@@ -258,9 +258,11 @@ export default class Validator extends Component{
                                     <Col sm={8} className="value">{numbro(this.props.validator.tokens).format('0,0.00')}</Col>
                                     {(this.props.validator.jailed)?<Col xs={12} >
                                         <Row><Col md={4} className="label"><T>validators.unbondingHeight</T></Col>
-                                            <Col md={8} className="value">{numbro(this.props.validator.unbondingHeight).format('0,0')}</Col>
+                                            <Col md={8} className="value">{numbro(this.props.validator.unbonding_height).format('0,0')}</Col>
                                             <Col md={4} className="label"><T>validators.unbondingTime</T></Col>
-                                            <Col md={8} className="value"><TimeStamp time={this.props.validator.unbondingTime}/></Col>
+                                            <Col md={8} className="value"><TimeStamp time={this.props.validator.unbonding_time}/></Col>
+                                            <Col md={4} className="label"><T>validators.jailedUntil</T></Col>
+                                            <Col md={8} className="value"><TimeStamp time={this.props.validator.jailed_until}/></Col>
                                         </Row></Col>:''}
                                 </Row>
                             </CardBody>
