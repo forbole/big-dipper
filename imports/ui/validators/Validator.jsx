@@ -228,7 +228,7 @@ export default class Validator extends Component{
                                     <Col sm={4} className="label"><T>validators.operatorAddress</T></Col>
                                     <Col sm={8} className="value address" data-operator-address={this.props.validator.operator_address}>{this.props.validator.operator_address}</Col>
                                     <Col sm={4} className="label"><T>validators.selfDelegationAddress</T></Col>
-                                    <Col sm={8} className="value address" data-delegator-address={this.props.validator.delegator_address}><Link to={"/account/"+this.props.validator.delegatorAddress}>{this.props.validator.delegator_address}</Link></Col>
+                                    <Col sm={8} className="value address" data-delegator-address={this.props.validator.delegator_address}><Link to={"/account/"+this.props.validator.delegator_address}>{this.props.validator.delegator_address}</Link></Col>
                                     <Col sm={4} className="label"><T>validators.commissionRate</T></Col>
                                     <Col sm={8} className="value">{this.props.validator.commission&&this.props.validator.commission.commission_rates?numbro(this.props.validator.commission.commission_rates.rate*100).format('0.00')+"%":''} <small className="text-secondary">({this.state.update_time})</small></Col>
                                     <Col sm={4} className="label"><T>validators.maxRate</T></Col>
