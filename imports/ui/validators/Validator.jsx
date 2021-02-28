@@ -18,7 +18,6 @@ import i18n from 'meteor/universe:i18n';
 import TimeStamp from '../components/TimeStamp.jsx';
 import SentryBoundary from '../components/SentryBoundary.jsx';
 import Coin from '../../../both/utils/coins.js';
-import { goTimeToISOString } from '../../../both/utils/time';
 
 const T = i18n.createComponent();
 
@@ -47,7 +46,7 @@ export default class Validator extends Component{
             identity: "",
             records: "",
             history: "",
-            updateTime: "",
+            update_time: "",
             user: localStorage.getItem(CURRENTUSERADDR),
             denom: "",
         }
@@ -56,9 +55,9 @@ export default class Validator extends Component{
 
     getUserDelegations() {
         if (this.state.user && this.props.validator && this.props.validator.address) {
-            Meteor.call('accounts.getDelegation', this.state.user, this.props.validator.operatorAddress, (err, res) => {
+            Meteor.call('accounts.getDelegation', this.state.user, this.props.validator.operator_address, (err, res) => {
                 if (res && res.shares > 0) {
-                    res.tokenPerShare = this.props.validator.tokens/this.props.validator.delegatorShares
+                    res.tokenPerShare = this.props.validator.tokens/this.props.validator.delegator_shares
                     this.setState({
                         currentUserDelegation: res
                     })
@@ -102,10 +101,10 @@ export default class Validator extends Component{
             }
 
             if (this.props.validator.commission){
-                let updateTime = goTimeToISOString(this.props.validator.commission.updateTime);
-                if (updateTime == Meteor.settings.public.genesisTime){
+                let update_time = this.props.validator.commission.update_time;
+                if (update_time == Meteor.settings.public.genesisTime){
                     this.setState({
-                        updateTime: "Never changed"
+                        update_time: "Never changed"
                     });
                 }
                 else{
@@ -115,20 +114,20 @@ export default class Validator extends Component{
                         }
                         else{
                             if (result){
-                                if (result == updateTime){
+                                if (result == update_time){
                                     this.setState({
-                                        updateTime: "Never changed"
+                                        update_time: "Never changed"
                                     });
                                 }
                                 else{
                                     this.setState({
-                                        updateTime: "Updated "+moment(updateTime).fromNow()
+                                        update_time: "Updated "+moment(update_time).fromNow()
                                     });
                                 }
                             }
                             else{
                                 this.setState({
-                                    updateTime: "Updated "+moment(updateTime).fromNow()
+                                    update_time: "Updated "+moment(update_time).fromNow()
                                 });
                             }
                         }
@@ -149,7 +148,7 @@ export default class Validator extends Component{
                             votingPower={history.voting_power}
                             time={history.block_time}
                             height={history.height}
-                            address={this.props.validator.operatorAddress}
+                            address={this.props.validator.operator_adddress}
                         />
                     })
                 })
@@ -169,7 +168,7 @@ export default class Validator extends Component{
 
     renderShareLink() {
         let validator = this.props.validator;
-        let primaryLink = `/validator/${validator.operatorAddress}`
+        let primaryLink = `/validator/${validator.operator_address}`
         let otherLinks = [
             {label: 'Delegate', url: `${primaryLink}/delegate`},
             {label: 'Transfer', url: `/account/${validator.delegatorAddress}/send`}
@@ -227,15 +226,15 @@ export default class Validator extends Component{
                                 <Row>
                                     <Col xs={12}><StatusBadge bondingStatus={this.props.validator.status} jailed={this.props.validator.jailed} /></Col>
                                     <Col sm={4} className="label"><T>validators.operatorAddress</T></Col>
-                                    <Col sm={8} className="value address" data-operator-address={this.props.validator.operatorAddress}>{this.props.validator.operatorAddress}</Col>
+                                    <Col sm={8} className="value address" data-operator-address={this.props.validator.operator_address}>{this.props.validator.operator_address}</Col>
                                     <Col sm={4} className="label"><T>validators.selfDelegationAddress</T></Col>
-                                    <Col sm={8} className="value address" data-delegator-address={this.props.validator.delegatorAddress}><Link to={"/account/"+this.props.validator.delegatorAddress}>{this.props.validator.delegatorAddress}</Link></Col>
+                                    <Col sm={8} className="value address" data-delegator-address={this.props.validator.delegator_address}><Link to={"/account/"+this.props.validator.delegatorAddress}>{this.props.validator.delegator_address}</Link></Col>
                                     <Col sm={4} className="label"><T>validators.commissionRate</T></Col>
-                                    <Col sm={8} className="value">{this.props.validator.commission&&this.props.validator.commission.commissionRates?numbro(this.props.validator.commission.commissionRates.rate*100/Meteor.settings.public.humanizeReduction).format('0.00')+"%":''} <small className="text-secondary">({this.state.updateTime})</small></Col>
-                                    <Col sm={4} className="label"><T>validators.maxRate</T></Col>
-                                    <Col sm={8} className="value">{this.props.validator.commission&&this.props.validator.commission.commissionRates?numbro(this.props.validator.commission.commissionRates.maxRate*100/Meteor.settings.public.humanizeReduction).format('0.00')+"%":''}</Col>
-                                    <Col sm={4} className="label"><T>validators.maxChangeRate</T></Col>
-                                    <Col sm={8} className="value">{this.props.validator.commission&&this.props.validator.commission.commissionRates?numbro(this.props.validator.commission.commissionRates.maxChangeRate*100/Meteor.settings.public.humanizeReduction).format('0.00')+"%":''}</Col>
+                                    <Col sm={8} className="value">{this.props.validator.commission&&this.props.validator.commission.commission_rates?numbro(this.props.validator.commission.commission_rates.rate*100).format('0.00')+"%":''} <small className="text-secondary">({this.state.update_time})</small></Col>
+                                    <Col sm={4} className="label"><T>validators.max_rate</T></Col>
+                                    <Col sm={8} className="value">{this.props.validator.commission&&this.props.validator.commission.commission_rates?numbro(this.props.validator.commission.commission_rates.max_rate*100).format('0.00')+"%":''}</Col>
+                                    <Col sm={4} className="label"><T>validators.max_change_rate</T></Col>
+                                    <Col sm={8} className="value">{this.props.validator.commission&&this.props.validator.commission.commission_rates?numbro(this.props.validator.commission.commission_rates.max_change_rate*100).format('0.00')+"%":''}</Col>
                                 </Row>
                             </CardBody>
                         </Card>
@@ -252,9 +251,9 @@ export default class Validator extends Component{
                                     <Col sm={4} className="label"><T>validators.proposerPriority</T></Col>
                                     <Col sm={8} className="value">{this.props.validator.proposer_priority?numbro(this.props.validator.proposer_priority).format('0,0'):'N/A'}</Col>
                                     <Col sm={4} className="label"><T>validators.delegatorShares</T></Col>
-                                    <Col sm={8} className="value">{numbro(this.props.validator.delegatorShares/Meteor.settings.public.humanizeReduction).format('0,0.00')}</Col>
+                                    <Col sm={8} className="value">{numbro(this.props.validator.delegator_shares).format('0,0.00')}</Col>
                                     {(this.state.currentUserDelegation)?<Col sm={4} className="label"><T>validators.userDelegateShares</T></Col>:''}
-                                    {(this.state.currentUserDelegation)?<Col sm={8} className="value">{numbro(this.state.currentUserDelegation.shares/Meteor.settings.public.humanizeReduction).format('0,0.00')}</Col>:''}
+                                    {(this.state.currentUserDelegation)?<Col sm={8} className="value">{numbro(this.state.currentUserDelegation.shares).format('0,0.00')}</Col>:''}
                                     <Col sm={4} className="label"><T>validators.tokens</T></Col>
                                     <Col sm={8} className="value">{numbro(this.props.validator.tokens).format('0,0.00')}</Col>
                                     {(this.props.validator.jailed)?<Col xs={12} >
@@ -268,19 +267,19 @@ export default class Validator extends Component{
                         </Card>
                         <Nav pills>
                             <NavItem>
-                                <NavLink tag={Link} to={"/validator/"+this.props.validator.operatorAddress} active={!(this.props.location.pathname.match(/(delegations|transactions)/gm))}><T>validators.powerChange</T></NavLink>
+                                <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address} active={!(this.props.location.pathname.match(/(delegations|transactions)/gm))}><T>validators.powerChange</T></NavLink>
                             </NavItem>
                             <NavItem>
-                                <NavLink tag={Link} to={"/validator/"+this.props.validator.operatorAddress+"/delegations"} active={(this.props.location.pathname.match(/delegations/gm) && this.props.location.pathname.match(/delegations/gm).length > 0)}><T>validators.delegations</T></NavLink>
+                                <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address+"/delegations"} active={(this.props.location.pathname.match(/delegations/gm) && this.props.location.pathname.match(/delegations/gm).length > 0)}><T>validators.delegations</T></NavLink>
                             </NavItem>
                             <NavItem>
-                                <NavLink tag={Link} to={"/validator/"+this.props.validator.operatorAddress+"/transactions"} active={(this.props.location.pathname.match(/transactions/gm) && this.props.location.pathname.match(/transactions/gm).length > 0)}><T>validators.transactions</T></NavLink>
+                                <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address+"/transactions"} active={(this.props.location.pathname.match(/transactions/gm) && this.props.location.pathname.match(/transactions/gm).length > 0)}><T>validators.transactions</T></NavLink>
                             </NavItem>
                         </Nav>
                         <Switch>
                             <Route exact path="/(validator|validators)/:address" render={() => <div className="power-history">{this.state.history}</div> } />
-                            <Route path="/(validator|validators)/:address/delegations" render={() => <ValidatorDelegations address={this.props.validator.operatorAddress} tokens={this.props.validator.tokens} shares={this.props.validator.delegatorShares} denom={this.props.denom} />} />
-                            <Route path="/(validator|validators)/:address/transactions" render={() => <ValidatorTransactions validator={this.props.validator.operatorAddress} delegator={this.props.validator.delegatorAddress} limit={100}/>} />
+                            <Route path="/(validator|validators)/:address/delegations" render={() => <ValidatorDelegations address={this.props.validator.operator_address} tokens={this.props.validator.tokens} shares={this.props.validator.delegatorShares} denom={this.props.denom} />} />
+                            <Route path="/(validator|validators)/:address/transactions" render={() => <ValidatorTransactions validator={this.props.validator.operator_address} delegator={this.props.validator.delegatorAddress} limit={100}/>} />
                         </Switch>
 
                         <Link to="/validators" className="btn btn-link"><i className="fas fa-caret-left"></i> <T>common.backToList</T></Link>

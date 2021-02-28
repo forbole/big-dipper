@@ -18,15 +18,19 @@ export default ValidatorListContainer = withTracker((props) => {
     // console.log(props);
     if (props.inactive){
         validatorsCond = {
-            $or: [
-                { status: { $lt : 3 } },
-                // { jailed: true }
-            ]
+            status: { $ne:'BOND_STATUS_BONDED' }
         }
+        // validatorsCond = {
+        //     $or: [
+        //         { status: 'BOND_STATUS_UNBONDED' },
+        //         { status: 'BOND_STATUS_BONDED' }
+        //         // { jailed: true }
+        //     ]
+        // }
     }
     else{
         validatorsCond = {
-            status: 3
+            status: 'BOND_STATUS_BONDED'
         }
     }
 
@@ -38,7 +42,7 @@ export default ValidatorListContainer = withTracker((props) => {
         options = {
             sort:{
                 "description.moniker": props.monikerDir,
-                "commission.commissionRates.rate": props.commissionDir,
+                "commission.commission_rates.rate": props.commissionDir,
                 uptime: props.uptimeDir,
                 voting_power: props.votingPowerDir,
                 self_delegation: props.selfDelDir
@@ -51,7 +55,7 @@ export default ValidatorListContainer = withTracker((props) => {
                 voting_power: props.votingPowerDir,
                 "description.moniker": props.monikerDir,
                 uptime: props.uptimeDir,
-                "commission.commissionRates.rate": props.commissionDir,
+                "commission.commission_rates.rate": props.commissionDir,
                 self_delegation: props.selfDelDir
             }
         }
@@ -62,7 +66,7 @@ export default ValidatorListContainer = withTracker((props) => {
                 uptime: props.uptimeDir,
                 "description.moniker": props.monikerDir,
                 voting_power: props.votingPowerDir,
-                "commission.commissionRates.rate": props.commissionDir,
+                "commission.commission_rates.rate": props.commissionDir,
                 self_delegation: props.selfDelDir,
             }
         }
@@ -70,7 +74,7 @@ export default ValidatorListContainer = withTracker((props) => {
     case 3:
         options = {
             sort:{
-                "commission.commissionRates.rate": props.commissionDir,
+                "commission.commission_rates.rate": props.commissionDir,
                 "description.moniker": props.monikerDir,
                 voting_power: props.votingPowerDir,
                 uptime: props.uptimeDir,
@@ -83,7 +87,7 @@ export default ValidatorListContainer = withTracker((props) => {
             sort:{
                 self_delegation: props.selfDelDir,
                 "description.moniker": props.monikerDir,
-                "commission.commissionRates.rate": props.commissionDir,
+                "commission.commission_rates.rate": props.commissionDir,
                 voting_power: props.votingPowerDir,
                 uptime: props.uptimeDir,
             }

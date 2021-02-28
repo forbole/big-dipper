@@ -44,7 +44,7 @@ Meteor.publish('validators.voting_power', function(){
 publishComposite('validator.details', function(address){
     let options = {address:address};
     if (address.indexOf(Meteor.settings.public.bech32PrefixValAddr) != -1){
-        options = {operatorAddress:address}
+        options = {operator_address:address}
     }
     return {
         find(){
