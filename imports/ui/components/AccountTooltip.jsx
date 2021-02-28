@@ -61,7 +61,7 @@ export default class AccountTooltip extends Account{
                     <PopoverBody>
                     <CardText className="voting-power data">
                         <i className="material-icons">power </i>
-                        {validator.voting_power?numbro(validator.voting_power).format('0,0'):0}
+                        {validator.tokens?numbro(Math.floor(validator.tokens/Meteor.settings.public.powerReduction)).format('0,0'):0}
                     </CardText>
                     <CardText className="self-delegation data">
                         <i className="material-icons">equalizer </i>

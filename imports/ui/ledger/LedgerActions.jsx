@@ -549,7 +549,7 @@ class LedgerButton extends Component {
                                 <Col xs='12' className='moniker'>{validator.description.moniker}</Col>
                                 <Col xs='3' className="voting-power data">
                                     <i className="material-icons">power</i>
-                                    {validator.voting_power?numbro(validator.voting_power).format('0,0'):0}
+                                    {validator.tokens?numbro(Math.floor(validator.tokens/Meteor.settings.public.powerReduction)).format('0,0'):0}
                                 </Col>
 
                                 <Col xs='4' className="commission data">
