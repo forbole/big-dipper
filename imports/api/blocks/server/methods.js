@@ -100,7 +100,7 @@ getValidatorUptime = async (validatorSet) => {
 
 calculateVPDist = async (analyticsData, blockData) => {
     console.log("===== calculate voting power distribution =====");
-    let activeValidators = Validators.find({status:3,jailed:false},{sort:{voting_power:-1}}).fetch();
+    let activeValidators = Validators.find({status:'BOND_STATUS_BONDED',jailed:false},{sort:{voting_power:-1}}).fetch();
     let numTopTwenty = Math.ceil(activeValidators.length*0.2);
     let numBottomEighty = activeValidators.length - numTopTwenty;
 
