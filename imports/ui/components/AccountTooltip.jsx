@@ -27,13 +27,13 @@ export default class AccountTooltip extends Account{
         return {
             status: 1,
             description: 1,
-            delegatorShares: 1,
-            operatorAddress: 1,
+            delegator_shares: 1,
+            operator_address: 1,
             tokens: 1,
             commission: 1,
             unbonding_time: 1,
             jailed: 1,
-            delegatorAddress: 1,
+            delegator_address: 1,
             address: 1,
             operator_pubkey: 1,
             voting_power: 1,
@@ -49,7 +49,7 @@ export default class AccountTooltip extends Account{
             return
         let validator = this.state.validator;
         let moniker = (validator.description && validator.description.moniker) || validator.address;
-        let isActive = validator.status == 3 && !validator.jailed;
+        let isActive = validator.status == 'BOND_STATUS_BONDED' && !validator.jailed;
 
         return <UncontrolledPopover className='validator-popover' trigger="hover" placement="right" target={this.ref} key={this.ref}>
             <Card className='validator-popover-card' body outline color="danger">
