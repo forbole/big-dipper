@@ -44,7 +44,7 @@ export default ValidatorListContainer = withTracker((props) => {
                 "description.moniker": props.monikerDir,
                 "commission.commission_rates.rate": props.commissionDir,
                 uptime: props.uptimeDir,
-                voting_power: props.votingPowerDir,
+                tokens: props.votingPowerDir,
                 self_delegation: props.selfDelDir
             }
         }
@@ -52,7 +52,7 @@ export default ValidatorListContainer = withTracker((props) => {
     case 1:
         options = {
             sort:{
-                voting_power: props.votingPowerDir,
+                tokens: props.votingPowerDir,
                 "description.moniker": props.monikerDir,
                 uptime: props.uptimeDir,
                 "commission.commission_rates.rate": props.commissionDir,
@@ -65,7 +65,7 @@ export default ValidatorListContainer = withTracker((props) => {
             sort:{
                 uptime: props.uptimeDir,
                 "description.moniker": props.monikerDir,
-                voting_power: props.votingPowerDir,
+                tokens: props.votingPowerDir,
                 "commission.commission_rates.rate": props.commissionDir,
                 self_delegation: props.selfDelDir,
             }
@@ -76,7 +76,7 @@ export default ValidatorListContainer = withTracker((props) => {
             sort:{
                 "commission.commission_rates.rate": props.commissionDir,
                 "description.moniker": props.monikerDir,
-                voting_power: props.votingPowerDir,
+                tokens: props.votingPowerDir,
                 uptime: props.uptimeDir,
                 self_delegation: props.selfDelDir
             }
@@ -88,7 +88,7 @@ export default ValidatorListContainer = withTracker((props) => {
                 self_delegation: props.selfDelDir,
                 "description.moniker": props.monikerDir,
                 "commission.commission_rates.rate": props.commissionDir,
-                voting_power: props.votingPowerDir,
+                tokens: props.votingPowerDir,
                 uptime: props.uptimeDir,
             }
         }

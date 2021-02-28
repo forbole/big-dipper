@@ -461,6 +461,9 @@ Meteor.methods({
                         let startFindValidatorsNameTime = new Date();
                         for (v in validatorSet){
                             let valData = validatorSet[v];
+
+                            valData.tokens = parseInt(valData.tokens);
+
                             let valExist = Validators.findOne({"consensus_pubkey.key":v});
                             
                             // console.log(valData);
