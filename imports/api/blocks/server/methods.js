@@ -604,6 +604,10 @@ Meteor.methods({
                                     let selfDelegation = JSON.parse(response.content).delegation_response;
 
                                     valData.self_delegation = (selfDelegation.delegation && selfDelegation.delegation.shares)?parseFloat(selfDelegation.delegation.shares)/parseFloat(valData.delegator_shares):0;
+
+                                    console.log("Add validator upsert to bulk operations.")
+
+                                    bulkValidators.find({"address": valData.address}).upsert().updateOne({$set:valData});
                                 }
                                 catch(e){
                                     console.log(url);
@@ -611,9 +615,6 @@ Meteor.methods({
                                 }
                             }
 
-                            console.log("Add validator upsert to bulk operations.")
-
-                            bulkValidators.find({"address": valData.address}).upsert().updateOne({$set:valData});
     
                         }
 
