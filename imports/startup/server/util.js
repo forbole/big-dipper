@@ -46,21 +46,21 @@ Meteor.methods({
         let buffer;
 
         try {
-            if (pubkey.typeUrl.indexOf("ed25519") > 0){
+            if (pubkey["@type"].indexOf("ed25519") > 0){
             // '1624DE6420' is ed25519 pubkey prefix
                 let pubkeyAminoPrefix = Buffer.from('1624DE6420', 'hex');
                 buffer = Buffer.alloc(37);
         
                 pubkeyAminoPrefix.copy(buffer, 0)
-                Buffer.from(pubkey.value, 'base64').copy(buffer, pubkeyAminoPrefix.length)
+                Buffer.from(pubkey.key, 'base64').copy(buffer, pubkeyAminoPrefix.length)
             }
-            else if (pubkey.typeUrl.indexOf("secp256k1") > 0){
+            else if (pubkey["@type"].indexOf("secp256k1") > 0){
             // 'EB5AE98721' is secp256k1 pubkey prefix
                 let pubkeyAminoPrefix = Buffer.from('EB5AE98721', 'hex');
                 buffer = Buffer.alloc(38);
     
                 pubkeyAminoPrefix.copy(buffer, 0)
-                Buffer.from(pubkey.value, 'base64').copy(buffer, pubkeyAminoPrefix.length)
+                Buffer.from(pubkey.key, 'base64').copy(buffer, pubkeyAminoPrefix.length)
             }
             else {
                 console.log("Pubkey type not supported.");
@@ -102,9 +102,8 @@ Meteor.methods({
         }
     },
     getAddressFromPubkey: function(pubkey){
-        var bytes = Buffer.from(pubkey.value, 'base64');
-        // there are two extra byte in the protobuf result
-        return tmhash(bytes.slice(2)).slice(0, 20).toString('hex').toUpperCase();
+        var bytes = Buffer.from(pubkey.key, 'base64');
+        return tmhash(bytes).slice(0, 20).toString('hex').toUpperCase();
     },
     getDelegator: function(operatorAddr){
         let address = bech32.decode(operatorAddr);

@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Delegations } from '../delegations.js';
 import { Validators } from '../../validators/validators.js';
-// import { Cosmos } from '@forbole/cosmos-protobuf-js'
 
 Meteor.methods({
     'delegations.getDelegations': async function(){
@@ -10,7 +9,7 @@ Meteor.methods({
         let delegations = [];
         console.log("=== Getting delegations ===");
         for (v in validators){
-            if (validators[v].operatorAddress){
+            if (validators[v].operator_address){
                 let url = API + '/cosmos/staking/v1beta1/validators/'+validators[v].operatorAddress+"/delegations";
                 try{
                     let response = HTTP.get(url);
@@ -22,10 +21,6 @@ Meteor.methods({
                     else{
                         console.log(response.statusCode);
                     }
-                    // let req = new Cosmos.Staking.QueryValidatorDelegationsRequest();
-                    // req.setValidatorAddr(validators[v].operatorAddress);
-                    // let delegations = await Cosmos.gRPC.unary(Cosmos.Staking.Query.ValidatorDelegations, req, GRPC);
-                    // console.log("delegations: %o", delegations);
                 }
                 catch (e){
                     // console.log(url);
@@ -34,12 +29,6 @@ Meteor.methods({
             }
         }
 
-        // for (i in delegations.delegationResponsesList){
-        //     if (delegations.delegationResponsesList[i].delegation && delegations.delegationResponsesList[i].delegation.shares)
-        //         delegations.delegationResponsesList[i].delegation.shares = parseFloat(delegations.delegationResponsesList[i].delegation.shares);
-        // }
-
-        // console.log(delegations);
         let data = {
             delegations: delegations,
             createdAt: new Date(),

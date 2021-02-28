@@ -58,9 +58,6 @@ Meteor.methods({
 
             // Since Tendermint v0.33, validator page default set to return 30 validators.
             // Query latest height with page 1 and 100 validators per page.
-            // req = new Cosmos.Base.Tendermint.GetLatestValidatorSetRequest()
-            // let validators = await Cosmos.gRPC.unary(Cosmos.Base.Tendermint.Service.GetLatestValidatorSet, req, GRPC)
-            // console.log(validators)
 
             // validators = validators.validatorsList;
             // chain.validators = validators.length;
@@ -118,8 +115,6 @@ Meteor.methods({
 
                     if (Meteor.settings.public.modules.distribution){
                         try {
-                            // req = new Cosmos.Distribution.QueryCommunityPoolRequest();
-                            // let pool = await Cosmos.gRPC.unary(Cosmos.Distribution.Query.CommunityPool, req, GRPC);
                             url = API + '/cosmos/distribution/v1beta1/community_pool';
                             let response = HTTP.get(url);
                             let pool = JSON.parse(response.content).pool;
@@ -154,8 +149,6 @@ Meteor.methods({
                         }
 
                         try{
-                            // req = new Cosmos.Mint.QueryAnnualProvisionsRequest();
-                            // let provisions = await Cosmos.gRPC.unary(Cosmos.Mint.Query.AnnualProvisions, req, GRPC)
                             url = API + '/cosmos/mint/v1beta1/annual_provisions';
                             let response = HTTP.get(url);
                             let provisions = JSON.parse(response.content).annual_provisions;
