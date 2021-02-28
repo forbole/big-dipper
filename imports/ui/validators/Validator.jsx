@@ -260,7 +260,7 @@ export default class Validator extends Component{
                                         <Row><Col md={4} className="label"><T>validators.unbondingHeight</T></Col>
                                             <Col md={8} className="value">{numbro(this.props.validator.unbondingHeight).format('0,0')}</Col>
                                             <Col md={4} className="label"><T>validators.unbondingTime</T></Col>
-                                            <Col md={8} className="value"><TimeStamp time={goTimeToISOString(this.props.validator.unbondingTime)}/></Col>
+                                            <Col md={8} className="value"><TimeStamp time={this.props.validator.unbondingTime}/></Col>
                                         </Row></Col>:''}
                                 </Row>
                             </CardBody>
