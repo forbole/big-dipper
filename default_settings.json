@@ -40,8 +40,7 @@
     },
     "remote":{
         "rpc":"https://rpc.stargate.forbole.com:443",
-        "api":"https://api.stargate.forbole.com:443",
-        "grpc":"https://grpc.stargate.forbole.com:443"
+        "api":"https://api.stargate.forbole.com:443"
     },
     "debug": {
         "startTimer": true

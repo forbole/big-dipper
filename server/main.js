@@ -5,8 +5,6 @@ import '/imports/startup/both';
 // import moment from 'moment';
 // import '/imports/api/blocks/blocks.js';
 
-import { Cosmos } from '@forbole/cosmos-protobuf-js'
-
 SYNCING = false;
 TXSYNCING = false;
 COUNTMISSEDBLOCKS = false;
