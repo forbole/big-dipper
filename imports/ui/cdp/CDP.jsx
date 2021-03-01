@@ -51,7 +51,7 @@ export default class CDP extends Component {
     }
 
     updateCDP() {
-        Meteor.call('accounts.getAccountCDP', this.props.owner, this.props.collateral, (error, result) => {
+        Meteor.call('accounts.getAccountCDP', this.props.owner, this.state.denomType, (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({
@@ -102,9 +102,15 @@ export default class CDP extends Component {
             }
 
             if (result) {
+                for(let c in result.collateral_params){
+                    if(result.collateral_params[c].denom === this.props.collateral){
+                        this.setState({
+                            denomType: result.collateral_params[c].type
+                        })
+                    }
+                }
                 this.setState({
-                    cdpParams: result,
-
+                    cdpParams: result
                 })
             }
         }),
