@@ -612,12 +612,11 @@ Meteor.methods({
                                         valData.self_delegation = 0;
                                         
                                     }
+
+                                    console.log("Add validator upsert to bulk operations.")
+                                    bulkValidators.find({"address": valData.address}).upsert().updateOne({$set:valData});
                                 }
                             }
-
-                            console.log("Add validator upsert to bulk operations.")
-                            bulkValidators.find({"address": valData.address}).upsert().updateOne({$set:valData});
-    
                         }
 
                         // store valdiators exist records
