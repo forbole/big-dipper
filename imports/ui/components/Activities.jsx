@@ -119,7 +119,7 @@ export default class Activites extends Component {
                 <Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} />
                 <Table striped className="mt-3">
                     <tbody>
-                        {events['claim_reward_USDX'].map((reward, i) => {
+                        {events['claim_reward'].map((reward, i) => {
                             if (i % 2 == 1) {
                                 return <tr key={i}>
                                     <th>{voca.chain(reward.key).replace("_", " ").titleCase().value()}</th>
@@ -136,7 +136,7 @@ export default class Activites extends Component {
                 <Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} />
                 <Table striped className="mt-3">
                     <tbody>
-                        {events['claim_reward_HARD'].map((reward, i) => {
+                        {events['claim_reward'].map((reward, i) => {
                             if (i % 2 == 1) {
                                 return <tr key={i}>
                                     <th>{voca.chain(reward.key).replace("_", " ").titleCase().value()}</th>
