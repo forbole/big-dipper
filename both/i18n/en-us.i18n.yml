@@ -336,3 +336,8 @@ messageTypes:
     IBCTransfer: 'IBC Transfer'
     IBCReceive: 'IBC Receive'
     placeBid: 'Place Bid'
+    depositHARD: '/HARD Deposit'
+    withdrawHARD: '/HARD Withdraw'
+    borrowHARD: '\HARD Borrow'
+    liquidateHARD: '\HARD Liquidate'
+    repayHARD: '\HARD Repay'

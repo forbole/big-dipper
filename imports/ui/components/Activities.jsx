@@ -111,6 +111,28 @@ export default class Activites extends Component {
                 <Liquidate address={msg.value.owner} collateral={msg.value.collateral} />
             </div>
 
+            // HARD
+        case "hard/MsgDeposit":
+            return <div>
+                <div><Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
+            </div>
+        case "hard/MsgWithdraw":
+            return <div>
+                <div><Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
+            </div>
+        case "hard/MsgBorrow":
+            return <div>
+                <div><Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
+            </div>
+        case "hard/MsgLiquidate":
+            return <div>
+                <div><Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
+            </div>
+        case "hard/MsgRepay":
+            return <div>
+                <div><Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
+            </div>
+
 
             // incentive 
             // USDX rewards

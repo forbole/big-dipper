@@ -32,6 +32,18 @@ export const MsgType = (props) => {
     case "cdp/MsgLiquidate":
         return <Badge color="success"><T>messageTypes.liquidate</T></Badge>  
     
+    // hard 
+    case "hard/MsgDeposit":
+        return <Badge color="info"><T>messageTypes.depositHARD</T></Badge>
+    case "hard/MsgWithdraw":
+        return <Badge color="info"><T>messageTypes.withdrawHARD</T></Badge>
+    case "hard/MsgBorrow":
+        return <Badge color="info"><T>messageTypes.borrowHARD</T></Badge>
+    case "hard/MsgLiquidate":
+        return <Badge color="info"><T>messageTypes.liquidateHARD</T></Badge>
+    case "hard/MsgRepay":
+        return <Badge color="info"><T>messageTypes.repayHARD</T></Badge>
+   
     // incentive
     case "incentive/MsgClaimUSDXMintingReward":
         return <Badge color="success"><T>messageTypes.claimIncentive</T></Badge>
@@ -43,7 +55,7 @@ export const MsgType = (props) => {
     
     // pricefeed
     case "pricefeed/MsgPostPrice":
-        return <Badge color="info"><T>messageTypes.postPrice</T></Badge>
+        return <Badge style={{ backgroundColor: "#779DBB"}}><T>messageTypes.postPrice</T></Badge>
     // staking
     case "cosmos-sdk/MsgCreateValidator":
         return <Badge color="warning"><T>messageTypes.createValidator</T></Badge>;
