@@ -594,23 +594,24 @@ Meteor.methods({
                             // only update validator infor during start of crawling, end of crawling or every validator update window
                             // get self delegation every 30 blocks
                             // if ((height == Meteor.settings.params.startHeight+1) || (height == until) || (height % Meteor.settings.params.validatorUpdateWindow == 0)){
-                            if ((height == curr+1) || (height % Meteor.settings.params.validatorUpdateWindow == 0)){    
-
-                                url = `${API}/cosmos/staking/v1beta1/validators/${valData.operator_address}/delegations/${valData.delegator_address}`
-                                try{
-                                    console.log("Getting self delegation");
-
-                                    let response = HTTP.get(url);
-                                    let selfDelegation = JSON.parse(response.content).delegation_response;
-
-                                    valData.self_delegation = (selfDelegation.delegation && selfDelegation.delegation.shares)?parseFloat(selfDelegation.delegation.shares)/parseFloat(valData.delegator_shares):0;
-
-                                }
-                                catch(e){
-                                    console.log(url);
-                                    console.log("Getting self delegation: %o", e);
-                                    valData.self_delegation = 0;
-                                    
+                            if ((height == Meteor.settings.params.startHeight+1) || (height % Meteor.settings.params.validatorUpdateWindow == 0)){    
+                                if (valData.status == 'BOND_STATUS_BONDED'){
+                                    url = `${API}/cosmos/staking/v1beta1/validators/${valData.operator_address}/delegations/${valData.delegator_address}`
+                                    try{
+                                        console.log("Getting self delegation");
+    
+                                        let response = HTTP.get(url);
+                                        let selfDelegation = JSON.parse(response.content).delegation_response;
+    
+                                        valData.self_delegation = (selfDelegation.delegation && selfDelegation.delegation.shares)?parseFloat(selfDelegation.delegation.shares)/parseFloat(valData.delegator_shares):0;
+    
+                                    }
+                                    catch(e){
+                                        console.log(url);
+                                        console.log("Getting self delegation: %o", e);
+                                        valData.self_delegation = 0;
+                                        
+                                    }
                                 }
                             }
 
