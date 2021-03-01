@@ -144,21 +144,18 @@ export default class AccountDetails extends Component{
  
 
                 if (result.rewards && result.rewards.length > 0){
-                    console.log(result.rewards);
                     for(let c = 0; c < result.rewards.length; c++){
                         if(result.rewards[c].reward != null){
                             numRewards[result.rewards[c]["validator_address"]] = result.rewards[c].reward;
                         }
                     }
-                    console.log(numRewards);
                     for(let e in numRewards){
                         for(let f in numRewards[e]){
-                            console.log(numRewards[e][f]);
                             if(this.state.denom === numRewards[e][f].denom){
                                 this.setState({
                                     rewardDenomType: numRewards[e][f].denom,
                                     rewardsForEachDel: numRewards,
-                                }, console.log(this.state.rewardsForEachDel))
+                                })
                             }
                                 
                         }
