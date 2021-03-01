@@ -31,7 +31,7 @@ export default class AccountDelegations extends Component{
                     </Row>
                     <SentryBoundary>
                         {this.props.delegations.sort((b, a) => (a.balance - b.balance)).map((d, i) => {
-                            let reward = this.props.rewardsForEachDel[d.validator_address];
+                            let reward = this.props.rewardsForEachDel[d.delegation.validator_address];
                             rewardDenom =(reward)?reward.find(({denom}) => denom === denomType): null;
                             return <Row key={i} className="delegation-info">
                                 <Col xs={7} md={4} className="text-nowrap overflow-auto"><AccountTooltip address={d.delegation.validator_address} /></Col>

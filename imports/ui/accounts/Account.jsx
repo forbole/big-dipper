@@ -39,7 +39,7 @@ export default class AccountDetails extends Component{
             user: localStorage.getItem(CURRENTUSERADDR),
             commission: [defaultCoin],
             denom: '',
-            rewardsForEachDel: [defaultCoin],
+            rewardsForEachDel: {defaultCoin},
             rewardDenomType: [defaultCoin],
         }
     }
@@ -71,7 +71,6 @@ export default class AccountDetails extends Component{
             }
 
             if (result){
-
                 if (result.available && (result.available.length > 0)){
 
                     this.setState({
@@ -145,19 +144,21 @@ export default class AccountDetails extends Component{
  
 
                 if (result.rewards && result.rewards.length > 0){
-                    
+                    console.log(result.rewards);
                     for(let c = 0; c < result.rewards.length; c++){
                         if(result.rewards[c].reward != null){
                             numRewards[result.rewards[c]["validator_address"]] = result.rewards[c].reward;
                         }
                     }
+                    console.log(numRewards);
                     for(let e in numRewards){
                         for(let f in numRewards[e]){
+                            console.log(numRewards[e][f]);
                             if(this.state.denom === numRewards[e][f].denom){
                                 this.setState({
                                     rewardDenomType: numRewards[e][f].denom,
                                     rewardsForEachDel: numRewards,
-                                })
+                                }, console.log(this.state.rewardsForEachDel))
                             }
                                 
                         }
@@ -207,7 +208,7 @@ export default class AccountDetails extends Component{
                 price: 0,
                 reward: [],
                 denom: '',
-                rewardsForEachDel: [],
+                rewardsForEachDel: {},
                 rewardDenomType: [],
             }, () => {
                 this.getBalance();
