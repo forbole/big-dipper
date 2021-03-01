@@ -8,6 +8,7 @@ import DepositCDP from '../cdp/DepositCDP.jsx';
 import WithdrawCDP from '../cdp/WithdrawCDP.jsx';
 import DrawDebt from '../cdp/DrawDebt.jsx';
 import RepayDebt from '../cdp/RepayDebt.jsx';
+import Liquidate from '../cdp/Liquidate.jsx';
 import CreateSwap from '../bep3/CreateSwap.jsx';
 import { ListGroup, ListGroupItem, Table } from 'reactstrap';
 import i18n from 'meteor/universe:i18n';
@@ -104,6 +105,12 @@ export default class Activites extends Component {
                 <div><Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
                 <RepayDebt sender={msg.value.sender} cdp_denom={msg.value.cdp_denom} payment={msg.value.payment} />
             </div>
+        case "cdp/MsgLiquidate":
+            return <div>
+                <div><Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
+                <Liquidate address={msg.value.owner} collateral={msg.value.collateral} />
+            </div>
+
 
             // incentive 
             // USDX rewards

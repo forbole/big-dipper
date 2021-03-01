@@ -318,6 +318,7 @@ messageTypes:
     withdrawCDP: 'Withdraw CDP'
     repayDebt: 'Repay Debt'
     drawDebt: 'Draw Debt'
+    liquidate: 'Liquidate CDP'
     postPrice: 'Post Price'
     claimIncentive: 'Claim Incentive'
     createValidator: 'Create Validator'

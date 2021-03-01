@@ -39,7 +39,9 @@ export default TransactionsContainer = withTracker((props) => {
                 {"tx.value.msg.type":"cdp/MsgDeposit"},
                 {"tx.value.msg.type":"cdp/MsgWithdraw"},
                 {"tx.value.msg.type":"cdp/MsgDrawDebt"}, 
-                {"tx.value.msg.type":"cdp/MsgRepayDebt"}
+                {"tx.value.msg.type":"cdp/MsgRepayDebt"},
+                {"tx.value.msg.type": "cdp/MsgLiquidate"}
+
             ]
         }).fetch() : {},
         swapTxs: transactionsExist ? Transactions.find({
