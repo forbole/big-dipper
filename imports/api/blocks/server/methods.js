@@ -594,7 +594,7 @@ Meteor.methods({
                             // only update validator infor during start of crawling, end of crawling or every validator update window
                             // get self delegation every 30 blocks
                             // if ((height == Meteor.settings.params.startHeight+1) || (height == until) || (height % Meteor.settings.params.validatorUpdateWindow == 0)){
-                            if ((height == curr+1) || (height == until) || (height % Meteor.settings.params.validatorUpdateWindow == 0)){    
+                            if ((height == curr+1) || (height % Meteor.settings.params.validatorUpdateWindow == 0)){    
 
                                 url = `${API}/cosmos/staking/v1beta1/validators/${valData.operator_address}/delegations/${valData.delegator_address}`
                                 try{
