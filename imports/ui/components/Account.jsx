@@ -17,18 +17,18 @@ export default class Account extends Component{
     }
 
     getFields() {
-        return {address:1, description:1, operatorAddress:1, delegatorAddress:1, profile_url:1};
+        return {address:1, description:1, operator_address:1, delegator_address:1, profile_url:1};
     }
 
     getAccount = () => {
         let address = this.props.address;
         let validator = Validators.findOne(
-            {$or: [{operatorAddress:address}, {delegatorAddress:address}, {address:address}]},
+            {$or: [{operator_address:address}, {delegator_address:address}, {address:address}]},
             {fields: this.getFields() });
         if (validator)
             this.setState({
                 address: `/validator/${validator.address}`,
-                moniker: validator.description?validator.description.moniker:validator.operatorAddress,
+                moniker: validator.description?validator.description.moniker:validator.operator_address,
                 validator: validator
             });
         else
@@ -46,7 +46,7 @@ export default class Account extends Component{
                 // console.log(result);
                 this.setState({
                     address: `/validator/${result.address}`,
-                    moniker: result.description?result.description.moniker:result.operatorAddress,
+                    moniker: result.description?result.description.moniker:result.operator_address,
                     validator: result
                 });
             }
@@ -56,8 +56,8 @@ export default class Account extends Component{
     getAccount = () => {
         let address = this.props.address;
         let validator = Validators.findOne(
-            {$or: [{operatorAddress:address}, {delegatorAddress:address}, {address:address}]},
-            {fields: {address:1, description:1, operatorAddress:1, delegatorAddress:1}});
+            {$or: [{operator_address:address}, {delegator_address:address}, {address:address}]},
+            {fields: {address:1, description:1, operator_address:1, delegator_address:1}});
         if (validator)
             this.setState({
                 address: `/validator/${validator.address}`,
