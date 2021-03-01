@@ -611,7 +611,9 @@ Meteor.methods({
                                 }
                                 catch(e){
                                     console.log(url);
-                                    console.log("Getting self delegation: %o", e)
+                                    console.log("Getting self delegation: %o", e);
+                                    valData.self_delegation = 0;
+                                    bulkValidators.find({"address": valData.address}).upsert().updateOne({$set:valData});
                                 }
                             }
 
