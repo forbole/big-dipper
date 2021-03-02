@@ -504,19 +504,31 @@ body {
     }
 
     .cdp-logo {
-      display: block;
+      display: inline-flex;
       background-size: 24px;
       background-position: top left;
       background-repeat: no-repeat;
-
-      &.create {
-        background-image: url(/img/money-exchange.svg);
-        background-position: right;
-        padding-right: 30px;
+      
+      .cdp-logo-image {
+        padding-right: 5px;
+        margin-left: -15px;
+        padding-left:20px;
+        height:1.5em;
       }
-    
+
+      .material-icons{
+        padding-left: 0.2em;
+      }
+
+      &.denom {
+        font-size: 12px;
+      }
     }
   
+    .denom-list{
+        padding-left: 1em;
+    }
+
     .available {
       background-color: $cyan;
     }

@@ -51,7 +51,7 @@ export default class CDP extends Component {
     }
 
     updateCDP() {
-        Meteor.call('accounts.getAccountCDP', this.props.owner, this.state.denomType, (error, result) => {
+        Meteor.call('accounts.getAccountCDP', this.props.owner, this.props.collateral, (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({
@@ -61,10 +61,8 @@ export default class CDP extends Component {
             }
 
             if (result) {
-
                 this.setState({
                     userCDP: result
-
                 })
             }
         })
@@ -72,7 +70,6 @@ export default class CDP extends Component {
 
     updateDeposits() {
         Meteor.call('cdp.getDeposits', this.props.owner, this.props.collateral, (error, result) => {
-            //console.log(this.props.owner)
             if (!error) {
                 this.setState({
                     deposits: result,
@@ -176,19 +173,9 @@ export default class CDP extends Component {
 
 
     render() {
-        if (this.state.userCDP && this.state.userCDP.cdp) {
+        if (this.state.userCDP && this.state.userCDP.cdp && !this.props.createCDP) {
             return <div className="cdp-content">
                 <Table responsive>
-                    <span className="bnb-usd-price ">
-                        <span className="pr-3">
-                            <div ><Badge color="success" className="badge-bnb-usd">BNB : USD</Badge> </div>
-                            <div className="mb-2"> <strong className="text-success">1 : {this.state.BNB_USD ? numbro(this.state.BNB_USD).formatCurrency({ mantissa: 4 }) : 0}</strong></div>
-                        </span>
-                        <span >
-                            <div ><Badge color="success" className="badge-bnb-usd">BNB : USD : 30</Badge> </div>
-                            <div className="mb-2"> <strong className="text-success">1 : {this.state.BNB_USD_30 ? numbro(this.state.BNB_USD_30).formatCurrency({ mantissa: 4 }) : 0}</strong></div>
-                        </span>
-                    </span>
                     <tbody>
                         <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.id</T></th>
@@ -274,7 +261,7 @@ export default class CDP extends Component {
             </div>
         }
 
-        else {
+        else if (this.props.createCDP){
             return <div >
                 <span className="bnb-usd-price">
                     <span className="pr-3">
@@ -302,6 +289,7 @@ export default class CDP extends Component {
 
         }
 
+        else return null;
 
     }
 }

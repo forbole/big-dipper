@@ -61,6 +61,7 @@ export default class AccountDetails extends Component {
             rewardDenomType: [defaultCoin],
             bondActiveTab: 'delegations',
             cdpActiveTab: 'cdp-create',
+            activeSubtab: 'cdp-bnb-a',
             cdpID: 0,
             cdpOwner: '',
             cdpCollateral: [],
@@ -79,6 +80,8 @@ export default class AccountDetails extends Component {
             redelegations: [],
             hasIncentive: false,
             operator_address: "",
+            hasActiveCDP: false,
+            collateralTypes: []
         }
     }
 
@@ -400,7 +403,7 @@ export default class AccountDetails extends Component {
         });
 
 
-        Meteor.call('account.getIncentive', this.props.match.params.address, coin2, (error, result) => {
+        Meteor.call('account.getIncentive', (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({
@@ -408,11 +411,23 @@ export default class AccountDetails extends Component {
                     hasIncentive: false
                 })
             }
-            if (result && result.length > 0) {
-                this.setState({
-                    hasIncentive: true,
-                })
-            }
+            if (result) {
+                for (let d = 0; d < result.hard_claims.length; d++) {
+                    if (result.hard_claims[d].base_claim.owner === this.props.match.params.address){
+                        this.setState({
+                            hasIncentive: true,
+                        })
+                    }
+                };
+
+                for (let e = 0; e < result.usdx_minting_claims.length; e++) {
+                    if (result.usdx_minting_claims[e].base_claim.owner === this.props.match.params.address) {
+                        this.setState({
+                            hasIncentive: true,
+                        })
+                    }
+                }
+            };
         })
 
     }
@@ -420,7 +435,7 @@ export default class AccountDetails extends Component {
 
     componentDidMount() {
         this.getBalance();
-
+        this.checkIfCDPIsActive();
         timer = Meteor.setInterval(() => {
             this.getBalance();
         }, 10000)
@@ -458,7 +473,9 @@ export default class AccountDetails extends Component {
                 totalValueInUSD: 0,
                 redelegations: [],
                 hasIncentive: false,
-                operator_address: ""
+                operator_address: "",
+                hasActiveCDP: false,
+                collateralTypes: []
             }, () => {
                 this.getBalance();
             })
@@ -562,6 +579,53 @@ export default class AccountDetails extends Component {
             });
         }
     }
+
+    toggleCDPSutab = (tab) => {
+        if (this.state.activeSubtab !== tab) {
+            this.setState({
+                activeSubtab: tab
+            });
+        }
+    }
+
+    checkIfCDPIsActive() {
+        Meteor.call('cdp.getCDPParams', (error, result) => {
+            if (error) {
+                console.warn(error);
+                this.setState({
+                    loading: false
+                })
+            }
+
+            if (result) {
+                let collateralTypes = [];
+                for (let c in result.collateral_params) {
+                    Meteor.call('accounts.getAccountCDP', this.state.address, result.collateral_params[c].type, (err, res) => {
+                        if (err) {
+                            this.setState({
+                                loading: false,
+                                hasActiveCDP: false
+                            })
+                        }
+
+                        if (res) {
+                            this.setState({
+                                hasActiveCDP: true
+                            });
+                            collateralTypes[c] = {denom: result.collateral_params[c].denom, type:
+                            result.collateral_params[c]?.type};
+
+                        }
+                    })
+                }
+                this.setState({
+                    collateralTypes: collateralTypes
+                })
+            }
+        })
+
+     
+    };
 
     // createCDP = (callback) =>{
     //     Meteor.call('create.cdp', {from: this.state.user}, this.getPath(), (err, res) =>{
@@ -830,9 +894,23 @@ export default class AccountDetails extends Component {
                                             className={classnames({ active: this.state.cdpActiveTab === 'cdp-create' })}
                                             onClick={() => { this.toggleCDP('cdp-create'); }}
                                         >
-                                            <span className="cdp-logo create">Create CDP</span>
+                                            <span className="cdp-logo">Create CDP <i className="material-icons">
+                                                account_balance
+                                            </i></span>
                                         </NavLink>
                                     </NavItem>
+                                    {this.state.hasActiveCDP ?
+                                        <NavItem>
+                                            <NavLink
+                                                className={classnames({ active: this.state.cdpActiveTab === 'cdp-active' })}
+                                                onClick={() => { this.toggleCDP('cdp-active'); }}
+                                            >
+                                                <span className="cdp-logo ">
+                                                   CDPs <i className="material-icons">
+                                                        price_check
+                                                    </i></span>
+                                            </NavLink>
+                                        </NavItem> : null}
                                     {this.state.hasIncentive ?
                                         <NavItem>
                                             <NavLink
@@ -840,9 +918,9 @@ export default class AccountDetails extends Component {
                                                 onClick={() => { this.toggleCDP('cdp-incentive'); }}
                                             >
                                                 <span className="cdp-logo ">
-                                                    <i className="material-icons">
-                                                        emoji_events
-                                                    </i> Incentive</span>
+                                                    Incentive  <i className="material-icons">
+                                                        redeem
+                                                    </i></span>
                                             </NavLink>
                                         </NavItem> : null}
                                 </Nav>
@@ -852,8 +930,46 @@ export default class AccountDetails extends Component {
                                             owner={this.state.address}
                                             collateral='bnb'
                                             user={this.state.user}
+                                            createCDP={true}
                                         />
                                     </TabPane>
+
+
+                                    <TabPane tabId="cdp-active">
+                                        <Row className="denom-list">
+                                            {this.state.hasActiveCDP ?
+                                                this.state.collateralTypes.map(denom => {
+                                                    return (   
+                                                        <Nav tabs className="mb-2">
+
+                                                            <NavItem style={{listStyle: "none", display: "flex", flexWrap: "wrap"}} >
+                                                                <NavLink
+                                                                    className={classnames({ active: this.state.activeSubtab === `cdp-${denom.type}` })}
+                                                                    onClick={() => { this.toggleCDPSutab(`cdp-${denom.type}`); }}
+                                                                >
+                                                                    {denom.denom === 'ukava' ? <span className="cdp-logo denom"><img src="/img/KAVA-symbol.svg" className="cdp-logo-image"/> {denom.type.toUpperCase()} </span> : null}
+                                                                    {denom.denom === 'xrpb' ? <span className="cdp-logo denom"><img src="/img/XRP-symbol.svg" className="cdp-logo-image" /> {denom.type.toUpperCase()} </span> : null}
+                                                                    {denom.denom != 'ukava' && denom.denom != 'xrpb' ? <span className="cdp-logo denom"><img src={`/img/${denom.denom.toUpperCase()}-symbol.svg`} className="cdp-logo-image" /> {denom.type.toUpperCase()} </span> : null}
+                                                                </NavLink>
+                                                            </NavItem>
+                                                        </Nav>) }) : null}
+                                        </Row>
+                                        {this.state.hasActiveCDP ?
+                                            this.state.collateralTypes.map(denom => {
+                                                return (  
+                                                    <TabContent activeTab={this.state.activeSubtab} >
+                                                        <TabPane tabId={`cdp-${denom.type}`}>
+                                                            <CDP
+                                                                owner={this.state.address}
+                                                                collateral={denom.type}
+                                                                user={this.state.user}
+                                                                createCDP={false}
+                                                            />
+                                                        </TabPane>
+                                                    </TabContent>) 
+                                            }) : null}
+                                    </TabPane>
+                                   
                                     <TabPane tabId="cdp-incentive">
                                         <Incentive
                                             owner={this.state.address}
