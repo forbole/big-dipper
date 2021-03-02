@@ -102,9 +102,9 @@ Meteor.methods({
         }
     },
 
-    'account.getIncentive': function (address, collateral) {
+    'account.getIncentive': function () {
         this.unblock();
-        let url = LCD + '/incentive/claims/' + address + '/' + collateral;
+        let url = LCD + '/incentive/rewards'
 
         try {
             let response = HTTP.get(url);
