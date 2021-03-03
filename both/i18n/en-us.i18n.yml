@@ -176,6 +176,7 @@ cdp:
     idClaimPeriod: 'Claim Period ID'
     owner: 'Owner'
     collateral: 'Collateral'
+    collateralType: 'Collateral Type'
     collateralDeposited: 'Collateral Deposited'
     principal: 'Principal Drawn'
     accumulatedFees: 'Accumulated Fees'
@@ -202,6 +203,7 @@ cdp:
     totalReward: 'Total Rewards Value'
     bnbusd: 'BNB:USD Market'
     bnbusd30: 'BNB:USD:30 Market'
+    rewardFactor: "Reward Factor"
 
 proposals:
     notFound: 'No proposal found.'

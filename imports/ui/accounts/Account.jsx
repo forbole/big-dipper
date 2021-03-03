@@ -973,7 +973,6 @@ export default class AccountDetails extends Component {
                                     <TabPane tabId="cdp-incentive">
                                         <Incentive
                                             owner={this.state.address}
-                                            collateral='bnb'
                                             user={this.state.user}
                                         />
                                     </TabPane>
