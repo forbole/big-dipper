@@ -1,6 +1,6 @@
 {
     "public":{
-        "chainName": "Cosmos Testnet",
+        "chainName": "Cosmos",
         "chainId": "{Chain ID}",
         "gtm": "{Add your Google Tag Manager ID here}",
         "slashingWindow": 10000,
@@ -27,6 +27,12 @@
                 "fraction": 1000000
             } 
         ],
+        "ledger":{
+            "coinType": 118,
+            "appName": "Cosmos",
+            "appVersion": "2.16.0",
+            "gasPrice": 0.02
+        },
         "modules": {
             "bank": true,
             "supply": true,
@@ -34,7 +40,6 @@
             "gov": true,
             "distribution": false
         },
-        "gasPrice": 0.02,
         "coingeckoId": "cosmos"
     },
     "remote":{
