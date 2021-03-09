@@ -21,7 +21,6 @@ export default class PowerHistory extends React.Component {
                 // console.log(err);
                 }
                 if (result){
-                console.log(result);
                     let self = this;
                     this.setState({
                         tx: result.map((msg, i) => <CardFooter key={i} className="text-secondary"><Row>

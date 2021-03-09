@@ -101,8 +101,8 @@ export default class Validator extends Component{
             }
 
             if (this.props.validator.commission){
-                let update_time = this.props.validator.commission.update_time;
-                if (update_time == Meteor.settings.public.genesisTime){
+                let updateTime = this.props.validator.commission.update_time;
+                if (updateTime == Meteor.settings.public.genesisTime){
                     this.setState({
                         update_time: "Never changed"
                     });
@@ -114,20 +114,20 @@ export default class Validator extends Component{
                         }
                         else{
                             if (result){
-                                if (result == update_time){
+                                if (result == updateTime){
                                     this.setState({
                                         update_time: "Never changed"
                                     });
                                 }
                                 else{
                                     this.setState({
-                                        update_time: "Updated "+moment(update_time).fromNow()
+                                        update_time: "Updated "+moment(updateTime).fromNow()
                                     });
                                 }
                             }
                             else{
                                 this.setState({
-                                    update_time: "Updated "+moment(update_time).fromNow()
+                                    update_time: "Updated "+moment(updateTime).fromNow()
                                 });
                             }
                         }
