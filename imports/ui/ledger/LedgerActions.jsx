@@ -132,7 +132,7 @@ const Fee = (props) => {
 }
 
 const isActiveValidator = (validator) => {
-    return !validator.jailed && validator.status == 3;
+    return !validator.jailed && validator.status == 'BOND_STATUS_BONDED';
 }
 
 const isBetween = (value, min, max) => {
