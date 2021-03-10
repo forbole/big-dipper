@@ -526,7 +526,7 @@ class LedgerButton extends Component {
 
     getValidatorOptions = () => {
         let activeValidators = Validators.find(
-            {"jailed": false, "status": 3},
+            {"jailed": false, "status": 'BOND_STATUS_BONDED'},
             {"sort":{"description.moniker":1}}
         );
         let redelegations = this.state.redelegations || {};
