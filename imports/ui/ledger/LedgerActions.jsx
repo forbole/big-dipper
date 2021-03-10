@@ -1083,7 +1083,7 @@ DelegationButtons.propTypes = {
         jailed: PropTypes.bool,
         operatorAddress: PropTypes.string,
         profile_url: PropTypes.string,
-        status: PropTypes.number
+        status: PropTypes.string
     }),
     history: PropTypes.shape({
         length:PropTypes.number,
