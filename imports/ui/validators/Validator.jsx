@@ -253,7 +253,7 @@ export default class Validator extends Component{
                                     <Col sm={4} className="label"><T>validators.delegatorShares</T></Col>
                                     <Col sm={8} className="value">{numbro(this.props.validator.delegator_shares).format('0,0.00')}</Col>
                                     {(this.state.currentUserDelegation)?<Col sm={4} className="label"><T>validators.userDelegateShares</T></Col>:''}
-                                    {(this.state.currentUserDelegation)?<Col sm={8} className="value">{numbro(this.state.currentUserDelegation.shares).format('0,0.00')}</Col>:''}
+                                    {(this.state.currentUserDelegation)?<Col sm={8} className="value">{numbro(this.state.currentUserDelegation.delegation.shares).format('0,0.00')}</Col>:''}
                                     <Col sm={4} className="label"><T>validators.tokens</T></Col>
                                     <Col sm={8} className="value">{numbro(this.props.validator.tokens).format('0,0.00')}</Col>
                                     {(this.props.validator.jailed)?<Col xs={12} >
