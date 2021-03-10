@@ -209,8 +209,8 @@ export class Ledger {
             account_number: txContext.accountNumber.toString(),
             chain_id: txContext.chainId,
             fee: tx.value.fee,
-            memo: tx.body.memo,
-            msgs: tx.body.messages,
+            memo: tx.value.memo,
+            msgs: tx.value.msg,
             sequence: txContext.sequence.toString(),
         };
 

@@ -128,7 +128,7 @@ const Amount = (props) => {
 
 
 const Fee = (props) => {
-    return <span><CoinAmount mint className='gas' amount={Math.ceil(props.gas * Meteor.settings.public.gasPrice)}/> as fee </span>
+    return <span><CoinAmount mint className='gas' amount={Math.ceil(props.gas * Meteor.settings.public.ledger.gasPrice)}/> as fee </span>
 }
 
 const isActiveValidator = (validator) => {
@@ -220,6 +220,7 @@ class LedgerButton extends Component {
     }
 
     setStateOnError = (action, errorMsg, state={}) => {
+        console.log(action);
         this.setState({
             loading: false,
             [action]: false,
@@ -337,7 +338,7 @@ class LedgerButton extends Component {
             sequence: this.state.currentUser.sequence,
             denom: Coin.StakingCoin.denom,
             pk: this.state.pubKey,
-            path: [44, 118, 0, 0, 0],
+            path: [44, Meteor.settings.public.ledger.coinType, 0, 0, 0],
             memo: this.state.memo
         }
     }
@@ -417,9 +418,9 @@ class LedgerButton extends Component {
 
     runSimulatation = (txMsg, simulateBody) => {
         let gasAdjustment = TypeMeta[this.state.actionType].gasAdjustment || DEFAULT_GAS_ADJUSTMENT;
-        Meteor.call('transaction.simulate', simulateBody, this.state.user, this.getPath(), gasAdjustment, (err, res) =>{
+        Meteor.call('transaction.simulate', simulateBody, this.state.user, this.state.currentUser.accountNumber, this.state.currentUser.sequence, this.getPath(), gasAdjustment, (err, res) =>{
             if (res){
-                Ledger.applyGas(txMsg, res, Meteor.settings.public.gasPrice, Coin.StakingCoin.denom);
+                Ledger.applyGas(txMsg, res, Meteor.settings.public.ledger.gasPrice, Coin.StakingCoin.denom);
                 this.setStateOnSuccess('simulating', {
                     gasEstimate: res,
                     activeTab: '3',
@@ -457,6 +458,7 @@ class LedgerButton extends Component {
                 }
             }, (err) => this.setStateOnError('signing', err.message))
         } catch (e) {
+            console.log('everything sign');
             this.setStateOnError('signing', e.message)
         }
     }
@@ -758,13 +760,15 @@ class WithdrawButton extends LedgerButton {
     createMessage = (callback) => {
         Meteor.call('transaction.execute', {from: this.state.user}, this.getPath(), (err, res) =>{
             if (res){
-                if (this.props.address) {
-                    res.value.msg.push({
-                        type: 'cosmos-sdk/MsgWithdrawValidatorCommission',
-                        value: { validator_address: this.props.address }
-                    })
-                }
-                callback(res, res)
+                Meteor.call('isValidator', this.state.user, (error, result) => {
+                    if (result && result.address){
+                        res.value.msg.push({
+                            type: 'cosmos-sdk/MsgWithdrawValidatorCommission',
+                            value: { validator_address: result.address }
+                        })
+                    }
+                    callback(res, res)
+                })
             }
             else {
                 this.setState({

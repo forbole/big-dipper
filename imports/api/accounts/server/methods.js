@@ -17,20 +17,31 @@ const fetchFromUrl = (url) => {
 Meteor.methods({
     'accounts.getAccountDetail': function(address){
         this.unblock();
-        let url = API + '/cosmos/auth/v1beta1/accounts/'+ address;
+        let url = API + '/auth/accounts/'+ address;
         try{
             let available = HTTP.get(url);
             if (available.statusCode == 200){
-                return JSON.parse(available.content).account
-                // let response = JSON.parse(available.content).result;
-                // let account;
-                // if (response.type === 'cosmos-sdk/Account')
-                //     account = response.value;
-                // else if (response.type === 'cosmos-sdk/DelayedVestingAccount' || response.type === 'cosmos-sdk/ContinuousVestingAccount')
-                //     account = response.value.BaseVestingAccount.BaseAccount
-                // if (account && account.account_number != null)
-                //     return account
-                // return null
+                // return JSON.parse(available.content).account
+                let response = JSON.parse(available.content).result;
+                let account;
+                if ((response.type === 'cosmos-sdk/Account') || (response.type === 'cosmos-sdk/BaseAccount'))
+                    account = response.value;
+                else if (response.type === 'cosmos-sdk/DelayedVestingAccount' || response.type === 'cosmos-sdk/ContinuousVestingAccount')
+                    account = response.value.BaseVestingAccount.BaseAccount
+
+                try{
+                    url = API + '/bank/balances/' + address;
+                    response = HTTP.get(url);
+                    let balances = JSON.parse(response.content).result;
+                    account.coins = balances;
+
+                    if (account && account.account_number != null)
+                        return account
+                    return null
+                }
+                catch (e){
+                    return null;
+                }
             }
         }
         catch (e){
