@@ -32,6 +32,7 @@ Meteor.methods({
                 for (let i in proposals){
                     let proposal = proposals[i];
                     proposal.proposalId = parseInt(proposal.proposal_id);
+                    proposalIds.push(proposal.proposalId);
                     if (proposal.proposalId > 0 && !finishedProposalIds.has(proposal.proposalId)) {
                         try{
                             // url = API + '/cosmos/gov/v1beta1/proposals/'+proposal.proposalId+'/proposer';
@@ -46,13 +47,13 @@ Meteor.methods({
                         }
                         catch(e){
                             bulkProposals.find({proposalId: proposal.proposalId}).upsert().updateOne({$set:proposal});
-                            proposalIds.push(proposal.proposalId);
+                            // proposalIds.push(proposal.proposalId);
                             console.log(url);
                             console.log(e.response.content);
                         }
                     }
                 }
-                bulkProposals.find({proposalId:{$nin:proposalIds}, status:{$nin:["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_REJECTED", "PROPOSAL_STATUS_REMOVED"]}})
+                bulkProposals.find({proposalId:{$nin:proposalIds}, status:{$nin:["PROPOSAL_STATUS_VOTING_PERIOD", "PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_REJECTED", "PROPOSAL_STATUS_REMOVED"]}})
                     .update({$set: {"status": "PROPOSAL_STATUS_REMOVED"}});
                 bulkProposals.execute();
             }

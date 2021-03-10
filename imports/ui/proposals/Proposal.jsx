@@ -15,6 +15,7 @@ import { Meteor } from 'meteor/meteor';
 import Coin from '/both/utils/coins.js';
 import TimeStamp from '../components/TimeStamp.jsx';
 import { ProposalActionButtons } from '../ledger/LedgerActions.jsx';
+import voca from 'voca';
 
 const T = i18n.createComponent();
 
@@ -316,7 +317,7 @@ export default class Proposal extends Component{
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposalStatus</T></Col>
-                            <Col md={9} className="value"><ProposalStatusIcon status={this.props.proposal.status} /> {(this.props.proposal.status)?this.props.proposal.status.substr(16):''}</Col>
+                            <Col md={9} className="value"><ProposalStatusIcon status={this.props.proposal.status} /> {(this.props.proposal.status)?voca.chain(this.props.proposal.status.substr(16)).replace('_', ' ').titleCase().value():''}</Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.deposit</T></Col>
