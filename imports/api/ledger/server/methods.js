@@ -39,6 +39,7 @@ Meteor.methods({
     'transaction.simulate': function(txMsg, from, accountNumber, sequence, path, adjustment='1.2') {
         this.unblock();
         const url = `${API}/${path}`;
+        console.log(txMsg);
         data = {...txMsg,
             "base_req": {
                 "from": from,

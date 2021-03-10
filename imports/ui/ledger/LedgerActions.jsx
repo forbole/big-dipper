@@ -1,10 +1,8 @@
 /* eslint-disable react/no-unused-prop-types */
 import qs from 'querystring';
-import Cosmos from "@lunie/cosmos-js"
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Spinner, TabContent, TabPane, Row, Col, Modal, ModalHeader,
-    Form, ModalBody, ModalFooter, InputGroup, InputGroupAddon, Input, Progress,
+import { Button, Spinner, TabContent, TabPane, Row, Col, Modal, ModalBody, ModalFooter, InputGroup, InputGroupAddon, Input, Progress,
     UncontrolledTooltip, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
 import { Ledger, DEFAULT_MEMO } from './ledger.js';
 import { Validators } from '/imports/api/validators/validators.js';
@@ -349,20 +347,20 @@ class LedgerButton extends Component {
         case Types.DELEGATE:
             txMsg = Ledger.createDelegate(
                 this.getTxContext(),
-                this.props.validator.operatorAddress,
+                this.props.validator.operator_address,
                 this.state.delegateAmount.amount)
             break;
         case Types.REDELEGATE:
             txMsg = Ledger.createRedelegate(
                 this.getTxContext(),
-                this.props.validator.operatorAddress,
-                this.state.targetValidator.operatorAddress,
+                this.props.validator.operator_address,
+                this.state.targetValidator.operator_address,
                 this.state.delegateAmount.amount)
             break;
         case Types.UNDELEGATE:
             txMsg = Ledger.createUndelegate(
                 this.getTxContext(),
-                this.props.validator.operatorAddress,
+                this.props.validator.operator_address,
                 this.state.delegateAmount.amount);
             break;
         case Types.SEND:

@@ -316,7 +316,7 @@ export class Ledger {
                     amount: uatomAmount.toString(),
                     denom: txContext.denom,
                 },
-                delegatorAddress: txContext.bech32,
+                delegator_address: txContext.bech32,
                 validator_address: validatorBech32,
             },
         };
@@ -338,7 +338,7 @@ export class Ledger {
                     amount: uatomAmount.toString(),
                     denom: txContext.denom,
                 },
-                delegatorAddress: txContext.bech32,
+                delegator_address: txContext.bech32,
                 validator_address: validatorBech32,
             },
         };
@@ -361,7 +361,7 @@ export class Ledger {
                     amount: uatomAmount.toString(),
                     denom: txContext.denom,
                 },
-                delegatorAddress: txContext.bech32,
+                delegator_address: txContext.bech32,
                 validator_dst_address: validatorDestBech32,
                 validator_src_address: validatorSourceBech32,
             },

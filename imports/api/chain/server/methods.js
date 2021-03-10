@@ -81,8 +81,16 @@ Meteor.methods({
             }
             chain.activeVotingPower = activeVP;
 
+            // update staking params
+            try {
+                url = API + '/cosmos/staking/v1beta1/params';
+                response = HTTP.get(url);
+                chain.staking = JSON.parse(response.content);
+            }
+            catch(e){
+                console.log(e);
+            }
 
-            Chain.update({chainId:chain.chainId}, {$set:chain}, {upsert: true});
             // Get chain states
             if (parseInt(chain.latestBlockHeight) > 0){
                 let chainStates = {};
@@ -111,6 +119,17 @@ Meteor.methods({
                         catch(e){
                             console.log(e);
                         }
+
+                        // update bank params
+                        try {
+                            url = API + '/cosmos/bank/v1beta1/params';
+                            response = HTTP.get(url);
+                            chain.bank = JSON.parse(response.content);
+                        }
+                        catch(e){
+                            console.log(e);
+                        }
+
                     }
 
                     if (Meteor.settings.public.modules.distribution){
@@ -130,6 +149,16 @@ Meteor.methods({
                         }
                         catch (e){
                             console.log(e)
+                        }
+
+                        // update distribution params
+                        try {
+                            url = API + '/cosmos/distribution/v1beta1/params';
+                            response = HTTP.get(url);
+                            chain.distribution = JSON.parse(response.content);
+                        }
+                        catch(e){
+                            console.log(e);
                         }
                     }
 
@@ -160,11 +189,35 @@ Meteor.methods({
                         catch(e){
                             console.log(e);
                         }
+
+                        // update mint params
+                        try {
+                            url = API + '/cosmos/mint/v1beta1/params';
+                            response = HTTP.get(url);
+                            chain.mint = JSON.parse(response.content);
+                        }
+                        catch(e){
+                            console.log(e);
+                        }
+                    }
+
+                    if (Meteor.settings.public.modules.gov){
+                        // update mint params
+                        try {
+                            url = API + '/cosmos/gov/v1beta1/params';
+                            response = HTTP.get(url);
+                            chain.gov = JSON.parse(response.content);
+                        }
+                        catch(e){
+                            console.log(e);
+                        }
                     }
                 }
 
                 ChainStates.insert(chainStates);
             }
+
+            Chain.update({chainId:chain.chainId}, {$set:chain}, {upsert: true});
 
             // chain.totalVotingPower = totalVP;
 
