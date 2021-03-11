@@ -8,9 +8,9 @@ const fetchFromUrl = (url) => {
         if (res.statusCode == 200) {
             return res
         };
-    } catch (e) {
-        console.log(res);
-        console.log(e.response.content);
+    }
+    catch (e){
+        console.log(e);
     }
 }
 
@@ -283,9 +283,9 @@ Meteor.methods({
         return cdp
     },
 
-    'cdp.getCDPList': function () {
+    'cdp.getCDPList': function (collateralType) {
         this.unblock();
-        let url = LCD + '/cdp/cdps/denom/bnb';
+        let url = LCD + '/cdp/cdps/collateralType/' + collateralType;
         try {
             let result = HTTP.get(url);
             if (result.statusCode == 200) {

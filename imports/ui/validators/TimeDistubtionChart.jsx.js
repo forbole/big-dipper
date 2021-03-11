@@ -17,7 +17,7 @@ export default class TimeDistubtionChart extends Component{
         let timeline = [];
         let breakdown = [];
         let i;
-        for (i = 0;i < (7 * 24); i ++)
+        for (i = 0;i < (7 * 24); i++)
             breakdown.push({
                 hour: i % 24,
                 day: daysOfWeek[Math.floor(i / 24)],
@@ -162,7 +162,7 @@ export default class TimeDistubtionChart extends Component{
                 type: 'Category',
                 scale: 'yScale',
                 orientation: 'left',
-                }
+            }
             ],
             legends: [{
                 legendId: 'colorLegend',

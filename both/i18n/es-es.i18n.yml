@@ -23,8 +23,7 @@ common:
     cancel: 'Cancelar'
     retry: 'Reintentar'
 navbar:
-    siteName: 'The Big Dipper'
-    version: 'beta'
+    siteName: 'BIG DIPPER'
     validators: 'Validadores'
     blocks: 'Bloques'
     transactions: 'Transacciones'
@@ -38,6 +37,7 @@ navbar:
     russian: "Русский"
     chinese: "中文（繁）"
     simChinese: "中文（简）"
+    portuguese: "Português"
     license: 'LICENCIA'
     forkMe: 'Fork me!'
 consensus:

@@ -163,31 +163,31 @@ export class Ledger {
             throw new Error(`Ledger's screensaver mode is on`)
         }
         switch (error_message) {
-            case `U2F: Timeout`:
-                throw new Error(timeoutMessag)
-            case `Cosmos app does not seem to be open`:
-                // hack:
-                // It seems that when switching app in Ledger, WebUSB will disconnect, disabling further action.
-                // So we clean up here, and re-initialize this.cosmosApp next time when calling `connect`
-                this.cosmosApp.transport.close()
-                this.cosmosApp = undefined
-                throw new Error(`Cosmos app is not open`)
-            case `Command not allowed`:
-                throw new Error(`Transaction rejected`)
-            case `Transaction rejected`:
-                throw new Error(rejectionMessage)
-            case `Unknown error code`:
-                throw new Error(`Ledger's screensaver mode is on`)
-            case `Instruction not supported`:
-                throw new Error(
-                    `Your Cosmos Ledger App is not up to date. ` +
+        case `U2F: Timeout`:
+            throw new Error(timeoutMessag)
+        case `Cosmos app does not seem to be open`:
+            // hack:
+            // It seems that when switching app in Ledger, WebUSB will disconnect, disabling further action.
+            // So we clean up here, and re-initialize this.cosmosApp next time when calling `connect`
+            this.cosmosApp.transport.close()
+            this.cosmosApp = undefined
+            throw new Error(`Cosmos app is not open`)
+        case `Command not allowed`:
+            throw new Error(`Transaction rejected`)
+        case `Transaction rejected`:
+            throw new Error(rejectionMessage)
+        case `Unknown error code`:
+            throw new Error(`Ledger's screensaver mode is on`)
+        case `Instruction not supported`:
+            throw new Error(
+                `Your Cosmos Ledger App is not up to date. ` +
                     `Please update to version ${REQUIRED_COSMOS_APP_VERSION}.`
-                )
-            case `No errors`:
-                // do nothing
-                break
-            default:
-                throw new Error(error_message)
+            )
+        case `No errors`:
+            // do nothing
+            break
+        default:
+            throw new Error(error_message)
         }
     }
 
@@ -213,7 +213,6 @@ export class Ledger {
             msgs: tx.value.msg,
             sequence: txContext.sequence.toString(),
         };
-
         return JSON.stringify(canonicalizeJson(txFieldsToSign));
     }
 
@@ -228,8 +227,8 @@ export class Ledger {
         // eslint-disable-next-line no-param-reassign
         unsignedTx.value.fee = {
             amount: [{
-                 amount: Math.ceil(gas * gasPrice).toString(),
-                 denom: denom,
+                amount: Math.ceil(gas * gasPrice).toString(),
+                denom: denom,
             }],
             gas: gas.toString(),
         };
@@ -475,21 +474,25 @@ export class Ledger {
     static createCDP(
         txContext,
         collateral,
-        debt
+        debt,
+        denom,
+        denomFraction,
+        collateralType,
+        
     ) {
         const txMsg = {
             type: 'cdp/MsgCreateCDP',
             value: {
                 collateral: {
-                    amount: (parseFloat(collateral) * Meteor.settings.public.coins[1].fraction).toString(),
-                    denom: 'bnb'
+                    amount: (parseFloat(collateral) * (10 ** denomFraction)).toString(),
+                    denom: denom
                 },
+                collateral_type: collateralType,
                 principal: {
                     amount: (parseFloat(debt) * Meteor.settings.public.coins[5].fraction).toString(),
                     denom: 'usdx'
                 },
                 sender: txContext.bech32,
-
             },
         };
         return Ledger.createSkeleton(txContext, [txMsg]);
@@ -514,7 +517,6 @@ export class Ledger {
 
             },
         };
-        console.log(Ledger.createSkeleton(txContext, [txMsg]))
         return Ledger.createSkeleton(txContext, [txMsg]);
     }
 

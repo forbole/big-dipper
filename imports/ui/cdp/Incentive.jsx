@@ -59,9 +59,9 @@ export default class Incentive extends Component {
                     claims[i] = el.claim_period_id
                 }),
 
-                    result.forEach((el, i) => {
-                        totalClaims = parseFloat(totalClaims) + parseFloat(el.reward.amount)
-                    })
+                result.forEach((el, i) => {
+                    totalClaims = parseFloat(totalClaims) + parseFloat(el.reward.amount)
+                })
 
                 this.setState({
                     incentive: result,
@@ -101,7 +101,7 @@ export default class Incentive extends Component {
                     </tbody>
                 </Table>
                 {this.props.owner === this.props.user ? 
-                (this.state.claimRewardsTotal && this.state.claimRewardsTotal > 0) ? <div className="mt-n3"><WithdrawIncentiveRewards rewards={parseFloat(this.state.claimRewardsTotal)}
+                    (this.state.claimRewardsTotal && this.state.claimRewardsTotal > 0) ? <div className="mt-n3"><WithdrawIncentiveRewards rewards={parseFloat(this.state.claimRewardsTotal)}
                         denom={this.props.collateral} /></div> : null : null}
             </div>
         }
