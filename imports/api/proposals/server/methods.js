@@ -146,13 +146,13 @@ const getVoteDetail = (votes) => {
                                 let validator = votingPowerMap[validatorAddressMap[delegation.validator_address]];
                                 validator.deductedShares -= shares;
                                 if (validator.delegatorShares != 0){ // avoiding division by zero
-                                    votingPower += (shares/validator.delegatorShares) * validator.tokens / Meteor.settings.public.powerReduction;
+                                    votingPower += (shares/validator.delegatorShares) * validator.tokens;
                                 }
 
                             } else {
                                 let validator = Validators.findOne({operatorAddress: delegation.validator_address});
                                 if (validator && validator.delegatorShares != 0){ // avoiding division by zero
-                                    votingPower += (shares/parseFloat(validator.delegatorShares)) * parseFloat(validator.tokens) / Meteor.settings.public.powerReduction;
+                                    votingPower += (shares/parseFloat(validator.delegatorShares)) * parseFloat(validator.tokens);
                                 }
                             }
                         });
@@ -171,7 +171,7 @@ const getVoteDetail = (votes) => {
         let votingPower = voter.votingPower;
         if (votingPower == undefined) {
             // voter is a validator
-            votingPower = voter.delegatorShares?((voter.deductedShares/voter.delegatorShares) * voter.tokens / Meteor.settings.public.powerReduction):0;
+            votingPower = voter.delegatorShares?((voter.deductedShares/voter.delegatorShares) * voter.tokens):0;
         }
         return {...vote, votingPower};
     });
