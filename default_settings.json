@@ -1,6 +1,6 @@
 {
     "public":{
-        "chainName": "Cosmos Testnet",
+        "chainName": "Cosmos",
         "chainId": "{Chain ID}",
         "gtm": "{Add your Google Tag Manager ID here}",
         "slashingWindow": 10000,
@@ -27,18 +27,24 @@
                 "fraction": 1000000
             } 
         ],
+        "ledger":{
+            "coinType": 118,
+            "appName": "Cosmos",
+            "appVersion": "2.16.0",
+            "gasPrice": 0.02
+        },
         "modules": {
+            "bank": true,
             "supply": true,
             "minting": false,
             "gov": true,
             "distribution": false
         },
-        "gasPrice": 0.02,
         "coingeckoId": "cosmos"
     },
     "remote":{
-        "rpc":"https://gaia-seeds.interblock.io",
-        "lcd":"https://gaia-seeds.interblock.io:1317"
+        "rpc":"https://rpc.stargate.forbole.com:443",
+        "api":"https://api.stargate.forbole.com:443"
     },
     "debug": {
         "startTimer": true

@@ -41,19 +41,19 @@ Transactions.rawCollection().createIndex({txhash:1},{unique:true});
 Transactions.rawCollection().createIndex({height:-1});
 Transactions.rawCollection().createIndex({processed:1});
 // Transactions.rawCollection().createIndex({action:1});
-Transactions.rawCollection().createIndex({"logs.events.attributes.key":1});
-Transactions.rawCollection().createIndex({"logs.events.attributes.value":1});
+Transactions.rawCollection().createIndex({"tx_response.logs.events.attributes.key":1});
+Transactions.rawCollection().createIndex({"tx_response.logs.events.attributes.value":1});
 Transactions.rawCollection().createIndex({
-    "tx.value.msg.value.delegator_address":1,
-    "tx.value.msg.type":1,
-    "code": 1
-},{partialFilterExpression: {code:{$exists: true}}})
+    "tx.body.messages.delegator_address":1,
+    "tx.body.messages.@type":1,
+    "tx_response.code": 1
+},{partialFilterExpression: {"tx_response.code":{$exists: true}}})
 
 ValidatorSets.rawCollection().createIndex({block_height:-1});
 
 Validators.rawCollection().createIndex({address:1},{unique:true, partialFilterExpression: { address: { $exists: true } } });
-Validators.rawCollection().createIndex({consensus_pubkey:1},{unique:true});
-Validators.rawCollection().createIndex({"pub_key.value":1},{unique:true, partialFilterExpression: { "pub_key.value": { $exists: true } }});
+// Validators.rawCollection().createIndex({consensusPubkey:1},{unique:true});
+Validators.rawCollection().createIndex({"consensusPubkey.value":1},{unique:true, partialFilterExpression: { "consensusPubkey.value": { $exists: true } }});
 
 VotingPowerHistory.rawCollection().createIndex({address:1,height:-1});
 VotingPowerHistory.rawCollection().createIndex({type:1});

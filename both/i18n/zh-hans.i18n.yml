@@ -22,6 +22,7 @@ common:
     searchPlaceholder: '搜寻交易哈希 / 区块高度 / 地址'
     cancel: '取消'
     retry: '重试'
+    bondedTokens: '受委托量'
 navbar:
     siteName: '北斗'
     validators: '验证人'
@@ -100,6 +101,7 @@ validators:
     tokens: '代币数量'
     unbondingHeight: '解绑高度'
     unbondingTime: '解绑时间'
+    jailedUntil: '被禁制至'
     powerChange: '投票权变更'
     delegations: '委托'
     transactions: '交易'

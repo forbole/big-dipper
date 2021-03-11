@@ -23,6 +23,7 @@ common:
     cancel: 'Cancel'
     retry: 'Retry'
     rewards: 'Rewards'
+    bondedTokens: 'Bonded Tokens'
 navbar:
     siteName: 'BIG DIPPER'
     version: '-'
@@ -102,6 +103,7 @@ validators:
     tokens: 'Tokens'
     unbondingHeight: 'Unbonding Height'
     unbondingTime: 'Unbonding Time'
+    jailedUntil: 'Jailed Until'
     powerChange: 'Power Change'
     delegations: 'Delegations'
     transactions: 'Transactions'
@@ -201,7 +203,7 @@ accounts:
     signInText: 'You are signed in as '
     toLoginAs: 'To log in as'
     signInWithLedger: 'Sign In With Ledger'
-    signInWarning: 'Please make sure your Ledger device is connected and <strong class="text-primary">Cosmos App 1.5.0 or above</strong> is opened.'
+    signInWarning: 'Please make sure your Ledger device is connected and <strong class="text-primary">{$network} App {$version} or above</strong> is opened.'
     pleaseAccept: 'please accept in your Ledger device.'
     noRewards: 'No Rewards'
 activities:

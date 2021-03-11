@@ -2,23 +2,20 @@
 // https://github.com/zondax/cosmos-delegation-js/
 // https://github.com/cosmos/ledger-cosmos-js/blob/master/src/index.js
 import 'babel-polyfill';
-import Cosmos from "@lunie/cosmos-js"
 import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
 import CosmosApp from "ledger-cosmos-js"
 import { signatureImport } from "secp256k1"
 import semver from "semver"
 import bech32 from "bech32";
-import secp256k1 from "secp256k1";
 import sha256 from "crypto-js/sha256"
 import ripemd160 from "crypto-js/ripemd160"
 import CryptoJS from "crypto-js"
 
 // TODO: discuss TIMEOUT value
 const INTERACTION_TIMEOUT = 10000
-const REQUIRED_COSMOS_APP_VERSION = "2.0.0"
-const DEFAULT_DENOM = 'uatom';
-const DEFAULT_GAS = 200000;
-export const DEFAULT_GAS_PRICE = 0.025;
+const REQUIRED_COSMOS_APP_VERSION = Meteor.settings.public.ledger.ledgerAppVersion || "2.16.0";
+const DEFAULT_DENOM = Meteor.settings.public.bondDenom || 'uatom';
+export const DEFAULT_GAS_PRICE = parseFloat(Meteor.settings.public.ledger.gasPrice) || 0.025;
 export const DEFAULT_MEMO = 'Sent via Big Dipper'
 
 /*
@@ -26,7 +23,9 @@ HD wallet derivation path (BIP44)
 DerivationPath{44, 118, account, 0, index}
 */
 
-const HDPATH = [44, 118, 0, 0, 0]
+const COINTYPE = Meteor.settings.public.ledger.coinType || 118;
+
+const HDPATH = [44, COINTYPE, 0, 0, 0]
 const BECH32PREFIX = Meteor.settings.public.bech32PrefixAccAddr
 
 function bech32ify(address, prefix) {
@@ -403,7 +402,7 @@ export class Ledger {
             type: 'cosmos-sdk/MsgSubmitProposal',
             value: {
                 content: {
-                    type: "cosmos-sdk/TextProposal",
+                    type: "/cosmos.TextProposal",
                     value: {
                         description: description,
                         title: title

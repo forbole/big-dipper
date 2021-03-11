@@ -1,5 +1,16 @@
 # Changelog
 
+## v.41.x-7 (Stargate compatible)
+
+* [#472] Fix missing transactions
+* [#449] Migrate API to gRPC gateway
+* [#360] Update validator info correctly
+* [#311] Update validator status to display validators correctly
+* [#321] Enable module related components which will display 0 or hide the components when the Cosmos SDK modules are not implemented
+* [#485] Query proposal tally results correctly
+* Update transaction skeletons for Ledger to work properly
+* Config correct Ledger app and app version
+
 ## v0.39.x-7
 
 * [#452] Fix VP Chart not being shown
@@ -26,6 +37,7 @@
 * Simplify validator storing
 * Get data and show proposal based on enabled modules
 * Calculate validator uptime in async
+* Update validator status
 
 ## v0.39.x-3
 

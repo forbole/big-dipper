@@ -7,9 +7,9 @@ Meteor.methods({
         this.unblock();
         // look up the create validator time to consider if the validator has never updated the commission
         let tx = Transactions.findOne({$and:[
-            {"tx.value.msg.value.delegator_address":address},
-            {"tx.value.msg.type":"cosmos-sdk/MsgCreateValidator"},
-            {code:{$exists:false}}
+            {"tx.body.messages.delegator_address":address},
+            {"tx.body.messages.@type":"/cosmos.staking.v1beta1.MsgCreateValidator"},
+            {"tx_response.code":0}
         ]});
 
         if (tx){
@@ -26,12 +26,12 @@ Meteor.methods({
     // async 'Validators.getAllDelegations'(address){
     'Validators.getAllDelegations'(address){
         this.unblock();
-        let url = LCD + '/staking/validators/'+address+'/delegations';
+        let url = API + '/cosmos/staking/v1beta1/validators/'+address+'/delegations';
 
         try{
             let delegations = HTTP.get(url);
             if (delegations.statusCode == 200){
-                delegations = JSON.parse(delegations.content).result;
+                delegations = JSON.parse(delegations.content).delegation_responses;
                 delegations.forEach((delegation, i) => {
                     if (delegations[i] && delegations[i].shares)
                         delegations[i].shares = parseFloat(delegations[i].shares);
@@ -41,6 +41,7 @@ Meteor.methods({
             };
         }
         catch (e){
+            console.log(url);
             console.log("Getting error: %o when fetching from %o", e, url);
         }
     }

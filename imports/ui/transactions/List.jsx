@@ -1,11 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import { Row, Col, Card, Alert, Spinner } from 'reactstrap';
-import { TxIcon } from '../components/Icons.jsx';
-import Activities from '../components/Activities.jsx';
-import CosmosErrors from '../components/CosmosErrors.jsx';
-import TimeAgo from '../components/TimeAgo.jsx';
-import numbro from 'numbro';
+import { Row, Col, Spinner } from 'reactstrap';
 import { TransactionRow } from './TransactionRow.jsx';
 import i18n from 'meteor/universe:i18n';
 

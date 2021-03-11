@@ -21,7 +21,7 @@ export default TopValidatorsContainer = withTracker(() => {
     
     if (Meteor.isServer || !loading){
         status = Chain.findOne({chainId:Meteor.settings.public.chainId});
-        validators = Validators.find({status: 2, jailed:false}).fetch();
+        validators = Validators.find({status: 'BOND_STATUS_BONDED'}).fetch();
 
         if (Meteor.isServer){
             // loading = false;

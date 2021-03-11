@@ -31,10 +31,10 @@ export default class AccountDelegations extends Component{
                     </Row>
                     <SentryBoundary>
                         {this.props.delegations.sort((b, a) => (a.balance - b.balance)).map((d, i) => {
-                            let reward = this.props.rewardsForEachDel[d.validator_address];
+                            let reward = this.props.rewardsForEachDel[d.delegation.validator_address];
                             rewardDenom =(reward)?reward.find(({denom}) => denom === denomType): null;
                             return <Row key={i} className="delegation-info">
-                                <Col xs={7} md={4} className="text-nowrap overflow-auto"><AccountTooltip address={d.validator_address} /></Col>
+                                <Col xs={7} md={4} className="text-nowrap overflow-auto"><AccountTooltip address={d.delegation.validator_address} /></Col>
                                 <Col xs={2} md={5} className="overflow-auto">{new Coin(d.balance.amount, denomType).stakeString()}</Col>
                                 <Col xs={3} md={3}>{rewardDenom?new Coin(rewardDenom.amount, rewardDenom.denom).toString(4):'No rewards '} </Col>
                             </Row>

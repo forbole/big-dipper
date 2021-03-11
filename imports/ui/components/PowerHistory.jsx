@@ -21,48 +21,47 @@ export default class PowerHistory extends React.Component {
                 // console.log(err);
                 }
                 if (result){
-                // console.log(result);
                     let self = this;
                     this.setState({
                         tx: result.map((msg, i) => <CardFooter key={i} className="text-secondary"><Row>
                             <Col xs={12} sm={8}>
-                                {(msg.tx.value.msg && msg.tx.value.msg.length > 0)?msg.tx.value.msg.map((m, j) => {
-                                    switch (m.type){
-                                    case "cosmos-sdk/MsgBeginRedelegate":
+                                {(msg.tx.body.messages && msg.tx.body.messages.length > 0)?msg.tx.body.messages.map((m, j) => {
+                                    switch (m["@type"]){
+                                    case "/cosmos.staking.v1beta1.MsgBeginRedelegate":
                                         return <Row key={j}>
                                             <Col xs={12}>
                                                 <Row>
                                                     <Col xs={4}><T>validators.delegator</T></Col>
-                                                    <Col xs={8} className="address" data-delegator-address={m.value.delegator_address}><Account address={m.value.delegator_address} /></Col>
+                                                    <Col xs={8} className="address" data-delegator-address={m.delegator_address}><Account address={m.delegator_address} /></Col>
                                                 </Row>
                                             </Col>
                                             <Col xs={12}>
                                                 <Row>
-                                                    <Col xs={4}>{(this.props.address == m.value.validator_dst_address)?<T>activities.from</T>:<T>activities.to</T>}</Col>
-                                                    <Col xs={8} className="address" data-validator-address={(this.props.address == m.value.validator_dst_address)?m.value.validator_src_address:m.value.validator_dst_address}><Account address={(this.props.address == m.value.validator_dst_address)?m.value.validator_src_address:m.value.validator_dst_address} /></Col>
+                                                    <Col xs={4}>{(this.props.address == m.validator_dst_address)?<T>activities.from</T>:<T>activities.to</T>}</Col>
+                                                    <Col xs={8} className="address" data-validator-address={(this.props.address == m.validator_dst_address)?m.validator_src_address:m.validator_dst_address}><Account address={(this.props.address == m.validator_dst_address)?m.validator_src_address:m.validator_dst_address} /></Col>
                                                 </Row>
                                             </Col>
                                             <Col xs={12}>
                                                 <Row>
                                                     <Col xs={4}><T>validators.amount</T></Col>
-                                                    <Col xs={8}>{new Coin(m.value.amount.amount, m.value.amount.denom).toString()}</Col>
+                                                    <Col xs={8}>{new Coin(m.amount.amount, m.amount.denom).toString()}</Col>
                                                     
                                                 </Row>
                                             </Col>
                                         </Row>
-                                    case "cosmos-sdk/MsgDelegate":
-                                        if (m.value.validator_address == self.props.address){
+                                    case "/cosmos.staking.v1beta1.MsgDelegate":
+                                        if (m.validator_address == self.props.address){
                                             return <Row key={j}>
                                                 <Col xs={12}>
                                                     <Row>
                                                         <Col xs={4}><T>validators.delegator</T></Col>
-                                                        <Col xs={8} className="address" data-delegator-address={m.value.delegator_address}><Account address={m.value.delegator_address} /></Col>
+                                                        <Col xs={8} className="address" data-delegator-address={m.delegator_address}><Account address={m.delegator_address} /></Col>
                                                     </Row>
                                                 </Col>
                                                 <Col xs={12}>
                                                     <Row>
                                                         <Col xs={4}><T>validators.amount</T></Col>
-                                                        <Col xs={8}>{new Coin(m.value.amount.amount, m.value.amount.denom).toString()}</Col>
+                                                        <Col xs={8}>{new Coin(m.amount.amount, m.amount.denom).toString()}</Col>
                                                     </Row>
                                                 </Col>
                                             </Row>
@@ -70,33 +69,33 @@ export default class PowerHistory extends React.Component {
                                         else{
                                             return;
                                         }
-                                    case "cosmos-sdk/MsgCreateValidator":
+                                    case "/cosmos.staking.v1beta1.MsgCreateValidator":
                                         return <Row key={j}>
                                             <Col xs={12}>
                                                 <Row>
                                                     <Col xs={4}><T>validators.delegator</T></Col>
-                                                    <Col xs={8} className="address" data-delegator-address={m.value.delegator_address}><Account address={m.value.delegator_address} /></Col>
+                                                    <Col xs={8} className="address" data-delegator-address={m.delegator_address}><Account address={m.delegator_address} /></Col>
                                                 </Row>
                                             </Col>
                                             <Col xs={12}>
                                                 <Row>
                                                     <Col xs={4}><T>validators.amount</T></Col>
-                                                    <Col xs={8}>{new Coin(m.value.value.amount, m.value.value.denom).toString()}</Col>
+                                                    <Col xs={8}>{new Coin(m.value.amount, m.value.denom).toString()}</Col>
                                                 </Row>
                                             </Col>
                                         </Row>
-                                    case "cosmos-sdk/MsgUndelegate":
+                                    case "/cosmos.staking.v1beta1.MsgUndelegate":
                                         return <Row key={j}>
                                             <Col xs={12}>
                                                 <Row>
                                                     <Col xs={4}><T>validators.delegator</T></Col>
-                                                    <Col xs={8} className="address" data-delegator-address={m.value.delegator_address}><Account address={m.value.delegator_address} /></Col>
+                                                    <Col xs={8} className="address" data-delegator-address={m.delegator_address}><Account address={m.delegator_address} /></Col>
                                                 </Row>
                                             </Col>
                                             <Col xs={12}>
                                                 <Row>
                                                     <Col xs={4}><T>validators.amount</T></Col>
-                                                    <Col xs={8}>{new Coin(m.value.amount.amount, m.value.amount.denom).toString()}</Col>
+                                                    <Col xs={8}>{new Coin(m.amount.amount, m.amount.denom).toString()}</Col>
                                                 </Row>
                                             </Col>
                                         </Row>
@@ -107,28 +106,28 @@ export default class PowerHistory extends React.Component {
                                 <Row>
                                     <Col xs={12}>
                                         <Row>
-                                            {(msg.tx.value.msg && msg.tx.value.msg.length > 0)?msg.tx.value.msg.map((m,j) => {
-                                                switch (m.type){
-                                                case "cosmos-sdk/MsgBeginRedelegate":
+                                            {(msg.tx.body.messages && msg.tx.body.messages.length > 0)?msg.tx.body.messages.map((m,j) => {
+                                                switch (m["@type"]){
+                                                case "/cosmos.staking.v1beta1.MsgBeginRedelegate":
                                                     return <Col key={j}><Badge color="success"><T>messageTypes.redelegate</T></Badge></Col>;
-                                                case "cosmos-sdk/MsgDelegate":
-                                                    if (m.value.validator_address == self.props.address){
+                                                case "/cosmos.staking.v1beta1.MsgDelegate":
+                                                    if (m.validator_address == self.props.address){
                                                         return <Col key={j}><Badge color="success"><T>messageTypes.delegate</T></Badge></Col>;
                                                     }
                                                     else
                                                         return;
-                                                case "cosmos-sdk/MsgCreateValidator":
+                                                case "/cosmos.staking.v1beta1.MsgCreateValidator":
                                                     return <Col key={j}><Badge color="warning"><T>messageTypes.createValidator</T></Badge></Col>;
-                                                case "cosmos-sdk/MsgUnjail":
+                                                case "/cosmos.staking.v1beta1.MsgUnjail":
                                                     return <Col key={j}><Badge color="info"><T>messageTypes.unjail</T></Badge></Col>;
-                                                case "cosmos-sdk/MsgUndelegate":
+                                                case "/cosmos.staking.v1beta1.MsgUndelegate":
                                                     return <Col key={j}><Badge color="danger"><T>messageTypes.undelegate</T></Badge></Col>;
                                                 }
                                             }):''}
                                         </Row>
                                         <Row>
                                             <Col xs={4} sm={6}><T>transactions.fee</T></Col>
-                                            <Col xs={8} sm={6}>{(msg.tx.value.fee.amount&& msg.tx.value.fee.amount.length>0)?msg.tx.value.fee.amount.map((amount,i)=> new Coin(amount.amount, amount.denom).toString()).join(' ,'):'0'}</Col>
+                                            <Col xs={8} sm={6}>{(msg.tx.auth_info.fee.amount&& msg.tx.auth_info.fee.amount.length>0)?msg.tx.auth_info.fee.amount.map((amount,i)=> new Coin(amount.amount, amount.denom).toString()).join(' ,'):'0'}</Col>
                                         </Row>
                                     </Col>
                                 </Row>

@@ -49,7 +49,7 @@ export default class AccountTooltip extends Account{
             return
         let validator = this.state.validator;
         let moniker = (validator.description && validator.description.moniker) || validator.address;
-        let isActive = validator.status == 2 && !validator.jailed;
+        let isActive = validator.status == 'BOND_STATUS_BONDED' && !validator.jailed;
 
         return <UncontrolledPopover className='validator-popover' trigger="hover" placement="right" target={this.ref} key={this.ref}>
             <Card className='validator-popover-card' body outline color="danger">
@@ -61,7 +61,7 @@ export default class AccountTooltip extends Account{
                 <PopoverBody>
                     <CardText className="voting-power data">
                         <i className="material-icons">power </i>
-                        {validator.voting_power?numbro(validator.voting_power).format('0,0'):0}
+                        {validator.tokens?numbro(Math.floor(validator.tokens/Meteor.settings.public.powerReduction)).format('0,0'):0}
                     </CardText>
                     <CardText className="self-delegation data">
                         <i className="material-icons">equalizer </i>
@@ -70,14 +70,14 @@ export default class AccountTooltip extends Account{
                     {(isActive)?<CardText className="commission data">
                         <i className="material-icons">call_split </i>{ (validator.commission.commission_rates)?
                             numbro(validator.commission.commission_rates.rate).format('0.00%') : numbro(validator.commission.rate).format('0.00%')  }
-                    </CardText>:null} 
+                    </CardText>:null}
                     {(!isActive)?<CardText className="last-seen data">
                         <i className="material-icons">access_time </i>
                         {validator.lastSeen?<TimeStamp time={validator.lastSeen}/>:
                             (validator.unbonding_time?<TimeStamp time={validator.unbonding_time}/>:null)}
                     </CardText>:null}
                     {(!isActive)?<CardText className="bond-status data" xs={2}>
-                        <Col xs={6}>{(validator.status == 0)?<Badge color="secondary">Unbonded</Badge>:<Badge color="warning">Unbonding</Badge>}</Col>
+                        <Col xs={6}>{(validator.status == 1)?<Badge color="secondary">Unbonded</Badge>:<Badge color="warning">Unbonding</Badge>}</Col>
                         <Col xs={6}>{validator.jailed?<Badge color="danger">Jailed</Badge>:''}</Col>
                     </CardText>:null}
                     {(isActive)?<CardText className="uptime data">

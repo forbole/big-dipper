@@ -14,7 +14,8 @@ import i18n from 'meteor/universe:i18n';
 import { Meteor } from 'meteor/meteor';
 import Coin from '/both/utils/coins.js';
 import TimeStamp from '../components/TimeStamp.jsx';
-import { ProposalActionButtons } from '../ledger/LedgerActions.jsx';
+// import { ProposalActionButtons } from '../ledger/LedgerActions.jsx';
+import voca from 'voca';
 
 const T = i18n.createComponent();
 
@@ -40,7 +41,15 @@ export default class Proposal extends Component{
             noWithVetoPercent: 0,
             proposalValid: false,
             orderDir: -1,
-            breakDownSelection: 'Bar'
+            breakDownSelection: 'Bar',
+            chartOptions : {
+                'Bar':'Bar', 
+                'All':'All', 
+                'Yes':'VOTE_OPTION_YES', 
+                'Abstain':'VOTE_OPTION_ABSTAIN', 
+                'No': 'VOTE_OPTION_NO', 
+                'No With Veto':'VOTE_OPTION_NO_WITH_VETO'
+            }
         }
 
         if (Meteor.isServer){
@@ -131,14 +140,14 @@ export default class Proposal extends Component{
     }
 
     populateChartData() {
-        const optionOrder = {'Yes': 0, 'Abstain': 1, 'No': 2, 'NoWithVeto': 3};
+        const optionOrder = {'VOTE_OPTION_YES': 0, 'VOTE_OPTION_ABSTAIN': 1, 'VOTE_OPTION_NO': 2, 'VOTE_OPTION_NO_WITH_VETO': 3};
         let votes = this.props.proposal.votes?this.props.proposal.votes.sort(
             (vote1, vote2) => vote2['votingPower'] - vote1['votingPower']
         ).sort(
             (vote1, vote2) => optionOrder[vote1.option] - optionOrder[vote2.option]):null;
         let maxVotingPower = {'N/A': 1};
         let totalVotingPower = {'N/A': 0};
-        let votesByOptions = {'All': votes, 'Yes': [], 'Abstain': [], 'No': [], 'NoWithVeto': []};
+        let votesByOptions = {'All': votes, 'VOTE_OPTION_YES': [], 'VOTE_OPTION_ABSTAIN': [], 'VOTE_OPTION_NO': [], 'VOTE_OPTION_NO_WITH_VETO': []};
 
         let emtpyData = [{'votingPower': 1, option: 'N/A'}];
 
@@ -164,7 +173,7 @@ export default class Proposal extends Component{
         let scales = [{
             scaleId: 'colorScale',
             type: 'Color',
-            domain: ['Yes', 'Abstain', 'No', 'NoWithVeto', 'N/A'],
+            domain: ['VOTE_OPTION_YES', 'VOTE_OPTION_ABSTAIN', 'VOTE_OPTION_NO', 'VOTE_OPTION_NO_WITH_VETO', 'N/A'],
             range: ['#4CAF50', '#ff9800', '#e51c23', '#9C27B0', '#BDBDBD']
         }];
         let isDataEmtpy = votesByOptions[this.state.breakDownSelection] && votesByOptions[this.state.breakDownSelection].length==0;
@@ -250,7 +259,7 @@ export default class Proposal extends Component{
                         </Col>
                         <Col className="voting-power data" md={4}>
                             <i className="material-icons d-md-none">power</i>
-                            {(vote.votingPower!==undefined)?numbro(vote.votingPower).format('0,0.00'):""}
+                            {(vote.votingPower!==undefined)?numbro(vote.votingPower/Meteor.settings.public.powerReduction).format('0,0.000000'):""}
                         </Col>
                         <Col className="voting-power-percent data" md={3}>
                             <i className="material-icons d-md-none">equalizer</i>
@@ -272,17 +281,20 @@ export default class Proposal extends Component{
                 const proposalId = Number(this.props.proposal.proposalId), maxProposalId = Number(this.props.proposalCount);
                 const powerReduction = Meteor.settings.public.powerReduction || Coin.StakingCoin.fraction;
                 let totalVotingPower = this.props.chain.activeVotingPower * powerReduction;
+                let proposalType = this.props.proposal.content["@type"].split('.');
+                proposalType = proposalType[proposalType.length-1].match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ");
+
                 return <div>
                     <Helmet>
-                        <title>{this.props.proposal.content.value.title} | The Big Dipper</title>
-                        <meta name="description" content={this.props.proposal.content.value.description} />
+                        <title>{this.props.proposal.content.title} | The Big Dipper</title>
+                        <meta name="description" content={this.props.proposal.content.description} />
                     </Helmet>
 
                     <div className="proposal bg-light">
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposalID</T></Col>
                             <Col md={this.state.user?6:9} className="value">{this.props.proposal.proposalId}</Col>
-                            {this.state.user?<Col md={3}><ProposalActionButtons history={this.props.history} proposalId={proposalId}/></Col>:null}
+                            {/* {this.state.user?<Col md={3}><ProposalActionButtons history={this.props.history} proposalId={proposalId}/></Col>:null} */}
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposer</T></Col>
@@ -290,30 +302,30 @@ export default class Proposal extends Component{
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.title</T></Col>
-                            <Col md={9} className="value">{this.props.proposal.content.value.title}</Col>
+                            <Col md={9} className="value">{this.props.proposal.content.title}</Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.description</T></Col>
-                            <Col md={9} className="value"><Markdown markup={this.props.proposal.content.value.description} /></Col>
+                            <Col md={9} className="value"><Markdown markup={this.props.proposal.content.description} /></Col>
                         </Row>
                         {/* Community Pool Spend Proposal */}
                         {(this.props.proposal.content.type === 'cosmos-sdk/CommunityPoolSpendProposal')?<Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.recipient</T></Col>
-                            <Col md={9} className="value"> <Account address={this.props.proposal.content.value.recipient}/></Col> 
+                            <Col md={9} className="value"> <Account address={this.props.proposal.content.recipient}/></Col> 
                         </Row>:null}
                         {(this.props.proposal.content.type === 'cosmos-sdk/CommunityPoolSpendProposal')?<Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.amount</T></Col>
-                            <Col md={9} className="value"> {this.props.proposal.content.value.amount.map((amount, j) => {
+                            <Col md={9} className="value"> {this.props.proposal.content.amount.map((amount, j) => {
                                 return <div key={j}>{new Coin(amount.amount, amount.denom).toString()}</div>
                             })}</Col> 
                         </Row>:null}
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposalType</T></Col>
-                            <Col md={9} className="value">{this.props.proposal.content.type.substr(11).match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</Col>
+                            <Col md={9} className="value">{proposalType}</Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposalStatus</T></Col>
-                            <Col md={9} className="value"><ProposalStatusIcon status={this.props.proposal.proposal_status} /> {(this.props.proposal.proposal_status)?this.props.proposal.proposal_status.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" "):''}</Col>
+                            <Col md={9} className="value"><ProposalStatusIcon status={this.props.proposal.status} /> {(this.props.proposal.status)?voca.chain(this.props.proposal.status.substr(16)).replace('_', ' ').titleCase().value():''}</Col>
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.deposit</T></Col>
@@ -335,7 +347,7 @@ export default class Proposal extends Component{
                             </Col>
                         </Row>
                         {/* Parameter Change Proposal */}
-                        {(this.props.proposal.content.type === 'cosmos-sdk/ParameterChangeProposal')?<Row className="mb-2 border-top">
+                        {(this.props.proposal.content["@type"] === '/cosmos.params.v1beta1.ParameterChangeProposal')?<Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.changes</T></Col>
                             <Col md={6} className="value-table text-center">
                                 <Table bordered responsive="sm">
@@ -348,11 +360,11 @@ export default class Proposal extends Component{
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>{this.props.proposal.content.value.changes ? this.props.proposal.content.value.changes.map((changesItem, i) => {
+                                            <td>{this.props.proposal.content.changes ? this.props.proposal.content.changes.map((changesItem, i) => {
                                                 return <div key={i}>{changesItem.subspace.charAt(0).toUpperCase() + changesItem.subspace.slice(1)} </div> }): ''}</td>
-                                            <td>{this.props.proposal.content.value.changes ? this.props.proposal.content.value.changes.map((changesItem, i) => {
+                                            <td>{this.props.proposal.content.changes ? this.props.proposal.content.changes.map((changesItem, i) => {
                                                 return <div key={i}>{changesItem.key.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</div> }): ''}</td>
-                                            <td> {this.props.proposal.content.value.changes ? this.props.proposal.content.value.changes.map((changesItem, i) => {
+                                            <td> {this.props.proposal.content.changes ? this.props.proposal.content.changes.map((changesItem, i) => {
                                                 return   parseFloat(changesItem.value.replace(/"/g, "")) ?  <div key={i}>{numbro(changesItem.value.replace(/"/g, "")).format("0,000")}</div> : <div key={i}>{changesItem.value.replace(/"|}|{/g, "")}</div>}): ''}</td>
                                         </tr>
                                     </tbody>
@@ -364,44 +376,44 @@ export default class Proposal extends Component{
                             <Col md={9} className="value">
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><VoteIcon vote="yes" /> Yes</Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(this.state.tally.yes).format("0,0"):''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(parseInt(this.state.tally.yes)/Meteor.settings.public.powerReduction).format("0,0.000000"):''}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(1,e)}><i className="material-icons">{this.state.open === 1 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
-                                        {this.renderTallyResultDetail(1, 'Yes')}
+                                        {this.renderTallyResultDetail(1, 'VOTE_OPTION_YES')}
                                     </Col>
                                 </Row>
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><VoteIcon vote="abstain" /> Abstain</Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(this.state.tally.abstain).format("0,0"):''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(parseInt(this.state.tally.abstain)/Meteor.settings.public.powerReduction).format("0,0.000000"):''}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(2,e)}><i className="material-icons">{this.state.open === 2 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
-                                        {this.renderTallyResultDetail(2, 'Abstain')}
+                                        {this.renderTallyResultDetail(2, 'VOTE_OPTION_ABSTAIN')}
                                     </Col>
                                 </Row>
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><VoteIcon vote="no" /> No</Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(this.state.tally.no).format("0,0"):''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(parseInt(this.state.tally.no)/Meteor.settings.public.powerReduction).format("0,0.000000"):''}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(3,e)}><i className="material-icons">{this.state.open === 3 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
-                                        {this.renderTallyResultDetail(3, 'No')}
+                                        {this.renderTallyResultDetail(3, 'VOTE_OPTION_NO')}
                                     </Col>
                                 </Row>
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><VoteIcon vote="no_with_veto" /> No with Veto</Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(this.state.tally.no_with_veto).format("0,0"):''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(parseInt(this.state.tally.no_with_veto)/Meteor.settings.public.powerReduction).format("0,0.000000"):''}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(4,e)}><i className="material-icons">{this.state.open === 4 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
-                                        {this.renderTallyResultDetail(4, 'NoWithVeto')}
+                                        {this.renderTallyResultDetail(4, 'VOTE_OPTION_NO_WITH_VETO')}
                                     </Col>
                                 </Row>
                                 {this.state.voteStarted?<Row>
                                     <Col xs={12}><Card>
                                         <CardHeader>
                                             <Nav tabs className='card-header-tabs'>
-                                                {['Bar', 'All', 'Yes', 'Abstain', 'No', 'NoWithVeto'].map((option)=>
-                                                    <NavItem key={option}><NavLink className='no-select' active={this.state.breakDownSelection==option}
-                                                        onClick={() => this.setState({breakDownSelection: option})}>
-                                                        {option=='Bar'?'All(Bar)':option}
+                                                {Object.keys(this.state.chartOptions).map(key => 
+                                                    <NavItem key={key}><NavLink className='no-select' active={this.state.breakDownSelection==this.state.chartOptions[key]}
+                                                        onClick={() => this.setState({breakDownSelection: this.state.chartOptions[key]})}>
+                                                        {key}
                                                     </NavLink></NavItem>
                                                 )}
                                             </Nav>
@@ -427,7 +439,7 @@ export default class Proposal extends Component{
                                         <Card body className="tally-info">
                                             <em>
                                                 <T _purify={false} percent={numbro(this.state.totalVotes/totalVotingPower).format("0.00%")}>proposals.percentageVoted</T><br/>
-                                                {this.state.proposalValid?<T _props={{className:'text-success'}} tentative={(!this.state.voteEnded)?'(tentatively) ':''} _purify={false}>proposals.validMessage</T>:(this.state.voteEnded)?<T _props={{className:'text-danger'}} quorum={numbro(this.props.chain.gov.tallyParams.quorum).format("0.00%")} _purify={false}>proposals.invalidMessage</T>:<T moreVotes={numbro(totalVotingPower*this.props.chain.gov.tallyParams.quorum-this.state.totalVotes).format("0,0")} _purify={false}>proposals.moreVoteMessage</T>}
+                                                {this.state.proposalValid?<T _props={{className:'text-success'}} tentative={(!this.state.voteEnded)?'(tentatively) ':''} _purify={false}>proposals.validMessage</T>:(this.state.voteEnded)?<T _props={{className:'text-danger'}} quorum={numbro(this.props.chain.gov.tallyParams.quorum).format("0.00%")} _purify={false}>proposals.invalidMessage</T>:<T moreVotes={numbro((totalVotingPower*this.props.chain.gov.tallyParams.quorum-this.state.totalVotes)/Meteor.settings.public.powerReduction).format("0,0")} _purify={false}>proposals.moreVoteMessage</T>}
                                             </em>
                                         </Card>
                                     </Col>

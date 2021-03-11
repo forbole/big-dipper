@@ -10,7 +10,9 @@ TXSYNCING = false;
 COUNTMISSEDBLOCKS = false;
 COUNTMISSEDBLOCKSSTATS = false;
 RPC = Meteor.settings.remote.rpc;
-LCD = Meteor.settings.remote.lcd;
+API = Meteor.settings.remote.api;
+GRPC = Meteor.settings.remote.grpc;
+
 timerBlocks = 0;
 timerTransactions = 0;
 timerChain = 0;
@@ -26,10 +28,10 @@ const DEFAULTSETTINGS = '/default_settings.json';
 updateChainStatus = () => {
     Meteor.call('chain.updateStatus', (error, result) => {
         if (error){
-            console.log("updateStatus: "+error);
+            console.log("updateStatus: %o", error);
         }
         else{
-            console.log("updateStatus: "+result);
+            console.log("updateStatus: %o", result);
         }
     })
 }
@@ -37,10 +39,10 @@ updateChainStatus = () => {
 updateBlock = () => {
     Meteor.call('blocks.blocksUpdate', (error, result) => {
         if (error){
-            console.log("updateBlocks: "+error);
+            console.log("updateBlocks: %o", error);
         }
         else{
-            console.log("updateBlocks: "+result);
+            console.log("updateBlocks: %o", result);
         }
     })
 }
@@ -48,10 +50,10 @@ updateBlock = () => {
 updateTransactions = () => {
     Meteor.call('Transactions.updateTransactions', (error, result) => {
         if (error){
-            console.log("updateTransactions: "+error);
+            console.log("updateTransactions: %o",error);
         }
         else{
-            console.log("updateTransactions: "+result);
+            console.log("updateTransactions: %o",result);
         }
     })
 }
@@ -59,7 +61,7 @@ updateTransactions = () => {
 getConsensusState = () => {
     Meteor.call('chain.getConsensusState', (error, result) => {
         if (error){
-            console.log("get consensus: "+error)
+            console.log("get consensus: %o", error)
         }
     })
 }
@@ -67,10 +69,10 @@ getConsensusState = () => {
 getProposals = () => {
     Meteor.call('proposals.getProposals', (error, result) => {
         if (error){
-            console.log("get proposal: "+ error);
+            console.log("get proposal: %o", error);
         }
         if (result){
-            console.log("get proposal: "+result);
+            console.log("get proposal: %o", result);
         }
     });
 }
@@ -78,10 +80,10 @@ getProposals = () => {
 getProposalsResults = () => {
     Meteor.call('proposals.getProposalResults', (error, result) => {
         if (error){
-            console.log("get proposals result: "+error);
+            console.log("get proposals result: %o", error);
         }
         if (result){
-            console.log("get proposals result: "+result);
+            console.log("get proposals result: %o", result);
         }
     });
 }
@@ -89,10 +91,10 @@ getProposalsResults = () => {
 updateMissedBlocks = () => {
     Meteor.call('ValidatorRecords.calculateMissedBlocks', (error, result) =>{
         if (error){
-            console.log("missed blocks error: "+ error)
+            console.log("missed blocks error: %o", error)
         }
         if (result){
-            console.log("missed blocks ok:" + result);
+            console.log("missed blocks ok: %o", result);
         }
     });
 }
@@ -100,10 +102,10 @@ updateMissedBlocks = () => {
 getDelegations = () => {
     Meteor.call('delegations.getDelegations', (error, result) => {
         if (error){
-            console.log("get delegations error: "+ error)
+            console.log("get delegations error: %o", error)
         }
         else{
-            console.log("get delegations ok: "+ result)
+            console.log("get delegations ok: %o", result)
         }
     });
 }
@@ -112,19 +114,19 @@ aggregateMinutely = () =>{
     // doing something every min
     Meteor.call('Analytics.aggregateBlockTimeAndVotingPower', "m", (error, result) => {
         if (error){
-            console.log("aggregate minutely block time error: "+error)
+            console.log("aggregate minutely block time error: %o", error)
         }
         else{
-            console.log("aggregate minutely block time ok: "+result)
+            console.log("aggregate minutely block time ok: %o", result)
         }
     });
 
     Meteor.call('coinStats.getCoinStats', (error, result) => {
         if (error){
-            console.log("get coin stats error: "+error);
+            console.log("get coin stats error: %o", error);
         }
         else{
-            console.log("get coin stats ok: "+result)
+            console.log("get coin stats ok: %o", result)
         }
     });
 }
@@ -133,10 +135,10 @@ aggregateHourly = () =>{
     // doing something every hour
     Meteor.call('Analytics.aggregateBlockTimeAndVotingPower', "h", (error, result) => {
         if (error){
-            console.log("aggregate hourly block time error: "+error)
+            console.log("aggregate hourly block time error: %o", error)
         }
         else{
-            console.log("aggregate hourly block time ok: "+result)
+            console.log("aggregate hourly block time ok: %o", result)
         }
     });
 }
@@ -145,26 +147,26 @@ aggregateDaily = () =>{
     // doing somthing every day
     Meteor.call('Analytics.aggregateBlockTimeAndVotingPower', "d", (error, result) => {
         if (error){
-            console.log("aggregate daily block time error: "+error)
+            console.log("aggregate daily block time error: %o", error)
         }
         else{
-            console.log("aggregate daily block time ok: "+result)
+            console.log("aggregate daily block time ok: %o", result)
         }
     });
 
     Meteor.call('Analytics.aggregateValidatorDailyBlockTime', (error, result) => {
         if (error){
-            console.log("aggregate validators block time error:"+ error)
+            console.log("aggregate validators block time error: %o", error)
         }
         else {
-            console.log("aggregate validators block time ok:"+ result);
+            console.log("aggregate validators block time ok: %o", result);
         }
     })
 }
 
 
 
-Meteor.startup(function(){
+Meteor.startup(async function(){
     if (Meteor.isDevelopment){
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
         import DEFAULTSETTINGSJSON from '../default_settings.json'
@@ -213,9 +215,9 @@ Meteor.startup(function(){
             updateMissedBlocks();
         }, Meteor.settings.params.missedBlocksInterval);
 
-        timerDelegation = Meteor.setInterval(function(){
-            getDelegations();
-        }, Meteor.settings.params.delegationInterval);
+        // timerDelegation = Meteor.setInterval(function(){
+        //     getDelegations();
+        // }, Meteor.settings.params.delegationInterval);
 
         timerAggregate = Meteor.setInterval(function(){
             let now = new Date();

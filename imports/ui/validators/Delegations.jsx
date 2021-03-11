@@ -37,8 +37,8 @@ export default class ValidatorDelegations extends Component{
                     numDelegatiors:delegations.length,
                     delegations: delegations.map((d, i) => {
                         return <Row key={i} className="delegation-info">
-                            <Col md={8} className="text-nowrap overflow-auto"><Account address={d.delegator_address} /></Col>
-                            <Col md={4}>{new Coin((d.shares/this.props.shares*this.props.tokens), this.props.denom).stakeString()}</Col>
+                            <Col md={8} className="text-nowrap overflow-auto"><Account address={d.delegation.delegator_address} /></Col>
+                            <Col md={4}>{new Coin((d.balance.amount), d.balance.denom).stakeString()}</Col>
                         </Row>
                     })
                 })

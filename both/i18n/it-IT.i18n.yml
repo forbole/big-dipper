@@ -200,7 +200,7 @@ accounts:
     signInText: 'Registrati come'
     toLoginAs: 'Accedi come'
     signInWithLedger: 'Registrati con un Ledger'
-    signInWarning: 'Per favore assicurati che il tuo Ledger sia connesso e <strong class="text-primary">Cosmos App 1.5.0 or above</strong> che sia aperto.'
+    signInWarning: 'Per favore assicurati che il tuo Ledger sia connesso e <strong class="text-primary">{$network} App {$version} or above</strong> che sia aperto.'
     pleaseAccept: 'Per favore accetta nel tuo Ledger'
     noRewards: 'Nessun reward'
 activities:

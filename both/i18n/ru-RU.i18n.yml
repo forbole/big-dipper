@@ -192,7 +192,7 @@ accounts:
     signInText: 'Войти'
     toLoginAs: 'Войти'
     signInWithLedger: 'Войти с Ledger'
-    signInWarning: 'Пожалуйста, убедитесь, что устройство Ledger подключен и <strong class="text-primary">Cosmos App 1.5.0 или выше </strong> открыто.'
+    signInWarning: 'Пожалуйста, убедитесь, что устройство Ledger подключен и <strong class="text-primary">{$network} App {$version} или выше </strong> открыто.'
     pleaseAccept: 'пожалуйста, примите в свой Ledger устройство.'
 activities:
     single: ' '

@@ -1,10 +1,8 @@
 /* eslint-disable react/no-unused-prop-types */
 import qs from 'querystring';
-import Cosmos from "@lunie/cosmos-js"
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Spinner, TabContent, TabPane, Row, Col, Modal, ModalHeader,
-    Form, ModalBody, ModalFooter, InputGroup, InputGroupAddon, Input, Progress,
+import { Button, Spinner, TabContent, TabPane, Row, Col, Modal, ModalBody, ModalFooter, InputGroup, InputGroupAddon, Input, Progress,
     UncontrolledTooltip, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
 import { Ledger, DEFAULT_MEMO } from './ledger.js';
 import { Validators } from '/imports/api/validators/validators.js';
@@ -128,11 +126,11 @@ const Amount = (props) => {
 
 
 const Fee = (props) => {
-    return <span><CoinAmount mint className='gas' amount={Math.ceil(props.gas * Meteor.settings.public.gasPrice)}/> as fee </span>
+    return <span><CoinAmount mint className='gas' amount={Math.ceil(props.gas * Meteor.settings.public.ledger.gasPrice)}/> as fee </span>
 }
 
 const isActiveValidator = (validator) => {
-    return !validator.jailed && validator.status == 2;
+    return !validator.jailed && validator.status == 'BOND_STATUS_BONDED';
 }
 
 const isBetween = (value, min, max) => {
@@ -220,6 +218,7 @@ class LedgerButton extends Component {
     }
 
     setStateOnError = (action, errorMsg, state={}) => {
+        console.log(action);
         this.setState({
             loading: false,
             [action]: false,
@@ -337,7 +336,7 @@ class LedgerButton extends Component {
             sequence: this.state.currentUser.sequence,
             denom: Coin.StakingCoin.denom,
             pk: this.state.pubKey,
-            path: [44, 118, 0, 0, 0],
+            path: [44, Meteor.settings.public.ledger.coinType, 0, 0, 0],
             memo: this.state.memo
         }
     }
@@ -417,9 +416,9 @@ class LedgerButton extends Component {
 
     runSimulatation = (txMsg, simulateBody) => {
         let gasAdjustment = TypeMeta[this.state.actionType].gasAdjustment || DEFAULT_GAS_ADJUSTMENT;
-        Meteor.call('transaction.simulate', simulateBody, this.state.user, this.getPath(), gasAdjustment, (err, res) =>{
+        Meteor.call('transaction.simulate', simulateBody, this.state.user, this.state.currentUser.accountNumber, this.state.currentUser.sequence, this.getPath(), gasAdjustment, (err, res) =>{
             if (res){
-                Ledger.applyGas(txMsg, res, Meteor.settings.public.gasPrice, Coin.StakingCoin.denom);
+                Ledger.applyGas(txMsg, res, Meteor.settings.public.ledger.gasPrice, Coin.StakingCoin.denom);
                 this.setStateOnSuccess('simulating', {
                     gasEstimate: res,
                     activeTab: '3',
@@ -457,6 +456,7 @@ class LedgerButton extends Component {
                 }
             }, (err) => this.setStateOnError('signing', err.message))
         } catch (e) {
+            console.log('everything sign');
             this.setStateOnError('signing', e.message)
         }
     }
@@ -524,7 +524,7 @@ class LedgerButton extends Component {
 
     getValidatorOptions = () => {
         let activeValidators = Validators.find(
-            {"jailed": false, "status": 2},
+            {"jailed": false, "status": 'BOND_STATUS_BONDED'},
             {"sort":{"description.moniker":1}}
         );
         let redelegations = this.state.redelegations || {};
@@ -549,7 +549,7 @@ class LedgerButton extends Component {
                                 <Col xs='12' className='moniker'>{validator.description.moniker}</Col>
                                 <Col xs='3' className="voting-power data">
                                     <i className="material-icons">power</i>
-                                    {validator.voting_power?numbro(validator.voting_power).format('0,0'):0}
+                                    {validator.tokens?numbro(Math.floor(validator.tokens/Meteor.settings.public.powerReduction)).format('0,0'):0}
                                 </Col>
 
                                 <Col xs='4' className="commission data">
@@ -621,8 +621,8 @@ class DelegationButtons extends LedgerButton {
     }
 
     getDelegatedToken = (currentDelegation) => {
-        if (currentDelegation && currentDelegation.shares && currentDelegation.tokenPerShare) {
-            return new Coin(currentDelegation.shares * currentDelegation.tokenPerShare);
+        if (currentDelegation && currentDelegation.delegation.shares && currentDelegation.tokenPerShare) {
+            return new Coin(currentDelegation.delegation.shares * currentDelegation.tokenPerShare);
         }
         return null
     }
@@ -691,7 +691,7 @@ class DelegationButtons extends LedgerButton {
     }
 
     getWarningMessage = () => {
-        let duration = this.props.stakingParams.unbonding_time;
+        let duration = parseInt(this.props.stakingParams.unbonding_time.substr(0, this.props.stakingParams.unbonding_time.length-1));
         let maxEntries = this.props.stakingParams.max_entries;
         let warning = TypeMeta[this.state.actionType].warning;
         return warning && warning(duration, maxEntries);
@@ -758,13 +758,15 @@ class WithdrawButton extends LedgerButton {
     createMessage = (callback) => {
         Meteor.call('transaction.execute', {from: this.state.user}, this.getPath(), (err, res) =>{
             if (res){
-                if (this.props.address) {
-                    res.value.msg.push({
-                        type: 'cosmos-sdk/MsgWithdrawValidatorCommission',
-                        value: { validator_address: this.props.address }
-                    })
-                }
-                callback(res, res)
+                Meteor.call('isValidator', this.state.user, (error, result) => {
+                    if (result && result.address){
+                        res.value.msg.push({
+                            type: 'cosmos-sdk/MsgWithdrawValidatorCommission',
+                            value: { validator_address: result.address }
+                        })
+                    }
+                    callback(res, res)
+                })
             }
             else {
                 this.setState({
@@ -1079,7 +1081,7 @@ DelegationButtons.propTypes = {
         jailed: PropTypes.bool,
         operator_address: PropTypes.string,
         profile_url: PropTypes.string,
-        status: PropTypes.number
+        status: PropTypes.string
     }),
     history: PropTypes.shape({
         length:PropTypes.number,
