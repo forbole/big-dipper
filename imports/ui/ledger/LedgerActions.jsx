@@ -212,7 +212,7 @@ const Amount = (props) => {
 
 
 const Fee = (props) => {
-    return <span><CoinAmount mint className='gas' amount={Math.ceil(props.gas * Meteor.settings.public.gasPrice)}/> as fee </span>
+    return <span><CoinAmount mint className='gas' amount={Math.ceil(props.gas * Meteor.settings.public.gasPrice)} /> as fee </span>
 }
 
 const isActiveValidator = (validator) => {
@@ -339,9 +339,12 @@ class LedgerButton extends Component {
             this.getBalance();
         }
 
-        if(prevState.collateralDenom != this.state.collateralDenom){
-            this.getUSDPrice();
+        if (prevState.actionType === 'actionType') {
+            if (prevState.collateralDenom != this.state.collateralDenom) {
+                this.getUSDPrice();
+            }
         }
+
     }
 
     componentDidMount() {
@@ -512,7 +515,7 @@ class LedgerButton extends Component {
                 this.state.debt,
                 this.state.denom,
                 this.state.denomFraction,
-                this.state.collateralType);                
+                this.state.collateralType);
             break;
         case Types.DEPOSITCDP:
             txMsg = Ledger.depositCDP(
@@ -630,7 +633,7 @@ class LedgerButton extends Component {
         let target = e.currentTarget;
         let dataset = target.dataset;
         let value;
-               
+
         switch (dataset.type) {
         case 'validator':
             value = { moniker: dataset.moniker, operator_address: dataset.address }
@@ -698,7 +701,7 @@ class LedgerButton extends Component {
             { "sort": { "description.moniker": 1 } }
         );
         let redelegations = this.state.redelegations || {};
-        let maxEntries = (this.props.stakingParams&&this.props.stakingParams.max_entries)?this.props.stakingParams.max_entries:7;
+        let maxEntries = (this.props.stakingParams && this.props.stakingParams.max_entries) ? this.props.stakingParams.max_entries : 7;
         return <UncontrolledDropdown direction='down' size='sm' className='redelegate-validators'>
             <DropdownToggle caret={true}>
                 {this.state.targetValidator ? this.state.targetValidator.moniker : 'Select a Validator'}
@@ -897,7 +900,7 @@ class DelegationButtons extends LedgerButton {
         if (!delegation) return null;
         let completionTime = delegation.redelegationCompletionTime;
         let isCompleted = !completionTime || new Date() >= completionTime;
-        let maxEntries = this.props.stakingParams?this.props.stakingParams.max_entries:7;
+        let maxEntries = this.props.stakingParams ? this.props.stakingParams.max_entries : 7;
         let canUnbond = !delegation.unbonding || maxEntries > delegation.unbonding;
         return <span>
             <div id='redelegate-button' className={`disabled-btn-wrapper${isCompleted ? '' : ' disabled'}`}>
@@ -955,25 +958,21 @@ class WithdrawButton extends LedgerButton {
         let allCommission = [];
         let hasCommission = false;
 
-        if(nextProps.rewards){
+        if (nextProps.rewards) {
             nextProps.rewards.forEach((row, index) =>
                 allRewards[index] = new Coin(row.amount, row.denom).convertToString()
             )
         }
-        if(nextProps.commission[0]){
-            nextProps.commission[0].forEach((row, index) =>
-               
-                allCommission[index] = new Coin(row.amount, row.denom).convertToString()
-            )
+
+        if (nextProps.commission && nextProps.commission.length > 0) {
+            for (let index = 0; index < nextProps.commission.length; index++) {
+                allCommission[index] = new Coin(nextProps.commission[index].amount, nextProps.commission[index].denom),
+                (nextProps.commission[index].amount > 0 ? hasCommission = true : hasCommission = false)
+            }
         }
 
-        if (nextProps.commission[0]) {
-            nextProps.commission[0].forEach((row, index) =>
-                (row.amount > 0 ? hasCommission = true : hasCommission = false)
-            )
-        }
-        return { allRewards: allRewards, allCommission: allCommission, userHasCommission: hasCommission}
-      
+        return { allRewards: allRewards, allCommission: allCommission, userHasCommission: hasCommission }
+
     }
 
     createMessage = (callback) => {
@@ -1462,9 +1461,9 @@ class CreateCDPButton extends LedgerButton {
 
     static getDerivedStateFromProps(nextProps, prevState) {
         let maxAmount;
-        let fraction = 1; 
+        let fraction = 1;
 
-        if (nextProps.CDPParameters && nextProps.CDPParameters.collateral_params){
+        if (nextProps.CDPParameters && nextProps.CDPParameters.collateral_params) {
             for (let d in nextProps.CDPParameters.collateral_params) {
                 if (prevState.denom === nextProps.CDPParameters.collateral_params[d].denom) {
                     fraction = nextProps.CDPParameters.collateral_params[d].conversion_factor
@@ -1492,7 +1491,7 @@ class CreateCDPButton extends LedgerButton {
 
         this.setState({ collateralDenom: value, loading: true })
 
-        if (target.innerText=== 'KAVA') {
+        if (target.innerText === 'KAVA') {
             this.setState({
                 denom: 'ukava'
             })
@@ -1505,7 +1504,7 @@ class CreateCDPButton extends LedgerButton {
 
     }
 
-    getUSDPrice = () =>{
+    getUSDPrice = () => {
         Meteor.call('cdp.getCDPPrice', `${this.state.collateralDenom.toLowerCase()}:usd`, (error, result) => {
             if (error) {
                 console.warn(error);
@@ -1524,30 +1523,30 @@ class CreateCDPButton extends LedgerButton {
     }
 
     tokenDropdown = () => {
-        if (this.props.accountTokensAvailable){
+        if (this.props.accountTokensAvailable) {
             return (
                 <UncontrolledDropdown >
-                    <DropdownToggle caret style={{padding: "0.3rem", textTransform: "none"}}>
-                        {this.state.collateralDenom != '' ? this.state.collateralDenom : <img src="/img/dollar-coin.svg" style={{ marginTop: "-0.2rem" }} /> }
+                    <DropdownToggle caret style={{ padding: "0.3rem", textTransform: "none" }}>
+                        {this.state.collateralDenom != '' ? this.state.collateralDenom : <img src="/img/dollar-coin.svg" style={{ marginTop: "-0.2rem" }} />}
                     </DropdownToggle>
                     <DropdownMenu modifiers={coinSelectionModifier}>
-                        { this.props.accountTokensAvailable.map((item, index) => {
-                            return(
+                        {this.props.accountTokensAvailable.map((item, index) => {
+                            return (
                                 <>
                                     <DropdownItem name='collateralDenom' data-type='tokenSelection' key={index} onClick={this.handleTokenSelection}>{item.denom === 'ukava' ? 'KAVA' : item.denom.toUpperCase()}</DropdownItem>
-                             <DropdownItem divider />
-                            </>
+                                    <DropdownItem divider />
+                                </>
                             )
                         })}
                     </DropdownMenu>
                 </UncontrolledDropdown>
             );
         }
-         
+
     }
 
     iconChange = () => {
-        <img src={`/img/${this.state.collateralDenom}-symbol.svg`} className="symbol-img" /> 
+        <img src={`/img/${this.state.collateralDenom}-symbol.svg`} className="symbol-img" />
     }
 
     renderActionTab = () => {
@@ -1557,10 +1556,10 @@ class CreateCDPButton extends LedgerButton {
             <FormGroup>
                 <Label for="collateral" className="mb-n4"><T>cdp.collateral</T></Label>
                 {this.state.price != 0 ?
-                    <FormText className="coin-available ml-5"> 1 {this.state.collateralDenom} <i className="material-icons" style={{fontSize: '18px'}}>sync_alt</i> {numbro(this.state.price).format('0.0000')} USD</FormText> : null }
+                    <FormText className="coin-available ml-5"> 1 {this.state.collateralDenom} <i className="material-icons" style={{ fontSize: '18px' }}>sync_alt</i> {numbro(this.state.price).format('0.0000')} USD</FormText> : null}
                 <FormText className="coin-available mb-n5 float-right"> {this.state.denom != '' ? `Max ${this.state.maxAmount} ${this.state.collateralDenom}` : null}</FormText>
                 <InputGroup className="modal-for-ledger py-n5">
-                    {this.state.collateralDenom != '' ? 
+                    {this.state.collateralDenom != '' ?
                         <InputGroupAddon addonType="prepend">
                             <InputGroupText className="modal-for-ledger"> <img src={`/img/${this.state.collateralDenom}-symbol.svg`} className="symbol-img" /> </InputGroupText>
                         </InputGroupAddon>
