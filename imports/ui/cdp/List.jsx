@@ -126,7 +126,7 @@ export default class List extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {this.state.cdpList ? (this.state.cdpList > 1 ? this.state.cdpList.slice(this.state.currentPage * this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize) : this.state.cdpList) : "No active CDPs. "}
+                            {this.state.cdpList ? (Object.keys(this.state.cdpList).length > this.state.pageSize ? this.state.cdpList.slice(this.state.currentPage * this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize) : this.state.cdpList) : "No active CDPs. "}
                         </tbody>
                     </Table>
                 </div>
