@@ -6,7 +6,7 @@ import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js'
 import TimeStamp from '../components/TimeStamp.jsx';
-import { SubmitProposalButton } from '../ledger/LedgerActions.jsx';
+// import { SubmitProposalButton } from '../ledger/LedgerActions.jsx';
 import voca from 'voca';
 
 const T = i18n.createComponent();
@@ -70,7 +70,7 @@ export default class List extends Component{
         else{
             return (
                 <div>
-                    {this.state.user?<SubmitProposalButton history={this.props.history}/>:null}
+                    {/* {this.state.user?<SubmitProposalButton history={this.props.history}/>:null} */}
                     <Table striped className="proposal-list">
                         <thead>
                             <tr>
