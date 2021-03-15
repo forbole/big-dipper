@@ -11,7 +11,6 @@ COUNTMISSEDBLOCKS = false;
 COUNTMISSEDBLOCKSSTATS = false;
 RPC = Meteor.settings.remote.rpc;
 API = Meteor.settings.remote.api;
-GRPC = Meteor.settings.remote.grpc;
 
 timerBlocks = 0;
 timerTransactions = 0;
