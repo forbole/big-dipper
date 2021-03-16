@@ -148,7 +148,7 @@ export default class Validator extends Component{
                             votingPower={history.voting_power}
                             time={history.block_time}
                             height={history.height}
-                            address={this.props.validator.operator_adddress}
+                            address={this.props.validator.operator_address}
                         />
                     })
                 })

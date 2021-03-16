@@ -218,7 +218,6 @@ class LedgerButton extends Component {
     }
 
     setStateOnError = (action, errorMsg, state={}) => {
-        console.log(action);
         this.setState({
             loading: false,
             [action]: false,
@@ -456,7 +455,6 @@ class LedgerButton extends Component {
                 }
             }, (err) => this.setStateOnError('signing', err.message))
         } catch (e) {
-            console.log('everything sign');
             this.setStateOnError('signing', e.message)
         }
     }

@@ -1,6 +1,10 @@
 # Changelog
 
-## v.41.x-7 (Stargate compatible)
+## [Unreleased]
+
+* [#487] Fixed typo in the query which make validator power change tx lookup failed.
+* Fixed an issue on displaying individual transaction.
+## v0.41.x-7 (Stargate compatible)
 
 * [#472] Fix missing transactions
 * [#449] Migrate API to gRPC gateway
