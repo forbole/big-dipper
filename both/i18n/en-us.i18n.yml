@@ -219,7 +219,7 @@ activities:
     from: 'from'
     messages: 'message(s)'
     acknowledgement: 'acknowledgement'
-    via: 'via'
+    withPowerFlags: 'with power flags'
     operatingAt: 'operating at'
     withMoniker: 'with moniker'
     withTitle: 'with title'
@@ -243,3 +243,4 @@ messageTypes:
     IBCTransfer: 'IBC Transfer'
     IBCReceive: 'IBC Receive'
     AgoricSend: 'Eventual Send'
+    AgoricProvision: 'Provision Client'

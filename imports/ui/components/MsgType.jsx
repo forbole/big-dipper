@@ -51,6 +51,8 @@ export const MsgType = (props) => {
         return <Badge color="dark"><T>messageTypes.IBCReceive</T></Badge>;
     case "/agoric.swingset.MsgDeliverInbound":
         return <Badge color="success"><T>messageTypes.AgoricSend</T></Badge>
+    case "/agoric.swingset.MsgProvision":
+        return <Badge color="success"><T>messageTypes.AgoricProvision</T></Badge>
 
     default:
         return <Badge color="primary">{props.type}</Badge>;
