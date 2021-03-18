@@ -1,0 +1,36 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Inject slug/short variables
+        uses: rlespinasse/github-slug-action@v2.x
+
+      - if: contains(github.ref, 'testnet')
+        run: |
+          echo "CHAINNET=testnet" >> "$GITHUB_ENV"
+
+      - if: contains(github.ref, 'mainnet')
+        run: |
+          echo "CHAINNET=mainnet" >> "$GITHUB_ENV"
+
+      - name: Build docker image
+        run: |
+          echo ${{ env.CHAINNET }}
+          docker build -t sifchain/block-explorer:${{ env.CHAINNET }} .
+
+      - name: Push docker images
+        run: |
+          docker push sifchain/block-explorer:${{ env.CHAINNET }}
