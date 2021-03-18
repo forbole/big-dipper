@@ -1545,12 +1545,14 @@ class CreateCDPButton extends LedgerButton {
                     </DropdownToggle>
                     <DropdownMenu modifiers={coinSelectionModifier}>
                         { this.props.accountTokensAvailable.map((item, index) => {
-                            return(
+                            if(item.denom != "usdx"){
+                                return(
                                 <>
                                     <DropdownItem name='collateralDenom' data-type='tokenSelection' key={index} onClick={this.handleTokenSelection}>{item.denom === 'ukava' ? 'KAVA' : item.denom.toUpperCase()}</DropdownItem>
                              <DropdownItem divider />
                             </>
-                            )
+                                )
+                            }
                         })}
                     </DropdownMenu>
                 </UncontrolledDropdown>
