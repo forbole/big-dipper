@@ -338,26 +338,26 @@ export default class Proposal extends Component{
                         {(this.props.proposal.content.type === 'cosmos-sdk/ParameterChangeProposal')?<Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.changes</T></Col>
                             <Col md={6} className="value-table text-center">
-                            <Table bordered responsive="sm">
-                            <thead>
-                                <tr bgcolor="#ededed">
-                                <th><T>proposals.subspace</T></th>
-                                <th><T>proposals.key</T></th>
-                                <th><T>proposals.value</T></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                <td>{this.props.proposal.content.value.changes ? this.props.proposal.content.value.changes.map((changesItem, i) => {
-                                return <div key={i}>{changesItem.subspace.charAt(0).toUpperCase() + changesItem.subspace.slice(1)} </div> }): ''}</td>
-                                <td>{this.props.proposal.content.value.changes ? this.props.proposal.content.value.changes.map((changesItem, i) => {
-                                return <div key={i}>{changesItem.key.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</div> }): ''}</td>
-                                <td> {this.props.proposal.content.value.changes ? this.props.proposal.content.value.changes.map((changesItem, i) => {
-                                return   parseFloat(changesItem.value.replace (/"/g, "")) ?  <div key={i}>{numbro(changesItem.value.replace (/"/g, "")).format("0,000")}</div> : <div key={i}>{changesItem.value.replace(/"|}|{/g, "")}</div>}): ''}</td>
-                                </tr>
-                            </tbody>
-                            </Table>
-                             </Col>
+                                <Table bordered responsive="sm">
+                                    <thead>
+                                        <tr bgcolor="#ededed">
+                                            <th><T>proposals.subspace</T></th>
+                                            <th><T>proposals.key</T></th>
+                                            <th><T>proposals.value</T></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>{this.props.proposal.content.value.changes ? this.props.proposal.content.value.changes.map((changesItem, i) => {
+                                                return <div key={i}>{changesItem.subspace.charAt(0).toUpperCase() + changesItem.subspace.slice(1)} </div> }): ''}</td>
+                                            <td>{this.props.proposal.content.value.changes ? this.props.proposal.content.value.changes.map((changesItem, i) => {
+                                                return <div key={i}>{changesItem.key.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</div> }): ''}</td>
+                                            <td> {this.props.proposal.content.value.changes ? this.props.proposal.content.value.changes.map((changesItem, i) => {
+                                                return   parseFloat(changesItem.value.replace(/"/g, "")) ?  <div key={i}>{numbro(changesItem.value.replace(/"/g, "")).format("0,000")}</div> : <div key={i}>{changesItem.value.replace(/"|}|{/g, "")}</div>}): ''}</td>
+                                        </tr>
+                                    </tbody>
+                                </Table>
+                            </Col>
                         </Row>:null}
                         <Row className="mb-2 border-top tally-result">
                             <Col md={3} className="label"><T>proposals.tallyResult</T> <em>({this.state.tallyDate})</em></Col>
