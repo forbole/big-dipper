@@ -62,6 +62,8 @@ export default class AccountDetails extends Component {
             bondActiveTab: 'delegations',
             cdpActiveTab: 'cdp-create',
             activeSubtab: 'cdp-bnb-a',
+            activeSubtabDenomType: 'bnb-a',
+            activeSubtabDenom: 'bnb',
             cdpID: 0,
             cdpOwner: '',
             cdpCollateral: [],
@@ -81,7 +83,7 @@ export default class AccountDetails extends Component {
             hasIncentive: false,
             operator_address: "",
             hasActiveCDP: false,
-            collateralTypes: []
+            collateralParams: []
         }
     }
 
@@ -459,6 +461,7 @@ export default class AccountDetails extends Component {
                 rewardsForEachDel: [],
                 rewardDenomType: [],
                 cdpID: 0,
+                debtParams: [],
                 cdpOwner: '',
                 cdpCollateral: [],
                 cdpPrincipal: [],
@@ -475,7 +478,7 @@ export default class AccountDetails extends Component {
                 hasIncentive: false,
                 operator_address: "",
                 hasActiveCDP: false,
-                collateralTypes: []
+                collateralParams: []
             }, () => {
                 this.getBalance();
             })
@@ -580,10 +583,12 @@ export default class AccountDetails extends Component {
         }
     }
 
-    toggleCDPSutab = (tab) => {
+    toggleCDPSutab = (tab, denomName, denomType) => {
         if (this.state.activeSubtab !== tab) {
             this.setState({
-                activeSubtab: tab
+                activeSubtab: tab,
+                activeSubtabDenom: denomName,
+                activeSubtabDenomType: denomType
             });
         }
     }
@@ -598,7 +603,11 @@ export default class AccountDetails extends Component {
             }
 
             if (result) {
-                let collateralTypes = [];
+                this.setState({
+                    debtParams: result.debt_param
+                });
+
+                let collateralParams = [];
                 for (let c in result.collateral_params) {
                     Meteor.call('accounts.getAccountCDP', this.state.address, result.collateral_params[c].type, (err, res) => {
                         if (err) {
@@ -610,16 +619,15 @@ export default class AccountDetails extends Component {
 
                         if (res) {
                             this.setState({
-                                hasActiveCDP: true
+                                hasActiveCDP: true,
                             });
-                            collateralTypes[c] = {denom: result.collateral_params[c].denom, type:
-                            result.collateral_params[c]?.type};
+                            collateralParams[c] = result.collateral_params[c];
 
                         }
                     })
                 }
                 this.setState({
-                    collateralTypes: collateralTypes
+                    collateralParams: collateralParams
                 })
             }
         })
@@ -928,7 +936,10 @@ export default class AccountDetails extends Component {
                                     <TabPane tabId="cdp-create">
                                         <CDP
                                             owner={this.state.address}
-                                            collateral='bnb'
+                                            collateralType={this.state.activeSubtabDenomType}
+                                            collateralDenom={this.state.activeSubtabDenom}
+                                            collateralParams={this.state.collateralParams}
+                                            debtParams={this.state.debtParams} 
                                             user={this.state.user}
                                             createCDP={true}
                                         />
@@ -938,14 +949,14 @@ export default class AccountDetails extends Component {
                                     <TabPane tabId="cdp-active">
                                         <Row className="denom-list">
                                             {this.state.hasActiveCDP ?
-                                                this.state.collateralTypes.map(denom => {
+                                                this.state.collateralParams.map(denom => {
                                                     return (   
                                                         <Nav tabs className="mb-2">
 
                                                             <NavItem style={{listStyle: "none", display: "flex", flexWrap: "wrap"}} >
                                                                 <NavLink
                                                                     className={classnames({ active: this.state.activeSubtab === `cdp-${denom.type}` })}
-                                                                    onClick={() => { this.toggleCDPSutab(`cdp-${denom.type}`); }}
+                                                                    onClick={() => { this.toggleCDPSutab(`cdp-${denom.type}`, denom.denom, denom.type); }}
                                                                 >
                                                                     {denom.denom === 'ukava' ? <span className="cdp-logo denom"><img src="/img/KAVA-symbol.svg" className="cdp-logo-image"/> {denom.type.toUpperCase()} </span> : null}
                                                                     {denom.denom === 'xrpb' ? <span className="cdp-logo denom"><img src="/img/XRP-symbol.svg" className="cdp-logo-image" /> {denom.type.toUpperCase()} </span> : null}
@@ -955,13 +966,16 @@ export default class AccountDetails extends Component {
                                                         </Nav>) }) : null}
                                         </Row>
                                         {this.state.hasActiveCDP ?
-                                            this.state.collateralTypes.map(denom => {
+                                            this.state.collateralParams.map(denom => {
                                                 return (  
                                                     <TabContent activeTab={this.state.activeSubtab} >
                                                         <TabPane tabId={`cdp-${denom.type}`}>
                                                             <CDP
                                                                 owner={this.state.address}
-                                                                collateral={denom.type}
+                                                                collateralType={this.state.activeSubtabDenomType}
+                                                                collateralDenom={this.state.activeSubtabDenom}
+                                                                collateralParams={this.state.collateralParams} 
+                                                                debtParams={this.state.debtParams} 
                                                                 user={this.state.user}
                                                                 createCDP={false}
                                                             />
