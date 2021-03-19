@@ -202,15 +202,14 @@ export default class CDP extends Component {
                 </Table>
                 <div className="cdp-buttons float-right">
                     <DepositCDPButton
-                        // cdpParams={this.state.cdpParams ? this.state.cdpParams.debt_param.debt_floor : null}
-                        collateral={this.props.collateralDenom ? this.props.collateralDenom : null}
                         amountAvailable={this.state.total ? this.findTotalValue(this.state.total, this.props.collateralDenom) : null}
-                        principalDeposited={this.state.userCDP ? this.state.userCDP.cdp.principal.amount : null}
-                        principalDenom={this.state.userCDP ? this.state.userCDP.cdp.principal.denom : null}
-                        price={this.state.BNB_USD ? this.state.BNB_USD : null}
-                        collateralDeposited={this.state.userCDP ? this.state.userCDP.cdp.collateral.amount : null}
-                        collateralizationRatio={this.getCDPParams(this.props.collateralDenom, 'liquidation_ratio') ?? null}
                         cdpOwner={this.state.userCDP ? this.state.userCDP.cdp.owner : null}
+                        CDPParameters={this.props.collateralParams ?? null}
+                        collateralDeposited={this.state.userCDP ? this.state.userCDP.cdp.collateral.amount : null}
+                        collateralDenom={this.props.collateralDenom ? this.props.collateralDenom : null}
+                        principalDenom={this.state.userCDP ? this.state.userCDP.cdp.principal.denom : null}
+                        principalDeposited={this.state.userCDP ? this.state.userCDP.cdp.principal.amount : null}
+                        collateralizationRatio={this.getCDPParams(this.props.collateralDenom, 'liquidation_ratio') ?? null}
                     />
                     {((this.props.owner == this.props.user) || (this.state.isDepositor)) ? <WithdrawCDPButton
                         // cdpParams={this.state.cdpParams ? this.state.cdpParams.debt_param.debt_floor : null}
@@ -269,7 +268,7 @@ export default class CDP extends Component {
                         accountTokensAvailable={this.state.total ?? null}
                         CDPParameters={this.props.collateralParams ?? null}
                         debtParams={this.props.debtParams ??  null} 
-                        collateral={this.props.collateralDenom ? this.props.collateralDenom : null}
+                        collateralDenom={this.props.collateralDenom ? this.props.collateralDenom : null}
                     />
                 </div>
             </div >

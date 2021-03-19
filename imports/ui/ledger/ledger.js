@@ -300,6 +300,14 @@ export class Ledger {
         return txSkeleton
     }
 
+    // Returns fraction value of a token
+    static coinFraction(coin) {
+        let coinName = coin.toLowerCase()
+        let findCoin = Meteor.settings.public.coins.find(({ denom }) => denom === coinName);
+        let fraction = findCoin ? findCoin.fraction : 0;
+        return fraction;
+    }
+
     // Creates a new delegation tx based on the input parameters
     // the function expects a complete txContext
     static createDelegate(
@@ -476,7 +484,6 @@ export class Ledger {
         collateral,
         debt,
         denom,
-        denomFraction,
         collateralType,
         
     ) {
@@ -484,12 +491,12 @@ export class Ledger {
             type: 'cdp/MsgCreateCDP',
             value: {
                 collateral: {
-                    amount: (parseFloat(collateral) * (10 ** denomFraction)).toString(),
+                    amount: (parseFloat(collateral) * Ledger.coinFraction(denom)).toString(),
                     denom: denom
                 },
                 collateral_type: collateralType,
                 principal: {
-                    amount: (parseFloat(debt) * Meteor.settings.public.coins[5].fraction).toString(),
+                    amount: (parseFloat(debt) * Ledger.coinFraction('usdx')).toString(),
                     denom: 'usdx'
                 },
                 sender: txContext.bech32,
@@ -503,15 +510,17 @@ export class Ledger {
         txContext,
         collateral,
         collateralDenom,
-        cdpOwner
+        cdpOwner,
+        collateralType
     ) {
         const txMsg = {
             type: 'cdp/MsgDeposit',
             value: {
                 collateral: {
-                    amount: parseInt(parseFloat(collateral) * Meteor.settings.public.coins[1].fraction).toString(),
+                    amount: (parseFloat(collateral) * Ledger.coinFraction(collateralDenom)).toString(),
                     denom: collateralDenom
                 },
+                collateral_type: collateralType,
                 depositor: txContext.bech32,
                 owner: cdpOwner
 
