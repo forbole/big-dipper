@@ -534,15 +534,17 @@ export class Ledger {
         txContext,
         collateral,
         collateralDenom,
-        cdpOwner
+        cdpOwner,
+        collateralType
     ) {
         const txMsg = {
             type: 'cdp/MsgWithdraw',
             value: {
                 collateral: {
-                    amount: parseInt(parseFloat(collateral) * Meteor.settings.public.coins[1].fraction).toString(),
+                    amount: parseInt(parseFloat(collateral) * Ledger.coinFraction(collateralDenom)).toString(),
                     denom: collateralDenom
                 },
+                collateral_type: collateralType,
                 depositor: txContext.bech32,
                 owner: cdpOwner
             },

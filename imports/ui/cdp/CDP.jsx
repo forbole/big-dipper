@@ -212,16 +212,16 @@ export default class CDP extends Component {
                         collateralizationRatio={this.getCDPParams(this.props.collateralDenom, 'liquidation_ratio') ?? null}
                     />
                     {((this.props.owner == this.props.user) || (this.state.isDepositor)) ? <WithdrawCDPButton
-                        // cdpParams={this.state.cdpParams ? this.state.cdpParams.debt_param.debt_floor : null}
-                        collateral={this.props.collateralDenom ? this.props.collateralDenom : null}
-                        principalDeposited={this.state.userCDP ? this.state.userCDP.cdp.principal.amount : null}
-                        principalDenom={this.state.userCDP ? this.state.userCDP.cdp.principal.denom : null}
-                        price={this.state.BNB_USD_30 ? this.state.BNB_USD_30 : 0}
-                        collateralDeposited={this.state.userCDP ? this.state.userCDP.cdp.collateral.amount : null}
+                        amountAvailable={this.state.total ? this.findTotalValue(this.state.total, this.props.collateralDenom) : null}
                         cdpOwner={this.state.userCDP ? this.state.userCDP.cdp.owner : null}
-                        depositValue={this.state.depositValue ? this.state.depositValue : null}
+                        CDPParameters={this.props.collateralParams ?? null}
+                        collateralDeposited={this.state.userCDP ? this.state.userCDP.cdp.collateral.amount : null}
+                        collateralDenom={this.props.collateralDenom ? this.props.collateralDenom : null}
+                        principalDenom={this.state.userCDP ? this.state.userCDP.cdp.principal.denom : null}
+                        principalDeposited={this.state.userCDP ? this.state.userCDP.cdp.principal.amount : null}
+                        collateralizationRatio={this.getCDPParams(this.props.collateralDenom, 'liquidation_ratio') ?? null}
+                        collateral={this.props.collateralDenom ? this.props.collateralDenom : null}
                         isDepositor={this.state.isDepositor ? this.state.isDepositor : null}
-                        collateralizationRatio={this.getCDPParams(this.props.collateralDenom, 'liquidation_ratio') ??  null}
                     /> : ''}
                     {(this.props.owner == this.props.user) ? <DrawDebtCDPButton
                         // cdpParams={this.state.cdpParams ? this.state.cdpParams.debt_param.debt_floor : null}
@@ -269,6 +269,7 @@ export default class CDP extends Component {
                         CDPParameters={this.props.collateralParams ?? null}
                         debtParams={this.props.debtParams ??  null} 
                         collateralDenom={this.props.collateralDenom ? this.props.collateralDenom : null}
+                        collateralizationRatio={this.getCDPParams(this.props.collateralDenom, 'liquidation_ratio') ?? null}
                     />
                 </div>
             </div >
