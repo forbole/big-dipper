@@ -220,16 +220,16 @@ export default class CDP extends Component {
                         principalDenom={this.state.userCDP ? this.state.userCDP.cdp.principal.denom : null}
                         principalDeposited={this.state.userCDP ? this.state.userCDP.cdp.principal.amount : null}
                         collateralizationRatio={this.getCDPParams(this.props.collateralDenom, 'liquidation_ratio') ?? null}
-                        collateral={this.props.collateralDenom ? this.props.collateralDenom : null}
                         isDepositor={this.state.isDepositor ? this.state.isDepositor : null}
                     /> : ''}
                     {(this.props.owner == this.props.user) ? <DrawDebtCDPButton
-                        // cdpParams={this.state.cdpParams ? this.state.cdpParams.debt_param.debt_floor : null}
-                        collateral={this.props.collateralDenom ? this.props.collateralDenom : null}
-                        principalDeposited={this.state.userCDP ? this.state.userCDP.cdp.principal.amount : null}
-                        principalDenom={this.state.userCDP ? this.state.userCDP.cdp.principal.denom : null}
-                        price={this.state.BNB_USD ? this.state.BNB_USD : null}
+                        amountAvailable={this.state.total ? this.findTotalValue(this.state.total, this.props.collateralDenom) : null}
+                        cdpOwner={this.state.userCDP ? this.state.userCDP.cdp.owner : null}
+                        CDPParameters={this.props.collateralParams ?? null}
                         collateralDeposited={this.state.userCDP ? this.state.userCDP.cdp.collateral.amount : null}
+                        collateralDenom={this.props.collateralDenom ? this.props.collateralDenom : null}
+                        principalDenom={this.state.userCDP ? this.state.userCDP.cdp.principal.denom : null}
+                        principalDeposited={this.state.userCDP ? this.state.userCDP.cdp.principal.amount : null}
                         collateralizationRatio={this.getCDPParams(this.props.collateralDenom, 'liquidation_ratio') ?? null}
                     /> : ''}
 

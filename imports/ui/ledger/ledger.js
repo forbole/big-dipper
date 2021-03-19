@@ -556,15 +556,15 @@ export class Ledger {
     static drawDebt(
         txContext,
         draw,
-        collateralDenom
+        collateralType
 
     ) {
         const txMsg = {
             type: 'cdp/MsgDrawDebt',
             value: {
-                cdp_denom: collateralDenom,
+                collateral_type: collateralType,
                 principal: {
-                    amount: parseInt(parseFloat(draw) * Meteor.settings.public.coins[5].fraction).toString(),
+                    amount: parseInt(parseFloat(draw) * Ledger.coinFraction('usdx')).toString(),
                     denom: 'usdx'
                 },
                 sender: txContext.bech32,
