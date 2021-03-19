@@ -1,20 +1,31 @@
 # Changelog
 
-* Sif gold color style client/styles
-* server/methods.js fix for missing Sif (monkey-bars) genesis values
-* testnet-settings
+## v0.39.x-2
 
-## [Unreleased]
+* [392] Fixed account page not rendering when the account is empty
+* [413] Fixed validator page error after logging in with Ledger
 
-* Bump Meteor to v1.10.2 and update some dependency pcakges with security issues
+## v0.39.x-1
+
+* [#425] Fixed `commission_rates` might not exists in `validator.commission` object
+
+## v0.39.x
+
+* [#420] Update brand font
+* [#418] Fix avatar at delegation pane
+* [#404] Replace "casted" with "cast"
+* [#421] Fix NaN on account delegation pane
+* [#417] Fix NaN on account total value
+* [#416] Add version number to UI
+* Bump Meteor to v1.11.1 and update some dependency pcakges with security issues
 * Dockerize big-dipper
 * [#306] Display errors with SDK v0.38 format
 * [#301] Using Jazzicon as avatar if no Keybase avatar exists
 * [#297] Prettify unrecognized JSON messages
 * [#294] Fixed cloneDeep typo in Account section for case-sensitve filesystems.
 * [#284] Support Tendermint v0.33 block format
-* [#346] Changed "Governanza" typo to "Gobernanza" in Spanish Translation 
-* [#375] Fixed the Commission Value Calculations that caused Account Page to break 
+* [#346] Changed "Governanza" typo to "Gobernanza" in Spanish Translation
+* [#375] Fixed the Commission Value Calculations that caused Account Page to break
 * [#372] Fixed Redelegation List showing on all account pages  
 
 ## v0.37.x-patch-11
@@ -27,7 +38,7 @@
 * Added Russian transation
 * Fixed Unjail message with a correct account address.
 * [#323] Display rewards amount in activities list.
-* [#327] Fixed error in Proposals section to accept String and Number as a value in Changes table 
+* [#327] Fixed error in Proposals section to accept String and Number as a value in Changes table
 * Hide Italian it-IT Translation
 * Fixed hash overflow on mobile in Transaction Section (Added scroller)
 
@@ -76,6 +87,6 @@
 * [#239] Fixed Coin untilty. Now it shows coins from the chain matching with the `settings.json` if configuration exist. Please note there is a new `coins` object in the [`settings.json`](https://github.com/forbole/big_dipper/blob/master/default_settings.json#L17) to define the display parameters of each coin
 * [#238] Styled the tooltip not to block the validator info
 * [#230] Removed the delegation shares in account's delegation panel
-* [#229] Fixed the account address display 
+* [#229] Fixed the account address display
 * [#228] Added rewards column to account's delegation panel
 * Added memo button in each transaction

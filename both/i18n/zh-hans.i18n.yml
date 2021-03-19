@@ -24,7 +24,6 @@ common:
     retry: '重试'
 navbar:
     siteName: '北斗'
-    version: 'beta'
     validators: '验证人'
     blocks: '区块'
     transactions: '交易'

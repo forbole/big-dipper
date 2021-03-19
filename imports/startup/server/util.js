@@ -71,5 +71,9 @@ Meteor.methods({
             let page = cheerio.load(teamPage.content);
             return page(".kb-main-card img").attr('src');
         }
+    },
+    getVersion: function(){
+        const version = Assets.getText('version');
+        return version ? version : 'beta'
     }
 })
