@@ -24,8 +24,7 @@ common:
     retry: 'Tentar novamente'
     rewards: 'Recompensas'
 navbar:
-    siteName: 'The Big Dipper'
-    version: 'beta'
+    siteName: 'BIG DIPPER'
     validators: 'Validadores'
     blocks: 'Blocos'
     transactions: 'Transações'

@@ -517,7 +517,7 @@ Meteor.methods({
                                 console.log('Checking all validators against db...')
                                 let dbValidators = {}
                                 Validators.find({}, {fields: {consensus_pubkey: 1, status: 1}}
-                                    ).forEach((v) => dbValidators[v.consensus_pubkey] = v.status)
+                                ).forEach((v) => dbValidators[v.consensus_pubkey] = v.status)
                                 Object.keys(validatorSet).forEach((conPubKey) => {
                                     let validatorData = validatorSet[conPubKey];
                                     // Active validators should have been updated in previous steps
@@ -555,7 +555,7 @@ Meteor.methods({
                                     let profileUrl =  getValidatorProfileUrl(validator.description.identity)
                                     if (profileUrl) {
                                         bulkValidators.find({address: validator.address}
-                                            ).upsert().updateOne({$set:{'profile_url':profileUrl}});
+                                        ).upsert().updateOne({$set:{'profile_url':profileUrl}});
                                     }
                                 } catch (e) {
                                     console.log(profileUrl);
