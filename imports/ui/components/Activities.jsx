@@ -98,12 +98,12 @@ export default class Activites extends Component {
         case "cdp/MsgDrawDebt":
             return <div>
                 <div><Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
-                <DrawDebt sender={msg.value.sender} cdp_denom={msg.value.cdp_denom} principal={msg.value.principal} />
+                <DrawDebt sender={msg.value.sender} cdp_denom={msg.value.collateral_type} principal={msg.value.principal} />
             </div>
         case "cdp/MsgRepayDebt":
             return <div>
                 <div><Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
-                <RepayDebt sender={msg.value.sender} cdp_denom={msg.value.cdp_denom} payment={msg.value.payment} />
+                <RepayDebt sender={msg.value.sender} cdp_denom={msg.value.collateral_type} payment={msg.value.payment} />
             </div>
         case "cdp/MsgLiquidate":
             return <div>
