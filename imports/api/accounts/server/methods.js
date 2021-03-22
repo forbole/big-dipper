@@ -246,25 +246,6 @@ Meteor.methods({
         }
     },
 
-    //get BNB 
-    'accounts.getCDP': function (address) {
-
-        let cdp = {}
-
-        // get available atoms
-        let url = LCD + '/cdp/cdps/denom/bnb'
-        try {
-            let result = HTTP.get(url);
-            if (result.statusCode == 200) {
-                cdp = JSON.parse(result.content).result;
-
-            }
-        } catch (e) {
-            console.log(e.response.content)
-        }
-        return cdp
-    },
-
     //get Account CDP 
     'accounts.getAccountCDP': function (address, collateral) {
 
