@@ -27,6 +27,20 @@ export default TransactionsContainer = withTracker((props) => {
     return {
         loading,
         transactionsExist,
+        clpTxs: transactionsExist ? Transactions.find({
+            $or: [
+                {"tx.value.msg.type":"clp/Swap"},
+                {"tx.value.msg.type":"clp/AddLiquidity"},
+                {"tx.value.msg.type":"clp/CreatePool"},
+                {"tx.value.msg.type":"clp/RemoveLiquidity"}
+            ]
+        }).fetch() : {},
+        pegTxs: transactionsExist ? Transactions.find({
+            $or: [
+                {"tx.value.msg.type":"ethbridge/MsgLock"}, // unpeg?
+                {"tx.value.msg.type":"ethbridge/MsgCreateEthBridgeClaim"}, // peg: non-rowan (lock), rowan (burn)
+            ]
+        }).fetch() : {},           
         transferTxs: transactionsExist ? Transactions.find({
             $or: [
                 {"tx.value.msg.type":"cosmos-sdk/MsgSend"},
