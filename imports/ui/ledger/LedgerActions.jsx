@@ -158,13 +158,13 @@ const TypeMeta = {
         button: 'draw debt',
         pathPreFix: 'cdp',
         pathSuffix: 'draw',
-        gasAdjustment: '1.6'
+        gasAdjustment: '1.15'
     },
     [Types.REPAYDEBT]: {
         button: 'repay debt',
         pathPreFix: 'cdp',
         pathSuffix: 'repay',
-        gasAdjustment: '1.6'
+        gasAdjustment: '1.15'
     },
     [Types.CLAIMINCENTIVEREWARDS]: {
         button: 'claim rewards',
@@ -593,13 +593,15 @@ class LedgerButton extends Component {
             txMsg = Ledger.drawDebt(
                 this.getTxContext(),
                 this.state.draw,
-                this.state.collateralType);
+                this.state.collateralType,
+                this.state.principalDenom);
             break;
         case Types.REPAYDEBT:
             txMsg = Ledger.repayDebt(
                 this.getTxContext(),
                 this.state.debt,
-                this.state.collateralDenom);
+                this.state.collateralType,
+                this.state.principalDenom);
             break;
         case Types.CLAIMINCENTIVEREWARDS:
             txMsg = Ledger.claimIncentiveRewards(
@@ -1735,7 +1737,7 @@ class DepositCDPButton extends LedgerButton {
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         return <TabPane tabId="2" className="modal-body">
-            <h3 className="text-center pb-4">Deposit into CDP with <TokenImage collateral={this.props.collateralDenom} /> {collateralStakeName(this.props.collateralDenom)}</h3>
+            <h3 className="text-center pb-4">Deposit into  <TokenImage collateral={this.props.collateralDenom} /> {collateralStakeName(this.props.collateralDenom)} CDP </h3>
             <FormGroup>
                 <Label for="deposit" className="mb-n4"><T>cdp.deposit</T></Label>
                 <FormText className="coin-available mb-n5 float-right">Max {new Coin(this.state.maxAmount, this.props.collateralDenom).convertToString()}</FormText>
@@ -1941,7 +1943,8 @@ class DrawDebtCDPButton extends LedgerButton {
             draw: 0,
             collateralDenom: props.collateralDenom,
             maxAmount: props.amountAvailable,
-            collateralType: ''
+            collateralType: '',
+            principalDenom: props.principalDenom,
 
         }
     }
@@ -2062,26 +2065,32 @@ class RepayDebtCDPButton extends LedgerButton {
             debt: 0,
             collateral: 0,
             collateralDenom: props.collateralDenom,
-            maxAmount: props.amountAvailable,
+            maxAmount: 0,
             ratio: 0,
-            usdxTotalValue: props.principalDeposited / tokenFraction(props.principalDenom),
+            price: 0,
+            principalDenom: props.principalDenom,
         }
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        let maxAmount = nextProps.principalDeposited / Meteor.settings.public.coins[5].fraction;
-        // let ratio = ((parseInt(nextProps.collateralDeposited) / Meteor.settings.public.coins[1].fraction) * parseFloat(nextProps.price)) / ((parseInt(nextProps.principalDeposited) / Meteor.settings.public.coins[5].fraction) - parseFloat(this.state.debt));
-        let usdxTotalValue = nextProps.usdxTotalValue / Meteor.settings.public.coins[5].fraction;
-        let minDebt = nextProps.minDebt / Meteor.settings.public.coins[5].fraction;
+        let maxAmount = nextProps.principalDeposited;
         if (!_.isEqual(maxAmount, prevState.maxAmount)) {
             return {
                 maxAmount: maxAmount,
-                // ratio: ratio,
-                usdxTotalValue: usdxTotalValue,
-                minDebt: minDebt
             }
         }
         else return null;
+    }
+
+    findDenomType = () => {
+        for (let c in this.props.CDPParameters) {
+            if (this.state.collateralDenom === this.props.CDPParameters[c].denom) {
+                this.setState({
+                    collateralType: this.props.CDPParameters[c].type
+                })
+            }
+        }
+
     }
 
     handleChange = (e) => {
@@ -2092,28 +2101,29 @@ class RepayDebtCDPButton extends LedgerButton {
             [name]: value,
         }, () => {
             this.setState({
-                ratio: (((parseInt(this.props.collateralDeposited) / Meteor.settings.public.coins[1].fraction) * parseFloat(this.props.price)) / ((parseInt(this.props.principalDeposited) / Meteor.settings.public.coins[5].fraction) - parseFloat(this.state.debt))),
+                ratio: (((parseInt(this.props.collateralDeposited) / tokenFraction(this.props.collateralDenom)) * parseFloat(this.state.price)) / ((parseInt(this.props.principalDeposited) / tokenFraction(this.props.principalDenom)) - parseFloat(this.state.debt))),
+            
             })
         });
+        this.findDenomType()
     }
 
 
     renderActionTab = () => {
-        console.log(this.props)
         if (!this.state.currentUser) return null;
         return <TabPane tabId="2" className="modal-body">
-            <h3 className="text-center pb-4">Repay <TokenImage collateral={this.props.principalDenom} /> {collateralStakeName(this.props.principalDenom)} Debt into <TokenImage collateral={this.props.collateralDenom} /> {collateralStakeName(this.props.collateralDenom)} CDP </h3>
+            <h3 className="text-center pb-4">Repay <TokenImage collateral={this.props.principalDenom} /> {collateralStakeName(this.props.principalDenom)} into <TokenImage collateral={this.props.collateralDenom} /> {collateralStakeName(this.props.collateralDenom)} CDP </h3>
             <FormGroup>
                 <Label for="repay" className="mb-n4"><T>cdp.repay</T></Label>
                 <FormText className="coin-available mb-n5 float-right">Current Debt is {new Coin(this.state.maxAmount, this.props.principalDenom).convertToString()}</FormText>
                 <InputGroup className="modal-for-ledger py-n5">
                     <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="modal-for-ledger"><img src="/img/usdx-symbol.svg" className="symbol-img" /> </InputGroupText>
+                        <InputGroupText className="modal-for-ledger"><TokenImage collateral={this.props.principalDenom} />  </InputGroupText>
                     </InputGroupAddon>
 
                     <Input placeholder="Repay Amount" name="debt" value={this.state.debt} type="number" onChange={this.handleChange}
                         min={Coin.MinStake} max={this.state.maxAmount}
-                        invalid={this.state.debt != null && !isBetween(this.state.debt, parseInt(this.props.minDebt) / tokenFraction(this.props.principalDenom), this.state.maxAmount)} className="modal-for-ledger " />
+                        invalid={this.state.debt != null && !isBetween(this.state.debt, 0.00000001, this.state.maxAmount)} className="modal-for-ledger " />
                     <InputGroupAddon addonType="append">
                         <InputGroupText className="modal-for-ledger font-weight-bold">{collateralStakeName(this.props.principalDenom)}</InputGroupText>
                     </InputGroupAddon>
@@ -2146,11 +2156,11 @@ class RepayDebtCDPButton extends LedgerButton {
 
     isDataValid = () => {
         if (!this.state.currentUser) return false
-        return isBetween(this.state.debt, parseInt(this.props.minDebt) / tokenFraction(this.props.principalDenom), this.state.maxAmount)
+        return isBetween(this.state.debt, 0.00000001, this.state.maxAmount)
     }
 
     getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>repay </span> <span className='coin'>{new Coin(this.state.debt, this.props.principalDenom).convertToString(8)}</span> to CDP for address <b>{this.state.user} </b>
+        return <span>You are going to <span className='action'>repay </span> <span className='coin'>{new Coin(this.state.debt * tokenFraction(this.props.principalDenom), this.props.principalDenom).convertToString()}</span> into {this.props.collateralDenom} CDP for address <b>{this.state.user} </b>
      with <Fee gas={this.state.gasEstimate} />.</span>
     }
 

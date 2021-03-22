@@ -72,9 +72,9 @@ export default class AccountDetails extends Component {
             cdpFeesUpdated: 0,
             cdpCollateralValue: 0,
             cdpCollateralizationRatio: 0,
-            bnbPrice: 0,
-            usdxPrice: 1,
-            hardPrice: 0,
+            BNB_USD_Price: 0,
+            USDX_Price: 1,
+            HARD_USD_Price: 0,
             totalKavaInUSD: 0,
             totalBNBInUSD: 0,
             totalUSDXInUSD: 0,
@@ -337,9 +337,9 @@ export default class AccountDetails extends Component {
                 }
 
                 let calculateKavaInUSD = this.findValue(this.state.total, coin1) * this.state.price;
-                let calculateBNBInUSD = this.findValue(this.state.total, coin2) * this.state.bnbPrice;
-                let calculateUSDXInUSD = this.findValue(this.state.total, coin3) * this.state.usdxPrice
-                let calculateHARDInUSD = this.findValue(this.state.total, coin4) * this.state.hardPrice
+                let calculateBNBInUSD = this.findValue(this.state.total, coin2) * this.state.BNB_USD_Price;
+                let calculateUSDXInUSD = this.findValue(this.state.total, coin3) * this.state.USDX_Price
+                let calculateHARDInUSD = this.findValue(this.state.total, coin4) * this.state.HARD_USD_Price
                 let calculateTotalValueInUSD = calculateKavaInUSD + calculateBNBInUSD + calculateUSDXInUSD;
 
                 this.setState({
@@ -365,12 +365,27 @@ export default class AccountDetails extends Component {
 
             if (result) {
                 this.setState({
-                    bnbPrice: result
+                    BNB_USD_Price: result
                 })
             }
 
         });
+        Meteor.call('cdp.getCDPPrice', 'bnb:usd:30', (error, result) => {
+            if (error) {
+                console.warn(error);
+                this.setState({
+                    loading: false
+                })
+            }
 
+            if (result) {
+                this.setState({
+                    BNB_USD_30_Price: result
+                })
+            }
+
+        });
+        
 
         Meteor.call('cdp.getCDPPrice', 'hard:usd', (error, result) => {
             if (error) {
@@ -382,7 +397,7 @@ export default class AccountDetails extends Component {
 
             if (result) {
                 this.setState({
-                    hardPrice: result
+                    HARD_USD_Price: result
                 })
             }
 
@@ -469,7 +484,7 @@ export default class AccountDetails extends Component {
                 cdpFeesUpdated: 0,
                 cdpCollateralValue: 0,
                 cdpCollateralizationRatio: 0,
-                bnbPrice: 0,
+                BNB_USD_Price: 0,
                 totalKavaInUSD: 0,
                 totalBNBInUSD: 0,
                 totalUSDXInUSD: 0,
@@ -693,15 +708,15 @@ export default class AccountDetails extends Component {
                                         <Progress bar className="unbonding" value={this.findValue(this.state.unbonding, coin1) * this.state.price / this.state.totalValueInUSD * 100} />
                                         <Progress bar className="rewards" value={this.findValue(this.state.rewards, coin1) * this.state.price / this.state.totalValueInUSD * 100} />
                                         <Progress bar className="commission" value={this.findValue(this.state.commission, coin1) * this.state.price / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="available_2nd" value={this.findValue(this.state.available, coin2) * this.state.bnbPrice / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="rewards_2nd" value={this.findValue(this.state.rewards, coin2) * this.state.bnbPrice / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="commission_2nd" value={this.findValue(this.state.commission, coin2) * this.state.bnbPrice / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="available_3rd" value={this.findValue(this.state.available, coin3) * this.state.usdxPrice / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="rewards_3rd" value={this.findValue(this.state.rewards, coin3) * this.state.usdxPrice / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="commission_3rd" value={this.findValue(this.state.commission, coin3) * this.state.usdxPrice / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="available_4th" value={this.findValue(this.state.available, coin4) * this.state.hardPrice / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="rewards_4th" value={this.findValue(this.state.rewards, coin4) * this.state.hardPrice / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="commission_4th" value={this.findValue(this.state.commission, coin4) * this.state.hardPrice / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="available_2nd" value={this.findValue(this.state.available, coin2) * this.state.BNB_USD_Price / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="rewards_2nd" value={this.findValue(this.state.rewards, coin2) * this.state.BNB_USD_Price / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="commission_2nd" value={this.findValue(this.state.commission, coin2) * this.state.BNB_USD_Price / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="available_3rd" value={this.findValue(this.state.available, coin3) * this.state.USDX_Price / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="rewards_3rd" value={this.findValue(this.state.rewards, coin3) * this.state.USDX_Price / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="commission_3rd" value={this.findValue(this.state.commission, coin3) * this.state.USDX_Price / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="available_4th" value={this.findValue(this.state.available, coin4) * this.state.HARD_USD_Price / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="rewards_4th" value={this.findValue(this.state.rewards, coin4) * this.state.HARD_USD_Price / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="commission_4th" value={this.findValue(this.state.commission, coin4) * this.state.HARD_USD_Price / this.state.totalValueInUSD * 100} />
                                     </Progress>
                                 </Col>
                             </Row>
@@ -808,15 +823,15 @@ export default class AccountDetails extends Component {
                                     </Row>
                                     <Row>
                                         <Col xs={12} className="value-2 text-right">{this.findCoin(this.state.total, coin2)}</Col>
-                                        <Col xs={12} className="dollar-value-2 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin2)) * this.state.bnbPrice).format("$0,0.0000a")} ({numbro(this.state.bnbPrice).format("$0,0.00")}/{Meteor.settings.public.coins[1].displayName})</Col>
+                                        <Col xs={12} className="dollar-value-2 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin2)) * this.state.BNB_USD_Price).format("$0,0.0000a")} ({numbro(this.state.BNB_USD_Price).format("$0,0.00")}/{Meteor.settings.public.coins[1].displayName})</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={12} className="value-3 text-right">{this.findCoin(this.state.total, coin4)}</Col>
-                                        <Col xs={12} className="dollar-value-3 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin4)) * this.state.hardPrice).format("$0,0.0000a")} ({numbro(this.state.hardPrice).format("$0,0.00")}/{Meteor.settings.public.coins[8].displayName})</Col>
+                                        <Col xs={12} className="dollar-value-3 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin4)) * this.state.HARD_USD_Price).format("$0,0.0000a")} ({numbro(this.state.HARD_USD_Price).format("$0,0.00")}/{Meteor.settings.public.coins[8].displayName})</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={12} className="value-4 text-right">{this.findCoin(this.state.total, coin3)}</Col>
-                                        <Col xs={12} className="dollar-value-4 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin3)) * this.state.usdxPrice).format("$0,0.0000a")} ({numbro(this.state.usdxPrice).format("$0,0.00")}/{Meteor.settings.public.coins[5].displayName})</Col>
+                                        <Col xs={12} className="dollar-value-4 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin3)) * this.state.USDX_Price).format("$0,0.0000a")} ({numbro(this.state.USDX_Price).format("$0,0.00")}/{Meteor.settings.public.coins[5].displayName})</Col>
                                     </Row>
                                    
                                 </Col>
@@ -942,6 +957,9 @@ export default class AccountDetails extends Component {
                                             debtParams={this.state.debtParams} 
                                             user={this.state.user}
                                             createCDP={true}
+                                            BNB_USD_Price={this.state.BNB_USD_Price}
+                                            BNB_USD_30_Price={this.state.BNB_USD_30_Price}
+                                            HARD_USD_Price={this.state.HARD_USD_Price}
                                         />
                                     </TabPane>
 
