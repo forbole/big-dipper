@@ -226,15 +226,15 @@ export default class CDP extends Component {
                 <span className="bnb-usd-price">
                     <span className="pr-3">
                         <div ><Badge color="success" className="badge-bnb-usd">BNB : USD</Badge> </div>
-                        <div className="mb-2"> <strong className="text-success">1 : {this.props.BNB_USD_Price ? numbro(this.props.BNB_USD_Price).formatCurrency({ mantissa: 4 }) : 0}</strong></div>
+                        <div className="mb-2 ml-2"> <strong className="text-success">1 : {this.props.BNB_USD_Price ? numbro(this.props.BNB_USD_Price).formatCurrency({ mantissa: 4 }) : 0}</strong></div>
                     </span>
                     <span className="pr-3">
-                        <div ><Badge color="success" className="badge-bnb-usd">BNB : USD : 30</Badge> </div>
-                        <div className="mb-2"> <strong className="text-success">1 : {this.props.BNB_USD_30_Price ? numbro(this.props.BNB_USD_30_Price).formatCurrency({ mantissa: 4 }) : 0}</strong></div>
+                        <div ><Badge color="warning" className="badge-bnb-usd">BNB : USD : 30</Badge> </div>
+                        <div className="mb-2 ml-2"> <strong className="text-warning">1 : {this.props.BNB_USD_30_Price ? numbro(this.props.BNB_USD_30_Price).formatCurrency({ mantissa: 4 }) : 0}</strong></div>
                     </span>
                     <span className="pr-3">
-                        <div ><Badge color="success" className="badge-bnb-usd">HARD : USD </Badge> </div>
-                        <div className="mb-2"> <strong className="text-success">1 : {this.props.HARD_USD_Price ? numbro(this.props.HARD_USD_Price).formatCurrency({ mantissa: 4 }) : 0}</strong></div>
+                        <div ><Badge color="info" className="badge-bnb-usd">HARD : USD </Badge> </div>
+                        <div className="mb-2 ml-3"> <strong className="text-info">1 : {this.props.HARD_USD_Price ? numbro(this.props.HARD_USD_Price).formatCurrency({ mantissa: 4 }) : 0}</strong></div>
                     </span>
                 </span>
                 <div className="bnb-usd-price float-right px-2">
