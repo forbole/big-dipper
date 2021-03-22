@@ -145,6 +145,10 @@ export default class CDP extends Component {
                             <th scope="row" className="w-25 text-muted"><T>cdp.owner</T></th>
                             <td><Account address={this.props.owner} /></td>
                         </tr> : ''}
+                        {(this.state.userCDP.cdp.type) ? <tr>
+                            <th scope="row" className="w-25 text-muted"><T>cdp.collateralType</T></th>
+                            <td><div >{this.state.userCDP.cdp.type}</div></td>
+                        </tr> : ''}
                         {(this.state.userCDP.cdp.collateral) ? <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.collateralDeposited</T></th>
                             <td><div >{new Coin(this.state.userCDP.cdp.collateral.amount, this.state.userCDP.cdp.collateral.denom).toString(6)}</div></td>
