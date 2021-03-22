@@ -204,6 +204,7 @@ cdp:
     bnbusd: 'BNB:USD Market'
     bnbusd30: 'BNB:USD:30 Market'
     rewardFactor: "Reward Factor"
+    interestFactor: "Interest Factor"
 
 proposals:
     notFound: 'No proposal found.'

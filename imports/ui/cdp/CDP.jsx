@@ -195,6 +195,10 @@ export default class CDP extends Component {
                             <td>{this.state.userCDP.collateral_value.map((col, i) => <div key={i}>{new Coin(col.amount, col.denom).toString(6)}</div>)}</td>
                         </tr> : ''}
                         <tr>
+                            <th scope="row" className="w-25 text-muted"><T>cdp.interestFactor</T></th>
+                            <td>{numbro(this.state.userCDP.cdp.interest_factor).format({ mantissa: 4 })}</td>
+                        </tr>
+                        <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.collateralizationRatio</T></th>
                             <td className={this.state.userCDP.collateralization_ratio > 2 ? "text-success" : "text-danger"}>{numbro(this.state.userCDP.collateralization_ratio).format({ mantissa: 4 })}</td>
                         </tr>
