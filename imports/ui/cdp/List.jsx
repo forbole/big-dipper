@@ -14,6 +14,7 @@ const CDPRow = (props) => {
     return <tr>
         <th className="d-none d-sm-table-cell counter ">{(props?.cdpList?.cdp?.id ?? props?.cdpList?.id)}</th>
         <td className="owner"><Link to={"/account/" + props?.cdpList?.cdp?.owner ?? props?.cdpList?.owner}>{props?.cdpList?.cdp?.owner ?? props?.cdpList?.owner}</Link></td>
+        <td className="collateral-deposited-type">{props?.cdpList ? <div>{props?.cdpList?.cdp?.type}</div> : ' '}</td>
         <td className="collateral-deposited bold-text">{props?.cdpList ? <div>{new Coin(props?.cdpList?.cdp?.collateral?.amount ?? props?.cdpList?.collateral.amount, props?.cdpList?.cdp?.collateral?.denom ?? props?.cdpList?.collateral?.denom).toString()}</div> : '0'}</td>
         <td className="principal-drawn bold-text">{props?.cdpList ? <div>{new Coin(props?.cdpList?.cdp?.principal?.amount ?? props?.cdpList?.principal?.amount, props?.cdpList?.cdp?.principal?.denom ?? props?.cdpList?.principal?.denom).toString()}</div> : '0'}</td>
         <td className="value"> {parseFloat(props?.cdpList?.collateralization_ratio) > parseFloat(minCollateralRatio) ? <img src="/img/increase.svg" className="img-fluid collateral-ratio-icon pr-1 pb-1" /> : <img src="/img/reduce.svg" className="img-fluid collateral-ratio-icon pr-1 pb-1" />}{numbro(parseFloat(props?.cdpList?.collateralization_ratio)).format('0.000000')}</td>
@@ -118,6 +119,7 @@ export default class List extends Component {
                             <tr>
                                 <th className="d-none d-sm-table-cell counter "><i className="material-icons">sort</i> <T>cdp.cdpID</T></th>
                                 <th className="d-none d-sm-table-cell owner"><i className="material-icons">account_circle</i> <span className="d-none d-sm-inline"><T>cdp.owner</T></span></th>
+                                <th className="collateral-deposited-type "><i className="material-icons">attach_money</i> <span className="d-none d-sm-inline"><T>cdp.collateralType</T></span></th>
                                 <th className="collateral-deposited "><i className="material-icons">attach_money</i> <span className="d-none d-sm-inline"><T>cdp.collateralDeposited</T></span></th>
                                 <th className="principal-drawn"><i className="material-icons">attach_money</i> <span className="d-none d-sm-inline"><T>cdp.principal</T></span></th>
                                 <th className="value "><i className="material-icons">attach_money</i> <span className="d-none d-sm-inline"><T>cdp.collateralizationRatio</T></span></th>

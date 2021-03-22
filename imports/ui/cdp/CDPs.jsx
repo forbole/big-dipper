@@ -104,12 +104,20 @@ export default class CDPs extends Component{
                 </NavItem>   
                 <NavItem>
                     <NavLink
-                        className={classnames({ active: this.state.cdpActiveTab === 'cdp-busd' })}
-                        onClick={() => { this.toggleTab('cdp-busd', 'busd-a'); }}
+                        className={classnames({ active: this.state.cdpActiveTab === 'cdp-busd-a' })}
+                        onClick={() => { this.toggleTab('cdp-busd-a', 'busd-a'); }}
                     >
-                        <span className="cdp-logo"><img src="/img/BUSD-symbol.svg" className="symbol-img" /> BUSD</span>
+                        <span className="cdp-logo"><img src="/img/BUSD-symbol.svg" className="symbol-img" /> BUSD-A</span>
                     </NavLink>
                 </NavItem>    
+                <NavItem>
+                    <NavLink
+                        className={classnames({ active: this.state.cdpActiveTab === 'cdp-busd-b' })}
+                        onClick={() => { this.toggleTab('cdp-busd-b', 'busd-b'); }}
+                    >
+                        <span className="cdp-logo"><img src="/img/BUSD-symbol.svg" className="symbol-img" /> BUSD-B</span>
+                    </NavLink>
+                </NavItem>
             </Nav>
             <TabContent activeTab={this.state.cdpActiveTab}>
                 <TabPane tabId="cdp-list-tab-pane">
