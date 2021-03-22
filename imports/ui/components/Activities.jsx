@@ -114,19 +114,19 @@ export default class Activites extends Component {
             // HARD
         case "hard/MsgDeposit":
             return <div>
-                <div><Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
+                <div><Account address={msg.value.depositor} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
             </div>
         case "hard/MsgWithdraw":
             return <div>
-                <div><Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
+                <div><Account address={msg.value.depositor} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
             </div>
         case "hard/MsgBorrow":
             return <div>
-                <div><Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
+                <div><Account address={msg.value.borrower} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
             </div>
         case "hard/MsgLiquidate":
             return <div>
-                <div><Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
+                <div><Account address={msg.value.sender || msg.value.depositor} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
             </div>
         case "hard/MsgRepay":
             return <div>
