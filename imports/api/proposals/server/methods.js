@@ -39,7 +39,7 @@ Meteor.methods({
                         catch(e){
                             bulkProposals.find({proposalId: proposal.proposalId}).upsert().updateOne({$set:proposal});
                             proposalIds.push(proposal.proposalId);
-                            console.log(e.response.content);
+                            console.log(e)
                         }
                     }
                 }
@@ -88,7 +88,7 @@ Meteor.methods({
                         Proposals.update({proposalId: proposals[i].proposalId}, {$set:proposal});
                     }
                     catch(e){
-
+                        console.log(e)
                     }
                 }
             }
