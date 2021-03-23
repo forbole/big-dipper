@@ -212,7 +212,7 @@ const Amount = (props) => {
 
 
 const Fee = (props) => {
-    return <span><CoinAmount mint className='gas' amount={Math.ceil(props.gas * Meteor.settings.public.gasPrice)}/> as fee </span>
+    return <span><CoinAmount mint className='gas' amount={Math.ceil(props.gas * Meteor.settings.public.ledger.gasPrice)}/> as fee </span>
 }
 
 const isActiveValidator = (validator) => {
@@ -362,7 +362,7 @@ class LedgerButton extends Component {
                 this.tryConnect();
             this.getBalance();
         }
-        
+
         //calculate price for bnb on first load
         if (this.state.collateralDenom === 'bnb' || (prevState.collateralDenom != this.state.collateralDenom  && this.state.collateralDenom.length > 0)){
             this.getUSDPrice(this.state.collateralDenom);
@@ -646,7 +646,7 @@ class LedgerButton extends Component {
                 if (res === '0') {
                     res = '300000'
                 }
-                Ledger.applyGas(txMsg, res, Meteor.settings.public.gasPrice, Coin.StakingCoin.denom);
+                Ledger.applyGas(txMsg, res, Meteor.settings.public.ledger.gasPrice, Coin.StakingCoin.denom);
                 this.setStateOnSuccess('simulating', {
                     gasEstimate: res,
                     activeTab: '3',
