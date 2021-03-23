@@ -35,7 +35,7 @@ Meteor.methods({
             }
         } catch (e) {
             console.log(url);
-            console.log(e.response.content)
+            console.log(e)
         }
     },
     'accounts.getBalance': function (address) {
@@ -52,7 +52,7 @@ Meteor.methods({
             }
         } catch (e) {
             console.log(url);
-            console.log(e.response.content)
+            console.log(e)
         }
 
         // get delegated amnounts
@@ -64,7 +64,7 @@ Meteor.methods({
             }
         } catch (e) {
             console.log(url);
-            console.log(e.response.content);
+            console.log(e)
         }
         // get unbonding
         url = LCD + '/staking/delegators/' + address + '/unbonding_delegations';
@@ -75,7 +75,7 @@ Meteor.methods({
             }
         } catch (e) {
             console.log(url);
-            console.log(e.response.content);
+            console.log(e)
         }
 
         // get rewards
@@ -91,7 +91,7 @@ Meteor.methods({
             }
         } catch (e) {
             console.log(url);
-            console.log(e.response.content);
+            console.log(e)
         }
 
         // get commission
@@ -118,7 +118,7 @@ Meteor.methods({
 
             } catch (e) {
                 console.log(url);
-                console.log(e.response.content)
+                console.log(e)
             }
         }
 
@@ -157,7 +157,7 @@ Meteor.methods({
             };
         } catch (e) {
             console.log(url);
-            console.log(e.response.content);
+            console.log(e)
         }
 
         url = LCD + `/staking/delegators/${address}/unbonding_delegations/${validator}`;
@@ -172,7 +172,7 @@ Meteor.methods({
             };
         } catch (e) {
             console.log(url);
-            console.log(e.response.content);
+            console.log(e)
         }
 
         return delegations
@@ -196,7 +196,7 @@ Meteor.methods({
             };
         } catch (e) {
             console.log(url);
-            console.log(e.response.content);
+            console.log(e)
         }
     },
     'accounts.getAllUnbondings'(address) {
@@ -210,7 +210,7 @@ Meteor.methods({
             };
         } catch (e) {
             console.log(url);
-            console.log(e.response.content);
+            console.log(e)
         }
     },
     'accounts.getAllRedelegations'(address, validator) {
@@ -242,7 +242,7 @@ Meteor.methods({
             };
         } catch (e) {
             console.log(url);
-            console.log(e.response.content);
+            console.log(e)
         }
     },
 
@@ -259,7 +259,7 @@ Meteor.methods({
                 cdp = JSON.parse(result.content).result;
             }
         } catch (e) {
-            console.log(e.response.content)
+            console.log(e)
         }
         return cdp
     },
@@ -275,7 +275,7 @@ Meteor.methods({
 
             }
         } catch (e) {
-            console.log(e.response.content)
+            console.log(e)
         }
     },
 })

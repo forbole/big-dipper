@@ -30,7 +30,7 @@ Meteor.methods({
         };
         let response = HTTP.post(url, { data });
         if (response.statusCode == 200) {
-            return JSON.parse(response.content);
+            console.log(e)
         }
     },
     'transaction.simulate': function (txMsg, from, path, adjustment = '1.2') {
@@ -65,7 +65,7 @@ Meteor.methods({
             }
         }
         catch (e) {
-            console.log(e.response.content)
+            console.log(e)
         }
     },
 
@@ -82,7 +82,7 @@ Meteor.methods({
             }
         }
         catch (e) {
-            console.log(e.response.content)
+            console.log(e)
         }
     },
 
@@ -98,7 +98,7 @@ Meteor.methods({
         }
         catch (e) {
             console.log(url);
-            console.log(e.response.content);
+            console.log(e)
         }
     },
 
@@ -114,7 +114,7 @@ Meteor.methods({
         }
         catch (e) {
             console.log(url);
-            console.log(e.response.content);
+            console.log(e)
         }
     },
 
@@ -130,7 +130,7 @@ Meteor.methods({
         }
         catch (e) {
             console.log(url);
-            console.log(e.response.content);
+            console.log(e)
         }
     }
 
