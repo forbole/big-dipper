@@ -69,7 +69,7 @@ export default class TransactionTabs extends Component {
                             className={classnames({ active: this.state.activeTab === 'tx-cdp' })}
                             onClick={() => { this.toggle('tx-cdp'); }}
                         >
-                            <T>transactions.cdp</T> ({numbro(this.state.cdpTxs.length).format("0,0")})
+                            <T>transactions.cdp</T> ({numbro(this.state.cdpTxs.length + this.state.incentiveTxs.length).format("0,0")})
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -147,6 +147,15 @@ export default class TransactionTabs extends Component {
                                         blockList
                                     />
                                 }) : ''}
+                                {(this.state.incentiveTxs.length > 0) ? this.state.incentiveTxs.map((tx, i) => {
+                                    return <TransactionRow
+                                        key={i}
+                                        index={i}
+                                        tx={tx}
+                                        blockList
+                                    />
+                                }) : ''}
+                                
                             </Col>
                         </Row>
                     </TabPane>
@@ -154,6 +163,20 @@ export default class TransactionTabs extends Component {
                         <Row>
                             <Col>
                                 {(this.state.swapTxs.length > 0) ? this.state.swapTxs.map((tx, i) => {
+                                    return <TransactionRow
+                                        key={i}
+                                        index={i}
+                                        tx={tx}
+                                        blockList
+                                    />
+                                }) : ''}
+                            </Col>
+                        </Row>
+                    </TabPane>
+                    <TabPane tabId="tx-price">
+                        <Row>
+                            <Col>
+                                {(this.state.priceTxs.length > 0) ? this.state.priceTxs.map((tx, i) => {
                                     return <TransactionRow
                                         key={i}
                                         index={i}
