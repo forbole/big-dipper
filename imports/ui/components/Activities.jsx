@@ -170,6 +170,24 @@ export default class Activites extends Component {
                 </Table>
             </div>
 
+        case "incentive/MsgClaimHardReward":
+            return <div>
+                <Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} />
+                <Table striped className="mt-3">
+                    <tbody>
+                        {events['claim_reward'].map((reward, i) => {
+                            if (i % 2 == 1) {
+                                return <tr key={i}>
+                                    <th>{voca.chain(reward.key).replace("_", " ").titleCase().value()}</th>
+                                    <td>{new Coin(parseInt(reward.value), reward.value.match(/[a-z]*$/)[0]).toString()}</td>
+                                </tr>
+                            }
+                        })}
+                    </tbody>
+                </Table>
+            </div>
+                
+
             // pricefeed
         case "pricefeed/MsgPostPrice":
             return <div>

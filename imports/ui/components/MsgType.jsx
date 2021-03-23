@@ -20,17 +20,17 @@ export const MsgType = (props) => {
 
     // cdp
     case "cdp/MsgDeposit":
-        return <Badge color="success"><T>messageTypes.depositCDP</T></Badge>
+        return <Badge style={{ backgroundColor: "#FF9800" }}><T>messageTypes.depositCDP</T></Badge>
     case "cdp/MsgCreateCDP":
-        return <Badge color="success"><T>messageTypes.createCDP</T></Badge>
+        return <Badge style={{ backgroundColor: "#FF9800" }}><T>messageTypes.createCDP</T></Badge>
     case "cdp/MsgWithdraw":
-        return <Badge color="success"><T>messageTypes.withdrawCDP</T></Badge>  
+        return <Badge style={{ backgroundColor: "#FF9800" }}><T>messageTypes.withdrawCDP</T></Badge>
     case "cdp/MsgDrawDebt":
-        return <Badge color="success"><T>messageTypes.drawDebt</T></Badge>  
+        return <Badge style={{ backgroundColor: "#FF9800" }}><T>messageTypes.drawDebt</T></Badge>
     case "cdp/MsgRepayDebt":
-        return <Badge color="success"><T>messageTypes.repayDebt</T></Badge>  
+        return <Badge style={{ backgroundColor: "#FF9800" }}><T>messageTypes.repayDebt</T></Badge>
     case "cdp/MsgLiquidate":
-        return <Badge color="success"><T>messageTypes.liquidate</T></Badge>  
+        return <Badge style={{ backgroundColor: "#FF9800" }}><T>messageTypes.liquidate</T></Badge>
     
     // hard 
     case "hard/MsgDeposit":
@@ -46,16 +46,20 @@ export const MsgType = (props) => {
    
     // incentive
     case "incentive/MsgClaimUSDXMintingReward":
-        return <Badge color="success"><T>messageTypes.claimIncentive</T></Badge>
+        return <Badge style={{ backgroundColor: "#01b49e" }}><T>messageTypes.claimIncentive</T></Badge>
     case "incentive/MsgClaimHardLiquidityProivderReward":
-        return <Badge color="success"><T>messageTypes.claimIncentive</T></Badge>
+        return <Badge style={{ backgroundColor: "#01b49e" }}><T>messageTypes.claimIncentive</T></Badge>
+    case "incentive/MsgClaimHardReward":
+        return <Badge style={{ backgroundColor: "#01b49e" }}><T>messageTypes.claimIncentive</T></Badge>
+        
     // auctions
     case "auction/MsgPlaceBid":
-        return <Badge color="success"><T>messageTypes.placeBid</T></Badge>
+        return <Badge style={{ backgroundColor: "#cd0c53" }}><T>messageTypes.placeBid</T></Badge>
     
     // pricefeed
     case "pricefeed/MsgPostPrice":
         return <Badge style={{ backgroundColor: "#779DBB"}}><T>messageTypes.postPrice</T></Badge>
+
     // staking
     case "cosmos-sdk/MsgCreateValidator":
         return <Badge color="warning"><T>messageTypes.createValidator</T></Badge>;
@@ -68,7 +72,7 @@ export const MsgType = (props) => {
     case "cosmos-sdk/MsgBeginRedelegate":
         return <Badge color="warning"><T>messageTypes.redelegate</T></Badge>;
         
-        // gov
+    // gov
     case "cosmos-sdk/MsgSubmitProposal":
         return <Badge color="info"><T>messageTypes.submitProposal</T></Badge>
     case "cosmos-sdk/MsgDeposit":
@@ -76,7 +80,7 @@ export const MsgType = (props) => {
     case "cosmos-sdk/MsgVote":
         return <Badge color="info"><T>messageTypes.vote</T></Badge>;
         
-        // distribution
+    // distribution
     case "cosmos-sdk/MsgWithdrawValidatorCommission":
         return <Badge color="secondary"><T>messageTypes.withdrawComission</T></Badge>;
     case "cosmos-sdk/MsgWithdrawDelegationReward":
@@ -84,11 +88,11 @@ export const MsgType = (props) => {
     case "cosmos-sdk/MsgModifyWithdrawAddress":
         return <Badge color="secondary"><T>messageTypes.modifyWithdrawAddress</T></Badge>;
 
-        // slashing
+    // slashing
     case "cosmos-sdk/MsgUnjail":
         return <Badge color="danger"><T>messageTypes.unjail</T></Badge>;
         
-        // ibc
+    // ibc
     case "cosmos-sdk/IBCTransferMsg":
         return <Badge color="dark"><T>messageTypes.IBCTransfer</T></Badge>;
     case "cosmos-sdk/IBCReceiveMsg":
