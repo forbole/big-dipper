@@ -9,28 +9,29 @@ export default TopValidatorsContainer = withTracker(() => {
     let validatorsHandle;
     let loading = true;
 
-    if (Meteor.isClient){
+    if (Meteor.isClient) {
         chainHandle = Meteor.subscribe('chain.status');
         validatorsHandle = Meteor.subscribe('validators.all');
-        loading = (!validatorsHandle.ready() && !chainHandle.ready());    
+        loading = (!validatorsHandle.ready() && !chainHandle.ready());
     }
 
     let status;
     let validators;
     let validatorsExist;
-    
-    if (Meteor.isServer || !loading){
-        status = Chain.findOne({chainId:Meteor.settings.public.chainId});
-        validators = Validators.find({status: 2, jailed:false}).fetch();
 
-        if (Meteor.isServer){
+    if (Meteor.isServer || !loading) {
+        status = Chain.findOne({ chainId: Meteor.settings.public.chainId });
+        validators = Validators.find({ status: 2, jailed: false}).fetch();
+
+
+        if (Meteor.isServer) {
             // loading = false;
             validatorsExist = !!validators && !!status;
         }
-        else{
+        else {
             validatorsExist = !loading && !!validators && !!status;
         }
-        
+
     }
 
     return {
@@ -40,4 +41,3 @@ export default TopValidatorsContainer = withTracker(() => {
         validators: validatorsExist ? validators : {}
     };
 })(TopValidators);
-

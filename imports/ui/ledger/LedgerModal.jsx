@@ -101,7 +101,7 @@ class LedgerModal extends React.Component {
                 <ModalBody>
                     <TabContent activeTab={this.state.activeTab}>
                         <TabPane tabId="1">
-                            <T _purify={false}>accounts.signInWarning</T>
+                            <T _purify={false} network={Meteor.settings.public.ledger.appName} version={Meteor.settings.public.ledger.appVersion}>accounts.signInWarning</T>
                         </TabPane>
                         <TabPane tabId="2">
                             {this.state.currentUser?<span>You are currently logged in as <strong className="text-primary d-block">{this.state.currentUser}.</strong></span>:null}

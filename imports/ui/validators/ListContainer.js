@@ -9,22 +9,22 @@ export default ValidatorListContainer = withTracker((props) => {
     let chainHandle;
     let loading = true;
 
-    if (Meteor.isClient){
+    if (Meteor.isClient) {
         validatorsHandle = Meteor.subscribe('validators.all');
         chainHandle = Meteor.subscribe('chain.status');
-        loading = !validatorsHandle.ready() && !chainHandle.ready();    
+        loading = !validatorsHandle.ready() && !chainHandle.ready();
     }
     let validatorsCond = {};
     // console.log(props);
-    if (props.inactive){
+    if (props.inactive) {
         validatorsCond = {
             $or: [
-                { status: { $lt : 2 } },
+                { status: { $lt: 2 } },
                 { jailed: true }
             ]
         }
     }
-    else{
+    else {
         validatorsCond = {
             jailed: false,
             status: 2
@@ -34,22 +34,22 @@ export default ValidatorListContainer = withTracker((props) => {
     let options = {};
 
     // console.log(validatorsCond);
-    switch(props.priority){
+    switch (props.priority) {
     case 0:
         options = {
-            sort:{
+            sort: {
                 "description.moniker": props.monikerDir,
                 "commission.commission_rates.rate": props.commissionDir,
                 uptime: props.uptimeDir,
-                voting_power: props.votingPowerDir,
+                tokens: props.votingPowerDir,
                 self_delegation: props.selfDelDir
             }
         }
         break;
     case 1:
         options = {
-            sort:{
-                voting_power: props.votingPowerDir,
+            sort: {
+                tokens: props.votingPowerDir,
                 "description.moniker": props.monikerDir,
                 uptime: props.uptimeDir,
                 "commission.commission_rates.rate": props.commissionDir,
@@ -59,10 +59,10 @@ export default ValidatorListContainer = withTracker((props) => {
         break;
     case 2:
         options = {
-            sort:{
+            sort: {
                 uptime: props.uptimeDir,
                 "description.moniker": props.monikerDir,
-                voting_power: props.votingPowerDir,
+                tokens: props.votingPowerDir,
                 "commission.commission_rates.rate": props.commissionDir,
                 self_delegation: props.selfDelDir,
             }
@@ -70,10 +70,10 @@ export default ValidatorListContainer = withTracker((props) => {
         break;
     case 3:
         options = {
-            sort:{
+            sort: {
                 "commission.commission_rates.rate": props.commissionDir,
                 "description.moniker": props.monikerDir,
-                voting_power: props.votingPowerDir,
+                tokens: props.votingPowerDir,
                 uptime: props.uptimeDir,
                 self_delegation: props.selfDelDir
             }
@@ -81,18 +81,18 @@ export default ValidatorListContainer = withTracker((props) => {
         break;
     case 4:
         options = {
-            sort:{
+            sort: {
                 self_delegation: props.selfDelDir,
                 "description.moniker": props.monikerDir,
                 "commission.commission_rates.rate": props.commissionDir,
-                voting_power: props.votingPowerDir,
+                tokens: props.votingPowerDir,
                 uptime: props.uptimeDir,
             }
         }
         break;
     case 5:
         options = {
-            sort:{
+            sort: {
                 status: props.statusDir,
                 jailed: props.jailedDir,
                 "description.moniker": props.monikerDir,
@@ -101,7 +101,7 @@ export default ValidatorListContainer = withTracker((props) => {
         break;
     case 6:
         options = {
-            sort:{
+            sort: {
                 jailed: props.jailedDir,
                 status: props.statusDir,
                 "description.moniker": props.monikerDir,
@@ -114,20 +114,19 @@ export default ValidatorListContainer = withTracker((props) => {
     let chainStatus;
     let validatorsExist;
 
-    if (Meteor.isServer || !loading){
-        validators = Validators.find(validatorsCond,options).fetch();
-        chainStatus = Chain.findOne({chainId:Meteor.settings.public.chainId});
+    if (Meteor.isServer || !loading) {
+        validators = Validators.find(validatorsCond, options).fetch();
+        chainStatus = Chain.findOne({ chainId: Meteor.settings.public.chainId });
 
-        if (Meteor.isServer){
+        if (Meteor.isServer) {
             // loading = false;
             validatorsExist = !!validators && !!chainStatus;
         }
-        else{
+        else {
             validatorsExist = !loading && !!validators && !!chainStatus;
         }
-        
+
     }
-    // console.log(props.state.limit);
     return {
         loading,
         validatorsExist,

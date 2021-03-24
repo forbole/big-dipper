@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import { HTTP } from 'meteor/http';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Validators } from '/imports/api/validators/validators.js';
 import { ValidatorRecords } from '/imports/api/records/records.js';
@@ -11,37 +12,37 @@ export default ValidatorDetailsContainer = withTracker((props) => {
     let validatorsHandle;
     let loading = true;
 
-    if (Meteor.isClient){
+    if (Meteor.isClient) {
         chainHandle = Meteor.subscribe('chain.status');
         validatorsHandle = Meteor.subscribe('validators.all', props.address);
         validatorHandle = Meteor.subscribe('validator.details', props.address);
         loading = !validatorHandle.ready() && !validatorsHandle.ready() && !chainHandle.ready();
     }
 
-    let options = {address:props.address};
+    let options = { address: props.address };
 
     let chainStatus;
     let validatorExist;
     let validator;
     let validatorRecords;
 
-    if (Meteor.isServer || !loading){
-        if (props.address.indexOf(Meteor.settings.public.bech32PrefixValAddr) != -1){
-            options = {operator_address:props.address}
+    if (Meteor.isServer || !loading) {
+        if (props.address.indexOf(Meteor.settings.public.bech32PrefixValAddr) != -1) {
+            options = { operator_address: props.address }
         }
         validator = Validators.findOne(options);
 
-        if (validator){
-            validatorRecords = ValidatorRecords.find({address:validator.address}, {sort:{height:-1}}).fetch();
+        if (validator) {
+            validatorRecords = ValidatorRecords.find({ address: validator.address }, { sort: { height: -1 } }).fetch();
         }
 
-        chainStatus = Chain.findOne({chainId:Meteor.settings.public.chainId});
+        chainStatus = Chain.findOne({ chainId: Meteor.settings.public.chainId });
 
-        if (Meteor.isServer){
+        if (Meteor.isServer) {
             loading = false;
             validatorExist = !!validator && !!validatorRecords && !!chainStatus;
         }
-        else{
+        else {
             validatorExist = !loading && !!validator && !!validatorRecords && !!chainStatus;
         }
 
@@ -53,6 +54,6 @@ export default ValidatorDetailsContainer = withTracker((props) => {
         validatorExist,
         validator: validatorExist ? validator : {},
         records: validatorExist ? validatorRecords : {},
-        chainStatus: validatorExist ? chainStatus : {}
+        chainStatus: validatorExist ? chainStatus : {},
     };
 })(Validator);

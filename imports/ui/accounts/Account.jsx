@@ -57,7 +57,7 @@ export default class AccountDetails extends Component {
             user: localStorage.getItem(CURRENTUSERADDR),
             commission: [defaultCoin],
             denom: Coin.StakingCoin.denom,
-            rewardsForEachDel: [defaultCoin],
+            rewardsForEachDel: {defaultCoin},
             rewardDenomType: [defaultCoin],
             bondActiveTab: 'delegations',
             cdpActiveTab: 'cdp-create',
@@ -81,7 +81,7 @@ export default class AccountDetails extends Component {
             totalValueInUSD: 0,
             redelegations: [],
             hasIncentive: false,
-            operator_address: "",
+            operatorAddress: "",
             hasActiveCDP: false,
             collateralParams: []
         }
@@ -289,7 +289,7 @@ export default class AccountDetails extends Component {
                                 this.setState({
                                     rewardDenomType: numRewards[e][f].denom,
                                     rewardsForEachDel: numRewards,
-                                    operator_address: opAddress,
+                                    operatorAddress: opAddress,
                                 })
                             }
 
@@ -473,7 +473,7 @@ export default class AccountDetails extends Component {
                 price: 0,
                 reward: [],
                 denom: '',
-                rewardsForEachDel: [],
+                rewardsForEachDel: {},
                 rewardDenomType: [],
                 cdpID: 0,
                 debtParams: [],
@@ -491,7 +491,7 @@ export default class AccountDetails extends Component {
                 totalValueInUSD: 0,
                 redelegations: [],
                 hasIncentive: false,
-                operator_address: "",
+                operatorAddress: "",
                 hasActiveCDP: false,
                 collateralParams: []
             }, () => {
@@ -838,8 +838,8 @@ export default class AccountDetails extends Component {
                                 <Col xs={12} className="total d-flex flex-column justify-content-end text-nowrap pt-3">
                                     {this.state.user ? <Row>
                                         <Col xs={12} >
-                                            {this.state.user === this.state.address ? <ClaimSwapButton validator={this.props.validator} address={this.state.operator_address} /> : null}
-                                            {this.state.user === this.state.address ? <WithdrawButton rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address} denom={this.state.denom} /> : null}
+                                            {this.state.user === this.state.address ? <ClaimSwapButton validator={this.props.validator} address={this.state.operatorAddress} /> : null}
+                                            {this.state.user === this.state.address ? <WithdrawButton rewards={this.state.rewards} commission={this.state.commission} address={this.state.operatorAddress} denom={this.state.denom} /> : null}
                                             <TransferButton address={this.state.address} denom={this.state.denom} total={this.state.total} /></Col>
                                     </Row> : null}
                                 </Col>
@@ -934,6 +934,16 @@ export default class AccountDetails extends Component {
                                                     </i></span>
                                             </NavLink>
                                         </NavItem> : null}
+                                    {this.state.hasActiveCDP ?
+                                        <NavItem>
+                                            <NavLink
+                                                className={classnames({ active: this.state.cdpActiveTab === 'cdp-hard' })}
+                                                onClick={() => { this.toggleCDP('cdp-hard'); }}
+                                            >
+                                                <span className="cdp-logo ">
+                                                    Hard </span>
+                                            </NavLink>
+                                        </NavItem> : null}
                                     {this.state.hasIncentive ?
                                         <NavItem>
                                             <NavLink
@@ -1001,7 +1011,22 @@ export default class AccountDetails extends Component {
                                                     </TabContent>) 
                                             }) : null}
                                     </TabPane>
-                                   
+
+                                    <TabPane tabId="cdp-hard">
+                                        <CDP
+                                            owner={this.state.address}
+                                            collateralType={this.state.activeSubtabDenomType}
+                                            collateralDenom={this.state.activeSubtabDenom}
+                                            collateralParams={this.state.collateralParams}
+                                            debtParams={this.state.debtParams}
+                                            user={this.state.user}
+                                            createCDP={true}
+                                            BNB_USD_Price={this.state.BNB_USD_Price}
+                                            BNB_USD_30_Price={this.state.BNB_USD_30_Price}
+                                            HARD_USD_Price={this.state.HARD_USD_Price}
+                                        />
+                                    </TabPane>
+                                    
                                     <TabPane tabId="cdp-incentive">
                                         <Incentive
                                             owner={this.state.address}

@@ -24,6 +24,7 @@ common:
     retry: 'Retry'
     rewards: 'Rewards'
     lastUpdated: 'Last Updated:'
+    bondedTokens: "Bonded Tokens"
 navbar:
     siteName: 'BIG DIPPER'
     version: 'kava-4'

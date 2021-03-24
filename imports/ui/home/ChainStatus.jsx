@@ -1,6 +1,8 @@
 import React from 'react';
-import { Row, Col, Card, CardText,
-    CardTitle, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Spinner } from 'reactstrap';
+import {
+    Row, Col, Card, CardText,
+    CardTitle, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Spinner
+} from 'reactstrap';
 import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
 import TimeStamp from '../components/TimeStamp.jsx';
@@ -25,11 +27,11 @@ export default class ChainStatus extends React.Component {
         }
     }
 
-    componentDidUpdate(prevProps){
-        if (prevProps != this.props){
+    componentDidUpdate(prevProps) {
+        if (prevProps != this.props) {
             this.setState({
-                blockHeight: numbro(this.props.status.latestBlockHeight).format({thousandSeparated: true}),
-                blockTime: <TimeStamp time={this.props.status.latestBlockTime}/>,
+                blockHeight: numbro(this.props.status.latestBlockHeight).format({ thousandSeparated: true }),
+                blockTime: <TimeStamp time={this.props.status.latestBlockTime} />,
                 delegatedTokens: numbro(this.props.status.totalVotingPower).format('0,0.00a'),
                 numValidators: this.props.status.validators,
                 totalNumValidators: this.props.status.totalValidators,
@@ -37,30 +39,30 @@ export default class ChainStatus extends React.Component {
                 totalSupply: this.props.states.totalSupply
             })
 
-            switch (this.state.avgBlockTimeType){
+            switch (this.state.avgBlockTimeType) {
             case "":
                 this.setState({
-                    averageBlockTime: numbro(this.props.status.blockTime/1000).format('0,0.00')
+                    averageBlockTime: numbro(this.props.status.blockTime / 1000).format('0,0.00')
                 })
                 break;
             case "m":
                 this.setState({
-                    averageBlockTime: numbro(this.props.status.lastMinuteBlockTime/1000).format('0,0.00')
+                    averageBlockTime: numbro(this.props.status.lastMinuteBlockTime / 1000).format('0,0.00')
                 })
                 break;
             case "h":
                 this.setState({
-                    averageBlockTime: numbro(this.props.status.lastHourBlockTime/1000).format('0,0.00')
+                    averageBlockTime: numbro(this.props.status.lastHourBlockTime / 1000).format('0,0.00')
                 })
                 break;
             case "d":
                 this.setState({
-                    averageBlockTime: numbro(this.props.status.lastDayBlockTime/1000).format('0,0.00')
+                    averageBlockTime: numbro(this.props.status.lastDayBlockTime / 1000).format('0,0.00')
                 })
                 break;
             }
 
-            switch (this.state.avgVotingPowerType){
+            switch (this.state.avgVotingPowerType) {
             case "":
                 this.setState({
                     votingPower: numbro(this.props.status.activeVotingPower).format('0,0.00a'),
@@ -82,44 +84,44 @@ export default class ChainStatus extends React.Component {
         }
     }
 
-    handleSwitchBlockTime = (type,e) => {
+    handleSwitchBlockTime = (type, e) => {
         e.preventDefault();
-        switch (type){
+        switch (type) {
         case "":
             this.setState({
                 blockTimeText: <T>chainStatus.all</T>,
                 avgBlockTimeType: "",
-                averageBlockTime: numbro(this.props.status.blockTime/1000).format('0,0.00')
+                averageBlockTime: numbro(this.props.status.blockTime / 1000).format('0,0.00')
             })
             break;
         case "m":
             this.setState({
                 blockTimeText: "1m",
                 avgBlockTimeType: "m",
-                averageBlockTime: numbro(this.props.status.lastMinuteBlockTime/1000).format('0,0.00')
+                averageBlockTime: numbro(this.props.status.lastMinuteBlockTime / 1000).format('0,0.00')
             })
             break;
         case "h":
             this.setState({
                 blockTimeText: "1h",
                 avgBlockTimeType: "h",
-                averageBlockTime: numbro(this.props.status.lastHourBlockTime/1000).format('0,0.00')
+                averageBlockTime: numbro(this.props.status.lastHourBlockTime / 1000).format('0,0.00')
             })
             break;
         case "d":
             this.setState({
                 blockTimeText: "1d",
                 avgBlockTimeType: "d",
-                averageBlockTime: numbro(this.props.status.lastDayBlockTime/1000).format('0,0.00')
+                averageBlockTime: numbro(this.props.status.lastDayBlockTime / 1000).format('0,0.00')
             })
             break;
 
         }
     }
 
-    handleSwitchVotingPower = (type,e) => {
+    handleSwitchVotingPower = (type, e) => {
         e.preventDefault();
-        switch (type){
+        switch (type) {
         case "":
             this.setState({
                 votingPowerText: <T>chainStatus.now</T>,
@@ -145,13 +147,13 @@ export default class ChainStatus extends React.Component {
         }
     }
 
-    render(){
-        if (this.props.loading){
+    render() {
+        if (this.props.loading) {
             return <Spinner type="grow" color="primary" />
         }
         else {
-            if (this.props.statusExist && this.props.status.prevotes){
-                return(
+            if (this.props.statusExist && this.props.status.prevotes) {
+                return (
                     <Row className="status text-center">
                         <Col lg={3} md={6}>
                             <Card body>
@@ -170,9 +172,9 @@ export default class ChainStatus extends React.Component {
                                     </DropdownToggle>
                                     <DropdownMenu>
                                         <DropdownItem onClick={(e) => this.handleSwitchBlockTime("", e)}><T>chainStatus.allTime</T></DropdownItem>
-                                        {this.props.status.lastMinuteBlockTime?<DropdownItem onClick={(e) => this.handleSwitchBlockTime("m", e)}><T>chainStatus.lastMinute</T></DropdownItem>:''}
-                                        {this.props.status.lastHourBlockTime?<DropdownItem onClick={(e) => this.handleSwitchBlockTime("h", e)}><T>chainStatus.lastHour</T></DropdownItem>:''}
-                                        {this.props.status.lastDayBlockTime?<DropdownItem onClick={(e) => this.handleSwitchBlockTime("d", e)}><T>chainStatus.lastDay</T> </DropdownItem>:''}
+                                        {this.props.status.lastMinuteBlockTime ? <DropdownItem onClick={(e) => this.handleSwitchBlockTime("m", e)}><T>chainStatus.lastMinute</T></DropdownItem> : ''}
+                                        {this.props.status.lastHourBlockTime ? <DropdownItem onClick={(e) => this.handleSwitchBlockTime("h", e)}><T>chainStatus.lastHour</T></DropdownItem> : ''}
+                                        {this.props.status.lastDayBlockTime ? <DropdownItem onClick={(e) => this.handleSwitchBlockTime("d", e)}><T>chainStatus.lastDay</T> </DropdownItem> : ''}
                                     </DropdownMenu>
                                 </UncontrolledDropdown>
                                 <CardTitle><T>chainStatus.averageBlockTime</T> ({this.state.blockTimeText})</CardTitle>
@@ -195,18 +197,18 @@ export default class ChainStatus extends React.Component {
                                     </DropdownToggle>
                                     <DropdownMenu>
                                         <DropdownItem onClick={(e) => this.handleSwitchVotingPower("", e)}><T>chainStatus.now</T></DropdownItem>
-                                        {this.props.status.lastHourVotingPower?<DropdownItem onClick={(e) => this.handleSwitchVotingPower("h", e)}><T>chainStatus.lastHour</T></DropdownItem>:''}
-                                        {this.props.status.lastDayVotingPower?<DropdownItem onClick={(e) => this.handleSwitchVotingPower("d", e)}><T>chainStatus.lastDay</T></DropdownItem>:''}
+                                        {this.props.status.lastHourVotingPower ? <DropdownItem onClick={(e) => this.handleSwitchVotingPower("h", e)}><T>chainStatus.lastHour</T></DropdownItem> : ''}
+                                        {this.props.status.lastDayVotingPower ? <DropdownItem onClick={(e) => this.handleSwitchVotingPower("d", e)}><T>chainStatus.lastDay</T></DropdownItem> : ''}
                                     </DropdownMenu>
                                 </UncontrolledDropdown>
                                 <CardTitle><T>chainStatus.onlineVotingPower</T> ({this.state.votingPowerText})</CardTitle>
-                                <CardText><span className="display-4 value text-primary">{this.state.votingPower}</span><T percent={numbro(this.state.bondedTokens/this.state.totalSupply).format("0.00%")} totalStakes={numbro(this.state.totalSupply/Coin.StakingCoin.fraction).format("0.00a")} denom={Coin.StakingCoin.displayName} denomPlural={Coin.StakingCoin.displayNamePlural}>chainStatus.fromTotalStakes</T></CardText>
+                                <CardText><span className="display-4 value text-primary">{this.state.votingPower}</span><T percent={numbro(this.state.bondedTokens / this.state.totalSupply).format("0.00%")} totalStakes={numbro(this.state.totalSupply / Coin.StakingCoin.fraction).format("0.00a")} denom={Coin.StakingCoin.displayName} denomPlural={Coin.StakingCoin.displayNamePlural}>chainStatus.fromTotalStakes</T></CardText>
                             </Card>
                         </Col>
                     </Row>
                 )
             }
-            else{
+            else {
                 return <div></div>
             }
         }

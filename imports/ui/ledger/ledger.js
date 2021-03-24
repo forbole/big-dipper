@@ -14,18 +14,17 @@ import CryptoJS from "crypto-js"
 
 // TODO: discuss TIMEOUT value
 const INTERACTION_TIMEOUT = 10000
-const REQUIRED_COSMOS_APP_VERSION = "2.0.0"
-const DEFAULT_DENOM = 'uatom';
-const DEFAULT_GAS = 200000;
-export const DEFAULT_GAS_PRICE = 0.025;
+const REQUIRED_COSMOS_APP_VERSION = Meteor.settings.public.ledger.ledgerAppVersion || "2.16.0";
+const DEFAULT_DENOM = Meteor.settings.public.bondDenom || 'uatom';
+export const DEFAULT_GAS_PRICE = parseFloat(Meteor.settings.public.ledger.gasPrice) || 0.025;
 export const DEFAULT_MEMO = 'Sent via Big Dipper'
 
 /*
 HD wallet derivation path (BIP44)
 DerivationPath{44, 118, account, 0, index}
 */
-
-const HDPATH = [44, 118, 0, 0, 0]
+const COINTYPE = Meteor.settings.public.ledger.coinType || 118;
+const HDPATH = [44, COINTYPE, 0, 0, 0]
 const BECH32PREFIX = Meteor.settings.public.bech32PrefixAccAddr
 
 function bech32ify(address, prefix) {
