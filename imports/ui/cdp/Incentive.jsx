@@ -77,26 +77,26 @@ export default class Incentive extends Component {
                         
                         {(this.props.owner) ? <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.owner</T></th>
-                            <td><Account address={this.state.incentiveUSDX[0].base_claim.owner} /></td>
+                            <td><Account address={this.state.incentiveUSDX[0]?.base_claim?.owner} /></td>
                         </tr> : ''}
                         <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.collateralType</T></th>
-                            <td>{this.state.incentiveUSDX[0].reward_indexes ? this.state.incentiveUSDX[0].reward_indexes[0].collateral_type.toUpperCase() : null}</td>
+                            <td>{this.state.incentiveUSDX[0]?.reward_indexes ? this.state.incentiveUSDX[0]?.reward_indexes[0]?.collateral_type.toUpperCase() : null}</td>
                         </tr>
                         <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.rewardFactor</T></th>
-                            <td>{this.state.incentiveUSDX[0].reward_indexes ? this.state.incentiveUSDX[0].reward_indexes[0].reward_factor : null}</td>
+                            <td>{this.state.incentiveUSDX[0]?.reward_indexes ? this.state.incentiveUSDX[0]?.reward_indexes[0]?.reward_factor : null}</td>
                         </tr>
                         <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.totalReward</T></th>
-                            <td className="vertical-aligned"><div >{this.state.incentiveUSDX[0].base_claim.reward ? new Coin(this.state.incentiveUSDX[0].base_claim.reward.amount, this.state.incentiveUSDX[0].base_claim.reward.denom).toString(6) : 0}</div></td>
+                            <td className="vertical-aligned"><div >{this.state.incentiveUSDX[0]?.base_claim?.reward ? new Coin(this.state.incentiveUSDX[0]?.base_claim?.reward?.amount, this.state.incentiveUSDX[0]?.base_claim?.reward?.denom).toString(6) : 0}</div></td>
 
                         </tr>
                     </tbody>
                 </Table>
                 {this.props.owner === this.props.user ? 
-                    (this.state.incentiveUSDX[0].base_claim.reward.amount > 0) ? <div className="mt-n3"><WithdrawIncentiveRewards rewards={parseFloat(this.state.incentiveUSDX[0].base_claim.reward.amount)}
-                        denom={this.state.incentiveUSDX[0].base_claim.reward.denom} /></div> : null : null}
+                    (this.state.incentiveUSDX[0]?.base_claim?.reward?.amount > 0) ? <div className="mt-n3"><WithdrawIncentiveRewards rewards={parseFloat(this.state.incentiveUSDX[0]?.base_claim?.reward?.amount)}
+                        denom={this.state.incentiveUSDX[0]?.base_claim?.reward?.denom} /></div> : null : null}
             </div> : null}
             
              {this.state.incentiveHARD ? <div className="cdp-content">
@@ -105,12 +105,12 @@ export default class Incentive extends Component {
 
                          {(this.props.owner) ? <tr>
                              <th scope="row" className="w-25 text-muted"><T>cdp.owner</T></th>
-                             <td><Account address={this.state.incentiveHARD[0].base_claim.owner} /></td>
+                             <td><Account address={this.state.incentiveHARD[0]?.base_claim?.owner} /></td>
                          </tr> : ''}
                          <tr>
                              <th scope="row" className="w-25 text-muted"><T>cdp.totalReward</T></th>
                           
-                             <td>{this.state.incentiveHARD[0].base_claim.reward.length > 1 ? this.state.incentiveHARD[0].base_claim.reward.map((col, i) => <div key={i}>{new Coin(col.amount, col.denom).toString(6)}</div>) : <div>{new Coin(this.state.incentiveHARD[0].base_claim.reward[0].amount, this.state.incentiveHARD[0].base_claim.reward[0].denom).toString(4)}</div>}</td>
+                             <td>{this.state.incentiveHARD[0]?.base_claim?.reward.length > 1 ? this.state.incentiveHARD[0]?.base_claim?.reward.map((col, i) => <div key={i}>{new Coin(col?.amount, col?.denom).toString(6)}</div>) : <div>{new Coin(this.state.incentiveHARD[0]?.base_claim?.reward[0]?.amount, this.state.incentiveHARD[0]?.base_claim?.reward[0]?.denom).toString(4)}</div>}</td>
 
                             
 
@@ -118,7 +118,7 @@ export default class Incentive extends Component {
                      </tbody>
                  </Table>
                  {this.props.owner === this.props.user ?
-                     (this.state.incentiveHARD[0].base_claim.reward) ? <div className="mt-n3"><WithdrawIncentiveRewards rewards={null}
+                     (this.state.incentiveHARD[0]?.base_claim?.reward) ? <div className="mt-n3"><WithdrawIncentiveRewards rewards={null}
                          denom={null} /></div> : null : null}
              </div> : null}
             </>
