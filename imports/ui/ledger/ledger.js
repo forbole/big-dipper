@@ -641,9 +641,35 @@ export class Ledger {
         return Ledger.createSkeleton(txContext, [txMsg]);
     }
 
+    static depositHARD(txContext, depositAmount, depositDenom) {
+        const txMsg = {
+            type: 'hard/MsgDeposit',
+            value: {
+                amount: {
+                    amount: parseInt(parseFloat(depositAmount) * Ledger.coinFraction(depositDenom)).toString(),
+                    denom: depositDenom
+                },
+                depositor: txContext.bech32
+            },
+        };
+        return Ledger.createSkeleton(txContext, [txMsg]);
+    }
+
+    static withdrawHARD(txContext, withdrawAmount, withdrawDenom) {
+        const txMsg = {
+            type: 'hard/MsgWithdraw',
+            value: {
+                amount: {
+                    amount: parseInt(parseFloat(withdrawAmount) * Ledger.coinFraction(withdrawDenom)).toString(),
+                    denom: withdrawDenom
+                },
+                depositor: txContext.bech32
+            },
+        };
+        return Ledger.createSkeleton(txContext, [txMsg]);
+    }
 
 }
-
 
 
 function versionString({ major, minor, patch }) {

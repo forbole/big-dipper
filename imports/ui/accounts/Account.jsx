@@ -19,6 +19,7 @@ import ChainStates from '../components/ChainStatesContainer.js'
 import { Helmet } from 'react-helmet';
 import { WithdrawButton, TransferButton, ClaimSwapButton } from '../ledger/LedgerActions.jsx';
 import CDP from '../cdp/CDP.jsx';
+import HARD from '../hard/HARD.jsx';
 import SentryBoundary from '../components/SentryBoundary.jsx';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js';
@@ -1013,16 +1014,12 @@ export default class AccountDetails extends Component {
                                     </TabPane>
 
                                     <TabPane tabId="cdp-hard">
-                                        <CDP
+                                        <HARD
                                             owner={this.state.address}
                                             collateralType={this.state.activeSubtabDenomType}
                                             collateralDenom={this.state.activeSubtabDenom}
                                             collateralParams={this.state.collateralParams}
-                                            debtParams={this.state.debtParams}
                                             user={this.state.user}
-                                            createCDP={true}
-                                            BNB_USD_Price={this.state.BNB_USD_Price}
-                                            BNB_USD_30_Price={this.state.BNB_USD_30_Price}
                                             HARD_USD_Price={this.state.HARD_USD_Price}
                                         />
                                     </TabPane>
