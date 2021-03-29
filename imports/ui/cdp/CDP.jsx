@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Badge, ToastHeader, ToastBody, Toast } from 'reactstrap';
+import { Table, Badge, ToastHeader, ToastBody, Toast, Spinner } from 'reactstrap';
 import moment from 'moment';
 import numbro from 'numbro';
 import Account from '../components/Account.jsx';
@@ -34,7 +34,8 @@ export default class CDP extends Component {
             depositValue: 0,
             BNB_USD: 0,
             BNB_USD_30: 0,
-            denomType: ''
+            denomType: '',
+            loading: false
         }
 
     }
@@ -44,7 +45,14 @@ export default class CDP extends Component {
             Meteor.call('accounts.getBalance', this.props.user, (error, result) => {
                 if (!error) {
                     this.setState({
+                        loading: false,
                         total: result.available
+                    })
+                }
+                else{
+                    this.setState({
+                        loading: true,
+                        total: undefined
                     })
                 }
             })
@@ -56,14 +64,20 @@ export default class CDP extends Component {
             if (error) {
                 console.warn(error);
                 this.setState({
-                    loading: false,
+                    loading: true,
                     userCDP: null
                 })
             }
-
             if (result) {
                 this.setState({
+                    loading: false,
                     userCDP: result
+                })
+            }
+            if (result === null) {
+                this.setState({
+                    loading: false,
+                    userCDP: undefined
                 })
             }
         })
@@ -94,23 +108,26 @@ export default class CDP extends Component {
         this.updateDeposits();
         this.getUserBalances();
 
-        timer = Meteor.setInterval(() => {
+        // timer = Meteor.setInterval(() => {
+        //     this.updateCDP();
+        //     this.updateDeposits();
+        //     this.getUserBalances();
+        // }, 9000)
+
+    }
+
+    // componentWillUnmount() {
+    //     Meteor.clearInterval(timer);
+    // }
+
+    componentDidUpdate(prevProps) {
+        if (!_.isEqual(prevProps.collateralType, this.props.collateralType)){
+            this.setState({
+                loading: true,
+            })
             this.updateCDP();
             this.updateDeposits();
             this.getUserBalances();
-        }, 9000)
-
-    }
-
-    componentWillUnmount() {
-        Meteor.clearInterval(timer);
-    }
-
-    componentDidUpdate(prevProps) {
-        if (!_.isEqual(prevProps.total, this.props.total)) {
-            this.setState({
-                total: this.props.total,
-            })
         }
     }
 
@@ -133,7 +150,12 @@ export default class CDP extends Component {
 
 
     render() {
-        if (this.state.userCDP && this.state.userCDP.cdp && !this.props.createCDP) {
+        if(this.state.loading){
+            return <div>
+                <Spinner type="grow" color="primary" />
+            </div>
+        }
+        else if (this.state.userCDP && this.state.userCDP.cdp && !this.props.createCDP) {
             return <div className="cdp-content">
                 <Table responsive>
                     <tbody>

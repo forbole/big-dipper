@@ -628,7 +628,7 @@ export default class AccountDetails extends Component {
                     Meteor.call('accounts.getAccountCDP', this.state.address, result.collateral_params[c].type, (err, res) => {
                         if (err) {
                             this.setState({
-                                loading: false,
+                                loading: true,
                                 hasActiveCDP: false
                             })
                         }
