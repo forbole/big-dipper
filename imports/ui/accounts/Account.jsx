@@ -942,7 +942,7 @@ export default class AccountDetails extends Component {
                                                 onClick={() => { this.toggleCDP('cdp-hard'); }}
                                             >
                                                 <span className="cdp-logo ">
-                                                    Hard </span>
+                                                    HARD </span>
                                             </NavLink>
                                         </NavItem> : null}
                                     {this.state.hasIncentive ?
@@ -1018,7 +1018,6 @@ export default class AccountDetails extends Component {
                                             owner={this.state.address}
                                             collateralType={this.state.activeSubtabDenomType}
                                             collateralDenom={this.state.activeSubtabDenom}
-                                            collateralParams={this.state.collateralParams}
                                             user={this.state.user}
                                             HARD_USD_Price={this.state.HARD_USD_Price}
                                         />

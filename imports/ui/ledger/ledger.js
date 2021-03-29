@@ -501,6 +501,7 @@ export class Ledger {
                 sender: txContext.bech32,
             },
         };
+        console.log(txMsg);
         return Ledger.createSkeleton(txContext, [txMsg]);
     }
 
@@ -652,6 +653,7 @@ export class Ledger {
                 depositor: txContext.bech32
             },
         };
+        console.log(txMsg);
         return Ledger.createSkeleton(txContext, [txMsg]);
     }
 
@@ -669,6 +671,45 @@ export class Ledger {
         return Ledger.createSkeleton(txContext, [txMsg]);
     }
 
+    static borrowHARD(txContext, borrowAmount, borrowDenom) {
+        const txMsg = {
+            type: 'hard/MsgBorrow',
+            value: {
+                amount: {
+                    amount: parseInt(parseFloat(borrowAmount) * Ledger.coinFraction(borrowDenom)).toString(),
+                    denom: borrowDenom
+                },
+                borrower: txContext.bech32,
+            },
+        };
+        return Ledger.createSkeleton(txContext, [txMsg]);
+    }
+
+    static repayHARD(txContext, ownerAddress, repayAmount, repayDenom) {
+        const txMsg = {
+            type: 'hard/MsgRepay',
+            value: {
+                amount: {
+                    amount: parseInt(parseFloat(repayAmount) * Ledger.coinFraction(repayDenom)).toString(),
+                    denom: repayDenom
+                },
+                sender: txContext.bech32,
+                owner: ownerAddress,
+            },
+        };
+        return Ledger.createSkeleton(txContext, [txMsg]);
+    }
+
+    static liquidateHARD(txContext, borrowerAddress) {
+        const txMsg = {
+            type: 'hard/MsgLiquidate',
+            value: {
+                keeper: txContext.bech32,
+                borrower: borrowerAddress,
+            },
+        };
+        return Ledger.createSkeleton(txContext, [txMsg]);
+    }
 }
 
 

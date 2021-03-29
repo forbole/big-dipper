@@ -345,3 +345,7 @@ messageTypes:
     borrowHARD: 'HARD Borrow'
     liquidateHARD: 'HARD Liquidate'
     repayHARD: 'HARD Repay'
+hard:
+    deposit: 'Deposit'
+    repay: "Repay"
+    memo: 'Memo'

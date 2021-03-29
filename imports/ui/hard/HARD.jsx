@@ -6,7 +6,7 @@ import Account from '../components/Account.jsx';
 import Coin from '/both/utils/coins.js'
 import i18n from 'meteor/universe:i18n';
 import PropTypes from 'prop-types';
-import { HARDDepositButton, HARDWithdrawButton } from '../ledger/LedgerActions.jsx';
+import { HARDDepositButton, HARDWithdrawButton, HARDBorrowButton, HARDRepayButton, HARDLiquidateButton } from '../ledger/LedgerActions.jsx';
 import _ from 'lodash';
 
 const T = i18n.createComponent();
@@ -28,14 +28,14 @@ export default class HARD extends Component {
             collateralDeposited: 0,
             principalDeposited: 0,
             total: props.total,
-            deposits: [],
             isDepositor: false,
             cdpOwner: '',
             depositValue: 0,
             BNB_USD: 0,
             BNB_USD_30: 0,
             denomType: '',
-            HARDParameters: undefined
+            HARDParameters: undefined,
+            deposits: undefined,
         }
 
     }
@@ -76,13 +76,13 @@ export default class HARD extends Component {
                 console.warn(error);
                 this.setState({
                     loading: false,
-                    HARDParameters: null
+                    deposits: undefined
                 })
             }
 
             if (result) {
                 this.setState({
-                    HARDParameters: result
+                    deposits: result
                 })
             }
         })
@@ -119,17 +119,6 @@ export default class HARD extends Component {
         return totalValue
     }
 
-    getCDPParams(denomType, valueToGet) {
-        let value = (this.props.collateralParams).find(({ denom }) => denom === denomType);
-        let totalValue = value ? value[valueToGet] : null;
-        if(totalValue >= 0){
-            return parseFloat(totalValue)
-        }
-        else{
-            return totalValue
-        }
-    }
-
 
     render() {
         return <div className="hard-content">
@@ -153,8 +142,38 @@ export default class HARD extends Component {
                     collateralDenom={this.props.collateralDenom ? this.props.collateralDenom : null}
                     principalDenom={this.state.userCDP ? this.state.userCDP.cdp.principal.denom : null}
                     principalDeposited={this.state.userCDP ? this.state.userCDP.cdp.principal.amount : null}
-                    collateralizationRatio={this.getCDPParams(this.props.collateralDenom, 'liquidation_ratio') ?? null}
                     isDepositor={this.state.isDepositor ? this.state.isDepositor : null}
+                /> : ''}
+                {(this.props.owner == this.props.user) ? <HARDBorrowButton
+                    amountAvailable={this.state.total ? this.findTotalValue(this.state.total, this.props.collateralDenom) : null}
+                    CDPParameters={this.props.collateralParams ?? null}
+                    collateralDeposited={this.state.userCDP ? this.state.userCDP.cdp.collateral.amount : null}
+                    collateralDenom={this.props.collateralDenom ? this.props.collateralDenom : null}
+                    principalDenom={this.state.userCDP ? this.state.userCDP.cdp.principal.denom : null}
+                    principalDeposited={this.state.userCDP ? this.state.userCDP.cdp.principal.amount : null}
+                /> : ''}
+
+                {(this.props.owner == this.props.user) ? <HARDRepayButton
+                    amountAvailable={this.state.total ? this.findTotalValue(this.state.total, this.props.collateralDenom) : null}
+                    CDPParameters={this.props.collateralParams ?? null}
+                    collateralDeposited={this.state.userCDP ? this.state.userCDP.cdp.collateral.amount : null}
+                    collateralDenom={this.props.collateralDenom ? this.props.collateralDenom : null}
+                    principalDenom={this.state.userCDP ? this.state.userCDP.cdp.principal.denom : null}
+                    principalDeposited={this.state.userCDP ? this.state.userCDP.cdp.principal.amount : null}
+                    disabled={false}
+                    hard="HARD"
+                /> : ''}
+
+                {(this.props.owner == this.props.user) ? <HARDLiquidateButton
+                    amountAvailable={this.state.total ? this.findTotalValue(this.state.total, this.props.collateralDenom) : null}
+                    CDPParameters={this.props.collateralParams ?? null}
+                    collateralDeposited={this.state.userCDP ? this.state.userCDP.cdp.collateral.amount : null}
+                    collateralDenom={this.props.collateralDenom ? this.props.collateralDenom : null}
+                    principalDenom={this.state.userCDP ? this.state.userCDP.cdp.principal.denom : null}
+                    principalDeposited={this.state.userCDP ? this.state.userCDP.cdp.principal.amount : null}
+                    disabled={false}
+                    borrower="kava127lary0erprnrv9vn3wykyt9pjm5a5tdwdnm3h"
+                    hard="HARD"
                 /> : ''}
             </div>
 
@@ -171,6 +190,5 @@ HARD.propTypes = {
     owner: PropTypes.string.isRequired,
     collateralType: PropTypes.string.isRequired,
     collateralDenom: PropTypes.string.isRequired,
-    user: PropTypes.string.isRequired,
-    HARD_USD_Price: PropTypes.string.isRequired
+    user: PropTypes.string.isRequired
 }
