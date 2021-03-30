@@ -2256,16 +2256,24 @@ class WithdrawIncentiveRewards extends LedgerButton {
         this.state = {
             ...this.state,
             denom: props.denom,
-            incentiveRewards: 0,
         }
     }
 
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         return <TabPane tabId="2" className="modal-body">
-            <h3 className="text-center pt-3">Claim all <img src="/img/kava-symbol.png" className="symbol-img mb-1" /> KAVA incentive </h3>
-            <h3 className="text-center pb-4"> rewards from the CDP</h3>
-            {this.props.rewards ? <div className="text-center mb-n3">Your current rewards amount is: <CoinAmount amount={this.props.rewards} /></div> : ''}
+            <h3 className="text-center pt-3">Claim  <TokenImage collateral={this.props.incentiveType} /> {collateralStakeName(this.props.incentiveType)} Incentive </h3>
+            {this.props.rewards.length > 0 || Object.keys(this.props.rewards).length > 0? 
+                this.props.rewards.length > 1 ? <div className="text-center mb-n3">Your current rewards amount is: {this.props.rewards.map((item) => {
+                    return (
+                        <div className="text-center">
+                            <span className='coin'>{new Coin(item.amount, item.denom).convertToString()}</span>
+                        </div>
+                    )
+                })}
+                </div> : <div className="text-center mb-n3">Your current rewards amount is:  <span className='coin'>{new Coin(parseFloat(this.props.rewards.amount), this.props.rewards.denom).convertToString()}</span></div>
+                : null }
+
         </TabPane>
     }
 
@@ -2275,7 +2283,7 @@ class WithdrawIncentiveRewards extends LedgerButton {
 
 
     getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>claim</span> all <img src="/img/kava-symbol.png" className="symbol-img mb-1" /> KAVA incentive rewards from CDP for address <b>{this.state.user} </b>
+        return <span>You are going to <span className='action'>claim</span>  <TokenImage collateral={this.props.incentiveType} /> {collateralStakeName(this.props.incentiveType)} incentive rewards for address <b>{this.state.user} </b>
      with <Fee gas={this.state.gasEstimate} />.</span>
     }
 

@@ -65,6 +65,7 @@ export default class AccountDetails extends Component {
             activeSubtab: 'cdp-bnb-a',
             activeSubtabDenomType: 'bnb-a',
             activeSubtabDenom: 'bnb',
+            activeIncentiveSubtab: 'incentive-hard',
             cdpID: 0,
             cdpOwner: '',
             cdpCollateral: [],
@@ -609,6 +610,14 @@ export default class AccountDetails extends Component {
         }
     }
 
+    toggleIncentiveSutab = (tab) => {
+        if (this.state.activeIncentiveSubtab !== tab) {
+            this.setState({
+                activeIncentiveSubtab: tab
+            });
+        }
+    }
+
     checkIfCDPIsActive() {
         Meteor.call('cdp.getCDPParams', (error, result) => {
             if (error) {
@@ -1018,13 +1027,47 @@ export default class AccountDetails extends Component {
                                             HARD_USD_Price={this.state.HARD_USD_Price}
                                         />
                                     </TabPane>
-                                    
+
                                     <TabPane tabId="cdp-incentive">
-                                        <Incentive
-                                            owner={this.state.address}
-                                            user={this.state.user}
-                                        />
+                                        <Row className="incentive-list">
+                                            {this.state.hasIncentive ?
+                                                  <>
+                                                        <Nav tabs className="mb-2">
+                                                            <NavItem style={{ listStyle: "none", display: "flex", flexWrap: "wrap" }} >
+                                                                <NavLink
+                                                                    className={classnames({ active: this.state.activeIncentiveSubtab === `incentive-hard` })}
+                                                                    onClick={() => { this.toggleIncentiveSutab(`incentive-hard`); }}
+                                                                >
+                                                                    <span className="cdp-logo denom"><img src="/img/HARD-symbol.svg" className="cdp-logo-image"/>HARD </span>
+                                                                </NavLink>
+                                                            </NavItem>
+                                                        </Nav>
+                                                        <Nav tabs className="mb-2">
+
+                                                            <NavItem style={{ listStyle: "none", display: "flex", flexWrap: "wrap" }} >
+                                                                <NavLink
+                                                                    className={classnames({ active: this.state.activeIncentiveSubtab === `incentive-usdx-minting` })}
+                                                                    onClick={() => { this.toggleIncentiveSutab(`incentive-usdx-minting`); }}
+                                                                >
+                                                                    <span className="cdp-logo denom"><img src="/img/USDX-symbol.svg" className="cdp-logo-image"/>  USDX Minting </span>
+                                                                </NavLink>
+                                                            </NavItem>
+                                                        </Nav>
+                                                        </>
+                                                : null}
+                                        </Row>
+
+                                        <TabContent activeTab={this.state.activeIncentiveSubtab} >
+                                            <TabPane tabId={`${this.state.activeIncentiveSubtab}`}>
+                                                <Incentive
+                                                    owner={this.state.address}
+                                                    user={this.state.user}
+                                                    incentiveType={this.state.activeIncentiveSubtab}
+                                                />
+                                            </TabPane>
+                                        </TabContent>
                                     </TabPane>
+                                    
                                 </TabContent>
                             </CardBody>
                         </Card>

@@ -205,7 +205,6 @@ cdp:
     totalReward: 'Total Rewards Value'
     bnbusd: 'BNB:USD Market'
     bnbusd30: 'BNB:USD:30 Market'
-    rewardFactor: "Reward Factor"
     interestFactor: "Interest Factor"
 
 proposals:
@@ -350,3 +349,8 @@ hard:
     deposit: 'Deposit'
     repay: "Repay"
     memo: 'Memo'
+incentive:
+    rewards: 'Rewards'
+    owner: 'Owner'
+    collateralType: 'Collateral Type'
+    rewardFactor: 'Reward Factor'
