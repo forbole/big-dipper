@@ -55,4 +55,38 @@ Meteor.methods({
         // addressBuffer.copy(buffer);
         return bech32.encode(prefix, bech32.toWords(addressBuffer));
     },
+    pubkeyToBech32New: function (pubkey, prefix) {
+        let buffer;
+
+        try {
+            if (pubkey.type.indexOf("Ed25519") > 0) {
+                // '1624DE6420' is ed25519 pubkey prefix
+                let pubkeyAminoPrefix = Buffer.from('1624DE6420', 'hex');
+                buffer = Buffer.alloc(37);
+
+                pubkeyAminoPrefix.copy(buffer, 0)
+                Buffer.from(pubkey.value, 'base64').copy(buffer, pubkeyAminoPrefix.length)
+            }
+            else if (pubkey.type.indexOf("Secp256k1") > 0) {
+                // 'EB5AE98721' is secp256k1 pubkey prefix
+                let pubkeyAminoPrefix = Buffer.from('EB5AE98721', 'hex');
+                buffer = Buffer.alloc(38);
+
+                pubkeyAminoPrefix.copy(buffer, 0)
+                Buffer.from(pubkey.value, 'base64').copy(buffer, pubkeyAminoPrefix.length)
+            }
+            else {
+                console.log("Pubkey type not supported.");
+                return false;
+            }
+
+            return bech32.encode(prefix, bech32.toWords(buffer))
+        }
+        catch (e) {
+            console.log("Error converting from pubkey to bech32: %o\n %o", pubkey, e);
+            return false
+        }
+    },
+    
+    
 })

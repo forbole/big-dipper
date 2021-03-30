@@ -83,8 +83,6 @@ getValidatorUptime = async (validatorSet) => {
             if (signingInfo) {
                 for (let c = 0; c < signingInfo.length; c++) {
                     if (signingInfo[c].address === validatorSet[key].bech32ValConsAddress) {
-                        console.llg("TEN SAM ADRES" )
-                        console.log(signingInfo[c].address)
                         let valData = validatorSet[key]
                         valData.tombstoned = signingInfo[c].tombstoned;
                         valData.jailed_until = signingInfo[c].jailed_until;
@@ -350,7 +348,29 @@ Meteor.methods({
                         console.log("Error when getting validatorsets at height %o: %o", height, e)
                     }
 
+                    // Save validator address
+                    let validatorInfo = []
+                    try {
+                        let result;
 
+                        do {
+                            let url = `${RPC}/validators?height=${height}&page=1&per_page=100`;
+                            let response = HTTP.get(url);
+                            result = JSON.parse(response.content).result;
+                            validatorInfo = result.validators;
+                        }
+                        while (validatorInfo.length < parseInt(result.total))
+
+                    }
+                    catch (e) {
+                        console.log("Error when getting validatorsets at height %o: %o", height, e)
+                    }
+              
+                    for(let v in validatorInfo){
+                        validatorInfo[v].consensus_pubkey = Meteor.call('pubkeyToBech32New', validatorInfo[v].pub_key, Meteor.settings.public.bech32PrefixConsPub)
+                    }
+
+                    
                     ValidatorSets.insert({
                         block_height: height,
                         validators: validators
@@ -447,6 +467,18 @@ Meteor.methods({
                         valData.tokens = parseInt(valData.tokens);
                         valData.unbonding_height = parseInt(valData.unbonding_height)
 
+                        for (let c in validatorInfo){
+                            if (validatorInfo[c].consensus_pubkey === validatorSet[v].consensus_pubkey){
+                                valData.address = validatorInfo[c].address
+                            }
+                        }
+
+                        for(let d in validators){
+                            if (validators[d].pub_key === valData.consensus_pubkey){
+                                valData.bech32ValConsAddress = validators[d].address
+                            }
+                        }
+
                         let valExist = Validators.findOne({ "consensus_pubkey": v });
 
                         analyticsData.voting_power += valData.voting_power
@@ -456,11 +488,9 @@ Meteor.methods({
                             // get the validator hex address and other bech32 addresses.
                             valData.delegator_address = Meteor.call('getDelegator', valData.operator_address);
 
-                            console.log("get bech32 consensus pubkey");
-                            console.log(valData.consensus_pubkey)
                             valData.bech32ConsensusPubKey = Meteor.call('pubkeyToBech32', (valData.consensus_pubkey).toString(), Meteor.settings.public.bech32PrefixConsPub);
-                            valData.address = Meteor.call('getAddressFromPubkey', valData.consensus_pubkey);
-                            valData.bech32ValConsAddress = Meteor.call('hexToBech32', valData.address, Meteor.settings.public.bech32PrefixConsAddr);
+                            // let valAddress = Meteor.call('getAddressFromPubkey', valData.consensus_pubkey); 
+                            // valData.bech32ValConsAddress = Meteor.call('hexToBech32', valAddress, Meteor.settings.public.bech32PrefixConsAddr);
 
                             // assign back to the validator set so that we can use it to find the uptime
 
@@ -502,8 +532,8 @@ Meteor.methods({
                             // }
                         }
                         else {
-                            // valData.address = valExist.address;
-                            valData.consensus_pubkey = valExist.consensus_pubkey;
+                            valData.address = valExist.address;
+                            // valData.consensus_pubkey = valExist.consensus_pubkey;
 
                             // assign to valData for getting self delegation
                             valData.delegator_address = valExist.delegator_address;
