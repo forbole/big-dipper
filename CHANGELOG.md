@@ -1,5 +1,9 @@
 # Changelog
 
+# [Unreleased]
+
+* Updated Account Page to display tokens in Staking Denoms and aligned token values to right 
+* [#451] Fixed Validator Account page showing error after login with Ledger 
 ## kava-4-v1.1
 
 * [#438] Fixed Proposal Details Page, Create CDP Button and CDP List

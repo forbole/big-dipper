@@ -96,11 +96,12 @@ export default class Coin {
 
 	//return value along with bonding (staking) denom type
 	stakeString (formatter) {
-	    let amount = this.stakingAmount
-	    if (formatter) {
-	        amount = numbro(amount).format(formatter)
-	    }
-	    return `${amount} ${Coin.StakingCoin.displayName}`;
+		let amount = this.stakingAmount
+		if (formatter) {
+			amount = numbro(amount).format('0,0.' + '0'.repeat(formatter))
+		}
+		return `${amount} ${this._coin.displayName}`;
+
 	}
 
 }
