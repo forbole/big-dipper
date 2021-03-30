@@ -750,75 +750,56 @@ export default class AccountDetails extends Component {
                                 </Col>
                                 <Col xs={3} md={2}>
                                     <Row>
-                                        <Col xs={1} lg={5} className="value text-right" > <div className="available infinity" /></Col>
-                                        <Col xs={11} lg={7} className="account-value text-right "> {this.findCoin(this.state.available, coin1)}</Col>
+                                        <Col xs={12} className="value text-left "> <div className="available infinity" />{this.findCoin(this.state.available, coin1)}</Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={1} lg={5} className="value text-right"><div className="delegated infinity" /></Col>
-                                        <Col xs={11} lg={7} className="account-value text-right "> {this.findCoin(this.state.delegated, coin1)}</Col>
+                                        <Col xs={12} className="value text-left"><div className="delegated infinity" />{this.findCoin(this.state.delegated, coin1)}</Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={1} lg={5} className="value text-right"><div className="unbonding infinity" /></Col>
-                                        <Col xs={11} lg={7} className="account-value text-right "> {this.findCoin(this.state.unbonding, coin1)}</Col>
-
+                                        <Col xs={12} className="value text-left"><div className="unbonding infinity" />{this.findCoin(this.state.unbonding, coin1)}</Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={1} lg={5} className="value text-right"><div className="rewards infinity" /></Col>
-                                        <Col xs={11} lg={7} className="account-value text-right ">{this.findCoin(this.state.rewards, coin1)}</Col>
-
+                                        <Col xs={12} className="value text-left"><div className="rewards infinity" />{this.findCoin(this.state.rewards, coin1)}</Col>
                                     </Row>
                                     {this.state.commission ? <Row>
-                                        <Col xs={1} lg={5} className="value text-right"><div className="commission infinity" /></Col>
-                                        <Col xs={11} lg={7} className="account-value text-right ">{this.findCoin(this.state.commission, coin1)}</Col>
-
+                                        <Col xs={12} className="value text-left"><div className="commission infinity" />{this.findCoin(this.state.commission, coin1)}</Col>
                                     </Row> : null}
                                 </Col>
                                 <Col xs={3} md={2}>
 
                                     <Row>
-                                        <Col xs={1} lg={5} className="value text-right"> <div className="available_2nd infinity" /></Col>
-                                        <Col xs={11} lg={7} className="account-value text-right ">{this.findCoin(this.state.available, coin2)}</Col>
-
+                                        <Col xs={12} className="value text-left"> <div className="available_2nd infinity" />{this.findCoin(this.state.available, coin2)}</Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={12} className="value text-right"><div className="infinity" />{'  '}</Col>
+                                        <Col xs={12} className="value text-left"><div className="infinity" />{'  '}</Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={12} className="value text-right"><div className="infinity" />{' '}</Col>
+                                        <Col xs={12} className="value text-left"><div className="infinity" />{' '}</Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={1} lg={5} className="value text-right"><div className="rewards_2nd infinity" /></Col>
-                                        <Col xs={11} lg={7} className="account-value text-right ">{this.findCoin(this.state.rewards, coin2)}</Col>
-
+                                        <Col xs={12} className="value text-left"><div className="rewards_2nd infinity" />{this.findCoin(this.state.rewards, coin2)}</Col>
                                     </Row>
                                     {this.state.commission ? <Row>
-                                        <Col xs={1} lg={5} className="value text-right"><div className="commission_2nd infinity" /></Col>
-                                        <Col xs={11} lg={7} className="account-value text-right ">{this.findCoin(this.state.commission, coin2)}</Col>
-
+                                        <Col xs={12} className="value text-left"><div className="commission_2nd infinity" />{this.findCoin(this.state.commission, coin2)}</Col>
                                     </Row> : null}
                                 </Col>
                                 <Col xs={3} md={2} >
 
                                     <Row>
-                                        <Col xs={1} lg={5} className="value text-right"> <div className="available_3rd infinity" /></Col>
-                                        <Col xs={11} lg={7} className="account-value text-right ">{this.findCoin(this.state.available, coin3)}</Col>
-
+                                        <Col xs={12} className="value text-left"> <div className="available_3rd infinity" />{this.findCoin(this.state.available, coin3)}</Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={12} className="value text-right"><div className="infinity" />{'  '}</Col>
+                                        <Col xs={12} className="value text-left"><div className="infinity" />{'  '}</Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={12} className="value text-right"><div className="infinity" />{'  '}</Col>
+                                        <Col xs={12} className="value text-left"><div className="infinity" />{'  '}</Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={1} lg={5} className="value text-right"><div className="rewards_3rd infinity" /></Col>
-                                        <Col xs={11} lg={7} className="account-value text-right ">{this.findCoin(this.state.rewards, coin3)}</Col>
-
+                                        <Col xs={12} className="value text-left"><div className="rewards_3rd infinity" />{this.findCoin(this.state.rewards, coin3)}</Col>
                                     </Row>
                                     {this.state.commission ? <Row>
-                                        <Col xs={1} lg={5} className="value text-right"><div className="commission_3rd infinity" /></Col>
-                                        <Col xs={11} lg={7} className="account-value text-right ">{this.findCoin(this.state.commission, coin3)}</Col>
-
+                                        <Col xs={12} className="value text-left
+                                        "><div className="commission_3rd infinity" />{this.findCoin(this.state.commission, coin3)}</Col>
                                     </Row> : null}
                                 </Col>
 
