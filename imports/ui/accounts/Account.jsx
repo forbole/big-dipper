@@ -918,9 +918,7 @@ export default class AccountDetails extends Component {
                                             className={classnames({ active: this.state.cdpActiveTab === 'cdp-create' })}
                                             onClick={() => { this.toggleCDP('cdp-create'); }}
                                         >
-                                            <span className="cdp-logo">Create CDP <i className="material-icons">
-                                                account_balance
-                                            </i></span>
+                                            <span className="cdp-logo">Create CDP</span>
                                         </NavLink>
                                     </NavItem>
                                     {this.state.hasActiveCDP ?
@@ -930,9 +928,7 @@ export default class AccountDetails extends Component {
                                                 onClick={() => { this.toggleCDP('cdp-active'); }}
                                             >
                                                 <span className="cdp-logo ">
-                                                   CDPs <i className="material-icons">
-                                                        price_check
-                                                    </i></span>
+                                                   CDPs </span>
                                             </NavLink>
                                         </NavItem> : null}
                                     {this.state.hasActiveCDP ?
