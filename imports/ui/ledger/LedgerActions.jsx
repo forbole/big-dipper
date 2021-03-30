@@ -694,7 +694,6 @@ class LedgerButton extends Component {
 
     getPath = () => {
         let meta = TypeMeta[this.state.actionType];
-        console.log(`${meta.pathPreFix}/${this.state.user}/${meta.pathSuffix}`)
         return `${meta.pathPreFix}/${this.state.user}/${meta.pathSuffix}`;
     }
 

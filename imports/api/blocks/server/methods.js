@@ -405,12 +405,12 @@ Meteor.methods({
                         console.log("Inserting precommits")
                         for (i in validators) {
                             let address = validators[i].address;
-                            let pub_key = validators[i].pub_key;
+                            let pubKey = validators[i].pub_key;
 
                             let record = {
                                 height: height,
                                 address: address,
-                                pub_key: pub_key,
+                                pub_key: pubKey,
                                 exists: false,
                                 voting_power: parseInt(validators[i].voting_power)
                             }

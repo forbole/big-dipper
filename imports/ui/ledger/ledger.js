@@ -501,7 +501,6 @@ export class Ledger {
                 sender: txContext.bech32,
             },
         };
-        console.log(txMsg);
         return Ledger.createSkeleton(txContext, [txMsg]);
     }
 
@@ -653,7 +652,6 @@ export class Ledger {
                 depositor: txContext.bech32
             },
         };
-        console.log(txMsg);
         return Ledger.createSkeleton(txContext, [txMsg]);
     }
 

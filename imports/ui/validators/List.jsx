@@ -9,7 +9,6 @@ import SentryBoundary from '../components/SentryBoundary.jsx';
 
 
 const ValidatorRow = (props) => {
-    console.log(props)
     let moniker = (props.validator.description && props.validator.description.moniker) ? props.validator.description.moniker : props.validator.address;
     return <Card body>
         <SentryBoundary><Row className="validator-info">
