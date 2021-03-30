@@ -134,7 +134,7 @@ export default class HARD extends Component {
                     HARDParameters={this.state.HARDParameters ?? null}
                     collateralDenom={this.props.collateralDenom ? this.props.collateralDenom : null}
                 />
-                {((this.props.owner == this.props.user) || (this.state.isDepositor)) ? <HARDWithdrawButton
+                {/* {((this.props.owner == this.props.user) || (this.state.isDepositor)) ? <HARDWithdrawButton
                     amountAvailable={this.state.total ? this.findTotalValue(this.state.total, this.props.collateralDenom) : null}
                     cdpOwner={this.state.userCDP ? this.state.userCDP.cdp.owner : null}
                     CDPParameters={this.props.collateralParams ?? null}
@@ -174,7 +174,7 @@ export default class HARD extends Component {
                     disabled={false}
                     borrower="kava127lary0erprnrv9vn3wykyt9pjm5a5tdwdnm3h"
                     hard="HARD"
-                /> : ''}
+                /> : ''} */}
             </div>
 
         </div>
@@ -187,8 +187,8 @@ export default class HARD extends Component {
 
 
 HARD.propTypes = {
-    owner: PropTypes.string.isRequired,
-    collateralType: PropTypes.string.isRequired,
+    // owner: PropTypes.string.isRequired,
+    // collateralType: PropTypes.string.isRequired,
     collateralDenom: PropTypes.string.isRequired,
     user: PropTypes.string.isRequired
 }
