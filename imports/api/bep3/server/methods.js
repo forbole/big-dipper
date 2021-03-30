@@ -4,7 +4,7 @@ import { HTTP } from 'meteor/http';
 Meteor.methods({
     'bep3.getSwap': function(swapID){
         this.unblock();
-        let url = LCD + '/bep3/swap/'+ swapID;
+        let url = API + '/bep3/swap/'+ swapID;
         try{
             let response = HTTP.get(url);
             if (response.statusCode == 200){
@@ -18,7 +18,7 @@ Meteor.methods({
 
     'bep3.createSwap': function(){
         this.unblock();
-        let url = LCD +'bep3/swap/create';
+        let url = API +'bep3/swap/create';
         try{
             let response = HTTP.get(url);
             if (response.statusCode == 200){
