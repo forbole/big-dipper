@@ -54,6 +54,16 @@ export default BlockContainer = withTracker((props) => {
 
             ]
         }).fetch() : {},
+        hardTxs: transactionsExist ? Transactions.find({
+            $or: [
+                { "tx.value.msg.type": "hard/MsgDeposit" },
+                { "tx.value.msg.type": "hard/MsgWithdraw" },
+                { "tx.value.msg.type": "hard/MsgBorrow" },
+                { "tx.value.msg.type": "hard/MsgRepay" },
+                { "tx.value.msg.type": "hard/MsgLiquidate" }
+
+            ]
+        }).fetch() : {},
         swapTxs: transactionsExist ? Transactions.find({
             $or: [
                 { "tx.value.msg.type": "bep3/MsgClaimAtomicSwap" },

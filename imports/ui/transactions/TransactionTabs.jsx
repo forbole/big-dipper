@@ -15,6 +15,7 @@ export default class TransactionTabs extends Component {
             activeTab: 'tx-transfer',
             transferTxs: {},
             cdpTxs: {},
+            hardTxs: {},
             swapTxs: {},
             priceTxs: {},
             stakingTxs: {},
@@ -39,6 +40,7 @@ export default class TransactionTabs extends Component {
             this.setState({
                 transferTxs: this.props.transferTxs,
                 cdpTxs: this.props.cdpTxs,
+                hardTxs: this.props.hardTxs,
                 swapTxs: this.props.swapTxs,
                 priceTxs: this.props.priceTxs,
                 stakingTxs: this.props.stakingTxs,
@@ -70,6 +72,14 @@ export default class TransactionTabs extends Component {
                             onClick={() => { this.toggle('tx-cdp'); }}
                         >
                             <T>transactions.cdp</T> ({numbro(this.state.cdpTxs.length + this.state.incentiveTxs.length).format("0,0")})
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink
+                            className={classnames({ active: this.state.activeTab === 'tx-hard' })}
+                            onClick={() => { this.toggle('tx-hard'); }}
+                        >
+                            <T>transactions.hard</T> ({numbro(this.state.hardTxs.length).format("0,0")})
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -156,6 +166,20 @@ export default class TransactionTabs extends Component {
                                     />
                                 }) : ''}
                                 
+                            </Col>
+                        </Row>
+                    </TabPane>
+                    <TabPane tabId="tx-hard">
+                        <Row>
+                            <Col>
+                                {(this.state.hardTxs.length > 0) ? this.state.hardTxs.map((tx, i) => {
+                                    return <TransactionRow
+                                        key={i}
+                                        index={i}
+                                        tx={tx}
+                                        blockList
+                                    />
+                                }) : ''}
                             </Col>
                         </Row>
                     </TabPane>

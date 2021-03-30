@@ -88,7 +88,7 @@ getValidatorUptime = async (validatorSet) => {
                         valData.jailed_until = signingInfo[c].jailed_until;
                         valData.index_offset = parseInt(signingInfo[c].index_offset);
                         valData.start_height = parseInt(signingInfo[c].start_height);
-                        valData.uptime = (slashingParams.params.signed_blocks_window - parseInt(signingInfo[c].missed_blocks_counter)) / slashingParams.params.signed_blocks_window * 100;
+                        valData.uptime = (parseInt(slashingParams.params.signed_blocks_window) - parseInt(signingInfo[c].missed_blocks_counter)) / parseInt(slashingParams.params.signed_blocks_window )* 100;
 
                         try{
                             Validators.upsert({ bech32ValConsAddress: validatorSet[key].bech32ValConsAddress }, { $set: valData })
