@@ -711,10 +711,6 @@ class LedgerButton extends Component {
     runSimulatation = (txMsg, simulateBody) => {
         let gasAdjustment = TypeMeta[this.state.actionType].gasAdjustment || DEFAULT_GAS_ADJUSTMENT;
         Meteor.call('transaction.simulate', simulateBody, this.state.user, this.state.currentUser.accountNumber, this.state.currentUser.sequence, this.getPath(), gasAdjustment, (err, res) => {
-            console.log(txMsg)
-            console.log(simulateBody)
-            console.log(res)
-            console.log(err)
             if (res) {
                 if (res === '0') {
                     res = '300000'
@@ -2526,7 +2522,7 @@ class HARDDepositButton extends LedgerButton {
 
     getPath = () => {
         let meta = TypeMeta[this.state.actionType];
-        return `${meta.pathPreFix}`;
+        return `${meta.pathPreFix}/${meta.pathSuffix}`
     }
 
 
@@ -2650,7 +2646,7 @@ class HARDWithdrawButton extends LedgerButton {
 
     getPath = () => {
         let meta = TypeMeta[this.state.actionType];
-        return `${meta.pathPreFix}/${this.state.cdpOwner}/${this.props.collateralDenom}/${meta.pathSuffix}`
+        return `${meta.pathPreFix}/${meta.pathSuffix}`
     }
 
 
@@ -2895,7 +2891,7 @@ class HARDRepayButton extends LedgerButton {
 
     getPath = () => {
         let meta = TypeMeta[this.state.actionType];
-        return `${meta.pathPreFix}/${this.state.user}/${this.props.collateralDenom}/${meta.pathSuffix}`
+        return `${meta.pathPreFix}/${meta.pathSuffix}`
     }
 
     render = () => {
