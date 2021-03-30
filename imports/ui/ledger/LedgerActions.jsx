@@ -149,7 +149,7 @@ const TypeMeta = {
         gasAdjustment: '1.6'
     },
     [Types.DEPOSITCDP]: {
-        button: 'deposit CDP',
+        button: 'deposit',
         pathPreFix: 'cdp',
         pathSuffix: 'deposits',
         gasAdjustment: '1.6'
