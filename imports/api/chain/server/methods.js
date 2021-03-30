@@ -124,7 +124,7 @@ Meteor.methods({
                         try {
                             url = API + '/distribution/community_pool';
                             let response = HTTP.get(url);
-                            let pool = JSON.parse(response.content).pool;
+                            let pool = JSON.parse(response.content).result;
                             if (pool && pool.length > 0) {
                                 chainStates.communityPool = [];
                                 pool.forEach((amount) => {
