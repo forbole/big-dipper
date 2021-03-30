@@ -151,6 +151,7 @@ transactions:
     info: 'More Info'
     address: 'Address'
     amount: 'Amount'
+    hard: 'HARD'
 
 
 bep3:

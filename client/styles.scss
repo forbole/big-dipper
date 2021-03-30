@@ -763,6 +763,7 @@ body {
     height: 3.5em;
     display: block;
     overflow-x: auto;
+    overflow-y: hidden;
     white-space: nowrap;
   
     li {
@@ -1224,7 +1225,14 @@ body {
 
   .cdp-buttons{
     display: inline-flex;
+    width: 100%;
+    overflow: auto;
+  }
 
+  .hard-buttons{
+    display: inline-flex;
+    width: 100%;
+    overflow: auto;
   }
 
   .badge-bnb-usd{

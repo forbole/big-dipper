@@ -128,7 +128,7 @@ export default class HARD extends Component {
                     <div className="mb-2 ml-3"> <strong className="text-info">1 : {this.props.HARD_USD_Price ? numbro(this.props.HARD_USD_Price).formatCurrency({ mantissa: 4 }) : 0}</strong></div>
                 </span>
             </span>
-            <div className="cdp-buttons float-right">
+            <div className="hard-buttons float-right">
                 <HARDDepositButton
                     accountTokensAvailable={this.state.total ?? null}
                     HARDParameters={this.state.HARDParameters ?? null}
