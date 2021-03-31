@@ -276,7 +276,7 @@ export default class CDP extends Component {
 
         }
 
-        else return <span className="pl-2">{`No CDP for coin ${this.props.collateralType.toUpperCase()}`}</span>;
+        else return <span className="pl-2">{`No active CDP for collateral type ${this.props.collateralType.toUpperCase()}`}</span>;
 
     }
 }
