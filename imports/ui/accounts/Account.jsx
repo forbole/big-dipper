@@ -1020,7 +1020,7 @@ export default class AccountDetails extends Component {
 
                                     <TabPane tabId="cdp-hard">
                                         <HARD
-                                            owner={this.state.address}
+                                            address={this.state.address}
                                             collateralType={this.state.activeSubtabDenomType}
                                             collateralDenom={this.state.activeSubtabDenom}
                                             user={this.state.user}

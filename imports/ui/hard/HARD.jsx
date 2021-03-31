@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Badge, ToastHeader, ToastBody, Toast } from 'reactstrap';
+import { Table, Badge} from 'reactstrap';
 import moment from 'moment';
 import numbro from 'numbro';
 import Account from '../components/Account.jsx';
@@ -16,26 +16,14 @@ export default class HARD extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            ratio: 0,
-            collateral: 0,
-            debt: 0,
-            collateralAmount: 0,
-            debtAmount: 0,
-            cdpParams: null,
-            userCDP: null,
-            denom: '',
-            collateralizationRatio: 0,
             collateralDeposited: 0,
             principalDeposited: 0,
             total: props.total,
             isDepositor: false,
-            cdpOwner: '',
-            depositValue: 0,
-            BNB_USD: 0,
-            BNB_USD_30: 0,
             denomType: '',
             HARDParameters: undefined,
             deposits: undefined,
+            loading: false
         }
 
     }
@@ -57,7 +45,7 @@ export default class HARD extends Component {
             if (error) {
                 console.warn(error);
                 this.setState({
-                    loading: false,
+                    loading: true,
                     HARDParameters: null
                 })
             }
@@ -75,13 +63,21 @@ export default class HARD extends Component {
             if (error) {
                 console.warn(error);
                 this.setState({
-                    loading: false,
+                    loading: true,
                     deposits: undefined
                 })
             }
 
             if (result) {
+                for(let c in result){
+                    if(result[c].depositor === this.props.address){
+                        this.setState({
+                            depositedValue : result[c]
+                        })
+                    }
+                }
                 this.setState({
+                    loading: false,
                     deposits: result
                 })
             }
@@ -121,20 +117,51 @@ export default class HARD extends Component {
 
 
     render() {
-        return <div className="hard-content">
-            <span className="bnb-usd-price">
-                <span className="pr-3">
-                    <div ><Badge color="info" className="badge-bnb-usd">HARD : USD </Badge> </div>
-                    <div className="mb-2 ml-3"> <strong className="text-info">1 : {this.props.HARD_USD_Price ? numbro(this.props.HARD_USD_Price).formatCurrency({ mantissa: 4 }) : 0}</strong></div>
+        if (this.state.loading) {
+            return <div>
+                <Spinner type="grow" color="primary" />
+            </div>
+        }
+        else if (this.state.depositedValue) {
+            return <div className="hard-content">
+                <span className="bnb-usd-price">
+                    <span className="pr-3">
+                        <div ><Badge color="info" className="badge-bnb-usd">HARD : USD </Badge> </div>
+                        <div className="mb-2 ml-3"> <strong className="text-info">1 : {this.props.HARD_USD_Price ? numbro(this.props.HARD_USD_Price).formatCurrency({ mantissa: 4 }) : 0}</strong></div>
+                    </span>
                 </span>
-            </span>
-            <div className="hard-buttons float-right">
-                <HARDDepositButton
-                    accountTokensAvailable={this.state.total ?? null}
-                    HARDParameters={this.state.HARDParameters ?? null}
-                    collateralDenom={this.props.collateralDenom ? this.props.collateralDenom : null}
-                />
-                {/* {((this.props.owner == this.props.user) || (this.state.isDepositor)) ? <HARDWithdrawButton
+                <Table responsive>
+                    <tbody>
+                        <tr>
+                            <th scope="row" className="w-25 text-muted"><T>hard.depositor</T></th>
+                            <td><Account address={this.state.depositedValue.depositor} /></td>
+                        </tr>
+                        <tr>
+                            <th scope="row" className="w-25 text-muted"><T>hard.amount</T></th>
+                            <td>
+                                {this.state.depositedValue.amount.map(coin => {
+                                    return <div>{new Coin(coin.amount, coin.denom).toString()}</div>
+                                })}
+                            </td>
+                        </tr> 
+                        <tr>
+                            <th scope="row" className="w-25 text-muted"><T>hard.index</T></th>
+                            <td>
+                                {this.state.depositedValue.index.map(coin => {
+                                    return <div>{`${coin.value} ${coin.denom}`}</div>
+                                })}
+                            </td>
+                        </tr>
+                    </tbody>
+                </Table> 
+
+                <div className="hard-buttons float-right">
+                    <HARDDepositButton
+                        accountTokensAvailable={this.state.total ?? null}
+                        HARDParameters={this.state.HARDParameters ?? null}
+                        collateralDenom={this.props.collateralDenom ? this.props.collateralDenom : null}
+                    />
+                    {/* {((this.props.owner == this.props.user) || (this.state.isDepositor)) ? <HARDWithdrawButton
                     amountAvailable={this.state.total ? this.findTotalValue(this.state.total, this.props.collateralDenom) : null}
                     cdpOwner={this.state.userCDP ? this.state.userCDP.cdp.owner : null}
                     CDPParameters={this.props.collateralParams ?? null}
@@ -175,10 +202,27 @@ export default class HARD extends Component {
                     borrower="kava127lary0erprnrv9vn3wykyt9pjm5a5tdwdnm3h"
                     hard="HARD"
                 /> : ''} */}
+                </div>
+
             </div>
 
-        </div>
-
+        }
+        else{
+            return <div> <span className="bnb-usd-price">
+                <span className="pr-3">
+                    <div ><Badge color="info" className="badge-bnb-usd">HARD : USD </Badge> </div>
+                    <div className="mb-2 ml-3"> <strong className="text-info">1 : {this.props.HARD_USD_Price ? numbro(this.props.HARD_USD_Price).formatCurrency({ mantissa: 4 }) : 0}</strong></div>
+                </span>
+            </span>
+            <div className="hard-buttons float-right">
+                <HARDDepositButton
+                    accountTokensAvailable={this.state.total ?? null}
+                    HARDParameters={this.state.HARDParameters ?? null}
+                    collateralDenom={this.props.collateralDenom ? this.props.collateralDenom : null}
+                />
+            </div>
+            </div>
+        }
     }
 }
 

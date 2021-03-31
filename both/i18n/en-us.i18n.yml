@@ -349,6 +349,9 @@ hard:
     deposit: 'Deposit'
     repay: "Repay"
     memo: 'Memo'
+    depositor: 'Depositor'
+    amount: 'Amount'
+    index: 'Index'
 incentive:
     rewards: 'Rewards'
     owner: 'Owner'
