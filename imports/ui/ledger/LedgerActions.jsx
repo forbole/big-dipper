@@ -502,7 +502,8 @@ class LedgerButton extends Component {
             if (error) {
                 // console.warn(error);
                 this.setState({
-                    loading: true
+                    loading: true,
+                    price: 0
                 })
             }
 
@@ -642,9 +643,13 @@ class LedgerButton extends Component {
                 this.state.principalDenom);
             break;
         case Types.CLAIMINCENTIVEREWARDS:
-            txMsg = Ledger.claimIncentiveRewards(
-                this.getTxContext(),
-                this.state.denom);
+            this.state.incentiveType == 'HARD' ? 
+                txMsg = Ledger.claimHardRewards(
+                    this.getTxContext(),
+                    this.state.multiplier) :
+                txMsg = Ledger.claimUSDXRewards(
+                    this.getTxContext(),
+                    this.state.multiplier)
             break;
         case Types.AUCTIONBID:
             txMsg = Ledger.auctionBid(
@@ -2251,13 +2256,42 @@ class WithdrawIncentiveRewards extends LedgerButton {
         this.state = {
             ...this.state,
             denom: props.denom,
+            incentiveType: props.incentiveType,
+            rewards: props.rewards,
+            multiplier: ''
         }
+    }
+
+
+    handleMultiplierSelection = (e) => {
+        let target = e.currentTarget;
+        let value = target.innerText;
+        this.setState({ multiplier: value })
+    }
+
+
+    multiplierDropdown = () => {
+        return (
+            <UncontrolledDropdown >
+                <DropdownToggle caret style={{ padding: "0.3rem", textTransform: "none" }}>
+                    {this.state.multiplier != '' ? this.state.multiplier : 'Select' }
+                </DropdownToggle>
+                <DropdownMenu> 
+                    <DropdownItem name='small-multiplier' data-type='multiplierSelection' key='small-multiplier' onClick={this.handleMultiplierSelection}>Small</DropdownItem>
+                    <DropdownItem name='medium-multiplier' data-type='multiplierSelection' key='medium-multiplier' onClick={this.handleMultiplierSelection}>Medium</DropdownItem>
+                    <DropdownItem name='large-multiplier' data-type='multiplierSelection' key='large-multiplier' onClick={this.handleMultiplierSelection}>Large</DropdownItem>
+                    <DropdownItem divider />
+
+                </DropdownMenu>
+            </UncontrolledDropdown>
+        );
+
     }
 
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         return <TabPane tabId="2" className="modal-body">
-            <h3 className="text-center pt-3">Claim  <TokenImage collateral={this.props.incentiveType} /> {collateralStakeName(this.props.incentiveType)} Incentive </h3>
+            <h3 className="text-center pt-3">Claim  <TokenImage collateral={this.state.incentiveType} /> {collateralStakeName(this.state.incentiveType)} Incentive </h3>
             {this.props.rewards.length > 0 || Object.keys(this.props.rewards).length > 0? 
                 this.props.rewards.length > 1 ? <div className="text-center mb-n3">Your current rewards amount is: {this.props.rewards.map((item) => {
                     return (
@@ -2268,6 +2302,8 @@ class WithdrawIncentiveRewards extends LedgerButton {
                 })}
                 </div> : <div className="text-center mb-n3">Your current rewards amount is:  <span className='coin'>{new Coin(parseFloat(this.props.rewards.amount), this.props.rewards.denom).convertToString()}</span></div>
                 : null }
+
+            <div className="text-center mt-4 ml-n4"> <span className="d-inline-flex"><b className="pr-2">Select multiplier: </b>{this.multiplierDropdown()} </span></div>
 
         </TabPane>
     }

@@ -593,28 +593,32 @@ export class Ledger {
 
             },
         };
-
         return Ledger.createSkeleton(txContext, [txMsg]);
     }
 
 
-    static claimIncentiveRewards(txContext,denom) {
-        const txMsg = [{
+    static claimUSDXRewards(txContext,multiplier) {
+        const txMsg = {
             type: 'incentive/MsgClaimUSDXMintingReward',
             value: {
-                denom: denom,
+                multiplier_name: multiplier.toLowerCase(),
                 sender: txContext.bech32,
 
-            },
-        },
-        {
+            }
+        }
+        return Ledger.createSkeleton(txContext, [txMsg]);
+    }
+
+
+    static claimHardRewards(txContext, multiplier) {
+        const txMsg = {
             type: 'incentive/MsgClaimHardLiquidityProivderReward',
             value: {
-                denom: denom,
+                multiplier_name: multiplier.toLowerCase(),
                 sender: txContext.bech32,
 
             },
-        }]
+        }
         return Ledger.createSkeleton(txContext, [txMsg]);
     }
 
