@@ -17,7 +17,6 @@ import moment from 'moment';
 import Account from '../components/Account.jsx';
 import _ from 'lodash';
 import i18n from 'meteor/universe:i18n';
-// import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 
 
 const maxHeightModifier = {
@@ -164,13 +163,13 @@ const TypeMeta = {
         button: 'draw debt',
         pathPreFix: 'cdp',
         pathSuffix: 'draw',
-        gasAdjustment: '1.15'
+        gasAdjustment: '1.6'
     },
     [Types.REPAYDEBT]: {
         button: 'repay debt',
         pathPreFix: 'cdp',
         pathSuffix: 'repay',
-        gasAdjustment: '1.15'
+        gasAdjustment: '1.6'
     },
     [Types.CLAIMINCENTIVEREWARDS]: {
         button: 'claim rewards',
@@ -401,10 +400,6 @@ class LedgerButton extends Component {
             this.getBalance();
         }
 
-        //calculate price for bnb on first load
-        if (this.state.collateralDenom === 'bnb' || (prevState.collateralDenom != this.state.collateralDenom  && this.state.collateralDenom.length > 0)){
-            this.getUSDPrice(this.state.collateralDenom);
-        }
     }
 
     componentDidMount() {
@@ -1610,7 +1605,7 @@ class CreateCDPButton extends LedgerButton {
     handleTokenSelection = (e) => {
         let target = e.currentTarget;
         let value = target.innerText;
-
+        this.getUSDPrice(this.props.collateralDenom)
         this.setState({ collateralDenom: value, loading: true })
 
         if (target.innerText === 'KAVA') {
@@ -1795,6 +1790,7 @@ class DepositCDPButton extends LedgerButton {
         const { target } = e;
         const value = target.value;
         const { name } = target;
+        this.getUSDPrice(this.props.collateralDenom)
         this.setState({
             [name]: value,
         }, () => {
@@ -1861,7 +1857,7 @@ class DepositCDPButton extends LedgerButton {
 
     getPath = () => {
         let meta = TypeMeta[this.state.actionType];
-        return `${meta.pathPreFix}/${this.state.cdpOwner}/${this.props.collateralDenom}/${meta.pathSuffix}`
+        return `${meta.pathPreFix}/${this.state.cdpOwner}/${this.state.collateralType}/${meta.pathSuffix}`
     }
 
 
@@ -1889,10 +1885,10 @@ class WithdrawCDPButton extends LedgerButton {
             collateral: 0,
             collateralDenom: '',
             amount: 0,
-            maxAmount: props.collateralDeposited / Meteor.settings.public.coins[1].fraction,
+            maxAmount: props.collateralDeposited / tokenFraction(props.collateralDenom),
             ratio: 0,
+            price: 0,
             cdpOwner: props.cdpOwner,
-            depositedValue: props.collateralDeposited / tokenFraction(props.collateralDenom),
         }
     }
 
@@ -1922,6 +1918,7 @@ class WithdrawCDPButton extends LedgerButton {
         const { target } = e;
         const value = target.value;
         const { name } = target;
+        this.getUSDPrice(this.props.collateralDenom)
         this.setState({
             [name]: value,
         }, () => {
@@ -1948,7 +1945,7 @@ class WithdrawCDPButton extends LedgerButton {
 
                     <Input placeholder="Collateral Amount" name="collateral" type="number" value={this.state.collateral} onChange={this.handleChange}
                         min={Coin.MinStake} max={this.state.maxAmount}
-                        invalid={this.state.isDepositor ? this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.depositedValue) : this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount)} className="modal-for-ledger " />
+                        invalid={this.state.isDepositor ? this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount) : this.state.collateral != null && !isBetween(this.state.collateral, 0, this.state.maxAmount)} className="modal-for-ledger " />
                     <InputGroupAddon addonType="append">
                         <InputGroupText className="modal-for-ledger font-weight-bold">{collateralStakeName(this.state.collateralDenom)}</InputGroupText>
                     </InputGroupAddon>
@@ -1992,7 +1989,7 @@ class WithdrawCDPButton extends LedgerButton {
 
     getPath = () => {
         let meta = TypeMeta[this.state.actionType];
-        return `${meta.pathPreFix}/${this.state.cdpOwner}/${this.props.collateralDenom}/${meta.pathSuffix}`
+        return `${meta.pathPreFix}/${this.state.cdpOwner}/${this.state.collateralType}/${meta.pathSuffix}`
     }
 
 
@@ -2017,6 +2014,7 @@ class DrawDebtCDPButton extends LedgerButton {
             maxAmount: props.amountAvailable,
             collateralType: '',
             principalDenom: props.principalDenom,
+            price: 0,
 
         }
     }
@@ -2049,6 +2047,7 @@ class DrawDebtCDPButton extends LedgerButton {
         const { target } = e;
         const value = target.value;
         const { name } = target;
+        this.getUSDPrice(this.props.collateralDenom)
         this.setState({
             [name]: value,
         }, () => {
@@ -2105,7 +2104,7 @@ class DrawDebtCDPButton extends LedgerButton {
 
     isDataValid = () => {
         if (!this.state.currentUser) return false
-        return (this.state.ratio > this.props.collateralizationRatio)
+        return (this.state.ratio >= this.props.collateralizationRatio)
     }
 
     getConfirmationMessage = () => {
@@ -2115,7 +2114,7 @@ class DrawDebtCDPButton extends LedgerButton {
 
     getPath = () => {
         let meta = TypeMeta[this.state.actionType];
-        return `${meta.pathPreFix}/${this.state.user}/${this.props.collateralDenom}/${meta.pathSuffix}`
+        return `${meta.pathPreFix}/${this.state.user}/${this.state.collateralType}/${meta.pathSuffix}`
     }
 
 
@@ -2169,12 +2168,12 @@ class RepayDebtCDPButton extends LedgerButton {
         const { target } = e;
         const value = target.value;
         const { name } = target;
+        this.getUSDPrice(this.props.collateralDenom)
         this.setState({
             [name]: value,
         }, () => {
             this.setState({
                 ratio: (((parseInt(this.props.collateralDeposited) / tokenFraction(this.props.collateralDenom)) * parseFloat(this.state.price)) / ((parseInt(this.props.principalDeposited) / tokenFraction(this.props.principalDenom)) - parseFloat(this.state.debt))),
-            
             })
         });
         this.findDenomType()
@@ -2238,7 +2237,7 @@ class RepayDebtCDPButton extends LedgerButton {
 
     getPath = () => {
         let meta = TypeMeta[this.state.actionType];
-        return `${meta.pathPreFix}/${this.state.user}/${this.props.collateralDenom}/${meta.pathSuffix}`
+        return `${meta.pathPreFix}/${this.state.user}/${this.state.collateralType}/${meta.pathSuffix}`
     }
 
     render = () => {
