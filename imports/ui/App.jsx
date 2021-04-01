@@ -19,6 +19,8 @@ import moment from 'moment';
 import SentryBoundary from '/imports/ui/components/SentryBoundary.jsx';
 import NotFound from '/imports/ui/pages/NotFound.jsx';
 import CDPs from '/imports/ui/cdp/CDPs.jsx'
+import HARD from '/imports/ui/hard/HARDList.jsx'
+
 import Auction from '/imports/ui/auction/Auction.jsx';
 
 import { ToastContainer, toast } from 'react-toastify';
@@ -94,6 +96,7 @@ class App extends Component {
                             <Route path="/(validator|validators)" component={ValidatorDetails} />
                             <Route path="/proposals" component={Proposals} />
                             <Route path="/cdps" component={CDPs} />
+                            <Route path="/hard" component={HARD} />
                             <Route path="/auctions" component={Auction} />
                             <Route component={NotFound} />
                         </Switch>
