@@ -30,4 +30,17 @@ Meteor.methods({
             console.log(e)
         }
     },
+    'hard.borrows': function () {
+        this.unblock();
+        let url = API + '/hard/borrows';
+        try {
+            let result = HTTP.get(url);
+            if (result.statusCode == 200) {
+                let deposits = JSON.parse(result.content).result;
+                return deposits
+            }
+        } catch (e) {
+            console.log(e)
+        }
+    },
 })
