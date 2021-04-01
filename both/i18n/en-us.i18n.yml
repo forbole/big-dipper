@@ -350,8 +350,11 @@ hard:
     repay: "Repay"
     memo: 'Memo'
     depositor: 'Depositor'
+    borrower: 'Borrower'
     amount: 'Amount'
     index: 'Index'
+    hard: 'HARD'
+    hardList: 'List of HARD Deposits and Borrows'
 incentive:
     rewards: 'Rewards'
     owner: 'Owner'
