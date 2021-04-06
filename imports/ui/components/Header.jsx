@@ -195,9 +195,12 @@ export default class Header extends Component {
                             <NavLink tag={Link} to="/proposals"><T>navbar.proposals</T></NavLink>
                         </NavItem>
                         <NavItem>
-                            <NavLink tag={Link} to="/voting-power-distribution"><T>navbar.votingPower</T></NavLink>
+                            <NavLink tag={Link}  to="/voting-power-distribution"><T>navbar.votingPower</T></NavLink>
                         </NavItem>
-                        <NavItem id="user-acconut-icon">
+                        <NavItem>
+                            <a className="nav-link" href="https://dex.sifchain.finance" target="_blank">Trade</a>
+                        </NavItem>
+{/*                        <NavItem id="user-acconut-icon">
                             {!signedInAddress?<Button className="sign-in-btn" color="link" size="lg" onClick={() => {this.setState({isSignInOpen: true})}}><i className="material-icons">vpn_key</i></Button>:
                                 <span>
                                     <span className="d-lg-none">
@@ -219,7 +222,7 @@ export default class Header extends Component {
                                     </span>
                                 </span>}
                             <LedgerModal isOpen={this.state.isSignInOpen} toggle={this.toggleSignIn} refreshApp={this.props.refreshApp} handleLoginConfirmed={this.shouldLogin()?this.handleLoginConfirmed:null}/>
-                        </NavItem>
+                        </NavItem>*/}
                         <NavItem>
                             <UncontrolledDropdown inNavbar>
                                 <DropdownToggle nav caret>

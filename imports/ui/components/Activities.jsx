@@ -305,7 +305,7 @@ export default class Activites extends Component {
       case "clp/Swap":
           // console.log(getCoinDecimals(msg.value.SentAsset.symbol))
         return (
-            <p>
+            <div>
               {/*<Account address={msg.value.Signer} />{" "}
                 <MsgType type={msg.type} /> &nbsp;
                 <span className="text-success">
@@ -324,47 +324,47 @@ export default class Activites extends Component {
                 </span>{" "}*/}
                 <JSONPretty id="json-pretty" data={msg.value}></JSONPretty>
                 <span className="quick-note">Swap</span>
-            </p>
+            </div>
         )
 
       case "ethbridge/MsgLock":
         return (
-          <p>
+          <div>
               <JSONPretty id="json-pretty" data={msg.value}></JSONPretty>
-              <span class="quick-note">Unpeg</span>
-            </p>
+              <span className="quick-note">Unpeg</span>
+            </div>
           )
 
       case  "ethbridge/MsgBurn":
         return (
-          <p>
+          <div>
               <JSONPretty id="json-pretty" data={msg.value}></JSONPretty>
-              <span class="quick-note">Unpeg</span>
-            </p>
+              <span className="quick-note">Unpeg</span>
+            </div>
           )
 
       case "ethbridge/MsgCreateEthBridgeClaim":
         return (
-          <p>
+          <div>
                 <JSONPretty id="json-pretty" data={msg.value}></JSONPretty>
-                <span class="quick-note">Peg</span>
-            </p>
+                <span className="quick-note">Peg</span>
+            </div>
           )      
 
       case  "clp/AddLiquidity":
         return (
-          <p>
+          <div>
               <JSONPretty id="json-pretty" data={msg.value}></JSONPretty>
-              <span class="quick-note">Add Liquidity</span>
-            </p>
+              <span className="quick-note">Add Liquidity</span>
+            </div>
           )
 
       case  "clp/RemoveLiquidity":
         return (
-          <p>
+          <div>
               <JSONPretty id="json-pretty" data={msg.value}></JSONPretty>
-              <span class="quick-note">Remove Liquidity</span>
-            </p>
+              <span className="quick-note">Remove Liquidity</span>
+            </div>
           )
 
 
