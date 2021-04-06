@@ -190,7 +190,7 @@ export default class Validator extends Component{
 
                 return <Row className="validator-details">
                     <Helmet>
-                        <title>{ moniker } - Cosmos Validator | The Big Dipper</title>
+                        <title>{ moniker } - Sifchain Validator | The Big Dipper</title>
                         <meta name="description" content={details} />
                     </Helmet>
                     <Col xs={12}>
@@ -264,7 +264,7 @@ export default class Validator extends Component{
                                 </Row>
                             </CardBody>
                         </Card>
-                        <Nav pills>
+                        <Nav pills class="bgw">
                             <NavItem>
                                 <NavLink tag={Link} to={"/validator/"+this.props.validator.operator_address} active={!(this.props.location.pathname.match(/(delegations|transactions)/gm))}><T>validators.powerChange</T></NavLink>
                             </NavItem>

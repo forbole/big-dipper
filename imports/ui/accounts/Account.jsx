@@ -282,7 +282,7 @@ export default class AccountDetails extends Component{
         else if (this.state.accountExists){
             return <div id="account">
                 <Helmet>
-                    <title>Account Details of {this.state.address} on Cosmos Hub | The Big Dipper</title>
+                    <title>Account Details of {this.state.address} on Sifchain | The Big Dipper</title>
                     <meta name="description" content={"Account Details of "+this.state.address+" on Cosmos Hub"} />
                 </Helmet>
                 <Row>

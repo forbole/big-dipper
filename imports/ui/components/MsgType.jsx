@@ -49,7 +49,9 @@ export const MsgType = (props) => {
         return <Badge color="dark"><T>messageTypes.IBCTransfer</T></Badge>;
     case "cosmos-sdk/IBCReceiveMsg":
         return <Badge color="dark"><T>messageTypes.IBCReceive</T></Badge>;
-
+      // clp
+      case "clp/Swap":
+        return <Badge color="success">Swap</Badge>;
     default:
         return <Badge color="primary">{props.type}</Badge>;
     }
