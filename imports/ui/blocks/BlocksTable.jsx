@@ -84,7 +84,7 @@ export default class BlocksTable extends Component {
                 <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>blocks.latestBlocks</T></h1></Col>
                 <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
             </Row>
-            <div class="bgw mt15">
+            <div className="bgw mt15">
             <Switch>
                 <Route path="/blocks/:blockId" render={(props)=> <Sidebar 
                     sidebar={<Block {...props} />}

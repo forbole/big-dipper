@@ -47,8 +47,9 @@ export default BlockContainer = withTracker((props) => {
         }).fetch() : {},
         pegTxs: transactionsExist ? Transactions.find({
             $or: [
-                {"tx.value.msg.type":"ethbridge/MsgLock"}, // unpeg?
-                {"tx.value.msg.type":"ethbridge/MsgCreateEthBridgeClaim"}, // peg: non-rowan (lock), rowan (burn)
+                {"tx.value.msg.type":"ethbridge/MsgLock"},
+                {"tx.value.msg.type":"ethbridge/MsgBurn"},
+                {"tx.value.msg.type":"ethbridge/MsgCreateEthBridgeClaim"},
             ]
         }).fetch() : {},        
         transferTxs: transactionsExist ? Transactions.find({

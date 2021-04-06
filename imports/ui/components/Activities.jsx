@@ -69,7 +69,6 @@ export default class Activites extends Component {
   }
 
   render() {
-    // console.log(this.props);
     const msg = this.props.msg;
     const events = [];
     for (let i in this.props.events) {
@@ -324,7 +323,7 @@ export default class Activites extends Component {
                     ).toString(6)}
                 </span>{" "}*/}
                 <JSONPretty id="json-pretty" data={msg.value}></JSONPretty>
-                <span class="quick-note">Swap</span>
+                <span className="quick-note">Swap</span>
             </p>
         )
 
@@ -375,7 +374,6 @@ export default class Activites extends Component {
           <div>
             <JSONPretty id="json-pretty" data={msg.value}></JSONPretty>
             {msg.type}
-            
           </div>
         );
     }

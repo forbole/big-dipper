@@ -86,13 +86,13 @@ export default class Transactions extends Component{
         return <div id="transactions">
             <Helmet>
                 <title>Latest Transactions on Sifchain | The Big Dipper</title>
-                <meta name="description" content="See what is happening on Cosmos Hub" />
+                <meta name="description" content="See what is happening on Sifchain" />
             </Helmet>
             <Row>
                 <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>transactions.transactions</T></h1></Col>
                 <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
             </Row>
-            <div class="bgw mt15">
+            <div className="bgw mt15">
                 <Switch>
                     <Route path="/transactions/:txId" render={(props)=> <Sidebar 
                         sidebar={<Transaction {...props} />}
