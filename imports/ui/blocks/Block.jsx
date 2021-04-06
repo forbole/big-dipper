@@ -20,19 +20,25 @@ export default class Block extends Component{
             distributionTxs: {},
             governanceTxs: {},
             slashingTxs: {},
+            clpTxs: {},
+            pegTxs: {},
+
         };
     }
 
     componentDidUpdate(prevProps){
         if (this.props != prevProps){
             if (this.props.transactionsExist){
-                // console.log("have txs.");
+                // console.log("have txs.", this.props);
                 this.setState({
                     transferTxs: this.props.transferTxs,
                     stakingTxs: this.props.stakingTxs,
                     distributionTxs: this.props.distributionTxs,
                     governanceTxs: this.props.governanceTxs,
-                    slashingTxs: this.props.slashingTxs
+                    slashingTxs: this.props.slashingTxs,
+                    clpTxs: this.props.clpTxs,
+                    pegTxs: this.props.pegTxs
+
                 })
             }
         }
@@ -54,7 +60,7 @@ export default class Block extends Component{
 
                 return <Container id="block">
                     <Helmet>
-                        <title>Block {numbro(block.height).format("0,0")} on Cosmos Hub | The Big Dipper</title>
+                        <title>Block {numbro(block.height).format("0,0")} on Sifchain | The Big Dipper</title>
                         <meta name="description" content={"Block details of height "+numbro(block.height).format("0,0")} />
                     </Helmet>
                     <h4><T>blocks.block</T> {numbro(block.height).format("0,0")}</h4>
@@ -79,6 +85,8 @@ export default class Block extends Component{
                         distributionTxs={this.state.distributionTxs}
                         governanceTxs={this.state.governanceTxs}
                         slashingTxs={this.state.slashingTxs}
+                        clpTxs={this.state.clpTxs}
+                        pegTxs={this.state.pegTxs}
                     />
                 </Container>
             }
