@@ -85,31 +85,33 @@ export default class Transactions extends Component{
     render(){
         return <div id="transactions">
             <Helmet>
-                <title>Latest Transactions on Cosmos Hub | The Big Dipper</title>
+                <title>Latest Transactions on Sifchain | The Big Dipper</title>
                 <meta name="description" content="See what is happening on Cosmos Hub" />
             </Helmet>
             <Row>
                 <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>transactions.transactions</T></h1></Col>
                 <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
             </Row>
-            <Switch>
-                <Route path="/transactions/:txId" render={(props)=> <Sidebar 
-                    sidebar={<Transaction {...props} />}
-                    open={this.state.sidebarOpen}
-                    onSetOpen={this.onSetSidebarOpen}
-                    styles={{ sidebar: { 
-                        background: "white", 
-                        position: "fixed",
-                        width: '85%',
-                        zIndex: 4
-                    },overlay: {
-                        zIndex: 3
-                    } }}
-                >
-                </Sidebar>} />
-            </Switch>
-            <List limit={this.state.limit} />
-            <LoadMore show={this.state.loadmore} />
+            <div class="bgw mt15">
+                <Switch>
+                    <Route path="/transactions/:txId" render={(props)=> <Sidebar 
+                        sidebar={<Transaction {...props} />}
+                        open={this.state.sidebarOpen}
+                        onSetOpen={this.onSetSidebarOpen}
+                        styles={{ sidebar: { 
+                            background: "white", 
+                            position: "fixed",
+                            width: '85%',
+                            zIndex: 4
+                        },overlay: {
+                            zIndex: 3
+                        } }}
+                    >
+                    </Sidebar>} />
+                </Switch>
+                <List limit={this.state.limit} />
+                <LoadMore show={this.state.loadmore} />
+            </div>
         </div>
     }
 }

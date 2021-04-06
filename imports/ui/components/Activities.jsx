@@ -304,7 +304,7 @@ export default class Activites extends Component {
 
       // clp
       case "clp/Swap":
-          console.log(getCoinDecimals(msg.value.SentAsset.symbol))
+          // console.log(getCoinDecimals(msg.value.SentAsset.symbol))
         return (
             <p>
               {/*<Account address={msg.value.Signer} />{" "}
@@ -324,13 +324,58 @@ export default class Activites extends Component {
                     ).toString(6)}
                 </span>{" "}*/}
                 <JSONPretty id="json-pretty" data={msg.value}></JSONPretty>
+                <span class="quick-note">Swap</span>
             </p>
         )
+
+      case "ethbridge/MsgLock":
+        return (
+          <p>
+              <JSONPretty id="json-pretty" data={msg.value}></JSONPretty>
+              <span class="quick-note">Unpeg</span>
+            </p>
+          )
+
+      case  "ethbridge/MsgBurn":
+        return (
+          <p>
+              <JSONPretty id="json-pretty" data={msg.value}></JSONPretty>
+              <span class="quick-note">Unpeg</span>
+            </p>
+          )
+
+      case "ethbridge/MsgCreateEthBridgeClaim":
+        return (
+          <p>
+                <JSONPretty id="json-pretty" data={msg.value}></JSONPretty>
+                <span class="quick-note">Peg</span>
+            </p>
+          )      
+
+      case  "clp/AddLiquidity":
+        return (
+          <p>
+              <JSONPretty id="json-pretty" data={msg.value}></JSONPretty>
+              <span class="quick-note">Add Liquidity</span>
+            </p>
+          )
+
+      case  "clp/RemoveLiquidity":
+        return (
+          <p>
+              <JSONPretty id="json-pretty" data={msg.value}></JSONPretty>
+              <span class="quick-note">Remove Liquidity</span>
+            </p>
+          )
+
+
 
       default:
         return (
           <div>
             <JSONPretty id="json-pretty" data={msg.value}></JSONPretty>
+            {msg.type}
+            
           </div>
         );
     }
