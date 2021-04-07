@@ -215,7 +215,7 @@ export default class Activites extends Component {
                 <Table striped className="mt-3">
                     <thead>
                         <tr>
-                            <th className="w-25">activities.auctionID</th>
+                            <th className="w-25"><T>activities.auctionID</T></th>
                             <td>{msg.value.auction_id}</td>
                         </tr>
                     </thead>
