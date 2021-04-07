@@ -128,7 +128,7 @@ export default class List extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {this.state.cdpList ? (Object.keys(this.state.cdpList).length > this.state.pageSize ? this.state.cdpList.slice(this.state.currentPage * this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize) : this.state.cdpList) : "No active CDPs. "}
+                            {this.state.cdpList ? (Object.keys(this.state.cdpList).length > this.state.pageSize ? this.state.cdpList.slice(this.state.currentPage * this.state.pageSize - this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize - this.state.pageSize) : this.state.cdpList) : "No active CDPs. "}
                         </tbody>
                     </Table>
                 </div>
@@ -140,7 +140,7 @@ export default class List extends Component {
                         nextPageText={<i className="material-icons">navigate_next</i>}
                         activePage={this.state.currentPage}
                         itemsCountPerPage={this.state.pageSize}
-                        totalItemsCount={this.state.cdpList.length - (this.state.cdpList.length % this.state.pageSize)}
+                        totalItemsCount={this.state.cdpList.length}
                         pageRangeDisplayed={10}
                         // eslint-disable-next-line react/jsx-no-bind
                         onChange={this.handlePageChange.bind(this)}

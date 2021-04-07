@@ -16,7 +16,7 @@ const depositedAmount = (searchObject, HARDDenom) => {
 
 const indexValue = (searchObject, HARDDenom) => {
     let findIndex = searchObject.find(({ denom }) => denom === HARDDenom);
-    return findIndex ? <h6>{numbro(findIndex.value).format('0.0000000000')}</h6> : ''
+    return findIndex ? <h6>Index {numbro(findIndex.value).format('0.0000000')}</h6> : ''
 }
 
 const HARDRow = (props) => {
@@ -198,8 +198,8 @@ export default class List extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {this.state.HARDBorrows ? (Object.keys(this.state.HARDBorrows).length > this.state.pageSize ? this.state.HARDBorrows.slice(this.state.currentPage * this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize) : this.state.HARDBorrows) : "  "}
-                            {this.state.HARDDeposits ? (Object.keys(this.state.HARDDeposits).length > this.state.pageSize ? this.state.HARDDeposits.slice(this.state.currentPage * this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize) : this.state.HARDDeposits) : "  "}
+                            {this.state.HARDBorrows ? (Object.keys(this.state.HARDBorrows).length > this.state.pageSize ? this.state.HARDBorrows.slice(this.state.currentPage * this.state.pageSize - this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize - this.state.pageSize) : this.state.HARDBorrows) : null}
+                            {this.state.HARDDeposits ? (Object.keys(this.state.HARDDeposits).length > this.state.pageSize ? this.state.HARDDeposits.slice((this.state.currentPage * this.state.pageSize) - this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize - this.state.pageSize) : this.state.HARDDeposits) : null}
                         </tbody>
                     </Table>
                 </div>
@@ -211,7 +211,7 @@ export default class List extends Component {
                         nextPageText={<i className="material-icons">navigate_next</i>}
                         activePage={this.state.currentPage}
                         itemsCountPerPage={this.state.pageSize}
-                        totalItemsCount={this.state.HARDDeposits ? this.state.HARDDeposits.length - (this.state.HARDDeposits.length % this.state.pageSize) : this.state.HARDBorrows.length - (this.state.HARDBorrows.length % this.state.pageSize)}
+                        totalItemsCount={this.state.HARDDeposits ? this.state.HARDDeposits.length  : this.state.HARDBorrows.length}
                         pageRangeDisplayed={10}
                         // eslint-disable-next-line react/jsx-no-bind
                         onChange={this.handlePageChange.bind(this)}
