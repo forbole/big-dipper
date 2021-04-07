@@ -166,19 +166,19 @@ export default class CDP extends Component {
                         {(this.props.owner) ? <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.owner</T></th>
                             <td><Account address={this.props.owner} /></td>
-                        </tr> : ''}
+                        </tr> : null}
                         {(this.state.userCDP.cdp.type) ? <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.collateralType</T></th>
                             <td><div >{this.state.userCDP.cdp.type}</div></td>
-                        </tr> : ''}
+                        </tr> : null}
                         {(this.state.userCDP.cdp.collateral) ? <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.collateralDeposited</T></th>
                             <td><div >{new Coin(this.state.userCDP.cdp.collateral.amount, this.state.userCDP.cdp.collateral.denom).toString(6)}</div></td>
-                        </tr> : ''}
+                        </tr> : null}
                         {(this.state.userCDP.cdp.principal) ? <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.principal</T></th>
                             <td><div >{new Coin(this.state.userCDP.cdp.principal.amount, this.state.userCDP.cdp.principal.denom).toString(6)}</div></td>
-                        </tr> : ''}
+                        </tr> : null}
                         <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.accumulatedFees</T></th>
                             <td>
@@ -189,7 +189,7 @@ export default class CDP extends Component {
                         {(this.state.userCDP.collateral_value && (this.state.userCDP.collateral_value.length > 0)) ? <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.collateralValue</T></th>
                             <td>{this.state.userCDP.collateral_value.map((col, i) => <div key={i}>{new Coin(col.amount, col.denom).toString(6)}</div>)}</td>
-                        </tr> : ''}
+                        </tr> : null}
                         <tr>
                             <th scope="row" className="w-25 text-muted"><T>cdp.interestFactor</T></th>
                             <td>{numbro(this.state.userCDP.cdp.interest_factor).format({ mantissa: 4 })}</td>
@@ -221,7 +221,7 @@ export default class CDP extends Component {
                         principalDeposited={this.state.userCDP ? this.state.userCDP.cdp.principal.amount : null}
                         collateralizationRatio={this.getCDPParams(this.props.collateralDenom, 'liquidation_ratio') ?? null}
                         isDepositor={this.state.isDepositor ? this.state.isDepositor : null}
-                    /> : ''}
+                    /> : null}
                     {(this.props.owner == this.props.user) ? <DrawDebtCDPButton
                         amountAvailable={this.state.total ? this.findTotalValue(this.state.total, this.props.collateralDenom) : null}
                         CDPParameters={this.props.collateralParams ?? null}
@@ -230,7 +230,7 @@ export default class CDP extends Component {
                         principalDenom={this.state.userCDP ? this.state.userCDP.cdp.principal.denom : null}
                         principalDeposited={this.state.userCDP ? this.state.userCDP.cdp.principal.amount : null}
                         collateralizationRatio={this.getCDPParams(this.props.collateralDenom, 'liquidation_ratio') ?? null}
-                    /> : ''}
+                    /> : null}
 
                     {(this.props.owner == this.props.user) ? <RepayDebtCDPButton
                         amountAvailable={this.state.total ? this.findTotalValue(this.state.total, this.props.collateralDenom) : null}
@@ -241,7 +241,7 @@ export default class CDP extends Component {
                         principalDeposited={this.state.userCDP ? this.state.userCDP.cdp.principal.amount : null}
                         collateralizationRatio={this.getCDPParams(this.props.collateralDenom, 'liquidation_ratio') ?? null}
                         disabled={!this.state.userCDP}
-                    /> : ''}
+                    /> : null}
                 </div>
 
             </div>

@@ -983,11 +983,11 @@ export default class AccountDetails extends Component {
                                     <TabPane tabId="cdp-active">
                                         <Row className="denom-list">
                                             {this.state.hasActiveCDP ?
-                                                this.state.collateralParams.map(denom => {
+                                                this.state.collateralParams.map((denom, index) => {
                                                     return (   
-                                                        <Nav tabs className="mb-2">
+                                                        <Nav tabs className="mb-2" key={index}>
 
-                                                            <NavItem style={{listStyle: "none", display: "flex", flexWrap: "wrap"}} >
+                                                            <NavItem key={index} style={{listStyle: "none", display: "flex", flexWrap: "wrap"}} >
                                                                 <NavLink
                                                                     className={classnames({ active: this.state.activeSubtab === `cdp-${denom.type}` })}
                                                                     onClick={() => { this.toggleCDPSutab(`cdp-${denom.type}`, denom.denom, denom.type); }}
@@ -1000,9 +1000,9 @@ export default class AccountDetails extends Component {
                                                         </Nav>) }) : null}
                                         </Row>
                                         {this.state.hasActiveCDP ?
-                                            this.state.collateralParams.map(denom => {
+                                            this.state.collateralParams.map((denom, index )=> {
                                                 return (  
-                                                    <TabContent activeTab={this.state.activeSubtab} >
+                                                    <TabContent activeTab={this.state.activeSubtab} key={index}>
                                                         <TabPane tabId={`cdp-${denom.type}`}>
                                                             <CDP
                                                                 owner={this.state.address}
