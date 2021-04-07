@@ -65,6 +65,7 @@ export default class AccountDetails extends Component {
             activeSubtab: 'cdp-bnb-a',
             activeSubtabDenomType: 'bnb-a',
             activeSubtabDenom: 'bnb',
+            activeHARDSubtab: 'bnb',
             activeIncentiveSubtab: 'incentive-hard',
             cdpID: 0,
             cdpOwner: '',
@@ -455,6 +456,7 @@ export default class AccountDetails extends Component {
     componentDidMount() {
         this.getBalance();
         this.checkIfCDPIsActive();
+        this.updateDeposits();
         timer = Meteor.setInterval(() => {
             this.getBalance();
         }, 10000)
@@ -495,6 +497,7 @@ export default class AccountDetails extends Component {
                 hasIncentive: false,
                 operatorAddress: "",
                 hasActiveCDP: false,
+                hasHARDDeposit: false,
                 collateralParams: []
             }, () => {
                 this.getBalance();
@@ -610,6 +613,14 @@ export default class AccountDetails extends Component {
         }
     }
 
+    toggleHARD = (tab) => {
+        if (this.state.activeHARDSubtab !== tab) {
+            this.setState({
+                activeHARDSubtab: tab
+            });
+        }
+    }
+
     toggleIncentiveSutab = (tab) => {
         if (this.state.activeIncentiveSubtab !== tab) {
             this.setState({
@@ -660,6 +671,31 @@ export default class AccountDetails extends Component {
      
     };
 
+    updateDeposits() {
+        Meteor.call('hard.deposits', (error, result) => {
+            if (error) {
+                console.warn(error);
+                this.setState({
+                    // loading: true,
+                    HARDDeposits: undefined
+                })
+            }
+
+            if (result) {
+                for (let c in result) {
+                    if (result[c].depositor === this.state.address) {
+                        this.setState({
+                            HARDDeposits: result[c]
+                        })
+                    }
+                }
+                this.setState({
+                    loading: false,
+                    hasHARDDeposit: true
+                })
+            }
+        })
+    }
     // createCDP = (callback) =>{
     //     Meteor.call('create.cdp', {from: this.state.user}, this.getPath(), (err, res) =>{
     //         if (res){
@@ -1019,13 +1055,38 @@ export default class AccountDetails extends Component {
                                     </TabPane>
 
                                     <TabPane tabId="cdp-hard">
-                                        <HARD
-                                            address={this.state.address}
-                                            collateralType={this.state.activeSubtabDenomType}
-                                            collateralDenom={this.state.activeSubtabDenom}
-                                            user={this.state.user}
-                                            HARD_USD_Price={this.state.HARD_USD_Price}
-                                        />
+                                        <Row className="hard-denom-list">
+                                            {this.state.hasHARDDeposit ?
+                                                this.state.HARDDeposits.amount.map((denom, index) => {
+                                                    return (
+                                                        <Nav tabs className="mb-2" key={index}>
+
+                                                            <NavItem key={index} style={{ listStyle: "none", display: "flex", flexWrap: "wrap" }} >
+                                                                <NavLink
+                                                                    className={classnames({ active: this.state.activeHARDSubtab === `${denom.denom}` })}
+                                                                    onClick={() => { this.toggleHARD(`${denom.denom}`); }}
+                                                                >
+                                                                    {denom.denom === 'ukava' ? <span className="cdp-logo denom"><img src="/img/KAVA-symbol.svg" className="cdp-logo-image" /> {denom.denom.toUpperCase()} </span> : null}
+                                                                    {denom.denom === 'xrpb' ? <span className="cdp-logo denom"><img src="/img/XRP-symbol.svg" className="cdp-logo-image" /> {denom.denom.toUpperCase()} </span> : null}
+                                                                    {denom.denom != 'ukava' && denom.denom != 'xrpb' ? <span className="cdp-logo denom"><img src={`/img/${denom.denom.toUpperCase()}-symbol.svg`} className="cdp-logo-image" /> {denom.denom.toUpperCase()} </span> : null}
+                                                                </NavLink>
+                                                            </NavItem>
+                                                        </Nav>)
+                                                }) : null}
+                                        </Row>
+                                        {this.state.hasHARDDeposit ?
+                                            this.state.HARDDeposits.amount.map((denom, index) => {
+                                                return (
+                                                    <TabContent activeTab={this.state.activeHARDSubtab} key={index}>
+                                                        <TabPane tabId={`${denom.denom}`}>
+                                                            <HARD
+                                                                address={this.state.address}
+                                                                collateralDenom={this.state.activeHARDSubtab}
+                                                                user={this.state.user}
+                                                            />
+                                                        </TabPane>
+                                                    </TabContent>)
+                                            }) : null}
                                     </TabPane>
 
                                     <TabPane tabId="cdp-incentive">
