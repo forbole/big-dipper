@@ -2363,7 +2363,7 @@ class AuctionBidButton extends LedgerButton {
                 {(new Coin(this.state.minAmount, this.state.denom).convertToString()) > 0 ? <FormText className="coin-available mb-n5 float-right">Min {new Coin(this.state.minAmount, this.state.denom).convertToString()}</FormText> : null}
                 <InputGroup className="modal-for-ledger py-n5">
                     <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="modal-for-ledger"><img src="/img/usdx-symbol.svg" className="symbol-img" /> </InputGroupText>
+                        <InputGroupText className="modal-for-ledger"><TokenImage collateral={this.state.denom} /></InputGroupText>
                     </InputGroupAddon>
 
                     <Input placeholder="Bid Amount" name="bid" value={this.state.bid} type="number" onChange={this.handleChange}
