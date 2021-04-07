@@ -79,7 +79,7 @@ export default class Incentive extends Component {
                         </tr> : ''}
                         <tr>
                             <th scope="row" className="w-25 text-muted"><T>incentive.collateralType</T></th>
-                            <td>{this.state.incentiveUSDX[0]?.reward_indexes ? this.state.incentiveUSDX[0]?.reward_indexes[0]?.collateral_type.toUpperCase() : null}</td>
+                            <td>{this.state.incentiveUSDX[0]?.reward_indexes ? this.state.incentiveUSDX[0]?.reward_indexes[0]?.collateral_type : null}</td>
                         </tr>
                         <tr>
                             <th scope="row" className="w-25 text-muted"><T>incentive.rewardFactor</T></th>
