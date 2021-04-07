@@ -656,7 +656,7 @@ class LedgerButton extends Component {
             txMsg = Ledger.depositHARD(
                 this.getTxContext(),
                 this.state.depositAmount,
-                this.state.denom);
+                this.state.collateralDenom);
             break;
         case Types.HARDWITHDRAW:
             txMsg = Ledger.withdrawHARD(
@@ -2012,10 +2012,11 @@ class DrawDebtCDPButton extends LedgerButton {
             draw: 0,
             collateralDenom: props.collateralDenom,
             maxAmount: props.amountAvailable,
+            ratio: 0,
             collateralType: '',
+            collateral: 0,
             principalDenom: props.principalDenom,
             price: 0,
-
         }
     }
 
@@ -2468,7 +2469,7 @@ class HARDDepositButton extends LedgerButton {
         let target = e.currentTarget;
         let value = target.innerText;
 
-        this.setState({ collateralDenom: value, loading: true })
+        this.setState({ collateralDenom: value})
 
         if (target.innerText === 'KAVA') {
             this.setState({
@@ -2496,7 +2497,7 @@ class HARDDepositButton extends LedgerButton {
                             if (item.denom != "usdx") {
                                 return (
                                     <>
-                                        <DropdownItem name='collateralDenom' data-type='tokenSelection' key={index} onClick={this.handleTokenSelection}>{collateralStakeName(item.denom)}</DropdownItem>
+                                        <DropdownItem name='collateralDenom' data-type='tokenSelection' key={index+1} onClick={this.handleTokenSelection}>{collateralStakeName(item.denom)}</DropdownItem>
                                         <DropdownItem divider />
                                     </>
                                 )
