@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Badge} from 'reactstrap';
+import { Table, Badge, Spinner} from 'reactstrap';
 import moment from 'moment';
 import numbro from 'numbro';
 import Account from '../components/Account.jsx';
@@ -102,7 +102,7 @@ export default class HARD extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (!_.isEqual(prevProps.total, this.props.total)) {
+        if (!_.isEqual(prevProps.total, this.props.total) || !_.isEqual(prevProps.collateralDenom, this.props.collateralDenom) ) {
             this.setState({
                 loading: true,
 

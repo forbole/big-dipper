@@ -1057,7 +1057,7 @@ export default class AccountDetails extends Component {
                                     <TabPane tabId="cdp-hard">
                                         <Row className="hard-denom-list">
                                             {this.state.hasHARDDeposit ?
-                                                this.state.HARDDeposits.amount.map((denom, index) => {
+                                                this.state.HARDDeposits?.amount.map((denom, index) => {
                                                     return (
                                                         <Nav tabs className="mb-2" key={index}>
 
@@ -1075,7 +1075,7 @@ export default class AccountDetails extends Component {
                                                 }) : null}
                                         </Row>
                                         {this.state.hasHARDDeposit ?
-                                            this.state.HARDDeposits.amount.map((denom, index) => {
+                                            this.state.HARDDeposits?.amount.map((denom, index) => {
                                                 return (
                                                     <TabContent activeTab={this.state.activeHARDSubtab} key={index}>
                                                         <TabPane tabId={`${denom.denom}`}>
