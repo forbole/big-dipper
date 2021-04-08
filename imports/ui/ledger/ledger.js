@@ -301,7 +301,7 @@ export class Ledger {
 
     // Returns fraction value of a token
     static coinFraction(coin) {
-        let coinName = coin.toLowerCase()
+        let coinName = coin?.toLowerCase()
         let findCoin = Meteor.settings.public.coins.find(({ denom }) => denom === coinName);
         let fraction = findCoin ? findCoin.fraction : 0;
         return fraction;
@@ -567,8 +567,7 @@ export class Ledger {
                     amount: parseInt(parseFloat(draw) * Ledger.coinFraction(principalDenom)).toString(),
                     denom: principalDenom
                 },
-                sender: txContext.bech32,
-
+                sender: txContext.bech32
             },
         };
         return Ledger.createSkeleton(txContext, [txMsg]);
@@ -601,7 +600,7 @@ export class Ledger {
         const txMsg = {
             type: 'incentive/MsgClaimUSDXMintingReward',
             value: {
-                multiplier_name: multiplier.toLowerCase(),
+                multiplier_name: multiplier?.toLowerCase(),
                 sender: txContext.bech32,
 
             }
@@ -614,7 +613,7 @@ export class Ledger {
         const txMsg = {
             type: 'incentive/MsgClaimHardLiquidityProivderReward',
             value: {
-                multiplier_name: multiplier.toLowerCase(),
+                multiplier_name: multiplier?.toLowerCase(),
                 sender: txContext.bech32,
 
             },
@@ -650,7 +649,7 @@ export class Ledger {
             type: 'hard/MsgDeposit',
             value: {
                 amount: {
-                    amount: parseInt(parseFloat(depositAmount) * Ledger.coinFraction(depositDenom)).toString(),
+                    amount: (parseFloat(depositAmount) * Ledger.coinFraction(depositDenom)).toString(),
                     denom: depositDenom
                 },
                 depositor: txContext.bech32
@@ -664,7 +663,7 @@ export class Ledger {
             type: 'hard/MsgWithdraw',
             value: {
                 amount: {
-                    amount: parseInt(parseFloat(withdrawAmount) * Ledger.coinFraction(withdrawDenom)).toString(),
+                    amount: (parseFloat(withdrawAmount) * Ledger.coinFraction(withdrawDenom)).toString(),
                     denom: withdrawDenom
                 },
                 depositor: txContext.bech32
@@ -678,7 +677,7 @@ export class Ledger {
             type: 'hard/MsgBorrow',
             value: {
                 amount: {
-                    amount: parseInt(parseFloat(borrowAmount) * Ledger.coinFraction(borrowDenom)).toString(),
+                    amount: (parseFloat(borrowAmount) * Ledger.coinFraction(borrowDenom)).toString(),
                     denom: borrowDenom
                 },
                 borrower: txContext.bech32,
@@ -692,7 +691,7 @@ export class Ledger {
             type: 'hard/MsgRepay',
             value: {
                 amount: {
-                    amount: parseInt(parseFloat(repayAmount) * Ledger.coinFraction(repayDenom)).toString(),
+                    amount: (parseFloat(repayAmount) * Ledger.coinFraction(repayDenom)).toString(),
                     denom: repayDenom
                 },
                 sender: txContext.bech32,
@@ -702,11 +701,11 @@ export class Ledger {
         return Ledger.createSkeleton(txContext, [txMsg]);
     }
 
-    static liquidateHARD(txContext, borrowerAddress) {
+    static liquidateHARD(txContext, keeperAddress, borrowerAddress) {
         const txMsg = {
             type: 'hard/MsgLiquidate',
             value: {
-                keeper: txContext.bech32,
+                keeper: keeperAddress,
                 borrower: borrowerAddress,
             },
         };

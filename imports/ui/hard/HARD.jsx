@@ -6,7 +6,7 @@ import Account from '../components/Account.jsx';
 import Coin from '/both/utils/coins.js'
 import i18n from 'meteor/universe:i18n';
 import PropTypes from 'prop-types';
-import { HARDDepositButton, HARDNewDepositButton, HARDWithdrawButton, HARDBorrowButton, HARDRepayButton, HARDLiquidateButton } from '../ledger/LedgerActions.jsx';
+import { HARDDepositButton, HARDNewDepositButton, HARDWithdrawButton, HARDBorrowButton, HARDNewBorrowButton, HARDRepayButton, HARDLiquidateButton } from '../ledger/LedgerActions.jsx';
 import _ from 'lodash';
 
 const T = i18n.createComponent();
@@ -203,20 +203,23 @@ export default class HARD extends Component {
                                 accountTokensAvailable={this.state.total ?? null}
                                 HARDParameters={this.state.HARDParameters ?? null}
                                 collateralDenom={this.props.collateralDenom ? this.props.collateralDenom : null}
-                            /> : null }
+                            /> 
+                            : null }
                         {(this.props.address == this.props.user) ?
                             <HARDDepositButton
                                 amountAvailable={this.state.total ? this.findTotalValue(this.state.total, this.props.collateralDenom) : null}
                                 HARDParameters={this.state.HARDParameters ?? null}
                                 collateralDenom={this.props.collateralDenom ? this.props.collateralDenom : null}
-                            /> : null } 
+                            />
+                            : null } 
                         {(this.props.address == this.props.user) ? 
                             <HARDWithdrawButton
                                 amountAvailable={this.state.total ? this.findTotalValue(this.state.total, this.props.collateralDenom) : null}
                                 collateralDeposited={this.state.HARDDeposits ? this.state.HARDDeposits?.amount : null}
                                 collateralDenom={this.props.collateralDenom ? this.props.collateralDenom : null}
                                 isDepositor={this.state.isDepositor ? this.state.isDepositor : null}
-                            /> : null} 
+                            /> 
+                            : null} 
                     </div>
 
                 </div>
@@ -263,6 +266,15 @@ export default class HARD extends Component {
 
                     <div className="hard-buttons float-right">
                         {(this.props.address == this.props.user) ?
+                            <HARDNewBorrowButton
+                                accountTokensAvailable={this.state.total ?? null}
+                                HARDParameters={this.state.HARDParameters ?? null}
+                                collateralDenom={this.props.collateralDenom ? this.props.collateralDenom : null}
+                                amountAvailable={this.state.total ? this.findTotalValue(this.state.total, this.props.collateralDenom) : null}
+                            /> 
+                            : null}
+
+                        {(this.props.address == this.props.user) ?
                             <HARDBorrowButton
                                 amountAvailable={this.state.total ? this.findTotalValue(this.state.total, this.props.collateralDenom) : null}
                                 borrowedValue={this.state.HARDBorrows.amount ?? null}
@@ -293,7 +305,7 @@ export default class HARD extends Component {
             else {
                 return <div className="hard-buttons float-right">
                     {(this.props.address == this.props.user) ?
-                        <HARDBorrowButton
+                        <HARDNewBorrowButton
                             accountTokensAvailable={this.state.total ?? null}
                             HARDParameters={this.state.HARDParameters ?? null}
                             collateralDenom={this.props.collateralDenom ? this.props.collateralDenom : null}
