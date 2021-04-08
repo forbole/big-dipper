@@ -1,7 +1,7 @@
 # Changelog
 
 # [Unreleased]
-* Project upgrade to kava-5.1
+* Updated project to Kava-5 upgrade (Added HARD Protocol Support)
 
 ## kava-6-v1.0.0
 
