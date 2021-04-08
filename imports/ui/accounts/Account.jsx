@@ -65,7 +65,8 @@ export default class AccountDetails extends Component {
             activeSubtab: 'cdp-bnb-a',
             activeSubtabDenomType: 'bnb-a',
             activeSubtabDenom: 'bnb',
-            activeHARDSubtab: 'bnb',
+            activeHARDTab: '',
+            activeHARDSubtab: '',
             activeIncentiveSubtab: 'incentive-hard',
             cdpID: 0,
             cdpOwner: '',
@@ -86,7 +87,12 @@ export default class AccountDetails extends Component {
             hasIncentive: false,
             operatorAddress: "",
             hasActiveCDP: false,
-            collateralParams: []
+            collateralParams: [],
+            hasHARDBorrows: false,
+            hasHARDDeposit: false,
+            HARDDeposits: undefined,
+            HARDBorrows: undefined
+
         }
     }
 
@@ -457,6 +463,7 @@ export default class AccountDetails extends Component {
         this.getBalance();
         this.checkIfCDPIsActive();
         this.updateDeposits();
+        this.updateBorrows();
         timer = Meteor.setInterval(() => {
             this.getBalance();
         }, 10000)
@@ -498,6 +505,9 @@ export default class AccountDetails extends Component {
                 operatorAddress: "",
                 hasActiveCDP: false,
                 hasHARDDeposit: false,
+                hasHARDBorrows: false,
+                HARDDeposits: undefined,
+                HARDBorrows: undefined,
                 collateralParams: []
             }, () => {
                 this.getBalance();
@@ -613,7 +623,16 @@ export default class AccountDetails extends Component {
         }
     }
 
-    toggleHARD = (tab) => {
+    toggleHARDTab = (tab) => {
+        if (this.state.activeHARDTab !== tab) {
+            this.setState({
+                activeHARDTab: tab
+            });
+        }
+    }
+    
+
+    toggleHARDSubtab = (tab) => {
         if (this.state.activeHARDSubtab !== tab) {
             this.setState({
                 activeHARDSubtab: tab
@@ -676,7 +695,7 @@ export default class AccountDetails extends Component {
             if (error) {
                 console.warn(error);
                 this.setState({
-                    // loading: true,
+                    loading: true,
                     HARDDeposits: undefined
                 })
             }
@@ -692,6 +711,32 @@ export default class AccountDetails extends Component {
                 this.setState({
                     loading: false,
                     hasHARDDeposit: true
+                })
+            }
+        })
+    }
+
+    updateBorrows() {
+        Meteor.call('hard.borrows', (error, result) => {
+            if (error) {
+                console.warn(error);
+                this.setState({
+                    loading: true,
+                    HARDBorrows: undefined
+                })
+            }
+
+            if (result) {
+                for (let c in result) {
+                    if (result[c].borrower === this.state.address) {
+                        this.setState({
+                            HARDBorrows: result[c]
+                        })
+                    }
+                }
+                this.setState({
+                    loading: false,
+                    hasHARDBorrows: true
                 })
             }
         })
@@ -1055,38 +1100,118 @@ export default class AccountDetails extends Component {
                                     </TabPane>
 
                                     <TabPane tabId="cdp-hard">
-                                        <Row className="hard-denom-list">
-                                            {this.state.hasHARDDeposit ?
-                                                this.state.HARDDeposits?.amount.map((denom, index) => {
-                                                    return (
-                                                        <Nav tabs className="mb-2" key={index}>
+                                        <Nav tabs className="mb-2">
+                                            <NavItem>
+                                                <NavLink
+                                                    className={classnames({ active: this.state.activeHARDTab === 'hard-deposits' })}
+                                                    onClick={() => { this.toggleHARDTab('hard-deposits'); }}
+                                                >
+                                                    <span className="cdp-logo"><img src="/img/HARD-symbol.svg" className="cdp-logo-image"/> Deposits</span>
+                                                </NavLink>
+                                            </NavItem>
+                                            <NavItem>
+                                                <NavLink
+                                                    className={classnames({ active: this.state.activeHARDTab === 'hard-borrows' })}
+                                                    onClick={() => { this.toggleHARDTab('hard-borrows'); }}
+                                                >
+                                                    <span className="cdp-logo"><img src="/img/HARD-symbol.svg" className="cdp-logo-image"/> Borrows</span>
+                                                </NavLink>
+                                            </NavItem>
+                                        </Nav>
+                                        <TabContent activeTab={this.state.activeHARDTab} >
+                                            <TabPane tabId={`${this.state.activeHARDTab}`}>
+                                                {this.state.activeHARDTab === 'hard-deposits' ? 
+                                                // HARD Deposit list
+                                                <>
+                                                        <Row className="hard-deposit-list">
+                                                            {this.state.hasHARDDeposit && this.state.HARDDeposits ?
+                                                        this.state.HARDDeposits?.amount.map((denom, index) => {
+                                                            return (
+                                                                <Nav tabs className="mb-2" key={index}>
 
-                                                            <NavItem key={index} style={{ listStyle: "none", display: "flex", flexWrap: "wrap" }} >
-                                                                <NavLink
-                                                                    className={classnames({ active: this.state.activeHARDSubtab === `${denom.denom}` })}
-                                                                    onClick={() => { this.toggleHARD(`${denom.denom}`); }}
-                                                                >
-                                                                    {denom.denom === 'ukava' ? <span className="cdp-logo denom"><img src="/img/KAVA-symbol.svg" className="cdp-logo-image" /> {denom.denom.toUpperCase()} </span> : null}
-                                                                    {denom.denom === 'xrpb' ? <span className="cdp-logo denom"><img src="/img/XRP-symbol.svg" className="cdp-logo-image" /> {denom.denom.toUpperCase()} </span> : null}
-                                                                    {denom.denom != 'ukava' && denom.denom != 'xrpb' ? <span className="cdp-logo denom"><img src={`/img/${denom.denom.toUpperCase()}-symbol.svg`} className="cdp-logo-image" /> {denom.denom.toUpperCase()} </span> : null}
-                                                                </NavLink>
-                                                            </NavItem>
-                                                        </Nav>)
-                                                }) : null}
-                                        </Row>
-                                        {this.state.hasHARDDeposit ?
-                                            this.state.HARDDeposits?.amount.map((denom, index) => {
-                                                return (
-                                                    <TabContent activeTab={this.state.activeHARDSubtab} key={index}>
-                                                        <TabPane tabId={`${denom.denom}`}>
-                                                            <HARD
+                                                                    <NavItem key={index} style={{ listStyle: "none", display: "flex", flexWrap: "wrap" }} >
+                                                                        <NavLink
+                                                                            className={classnames({ active: this.state.activeHARDSubtab === `${denom.denom}` })}
+                                                                            onClick={() => { this.toggleHARDSubtab(`${denom.denom}`); }}
+                                                                        >
+                                                                            {denom.denom === 'ukava' ? <span className="cdp-logo denom"><img src="/img/KAVA-symbol.svg" className="cdp-logo-image" /> {denom.denom.toUpperCase()} </span> : null}
+                                                                            {denom.denom === 'xrpb' ? <span className="cdp-logo denom"><img src="/img/XRP-symbol.svg" className="cdp-logo-image" /> {denom.denom.toUpperCase()} </span> : null}
+                                                                            {denom.denom != 'ukava' && denom.denom != 'xrpb' ? <span className="cdp-logo denom"><img src={`/img/${denom.denom.toUpperCase()}-symbol.svg`} className="cdp-logo-image" /> {denom.denom.toUpperCase()} </span> : null}
+                                                                        </NavLink>
+                                                                    </NavItem>
+                                                                </Nav>)
+                                                        }) : null}
+                                                        </Row>
+
+                                                        {this.state.hasHARDDeposit && this.state.HARDDeposits ?
+                                                    this.state.HARDDeposits?.amount.map((denom, index) => {
+                                                        return (
+                                                            <TabContent activeTab={this.state.activeHARDSubtab} key={index}>
+                                                                <TabPane tabId={`${denom.denom}`}>
+                                                                    <HARD
+                                                                        address={this.state.address}
+                                                                        collateralDenom={this.state.activeHARDSubtab}
+                                                                        user={this.state.user}
+                                                                        activeTab={this.state.activeHARDTab}
+                                                                    />
+                                                                </TabPane>
+                                                            </TabContent>)
+                                                    }) : <HARD
+                                                        address={this.state.address}
+                                                        collateralDenom={this.state.activeHARDSubtab}
+                                                        user={this.state.user}
+                                                        activeTab={this.state.activeHARDTab}
+                                                    /> }
+                                                    </>
+                                                    : null }
+                                                {this.state.activeHARDTab === 'hard-borrows' ?
+
+                                                    // HARD Borrows List
+                                                    <>
+                                                        <Row className="hard-borrow-list">
+                                                            {this.state.hasHARDBorrows === true && this.state.HARDBorrows ?
+                                                                this.state.HARDBorrows?.amount.map((denom, index) => {
+                                                                    return (
+                                                                        <Nav tabs className="mb-2" key={index}>
+
+                                                                            <NavItem key={index} style={{ listStyle: "none", display: "flex", flexWrap: "wrap" }} >
+                                                                                <NavLink
+                                                                                    className={classnames({ active: this.state.activeHARDSubtab === `${denom.denom}` })}
+                                                                                    onClick={() => { this.toggleHARDSubtab(`${denom.denom}`); }}
+                                                                                >
+                                                                                    {denom.denom === 'ukava' ? <span className="cdp-logo denom"><img src="/img/KAVA-symbol.svg" className="cdp-logo-image" /> {denom.denom.toUpperCase()} </span> : null}
+                                                                                    {denom.denom === 'xrpb' ? <span className="cdp-logo denom"><img src="/img/XRP-symbol.svg" className="cdp-logo-image" /> {denom.denom.toUpperCase()} </span> : null}
+                                                                                    {denom.denom != 'ukava' && denom.denom != 'xrpb' ? <span className="cdp-logo denom"><img src={`/img/${denom.denom.toUpperCase()}-symbol.svg`} className="cdp-logo-image" /> {denom.denom.toUpperCase()} </span> : null}
+                                                                                </NavLink>
+                                                                            </NavItem>
+                                                                        </Nav>)
+                                                                }) : null}
+                                                        </Row>
+
+                                                        {this.state.hasHARDBorrows === true && this.state.HARDBorrows ?
+                                                            this.state.HARDBorrows?.amount.map((denom, index) => {
+                                                                return (
+                                                                    <TabContent activeTab={this.state.activeHARDSubtab} key={index}>
+                                                                        <TabPane tabId={`${denom.denom}`}>
+                                                                            <HARD
+                                                                                address={this.state.address}
+                                                                                collateralDenom={this.state.activeHARDSubtab}
+                                                                                user={this.state.user}
+                                                                                activeTab={this.state.activeHARDTab}
+                                                                            />
+                                                                        </TabPane>
+                                                                    </TabContent>)
+                                                            }) : <HARD
                                                                 address={this.state.address}
                                                                 collateralDenom={this.state.activeHARDSubtab}
                                                                 user={this.state.user}
-                                                            />
-                                                        </TabPane>
-                                                    </TabContent>)
-                                            }) : null}
+                                                                activeTab={this.state.activeHARDTab}
+
+                                                            />}
+                                                    </> : null}
+                                            </TabPane>
+                                        </TabContent>
+
                                     </TabPane>
 
                                     <TabPane tabId="cdp-incentive">
