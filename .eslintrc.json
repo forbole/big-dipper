@@ -151,6 +151,7 @@
         "space-before-blocks": "off",
         "space-in-parens": "off",
         "space-infix-ops": "off",
-        "spaced-comment": "off"
+        "spaced-comment": "off",
+        "react/jsx-no-bind": "off"
     }
 }
