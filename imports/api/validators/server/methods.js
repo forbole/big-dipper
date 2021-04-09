@@ -23,9 +23,8 @@ Meteor.methods({
             return false;
         }
     },
-    // async 'Validators.getAllDelegations'(address){
     'Validators.getAllDelegations'(address){
-        let url = API + '/staking/validators/'+address+'/delegations';
+        let url = LCD + '/staking/validators/'+address+'/delegations';
 
         try{
             let delegations = HTTP.get(url);

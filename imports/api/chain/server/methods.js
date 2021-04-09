@@ -1,6 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
+import { getAddress } from 'tendermint/lib/pubkey.js';
 import { Chain, ChainStates } from '../chain.js';
+import { Validators } from '../../validators/validators.js';
+import { VotingPowerHistory } from '../../voting-power/history.js';
 import Coin from '../../../../both/utils/coins.js';
 
 findVotingPower = (validator, genValidators) => {
@@ -41,18 +44,18 @@ Meteor.methods({
             console.log(e);
         }
     },
-    'chain.updateStatus': async function () {
+    'chain.updateStatus': function () {
         this.unblock();
-        let url = "";
+        let url = RPC + '/status';
         try {
-            url = API + '/blocks/latest';
             let response = HTTP.get(url);
-            let latestBlock = JSON.parse(response.content);
-
+            let status = JSON.parse(response.content);
+            status = status.result;
             let chain = { chainId: '', latestBlockHeight: 0, latestBlockTime: 0, validators: 0, activeVotingPower: 0, staking: {}, distribution: {}, mint: {}, gov: { tallyParams: {}, depositParams: {}, votingParams: {} } };
-            chain.chainId = latestBlock.block.header.chain_id;
-            chain.latestBlockHeight = parseInt(latestBlock.block.header.height);
-            chain.latestBlockTime = latestBlock.block.header.time;
+            chain.chainId = status.node_info.network;
+            chain.latestBlockHeight = status.sync_info.latest_block_height;
+            chain.latestBlockTime = status.sync_info.latest_block_time;
+
             let latestState = ChainStates.findOne({}, { sort: { height: -1 } })
             if (latestState && latestState.height >= chain.latestBlockHeight) {
                 return `no updates (getting block ${chain.latestBlockHeight} at block ${latestState.height})`
@@ -60,18 +63,10 @@ Meteor.methods({
 
             // Since Tendermint v0.33, validator page default set to return 30 validators.
             // Query latest height with page 1 and 100 validators per page.
-
-            let validators = []
-
-            do {
-                url = API + `/validatorsets/latest`;
-                let response = HTTP.get(url);
-                result = JSON.parse(response.content).result;
-                validators = result.validators
-
-            }
-            while (validators.length < parseInt(result.total))
-
+            url = RPC + `/validators?height=${chain.latestBlockHeight}&page=1&per_page=100`;
+            response = HTTP.get(url);
+            let validators = JSON.parse(response.content);
+            validators = validators.result.validators;
             chain.validators = validators.length;
             let activeVP = 0;
             for (v in validators) {
@@ -81,9 +76,9 @@ Meteor.methods({
 
             // update staking params
             try {
-                url = API + 'staking/parameters';
+                url = LCD + 'staking/parameters';
                 response = HTTP.get(url);
-                chain.staking = JSON.parse(response.content);
+                chain.staking = JSON.parse(response.content).result;
             }
             catch (e) {
                 console.log(e);
@@ -91,132 +86,131 @@ Meteor.methods({
 
             // Get chain states
             if (parseInt(chain.latestBlockHeight) > 0) {
-                let chainStates = {};
-                chainStates.height = parseInt(chain.latestBlockHeight);
-                chainStates.time = new Date(chain.latestBlockTime);
+                let chainStates = {height: 0, };
+                chainStates.height = parseInt(status.sync_info.latest_block_height);
+                chainStates.time = new Date(status.sync_info.latest_block_time);
 
+                url = LCD + '/staking/pool';
                 try {
-                    url = API + '/staking/pool';
-                    let response = HTTP.get(url);
+                    response = HTTP.get(url);
                     let bonding = JSON.parse(response.content).result;
                     chainStates.bondedTokens = parseInt(bonding.bonded_tokens);
                     chainStates.notBondedTokens = parseInt(bonding.not_bonded_tokens);
                 }
                 catch (e) {
+                    console.log(url);
                     console.log(e);
                 }
 
                 if (Coin.StakingCoin.denom) {
-                    if (Meteor.settings.public.modules.bank) {
-                        try {
-                            url = API + '/supply/total/' + Coin.StakingCoin.denom;
-                            let response = HTTP.get(url);
-                            let supply = JSON.parse(response.content).result;
-                            chainStates.totalSupply = parseInt(supply);
-                        }
-                        catch (e) {
-                            console.log(e);
-                        }
-
+                    url = LCD + '/supply/total/' + Coin.StakingCoin.denom;
+                    try {
+                        response = HTTP.get(url);
+                        let supply = JSON.parse(response.content).result;
+                        chainStates.totalSupply = parseInt(supply);
+                    }
+                    catch (e) {
+                        console.log(url);
+                        console.log(e);
                     }
 
-                    if (Meteor.settings.public.modules.distribution) {
-                        try {
-                            url = API + '/distribution/community_pool';
-                            let response = HTTP.get(url);
-                            let pool = JSON.parse(response.content).result;
-                            if (pool && pool.length > 0) {
-                                chainStates.communityPool = [];
-                                pool.forEach((amount) => {
-                                    chainStates.communityPool.push({
-                                        denom: amount.denom,
-                                        amount: parseFloat(amount.amount)
-                                    })
+                    url = LCD + '/distribution/community_pool';
+                    try {
+                        response = HTTP.get(url);
+                        let pool = JSON.parse(response.content).result;
+                        if (pool && pool.length > 0) {
+                            chainStates.communityPool = [];
+                            pool.forEach((amount, i) => {
+                                chainStates.communityPool.push({
+                                    denom: amount.denom,
+                                    amount: parseFloat(amount.amount)
                                 })
-                            }
-                        }
-                        catch (e) {
-                            console.log(e)
-                        }
-
-                        // update distribution params
-                        try {
-                            url = API + '/distribution/parameters';
-                            response = HTTP.get(url);
-                            chain.distribution = JSON.parse(response.content).result;
-                        }
-                        catch (e) {
-                            console.log(e);
+                            })
                         }
                     }
-
-                    if (Meteor.settings.public.modules.minting) {
-                        try {
-                            url = API + '/minting/inflation';
-                            let response = HTTP.get(url);
-                            let inflation = JSON.parse(response.content).result;
-                            if (inflation) {
-                                chainStates.inflation = parseFloat(inflation)
-                            }
-                        }
-                        catch (e) {
-                            console.log(e);
-                        }
-
-                        try {
-                            url = API + '/minting/annual-provisions';
-                            let response = HTTP.get(url);
-                            let provisions = JSON.parse(response.content).result;
-                            if (provisions) {
-                                chainStates.annualProvisions = parseFloat(provisions)
-                            }
-                        }
-                        catch (e) {
-                            console.log(e);
-                        }
-
-                        // update mint params
-                        try {
-                            url = API + '/minting/parameters';
-                            response = HTTP.get(url);
-                            let mint = JSON.parse(response.content).result
-                            chain.mint = mint;
-                        }
-                        catch (e) {
-                            console.log(e);
-                        }
+                    catch (e) {
+                        console.log(url);
+                        console.log(e)
                     }
 
-                    if (Meteor.settings.public.modules.gov) {
-                        // update gov params
-                        try {
-                            url = API + '/gov/parameters/tallying';
-                            response = HTTP.get(url);
-                            let gov = JSON.parse(response.content).result;
-                            chain.gov.tallyParams = gov;
-                        }
-                        catch (e) {
-                            console.log(e);
-                        }
-                        try {
-                            url = API + '/gov/parameters/deposit';
-                            response = HTTP.get(url);
-                            let gov = JSON.parse(response.content).result;
-                            chain.gov.depositParams = gov;
-                        }
-                        catch (e) {
-                            console.log(e);
-                        }
-                        try {
-                            url = API + '/gov/parameters/voting';
-                            response = HTTP.get(url);
-                            let gov = JSON.parse(response.content).result;
-                            chain.gov.votingParams = gov;
-                        }
-                        catch (e) {
-                            console.log(e);
-                        }
+                    // update distribution params
+                    try {
+                        url = LCD + '/distribution/parameters';
+                        response = HTTP.get(url);
+                        chain.distribution = JSON.parse(response.content).result;
                     }
+                    catch (e) {
+                        console.log(e);
+                    }
+                }
+
+                url = LCD + '/minting/inflation';
+                try {
+                    response = HTTP.get(url);
+                    let inflation = JSON.parse(response.content).result;
+                    if (inflation) {
+                        chainStates.inflation = parseFloat(inflation)
+                    }
+                }
+                catch (e) {
+                    console.log(url);
+                    console.log(e);
+                }
+
+                url = LCD + '/minting/annual-provisions';
+                try {
+                    response = HTTP.get(url);
+                    let provisions = JSON.parse(response.content);
+                    if (provisions) {
+                        chainStates.annualProvisions = parseFloat(provisions.result)
+                    }
+                }
+                catch (e) {
+                    console.log(url);
+                    console.log(e);
+                }
+
+                // update mint params
+                try {
+                    url = LCD + '/minting/parameters';
+                    response = HTTP.get(url);
+                    let mint = JSON.parse(response.content).result
+                    chain.mint = mint;
+                }
+                catch (e) {
+                    console.log(e);
+                }
+
+                url = LCD + '/gov/parameters/tallying';
+                try {
+                    response = HTTP.get(url);
+                    let tallying = JSON.parse(response.content);
+                    if (tallying) {
+                        chain.gov.tallyParams = (tallying.result)
+                    }
+                }
+                catch (e) {
+                    console.log(url);
+                    console.log(e);
+                }
+
+                try {
+                    url = LCD + '/gov/parameters/deposit';
+                    response = HTTP.get(url);
+                    let gov = JSON.parse(response.content).result;
+                    chain.gov.depositParams = gov;
+                }
+                catch (e) {
+                    console.log(e);
+                }
+                try {
+                    url = LCD + '/gov/parameters/voting';
+                    response = HTTP.get(url);
+                    let gov = JSON.parse(response.content).result;
+                    chain.gov.votingParams = gov;
+                }
+                catch (e) {
+                    console.log(e);
                 }
 
                 ChainStates.insert(chainStates);
@@ -233,7 +227,151 @@ Meteor.methods({
         }
     },
     'chain.getLatestStatus': function () {
-        this.unblock();
         Chain.find().sort({ created: -1 }).limit(1);
     },
+    'chain.genesis': function () {
+        let chain = Chain.findOne({ chainId: Meteor.settings.public.chainId });
+
+        if (chain && chain.readGenesis) {
+            console.log('Genesis file has been processed');
+        }
+        else if (Meteor.settings.debug.readGenesis) {
+            console.log('=== Start processing genesis file ===');
+            let response = HTTP.get(Meteor.settings.genesisFile);
+            let genesis = JSON.parse(response.content);
+            let distr = genesis.app_state.distr || genesis.app_state.distribution
+            let chainParams = {
+                chainId: genesis.chain_id,
+                genesisTime: genesis.genesis_time,
+                consensusParams: genesis.consensus_params,
+                auth: genesis.app_state.auth,
+                bank: genesis.app_state.bank,
+                staking: {
+                    pool: genesis.app_state.staking.pool,
+                    params: genesis.app_state.staking.params
+                },
+                mint: genesis.app_state.mint,
+                distr: {
+                    communityTax: distr.community_tax,
+                    baseProposerReward: distr.base_proposer_reward,
+                    bonusProposerReward: distr.bonus_proposer_reward,
+                    withdrawAddrEnabled: distr.withdraw_addr_enabled
+                },
+                gov: {
+                    startingProposalId: 0,
+                    depositParams: {},
+                    votingParams: {},
+                    tallyParams: {}
+                },
+                slashing: {
+                    params: genesis.app_state.slashing.params
+                },
+                supply: genesis.app_state.supply,
+                crisis: genesis.app_state.crisis
+            }
+
+            if (genesis.app_state.gov) {
+                chainParams.gov = {
+                    startingProposalId: genesis.app_state.gov.starting_proposal_id,
+                    depositParams: genesis.app_state.gov.deposit_params,
+                    votingParams: genesis.app_state.gov.voting_params,
+                    tallyParams: genesis.app_state.gov.tally_params
+                };
+            }
+            let totalVotingPower = 0;
+
+            // read gentx
+            if (genesis.app_state.genutil && genesis.app_state.genutil.gentxs && (genesis.app_state.genutil.gentxs.length > 0)) {
+                for (i in genesis.app_state.genutil.gentxs) {
+                    let msg = genesis.app_state.genutil.gentxs[i].value.msg;
+                    for (m in msg) {
+                        if (msg[m].type == "cosmos-sdk/MsgCreateValidator") {
+                            console.log(msg[m].value);
+                            let validator = {
+                                consensus_pubkey: msg[m].value.pubkey,
+                                description: msg[m].value.description,
+                                commission: msg[m].value.commission,
+                                min_self_delegation: msg[m].value.min_self_delegation,
+                                operator_address: msg[m].value.validator_address,
+                                delegator_address: msg[m].value.delegator_address,
+                                voting_power: Math.floor(parseInt(msg[m].value.value.amount) / Coin.StakingCoin.fraction),
+                                jailed: false,
+                                status: 2
+                            }
+
+                            totalVotingPower += validator.voting_power;
+
+                            let pubkeyValue = Meteor.call('bech32ToPubkey', msg[m].value.pubkey);
+
+                            validator.pub_key = {
+                                "type": "tendermint/PubKeyEd25519",
+                                "value": pubkeyValue
+                            }
+
+                            validator.address = getAddress(validator.pub_key);
+                            validator.accpub = Meteor.call('pubkeyToBech32', validator.pub_key, Meteor.settings.public.bech32PrefixAccPub);
+                            validator.operator_pubkey = Meteor.call('pubkeyToBech32', validator.pub_key, Meteor.settings.public.bech32PrefixValPub);
+                            VotingPowerHistory.insert({
+                                address: validator.address,
+                                prev_voting_power: 0,
+                                voting_power: validator.voting_power,
+                                type: 'add',
+                                height: 0,
+                                block_time: genesis.genesis_time
+                            });
+
+                            Validators.insert(validator);
+                        }
+                    }
+                }
+            }
+
+            // read validators from previous chain
+            console.log('read validators from previous chain');
+            if (genesis.app_state.staking.validators && genesis.app_state.staking.validators.length > 0) {
+                console.log(genesis.app_state.staking.validators.length);
+                let genValidatorsSet = genesis.app_state.staking.validators;
+                let genValidators = genesis.validators;
+                for (let v in genValidatorsSet) {
+                    let validator = genValidatorsSet[v];
+                    validator.delegator_address = Meteor.call('getDelegator', genValidatorsSet[v].operator_address);
+
+                    let pubkeyValue = Meteor.call('bech32ToPubkey', validator.consensus_pubkey);
+
+                    validator.pub_key = {
+                        "type": "tendermint/PubKeyEd25519",
+                        "value": pubkeyValue
+                    }
+
+                    validator.address = getAddress(validator.pub_key);
+                    validator.pub_key = validator.pub_key;
+                    validator.accpub = Meteor.call('pubkeyToBech32', validator.pub_key, Meteor.settings.public.bech32PrefixAccPub);
+                    validator.operator_pubkey = Meteor.call('pubkeyToBech32', validator.pub_key, Meteor.settings.public.bech32PrefixValPub);
+
+                    validator.voting_power = findVotingPower(validator, genValidators);
+                    totalVotingPower += validator.voting_power;
+
+                    Validators.upsert({ consensus_pubkey: validator.consensus_pubkey }, validator);
+                    VotingPowerHistory.insert({
+                        address: validator.address,
+                        prev_voting_power: 0,
+                        voting_power: validator.voting_power,
+                        type: 'add',
+                        height: 0,
+                        block_time: genesis.genesis_time
+                    });
+                }
+            }
+
+            chainParams.readGenesis = true;
+            chainParams.activeVotingPower = totalVotingPower;
+            let result = Chain.upsert({ chainId: chainParams.chainId }, { $set: chainParams });
+
+
+            console.log('=== Finished processing genesis file ===');
+
+        }
+
+        return true;
+    }
 })

@@ -5,7 +5,7 @@ import { HTTP } from 'meteor/http';
 Meteor.methods({
     'hard.parameters': function () {
         this.unblock();
-        let url = API + '/hard/parameters';
+        let url = LCD + '/hard/parameters';
         try {
             let result = HTTP.get(url);
             if (result.statusCode == 200) {
@@ -19,7 +19,7 @@ Meteor.methods({
 
     'hard.deposits': function () {
         this.unblock();
-        let url = API + '/hard/deposits';
+        let url = LCD + '/hard/deposits';
         try {
             let result = HTTP.get(url);
             if (result.statusCode == 200) {
@@ -32,7 +32,7 @@ Meteor.methods({
     },
     'hard.borrows': function () {
         this.unblock();
-        let url = API + '/hard/borrows';
+        let url = LCD + '/hard/borrows';
         try {
             let result = HTTP.get(url);
             if (result.statusCode == 200) {

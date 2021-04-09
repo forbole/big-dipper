@@ -195,7 +195,7 @@ export default class Activites extends Component {
                 <Table striped className="mt-3">
                     <thead>
                         <tr>
-                            <th className="w-25">{msg.value.market_id}</th>
+                            <th className="w-25">{msg.value.market_id.toUpperCase()}</th>
                             <td>{numbro(msg.value.price).formatCurrency({ mantissa: 6 })}</td>
                         </tr>
                     </thead>

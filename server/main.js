@@ -2,15 +2,13 @@
 
 import '/imports/startup/server';
 import '/imports/startup/both';
-// import moment from 'moment';
-// import '/imports/api/blocks/blocks.js';
 
 SYNCING = false;
 TXSYNCING = false;
 COUNTMISSEDBLOCKS = false;
 COUNTMISSEDBLOCKSSTATS = false;
 RPC = Meteor.settings.remote.rpc;
-API = Meteor.settings.remote.api;
+LCD = Meteor.settings.remote.lcd;
 timerBlocks = 0;
 timerTransactions = 0;
 timerChain = 0;
@@ -182,54 +180,62 @@ Meteor.startup(function () {
         })
     }
 
-    if (Meteor.settings.debug.startTimer) {
-        timerConsensus = Meteor.setInterval(function () {
-            getConsensusState();
-        }, Meteor.settings.params.consensusInterval);
-
-        timerBlocks = Meteor.setInterval(function () {
-            updateBlock();
-        }, Meteor.settings.params.blockInterval);
-
-        timerTransactions = Meteor.setInterval(function () {
-            updateTransactions();
-        }, Meteor.settings.params.transactionsInterval);
-
-        timerChain = Meteor.setInterval(function () {
-            updateChainStatus();
-        }, Meteor.settings.params.statusInterval);
-
-        if (Meteor.settings.public.modules.gov) {
-            timerProposal = Meteor.setInterval(function () {
-                getProposals();
-            }, Meteor.settings.params.proposalInterval);
-
-            timerProposalsResults = Meteor.setInterval(function () {
-                getProposalsResults();
-            }, Meteor.settings.params.proposalInterval);
+    Meteor.call('chain.genesis', (err, result) => {
+        if (err) {
+            console.log(err);
         }
+        if (result) {
+            if (Meteor.settings.debug.startTimer) {
+                timerConsensus = Meteor.setInterval(function () {
+                    getConsensusState();
+                }, Meteor.settings.params.consensusInterval);
 
-        timerMissedBlock = Meteor.setInterval(function () {
-            updateMissedBlocks();
-        }, Meteor.settings.params.missedBlocksInterval);
+                timerBlocks = Meteor.setInterval(function () {
+                    updateBlock();
+                }, Meteor.settings.params.blockInterval);
 
-        timerDelegation = Meteor.setInterval(function () {
-            getDelegations();
-        }, Meteor.settings.params.delegationInterval);
+                timerTransactions = Meteor.setInterval(function () {
+                    updateTransactions();
+                }, Meteor.settings.params.transactionsInterval);
 
-        timerAggregate = Meteor.setInterval(function () {
-            let now = new Date();
-            if ((now.getUTCSeconds() == 0)) {
-                aggregateMinutely();
+                timerChain = Meteor.setInterval(function () {
+                    updateChainStatus();
+                }, Meteor.settings.params.statusInterval);
+
+                if (Meteor.settings.params.proposalInterval >= 0) {
+                    timerProposal = Meteor.setInterval(function () {
+                        getProposals();
+                    }, Meteor.settings.params.proposalInterval);
+
+                    timerProposalsResults = Meteor.setInterval(function () {
+                        getProposalsResults();
+                    }, Meteor.settings.params.proposalInterval);
+                }
+
+                timerMissedBlock = Meteor.setInterval(function () {
+                    updateMissedBlocks();
+                }, Meteor.settings.params.missedBlocksInterval);
+
+                timerDelegation = Meteor.setInterval(function () {
+                    getDelegations();
+                }, Meteor.settings.params.delegationInterval);
+
+                timerAggregate = Meteor.setInterval(function () {
+                    let now = new Date();
+                    if ((now.getUTCSeconds() == 0)) {
+                        aggregateMinutely();
+                    }
+
+                    if ((now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)) {
+                        aggregateHourly();
+                    }
+
+                    if ((now.getUTCHours() == 0) && (now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)) {
+                        aggregateDaily();
+                    }
+                }, 1000)
             }
+        }
+    })
 
-            if ((now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)) {
-                aggregateHourly();
-            }
-
-            if ((now.getUTCHours() == 0) && (now.getUTCMinutes() == 0) && (now.getUTCSeconds() == 0)) {
-                aggregateDaily();
-            }
-        }, 1000)
-    }
 });

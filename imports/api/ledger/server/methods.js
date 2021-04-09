@@ -4,7 +4,7 @@ import { Validators } from '../../validators/validators';
 Meteor.methods({
     'transaction.submit': function (txInfo) {
         this.unblock();
-        const url = `${API}/txs`;
+        const url = `${LCD}/txs`;
         data = {
             "tx": txInfo.value,
             "mode": "sync"
@@ -23,7 +23,7 @@ Meteor.methods({
     },
     'transaction.execute': function (body, path) {
         this.unblock();
-        const url = `${API}/${path}`;
+        const url = `${LCD}/${path}`;
         data = {
             "base_req": {
                 ...body,
@@ -38,8 +38,7 @@ Meteor.methods({
     },
     'transaction.simulate': function (txMsg, from, accountNumber, sequence, path, adjustment = '1.2') {
         this.unblock();
-        const url = `${API}/${path}`;
-        console.log(txMsg);
+        const url = `${LCD}/${path}`;
         data = {
             ...txMsg,
             "base_req": {
@@ -51,8 +50,6 @@ Meteor.methods({
                 "simulate": true
             }
         };
-        console.log(url);
-        console.log(data);
         let response = HTTP.post(url, { data });
         if (response.statusCode == 200) {
             return JSON.parse(response.content).gas_estimate;
@@ -65,7 +62,7 @@ Meteor.methods({
     },
     'cdp.getCDPParams': function () {
         this.unblock();
-        let url = API + '/cdp/parameters';
+        let url = LCD + '/cdp/parameters';
         let cdpParams = {};
 
         try {
@@ -82,7 +79,7 @@ Meteor.methods({
 
     'cdp.getCDPPrice': function (market) {
         this.unblock();
-        let url = API + '/pricefeed/price/' + market;
+        let url = LCD + '/pricefeed/price/' + market;
         let cdpPrice = null;
 
         try {
@@ -99,7 +96,7 @@ Meteor.methods({
 
     'cdp.getDeposits': function (address, collateral) {
         this.unblock();
-        let url = API + '/cdp/cdps/cdp/deposits/' + address + '/' + collateral;
+        let url = LCD + '/cdp/cdps/cdp/deposits/' + address + '/' + collateral;
 
         try {
             let response = HTTP.get(url);
@@ -115,7 +112,7 @@ Meteor.methods({
 
     'account.getIncentive': function () {
         this.unblock();
-        let url = API + '/incentive/rewards'
+        let url = LCD + '/incentive/rewards'
 
         try {
             let response = HTTP.get(url);
@@ -131,7 +128,7 @@ Meteor.methods({
 
     'account.auction': function () {
         this.unblock();
-        let url = API + '/auction/auctions'
+        let url = LCD + '/auction/auctions'
 
         try {
             let response = HTTP.get(url);
