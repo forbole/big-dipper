@@ -492,7 +492,6 @@ class LedgerButton extends Component {
         else {
             market = collateralDenom?.toLowerCase();
         }
-
         Meteor.call('cdp.getCDPPrice', `${market}:usd`, (error, result) => {
             if (error) {
                 // console.warn(error);
@@ -1604,7 +1603,7 @@ class CreateCDPButton extends LedgerButton {
     handleTokenSelection = (e) => {
         let target = e.currentTarget;
         let value = target.innerText;
-        this.getUSDPrice(this.props.collateralDenom)
+        this.getUSDPrice(value)
         this.setState({ collateralDenom: value, loading: true })
 
         if (target.innerText === 'KAVA') {
@@ -1754,7 +1753,8 @@ class DepositCDPButton extends LedgerButton {
         this.state = {
             ...this.state,
             collateral: 0,
-            collateralDenom: '',
+            collateralDenom: props.collateralDenom,
+            collateralType: '',
             maxAmount: props.amountAvailable,
             ratio: 0,
             cdpOwner: props.cdpOwner,
