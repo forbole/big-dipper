@@ -540,7 +540,7 @@ export class Ledger {
             type: 'cdp/MsgWithdraw',
             value: {
                 collateral: {
-                    amount: parseInt(parseFloat(collateral) * Ledger.coinFraction(collateralDenom)).toString(),
+                    amount: (parseFloat(collateral) * Ledger.coinFraction(collateralDenom)).toString(),
                     denom: collateralDenom
                 },
                 collateral_type: collateralType,
@@ -564,7 +564,7 @@ export class Ledger {
             value: {
                 collateral_type: collateralType,
                 principal: {
-                    amount: parseInt(parseFloat(draw) * Ledger.coinFraction(principalDenom)).toString(),
+                    amount: (parseFloat(draw) * Ledger.coinFraction(principalDenom)).toString(),
                     denom: principalDenom
                 },
                 sender: txContext.bech32
@@ -585,7 +585,7 @@ export class Ledger {
             value: {
                 collateral_type: collateralType,
                 payment: {
-                    amount: parseInt(parseFloat(debt) * Ledger.coinFraction(principalDenom)).toString(),
+                    amount: (parseFloat(debt) * Ledger.coinFraction(principalDenom)).toString(),
                     denom: principalDenom
                 },
                 sender: txContext.bech32,
@@ -632,7 +632,7 @@ export class Ledger {
             type: 'auction/MsgPlaceBid',
             value: {
                 amount: {
-                    amount: parseInt(parseFloat(bid) * Meteor.settings.public.coins[5].fraction).toString(),
+                    amount: (parseFloat(bid) * Meteor.settings.public.coins[5].fraction).toString(),
                     denom: 'usdx'
                 },
                 auction_id: auctionID,

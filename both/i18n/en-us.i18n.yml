@@ -354,6 +354,8 @@ hard:
     amount: 'Amount'
     index: 'Index'
     hard: 'HARD'
+    borrow: 'Borrow'
+    withdraw: 'Withdraw'
     hardList: 'List of HARD Deposits and Borrows'
 incentive:
     rewards: 'Rewards'

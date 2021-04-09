@@ -2012,7 +2012,7 @@ class DrawDebtCDPButton extends LedgerButton {
             collateralDenom: props.collateralDenom,
             maxAmount: props.amountAvailable,
             ratio: 0,
-            collateralType: '',
+            // collateralType: '',
             collateral: 0,
             principalDenom: props.principalDenom,
             price: 0,
@@ -2021,16 +2021,12 @@ class DrawDebtCDPButton extends LedgerButton {
 
     //collateral type instaed of collateraldenom
     static getDerivedStateFromProps(nextProps, prevState) {
-        let maxAmount = nextProps.amountAvailable;
-
-        if (!_.isEqual(maxAmount, prevState.maxAmount)) {
+        if (!_.isEqual(nextProps.collateralDenom, prevState.collateralDenom)) {
 
             return {
-                maxAmount: maxAmount,
                 collateralDenom: nextProps?.collateralDenom
             }
         }
-        else return null;
     }
 
     findDenomType = () => {
@@ -2108,7 +2104,7 @@ class DrawDebtCDPButton extends LedgerButton {
     }
 
     getConfirmationMessage = () => {
-        return <span>You are going to <span className='action'>draw </span> <span className='coin'>{new Coin(this.state.draw * tokenFraction(this.props.principalDenom), this.props.principalDenom).convertToString()}</span> from CDP  for address <b>{this.state.user} </b>
+        return <span>You are going to <span className='action'>draw </span> <span className='coin'>{new Coin(this.state.draw * tokenFraction("USDX"), "USDX").convertToString()}</span> from CDP  for address <b>{this.state.user} </b>
      with <Fee gas={this.state.gasEstimate} />.</span>
     }
 
@@ -2710,7 +2706,7 @@ class HARDWithdrawButton extends LedgerButton {
         return <TabPane tabId="2" className="modal-body">
             <h3 className="text-center pb-4">Withdraw <TokenImage collateral={this.props.collateralDenom} /> {collateralStakeName(this.props.collateralDenom)} from <TokenImage collateral="HARD" /> HARD </h3>
             <FormGroup>
-                <Label for="withdraw" className="mb-n4"><T>cdp.withdraw</T></Label>
+                <Label for="withdraw" className="mb-n4"><T>hard.withdraw</T></Label>
                 <FormText className="coin-available mb-n5 float-right">Max {new Coin(this.props.collateralDeposited, this.props.collateralDenom).convertToString()}</FormText>
                 <InputGroup className="modal-for-ledger py-n5">
                     <InputGroupAddon addonType="prepend">
@@ -2726,7 +2722,7 @@ class HARDWithdrawButton extends LedgerButton {
                 </InputGroup>
             </FormGroup>
             <FormGroup className="mb-n4" >
-                <Label for="memo" className="mb-n4"><T>cdp.memo</T></Label>
+                <Label for="memo" className="mb-n4"><T>hard.memo</T></Label>
                 <Input name="memo" onChange={this.handleInputChange} className="mb-n4"
                     placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
             </FormGroup>
@@ -2803,7 +2799,7 @@ class HARDBorrowButton extends LedgerButton {
         return <TabPane tabId="2" className="modal-body">
             <h3 className="text-center pb-4 pt-3">Borrow <TokenImage collateral={this.props.collateralDenom} /> {collateralStakeName(this.props.collateralDenom)} from <TokenImage collateral="HARD" /> HARD </h3>
             <FormGroup>
-                <Label for="collateral" className="mb-n4"><T>cdp.collateral</T></Label>
+                <Label for="collateral" className="mb-n4"><T>hard.borrow</T></Label>
                 <InputGroup className="modal-for-ledger py-n5">
                     {this.props.collateralDenom != '' ?
                         <InputGroupAddon addonType="prepend">
@@ -2820,7 +2816,7 @@ class HARDBorrowButton extends LedgerButton {
             </FormGroup>
 
             <FormGroup className="mb-n4" >
-                <Label for="memo" className="mb-n4"><T>cdp.memo</T></Label>
+                <Label for="memo" className="mb-n4"><T>hard.memo</T></Label>
                 <Input name="memo" onChange={this.handleInputChange} className="mb-n4"
                     placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
             </FormGroup>
@@ -2935,7 +2931,7 @@ class HARDNewBorrowButton extends LedgerButton {
         return <TabPane tabId="2" className="modal-body">
             <h3 className="text-center pb-4 pt-3"><TokenImage collateral="HARD" /> HARD Borrow</h3>
             <FormGroup>
-                <Label for="collateral" className="mb-n4"><T>cdp.collateral</T></Label>
+                <Label for="collateral" className="mb-n4"><T>hard.borrow</T></Label>
                 <InputGroup className="modal-for-ledger py-n5">
                     {this.state.selectedDenom != '' ?
                         <InputGroupAddon addonType="prepend">
@@ -2952,7 +2948,7 @@ class HARDNewBorrowButton extends LedgerButton {
             </FormGroup>
 
             <FormGroup className="mb-n4" >
-                <Label for="memo" className="mb-n4"><T>cdp.memo</T></Label>
+                <Label for="memo" className="mb-n4"><T>hard.memo</T></Label>
                 <Input name="memo" onChange={this.handleInputChange} className="mb-n4"
                     placeholder="Memo(optional)" type="textarea" value={this.state.memo} />
             </FormGroup>
