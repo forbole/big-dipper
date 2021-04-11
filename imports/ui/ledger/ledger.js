@@ -106,8 +106,8 @@ export class Ledger {
         this.checkLedgerErrors(response)
         const { appName } = response
 
-        if (appName.toLowerCase() !== `cosmos`) {
-            throw new Error(`Close ${appName} and open the Cosmos app`)
+        if (appName.toLowerCase() !== Meteor.settings.public.ledger.appName.toLowerCase()) {
+            throw new Error(`Close ${appName} and open the ${Meteor.settings.public.ledger.appName} app`)
         }
     }
     async getPubKey() {
@@ -165,13 +165,13 @@ export class Ledger {
         switch (error_message) {
         case `U2F: Timeout`:
             throw new Error(timeoutMessag)
-        case `Cosmos app does not seem to be open`:
+        case `${Meteor.settings.public.ledger.appName} app does not seem to be open`:
             // hack:
             // It seems that when switching app in Ledger, WebUSB will disconnect, disabling further action.
             // So we clean up here, and re-initialize this.cosmosApp next time when calling `connect`
             this.cosmosApp.transport.close()
             this.cosmosApp = undefined
-            throw new Error(`Cosmos app is not open`)
+            throw new Error(`${Meteor.settings.public.ledger.appName} app is not open`)
         case `Command not allowed`:
             throw new Error(`Transaction rejected`)
         case `Transaction rejected`:
@@ -180,7 +180,7 @@ export class Ledger {
             throw new Error(`Ledger's screensaver mode is on`)
         case `Instruction not supported`:
             throw new Error(
-                `Your Cosmos Ledger App is not up to date. ` +
+                `Your ${Meteor.settings.public.ledger.appName} Ledger App is not up to date. ` +
                 `Please update to version ${REQUIRED_COSMOS_APP_VERSION}.`
             )
         case `No errors`:
@@ -465,7 +465,7 @@ function versionString({ major, minor, patch }) {
 export const checkAppMode = (testModeAllowed, testMode) => {
     if (testMode && !testModeAllowed) {
         throw new Error(
-            `DANGER: The Cosmos Ledger app is in test mode and shouldn't be used on mainnet!`
+            `DANGER: The ${Meteor.settings.public.ledger.appName} Ledger app is in test mode and shouldn't be used on mainnet!`
         )
     }
 }

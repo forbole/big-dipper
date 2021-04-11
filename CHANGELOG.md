@@ -4,6 +4,7 @@
 
 * [#487] Fixed typo in the query which make validator power change tx lookup failed.
 * Fixed an issue on displaying individual transaction.
+* Updated Ledger app name checking so that it will follows the value defined in settings.
 ## v0.41.x-7 (Stargate compatible)
 
 * [#472] Fix missing transactions
