@@ -636,27 +636,27 @@ Meteor.methods({
                         // check the last fetching time
 
                         let now = Date.now();
-                        let lastKeybaseFetchTime = Date.parse(chainStatus.lastKeybaseFetchTime) || 0
+                        let lastKeybaseFetchTime = Date.parse(chainStatus?.lastKeybaseFetchTime) ??  0
                         console.log("Now: %o", now)
                         console.log("Last fetch time: %o", lastKeybaseFetchTime)
 
-                        if (!lastKeybaseFetchTime || (now - lastKeybaseFetchTime) > Meteor.settings.params.keybaseFetchingInterval ){
+                        if ((now - lastKeybaseFetchTime) >= Meteor.settings.params.keybaseFetchingInterval ){
                             console.log('Fetching keybase...')
                             // eslint-disable-next-line no-loop-func
                             Validators.find({}).forEach(async (validator) => {
                                 try {
-                                    if (validator.description && validator.description.identity){
-                                        let profileUrl = getValidatorProfileUrl(validator.description.identity)
+                                    if (validator?.description && validator?.description?.identity){
+                                        let profileUrl = getValidatorProfileUrl(validator?.description?.identity)
                                         if (profileUrl) {
-                                            bulkValidators.find({address: validator.address}).upsert().updateOne({$set:{'profile_url':profileUrl}});
+                                            bulkValidators.find({address: validator?.address}).upsert().updateOne({$set:{'profile_url':profileUrl}});
                                         }    
                                     }
                                 } catch (e) {
-                                    console.log("Error fetching Keybase for %o: %o", validator.address, e)
+                                    console.log("Error fetching Keybase for %o: %o", validator?.address, e)
                                 }
                             })
 
-                            Chain.update({chainId:block.block.header.chainId}, {$set:{lastKeybaseFetchTime:new Date().toUTCString()}});
+                            Chain.update({chainId:block?.block?.header?.chainId}, {$set:{lastKeybaseFetchTime:new Date().toUTCString()}});
                         }
 
                     }
