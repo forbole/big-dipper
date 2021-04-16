@@ -78,8 +78,8 @@ Meteor.methods({
         let chainId;
         try {
             let response = HTTP.get(url);
-            let status = JSON.parse(response.content);
-            chainId = (status.result.node_info.network);
+            let status = JSON.parse(response?.content);
+            chainId = (status?.result?.node_info?.network);
         }
         catch (e) {
             console.log("Error getting chainId for keybase fetching")        
