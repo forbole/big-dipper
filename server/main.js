@@ -212,12 +212,12 @@ Meteor.startup(async function(){
             updateChainStatus();
         }, Meteor.settings.params.statusInterval);
 
-        if (Meteor.settings.public.modules.gov) {
-            timerProposal = Meteor.setInterval(function () {
+        if (Meteor.settings.public.modules.gov){
+            timerProposal = Meteor.setInterval(function (){
                 getProposals();
             }, Meteor.settings.params.proposalInterval);
 
-            timerProposalsResults = Meteor.setInterval(function () {
+            timerProposalsResults = Meteor.setInterval(function (){
                 getProposalsResults();
             }, Meteor.settings.params.proposalInterval);
         }
@@ -226,7 +226,7 @@ Meteor.startup(async function(){
             updateMissedBlocks();
         }, Meteor.settings.params.missedBlocksInterval);
 
-        timerFetchKeybase = Meteor.setInterval(function () {
+        timerFetchKeybase = Meteor.setInterval(function (){
             fetchKeybase();
         }, Meteor.settings.params.keybaseFetchingInterval);
 
