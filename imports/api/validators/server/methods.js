@@ -101,10 +101,10 @@ Meteor.methods({
                         if (bulkValidators.length > 0) {
                             bulkValidators.execute((err, result) => {
                                 if (err) {
-                                    console.log(`Error when saving profile_url ${err}`);
+                                    console.log(`Error when updating validator profile_url ${err}`);
                                 }
                                 if (result) {
-                                    console.log('profile_url saved!');
+                                    console.log('Validator profile_url has been updated!');
                                 }
                             });
                         }
