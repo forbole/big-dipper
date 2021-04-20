@@ -1,6 +1,8 @@
 REVISION = $(shell git rev-parse HEAD)
 export START_TIME:=$(shell date -u +%s)
 
+FILE=settings.json
+
 help:
 	@echo "help\t\tPrint this help"
 	@echo "build\t\tBuild Docker images"
@@ -18,7 +20,7 @@ build:
 	@echo "All built 🏛"
 
 up:
-	@METEOR_SETTINGS=$(`cat settings.json`) docker-compose up -d
+	METEOR_SETTINGS=`cat $(FILE)` docker-compose up -d
 	@docker-compose logs --tail 10 -f
 
 down:
