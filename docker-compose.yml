@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 
 services:
   app:
@@ -9,11 +9,19 @@ services:
       - '3080:3000'
     depends_on:
       - mongo
+      - kafka
     environment:
       ROOT_URL: ${APP_ROOT_URL:-http://localhost}
       MONGO_URL: mongodb://mongo:27017/meteor
       PORT: 3000
       METEOR_SETTINGS: ${METEOR_SETTINGS}
+    networks:
+      - poc_net
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "10m"
 
   mongo:
     image: mongo:latest
@@ -21,6 +29,54 @@ services:
       - --storageEngine=wiredTiger
     volumes:
       - data:/data/db
+    networks:
+      - poc_net
+    depends_on:
+      - kafka
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "10m"
 
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+      - poc_net
+    logging: 
+      driver: "json-file"
+      options: 
+        max-file: "5"
+        max-size: "10m"
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_CREATE_TOPICS: "Trades:3:1:delegate, ShortPuts:2:1,LM_snapshot:3:1,Prices:2:1,Volume:3:1"
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:19092,OUTSIDE://${DOCKER_HOST_IP:-127.0.0.1}:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_BROKER_ID: 1
+    networks:
+      - poc_net
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "10m"
+    depends_on:
+      - zookeeper
+
+     
 volumes:
   data:
+
+networks:
+  poc_net:
