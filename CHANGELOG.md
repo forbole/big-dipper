@@ -1,5 +1,55 @@
 # Changelog
 
+## [Unreleased]
+
+* [#487] Fixed typo in the query which make validator power change tx lookup failed.
+* Fixed an issue on displaying individual transaction.
+* Updated Ledger app name checking so that it will follows the value defined in settings.
+* [#213] Updated `@ledgerhq/hw-transport-webusb` pkg to v5.49.0 to fix Ledger errors on Windows10
+
+## v0.41.x-7 (Stargate compatible)
+
+* [#472] Fix missing transactions
+* [#449] Migrate API to gRPC gateway
+* [#360] Update validator info correctly
+* [#311] Update validator status to display validators correctly
+* [#321] Enable module related components which will display 0 or hide the components when the Cosmos SDK modules are not implemented
+* [#485] Query proposal tally results correctly
+* Update transaction skeletons for Ledger to work properly
+* Config correct Ledger app and app version
+
+## v0.39.x-7
+
+* [#452] Fix VP Chart not being shown
+
+## v0.39.x-6
+
+* Index transactions with timer settings
+
+## v0.39.x-5
+
+* [#444] Fetch keybase in async function with query interval contolled by settings
+* Fix missing value in VP distribution
+
+## v0.39.x-4
+
+* [#436] Index transactions in a separate process
+* Update to Meteor 1.12
+* [#435] Show inflation as 0% if there is no inflation (no minting module integrated)
+* [#433] Create tx index for MsgCreateValidator
+* Use react-json-view instead of JSONPretty
+* Update uptime with signing info
+* [#280] Remove reading genesis file
+* Remove plural denom
+* Simplify validator storing
+* Get data and show proposal based on enabled modules
+* Calculate validator uptime in async
+* Update validator status
+
+## v0.39.x-3
+
+* [#431] Create correct index for trasaction events
+
 ## v0.39.x-2
 
 * [392] Fixed account page not rendering when the account is empty
