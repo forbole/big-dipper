@@ -17,7 +17,7 @@ class LedgerModal extends React.Component {
 
     autoOpenModal = () => {
         if (!this.props.isOpen && this.props.handleLoginConfirmed) {
-            this.tryConnect(5000);
+            // this.tryConnect(5000);
             this.props.toggle(true);
         }
     }
@@ -28,12 +28,12 @@ class LedgerModal extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         this.autoOpenModal();
-        if (this.props.isOpen && !prevProps.isOpen) {
-            this.tryConnect();
-        }
+        // if (this.props.isOpen && !prevProps.isOpen) {
+        //     this.tryConnect();
+        // }
     }
 
-    tryConnect = (timeout=undefined) => {
+    tryConnect = (timeout=undefined, bleTransport=false) => {
         if (this.state.loading) return
         this.setState({ loading: true, errorMessage: '' })
         this.ledger.getCosmosAddress(timeout).then((res) => {
@@ -59,9 +59,26 @@ class LedgerModal extends React.Component {
         });
     }
 
+    connectionSelection = (connectionType) => {
+        if(connectionType == "usb"){
+            this.setState({
+                connection: connectionType,
+                bleTransport: false
+            })
+        }
+        else if (connectionType == "bluetooth") {
+            this.setState({
+                connection: connectionType,
+                bleTransport: true
+            })
+        }
+
+    }
+
+
     trySignIn = () => {
         this.setState({ loading: true, errorMessage: '' })
-        this.ledger.confirmLedgerAddress().then((res) => {
+        this.ledger.confirmLedgerAddress(this.state.bleTransport).then((res) => {
             localStorage.setItem(CURRENTUSERADDR, this.state.address);
             localStorage.setItem(CURRENTUSERPUBKEY, this.state.pubKey);
             this.props.refreshApp();
@@ -102,6 +119,10 @@ class LedgerModal extends React.Component {
                     <TabContent activeTab={this.state.activeTab}>
                         <TabPane tabId="1">
                             <T _purify={false} network={Meteor.settings.public.ledger.appName} version={Meteor.settings.public.ledger.appVersion}>accounts.signInWarning</T>
+                            <div className="d-flex justify-content-center">
+                                <Button color="secondary" value="usb" onClick={() => this.connectionSelection("usb")} className="mt-3 mr-4"><img src="/img/usb.svg" alt="USB" style={{height: "25px"}}/><T>USB</T></Button>
+                                <Button color="secondary" value="bluetooth" onClick={() => this.connectionSelection("bluetooth")} className="mt-3 "><img src="/img/bluetooth.svg" alt="Bluetooth" style={{ height: "25px" }} /><T>Bluetooth</T></Button>
+                            </div>
                         </TabPane>
                         <TabPane tabId="2">
                             {this.state.currentUser?<span>You are currently logged in as <strong className="text-primary d-block">{this.state.currentUser}.</strong></span>:null}
