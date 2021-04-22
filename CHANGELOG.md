@@ -1,6 +1,8 @@
 # Changelog
 
-## [Unreleased]
+## v0.41.x-9
+* Added banner support. Banner settings are loading remotely from the url defined in settings.
+## v0.41.x-8
 
 * [#487] Fixed typo in the query which make validator power change tx lookup failed.
 * Fixed an issue on displaying individual transaction.
