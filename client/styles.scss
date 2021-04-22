@@ -170,6 +170,17 @@ body {
     &#main, &#transaction, &#block {
       padding-top: 6rem;
       padding-bottom: 3.85rem;
+
+      .banner {
+        a {
+          display: block;
+          width: 100%;
+          
+          img {
+            max-width: 100%
+          }
+        }
+      }
     }
   
     &#transaction .card.card-body {
