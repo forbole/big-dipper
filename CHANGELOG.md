@@ -16,6 +16,7 @@
 * Updated Ledger app name checking so that it will follows the value defined in settings.
 * [#213] Updated `@ledgerhq/hw-transport-webusb` pkg to v5.49.0 to fix Ledger errors on Windows10
 * [#484] Increased number of delegations displayed under validator page to 500 and sorted delegation list in descending order.
+
 ## v0.41.x-7 (Stargate compatible)
 
 * [#472] Fix missing transactions
@@ -48,7 +49,7 @@
 * [#433] Create tx index for MsgCreateValidator
 * Use react-json-view instead of JSONPretty
 * Update uptime with signing info
-* [#280] Remove reading genesis file
+* [#280] Remove reading genesis fil
 * Remove plural denom
 * Simplify validator storing
 * Get data and show proposal based on enabled modules
