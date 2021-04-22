@@ -49,7 +49,7 @@
 * [#433] Create tx index for MsgCreateValidator
 * Use react-json-view instead of JSONPretty
 * Update uptime with signing info
-* [#280] Remove reading genesis fil
+* [#280] Remove reading genesis file
 * Remove plural denom
 * Simplify validator storing
 * Get data and show proposal based on enabled modules
