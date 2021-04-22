@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## v0.41.x-8
 
 * [#487] Fixed typo in the query which make validator power change tx lookup failed.
 * Fixed an issue on displaying individual transaction.
