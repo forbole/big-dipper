@@ -11,7 +11,6 @@ export default class Banners extends React.Component {
     }
     componentDidMount(){
         const url = this.props.url;
-        console.log(url);
         HTTP.get(url, (error, result) => {
             if (result.statusCode == 200){
                 let banners = JSON.parse(result.content);
