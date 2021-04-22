@@ -26,7 +26,7 @@ Meteor.methods({
     // async 'Validators.getAllDelegations'(address){
     'Validators.getAllDelegations'(address){
         this.unblock();
-        let url = API + '/cosmos/staking/v1beta1/validators/'+address+'/delegations';
+        let url = API + '/cosmos/staking/v1beta1/validators/' + address +'/delegations?pagination.limit=500';
 
         try{
             let delegations = HTTP.get(url);
@@ -36,7 +36,6 @@ Meteor.methods({
                     if (delegations[i] && delegations[i].shares)
                         delegations[i].shares = parseFloat(delegations[i].shares);
                 })
-                
                 return delegations;
             };
         }
