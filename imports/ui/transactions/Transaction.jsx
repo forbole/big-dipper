@@ -106,17 +106,7 @@ export default class Transaction extends Component {
                         return (
                           <span className="text-nowrap" key={i}>
                             {" "}
-                            {fee.amount /
-                              Meteor.settings.public.stakingFraction >=
-                            1
-                              ? new Coin(
-                                  parseFloat(fee.amount),
-                                  fee.denom
-                                ).stakeString()
-                              : new Coin(
-                                  parseFloat(fee.amount),
-                                  fee.denom
-                                ).mintString()}{" "}
+                            {new Coin(fee.amount, fee.denom).stakeString()}
                           </span>
                         );
                       })
