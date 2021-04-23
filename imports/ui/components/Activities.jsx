@@ -306,7 +306,7 @@ export default class Activites extends Component {
           // console.log(getCoinDecimals(msg.value.SentAsset.symbol))
         return (
             <div>
-              {/*<Account address={msg.value.Signer} />{" "}
+              <Account address={msg.value.Signer} />{" "}
                 <MsgType type={msg.type} /> &nbsp;
                 <span className="text-success">
                     {new Coin(
@@ -321,9 +321,7 @@ export default class Activites extends Component {
                         msg.value.MinReceivingAmount,
                         msg.value.ReceivedAsset.symbol
                     ).toString(6)}
-                </span>{" "}*/}
-                <JSONPretty id="json-pretty" data={msg.value}></JSONPretty>
-                <span className="quick-note">Swap</span>
+                </span>{" "}
             </div>
         )
 
