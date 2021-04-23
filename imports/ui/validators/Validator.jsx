@@ -194,7 +194,7 @@ export default class Validator extends Component{
                         <meta name="description" content={details} />
                     </Helmet>
                     <Col xs={12}>
-                        <Link to="/validators" className="btn btn-link"><i className="fas fa-caret-left"></i> <T>common.backToList</T></Link>
+                        <Link to="/validators" className="btn btn-link cw pl0"><i className="fas fa-caret-left"></i> <T>common.backToList</T></Link>
                     </Col>
                     <Col md={4}>
                         <Card body className="text-center">
