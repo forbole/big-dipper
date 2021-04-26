@@ -7,6 +7,7 @@ import Consensus from './ConsensusContainer.js';
 import TopValidators from './TopValidatorsContainer.js';
 import Chart from './ChartContainer.js';
 import { Helmet } from "react-helmet";
+import BlocksTable from '/imports/ui/blocks/BlocksTable.jsx'
 
 export default class Home extends Component{
     constructor(props){
@@ -24,7 +25,7 @@ export default class Home extends Component{
             <ChainStatus />
             <Row>
                 <Col md={6}>
-                    <TopValidators />
+                    <BlocksTable homePage={true} />
                 </Col>
                 <Col md={6}>
                     <Chart />
