@@ -8,6 +8,7 @@ import TopValidators from './TopValidatorsContainer.js';
 import Chart from './ChartContainer.js';
 import { Helmet } from "react-helmet";
 import BlocksTable from '/imports/ui/blocks/BlocksTable.jsx'
+import Transactions from '/imports/ui/transactions/TransactionsList.jsx'
 
 export default class Home extends Component{
     constructor(props){
@@ -24,11 +25,11 @@ export default class Home extends Component{
             <Consensus />
             <ChainStatus />
             <Row>
-                <Col md={6}>
+                <Col md={6} className="mb-2">
                     <BlocksTable homePage={true} />
                 </Col>
-                <Col md={6}>
-                    <Chart />
+                <Col md={6} className="mb-2">
+                    <Transactions homePage={true}/>
                 </Col>
             </Row>
         </div>
