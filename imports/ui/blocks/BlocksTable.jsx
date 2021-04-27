@@ -110,9 +110,9 @@ export default class BlocksTable extends Component {
             <LoadMore show={this.state.loadmore} />
         </div>
 
-            : <Card>
+            : <Card className="h-100 overflow-auto">
                 <div className="card-header"><T>blocks.latestBlocks</T></div>
-                <CardBody>
+                <CardBody className="overflow-auto">
                     <Table striped className="random-validators">
                         <thead>
                             <tr>

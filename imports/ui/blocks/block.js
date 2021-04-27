@@ -16,7 +16,7 @@ export default class Block extends Component {
         if (proposer){
             let moniker = (proposer&&proposer.description&&proposer.description.moniker)?proposer.description.moniker:this.props.block.proposerAddress;
             return <Row className="block-info">
-                {homePage ? <Col xs={8} sm={4} lg={4}><i className="far fa-clock d-sm-none"></i><TimeStamp time={this.props.block.time} /></Col> : <Col xs={8} sm={4} lg={3}><i className="far fa-clock d-sm-none"></i><TimeStamp time={this.props.block.time}/></Col>}
+                {homePage ? <Col xs={8} sm={4} lg={4} className="overflow-auto"><i className="far fa-clock d-sm-none"></i><TimeStamp time={this.props.block.time} /></Col> : <Col xs={8} sm={4} lg={3}><i className="far fa-clock d-sm-none"></i><TimeStamp time={this.props.block.time}/></Col>}
                 <Col xs={4} sm={2} className="text-truncate"><i className="fas fa-hashtag d-sm-none"></i> { this.props.block.hash}</Col>
                 <Col xs={8}sm={3} md={2} lg={3} className="text-truncate"><Link to={"/validator/"+this.props.block.proposerAddress}><Avatar moniker={moniker} profileUrl={proposer.profile_url} address={this.props.block.proposerAddress} list={true} /> {moniker}</Link></Col>
                 {/* <Col xs={8}sm={3} md={2} lg={3} className="text-truncate"><Link to={"/validator/"+this.props.block.proposerAddress}></Link></Col> */}
