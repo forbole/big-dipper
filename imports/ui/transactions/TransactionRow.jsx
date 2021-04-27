@@ -18,7 +18,7 @@ export const TransactionRow = (props) => {
     let tx = props.tx;
     let homePage = window?.location?.pathname === '/' ? true : false;
 
-    return <SentryBoundary><Row className={(tx.code)?"tx-info invalid":"tx-info"}>
+    return <SentryBoundary><Row className={(tx.code)?"tx-info w-40 invalid":"tx-info w-40"}>
         <Col xs={12} lg={homePage ? 5 : 7} className="activity" >{(tx?.tx?.body?.messages && tx?.tx?.body?.messages.length >0)?tx?.tx?.body?.messages.map((msg,i) => {
             return <Card body key={i}><Activities msg={msg} invalid={(!!tx.tx_response.code)} events={(tx.tx_response.logs&&tx.tx_response.logs[i])?tx.tx_response.logs[i].events:null} /></Card>
         }):''}</Col>

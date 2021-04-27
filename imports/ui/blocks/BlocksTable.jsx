@@ -18,7 +18,7 @@ export default class BlocksTable extends Component {
     constructor(props){
         super(props);
         this.state = {
-            limit: props.homePage ? 15 : Meteor.settings.public.initialPageSize,
+            limit: props.homePage ? 17 : Meteor.settings.public.initialPageSize,
             sidebarOpen: (props?.location?.pathname.split("/blocks/").length == 2)
         };
 
