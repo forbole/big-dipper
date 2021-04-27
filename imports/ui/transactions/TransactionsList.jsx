@@ -17,7 +17,7 @@ export default class Transactions extends Component{
         super(props);
 
         this.state = {
-            limit: props.homepage ? 4: Meteor.settings.public.initialPageSize,
+            limit: props.homepage ? 6: Meteor.settings.public.initialPageSize,
             monikerDir: 1,
             votingPowerDir: -1,
             uptimeDir: -1,
