@@ -26,10 +26,10 @@ export default class Home extends Component{
             <ChainStatus />
             <Row>
                 <Col md={6} className="mb-2">
-                    <BlocksTable homePage={true} />
+                    <BlocksTable homepage={true} />
                 </Col>
                 <Col md={6} className="mb-2">
-                    <Transactions homePage={true}/>
+                    <Transactions homepage={true}/>
                 </Col>
             </Row>
         </div>

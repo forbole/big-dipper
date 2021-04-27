@@ -18,7 +18,7 @@ export default class BlocksTable extends Component {
     constructor(props){
         super(props);
         this.state = {
-            limit: props.homePage ? 17 : Meteor.settings.public.initialPageSize,
+            limit: props.homepage ? 17 : Meteor.settings.public.initialPageSize,
             sidebarOpen: (props?.location?.pathname.split("/blocks/").length == 2)
         };
 
@@ -78,7 +78,7 @@ export default class BlocksTable extends Component {
 
     render(){
 
-        return !this.props.homePage ? <div>
+        return !this.props.homepage ? <div>
             <Helmet>
                 <title>Latest Blocks | Big Dipper</title>
                 <meta name="description" content="Latest blocks committed by validators" />
@@ -116,7 +116,7 @@ export default class BlocksTable extends Component {
                     <Table striped className="random-validators">
                         <thead>
                             <tr>
-                                <HeaderRecord homePage={true}/>
+                                <HeaderRecord homepage={true}/>
                                 <Switch>
                                     <Route path="/blocks/:blockId" render={(props) => <Sidebar
                                         sidebar={<Block {...props} />}

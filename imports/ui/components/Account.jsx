@@ -13,7 +13,7 @@ export default class Account extends Component{
             address: `/account/${this.props.address}`,
             moniker: this.props.address,
             validator: null,
-            homePage: window?.location?.pathname === '/' ? true : false
+            homepage: window?.location?.pathname === '/' ? true : false
         }
     }
 
@@ -102,7 +102,7 @@ export default class Account extends Component{
     }
 
     render(){
-        return <span className={this.state.homePage == true ? "address overflow-auto d-inline h6 font-weight-normal copy" : (this.props.copy)?"address overflow-auto d-inline-block copy":"address overflow-auto d-inline"} >
+        return <span className={this.state.homepage == true ? "address overflow-auto d-inline h6 font-weight-normal copy" : (this.props.copy)?"address overflow-auto d-inline-block copy":"address overflow-auto d-inline"} >
             <Link to={this.state.address}>{this.userIcon()}{this.state.moniker}</Link>
         </span>
     }

@@ -17,7 +17,7 @@ export default class Transactions extends Component{
         super(props);
 
         this.state = {
-            limit: props.homePage ? 4: Meteor.settings.public.initialPageSize,
+            limit: props.homepage ? 4: Meteor.settings.public.initialPageSize,
             monikerDir: 1,
             votingPowerDir: -1,
             uptimeDir: -1,
@@ -83,7 +83,7 @@ export default class Transactions extends Component{
     }
 
     render(){
-        return !this.props.homePage ?  <div id="transactions">
+        return !this.props.homepage ?  <div id="transactions">
             <Helmet>
                 <title>Latest Transactions on Cosmos Hub | The Big Dipper</title>
                 <meta name="description" content="See what is happening on Cosmos Hub" />
