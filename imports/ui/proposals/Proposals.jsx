@@ -27,8 +27,8 @@ export default class Proposals extends Component{
     render() {
         return <div>
             <Helmet>
-                <title>Governance Proposals on Cosmos Hub | The Big Dipper</title>
-                <meta name="description" content="Cosmos Hub incorporates on-chain governance. Come to see how on-chain governance can be achieved on The Big Dipper." />
+                <title>Governance Proposals on {Meteor.settings.public.chainName} | Big Dipper</title>
+                <meta name="description" content="{Meteor.settings.public.chainName} incorporates on-chain governance. Come to see how on-chain governance can be achieved on Big Dipper." />
             </Helmet>
             <Row>
                 <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>proposals.proposals</T></h1></Col>

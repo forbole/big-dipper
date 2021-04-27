@@ -280,8 +280,8 @@ export default class AccountDetails extends Component{
         else if (this.state.accountExists){
             return <div id="account">
                 <Helmet>
-                    <title>Account Details of {this.state.address} on Cosmos Hub | The Big Dipper</title>
-                    <meta name="description" content={"Account Details of "+this.state.address+" on Cosmos Hub"} />
+                    <title>Account Details of {this.state.address} on {Meteor.settings.public.chainName} | Big Dipper</title>
+                    <meta name="description" content={"Account Details of "+this.state.address+" on {Meteor.settings.public.chainName}"} />
                 </Helmet>
                 <Row>
                     <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>accounts.accountDetails</T></h1></Col>

@@ -33,7 +33,7 @@ export default class Transaction extends Component{
                 let tx = this.props.transaction;
                 return <Container id="transaction">
                     <Helmet>
-                        <title>Transaction {tx.txhash} on Cosmos Hub | The Big Dipper</title>
+                        <title>Transaction {tx.txhash} on {Meteor.settings.public.chainName} | Big Dipper</title>
                         <meta name="description" content={"Details of transaction "+tx.txhash} />
                     </Helmet>
                     <h4><T>transactions.transaction</T> {(!tx.code)?<TxIcon valid />:<TxIcon />}</h4>

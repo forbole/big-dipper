@@ -17,7 +17,7 @@ export default class Distribution extends Component{
     render(){
         return <div id="voting-power-dist">
             <Helmet>
-                <title>Voting Power Distribution on Cosmos Hub | The Big Dipper</title>
+                <title>Voting Power Distribution on {Meteor.settings.public.chainName} | Big Dipper</title>
                 <meta name="description" content="We would like to keep track how voting power are distributed over time among validators." />
             </Helmet>
             <Row>
