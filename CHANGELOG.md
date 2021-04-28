@@ -1,7 +1,8 @@
 # Changelog
 
-## [Unreleased]
-* Replaced Random Validators and Chart components with Latest Blocks and Latest Transactions components on homepage 
+## v0.41.x-11
+* Replaced Random Validators and Chart components with Latest Blocks and Latest Transactions components on homepage
+* Update meta data to align with setting values
 
 ## v0.41.x-10
 * Bump Meteor to v2.2
