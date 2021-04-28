@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col } from 'reactstrap';
+import { Table, Row, Col, Card, CardBody, Container } from 'reactstrap';
 import List from './ListContainer.js';
 import { LoadMore } from '../components/LoadMore.jsx';
 import { Meteor } from 'meteor/meteor';
@@ -17,14 +17,14 @@ export default class Transactions extends Component{
         super(props);
 
         this.state = {
-            limit: Meteor.settings.public.initialPageSize,
+            limit: props.homepage ? 16: Meteor.settings.public.initialPageSize,
             monikerDir: 1,
             votingPowerDir: -1,
             uptimeDir: -1,
             proposerDir: -1,
             priority: 2,
             loadmore: false,
-            sidebarOpen: (props.location.pathname.split("/transactions/").length == 2)
+            sidebarOpen: (props?.location?.pathname.split("/transactions/").length == 2)
         }
 
         this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
@@ -43,9 +43,9 @@ export default class Transactions extends Component{
     }
     
     componentDidUpdate(prevProps){
-        if (this.props.location.pathname != prevProps.location.pathname){
+        if (this.props?.location?.pathname != prevProps?.location?.pathname){
             this.setState({
-                sidebarOpen: (this.props.location.pathname.split("/transactions/").length == 2)
+                sidebarOpen: (this.props?.location?.pathname.split("/transactions/").length == 2)
             })
         }
     }
@@ -83,7 +83,7 @@ export default class Transactions extends Component{
     }
 
     render(){
-        return <div id="transactions">
+        return !this.props.homepage ?  <div id="transactions">
             <Helmet>
                 <title>Latest Transactions on Cosmos Hub | The Big Dipper</title>
                 <meta name="description" content="See what is happening on Cosmos Hub" />
@@ -110,6 +110,39 @@ export default class Transactions extends Component{
             </Switch>
             <List limit={this.state.limit} />
             <LoadMore show={this.state.loadmore} />
-        </div>
+        </div> : <Card className="h-100 overflow-auto">
+            <div className="card-header"><T>transactions.transactions</T></div>
+            <CardBody className="tx-list-homepage">
+                <Table striped className="tx-home">
+                    <thead>
+                        <tr>
+                            <Switch>
+                                <Route path="/transactions/:txId" render={(props) => <Sidebar
+                                    sidebar={<Transaction {...props} />}
+                                    open={this.state.sidebarOpen}
+                                    onSetOpen={this.onSetSidebarOpen}
+                                    styles={{
+                                        sidebar: {
+                                            background: "white",
+                                            position: "fixed",
+                                            width: '85%',
+                                            zIndex: 4
+                                        }, overlay: {
+                                            zIndex: 3
+                                        }
+                                    }}
+                                >
+                                </Sidebar>} />
+
+                            </Switch>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <List limit={this.state.limit} /></tbody>
+                     
+
+                </Table>
+            </CardBody>
+        </Card>;
     }
 }
