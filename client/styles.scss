@@ -675,6 +675,12 @@ body {
       cursor: pointer;
     }
   }
+
+  .tx-list-homepage {
+    overflow-y: hidden;
+    overflow-x: auto;
+    height: 52em;
+  }
   
   @media only screen and (max-width: 767px) {
     div {
