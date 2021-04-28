@@ -17,7 +17,7 @@ export default class Transactions extends Component{
         super(props);
 
         this.state = {
-            limit: props.homepage ? 6: Meteor.settings.public.initialPageSize,
+            limit: props.homepage ? 16: Meteor.settings.public.initialPageSize,
             monikerDir: 1,
             votingPowerDir: -1,
             uptimeDir: -1,
@@ -112,7 +112,7 @@ export default class Transactions extends Component{
             <LoadMore show={this.state.loadmore} />
         </div> : <Card className="h-100 overflow-auto">
             <div className="card-header"><T>transactions.transactions</T></div>
-            <CardBody>
+            <CardBody className="tx-list-homepage">
                 <Table striped className="tx-home">
                     <thead>
                         <tr>
