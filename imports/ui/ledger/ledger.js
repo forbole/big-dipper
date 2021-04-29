@@ -81,7 +81,7 @@ export class Ledger {
         // assume well connection if connected once
         if (this.cosmosApp) return
         let transport;
-        if(transportBLE === true){
+        if(transportBLE === true || transportBLE === 'true'){
             transport = await BluetoothTransport.create(timeout)
         }
         else{
@@ -207,6 +207,8 @@ export class Ledger {
                 `Your ${Meteor.settings.public.ledger.appName} Ledger App is not up to date. ` +
                 `Please update to version ${REQUIRED_COSMOS_APP_VERSION}.`
             )
+        case `Web Bluetooth API globally disabled`:
+            throw new Error(`Bluetooth not supported. Please use the latest version of Chrome browser.`)
         case `No errors`:
             // do nothing
             break

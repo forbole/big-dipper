@@ -160,6 +160,7 @@ class LedgerButton extends Component {
             errorMessage: '',
             user: localStorage.getItem(CURRENTUSERADDR),
             pubKey: localStorage.getItem(CURRENTUSERPUBKEY),
+            transportBLE: localStorage.getItem(BLELEDGERCONNECTION),
             memo: DEFAULT_MEMO
         };
         this.ledger = new Ledger({testModeAllowed: false});
@@ -194,7 +195,8 @@ class LedgerButton extends Component {
         if (state.user !== localStorage.getItem(CURRENTUSERADDR)) {
             return {
                 user: localStorage.getItem(CURRENTUSERADDR),
-                pubKey: localStorage.getItem(CURRENTUSERPUBKEY)
+                pubKey: localStorage.getItem(CURRENTUSERPUBKEY),
+                transportBLE: localStorage.getItem(BLELEDGERCONNECTION)
             };
         }
         return null;
@@ -306,7 +308,7 @@ class LedgerButton extends Component {
     }
 
     tryConnect = () => {
-        this.ledger.getCosmosAddress().then((res) => {
+        this.ledger.getCosmosAddress(this.state.transportBLE).then((res) => {
             if (res.address == this.state.user)
                 this.setState({
                     success: true,

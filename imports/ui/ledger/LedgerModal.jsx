@@ -11,7 +11,7 @@ class LedgerModal extends React.Component {
         this.state = {
             loading: false,
             activeTab: '1',
-            transportBLE: false
+            transportBLE: localStorage.getItem(BLELEDGERCONNECTION) ?? false
         };
         this.ledger = new Ledger({testModeAllowed: false});
     }
@@ -83,6 +83,7 @@ class LedgerModal extends React.Component {
         this.ledger.confirmLedgerAddress(this.state.transportBLE).then((res) => {
             localStorage.setItem(CURRENTUSERADDR, this.state.address);
             localStorage.setItem(CURRENTUSERPUBKEY, this.state.pubKey);
+            localStorage.setItem(BLELEDGERCONNECTION, this.state.transportBLE);
             this.props.refreshApp();
             this.closeModal(true);
         }, (err) => {
