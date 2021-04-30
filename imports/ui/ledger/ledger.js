@@ -165,7 +165,7 @@ export class Ledger {
         })
     }
 
-    async sign(signMessage) {
+    async sign(signMessage, transportBLE) {
         await this.connect(INTERACTION_TIMEOUT, transportBLE)
 
         const response = await this.cosmosApp.sign(HDPATH, signMessage)

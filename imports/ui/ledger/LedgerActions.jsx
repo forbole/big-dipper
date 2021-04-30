@@ -439,7 +439,7 @@ class LedgerButton extends Component {
             let txMsg = this.state.txMsg;
             const txContext = this.getTxContext();
             const bytesToSign = Ledger.getBytesToSign(txMsg, txContext);
-            this.ledger.sign(bytesToSign).then((sig) => {
+            this.ledger.sign(bytesToSign, this.state.transportBLE).then((sig) => {
                 try {
                     Ledger.applySignature(txMsg, txContext, sig);
                     Meteor.call('transaction.submit', txMsg, (err, res) => {
