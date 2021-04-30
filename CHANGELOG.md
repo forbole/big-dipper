@@ -1,7 +1,8 @@
 # Changelog
 
-## [UNRELEASED]
+## v0.41.x-12
 * [#387] Added Bluetooth Ledger support
+* Fix transaction simulation bug
 
 ## v0.41.x-11
 * Replaced Random Validators and Chart components with Latest Blocks and Latest Transactions components on homepage
