@@ -1,8 +1,8 @@
 # Changelog
 
 ## [UNRELEASED]
-
 * [#387] Added Bluetooth Ledger support
+
 ## v0.41.x-11
 * Replaced Random Validators and Chart components with Latest Blocks and Latest Transactions components on homepage
 * Update meta data to align with setting values
@@ -18,7 +18,6 @@
 * Fixed an issue on displaying individual transaction.
 * Updated Ledger app name checking so that it will follows the value defined in settings.
 * [#213] Updated `@ledgerhq/hw-transport-webusb` pkg to v5.49.0 to fix Ledger errors on Windows10
-* [#387] Added Ledger web bluetooth support
 
 ## v0.41.x-7 (Stargate compatible)
 
