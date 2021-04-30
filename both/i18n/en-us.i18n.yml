@@ -206,6 +206,7 @@ accounts:
     signInWarning: 'Please make sure your Ledger device is turned on and <strong class="text-primary">{$network} App {$version} or above</strong> is opened.'
     pleaseAccept: 'please accept in your Ledger device.'
     noRewards: 'No Rewards'
+    BLESupport: 'Bluetooth connection is currently only supported on Google Chrome Browser.'
 activities:
     single: 'A'
     happened: 'happened.'

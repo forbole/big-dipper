@@ -124,6 +124,7 @@ class LedgerModal extends React.Component {
                                 <Button color="secondary" value="usb" onClick={this.connectionSelection} className="mt-3 mr-4"><span><img src="/img/usb.svg" alt="USB" style={{height: "25px"}}/><T>USB</T></span></Button>
                                 <Button color="secondary" value="bluetooth" onClick={this.connectionSelection} className="mt-3 "><span><img src="/img/bluetooth.svg" alt="Bluetooth" style={{ height: "25px" }} /><T>Bluetooth</T></span></Button>
                             </div>
+                            <h6 className="error-message text-center mt-3"><T>accounts.BLESupport</T></h6>
                         </TabPane>
                         <TabPane tabId="2">
                             {this.state.currentUser?<span>You are currently logged in as <strong className="text-primary d-block">{this.state.currentUser}.</strong></span>:null}
