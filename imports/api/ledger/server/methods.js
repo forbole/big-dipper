@@ -46,7 +46,7 @@ Meteor.methods({
                 "chain_id": Meteor.settings.public.chainId,
                 "gas_adjustment": adjustment,
                 "account_number": accountNumber,
-                "sequence": sequence,
+                "sequence": sequence.toString(),
                 "simulate": true
             }
         };
