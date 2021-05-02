@@ -10,14 +10,15 @@ class LedgerModal extends React.Component {
         super(props);
         this.state = {
             loading: false,
-            activeTab: '1'
+            activeTab: '1',
+            transportBLE: localStorage.getItem(BLELEDGERCONNECTION) ?? false
         };
         this.ledger = new Ledger({testModeAllowed: false});
     }
 
     autoOpenModal = () => {
         if (!this.props.isOpen && this.props.handleLoginConfirmed) {
-            this.tryConnect(5000);
+            // this.tryConnect(5000);
             this.props.toggle(true);
         }
     }
@@ -28,15 +29,30 @@ class LedgerModal extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         this.autoOpenModal();
-        if (this.props.isOpen && !prevProps.isOpen) {
+        let bleTransport = this.state.transportBLE
+        if (bleTransport != prevState.transportBLE) {
             this.tryConnect();
+        }
+    }
+
+    connectionSelection = async (e) => {
+        e.persist();
+        if(e?.currentTarget?.value === "usb"){
+            await this.setState({ transportBLE: false })
+            this.tryConnect()
+
+        }
+        if (e?.currentTarget?.value === "bluetooth") {
+            await this.setState({ transportBLE: true })
+            this.tryConnect()
+
         }
     }
 
     tryConnect = (timeout=undefined) => {
         if (this.state.loading) return
         this.setState({ loading: true, errorMessage: '' })
-        this.ledger.getCosmosAddress(timeout).then((res) => {
+        this.ledger.getCosmosAddress(this.state.transportBLE).then((res) => {
             let currentUser = localStorage.getItem(CURRENTUSERADDR);
             if (this.props.handleLoginConfirmed && res.address === currentUser) {
                 this.closeModal(true)
@@ -59,11 +75,15 @@ class LedgerModal extends React.Component {
         });
     }
 
+
+
+
     trySignIn = () => {
         this.setState({ loading: true, errorMessage: '' })
-        this.ledger.confirmLedgerAddress().then((res) => {
+        this.ledger.confirmLedgerAddress(this.state.transportBLE).then((res) => {
             localStorage.setItem(CURRENTUSERADDR, this.state.address);
             localStorage.setItem(CURRENTUSERPUBKEY, this.state.pubKey);
+            localStorage.setItem(BLELEDGERCONNECTION, this.state.transportBLE);
             this.props.refreshApp();
             this.closeModal(true);
         }, (err) => {
@@ -74,8 +94,6 @@ class LedgerModal extends React.Component {
     }
 
     getActionButton() {
-        if (this.state.activeTab === '1' && !this.state.loading)
-            return <Button color="primary"  onClick={this.tryConnect}><T>common.retry</T></Button>
         if (this.state.activeTab === '2' && this.state.errorMessage !== '')
             return <Button color="primary"  onClick={this.trySignIn}><T>common.retry</T></Button>
     }
@@ -102,6 +120,11 @@ class LedgerModal extends React.Component {
                     <TabContent activeTab={this.state.activeTab}>
                         <TabPane tabId="1">
                             <T _purify={false} network={Meteor.settings.public.ledger.appName} version={Meteor.settings.public.ledger.appVersion}>accounts.signInWarning</T>
+                            <div className="d-flex justify-content-center">
+                                <Button color="secondary" value="usb" onClick={this.connectionSelection} className="mt-3 mr-4"><span><img src="/img/usb.svg" alt="USB" style={{height: "25px"}}/><T>USB</T></span></Button>
+                                <Button color="secondary" value="bluetooth" onClick={this.connectionSelection} className="mt-3 "><span><img src="/img/bluetooth.svg" alt="Bluetooth" style={{ height: "25px" }} /><T>Bluetooth</T></span></Button>
+                            </div>
+                            <h6 className="error-message text-center mt-3"><T>accounts.BLESupport</T></h6>
                         </TabPane>
                         <TabPane tabId="2">
                             {this.state.currentUser?<span>You are currently logged in as <strong className="text-primary d-block">{this.state.currentUser}.</strong></span>:null}

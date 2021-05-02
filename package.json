@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.13.17",
+    "@ledgerhq/hw-transport-web-ble": "^5.50.0",
     "@ledgerhq/hw-transport-webusb": "^5.49.0",
     "@types/meteor-universe-i18n": "^1.14.5",
     "babel-polyfill": "^6.26.0",
