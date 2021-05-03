@@ -51,6 +51,13 @@ export class Ledger {
         this.testModeAllowed = testModeAllowed
     }
 
+    async getLedgerAddresses(accountNumber, transportBLE) {
+        await this.connect(INTERACTION_TIMEOUT, transportBLE)
+        let hdpaths = await this.cosmosApp?.publicKey([44, COINTYPE, accountNumber, 0, 0])
+        let pubKey = hdpaths?.compressed_pk
+        return { pubKey, address: createCosmosAddress(pubKey) }
+    }
+
     // test connection and compatibility
     async testDevice() {
         // poll device with low timeout to check if the device is connected
