@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Spinner, TabContent, TabPane, Row, Col, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { Button, Spinner, TabContent, TabPane, Row, Col, Modal, ModalHeader, ModalBody, ModalFooter, UncontrolledDropdown, DropdownMenu, DropdownToggle, DropdownItem } from 'reactstrap';
 import {Ledger} from './ledger.js';
 import i18n from 'meteor/universe:i18n';
 
@@ -40,46 +40,71 @@ class LedgerModal extends React.Component {
         if(e?.currentTarget?.value === "usb"){
             await this.setState({ transportBLE: false })
             this.tryConnect()
-
         }
         if (e?.currentTarget?.value === "bluetooth") {
             await this.setState({ transportBLE: true })
             this.tryConnect()
-
         }
     }
 
     tryConnect = (timeout=undefined) => {
         if (this.state.loading) return
         this.setState({ loading: true, errorMessage: '' })
-        this.ledger.getCosmosAddress(this.state.transportBLE).then((res) => {
-            let currentUser = localStorage.getItem(CURRENTUSERADDR);
-            if (this.props.handleLoginConfirmed && res.address === currentUser) {
-                this.closeModal(true)
-            } else {
+        if (!this.state.currentUserAddress || this.state.currentUserAddress == undefined){
+            this.renderDropDown()
+        }
+        if (this.state.currentUserAddress){
+            this.ledger.getCosmosAddress(this.state.transportBLE).then((res) => {
+                let currentUser = localStorage.getItem(CURRENTUSERADDR);
+                if (this.props.handleLoginConfirmed && res.address === currentUser) {
+                    this.closeModal(true)
+                } else {
+                    this.setState({
+                        currentUser: currentUser,
+                        address: res.address,
+                        pubKey: Buffer.from(res.pubKey).toString('base64'),
+                        errorMessage: '',
+                        loading: false,
+                        activeTab: '2'
+                    });
+                    this.trySignIn();
+                }
+            }, (err) => {
                 this.setState({
-                    currentUser: currentUser,
-                    address: res.address,
-                    pubKey: Buffer.from(res.pubKey).toString('base64'),
-                    errorMessage: '',
+                    errorMessage: err.message,
                     loading: false,
-                    activeTab: '2'});
-                this.trySignIn();
-            }
-        }, (err) => {
-            this.setState({
-                errorMessage: err.message,
-                loading: false,
-                activeTab: '1'
-            })
-        });
+                    activeTab: '1'
+                })
+            });
+        }
+    }
+
+    handleAddressSwitch = (address, index, e) => {
+        e.preventDefault();
+        localStorage.setItem('addressIndex', index)
+        this.setState({
+            currentUserAddress: address,
+        })
+    }
+
+    async renderDropDown() {
+        this.setState({ loadingAccountsList: true })
+        let accounts = [];
+        for(let c = 0; c < 10; c++){
+            // eslint-disable-next-line no-await-in-loop
+            accounts[c] = await this.ledger.getLedgerAddresses(c, this.state.transportBLE)
+        }
+        if(accounts.length === 10){
+            this.setState({ loadingAccountsList: false, accountsList: accounts })
+        }
+        return accounts
     }
 
 
 
-
     trySignIn = () => {
-        this.setState({ loading: true, errorMessage: '' })
+        // this.renderDropDown();
+        this.setState({ loading: true, errorMessage: ''})
         this.ledger.confirmLedgerAddress(this.state.transportBLE).then((res) => {
             localStorage.setItem(CURRENTUSERADDR, this.state.address);
             localStorage.setItem(CURRENTUSERPUBKEY, this.state.pubKey);
@@ -98,6 +123,11 @@ class LedgerModal extends React.Component {
             return <Button color="primary"  onClick={this.trySignIn}><T>common.retry</T></Button>
     }
 
+    getLoginButton() {
+        if (this.state.activeTab === '2' && this.state.errorMessage === '' && this.state.accountsList)
+            return <Button color="primary" onClick={this.tryConnect}><T>common.signIn</T></Button>
+    }
+
     closeModal = (success) => {
         if (this.props.handleLoginConfirmed) {
             this.props.handleLoginConfirmed(typeof success ==='boolean'?success:false);
@@ -109,6 +139,7 @@ class LedgerModal extends React.Component {
             address: null,
             activeTab: '1'
         })
+        localStorage.removeItem('addressIndex')
         this.props.toggle(false)
     }
 
@@ -128,13 +159,29 @@ class LedgerModal extends React.Component {
                         </TabPane>
                         <TabPane tabId="2">
                             {this.state.currentUser?<span>You are currently logged in as <strong className="text-primary d-block">{this.state.currentUser}.</strong></span>:null}
-                            <T>accounts.toLoginAs</T> <strong className="text-primary d-block">{this.state.address}</strong><T>accounts.pleaseAccept</T>
+                            {this.state.loadingAccountsList ? <Spinner type="grow" color="primary" /> :
+                            <>
+                            <span className="text-primary text-center mb-3 d-block">Select address to log in with from the list below: </span>
+                                    <UncontrolledDropdown direction='down' size="md" className='ledger-accounts-dropdown text-center'>
+                                        <DropdownToggle caret >
+                                            {this.state.currentUserAddress ? <span className="text-lowercase">{this.state.currentUserAddress}</span> : <span>Select address</span>}
+                                        </DropdownToggle>
+                                        <DropdownMenu>
+                                            {
+                                                this.state.accountsList ? this.state.accountsList?.map((option, k) => (
+                                                    <DropdownItem key={k} onClick={(e) => this.handleAddressSwitch(option.address,k, e)}>{option.address.toLowerCase()}</DropdownItem>
+                                                )) : null}
+                                        </DropdownMenu>
+                                    </UncontrolledDropdown> 
+                                </>}
+                            {/* <T>accounts.toLoginAs</T> <strong className="text-primary d-block">{this.state.address}</strong><T>accounts.pleaseAccept</T> */}
                         </TabPane>
                     </TabContent>
                     {this.state.loading?<Spinner type="grow" color="primary" />:''}
                     <p className="error-message">{this.state.errorMessage}</p>
                 </ModalBody>
                 <ModalFooter>
+                    {this.getLoginButton()}
                     {this.getActionButton()}
                     <Button color="secondary" onClick={this.closeModal}><T>common.cancel</T></Button>
                 </ModalFooter>

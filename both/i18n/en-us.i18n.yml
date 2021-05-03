@@ -25,6 +25,7 @@ common:
     rewards: 'Rewards'
     bondedTokens: 'Bonded Tokens'
     totalNumOfDelegations: 'Total Number of Delegations'
+    signIn: 'Sign In'
 navbar:
     siteName: 'BIG DIPPER'
     version: '-'
