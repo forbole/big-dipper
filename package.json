@@ -25,6 +25,7 @@
     "fibers": "^4.0.3",
     "jquery": "^3.5.1",
     "js-sha256": "^0.9.0",
+    "kafkajs": "^1.15.0",
     "ledger-cosmos-js": "^2.1.8",
     "lodash": "^4.17.20",
     "meteor-node-stubs": "^0.4.1",

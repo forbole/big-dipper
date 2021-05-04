@@ -30,3 +30,8 @@ jquery
 universe:i18n
 server-render@0.3.1
 fourseven:scss
+meteorhacks:npm
+
+
+npm-container
+meteorhacks:async
