@@ -50,10 +50,7 @@ class LedgerModal extends React.Component {
     tryConnect = (timeout=undefined) => {
         if (this.state.loading) return
         this.setState({ loading: true, errorMessage: '' })
-        if (!this.state.currentUserAddress || this.state.currentUserAddress == undefined){
-            this.renderDropDown()
-        }
-        if (this.state.currentUserAddress){
+        if (this.state.addressHasBeenSelected === true){
             this.ledger.getCosmosAddress(this.state.transportBLE).then((res) => {
                 let currentUser = localStorage.getItem(CURRENTUSERADDR);
                 if (this.props.handleLoginConfirmed && res.address === currentUser) {
@@ -77,6 +74,16 @@ class LedgerModal extends React.Component {
                 })
             });
         }
+        else{
+            this.renderDropDown();
+            this.setState({
+                errorMessage: '',
+                loading: false,
+                activeTab: '2'
+            });
+        }
+      
+        
     }
 
     handleAddressSwitch = (address, index, e) => {
@@ -84,6 +91,7 @@ class LedgerModal extends React.Component {
         localStorage.setItem('addressIndex', index)
         this.setState({
             currentUserAddress: address,
+            addressHasBeenSelected: true
         })
     }
 
@@ -95,7 +103,7 @@ class LedgerModal extends React.Component {
             accounts[c] = await this.ledger.getLedgerAddresses(c, this.state.transportBLE)
         }
         if(accounts.length === 10){
-            this.setState({ loadingAccountsList: false, accountsList: accounts })
+            this.setState({ loadingAccountsList: false, accountsList: accounts, addressesLoaded: true })
         }
         return accounts
     }
@@ -103,7 +111,6 @@ class LedgerModal extends React.Component {
 
 
     trySignIn = () => {
-        // this.renderDropDown();
         this.setState({ loading: true, errorMessage: ''})
         this.ledger.confirmLedgerAddress(this.state.transportBLE).then((res) => {
             localStorage.setItem(CURRENTUSERADDR, this.state.address);
