@@ -187,7 +187,7 @@ class LedgerModal extends React.Component {
                         <TabPane tabId="2">
                             {this.state.currentUser?<span>You are currently logged in as <strong className="text-primary d-block">{this.state.currentUser}.</strong></span>:null}
                             {/* <T>accounts.toLoginAs</T> <strong className="text-primary d-block">{this.state.address}</strong><T>accounts.pleaseAccept</T> */}
-                            {this.state.loadingAccountsList ? <Spinner type="grow" color="primary" /> :
+                            {this.state.loadingAccountsList ? <div className="d-block"> <h5 className="text-primary ml-2"> Generating accounts...</h5> <Spinner type="grow" color="primary" /></div>:
                                 <>
                                     <span className="text-primary text-center mb-1 d-block">Select address to log in with from the list below: </span>
                                     {!this.state.loadingAccountsList ? <h6 className="mt-1 mb-3 text-center">Your default address is account 0.</h6> : null}
