@@ -100,10 +100,17 @@ class LedgerModal extends React.Component {
         })
     }
 
-    loadMoreAddresses = (e) => {
+    loadNextAddresses = (e) => {
         this.setState({
             fromAccountIndex: this.state.toAccountIndex,
             toAccountIndex: this.state.toAccountIndex + 10
+        })
+    }
+
+    loadPreviousAddresses = (e) => {
+        this.setState({
+            fromAccountIndex: this.state.fromAccountIndex - 10,
+            toAccountIndex: this.state.toAccountIndex - 10
         })
     }
 
@@ -185,7 +192,10 @@ class LedgerModal extends React.Component {
                                     {this.state.accountsList?.map((option, k) => (
                                         <div className="mb-1 ml-1" key={k}> <span className="font-weight-bold mr-1">{`${k}.`}</span><input type="radio" name="ledger-address-selection" className="ml-1" index={k} address={option.address.toLowerCase()} onChange={this.handleAddressSwitch} /> {`${option.address.toLowerCase()}`} </div>
                                     ))}
-                                    <div className="text-center mt-3"> <Button outline color="danger" size="sm" onClick={this.loadMoreAddresses}>Show more addresses...</Button> </div>
+                                    <div className="text-center mt-3"> 
+                                        {this.state.fromAccountIndex != 0 ? 
+                                            <Button outline color="danger" size="sm" onClick={this.loadPreviousAddresses} className="mr-4 text-capitalize">Load previous</Button> : null }
+                                        <Button outline color="danger" size="sm" onClick={this.loadNextAddresses} className="text-capitalize">Load more</Button> </div>
                                 </>}
                         </TabPane>
                     </TabContent>
