@@ -23,26 +23,20 @@ Meteor.methods({
             return false;
         }
     },
-    // async 'Validators.getAllDelegations'(address){
     'Validators.getAllDelegations'(address){
         this.unblock();
-        let url = API + '/cosmos/staking/v1beta1/validators/'+address+'/delegations';
+        let url = `${API}/cosmos/staking/v1beta1/validators/${address}/delegations?pagination.limit=10&pagination.count_total=true`;
 
-        try{
+        try {
             let delegations = HTTP.get(url);
-            if (delegations.statusCode == 200){
-                delegations = JSON.parse(delegations.content).delegation_responses;
-                delegations.forEach((delegation, i) => {
-                    if (delegations[i] && delegations[i].shares)
-                        delegations[i].shares = parseFloat(delegations[i].shares);
-                })
-                
-                return delegations;
+            if (delegations.statusCode == 200) {
+                let delegationsCount = JSON.parse(delegations.content)?.pagination?.total;
+                return delegationsCount;
             };
         }
-        catch (e){
+        catch (e) {
             console.log(url);
-            console.log("Getting error: %o when fetching from %o", e, url);
+            console.log("Getting error: %o when getting delegations count from %o", e, url);
         }
     }
 });
