@@ -51,8 +51,8 @@ export class Ledger {
     }
 
     getHDPath() {
-        let addressIndex = localStorage.getItem('addressIndex')
-        let HDPATH = [44, COINTYPE, parseInt(addressIndex) ?? undefined, 0, 0]
+        let addressIndex = localStorage.getItem(ADDRESSINDEX)
+        let HDPATH = [44, COINTYPE, parseInt(addressIndex), 0, 0];
         return HDPATH
     }
 

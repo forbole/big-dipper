@@ -90,12 +90,12 @@ class LedgerModal extends React.Component {
         }
     }
 
-    handleAddressSwitch = (e) => {
-        e.preventDefault();
-        localStorage.setItem('addressIndex', e.target.index)
+    handleAddressSwitch = (e, addressIndex, ledgerAddress) => {
+        e.persist();
+        localStorage.setItem(ADDRESSINDEX, addressIndex)
         this.setState({
-            currentUserAddress: e.target.address,
-            accountIndex: e.target.index,
+            currentUserAddress: ledgerAddress,
+            accountIndex: addressIndex,
             addressHasBeenSelected: true
         })
     }
@@ -165,7 +165,7 @@ class LedgerModal extends React.Component {
             address: null,
             activeTab: '1'
         })
-        localStorage.removeItem('addressIndex')
+        // localStorage.removeItem('addressIndex')
         this.props.toggle(false)
     }
 
@@ -190,7 +190,7 @@ class LedgerModal extends React.Component {
                                 <>
                                     <span className="text-primary text-center mb-3 d-block">Select address to log in with from the list below: </span>
                                     {this.state.accountsList?.map((option, k) => (
-                                        <div className="mb-1 ml-1" key={k}> <span className="font-weight-bold mr-1">{`${k}.`}</span><input type="radio" name="ledger-address-selection" className="ml-1" index={k} address={option.address.toLowerCase()} onChange={this.handleAddressSwitch} /> {`${option.address.toLowerCase()}`} </div>
+                                        <div className="mb-1 ml-1" key={k}> <span className="font-weight-bold mr-1">{`${k}.`}</span><input type="radio" name="ledger-address-selection" className="ml-1 mr-1" onChange={(e) => this.handleAddressSwitch(e, k, option.address.toLowerCase())} />{`${option.address.toLowerCase()}`} </div>
                                     ))}
                                     <div className="text-center mt-3"> 
                                         {this.state.fromAccountIndex != 0 ? 
