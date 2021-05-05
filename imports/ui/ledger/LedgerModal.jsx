@@ -68,7 +68,8 @@ class LedgerModal extends React.Component {
                         pubKey: Buffer.from(res.pubKey).toString('base64'),
                         errorMessage: '',
                         loading: false,
-                        activeTab: '2'
+                        activeTab: '2',
+                        addressHasBeenSelected: false
                     });
                     this.trySignIn();
                 }
@@ -151,7 +152,7 @@ class LedgerModal extends React.Component {
 
     getLoginButton() {
         if (this.state.activeTab === '2' && this.state.errorMessage === '' && this.state.accountsList)
-            return <Button color="primary" onClick={this.tryConnect}><T>common.signIn</T></Button>
+            return <Button color="primary" onClick={this.tryConnect} disabled={!this.state.addressHasBeenSelected}><T>common.signIn</T></Button>
     }
 
     closeModal = (success) => {
