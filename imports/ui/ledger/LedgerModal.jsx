@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button, Spinner, TabContent, TabPane, Row, Col, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { Ledger } from './ledger.js';
 import i18n from 'meteor/universe:i18n';
+import Loader from '../../../both/utils/loader';
 
 const T = i18n.createComponent();
 
@@ -187,7 +188,7 @@ class LedgerModal extends React.Component {
                         <TabPane tabId="2">
                             {this.state.currentUser?<span>You are currently logged in as <strong className="text-primary d-block">{this.state.currentUser}.</strong></span>:null}
                             {/* <T>accounts.toLoginAs</T> <strong className="text-primary d-block">{this.state.address}</strong><T>accounts.pleaseAccept</T> */}
-                            {this.state.loadingAccountsList ? <div className="d-block"> <h5 className="text-primary ml-2"> Generating accounts...</h5> <Spinner type="grow" color="primary" /></div>:
+                            {this.state.loadingAccountsList ? <div className="d-block"> <h4 className="text-primary ml-2"> Generating accounts</h4>  <Loader /></div>:
                                 <>
                                     <span className="text-primary text-center mb-1 d-block">Select address to log in with from the list below: </span>
                                     {!this.state.loadingAccountsList ? <h6 className="mt-1 mb-3 text-center">Your default address is account 0.</h6> : null}
