@@ -2,7 +2,8 @@
 
 ## [UNRELEASED]
 * [#484] Replaced delegation list displayed under validator page with total number of delegations. 
-* [#509] Added display list of addresses available for user to log in with the ledger.
+* [#509] Added display list of addresses available for user to login with when connecting the Ledger. 
+
 ## v0.41.x-12
 * [#387] Added Bluetooth Ledger support
 * Fix transaction simulation bug
