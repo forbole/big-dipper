@@ -70,7 +70,7 @@ export default class Proposal extends Component{
             this.setState({
                 proposal: this.props.proposal,
                 deposit: <div>{this.props.proposal.total_deposit?this.props.proposal.total_deposit.map((deposit, i) => {
-                    return <div key={i}>{new Coin(deposit.amount, deposit.denom).toString()}</div>
+                    return <div key={i}>{new Coin(deposit.amount, deposit.denom).toString(6)}</div>
                 }):''} </div>
             });
 
@@ -316,7 +316,7 @@ export default class Proposal extends Component{
                         {(this.props.proposal.content.type === 'cosmos-sdk/CommunityPoolSpendProposal')?<Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.amount</T></Col>
                             <Col md={9} className="value"> {this.props.proposal.content.amount.map((amount, j) => {
-                                return <div key={j}>{new Coin(amount.amount, amount.denom).toString()}</div>
+                                return <div key={j}>{new Coin(amount.amount, amount.denom).toString(6)}</div>
                             })}</Col> 
                         </Row>:null}
                         <Row className="mb-2 border-top">
@@ -338,7 +338,7 @@ export default class Proposal extends Component{
                                             return <li key={i}>
                                                 <Account address={deposit.depositor} />
                                                 {deposit.amount.map((amount, j) => {
-                                                    return <div key={j}>{new Coin(amount.amount, amount.denom).toString()}</div>
+                                                    return <div key={j}>{new Coin(amount.amount, amount.denom).toString(6)}</div>
                                                 })}
                                             </li>
                                         }):''}
