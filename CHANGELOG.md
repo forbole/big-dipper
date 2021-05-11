@@ -3,6 +3,7 @@
 ## [UNRELEASED]
 * [#484] Replaced delegation list displayed under validator page with total number of delegations. 
 * [#509] Added display list of addresses available for user to login with when connecting the Ledger.  
+* [#497] Fetch keybase with timer settings 
 
 ## v0.41.x-12
 * [#387] Added Bluetooth Ledger support
@@ -23,6 +24,7 @@
 * Fixed an issue on displaying individual transaction.
 * Updated Ledger app name checking so that it will follows the value defined in settings.
 * [#213] Updated `@ledgerhq/hw-transport-webusb` pkg to v5.49.0 to fix Ledger errors on Windows10
+
 ## v0.41.x-7 (Stargate compatible)
 
 * [#472] Fix missing transactions
