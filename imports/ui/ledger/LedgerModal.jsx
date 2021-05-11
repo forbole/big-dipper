@@ -185,12 +185,12 @@ class LedgerModal extends React.Component {
                         </TabPane>
                         <TabPane tabId="2">
                             {this.state.currentUser?<span>You are currently logged in as <strong className="text-primary d-block">{this.state.currentUser}.</strong></span>:null}
-                            {this.state.loadingAddressList ? <div className="d-block"> <h4 className="text-primary ml-2"> <T>common.generatingAddresses</T></h4>  <Loader /></div>:
+                            {this.state.loadingAddressList ? <div className="d-flex justify-content-center"><div> <h4 className="text-primary"> <T>common.generatingAddresses</T></h4></div> <div className="ledger-loader"> <Loader /></div> </div>:
                                 <>
                                     <span className="text-primary text-center mb-1 d-block"> <T>common.selectAddress</T> </span>
                                     {!this.state.loadingAddressList ? <h6 className="mt-1 mb-3 text-center"><T>common.defaultAddressMessage</T></h6> : null}
                                     {this.state.accountsList?.map((option, k) => (
-                                        <div className={k > 0 ? "mb-2 pt-2 border-top" : "mb-2"} key={k}><input type="radio" name="ledger-address-selection" className="ml-1 mr-1" onChange={(e) => this.handleAddressSwitch(e, k, option.address.toLowerCase())} /> <span className="font-weight-bold mr-1">{`${k}.`}</span>{`${option.address.toLowerCase()}`} </div>
+                                        <div className={k > 0 ? "mb-2 pt-2 border-top ledger-address-list" : "mb-2 ledger-address-list"} key={k}><input type="radio" name="ledger-address-selection" className="ml-1 mr-1 mt-1" onChange={(e) => this.handleAddressSwitch(e, k, option.address.toLowerCase())} /> <span className="font-weight-bold mr-1">{`${k}.`}</span><span className="overflow-auto">{`${option.address.toLowerCase()}`} </span></div>
                                     ))}
                                     <div className="text-center mt-3"> 
                                         {this.state.accountIndexStart != 0 ? 
