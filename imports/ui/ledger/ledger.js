@@ -26,7 +26,6 @@ DerivationPath{44, 118, account, 0, index}
 
 const COINTYPE = Meteor.settings.public.ledger.coinType || 118;
 
-const HDPATH = [44, COINTYPE, 0, 0, 0]
 const BECH32PREFIX = Meteor.settings.public.bech32PrefixAccAddr
 
 function bech32ify(address, prefix) {
@@ -51,6 +50,19 @@ export class Ledger {
         this.testModeAllowed = testModeAllowed
     }
 
+    getHDPath() {
+        let addressIndex = localStorage.getItem(ADDRESSINDEX)
+        let HDPATH = [44, COINTYPE, parseInt(addressIndex), 0, 0];
+        return HDPATH
+    }
+
+    async getLedgerAddresses(accountNumber, transportBLE) {
+        await this.connect(INTERACTION_TIMEOUT, transportBLE)
+        let hdpaths = await this.cosmosApp?.publicKey([44, COINTYPE, accountNumber, 0, 0])
+        let pubKey = hdpaths?.compressed_pk
+        return { pubKey, address: createCosmosAddress(pubKey) }
+    }
+
     // test connection and compatibility
     async testDevice() {
         // poll device with low timeout to check if the device is connected
@@ -59,7 +71,7 @@ export class Ledger {
     }
     async isSendingData() {
         // check if the device is connected or on screensaver mode
-        const response = await this.cosmosApp.publicKey(HDPATH)
+        const response = await this.cosmosApp.publicKey(this.getHDPath())
         this.checkLedgerErrors(response, {
             timeoutMessag: "Could not find a connected and unlocked Ledger device"
         })
@@ -137,7 +149,7 @@ export class Ledger {
     async getPubKey(transportBLE) {
         await this.connect(INTERACTION_TIMEOUT, transportBLE)
 
-        const response = await this.cosmosApp.publicKey(HDPATH)
+        const response = await this.cosmosApp.publicKey(this.getHDPath())
         this.checkLedgerErrors(response)
         return response.compressed_pk
     }
@@ -157,7 +169,7 @@ export class Ledger {
         }
 
         const response = await this.cosmosApp.getAddressAndPubKey(
-            HDPATH,
+            this.getHDPath(),
             BECH32PREFIX,
         )
         this.checkLedgerErrors(response, {
@@ -168,7 +180,7 @@ export class Ledger {
     async sign(signMessage, transportBLE) {
         await this.connect(INTERACTION_TIMEOUT, transportBLE)
 
-        const response = await this.cosmosApp.sign(HDPATH, signMessage)
+        const response = await this.cosmosApp.sign(this.getHDPath(), signMessage)
         this.checkLedgerErrors(response)
         // we have to parse the signature from Ledger as it's in DER format
         const parsedSignature = signatureImport(response.signature)

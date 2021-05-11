@@ -25,6 +25,12 @@ common:
     rewards: 'Rewards'
     bondedTokens: 'Bonded Tokens'
     totalNumOfDelegations: 'Total Number of Delegations'
+    signIn: 'Sign In'
+    generatingAddresses: 'Generating addresses'
+    selectAddress: 'Select address to log in with from the list below:'
+    defaultAddressMessage: 'Your default address is account 0.'
+    back: 'Back'
+    next: 'Next'
 navbar:
     siteName: 'BIG DIPPER'
     version: '-'
