@@ -4,7 +4,7 @@ import { Blockscon } from '../../blocks/blocks.js';
 import { Validators } from '../../validators/validators.js';
 import { Chain } from '../../chain/chain.js';
 
-getValidatorProfileUrl = (identity) => {
+export function getValidatorProfileUrl(identity) {
     console.log("Get validator avatar.")
     if (identity.length == 16) {
         let response = HTTP.get(`https://keybase.io/_/api/1.0/user/lookup.json?key_suffix=${identity}&fields=pictures`)

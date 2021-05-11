@@ -9,9 +9,9 @@ import { VotingPowerHistory } from '/imports/api/voting-power/history.js';
 import { Transactions } from '../../transactions/transactions.js';
 import { Evidences } from '../../evidences/evidences.js';
 import { sha256 } from 'js-sha256';
+import { getValidatorProfileUrl } from '../../validators/server/methods';
 // import { getAddress } from 'tendermint/lib/pubkey';
 import * as cheerio from 'cheerio';
-
 
 getRemovedValidators = (prevValidators, validators) => {
     // let removeValidators = [];
@@ -475,6 +475,17 @@ Meteor.methods({
                                 validatorSet[v].bech32ValConsAddress = valData.bech32ValConsAddress;
 
                                 
+                            // First time adding validator to the database.
+                            // Fetch profile picture from Keybase
+
+                            if (valData.description && valData.description.identity) {
+                                try {
+                                    valData.profile_url = getValidatorProfileUrl(valData.description.identity)
+                                }
+                                catch (e) {
+                                    console.log("Error fetching keybase: %o", e)
+                                }
+                            }
                                     
 
                             valData.accpub = Meteor.call('pubkeyToBech32', valData.consensus_pubkey, Meteor.settings.public.bech32PrefixAccPub);
