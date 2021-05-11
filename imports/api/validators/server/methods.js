@@ -3,27 +3,8 @@ import { Transactions } from '../../transactions/transactions.js';
 import { Blockscon } from '../../blocks/blocks.js';
 import { Validators } from '../../validators/validators.js';
 import { Chain } from '../../chain/chain.js';
+import { getValidatorProfileUrl } from '../../blocks/server/methods.js';
 
-export function getValidatorProfileUrl(identity) {
-    console.log("Get validator avatar.")
-    if (identity.length == 16) {
-        let response = HTTP.get(`https://keybase.io/_/api/1.0/user/lookup.json?key_suffix=${identity}&fields=pictures`)
-        if (response.statusCode == 200) {
-            let them = response.data.them
-            return them && them.length && them[0]?.pictures && them[0]?.pictures?.primary && them[0]?.pictures?.primary?.url;
-        } else {
-            console.log(JSON.stringify(response))
-        }
-    } else if (identity.indexOf("keybase.io/team/") > 0) {
-        let teamPage = HTTP.get(identity);
-        if (teamPage.statusCode == 200) {
-            let page = cheerio.load(teamPage.content);
-            return page(".kb-main-card img").attr('src');
-        } else {
-            console.log(JSON.stringify(teamPage))
-        }
-    }
-}
 
 Meteor.methods({
     'Validators.findCreateValidatorTime': function(address){

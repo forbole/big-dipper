@@ -9,7 +9,6 @@ import { VotingPowerHistory } from '/imports/api/voting-power/history.js';
 import { Transactions } from '../../transactions/transactions.js';
 import { Evidences } from '../../evidences/evidences.js';
 import { sha256 } from 'js-sha256';
-import { getValidatorProfileUrl } from '../../validators/server/methods';
 // import { getAddress } from 'tendermint/lib/pubkey';
 import * as cheerio from 'cheerio';
 
@@ -24,6 +23,27 @@ getRemovedValidators = (prevValidators, validators) => {
     }
 
     return prevValidators;
+}
+
+export const getValidatorProfileUrl = (identity) => {
+    console.log("Get validator avatar.")
+    if (identity.length == 16) {
+        let response = HTTP.get(`https://keybase.io/_/api/1.0/user/lookup.json?key_suffix=${identity}&fields=pictures`)
+        if (response.statusCode == 200) {
+            let them = response.data.them
+            return them && them.length && them[0]?.pictures && them[0]?.pictures?.primary && them[0]?.pictures?.primary?.url;
+        } else {
+            console.log(JSON.stringify(response))
+        }
+    } else if (identity.indexOf("keybase.io/team/") > 0) {
+        let teamPage = HTTP.get(identity);
+        if (teamPage.statusCode == 200) {
+            let page = cheerio.load(teamPage.content);
+            return page(".kb-main-card img").attr('src');
+        } else {
+            console.log(JSON.stringify(teamPage))
+        }
+    }
 }
 
 getValidatorFromConsensusKey = (validators, consensusKey) => {
