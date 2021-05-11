@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+
 import { Meteor } from 'meteor/meteor';
 import { Transactions } from '../../transactions/transactions.js';
 import { Blockscon } from '../../blocks/blocks.js';
