@@ -12,6 +12,7 @@ import { sha256 } from 'js-sha256';
 // import { getAddress } from 'tendermint/lib/pubkey';
 import * as cheerio from 'cheerio';
 
+
 getRemovedValidators = (prevValidators, validators) => {
     // let removeValidators = [];
     for (p in prevValidators){
@@ -24,6 +25,24 @@ getRemovedValidators = (prevValidators, validators) => {
 
     return prevValidators;
 }
+
+
+getValidatorFromConsensusKey = (validators, consensusKey) => {
+    for (v in validators){
+        try {
+            let pubkeyType = Meteor.settings.public.secp256k1?'tendermint/PubKeySecp256k1':'tendermint/PubKeyEd25519';
+            let pubkey = Meteor.call('bech32ToPubkey', consensusKey, pubkeyType);
+            if (validators[v].pub_key.value == pubkey){
+                return validators[v]
+            }
+        }
+        catch (e){
+            console.log("Error converting pubkey: %o\n%o", consensusKey, e)
+        }
+    }
+    return null;
+}
+
 
 export const getValidatorProfileUrl = (identity) => {
     console.log("Get validator avatar.")
@@ -44,22 +63,6 @@ export const getValidatorProfileUrl = (identity) => {
             console.log(JSON.stringify(teamPage))
         }
     }
-}
-
-getValidatorFromConsensusKey = (validators, consensusKey) => {
-    for (v in validators){
-        try {
-            let pubkeyType = Meteor.settings.public.secp256k1?'tendermint/PubKeySecp256k1':'tendermint/PubKeyEd25519';
-            let pubkey = Meteor.call('bech32ToPubkey', consensusKey, pubkeyType);
-            if (validators[v].pub_key.value == pubkey){
-                return validators[v]
-            }
-        }
-        catch (e){
-            console.log("Error converting pubkey: %o\n%o", consensusKey, e)
-        }
-    }
-    return null;
 }
 
 
@@ -498,11 +501,11 @@ Meteor.methods({
                             // First time adding validator to the database.
                             // Fetch profile picture from Keybase
 
-                            if (valData.description && valData.description.identity) {
-                                try {
+                            if (valData.description && valData.description.identity){
+                                try{
                                     valData.profile_url = getValidatorProfileUrl(valData.description.identity)
                                 }
-                                catch (e) {
+                                catch (e){
                                     console.log("Error fetching keybase: %o", e)
                                 }
                             }
