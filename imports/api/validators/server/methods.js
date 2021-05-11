@@ -1,6 +1,12 @@
+/* eslint-disable camelcase */
+
 import { Meteor } from 'meteor/meteor';
 import { Transactions } from '../../transactions/transactions.js';
 import { Blockscon } from '../../blocks/blocks.js';
+import { Validators } from '../../validators/validators.js';
+import { Chain } from '../../chain/chain.js';
+import { getValidatorProfileUrl } from '../../blocks/server/methods.js';
+
 
 Meteor.methods({
     'Validators.findCreateValidatorTime': function(address){
@@ -38,5 +44,60 @@ Meteor.methods({
             console.log(url);
             console.log("Getting error: %o when getting delegations count from %o", e, url);
         }
-    }
+    },
+
+    'Validators.fetchKeybase'(address) {
+        this.unblock();
+        // fetching keybase every base on keybaseFetchingInterval settings
+        // default to every 5 hours 
+        
+        let url = RPC + '/status';
+        let chainId;
+        try {
+            let response = HTTP.get(url);
+            let status = JSON.parse(response?.content);
+            chainId = (status?.result?.node_info?.network);
+        }
+        catch (e) {
+            console.log("Error getting chainId for keybase fetching")        
+        }
+        let chainStatus = Chain.findOne({ chainId});
+        const bulkValidators = Validators.rawCollection().initializeUnorderedBulkOp();
+
+        let lastKeybaseFetchTime = Date.parse(chainStatus?.lastKeybaseFetchTime) ?? 0
+        console.log("Last fetch time: %o", lastKeybaseFetchTime)
+
+        console.log('Fetching keybase...')
+        // eslint-disable-next-line no-loop-func
+        Validators.find({}).forEach(async (validator) => {
+            try {
+                if (validator?.description && validator?.description?.identity) {
+                    let profileUrl = getValidatorProfileUrl(validator?.description?.identity)
+                    if (profileUrl) {
+                        bulkValidators.find({ address: validator?.address }).upsert().updateOne({ $set: { 'profile_url': profileUrl } });
+                        if (bulkValidators.length > 0) {
+                            bulkValidators.execute((err, result) => {
+                                if (err) {
+                                    console.log(`Error when updating validator profile_url ${err}`);
+                                }
+                                if (result) {
+                                    console.log('Validator profile_url has been updated!');
+                                }
+                            });
+                        }
+                    }
+                }
+            } catch (e) {
+                console.log("Error fetching Keybase for %o: %o", validator?.address, e)
+            }
+        })
+        try{
+            Chain.update({ chainId }, { $set: { lastKeybaseFetchTime: new Date().toUTCString() } });
+        }
+        catch(e){
+            console.log("Error when updating lastKeybaseFetchTime")
+        }
+
+    }    
+
 });

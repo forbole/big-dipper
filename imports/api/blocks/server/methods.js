@@ -26,6 +26,7 @@ getRemovedValidators = (prevValidators, validators) => {
     return prevValidators;
 }
 
+
 getValidatorFromConsensusKey = (validators, consensusKey) => {
     for (v in validators){
         try {
@@ -42,13 +43,14 @@ getValidatorFromConsensusKey = (validators, consensusKey) => {
     return null;
 }
 
-getValidatorProfileUrl = (identity) => {
+
+export const getValidatorProfileUrl = (identity) => {
     console.log("Get validator avatar.")
     if (identity.length == 16){
         let response = HTTP.get(`https://keybase.io/_/api/1.0/user/lookup.json?key_suffix=${identity}&fields=pictures`)
         if (response.statusCode == 200) {
-            let them = response.data.them
-            return them && them.length && them[0].pictures && them[0].pictures.primary && them[0].pictures.primary.url;
+            let them = response?.data?.them
+            return them && them.length && them[0]?.pictures && them[0]?.pictures?.primary && them[0]?.pictures?.primary?.url;
         } else {
             console.log(JSON.stringify(response))
         }
@@ -62,6 +64,7 @@ getValidatorProfileUrl = (identity) => {
         }
     }
 }
+
 
 getValidatorUptime = async (validatorSet) => {
 
@@ -500,7 +503,7 @@ Meteor.methods({
 
                             if (valData.description && valData.description.identity){
                                 try{
-                                    valData.profile_url =  getValidatorProfileUrl(valData.description.identity)
+                                    valData.profile_url = getValidatorProfileUrl(valData.description.identity)
                                 }
                                 catch (e){
                                     console.log("Error fetching keybase: %o", e)
@@ -628,38 +631,7 @@ Meteor.methods({
                         getValidatorUptime(validatorSet)
                     }
 
-                    // fetching keybase every base on keybaseFetchingInterval settings
-                    // default to every 5 hours 
 
-                    if (height == curr+1){
-
-                        // check the last fetching time
-
-                        let now = Date.now();
-                        let lastKeybaseFetchTime = Date.parse(chainStatus.lastKeybaseFetchTime) || 0
-                        console.log("Now: %o", now)
-                        console.log("Last fetch time: %o", lastKeybaseFetchTime)
-
-                        if (!lastKeybaseFetchTime || (now - lastKeybaseFetchTime) > Meteor.settings.params.keybaseFetchingInterval ){
-                            console.log('Fetching keybase...')
-                            // eslint-disable-next-line no-loop-func
-                            Validators.find({}).forEach(async (validator) => {
-                                try {
-                                    if (validator.description && validator.description.identity){
-                                        let profileUrl = getValidatorProfileUrl(validator.description.identity)
-                                        if (profileUrl) {
-                                            bulkValidators.find({address: validator.address}).upsert().updateOne({$set:{'profile_url':profileUrl}});
-                                        }    
-                                    }
-                                } catch (e) {
-                                    console.log("Error fetching Keybase for %o: %o", validator.address, e)
-                                }
-                            })
-
-                            Chain.update({chainId:block.block.header.chainId}, {$set:{lastKeybaseFetchTime:new Date().toUTCString()}});
-                        }
-
-                    }
 
                     let endFindValidatorsNameTime = new Date();
                     console.log("Get validators name time: "+((endFindValidatorsNameTime-startFindValidatorsNameTime)/1000)+"seconds.");
