@@ -185,7 +185,6 @@ class LedgerModal extends React.Component {
                         </TabPane>
                         <TabPane tabId="2">
                             {this.state.currentUser?<span>You are currently logged in as <strong className="text-primary d-block">{this.state.currentUser}.</strong></span>:null}
-                            {/* <T>accounts.toLoginAs</T> <strong className="text-primary d-block">{this.state.address}</strong><T>accounts.pleaseAccept</T> */}
                             {this.state.loadingAddressList ? <div className="d-block"> <h4 className="text-primary ml-2"> <T>common.generatingAddresses</T></h4>  <Loader /></div>:
                                 <>
                                     <span className="text-primary text-center mb-1 d-block"> <T>common.selectAddress</T> </span>
@@ -196,7 +195,7 @@ class LedgerModal extends React.Component {
                                     <div className="text-center mt-3"> 
                                         {this.state.accountIndexStart != 0 ? 
                                             <Button outline color="danger" size="md" onClick={this.loadPreviousAddresses} className="mr-4 text-capitalize"><T>common.back</T></Button> : null }
-                                        <Button outline color="danger" size="md" onClick={this.loadNextAddresses} className="text-capitalize"><T>common.next</T></Button> </div>
+                                        {this.state.accountIndexEnd <= 99 ? <Button outline color="danger" size="md" onClick={this.loadNextAddresses} className="text-capitalize"><T>common.next</T></Button> : null }</div>
                                 </>}
                         </TabPane>
                     </TabContent>
