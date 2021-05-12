@@ -18,6 +18,7 @@ const main = async () => {
     await consumer.run({
         eachMessage: async ({ topic, partition, message }) => {
             // TODO:  timescale insert
+            // sqlinsert timescale postgres
             console.log('Received message', {
                 topic,
                 partition,
