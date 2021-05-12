@@ -11,6 +11,9 @@ import Coin from '/both/utils/coins.js';
 import numbro from 'numbro';
 import TimeStamp from '../components/TimeStamp.jsx';
 import { PropTypes } from 'prop-types';
+import i18n from 'meteor/universe:i18n';
+
+const T = i18n.createComponent();
 
 const maxHeightModifier = {
     setMaxHeight: {
@@ -125,6 +128,10 @@ const Amount = (props) => {
 
 const Fee = (props) => {
     return <span><CoinAmount mint className='gas' amount={Math.ceil(props.gas * Meteor.settings.public.ledger.gasPrice)}/> as fee </span>
+}
+
+const calculateFee = (gasEstimate) => {
+    return Math.ceil(gasEstimate * Meteor.settings.public.ledger.gasPrice)
 }
 
 const isActiveValidator = (validator) => {
@@ -417,12 +424,22 @@ class LedgerButton extends Component {
         let gasAdjustment = TypeMeta[this.state.actionType].gasAdjustment || DEFAULT_GAS_ADJUSTMENT;
         Meteor.call('transaction.simulate', simulateBody, this.state.user, this.state.currentUser.accountNumber, this.state.currentUser.sequence, this.getPath(), gasAdjustment, (err, res) =>{
             if (res){
-                Ledger.applyGas(txMsg, res, Meteor.settings.public.ledger.gasPrice, Coin.StakingCoin.denom);
-                this.setStateOnSuccess('simulating', {
-                    gasEstimate: res,
-                    activeTab: '3',
-                    txMsg: txMsg
-                })
+                let gasPrice = calculateFee(res)
+                let amountToTransfer = this.state.transferAmount?.amount || this.state.delegateAmount?.amount || this.state.depositAmount?.amount || this.props.rewards[0]?.amount + this.props.commission[0][0]?.amount
+                let totalPrice = this.props.rewards || this.props.commission ? this.props.rewards[0]?.amount + this.props.commission[0][0]?.amount + gasPrice : amountToTransfer + gasPrice;
+                let maxAvailableAmount = this.props.rewards || this.props.commission ? gasPrice : amountToTransfer - gasPrice;
+                if (totalPrice <= this.state.currentUser?.availableCoin?._amount){
+                    Ledger.applyGas(txMsg, res, Meteor.settings.public.ledger.gasPrice, Coin.StakingCoin.denom);
+                    this.setStateOnSuccess('simulating', {
+                        gasEstimate: res,
+                        activeTab: '3',
+                        txMsg: txMsg
+                    })
+                }
+                else{
+                    this.setStateOnError('simulating', <h6 className="font-weight-normal mt-3 text-center"> {this.props.rewards || this.props.commission ? <T _purify={false} action={this.state.actionType} maxAmount={new Coin(maxAvailableAmount)} gasPrice={new Coin(gasPrice)}>common.withdrawOutOfGasMessage</T>
+                        :  <T _purify={false} action={this.state.actionType} maxAmount={new Coin(maxAvailableAmount)} gasPrice={new Coin(gasPrice)}>common.txOutOfGasMessage</T> }</h6>)
+                }
             }
             else {
                 this.setStateOnError('simulating', 'something went wrong')
@@ -498,7 +515,7 @@ class LedgerButton extends Component {
         if (this.state.activeTab === '1')
             return <Button color="primary"  onClick={this.tryConnect}>Continue</Button>
         if (this.state.activeTab === '2')
-            return <Button color="primary"  disabled={this.state.simulating || !this.isDataValid()} onClick={this.simulate}>
+            return <Button color="primary" disabled={this.state.simulating || !this.isDataValid()} onClick={this.simulate}>
                 {(this.state.errorMessage !== '')?'Retry':'Next'}
             </Button>
         if (this.state.activeTab === '3')
