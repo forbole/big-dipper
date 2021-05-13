@@ -1,5 +1,4 @@
 import { Meteor } from 'meteor/meteor';
-import { HTTP } from 'meteor/http';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Validators } from '/imports/api/validators/validators.js';
 import { ValidatorRecords } from '/imports/api/records/records.js';

@@ -154,8 +154,8 @@ Meteor.methods({
     'accounts.getDelegation': async function (address, validator) {
         this.unblock();
 
-        let url = `/cosmos/staking/v1beta1/validators/${validator}/delegations/${address}`;
-        let delegations;
+        let url = API + `/cosmos/staking/v1beta1/validators/${validator}/delegations/${address}`;
+        let delegations={};
         try {
             await fetch(url)
                 .then(function (response) {
@@ -174,7 +174,7 @@ Meteor.methods({
             console.log(e);
         }
 
-        url = `/cosmos/staking/v1beta1/delegators/${address}/redelegations?dst_validator_addr=${validator}`;
+        url = API + `/cosmos/staking/v1beta1/delegators/${address}/redelegations?dst_validator_addr=${validator}`;
         try {
             await fetch(url)
                 .then(function (response) {
@@ -200,7 +200,7 @@ Meteor.methods({
             console.log(e);
         }
 
-        url = `/cosmos/staking/v1beta1/validators/${validator}/delegations/${address}/unbonding_delegation`;
+        url = API + `/cosmos/staking/v1beta1/validators/${validator}/delegations/${address}/unbonding_delegation`;
         try {
             await fetch(url)
                 .then(function (response) {
@@ -268,7 +268,7 @@ Meteor.methods({
     },
     'accounts.getAllRedelegations': async function (address, validator) {
         this.unblock();
-        let url = `/cosmos/staking/v1beta1/v1beta1/delegators/${address}/redelegations&src_validator_addr=${validator}`;
+        let url = API + `/cosmos/staking/v1beta1/v1beta1/delegators/${address}/redelegations&src_validator_addr=${validator}`;
         try {
             await fetch(url)
                 .then(function (response) {

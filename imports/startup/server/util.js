@@ -1,5 +1,4 @@
 import bech32 from 'bech32'
-import { HTTP } from 'meteor/http';
 import * as cheerio from 'cheerio';
 import { tmhash } from 'tendermint/lib/hash'
 
@@ -109,11 +108,21 @@ Meteor.methods({
         let address = bech32.decode(operatorAddr);
         return bech32.encode(Meteor.settings.public.bech32PrefixAccAddr, address.words);
     },
-    getKeybaseTeamPic: function(keybaseUrl){
-        let teamPage = HTTP.get(keybaseUrl);
-        if (teamPage.statusCode == 200){
-            let page = cheerio.load(teamPage.content);
-            return page(".kb-main-card img").attr('src');
+    getKeybaseTeamPic: async function(keybaseUrl){
+        try {
+            await fetch(keybaseUrl)
+                .then(function (response) {
+                    if (response.ok) {
+                        response.json().then((data) => {
+                            let page = cheerio.load(data);
+                            return page(".kb-main-card img").attr('src');
+                        })
+                    }
+                });
+        }
+        catch (e) {
+            console.log(url);
+            console.log(e);
         }
     },
     getVersion: function(){
