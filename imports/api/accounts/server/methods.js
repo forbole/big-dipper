@@ -58,7 +58,6 @@ Meteor.methods({
                     if (response.ok) {
                         response.json().then((data) => {
                             balance.available = data.balances;
-                            console.log(data.balances)
                         })
                     }
                 });
