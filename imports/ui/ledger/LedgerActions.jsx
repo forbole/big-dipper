@@ -11,6 +11,9 @@ import Coin from '/both/utils/coins.js';
 import numbro from 'numbro';
 import TimeStamp from '../components/TimeStamp.jsx';
 import { PropTypes } from 'prop-types';
+import i18n from 'meteor/universe:i18n';
+
+const T = i18n.createComponent();
 
 const maxHeightModifier = {
     setMaxHeight: {
@@ -101,14 +104,14 @@ const CoinAmount = (props) => {
     let coin = {};
     if (!props.coin && !props.amount) return null;
     if(!props.denom){
-        coin = new Coin(props.amount).toString(4);
+        coin = new Coin(props.amount).toString(6);
     }
     else{
         let denomFinder =  Meteor.settings.public.coins.find(({ denom }) => denom === props.denom);
         let displayDenom = denomFinder ? denomFinder.displayName : null;
         
         let finder = props.amount.find(({ denom }) => denom === props.denom)
-        coin = finder ? new Coin(finder.amount, finder.denom).toString(4) : '0.0000 ' + displayDenom;
+        coin = finder ? new Coin(finder.amount, finder.denom).toString(6) : '0.000000 ' + displayDenom;
     }
     let denom = (props.mint)?Coin.StakingCoin.denom:Coin.StakingCoin.displayName;
 
@@ -118,15 +121,17 @@ const CoinAmount = (props) => {
 
 const Amount = (props) => {
     if (!props.coin && !props.amount) return null;
-    let coin = props.coin || new Coin(props.amount, props.denom).toString(4);
-    let amount = (props.mint)?Math.round(coin.amount):coin.stakingAmount;
-    let denom = (props.mint)?Coin.StakingCoin.denom:Coin.StakingCoin.displayName;
-    return <span><span className={props.className || 'amount'}>{numbro(amount).format("0,0.0000")}</span> <span className='denom'>{denom}</span></span>
+    let amount = new Coin(props?.coin?.amount, props?.coin?.denom).toString(6) ?? new Coin(0).toString(6)
+    return <span><span className={props.className || 'amount'}>{amount}</span> </span>
 }
 
 
 const Fee = (props) => {
     return <span><CoinAmount mint className='gas' amount={Math.ceil(props.gas * Meteor.settings.public.ledger.gasPrice)}/> as fee </span>
+}
+
+const calculateGasPrice = (gasEstimate) => {
+    return Math.ceil(gasEstimate * Meteor.settings.public.ledger.gasPrice)
 }
 
 const isActiveValidator = (validator) => {
@@ -419,12 +424,20 @@ class LedgerButton extends Component {
         let gasAdjustment = TypeMeta[this.state.actionType].gasAdjustment || DEFAULT_GAS_ADJUSTMENT;
         Meteor.call('transaction.simulate', simulateBody, this.state.user, this.state.currentUser.accountNumber, this.state.currentUser.sequence, this.getPath(), gasAdjustment, (err, res) =>{
             if (res){
-                Ledger.applyGas(txMsg, res, Meteor.settings.public.ledger.gasPrice, Coin.StakingCoin.denom);
-                this.setStateOnSuccess('simulating', {
-                    gasEstimate: res,
-                    activeTab: '3',
-                    txMsg: txMsg
-                })
+                let gasPrice = calculateGasPrice(res)
+                let amountToTransfer = this.state.transferAmount?.amount || this.state.delegateAmount?.amount || this.state.depositAmount?.amount
+                let totalAmount = this.props.rewards || this.props.commission || this.state.actionType === 'redelegate' || this.state.actionType === 'undelegate'?  gasPrice : amountToTransfer + gasPrice;
+                if (totalAmount <= this.state.currentUser?.availableCoin?._amount){
+                    Ledger.applyGas(txMsg, res, Meteor.settings.public.ledger.gasPrice, Coin.StakingCoin.denom);
+                    this.setStateOnSuccess('simulating', {
+                        gasEstimate: res,
+                        activeTab: '3',
+                        txMsg: txMsg
+                    })
+                }
+                else{
+                    this.setStateOnError('simulating', <h6 className="font-weight-normal mt-3"> <> <T>common.txOutOfGasMessage</T><div className="text-center"><T _purify={false}  gasPrice={new Coin(gasPrice)}>common.estimatedGasPrice</T></div></></h6>)
+                }
             }
             else {
                 this.setStateOnError('simulating', 'something went wrong')
@@ -500,7 +513,7 @@ class LedgerButton extends Component {
         if (this.state.activeTab === '1')
             return <Button color="primary"  onClick={this.tryConnect}>Continue</Button>
         if (this.state.activeTab === '2')
-            return <Button color="primary"  disabled={this.state.simulating || !this.isDataValid()} onClick={this.simulate}>
+            return <Button color="primary" disabled={this.state.simulating || !this.isDataValid()} onClick={this.simulate}>
                 {(this.state.errorMessage !== '')?'Retry':'Next'}
             </Button>
         if (this.state.activeTab === '3')

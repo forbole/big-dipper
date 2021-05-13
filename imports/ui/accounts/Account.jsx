@@ -255,7 +255,7 @@ export default class AccountDetails extends Component{
 
     findCoin(coins){
         let finder = (coins).find(({denom}) => denom === this.state.denom);
-        let coinFinder = finder ? new Coin(finder.amount, finder.denom).toString(4) : null;
+        let coinFinder = finder ? new Coin(finder.amount, finder.denom).toString(6) : null;
         return coinFinder
     }
 
@@ -317,11 +317,11 @@ export default class AccountDetails extends Component{
                                     </Row>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="delegated infinity" /><T>accounts.delegated</T></Col>
-                                        <Col xs={8} className="value text-right">{new Coin(this.state.delegated).toString(4)}</Col>
+                                        <Col xs={8} className="value text-right">{new Coin(this.state.delegated).toString(6)}</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="unbonding infinity" /><T>accounts.unbonding</T></Col>
-                                        <Col xs={8} className="value text-right">{new Coin(this.state.unbonding).toString(4)}</Col>
+                                        <Col xs={8} className="value text-right">{new Coin(this.state.unbonding).toString(6)}</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="rewards infinity" /><T>accounts.rewards</T></Col>

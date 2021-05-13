@@ -31,6 +31,8 @@ common:
     defaultAddressMessage: 'Your default address is account 0.'
     back: 'Back'
     next: 'Next'
+    txOutOfGasMessage: 'Unable to broadcast the transaction due to insufficient balance. Ensure you have enough funds available on your account to cover the transaction fees.'
+    estimatedGasPrice: 'Estimated gas price is <b>{$gasPrice}</b>.'
 navbar:
     siteName: 'BIG DIPPER'
     version: '-'

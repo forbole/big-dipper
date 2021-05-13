@@ -44,7 +44,7 @@ export default class PowerHistory extends React.Component {
                                             <Col xs={12}>
                                                 <Row>
                                                     <Col xs={4}><T>validators.amount</T></Col>
-                                                    <Col xs={8}>{new Coin(m.amount.amount, m.amount.denom).toString()}</Col>
+                                                    <Col xs={8}>{new Coin(m.amount.amount, m.amount.denom).toString(6)}</Col>
                                                     
                                                 </Row>
                                             </Col>
@@ -61,7 +61,7 @@ export default class PowerHistory extends React.Component {
                                                 <Col xs={12}>
                                                     <Row>
                                                         <Col xs={4}><T>validators.amount</T></Col>
-                                                        <Col xs={8}>{new Coin(m.amount.amount, m.amount.denom).toString()}</Col>
+                                                        <Col xs={8}>{new Coin(m.amount.amount, m.amount.denom).toString(6)}</Col>
                                                     </Row>
                                                 </Col>
                                             </Row>
@@ -80,7 +80,7 @@ export default class PowerHistory extends React.Component {
                                             <Col xs={12}>
                                                 <Row>
                                                     <Col xs={4}><T>validators.amount</T></Col>
-                                                    <Col xs={8}>{new Coin(m.value.amount, m.value.denom).toString()}</Col>
+                                                    <Col xs={8}>{new Coin(m.value.amount, m.value.denom).toString(6)}</Col>
                                                 </Row>
                                             </Col>
                                         </Row>
@@ -95,7 +95,7 @@ export default class PowerHistory extends React.Component {
                                             <Col xs={12}>
                                                 <Row>
                                                     <Col xs={4}><T>validators.amount</T></Col>
-                                                    <Col xs={8}>{new Coin(m.amount.amount, m.amount.denom).toString()}</Col>
+                                                    <Col xs={8}>{new Coin(m.amount.amount, m.amount.denom).toString(6)}</Col>
                                                 </Row>
                                             </Col>
                                         </Row>
@@ -127,7 +127,7 @@ export default class PowerHistory extends React.Component {
                                         </Row>
                                         <Row>
                                             <Col xs={4} sm={6}><T>transactions.fee</T></Col>
-                                            <Col xs={8} sm={6}>{(msg.tx.auth_info.fee.amount&& msg.tx.auth_info.fee.amount.length>0)?msg.tx.auth_info.fee.amount.map((amount,i)=> new Coin(amount.amount, amount.denom).toString()).join(' ,'):'0'}</Col>
+                                            <Col xs={8} sm={6}>{(msg.tx.auth_info.fee.amount&& msg.tx.auth_info.fee.amount.length>0)?msg.tx.auth_info.fee.amount.map((amount,i)=> new Coin(amount.amount, amount.denom).toString(6)).join(' ,'):'0'}</Col>
                                         </Row>
                                     </Col>
                                 </Row>

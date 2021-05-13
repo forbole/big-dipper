@@ -39,7 +39,7 @@ export default class AccountRedelegations extends Component{
                             <Col md={6}>{r.entries.map((entry,j) =>
                                 <Row key={j}>
                                     <Col md={6}>
-                                        {new Coin(entry.balance).toString(4)}
+                                        {new Coin(entry.balance).toString(6)}
                                     </Col>
                                     <Col md={6}>
                                         {moment.utc(entry.completion_time).fromNow()}

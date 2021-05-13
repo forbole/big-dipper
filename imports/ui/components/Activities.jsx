@@ -16,7 +16,7 @@ MultiSend = (props) => {
             <ul>
                 {props.msg.inputs.map((data,i) =>{
                     return <li key={i}><Account address={data.address}/> <T>activities.sent</T> {data.coins.map((coin, j) =>{
-                        return <span key={j} className="text-success">{new Coin(coin.amount, coin.denom).toString()}</span>
+                        return <span key={j} className="text-success">{new Coin(coin.amount, coin.denom).toString(6)}</span>
                     })}
                     </li>
                 })}
@@ -25,7 +25,7 @@ MultiSend = (props) => {
             <ul>
                 {props.msg.outputs.map((data,i) =>{
                     return <li key={i}><Account address={data.address}/> <T>activities.received</T> {data.coins.map((coin,j) =>{
-                        return <span key={j} className="text-success">{new Coin(coin.amount, coin.denom).toString()}</span>
+                        return <span key={j} className="text-success">{new Coin(coin.amount, coin.denom).toString(6)}</span>
                     })}</li>
                 })}
             </ul>
@@ -50,7 +50,7 @@ export default class Activites extends Component {
         // bank
         case "/cosmos.bank.v1beta1.MsgSend":
             let amount = '';
-            amount = msg.amount.map((coin) => new Coin(coin.amount, coin.denom).toString()).join(', ')
+            amount = msg.amount.map((coin) => new Coin(coin.amount, coin.denom).toString(6)).join(', ')
             return <p><Account address={msg.from_address} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg["@type"]} /> <span className="text-success">{amount}</span> <T>activities.to</T> <span className="address"><Account address={msg.to_address} /></span><T>common.fullStop</T></p>
         case "/cosmos.bank.v1beta1.MsgMultiSend":
             return <MultiSend msg={msg} />
@@ -81,7 +81,7 @@ export default class Activites extends Component {
         case "/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission":
             return <p><Account address={msg.validator_address} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg["@type"]} /><T> {(!this.props.invalid)?<T _purify={false} amount={new Coin(parseInt(events['withdraw_commission'][0].value), events['withdraw_commission'][0].value.replace(/[0-9]/g, '')).toString(6)}>activities.withAmount</T>:''}common.fullStop</T></p>
         case "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward":
-            return <p><Account address={msg.delegator_address}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg["@type"]} /> {(!this.props.invalid)?<T _purify={false} amount={new Coin(parseInt(events['withdraw_rewards'][0].value), events['withdraw_rewards'][0].value.replace(/[0-9]/g, '')).toString(6)}>activities.withAmount</T>:''} <T>activities.from</T> <Account address={msg.validator_address} /><T>common.fullStop</T></p>
+            return <p><Account address={msg.delegator_address} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} /> {(!this.props.invalid) ? events['withdraw_rewards'][0].value ? <T _purify={false} amount={new Coin(parseInt(events['withdraw_rewards'][0].value), events['withdraw_rewards'][0].value.replace(/[0-9]/g, '')).toString(6)}>activities.withAmount</T> : null :''} <T>activities.from</T> <Account address={msg.validator_address} /><T>common.fullStop</T></p>
         case "/cosmos.distribution.v1beta1.MsgModifyWithdrawAddress":
             return <p><Account address={msg.delegator_address}/> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg["@type"]} /></p>
 
