@@ -4,6 +4,7 @@
 * [#484] Replaced delegation list displayed under validator page with total number of delegations. 
 * [#509] Added display list of addresses available for user to login with when connecting the Ledger.  
 * [#497] Fetch keybase with timer settings 
+* [#403] Unified token display to show stake denom with 6 decimal places (abandon displaying values in mint denom) and improved the txs by adding gas caluclations before broadcasting the tx to ensure the message will not fail due to insufficient funds to cover the fees. 
 
 ## v0.41.x-12
 * [#387] Added Bluetooth Ledger support
