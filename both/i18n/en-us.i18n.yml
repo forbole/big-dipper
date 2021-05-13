@@ -32,7 +32,7 @@ common:
     back: 'Back'
     next: 'Next'
     txOutOfGasMessage: 'Unable to broadcast the transaction due to insufficient balance. Ensure you have enough funds available on your account to cover the transaction fees.'
-    estimatedGasPrice: 'The estimated gas price is <b>{$gasPrice}</b>.'
+    estimatedGasPrice: 'Estimated gas price is <b>{$gasPrice}</b>.'
 navbar:
     siteName: 'BIG DIPPER'
     version: '-'
