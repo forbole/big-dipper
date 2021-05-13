@@ -1,6 +1,6 @@
 # Changelog
 
-## [UNRELEASED]
+## v0.41.x-13
 * [#484] Replaced delegation list displayed under validator page with total number of delegations. 
 * [#509] Added display list of addresses available for user to login with when connecting the Ledger.  
 * [#497] Fetch keybase with timer settings 
