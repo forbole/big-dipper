@@ -130,7 +130,7 @@ const Fee = (props) => {
     return <span><CoinAmount mint className='gas' amount={Math.ceil(props.gas * Meteor.settings.public.ledger.gasPrice)}/> as fee </span>
 }
 
-const calculateFee = (gasEstimate) => {
+const calculateGasPrice = (gasEstimate) => {
     return Math.ceil(gasEstimate * Meteor.settings.public.ledger.gasPrice)
 }
 
@@ -424,11 +424,11 @@ class LedgerButton extends Component {
         let gasAdjustment = TypeMeta[this.state.actionType].gasAdjustment || DEFAULT_GAS_ADJUSTMENT;
         Meteor.call('transaction.simulate', simulateBody, this.state.user, this.state.currentUser.accountNumber, this.state.currentUser.sequence, this.getPath(), gasAdjustment, (err, res) =>{
             if (res){
-                let gasPrice = calculateFee(res)
-                let amountToTransfer = this.state.transferAmount?.amount || this.state.delegateAmount?.amount || this.state.depositAmount?.amount || this.props.rewards[0]?.amount + this.props.commission[0][0]?.amount
-                let totalPrice = this.props.rewards || this.props.commission ? this.props.rewards[0]?.amount + this.props.commission[0][0]?.amount + gasPrice : amountToTransfer + gasPrice;
-                let maxAvailableAmount = this.props.rewards || this.props.commission ? gasPrice : amountToTransfer - gasPrice;
-                if (totalPrice <= this.state.currentUser?.availableCoin?._amount){
+                let gasPrice = calculateGasPrice(res)
+                let amountToTransfer = this.state.transferAmount?.amount || this.state.delegateAmount?.amount || this.state.depositAmount?.amount
+                let totalAmount = this.props.rewards || this.props.commission || this.state.actionType === 'redelegate' || this.state.actionType === 'undelegate'?  gasPrice : amountToTransfer + gasPrice;
+                // let maxAvailableAmount = this.state.currentUser?.availableCoin?._amount - gasPrice > 0 ? this.state.currentUser?.availableCoin?._amount - gasPrice : 0;
+                if (totalAmount <= this.state.currentUser?.availableCoin?._amount){
                     Ledger.applyGas(txMsg, res, Meteor.settings.public.ledger.gasPrice, Coin.StakingCoin.denom);
                     this.setStateOnSuccess('simulating', {
                         gasEstimate: res,
@@ -437,8 +437,7 @@ class LedgerButton extends Component {
                     })
                 }
                 else{
-                    this.setStateOnError('simulating', <h6 className="font-weight-normal mt-3 text-center"> {this.props.rewards || this.props.commission ? <T _purify={false} action={this.state.actionType} maxAmount={new Coin(maxAvailableAmount)} gasPrice={new Coin(gasPrice)}>common.withdrawOutOfGasMessage</T>
-                        :  <T _purify={false} action={this.state.actionType} maxAmount={new Coin(maxAvailableAmount)} gasPrice={new Coin(gasPrice)}>common.txOutOfGasMessage</T> }</h6>)
+                    this.setStateOnError('simulating', <h6 className="font-weight-normal mt-3"> <> <T>common.txOutOfGasMessage</T><div className="text-center"><T _purify={false}  gasPrice={new Coin(gasPrice)}>common.estimatedGasPrice</T></div></></h6>)
                 }
             }
             else {

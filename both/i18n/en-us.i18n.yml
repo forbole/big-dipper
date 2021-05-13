@@ -31,8 +31,8 @@ common:
     defaultAddressMessage: 'Your default address is account 0.'
     back: 'Back'
     next: 'Next'
-    txOutOfGasMessage: 'The estimated gas price is <em>{$gasPrice}</em>. To cover the cost of a gas and ensure the transaction is successfully broadcasted, the maximum amount you can {$action} is <b>{$maxAmount}</b>'
-    withdrawOutOfGasMessage: 'The estimated gas price is <em>{$gasPrice}</em>. To cover the cost of a gas and ensure the transaction is successfully broadcasted, you need to hold at least <b>{$maxAmount}</b> in your account.'
+    txOutOfGasMessage: 'Unable to broadcast the transaction due to insufficient balance. Ensure you have enough funds available on your account to cover the transaction fees.'
+    estimatedGasPrice: 'The estimated gas price is <b>{$gasPrice}</b>.'
 navbar:
     siteName: 'BIG DIPPER'
     version: '-'
