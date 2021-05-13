@@ -427,7 +427,6 @@ class LedgerButton extends Component {
                 let gasPrice = calculateGasPrice(res)
                 let amountToTransfer = this.state.transferAmount?.amount || this.state.delegateAmount?.amount || this.state.depositAmount?.amount
                 let totalAmount = this.props.rewards || this.props.commission || this.state.actionType === 'redelegate' || this.state.actionType === 'undelegate'?  gasPrice : amountToTransfer + gasPrice;
-                // let maxAvailableAmount = this.state.currentUser?.availableCoin?._amount - gasPrice > 0 ? this.state.currentUser?.availableCoin?._amount - gasPrice : 0;
                 if (totalAmount <= this.state.currentUser?.availableCoin?._amount){
                     Ledger.applyGas(txMsg, res, Meteor.settings.public.ledger.gasPrice, Coin.StakingCoin.denom);
                     this.setStateOnSuccess('simulating', {
