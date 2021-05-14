@@ -160,9 +160,9 @@ Meteor.methods({
                 .then(function (response) {
                     if (response.ok) {
                         response.json().then((data) => {
-                            delegations = data.delegation_response;
-                            if (delegations && delegations.delegation.shares){
-                                delegations.delegation.shares = parseFloat(delegations.delegation.shares);
+                            delegations = data?.delegation_response;
+                            if (delegations && delegations?.delegation?.shares){
+                                delegations.delegation.shares = parseFloat(delegations?.delegation?.shares);
                             }
                         })
                     }
