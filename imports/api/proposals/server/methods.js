@@ -35,21 +35,20 @@ Meteor.methods({
                     proposalIds.push(proposal.proposalId);
                     if (proposal.proposalId > 0 && !finishedProposalIds.has(proposal.proposalId)) {
                         try{
-                            // url = API + '/cosmos/gov/v1beta1/proposals/'+proposal.proposalId+'/proposer';
-                            // let response = HTTP.get(url);
-                            // if (response.statusCode == 200){
-                            //     let proposer = JSON.parse(response.content).result;
-                            //     if (proposer.proposal_id && (proposer.proposal_id == proposal.id)){
-                            //         proposal.proposer = proposer.proposer;
-                            //     }
-                            // }
+                            url = API + '/gov/proposals/'+proposal.proposalId+'/proposer';
+                            let response = HTTP.get(url);
+                            if (response.statusCode == 200){
+                                let proposer = JSON.parse(response.content).result;
+                                if (proposer.proposal_id && (parseInt(proposer.proposal_id) == proposal.proposalId)){
+                                    proposal.proposer = proposer.proposer;
+                                }
+                            }
                             bulkProposals.find({proposalId: proposal.proposalId}).upsert().updateOne({$set:proposal});
                         }
                         catch(e){
                             bulkProposals.find({proposalId: proposal.proposalId}).upsert().updateOne({$set:proposal});
-                            // proposalIds.push(proposal.proposalId);
-                            console.log(url);
-                            console.log(e.response.content);
+                            // console.log(url);
+                            // console.log(e.response.content);
                         }
                     }
                 }
