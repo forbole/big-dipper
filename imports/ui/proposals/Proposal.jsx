@@ -139,6 +139,23 @@ export default class Proposal extends Component{
         });
     }
 
+    getAddressVotingPower(address, displayPercentage, totalVotes) {
+        Meteor.call('accounts.getBalance', address, (error, result) => {
+            if (result) {
+                if (result.available && (result.available.length > 0)) {
+                    if (displayPercentage === true){
+                        return numbro(result?.available[0]?.amount / totalVotes).format('0,0.000000%');
+                    }
+                    else{
+                        return numbro(result?.available[0]?.amount / Meteor.settings.public.powerReduction).format('0,0.000000')
+
+                    }
+                    
+                }
+            }
+        })
+    }
+
     populateChartData() {
         const optionOrder = {'VOTE_OPTION_YES': 0, 'VOTE_OPTION_ABSTAIN': 1, 'VOTE_OPTION_NO': 2, 'VOTE_OPTION_NO_WITH_VETO': 3};
         let votes = this.props.proposal.votes?this.props.proposal.votes.sort(
@@ -259,11 +276,11 @@ export default class Proposal extends Component{
                         </Col>
                         <Col className="voting-power data" md={4}>
                             <i className="material-icons d-md-none">power</i>
-                            {(vote.votingPower!==undefined)?numbro(vote.votingPower/Meteor.settings.public.powerReduction).format('0,0.000000'):""}
+                            {(vote.votingPower !== undefined && vote.votingPower > 0) ? numbro(vote.votingPower / Meteor.settings.public.powerReduction).format('0,0.000000') : this.getAddressVotingPower(vote.voter, false, null) }
                         </Col>
                         <Col className="voting-power-percent data" md={3}>
                             <i className="material-icons d-md-none">equalizer</i>
-                            {(vote.votingPower!==undefined)?numbro(vote.votingPower/this.state.totalVotes).format('0,0.00%'):""}
+                            {(vote.votingPower !== undefined && vote.votingPower > 0) ? numbro(vote.votingPower / this.state.totalVotes).format('0,0.000000%') : this.getAddressVotingPower(vote.voter, true, this.state.totalVotes)}
                         </Col>
                     </Row></Card>
                 )}
