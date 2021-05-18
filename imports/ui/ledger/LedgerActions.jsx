@@ -426,7 +426,7 @@ class LedgerButton extends Component {
             if (res){
                 let gasPrice = calculateGasPrice(res)
                 let amountToTransfer = this.state.transferAmount?.amount || this.state.delegateAmount?.amount || this.state.depositAmount?.amount
-                let totalAmount = this.props.rewards || this.props.commission || this.state.actionType === 'redelegate' || this.state.actionType === 'undelegate'?  gasPrice : amountToTransfer + gasPrice;
+                let totalAmount = this.state.actionType === 'withdraw' || this.state.actionType === 'redelegate' || this.state.actionType === 'undelegate' || this.state.actionType === 'vote'?  gasPrice : amountToTransfer + gasPrice;
                 if (totalAmount <= this.state.currentUser?.availableCoin?._amount){
                     Ledger.applyGas(txMsg, res, Meteor.settings.public.ledger.gasPrice, Coin.StakingCoin.denom);
                     this.setStateOnSuccess('simulating', {
@@ -450,12 +450,17 @@ class LedgerButton extends Component {
         this.initStateOnLoad('signing')
         try {
             let txMsg = this.state.txMsg;
+            // console.log(txMsg)
             const txContext = this.getTxContext();
+            // console.log(txContext)
             const bytesToSign = Ledger.getBytesToSign(txMsg, txContext);
+            // console.log(bytesToSign)
             this.ledger.sign(bytesToSign, this.state.transportBLE).then((sig) => {
                 try {
                     Ledger.applySignature(txMsg, txContext, sig);
-                    Meteor.call('transaction.submit', txMsg, (err, res) => {
+                    // console.log(txMsg)
+                    // console.log(Ledger.applySignature(txMsg, txContext, sig))
+                    Meteor.call('transaction.submit', txMsg, this.state.actionType, (err, res) => {
                         if (err) {
                             this.setStateOnError('signing', err.reason)
                         } else if (res) {
@@ -968,10 +973,10 @@ class ProposalActionButtons extends LedgerButton {
             title=`Vote on Proposal ${this.props.proposalId}`
             inputs = (<Input type="select" name="voteOption" onChange={this.handleInputChange} defaultValue=''>
                 <option value='' disabled>Vote Option</option>
-                <option value='Yes'>yes</option>
-                <option value='Abstain'>abstain</option>
-                <option value='No'>no</option>
-                <option value='NoWithVeto'>no with veto</option>
+                <option value='VOTE_OPTION_YES'>yes</option>
+                <option value='VOTE_OPTION_ABSTAIN'>abstain</option>
+                <option value='VOTE_OPTION_NO'>no</option>
+                <option value='VOTE_OPTION_NO_WITH_VETO'>no with veto</option>
             </Input>)
             break;
         case Types.DEPOSIT:
@@ -1018,7 +1023,7 @@ class ProposalActionButtons extends LedgerButton {
     isDataValid = () => {
         if (!this.state.currentUser) return false
         if (this.state.actionType === Types.VOTE) {
-            return ['Yes', 'No', 'NoWithVeto', 'Abstain'].indexOf(this.state.voteOption) !== -1;
+            return ['VOTE_OPTION_YES', 'VOTE_OPTION_NO', 'VOTE_OPTION_NO_WITH_VETO', 'VOTE_OPTION_ABSTAIN'].indexOf(this.state.voteOption) !== -1;
         } else {
             return isBetween(this.state.depositAmount, 1, this.state.currentUser.availableCoin)
         }
@@ -1027,7 +1032,7 @@ class ProposalActionButtons extends LedgerButton {
     getConfirmationMessage = () => {
         switch (this.state.actionType) {
         case Types.VOTE:
-            return <span>You are <span className='action'>voting</span> <strong>{this.state.voteOption}</strong> on proposal {this.props.proposalId}
+                return <span>You are <span className='action'>voting</span> <strong>{this.state.voteOption?.substring(12).replace(/_/g, " ")}</strong> on proposal {this.props.proposalId}
                 <span> with <Fee gas={this.state.gasEstimate}/>.</span>
             </span>
             break;
