@@ -2,13 +2,30 @@ import { HTTP } from 'meteor/http';
 import { Validators } from '../../validators/validators';
 
 Meteor.methods({
-    'transaction.submit': function(txInfo) {
+    'transaction.submit': function(txInfo, actionType) {
         this.unblock();
-        const url = `${API}/txs`;
-        data = {
-            "tx": txInfo.value,
-            "mode": "sync"
+        let url="";
+        let txObject = JSON.stringify(txInfo);
+        let txBytesBase64 = Buffer.from(txObject).toString('base64');
+
+        if (actionType === 'vote' || actionType === 'deposit' || actionType === 'submitProposal'){
+            url = `${API}/cosmos/tx/v1beta1/txs`;
+            data = {
+                "tx_bytes": txBytesBase64,
+                "mode": "BROADCAST_MODE_SYNC"
+            }
         }
+        // else{
+        //     url = `${API}/txs`;
+        //     data = {
+        //         "tx": txInfo.value,
+        //         "mode": "sync"
+        //     }
+        // }
+       
+        console.log(url)
+        console.log(data)
+
         const timestamp = new Date().getTime();
         console.log(`submitting transaction${timestamp} ${url} with data ${JSON.stringify(data)}`)
 
