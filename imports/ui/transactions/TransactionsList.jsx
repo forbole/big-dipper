@@ -83,7 +83,7 @@ export default class Transactions extends Component{
     }
 
     render(){
-        return !this.props.homepage ?  <div id="transactions">
+        return !this.props.homepage ?  <div>
             <Helmet>
                 <title>Latest Transactions on {Meteor.settings.public.chainName} | Big Dipper</title>
                 <meta name="description" content="See what is happening on {Meteor.settings.public.chainName}" />
@@ -108,41 +108,44 @@ export default class Transactions extends Component{
                 >
                 </Sidebar>} />
             </Switch>
-            <List limit={this.state.limit} />
+            <Container fluid id="transactions">
+                <List limit={this.state.limit} />
+            </Container>
             <LoadMore show={this.state.loadmore} />
-        </div> : <Card className="h-100 overflow-auto">
-            <div className="card-header"><T>transactions.transactions</T></div>
-            <CardBody className="tx-list-homepage">
-                <Table striped className="tx-home">
-                    <thead>
-                        <tr>
-                            <Switch>
-                                <Route path="/transactions/:txId" render={(props) => <Sidebar
-                                    sidebar={<Transaction {...props} />}
-                                    open={this.state.sidebarOpen}
-                                    onSetOpen={this.onSetSidebarOpen}
-                                    styles={{
-                                        sidebar: {
-                                            background: "white",
-                                            position: "fixed",
-                                            width: '85%',
-                                            zIndex: 4
-                                        }, overlay: {
-                                            zIndex: 3
-                                        }
-                                    }}
-                                >
-                                </Sidebar>} />
+        </div> 
+            : <Card className="h-100 overflow-auto">
+                <div className="card-header"><T>transactions.transactions</T></div>
+                <CardBody className="tx-list-homepage">
+                    <Table striped className="tx-home">
+                        <thead>
+                            <tr>
+                                <Switch>
+                                    <Route path="/transactions/:txId" render={(props) => <Sidebar
+                                        sidebar={<Transaction {...props} />}
+                                        open={this.state.sidebarOpen}
+                                        onSetOpen={this.onSetSidebarOpen}
+                                        styles={{
+                                            sidebar: {
+                                                background: "white",
+                                                position: "fixed",
+                                                width: '85%',
+                                                zIndex: 4
+                                            }, overlay: {
+                                                zIndex: 3
+                                            }
+                                        }}
+                                    >
+                                    </Sidebar>} />
 
-                            </Switch>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <List limit={this.state.limit} /></tbody>
+                                </Switch>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <List limit={this.state.limit} /></tbody>
                      
 
-                </Table>
-            </CardBody>
-        </Card>;
+                    </Table>
+                </CardBody>
+            </Card>;
     }
 }
