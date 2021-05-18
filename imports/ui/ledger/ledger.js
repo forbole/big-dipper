@@ -252,6 +252,25 @@ export class Ledger {
             sequence: txContext.sequence.toString(),
         };
 
+        const txSignFields = {
+            "auth_info": {
+                "signer_infos": [],
+                "fee":
+                    tx.value.fee
+            },
+            "body":{
+                "messages":[
+                    tx.value.msg
+                ],
+                "memo": tx.value.memo,
+                "timeout_height": "0",
+                "extension_options": [],
+                "non_critical_extension_options": []
+
+            },
+            "signatures": []
+        }
+
         return JSON.stringify(canonicalizeJson(txFieldsToSign));
     }
 
@@ -269,7 +288,9 @@ export class Ledger {
                 amount: Math.ceil(gas * gasPrice).toString(),
                 denom: denom,
             }],
-            gas: gas.toString(),
+            gas_limit: gas.toString(),
+            payer: "",
+            granter: ""
         };
 
         return unsignedTx;
@@ -336,7 +357,36 @@ export class Ledger {
                 }],
             },
         };
-        //return Ledger.applyGas(txSkeleton, DEFAULT_GAS);
+
+        const txSignSkeleton = {
+            "auth_info": {
+                "signer_infos": [],
+                "fee": {
+                    "amount": [],
+                    "gas_limit": "200000",
+                    "payer": "",
+                    "granter": ""
+                }
+            },
+            "body": {
+                "messages": [
+                    msgs
+                ],
+                "memo": txContext.memo || DEFAULT_MEMO,
+                "timeout_height": "0",
+                "extension_options": [],
+                "non_critical_extension_options": []
+            },
+            "signatures": [{
+                signature: 'N/A',
+                account_number: txContext.accountNumber.toString(),
+                sequence: txContext.sequence.toString(),
+                pub_key: {
+                    type: 'tendermint/PubKeySecp256k1',
+                    value: txContext.pk || 'PK',
+                },
+            }]
+        }
         return txSkeleton
     }
 
@@ -463,12 +513,10 @@ export class Ledger {
         option,
     ) {
         const txMsg = {
-            type: 'cosmos-sdk/MsgVote',
-            value: {
-                option,
-                proposal_id: proposalId.toString(),
-                voter: txContext.bech32
-            }
+            "@type": '/cosmos.gov.v1beta1.MsgVote',
+            "option": option,
+            "proposal_id": proposalId.toString(),
+            "voter": txContext.bech32.toString()
         };
 
         return Ledger.createSkeleton(txContext, [txMsg]);
