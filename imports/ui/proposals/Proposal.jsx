@@ -263,7 +263,7 @@ export default class Proposal extends Component{
                         </Col>
                         <Col className="voting-power-percent data" md={3}>
                             <i className="material-icons d-md-none">equalizer</i>
-                            {(vote.votingPower!==undefined)?numbro(vote.votingPower/this.state.totalVotes).format('0,0.00%'):""}
+                            {(vote.votingPower!==undefined)?numbro(vote.votingPower/this.state.totalVotes).format('0,0.000000%'):""}
                         </Col>
                     </Row></Card>
                 )}
