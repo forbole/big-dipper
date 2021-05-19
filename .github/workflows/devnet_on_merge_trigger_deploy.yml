@@ -25,7 +25,7 @@ jobs:
               "aws_region": "us-east-2",
               "target_big_dipper_branch": "develop",
               "app_region": "us",
-              "aws_cluster_name": "sifchain-aws-devnet-us",
+              "aws_cluster_name": "sifchain-aws-devnet-data",
               "aws_role": "arn:aws:iam::346064283538:role/OrganizationAccountAccessRole",
               "app_namespace": "block-explorer",
               "image": "sifchain/block-explorer",
