@@ -1,0 +1,36 @@
+name: Trigger DevNet Block Explorer Build And Deploy Pipeline
+on:
+  push:
+    branches:
+      - 'develop'
+      - 'testnet'
+      - 'master'
+
+jobs:
+  DevNet:
+    name: Trigger Block Explorer Pipeline
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/develop' }}
+    steps:
+      - name: DevNet Trigger Block Explorer Pipeline
+        uses: mvasigh/dispatch-action@main
+        with:
+          # You should create a personal access token and store it in your repository
+          token: ${{ secrets.CHAINOPS_ACCESS_TOKEN }}
+          repo: chainOps
+          owner: Sifchain
+          event_type: build_bigdipper
+          message: |
+            {
+              "aws_region": "us-east-2",
+              "target_big_dipper_branch": "develop",
+              "app_region": "us",
+              "aws_cluster_name": "sifchain-aws-devnet-us",
+              "aws_role": "arn:aws:iam::346064283538:role/OrganizationAccountAccessRole",
+              "app_namespace": "block-explorer",
+              "image": "sifchain/block-explorer",
+              "image_tag": "devnet-0.2.0",
+              "env": "data",
+              "app_name": "block-explorer",
+              "app_env": "data"
+            }
