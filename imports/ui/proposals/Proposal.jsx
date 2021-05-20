@@ -276,11 +276,11 @@ export default class Proposal extends Component{
                         </Col>
                         <Col className="voting-power data" md={4}>
                             <i className="material-icons d-md-none">power</i>
-                            {(vote.votingPower !== undefined && vote.votingPower > 0) ? numbro(vote.votingPower / Meteor.settings.public.powerReduction).format('0,0.000000') : this.getAddressVotingPower(vote.voter, false, null) }
+                            {(vote.votingPower !== undefined) ? numbro(vote.votingPower / Meteor.settings.public.powerReduction).format('0,0.000000') : ""}
                         </Col>
                         <Col className="voting-power-percent data" md={3}>
                             <i className="material-icons d-md-none">equalizer</i>
-                            {(vote.votingPower !== undefined && vote.votingPower > 0) ? numbro(vote.votingPower / this.state.totalVotes).format('0,0.000000%') : this.getAddressVotingPower(vote.voter, true, this.state.totalVotes)}
+                            {(vote.votingPower!==undefined) ? numbro(vote.votingPower/this.state.totalVotes).format('0,0.000000%') : ""}
                         </Col>
                     </Row></Card>
                 )}
