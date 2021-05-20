@@ -23,7 +23,6 @@ jobs:
       - name: Set version dding-trigger-pipeline
         if: ${{ github.ref == 'refs/heads/adding-trigger-pipeline' }}
         run: |
-          ls -lah
           VER=$(cat versions/devnet/version)
           echo $VER
           echo "VERSION=$VER" >> $GITHUB_ENV
