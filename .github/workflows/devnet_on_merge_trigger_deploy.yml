@@ -45,7 +45,8 @@ jobs:
               "aws_role": "arn:aws:iam::346064283538:role/OrganizationAccountAccessRole",
               "app_namespace": "block-explorer",
               "image": "sifchain/block-explorer",
-              "image_tag": "${{ env.VERSION }}",
+              "image_tag": "devnet-${{ env.VERSION }}",
+              "version": "${{ env.VERSION }}",
               "env": "data",
               "app_name": "block-explorer",
               "app_env": "data"
@@ -69,7 +70,8 @@ jobs:
               "aws_role": "arn:aws:iam::346064283538:role/OrganizationAccountAccessRole",
               "app_namespace": "block-explorer",
               "image": "sifchain/block-explorer",
-              "image_tag": "${{ env.VERSION }}",
+              "image_tag": "testnet-${{ env.VERSION }}",
+              "version": "${{ env.VERSION }}",
               "env": "data",
               "app_name": "block-explorer",
               "app_env": "data"
