@@ -48,7 +48,7 @@ export default class Consensus extends Component{
                 let moniker = proposer.description.moniker??this.props.consensus.proposerAddress;
                 let profileUrl = (proposer&&proposer.profile_url) || '';
                 let validator = Validators.findOne({ address: this.props.consensus.proposerAddress });
-                let validatorOperatorAddress = validator?.operator_address
+                let validatorOperatorAddress = validator?.operator_address ?? this.props.consensus.proposerAddress;
                 return (
                     <div>
                         {(this.state.chainStopped)?<Card body inverse color="danger">
