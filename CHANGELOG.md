@@ -2,6 +2,7 @@
 
 ## [UNRELEASED] 
 * [#488] Updated missing proposer address in proposals.
+* [#493] Fixed validators address showing as undefined in links.
 ## v0.41.x-13
 * [#484] Replaced delegation list displayed under validator page with total number of delegations. 
 * [#509] Added display list of addresses available for user to login with when connecting the Ledger.  
