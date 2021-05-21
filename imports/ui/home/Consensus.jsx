@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Row, Col, Card, CardImg, CardText, CardBody,
-    CardTitle, CardSubtitle, Button, Progress, Spinner } from 'reactstrap';
+import { Row, Col, Card, CardBody, CardSubtitle, Progress, Spinner } from 'reactstrap';
 import Avatar from '../components/Avatar.jsx';
 import CountDown from '../components/CountDown.jsx';
 import moment from 'moment';
 import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
+import { Validators } from '/imports/api/validators/validators.js';
 
 const T = i18n.createComponent();
 export default class Consensus extends Component{
@@ -45,8 +45,10 @@ export default class Consensus extends Component{
         else{
             if (this.props.consensusExist && this.props.consensus.prevotes){
                 let proposer = this.props.consensus.proposer();
-                let moniker = (proposer&&proposer.description&&proposer.description.moniker)?proposer.description.moniker:this.props.consensus.proposerAddress;
+                let moniker = proposer.description.moniker??this.props.consensus.proposerAddress;
                 let profileUrl = (proposer&&proposer.profile_url) || '';
+                let validator = Validators.findOne({ address: this.props.consensus.proposerAddress });
+                let validatorOperatorAddress = validator?.operator_address ?? this.props.consensus.proposerAddress;
                 return (
                     <div>
                         {(this.state.chainStopped)?<Card body inverse color="danger">
@@ -79,7 +81,7 @@ export default class Consensus extends Component{
                                             <Col md={6}>
                                                 <Row>
                                                     <Col md={12} xs={4}><CardSubtitle><T>blocks.proposer</T></CardSubtitle></Col>
-                                                    <Col md={12} xs={8}><span className="value"><Link to={"/validator/"+this.props.consensus.proposerAddress} ><Avatar moniker={moniker} profileUrl={profileUrl} address={this.props.consensus.proposerAddress} list={true} />{moniker}</Link></span></Col>
+                                                    <Col md={12} xs={8}><span className="value"><Link to={"/validator/" + validatorOperatorAddress} ><Avatar moniker={moniker} profileUrl={profileUrl} address={this.props?.consensus?.proposerAddress} list={true} />{moniker}</Link></span></Col>
                                                 </Row>
                                             </Col>
                                         </Row>

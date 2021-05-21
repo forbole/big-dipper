@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Container, Row, Col, Card, CardBody, Spinner } from 'reactstrap';
-import { Link,  } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import numbro from 'numbro';
 import moment from 'moment';
 import Avatar from '../components/Avatar.jsx';
@@ -26,7 +26,6 @@ export default class Block extends Component{
     componentDidUpdate(prevProps){
         if (this.props != prevProps){
             if (this.props.transactionsExist){
-                // console.log("have txs.");
                 this.setState({
                     transferTxs: this.props.transferTxs,
                     stakingTxs: this.props.stakingTxs,
@@ -46,7 +45,6 @@ export default class Block extends Component{
         }
         else{
             if (this.props.blockExist){
-                // console.log(this.props.block);
                 let block = this.props.block;
                 let proposer = block.proposer();
                 let moniker = proposer?proposer.description.moniker:'';
@@ -65,7 +63,7 @@ export default class Block extends Component{
                                 <Col md={4} className="label"><T>common.hash</T></Col>
                                 <Col md={8} className="value text-nowrap overflow-auto address">{block.hash}</Col>
                                 <Col md={4} className="label"><T>blocks.proposer</T></Col>
-                                <Col md={8} className="value"><Link to={"/validator/"+((proposer)?proposer.operatorAddress:'')}><Avatar moniker={moniker} profileUrl={profileUrl} address={block.proposerAddress} list={true} /> {moniker}</Link></Col>
+                                <Col md={8} className="value"><Link to={"/validator/" + ((proposer) ? proposer.operator_address : this.props?.block?.proposerAddress)}><Avatar moniker={moniker} profileUrl={profileUrl} address={block?.proposerAddress} list={true} /> {moniker}</Link></Col>
                                 <Col md={4} className="label"><T>blocks.numOfTransactions</T></Col>
                                 <Col md={8} className="value">{numbro(block.transNum).format("0,0")}</Col>
                                 <Col md={4} className="label"><T>common.time</T></Col>
