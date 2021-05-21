@@ -3,7 +3,6 @@ import { Meteor } from 'meteor/meteor';
 import { Link } from 'react-router-dom';
 import { Validators } from '/imports/api/validators/validators.js';
 
-const AddressLength = 40;
 
 export default class Account extends Component{
     constructor(props){
@@ -54,22 +53,6 @@ export default class Account extends Component{
         })
     }
 
-    getAccount = () => {
-        let address = this.props.address;
-        let validator = Validators.findOne(
-            {$or: [{operator_address:address}, {delegator_address:address}, {address:address}]},
-            {fields: {address:1, description:1, operator_address:1, delegator_address:1}});
-        if (validator)
-            this.setState({
-                address: `/validator/${validator?.operator_address}`,
-                moniker: validator.description.moniker
-            });
-        else
-            this.setState({
-                address: `/validator/${address}`,
-                moniker: address
-            });
-    }
 
     componentDidMount(){
         if (this.props.sync)
