@@ -202,9 +202,9 @@ Meteor.methods({
                     }
 
                     if (Meteor.settings.public.modules.gov){
-                        // update mint params
+                        // update gov params
                         try {
-                            url = API + '/cosmos/gov/v1beta1/params';
+                            url = API + '/cosmos/gov/v1beta1/params/tallying';
                             response = HTTP.get(url);
                             chain.gov = JSON.parse(response.content);
                         }
