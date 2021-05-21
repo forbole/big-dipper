@@ -15,7 +15,7 @@ export default class Block extends Component {
         let homepage = window?.location?.pathname === '/' ? true : false;
         let proposer = this.props.block.proposer();
         let validator = Validators.findOne({ address: this.props.block.proposerAddress });
-        let proposerOperatorAddress = validator?.operator_address ?? ""
+        let proposerOperatorAddress = validator?.operator_address ?? this.props?.block?.proposerAddress;
         if (proposer){
             let moniker=proposer?.description?.moniker ?? this.props.block.proposerAddress;
             return <Row className="block-info">

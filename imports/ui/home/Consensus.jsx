@@ -81,7 +81,7 @@ export default class Consensus extends Component{
                                             <Col md={6}>
                                                 <Row>
                                                     <Col md={12} xs={4}><CardSubtitle><T>blocks.proposer</T></CardSubtitle></Col>
-                                                    <Col md={12} xs={8}><span className="value"><Link to={"/validator/" + validatorOperatorAddress} ><Avatar moniker={moniker} profileUrl={profileUrl} address={validatorOperatorAddress} list={true} />{moniker}</Link></span></Col>
+                                                    <Col md={12} xs={8}><span className="value"><Link to={"/validator/" + validatorOperatorAddress} ><Avatar moniker={moniker} profileUrl={profileUrl} address={this.props?.consensus?.proposerAddress} list={true} />{moniker}</Link></span></Col>
                                                 </Row>
                                             </Col>
                                         </Row>
