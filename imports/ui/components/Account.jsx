@@ -28,8 +28,8 @@ export default class Account extends Component{
             {fields: this.getFields() });
         if (validator)
             this.setState({
-                address: `/validator/${validator.address}`,
-                moniker: validator.description?validator.description.moniker:validator.operator_address,
+                address: `/validator/${validator?.operator_address}`,
+                moniker: validator?.description?.moniker ?? validator?.operator_address,
                 validator: validator
             });
         else
@@ -46,8 +46,8 @@ export default class Account extends Component{
             if (result){
                 // console.log(result);
                 this.setState({
-                    address: `/validator/${result.address}`,
-                    moniker: result.description?result.description.moniker:result.operator_address,
+                    address: `/validator/${result?.operator_address}`,
+                    moniker: result?.description?.moniker ?? result?.operator_address,
                     validator: result
                 });
             }
@@ -61,7 +61,7 @@ export default class Account extends Component{
             {fields: {address:1, description:1, operator_address:1, delegator_address:1}});
         if (validator)
             this.setState({
-                address: `/validator/${validator.address}`,
+                address: `/validator/${validator?.operator_address}`,
                 moniker: validator.description.moniker
             });
         else
