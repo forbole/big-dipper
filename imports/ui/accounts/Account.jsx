@@ -19,6 +19,7 @@ import ChainStates from '../components/ChainStatesContainer.js'
 import { Helmet } from 'react-helmet';
 import { WithdrawButton, TransferButton, ClaimSwapButton } from '../ledger/LedgerActions.jsx';
 import CDP from '../cdp/CDP.jsx';
+import HARD from '../hard/HARD.jsx';
 import SentryBoundary from '../components/SentryBoundary.jsx';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js';
@@ -57,10 +58,16 @@ export default class AccountDetails extends Component {
             user: localStorage.getItem(CURRENTUSERADDR),
             commission: [defaultCoin],
             denom: Coin.StakingCoin.denom,
-            rewardsForEachDel: [defaultCoin],
+            rewardsForEachDel: {defaultCoin},
             rewardDenomType: [defaultCoin],
             bondActiveTab: 'delegations',
             cdpActiveTab: 'cdp-create',
+            activeSubtab: 'cdp-bnb-a',
+            activeSubtabDenomType: 'bnb-a',
+            activeSubtabDenom: 'bnb',
+            activeHARDTab: '',
+            activeHARDSubtab: '',
+            activeIncentiveSubtab: 'incentive-hard',
             cdpID: 0,
             cdpOwner: '',
             cdpCollateral: [],
@@ -69,16 +76,23 @@ export default class AccountDetails extends Component {
             cdpFeesUpdated: 0,
             cdpCollateralValue: 0,
             cdpCollateralizationRatio: 0,
-            bnbPrice: 0,
-            usdxPrice: 1,
-            hardPrice: 0,
+            BNB_USD_Price: 0,
+            USDX_Price: 1,
+            HARD_USD_Price: 0,
             totalKavaInUSD: 0,
             totalBNBInUSD: 0,
             totalUSDXInUSD: 0,
             totalValueInUSD: 0,
             redelegations: [],
             hasIncentive: false,
-            operator_address: "",
+            operatorAddress: "",
+            hasActiveCDP: false,
+            collateralParams: [],
+            hasHARDBorrows: false,
+            hasHARDDeposit: false,
+            HARDDeposits: undefined,
+            HARDBorrows: undefined
+
         }
     }
 
@@ -284,7 +298,7 @@ export default class AccountDetails extends Component {
                                 this.setState({
                                     rewardDenomType: numRewards[e][f].denom,
                                     rewardsForEachDel: numRewards,
-                                    operator_address: opAddress,
+                                    operatorAddress: opAddress,
                                 })
                             }
 
@@ -332,9 +346,9 @@ export default class AccountDetails extends Component {
                 }
 
                 let calculateKavaInUSD = this.findValue(this.state.total, coin1) * this.state.price;
-                let calculateBNBInUSD = this.findValue(this.state.total, coin2) * this.state.bnbPrice;
-                let calculateUSDXInUSD = this.findValue(this.state.total, coin3) * this.state.usdxPrice
-                let calculateHARDInUSD = this.findValue(this.state.total, coin4) * this.state.hardPrice
+                let calculateBNBInUSD = this.findValue(this.state.total, coin2) * this.state.BNB_USD_Price;
+                let calculateUSDXInUSD = this.findValue(this.state.total, coin3) * this.state.USDX_Price
+                let calculateHARDInUSD = this.findValue(this.state.total, coin4) * this.state.HARD_USD_Price
                 let calculateTotalValueInUSD = calculateKavaInUSD + calculateBNBInUSD + calculateUSDXInUSD;
 
                 this.setState({
@@ -360,12 +374,27 @@ export default class AccountDetails extends Component {
 
             if (result) {
                 this.setState({
-                    bnbPrice: result
+                    BNB_USD_Price: result
                 })
             }
 
         });
+        Meteor.call('cdp.getCDPPrice', 'bnb:usd:30', (error, result) => {
+            if (error) {
+                console.warn(error);
+                this.setState({
+                    loading: false
+                })
+            }
 
+            if (result) {
+                this.setState({
+                    BNB_USD_30_Price: result
+                })
+            }
+
+        });
+        
 
         Meteor.call('cdp.getCDPPrice', 'hard:usd', (error, result) => {
             if (error) {
@@ -377,7 +406,7 @@ export default class AccountDetails extends Component {
 
             if (result) {
                 this.setState({
-                    hardPrice: result
+                    HARD_USD_Price: result
                 })
             }
 
@@ -400,7 +429,7 @@ export default class AccountDetails extends Component {
         });
 
 
-        Meteor.call('account.getIncentive', this.props.match.params.address, coin2, (error, result) => {
+        Meteor.call('account.getIncentive', (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({
@@ -408,11 +437,23 @@ export default class AccountDetails extends Component {
                     hasIncentive: false
                 })
             }
-            if (result && result.length > 0) {
-                this.setState({
-                    hasIncentive: true,
-                })
-            }
+            if (result) {
+                for (let d = 0; d < result.hard_claims.length; d++) {
+                    if (result.hard_claims[d].base_claim.owner === this.props.match.params.address){
+                        this.setState({
+                            hasIncentive: true,
+                        })
+                    }
+                };
+
+                for (let e = 0; e < result.usdx_minting_claims.length; e++) {
+                    if (result.usdx_minting_claims[e].base_claim.owner === this.props.match.params.address) {
+                        this.setState({
+                            hasIncentive: true,
+                        })
+                    }
+                }
+            };
         })
 
     }
@@ -420,7 +461,9 @@ export default class AccountDetails extends Component {
 
     componentDidMount() {
         this.getBalance();
-
+        this.checkIfCDPIsActive();
+        this.updateDeposits();
+        this.updateBorrows();
         timer = Meteor.setInterval(() => {
             this.getBalance();
         }, 10000)
@@ -441,9 +484,10 @@ export default class AccountDetails extends Component {
                 price: 0,
                 reward: [],
                 denom: '',
-                rewardsForEachDel: [],
+                rewardsForEachDel: {},
                 rewardDenomType: [],
                 cdpID: 0,
+                debtParams: [],
                 cdpOwner: '',
                 cdpCollateral: [],
                 cdpPrincipal: [],
@@ -451,14 +495,20 @@ export default class AccountDetails extends Component {
                 cdpFeesUpdated: 0,
                 cdpCollateralValue: 0,
                 cdpCollateralizationRatio: 0,
-                bnbPrice: 0,
+                BNB_USD_Price: 0,
                 totalKavaInUSD: 0,
                 totalBNBInUSD: 0,
                 totalUSDXInUSD: 0,
                 totalValueInUSD: 0,
                 redelegations: [],
                 hasIncentive: false,
-                operator_address: ""
+                operatorAddress: "",
+                hasActiveCDP: false,
+                hasHARDDeposit: false,
+                hasHARDBorrows: false,
+                HARDDeposits: undefined,
+                HARDBorrows: undefined,
+                collateralParams: []
             }, () => {
                 this.getBalance();
             })
@@ -563,6 +613,134 @@ export default class AccountDetails extends Component {
         }
     }
 
+    toggleCDPSutab = (tab, denomName, denomType) => {
+        if (this.state.activeSubtab !== tab) {
+            this.setState({
+                activeSubtab: tab,
+                activeSubtabDenom: denomName,
+                activeSubtabDenomType: denomType
+            });
+        }
+    }
+
+    toggleHARDTab = (tab) => {
+        if (this.state.activeHARDTab !== tab) {
+            this.setState({
+                activeHARDTab: tab
+            });
+        }
+    }
+    
+
+    toggleHARDSubtab = (tab) => {
+        if (this.state.activeHARDSubtab !== tab) {
+            this.setState({
+                activeHARDSubtab: tab
+            });
+        }
+    }
+
+    toggleIncentiveSutab = (tab) => {
+        if (this.state.activeIncentiveSubtab !== tab) {
+            this.setState({
+                activeIncentiveSubtab: tab
+            });
+        }
+    }
+
+    checkIfCDPIsActive() {
+        Meteor.call('cdp.getCDPParams', (error, result) => {
+            if (error) {
+                console.warn(error);
+                this.setState({
+                    loading: false
+                })
+            }
+
+            if (result) {
+                this.setState({
+                    debtParams: result.debt_param
+                });
+
+                let collateralParams = [];
+                for (let c in result.collateral_params) {
+                    Meteor.call('accounts.getAccountCDP', this.state.address, result.collateral_params[c].type, (err, res) => {
+                        if (err) {
+                            this.setState({
+                                loading: true,
+                                hasActiveCDP: false
+                            })
+                        }
+
+                        if (res) {
+                            this.setState({
+                                hasActiveCDP: true,
+                            });
+                            collateralParams[c] = result.collateral_params[c];
+
+                        }
+                    })
+                }
+                this.setState({
+                    collateralParams: collateralParams
+                })
+            }
+        })
+
+     
+    };
+
+    updateDeposits() {
+        Meteor.call('hard.deposits', (error, result) => {
+            if (error) {
+                console.warn(error);
+                this.setState({
+                    loading: true,
+                    HARDDeposits: undefined
+                })
+            }
+
+            if (result) {
+                for (let c in result) {
+                    if (result[c].depositor === this.state.address) {
+                        this.setState({
+                            HARDDeposits: result[c]
+                        })
+                    }
+                }
+                this.setState({
+                    loading: false,
+                    hasHARDDeposit: true
+                })
+            }
+        })
+    }
+
+    updateBorrows() {
+        Meteor.call('hard.borrows', (error, result) => {
+            if (error) {
+                console.warn(error);
+                this.setState({
+                    loading: true,
+                    HARDBorrows: undefined
+                })
+            }
+
+            if (result) {
+                for (let c in result) {
+                    if (result[c].borrower === this.state.address) {
+                        this.setState({
+                            HARDBorrows: result[c]
+                        })
+                    }
+                }
+                this.setState({
+                    loading: false,
+                    hasHARDBorrows: true
+                })
+            }
+        })
+    }
     // createCDP = (callback) =>{
     //     Meteor.call('create.cdp', {from: this.state.user}, this.getPath(), (err, res) =>{
     //         if (res){
@@ -621,15 +799,15 @@ export default class AccountDetails extends Component {
                                         <Progress bar className="unbonding" value={this.findValue(this.state.unbonding, coin1) * this.state.price / this.state.totalValueInUSD * 100} />
                                         <Progress bar className="rewards" value={this.findValue(this.state.rewards, coin1) * this.state.price / this.state.totalValueInUSD * 100} />
                                         <Progress bar className="commission" value={this.findValue(this.state.commission, coin1) * this.state.price / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="available_2nd" value={this.findValue(this.state.available, coin2) * this.state.bnbPrice / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="rewards_2nd" value={this.findValue(this.state.rewards, coin2) * this.state.bnbPrice / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="commission_2nd" value={this.findValue(this.state.commission, coin2) * this.state.bnbPrice / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="available_3rd" value={this.findValue(this.state.available, coin3) * this.state.usdxPrice / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="rewards_3rd" value={this.findValue(this.state.rewards, coin3) * this.state.usdxPrice / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="commission_3rd" value={this.findValue(this.state.commission, coin3) * this.state.usdxPrice / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="available_4th" value={this.findValue(this.state.available, coin4) * this.state.hardPrice / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="rewards_4th" value={this.findValue(this.state.rewards, coin4) * this.state.hardPrice / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="commission_4th" value={this.findValue(this.state.commission, coin4) * this.state.hardPrice / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="available_2nd" value={this.findValue(this.state.available, coin2) * this.state.BNB_USD_Price / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="rewards_2nd" value={this.findValue(this.state.rewards, coin2) * this.state.BNB_USD_Price / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="commission_2nd" value={this.findValue(this.state.commission, coin2) * this.state.BNB_USD_Price / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="available_3rd" value={this.findValue(this.state.available, coin3) * this.state.USDX_Price / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="rewards_3rd" value={this.findValue(this.state.rewards, coin3) * this.state.USDX_Price / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="commission_3rd" value={this.findValue(this.state.commission, coin3) * this.state.USDX_Price / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="available_4th" value={this.findValue(this.state.available, coin4) * this.state.HARD_USD_Price / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="rewards_4th" value={this.findValue(this.state.rewards, coin4) * this.state.HARD_USD_Price / this.state.totalValueInUSD * 100} />
+                                        <Progress bar className="commission_4th" value={this.findValue(this.state.commission, coin4) * this.state.HARD_USD_Price / this.state.totalValueInUSD * 100} />
                                     </Progress>
                                 </Col>
                             </Row>
@@ -653,75 +831,56 @@ export default class AccountDetails extends Component {
                                 </Col>
                                 <Col xs={3} md={2}>
                                     <Row>
-                                        <Col xs={1} lg={5} className="value text-right" > <div className="available infinity" /></Col>
-                                        <Col xs={11} lg={7} className="account-value text-right "> {this.findCoin(this.state.available, coin1)}</Col>
+                                        <Col xs={12} className="value text-left "> <div className="available infinity" />{this.findCoin(this.state.available, coin1)}</Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={1} lg={5} className="value text-right"><div className="delegated infinity" /></Col>
-                                        <Col xs={11} lg={7} className="account-value text-right "> {this.findCoin(this.state.delegated, coin1)}</Col>
+                                        <Col xs={12} className="value text-left"><div className="delegated infinity" />{this.findCoin(this.state.delegated, coin1)}</Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={1} lg={5} className="value text-right"><div className="unbonding infinity" /></Col>
-                                        <Col xs={11} lg={7} className="account-value text-right "> {this.findCoin(this.state.unbonding, coin1)}</Col>
-
+                                        <Col xs={12} className="value text-left"><div className="unbonding infinity" />{this.findCoin(this.state.unbonding, coin1)}</Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={1} lg={5} className="value text-right"><div className="rewards infinity" /></Col>
-                                        <Col xs={11} lg={7} className="account-value text-right ">{this.findCoin(this.state.rewards, coin1)}</Col>
-
+                                        <Col xs={12} className="value text-left"><div className="rewards infinity" />{this.findCoin(this.state.rewards, coin1)}</Col>
                                     </Row>
                                     {this.state.commission ? <Row>
-                                        <Col xs={1} lg={5} className="value text-right"><div className="commission infinity" /></Col>
-                                        <Col xs={11} lg={7} className="account-value text-right ">{this.findCoin(this.state.commission, coin1)}</Col>
-
+                                        <Col xs={12} className="value text-left"><div className="commission infinity" />{this.findCoin(this.state.commission, coin1)}</Col>
                                     </Row> : null}
                                 </Col>
                                 <Col xs={3} md={2}>
 
                                     <Row>
-                                        <Col xs={1} lg={5} className="value text-right"> <div className="available_2nd infinity" /></Col>
-                                        <Col xs={11} lg={7} className="account-value text-right ">{this.findCoin(this.state.available, coin2)}</Col>
-
+                                        <Col xs={12} className="value text-left"> <div className="available_2nd infinity" />{this.findCoin(this.state.available, coin2)}</Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={12} className="value text-right"><div className="infinity" />{'  '}</Col>
+                                        <Col xs={12} className="value text-left"><div className="infinity" />{'  '}</Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={12} className="value text-right"><div className="infinity" />{' '}</Col>
+                                        <Col xs={12} className="value text-left"><div className="infinity" />{' '}</Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={1} lg={5} className="value text-right"><div className="rewards_2nd infinity" /></Col>
-                                        <Col xs={11} lg={7} className="account-value text-right ">{this.findCoin(this.state.rewards, coin2)}</Col>
-
+                                        <Col xs={12} className="value text-left"><div className="rewards_2nd infinity" />{this.findCoin(this.state.rewards, coin2)}</Col>
                                     </Row>
                                     {this.state.commission ? <Row>
-                                        <Col xs={1} lg={5} className="value text-right"><div className="commission_2nd infinity" /></Col>
-                                        <Col xs={11} lg={7} className="account-value text-right ">{this.findCoin(this.state.commission, coin2)}</Col>
-
+                                        <Col xs={12} className="value text-left"><div className="commission_2nd infinity" />{this.findCoin(this.state.commission, coin2)}</Col>
                                     </Row> : null}
                                 </Col>
                                 <Col xs={3} md={2} >
 
                                     <Row>
-                                        <Col xs={1} lg={5} className="value text-right"> <div className="available_3rd infinity" /></Col>
-                                        <Col xs={11} lg={7} className="account-value text-right ">{this.findCoin(this.state.available, coin3)}</Col>
-
+                                        <Col xs={12} className="value text-left"> <div className="available_3rd infinity" />{this.findCoin(this.state.available, coin3)}</Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={12} className="value text-right"><div className="infinity" />{'  '}</Col>
+                                        <Col xs={12} className="value text-left"><div className="infinity" />{'  '}</Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={12} className="value text-right"><div className="infinity" />{'  '}</Col>
+                                        <Col xs={12} className="value text-left"><div className="infinity" />{'  '}</Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={1} lg={5} className="value text-right"><div className="rewards_3rd infinity" /></Col>
-                                        <Col xs={11} lg={7} className="account-value text-right ">{this.findCoin(this.state.rewards, coin3)}</Col>
-
+                                        <Col xs={12} className="value text-left"><div className="rewards_3rd infinity" />{this.findCoin(this.state.rewards, coin3)}</Col>
                                     </Row>
                                     {this.state.commission ? <Row>
-                                        <Col xs={1} lg={5} className="value text-right"><div className="commission_3rd infinity" /></Col>
-                                        <Col xs={11} lg={7} className="account-value text-right ">{this.findCoin(this.state.commission, coin3)}</Col>
-
+                                        <Col xs={12} className="value text-left
+                                        "><div className="commission_3rd infinity" />{this.findCoin(this.state.commission, coin3)}</Col>
                                     </Row> : null}
                                 </Col>
 
@@ -755,23 +914,23 @@ export default class AccountDetails extends Component {
                                     </Row>
                                     <Row>
                                         <Col xs={12} className="value-2 text-right">{this.findCoin(this.state.total, coin2)}</Col>
-                                        <Col xs={12} className="dollar-value-2 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin2)) * this.state.bnbPrice).format("$0,0.0000a")} ({numbro(this.state.bnbPrice).format("$0,0.00")}/{Meteor.settings.public.coins[1].displayName})</Col>
+                                        <Col xs={12} className="dollar-value-2 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin2)) * this.state.BNB_USD_Price).format("$0,0.0000a")} ({numbro(this.state.BNB_USD_Price).format("$0,0.00")}/{Meteor.settings.public.coins[1].displayName})</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={12} className="value-3 text-right">{this.findCoin(this.state.total, coin4)}</Col>
-                                        <Col xs={12} className="dollar-value-3 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin4)) * this.state.hardPrice).format("$0,0.0000a")} ({numbro(this.state.hardPrice).format("$0,0.00")}/{Meteor.settings.public.coins[8].displayName})</Col>
+                                        <Col xs={12} className="dollar-value-3 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin4)) * this.state.HARD_USD_Price).format("$0,0.0000a")} ({numbro(this.state.HARD_USD_Price).format("$0,0.00")}/{Meteor.settings.public.coins[8].displayName})</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={12} className="value-4 text-right">{this.findCoin(this.state.total, coin3)}</Col>
-                                        <Col xs={12} className="dollar-value-4 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin3)) * this.state.usdxPrice).format("$0,0.0000a")} ({numbro(this.state.usdxPrice).format("$0,0.00")}/{Meteor.settings.public.coins[5].displayName})</Col>
+                                        <Col xs={12} className="dollar-value-4 text-right text-secondary">~{numbro((this.findValue(this.state.total, coin3)) * this.state.USDX_Price).format("$0,0.0000a")} ({numbro(this.state.USDX_Price).format("$0,0.00")}/{Meteor.settings.public.coins[5].displayName})</Col>
                                     </Row>
                                    
                                 </Col>
                                 <Col xs={12} className="total d-flex flex-column justify-content-end text-nowrap pt-3">
                                     {this.state.user ? <Row>
                                         <Col xs={12} >
-                                            {this.state.user === this.state.address ? <ClaimSwapButton validator={this.props.validator} address={this.state.operator_address} /> : null}
-                                            {this.state.user === this.state.address ? <WithdrawButton rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address} denom={this.state.denom} /> : null}
+                                            {this.state.user === this.state.address ? <ClaimSwapButton validator={this.props.validator} address={this.state.operatorAddress} /> : null}
+                                            {this.state.user === this.state.address ? <WithdrawButton rewards={this.state.rewards} commission={this.state.commission} address={this.state.operatorAddress} denom={this.state.denom} /> : null}
                                             <TransferButton address={this.state.address} denom={this.state.denom} total={this.state.total} /></Col>
                                     </Row> : null}
                                 </Col>
@@ -849,9 +1008,29 @@ export default class AccountDetails extends Component {
                                             className={classnames({ active: this.state.cdpActiveTab === 'cdp-create' })}
                                             onClick={() => { this.toggleCDP('cdp-create'); }}
                                         >
-                                            <span className="cdp-logo create">Create CDP</span>
+                                            <span className="cdp-logo">Create CDP</span>
                                         </NavLink>
                                     </NavItem>
+                                    {this.state.hasActiveCDP ?
+                                        <NavItem>
+                                            <NavLink
+                                                className={classnames({ active: this.state.cdpActiveTab === 'cdp-active' })}
+                                                onClick={() => { this.toggleCDP('cdp-active'); }}
+                                            >
+                                                <span className="cdp-logo ">
+                                                   CDPs </span>
+                                            </NavLink>
+                                        </NavItem> : null}
+                                    {this.state.hasActiveCDP ?
+                                        <NavItem>
+                                            <NavLink
+                                                className={classnames({ active: this.state.cdpActiveTab === 'cdp-hard' })}
+                                                onClick={() => { this.toggleCDP('cdp-hard'); }}
+                                            >
+                                                <span className="cdp-logo ">
+                                                    HARD </span>
+                                            </NavLink>
+                                        </NavItem> : null}
                                     {this.state.hasIncentive ?
                                         <NavItem>
                                             <NavLink
@@ -859,9 +1038,9 @@ export default class AccountDetails extends Component {
                                                 onClick={() => { this.toggleCDP('cdp-incentive'); }}
                                             >
                                                 <span className="cdp-logo ">
-                                                    <i className="material-icons">
-                                                        emoji_events
-                                                    </i> Incentive</span>
+                                                    Incentive  <i className="material-icons">
+                                                        redeem
+                                                    </i></span>
                                             </NavLink>
                                         </NavItem> : null}
                                 </Nav>
@@ -869,17 +1048,212 @@ export default class AccountDetails extends Component {
                                     <TabPane tabId="cdp-create">
                                         <CDP
                                             owner={this.state.address}
-                                            collateral='bnb'
+                                            collateralType={this.state.activeSubtabDenomType}
+                                            collateralDenom={this.state.activeSubtabDenom}
+                                            collateralParams={this.state.collateralParams}
+                                            debtParams={this.state.debtParams} 
                                             user={this.state.user}
+                                            createCDP={true}
+                                            BNB_USD_Price={this.state.BNB_USD_Price}
+                                            BNB_USD_30_Price={this.state.BNB_USD_30_Price}
+                                            HARD_USD_Price={this.state.HARD_USD_Price}
                                         />
                                     </TabPane>
+
+
+                                    <TabPane tabId="cdp-active">
+                                        <Row className="denom-list">
+                                            {this.state.hasActiveCDP ?
+                                                this.state.collateralParams.map((denom, index) => {
+                                                    return (   
+                                                        <Nav tabs className="mb-2" key={index}>
+
+                                                            <NavItem key={index} style={{listStyle: "none", display: "flex", flexWrap: "wrap"}} >
+                                                                <NavLink
+                                                                    className={classnames({ active: this.state.activeSubtab === `cdp-${denom.type}` })}
+                                                                    onClick={() => { this.toggleCDPSutab(`cdp-${denom.type}`, denom.denom, denom.type); }}
+                                                                >
+                                                                    {denom.denom === 'ukava' ? <span className="cdp-logo denom"><img src="/img/KAVA-symbol.svg" className="cdp-logo-image"/> {denom.type.toUpperCase()} </span> : null}
+                                                                    {denom.denom === 'xrpb' ? <span className="cdp-logo denom"><img src="/img/XRP-symbol.svg" className="cdp-logo-image" /> {denom.type.toUpperCase()} </span> : null}
+                                                                    {denom.denom != 'ukava' && denom.denom != 'xrpb' ? <span className="cdp-logo denom"><img src={`/img/${denom.denom.toUpperCase()}-symbol.svg`} className="cdp-logo-image" /> {denom.type.toUpperCase()} </span> : null}
+                                                                </NavLink>
+                                                            </NavItem>
+                                                        </Nav>) }) : null}
+                                        </Row>
+                                        {this.state.hasActiveCDP ?
+                                            this.state.collateralParams.map((denom, index )=> {
+                                                return (  
+                                                    <TabContent activeTab={this.state.activeSubtab} key={index}>
+                                                        <TabPane tabId={`cdp-${denom.type}`}>
+                                                            <CDP
+                                                                owner={this.state.address}
+                                                                collateralType={this.state.activeSubtabDenomType}
+                                                                collateralDenom={this.state.activeSubtabDenom}
+                                                                collateralParams={this.state.collateralParams} 
+                                                                debtParams={this.state.debtParams} 
+                                                                user={this.state.user}
+                                                                createCDP={false}
+                                                            />
+                                                        </TabPane>
+                                                    </TabContent>) 
+                                            }) : null}
+                                    </TabPane>
+
+                                    <TabPane tabId="cdp-hard">
+                                        <Nav tabs className="mb-2">
+                                            <NavItem>
+                                                <NavLink
+                                                    className={classnames({ active: this.state.activeHARDTab === 'hard-deposits' })}
+                                                    onClick={() => { this.toggleHARDTab('hard-deposits'); }}
+                                                >
+                                                    <span className="cdp-logo"><img src="/img/HARD-symbol.svg" className="cdp-logo-image"/> Deposits</span>
+                                                </NavLink>
+                                            </NavItem>
+                                            <NavItem>
+                                                <NavLink
+                                                    className={classnames({ active: this.state.activeHARDTab === 'hard-borrows' })}
+                                                    onClick={() => { this.toggleHARDTab('hard-borrows'); }}
+                                                >
+                                                    <span className="cdp-logo"><img src="/img/HARD-symbol.svg" className="cdp-logo-image"/> Borrows</span>
+                                                </NavLink>
+                                            </NavItem>
+                                        </Nav>
+                                        <TabContent activeTab={this.state.activeHARDTab} >
+                                            <TabPane tabId={`${this.state.activeHARDTab}`}>
+                                                {this.state.activeHARDTab === 'hard-deposits' ? 
+                                                // HARD Deposit list
+                                                <>
+                                                        <Row className="hard-deposit-list">
+                                                            {this.state.hasHARDDeposit && this.state.HARDDeposits ?
+                                                        this.state.HARDDeposits?.amount.map((denom, index) => {
+                                                            return (
+                                                                <Nav tabs className="mb-2" key={index}>
+
+                                                                    <NavItem key={index} style={{ listStyle: "none", display: "flex", flexWrap: "wrap" }} >
+                                                                        <NavLink
+                                                                            className={classnames({ active: this.state.activeHARDSubtab === `${denom.denom}` })}
+                                                                            onClick={() => { this.toggleHARDSubtab(`${denom.denom}`); }}
+                                                                        >
+                                                                            {denom.denom === 'ukava' ? <span className="cdp-logo denom"><img src="/img/KAVA-symbol.svg" className="cdp-logo-image" /> {denom.denom.toUpperCase()} </span> : null}
+                                                                            {denom.denom === 'xrpb' ? <span className="cdp-logo denom"><img src="/img/XRP-symbol.svg" className="cdp-logo-image" /> {denom.denom.toUpperCase()} </span> : null}
+                                                                            {denom.denom != 'ukava' && denom.denom != 'xrpb' ? <span className="cdp-logo denom"><img src={`/img/${denom.denom.toUpperCase()}-symbol.svg`} className="cdp-logo-image" /> {denom.denom.toUpperCase()} </span> : null}
+                                                                        </NavLink>
+                                                                    </NavItem>
+                                                                </Nav>)
+                                                        }) : null}
+                                                        </Row>
+
+                                                        {this.state.hasHARDDeposit && this.state.HARDDeposits ?
+                                                    this.state.HARDDeposits?.amount.map((denom, index) => {
+                                                        return (
+                                                            <TabContent activeTab={this.state.activeHARDSubtab} key={index}>
+                                                                <TabPane tabId={`${denom.denom}`}>
+                                                                    <HARD
+                                                                        address={this.state.address}
+                                                                        collateralDenom={this.state.activeHARDSubtab}
+                                                                        user={this.state.user}
+                                                                        activeTab={this.state.activeHARDTab}
+                                                                    />
+                                                                </TabPane>
+                                                            </TabContent>)
+                                                    }) : <HARD
+                                                        address={this.state.address}
+                                                        collateralDenom={this.state.activeHARDSubtab}
+                                                        user={this.state.user}
+                                                        activeTab={this.state.activeHARDTab}
+                                                    /> }
+                                                    </>
+                                                    : null }
+                                                {this.state.activeHARDTab === 'hard-borrows' ?
+
+                                                    // HARD Borrows List
+                                                    <>
+                                                        <Row className="hard-borrow-list">
+                                                            {this.state.hasHARDBorrows === true && this.state.HARDBorrows ?
+                                                                this.state.HARDBorrows?.amount.map((denom, index) => {
+                                                                    return (
+                                                                        <Nav tabs className="mb-2" key={index}>
+
+                                                                            <NavItem key={index} style={{ listStyle: "none", display: "flex", flexWrap: "wrap" }} >
+                                                                                <NavLink
+                                                                                    className={classnames({ active: this.state.activeHARDSubtab === `${denom.denom}` })}
+                                                                                    onClick={() => { this.toggleHARDSubtab(`${denom.denom}`); }}
+                                                                                >
+                                                                                    {denom.denom === 'ukava' ? <span className="cdp-logo denom"><img src="/img/KAVA-symbol.svg" className="cdp-logo-image" /> {denom.denom.toUpperCase()} </span> : null}
+                                                                                    {denom.denom === 'xrpb' ? <span className="cdp-logo denom"><img src="/img/XRP-symbol.svg" className="cdp-logo-image" /> {denom.denom.toUpperCase()} </span> : null}
+                                                                                    {denom.denom != 'ukava' && denom.denom != 'xrpb' ? <span className="cdp-logo denom"><img src={`/img/${denom.denom.toUpperCase()}-symbol.svg`} className="cdp-logo-image" /> {denom.denom.toUpperCase()} </span> : null}
+                                                                                </NavLink>
+                                                                            </NavItem>
+                                                                        </Nav>)
+                                                                }) : null}
+                                                        </Row>
+
+                                                        {this.state.hasHARDBorrows === true && this.state.HARDBorrows ?
+                                                            this.state.HARDBorrows?.amount.map((denom, index) => {
+                                                                return (
+                                                                    <TabContent activeTab={this.state.activeHARDSubtab} key={index}>
+                                                                        <TabPane tabId={`${denom.denom}`}>
+                                                                            <HARD
+                                                                                address={this.state.address}
+                                                                                collateralDenom={this.state.activeHARDSubtab}
+                                                                                user={this.state.user}
+                                                                                activeTab={this.state.activeHARDTab}
+                                                                            />
+                                                                        </TabPane>
+                                                                    </TabContent>)
+                                                            }) : <HARD
+                                                                address={this.state.address}
+                                                                collateralDenom={this.state.activeHARDSubtab}
+                                                                user={this.state.user}
+                                                                activeTab={this.state.activeHARDTab}
+
+                                                            />}
+                                                    </> : null}
+                                            </TabPane>
+                                        </TabContent>
+
+                                    </TabPane>
+
                                     <TabPane tabId="cdp-incentive">
-                                        <Incentive
-                                            owner={this.state.address}
-                                            collateral='bnb'
-                                            user={this.state.user}
-                                        />
+                                        <Row className="incentive-list">
+                                            {this.state.hasIncentive ?
+                                                  <>
+                                                        <Nav tabs className="mb-2">
+                                                            <NavItem style={{ listStyle: "none", display: "flex", flexWrap: "wrap" }} >
+                                                                <NavLink
+                                                                    className={classnames({ active: this.state.activeIncentiveSubtab === `incentive-hard` })}
+                                                                    onClick={() => { this.toggleIncentiveSutab(`incentive-hard`); }}
+                                                                >
+                                                                    <span className="cdp-logo denom"><img src="/img/HARD-symbol.svg" className="cdp-logo-image"/>HARD </span>
+                                                                </NavLink>
+                                                            </NavItem>
+                                                        </Nav>
+                                                        <Nav tabs className="mb-2">
+
+                                                            <NavItem style={{ listStyle: "none", display: "flex", flexWrap: "wrap" }} >
+                                                                <NavLink
+                                                                    className={classnames({ active: this.state.activeIncentiveSubtab === `incentive-usdx-minting` })}
+                                                                    onClick={() => { this.toggleIncentiveSutab(`incentive-usdx-minting`); }}
+                                                                >
+                                                                    <span className="cdp-logo denom"><img src="/img/USDX-symbol.svg" className="cdp-logo-image"/>  USDX Minting </span>
+                                                                </NavLink>
+                                                            </NavItem>
+                                                        </Nav>
+                                                        </>
+                                                : null}
+                                        </Row>
+
+                                        <TabContent activeTab={this.state.activeIncentiveSubtab} >
+                                            <TabPane tabId={`${this.state.activeIncentiveSubtab}`}>
+                                                <Incentive
+                                                    owner={this.state.address}
+                                                    user={this.state.user}
+                                                    incentiveType={this.state.activeIncentiveSubtab}
+                                                />
+                                            </TabPane>
+                                        </TabContent>
                                     </TabPane>
+                                    
                                 </TabContent>
                             </CardBody>
                         </Card>

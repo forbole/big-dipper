@@ -42,8 +42,7 @@ export default class Proposal extends Component {
             noWithVetoPercent: 0,
             proposalValid: false,
             orderDir: -1,
-            breakDownSelection: 'Bar',
-            quorum: this.props && this.props.chainStates && this.props.chainStates.tallyParams &&  this.props.chainStates.tallyParams.quorum ? this.props.chainStates.tallyParams.quorum : 0.4
+            breakDownSelection: 'Bar'
         }
 
         if (Meteor.isServer) {
@@ -58,7 +57,6 @@ export default class Proposal extends Component {
         return null;
     }
 
-
     componentDidUpdate(prevProps) {
         if (this.props.proposal != prevProps.proposal) {
             this.setState({
@@ -66,9 +64,8 @@ export default class Proposal extends Component {
                 deposit: <div>{this.props.proposal.total_deposit ? this.props.proposal.total_deposit.map((deposit, i) => {
                     return <div key={i}>{new Coin(deposit.amount, deposit.denom).toString()}</div>
                 }) : ''} </div>,
-                quorum: this.props && this.props.chainStates && this.props.chainStates.tallyParams && this.props.chainStates.tallyParams.quorum ? this.props.chainStates.tallyParams.quorum : 0.4
+                quorum: this.props?.chain?.gov?.tallyParams?.quorum ?? 0.4
             });
-
             let now = moment();
             const powerReduction = Meteor.settings.public.powerReduction || Coin.StakingCoin.fraction;
             let totalVotingPower = this.props.chain.activeVotingPower * powerReduction;
@@ -92,16 +89,14 @@ export default class Proposal extends Component {
                             abstainPercent: (totalVotes > 0) ? parseInt(this.props.proposal.tally.abstain) / totalVotes * 100 : 0,
                             noPercent: (totalVotes > 0) ? parseInt(this.props.proposal.tally.no) / totalVotes * 100 : 0,
                             noWithVetoPercent: (totalVotes > 0) ? parseInt(this.props.proposal.tally.no_with_veto) / totalVotes * 100 : 0,
-                            proposalValid: (this.state.totalVotes / totalVotingPower > parseFloat(this.state.quorum)) ? true : false
+                            proposalValid: (this.state.totalVotes / totalVotingPower > parseFloat(this.props?.chain?.gov?.tallyParams?.quorum)) ? true : false
                         })
                     }
                     else {
                         let totalVotes = 0;
-                        // if(this.props.proposal.final_tally_result){
                         for (let i in this.props.proposal.final_tally_result) {
                             totalVotes += parseInt(this.props.proposal.final_tally_result[i]);
                         }
-                        // }
 
                         this.setState({
                             tally: this.props.proposal.final_tally_result,
@@ -113,7 +108,7 @@ export default class Proposal extends Component {
                             abstainPercent: (totalVotes > 0) ? parseInt(this.props.proposal.final_tally_result.abstain) / totalVotes * 100 : 0,
                             noPercent: (totalVotes > 0) ? parseInt(this.props.proposal.final_tally_result.no) / totalVotes * 100 : 0,
                             noWithVetoPercent: (totalVotes > 0) ? parseInt(this.props.proposal.final_tally_result.no_with_veto) / totalVotes * 100 : 0,
-                            proposalValid: (this.state.totalVotes / totalVotingPower > parseFloat(this.state.quorum)) ? true : false
+                            proposalValid: (this.state.totalVotes / totalVotingPower > parseFloat(this.props?.chain?.gov?.tallyParams?.quorum)) ? true : false
 
                         })
                     }
@@ -257,7 +252,7 @@ export default class Proposal extends Component {
                         </Col>
                         <Col className="voting-power data" md={4}>
                             <i className="material-icons d-md-none">power</i>
-                            {(vote.votingPower !== undefined) ? numbro(vote.votingPower).format('0,0.00') : ""}
+                            {(vote.votingPower !== undefined) ? numbro(vote.votingPower / Meteor.settings.public.powerReduction).format('0,0.00') : ""}
                         </Col>
                         <Col className="voting-power-percent data" md={3}>
                             <i className="material-icons d-md-none">equalizer</i>
@@ -355,22 +350,25 @@ export default class Proposal extends Component {
                                     <tbody>
                                         <tr>
                                             <td>{this.props.proposal.content.value.changes ? this.props.proposal.content.value.changes.map((changesItem, i) => {
-                                                return <div key={i}>{changesItem.subspace.charAt(0).toUpperCase() + changesItem.subspace.slice(1)} </div> }): ''}</td>
+                                                return <div key={i}>{changesItem.subspace.charAt(0).toUpperCase() + changesItem.subspace.slice(1)} </div>
+                                            }) : ''}</td>
                                             <td>{this.props.proposal.content.value.changes ? this.props.proposal.content.value.changes.map((changesItem, i) => {
-                                                return <div key={i}>{changesItem.key.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</div> }): ''}</td>
+                                                return <div key={i}>{changesItem.key.match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ")}</div>
+                                            }) : ''}</td>
                                             <td> {this.props.proposal.content.value.changes ? this.props.proposal.content.value.changes.map((changesItem, i) => {
-                                                return parseFloat(changesItem.value.replace(/"/g, "")) ? <div key={i}>{numbro(changesItem.value.replace(/"/g, "")).format("0,000")}</div> : <div key={i}>{changesItem.value.split(",").join("\n")}</div>}): ''}</td>
+                                                return parseFloat(changesItem.value.replace(/"/g, "")) ? <div key={i}>{numbro(changesItem.value.replace(/"/g, "")).format("0,000")}</div> : <div key={i}>{changesItem.value.split(",").join("\n")}</div>
+                                            }) : ''}</td>
                                         </tr>
                                     </tbody>
                                 </Table>
                             </Col>
-                        </Row>:null}
+                        </Row> : null}
                         <Row className="mb-2 border-top tally-result">
                             <Col md={3} className="label"><T>proposals.tallyResult</T> <em>({this.state.tallyDate})</em></Col>
                             <Col md={9} className="value">
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><VoteIcon vote="yes" /> Yes</Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally ? numbro(this.state.tally.yes).format("0,0") : ''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally ? numbro(this.state.tally.yes / Meteor.settings.public.powerReduction).format("0,0") : ''}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(1, e)}><i className="material-icons">{this.state.open === 1 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
                                         {this.renderTallyResultDetail(1, 'Yes')}
@@ -378,7 +376,7 @@ export default class Proposal extends Component {
                                 </Row>
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><VoteIcon vote="abstain" /> Abstain</Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally ? numbro(this.state.tally.abstain).format("0,0") : ''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally ? numbro(this.state.tally.abstain / Meteor.settings.public.powerReduction).format("0,0") : ''}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(2, e)}><i className="material-icons">{this.state.open === 2 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
                                         {this.renderTallyResultDetail(2, 'Abstain')}
@@ -386,7 +384,7 @@ export default class Proposal extends Component {
                                 </Row>
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><VoteIcon vote="no" /> No</Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally ? numbro(this.state.tally.no).format("0,0") : ''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally ? numbro(this.state.tally.no / Meteor.settings.public.powerReduction).format("0,0") : ''}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(3, e)}><i className="material-icons">{this.state.open === 3 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
                                         {this.renderTallyResultDetail(3, 'No')}
@@ -394,7 +392,7 @@ export default class Proposal extends Component {
                                 </Row>
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><VoteIcon vote="no_with_veto" /> No with Veto</Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally ? numbro(this.state.tally.no_with_veto).format("0,0") : ''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally ? numbro(this.state.tally.no_with_veto / Meteor.settings.public.powerReduction).format("0,0") : ''}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(4, e)}><i className="material-icons">{this.state.open === 4 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
                                         {this.renderTallyResultDetail(4, 'NoWithVeto')}
@@ -433,7 +431,7 @@ export default class Proposal extends Component {
                                         <Card body className="tally-info">
                                             <em>
                                                 <T _purify={false} percent={numbro(this.state.totalVotes / totalVotingPower).format("0.00%")}>proposals.percentageVoted</T><br />
-                                                {this.state.proposalValid ? <T _props={{ className: 'text-success' }} tentative={(!this.state.voteEnded) ? '(tentatively) ' : ''} _purify={false}>proposals.validMessage</T> : (this.state.voteEnded) ? <T _props={{ className: 'text-danger' }} quorum={numbro(this.state.quorum).format("0.00%")} _purify={false}>proposals.invalidMessage</T> : <T moreVotes={numbro(totalVotingPower * this.state.quorum - this.state.totalVotes).format("0,0")} _purify={false}>proposals.moreVoteMessage</T>}
+                                                {this.state.proposalValid ? <T _props={{ className: 'text-success' }} tentative={(!this.state.voteEnded) ? '(tentatively) ' : ''} _purify={false}>proposals.validMessage</T> : (this.state.voteEnded) ? <T _props={{ className: 'text-danger' }} quorum={numbro(this.props?.chain?.gov?.tallyParams?.quorum).format("0.00%")} _purify={false}>proposals.invalidMessage</T> : <T moreVotes={numbro(totalVotingPower * this.props?.chain?.gov?.tallyParams?.quorum  - this.state.totalVotes).format("0,0")} _purify={false}>proposals.moreVoteMessage</T>}
                                             </em>
                                         </Card>
                                     </Col>

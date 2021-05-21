@@ -39,7 +39,19 @@ export default TransactionsContainer = withTracker((props) => {
                 {"tx.value.msg.type":"cdp/MsgDeposit"},
                 {"tx.value.msg.type":"cdp/MsgWithdraw"},
                 {"tx.value.msg.type":"cdp/MsgDrawDebt"}, 
-                {"tx.value.msg.type":"cdp/MsgRepayDebt"}
+                {"tx.value.msg.type":"cdp/MsgRepayDebt"},
+                {"tx.value.msg.type": "cdp/MsgLiquidate"}
+
+            ]
+        }).fetch() : {},
+        hardTxs: transactionsExist ? Transactions.find({
+            $or: [
+                { "tx.value.msg.type": "hard/MsgDeposit" },
+                { "tx.value.msg.type": "hard/MsgWithdraw" },
+                { "tx.value.msg.type": "hard/MsgBorrow" },
+                { "tx.value.msg.type": "hard/MsgRepay" },
+                { "tx.value.msg.type": "hard/MsgLiquidate" }
+
             ]
         }).fetch() : {},
         swapTxs: transactionsExist ? Transactions.find({
@@ -50,7 +62,8 @@ export default TransactionsContainer = withTracker((props) => {
         }).fetch() : {},
         incentiveTxs: transactionsExist ? Transactions.find({
             $or: [
-                { "tx.value.msg.type": "incentive/MsgClaimReward" },
+                { "tx.value.msg.type": "incentive/MsgClaimUSDXMintingReward" },
+                { "tx.value.msg.type": "incentive/MsgClaimHardLiquidityProivderReward" }
             ]
         }).fetch() : {},
         auctionTxs: transactionsExist ? Transactions.find({

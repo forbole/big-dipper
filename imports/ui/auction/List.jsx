@@ -98,7 +98,7 @@ export default class List extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {this.state.auctionList ? this.state.auctionList.slice(this.state.currentPage * this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize) : null}
+                            {this.state.auctionList ? this.state.auctionList?.slice(this.state.currentPage * this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize) : null}
                         </tbody>
                     </Table>
                 </div>

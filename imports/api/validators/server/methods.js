@@ -23,7 +23,6 @@ Meteor.methods({
             return false;
         }
     },
-    // async 'Validators.getAllDelegations'(address){
     'Validators.getAllDelegations'(address){
         let url = LCD + '/staking/validators/'+address+'/delegations';
 
@@ -40,7 +39,6 @@ Meteor.methods({
             };
         }
         catch (e){
-            console.log(url);
             console.log(e);
         }
     }

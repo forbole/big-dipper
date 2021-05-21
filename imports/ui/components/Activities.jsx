@@ -8,6 +8,7 @@ import DepositCDP from '../cdp/DepositCDP.jsx';
 import WithdrawCDP from '../cdp/WithdrawCDP.jsx';
 import DrawDebt from '../cdp/DrawDebt.jsx';
 import RepayDebt from '../cdp/RepayDebt.jsx';
+import Liquidate from '../cdp/Liquidate.jsx';
 import CreateSwap from '../bep3/CreateSwap.jsx';
 import { ListGroup, ListGroupItem, Table } from 'reactstrap';
 import i18n from 'meteor/universe:i18n';
@@ -97,16 +98,45 @@ export default class Activites extends Component {
         case "cdp/MsgDrawDebt":
             return <div>
                 <div><Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
-                <DrawDebt sender={msg.value.sender} cdp_denom={msg.value.cdp_denom} principal={msg.value.principal} />
+                <DrawDebt sender={msg.value.sender} cdp_denom={msg.value.collateral_type} principal={msg.value.principal} />
             </div>
         case "cdp/MsgRepayDebt":
             return <div>
                 <div><Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
-                <RepayDebt sender={msg.value.sender} cdp_denom={msg.value.cdp_denom} payment={msg.value.payment} />
+                <RepayDebt sender={msg.value.sender} cdp_denom={msg.value.collateral_type} payment={msg.value.payment} />
+            </div>
+        case "cdp/MsgLiquidate":
+            return <div>
+                <div><Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
+                <Liquidate address={msg.value.owner} collateral={msg.value.collateral} />
             </div>
 
-            // Incentive
-        case "incentive/MsgClaimReward":
+            // HARD
+        case "hard/MsgDeposit":
+            return <div>
+                <div><Account address={msg.value.depositor} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
+            </div>
+        case "hard/MsgWithdraw":
+            return <div>
+                <div><Account address={msg.value.depositor} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
+            </div>
+        case "hard/MsgBorrow":
+            return <div>
+                <div><Account address={msg.value.borrower} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
+            </div>
+        case "hard/MsgLiquidate":
+            return <div>
+                <div><Account address={msg.value.sender || msg.value.depositor} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
+            </div>
+        case "hard/MsgRepay":
+            return <div>
+                <div><Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} /> </div>
+            </div>
+
+
+            // incentive 
+            // USDX rewards
+        case "incentive/MsgClaimUSDXMintingReward":
             return <div>
                 <Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} />
                 <Table striped className="mt-3">
@@ -122,14 +152,50 @@ export default class Activites extends Component {
                     </tbody>
                 </Table>
             </div>
-            // Pricefeed
+            // HARD rewards
+        case "incentive/MsgClaimHardLiquidityProivderReward":
+            return <div>
+                <Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} />
+                <Table striped className="mt-3">
+                    <tbody>
+                        {events['claim_reward'].map((reward, i) => {
+                            if (i % 2 == 1) {
+                                return <tr key={i}>
+                                    <th>{voca.chain(reward.key).replace("_", " ").titleCase().value()}</th>
+                                    <td>{new Coin(parseInt(reward.value), reward.value.match(/[a-z]*$/)[0]).toString()}</td>
+                                </tr>
+                            }
+                        })}
+                    </tbody>
+                </Table>
+            </div>
+
+        case "incentive/MsgClaimHardReward":
+            return <div>
+                <Account address={msg.value.sender} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} />
+                <Table striped className="mt-3">
+                    <tbody>
+                        {events['claim_reward'].map((reward, i) => {
+                            if (i % 2 == 1) {
+                                return <tr key={i}>
+                                    <th>{voca.chain(reward.key).replace("_", " ").titleCase().value()}</th>
+                                    <td>{new Coin(parseInt(reward.value), reward.value.match(/[a-z]*$/)[0]).toString()}</td>
+                                </tr>
+                            }
+                        })}
+                    </tbody>
+                </Table>
+            </div>
+                
+
+            // pricefeed
         case "pricefeed/MsgPostPrice":
             return <div>
                 <Account address={msg.value.from} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} />
                 <Table striped className="mt-3">
                     <thead>
                         <tr>
-                            <th className="w-25">{msg.value.market_id}</th>
+                            <th className="w-25">{msg.value.market_id.toUpperCase()}</th>
                             <td>{numbro(msg.value.price).formatCurrency({ mantissa: 6 })}</td>
                         </tr>
                     </thead>
@@ -141,14 +207,15 @@ export default class Activites extends Component {
                     </tbody>
                 </Table>
             </div>
-            //Auctions
+
+            // auction
         case "auction/MsgPlaceBid":
             return <div>
                 <Account address={msg.value.from} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg.type} />
                 <Table striped className="mt-3">
                     <thead>
                         <tr>
-                            <th className="w-25">activities.auctionID</th>
+                            <th className="w-25"><T>activities.auctionID</T></th>
                             <td>{msg.value.auction_id}</td>
                         </tr>
                     </thead>

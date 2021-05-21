@@ -2,15 +2,15 @@
 
 import '/imports/startup/server';
 import '/imports/startup/both';
-// import moment from 'moment';
-// import '/imports/api/blocks/blocks.js';
 
 SYNCING = false;
+TXSYNCING = false;
 COUNTMISSEDBLOCKS = false;
 COUNTMISSEDBLOCKSSTATS = false;
 RPC = Meteor.settings.remote.rpc;
 LCD = Meteor.settings.remote.lcd;
 timerBlocks = 0;
+timerTransactions = 0;
 timerChain = 0;
 timerConsensus = 0;
 timerProposal = 0;
@@ -39,6 +39,17 @@ updateBlock = () => {
         }
         else {
             console.log("updateBlocks: " + result);
+        }
+    })
+}
+
+updateTransactions = () => {
+    Meteor.call('Transactions.updateTransactions', (error, result) => {
+        if (error) {
+            console.log("updateTransactions: " + error);
+        }
+        else {
+            console.log("updateTransactions: " + result);
         }
     })
 }
@@ -82,16 +93,6 @@ updateMissedBlocks = () => {
             console.log("missed blocks ok:" + result);
         }
     });
-    /*
-        Meteor.call('ValidatorRecords.calculateMissedBlocksStats', (error, result) =>{
-            if (error){
-                console.log("missed blocks stats error: "+ error)
-            }
-            if (result){
-                console.log("missed blocks stats ok:" + result);
-            }
-        });
-    */
 }
 
 getDelegations = () => {
@@ -192,6 +193,10 @@ Meteor.startup(function () {
                 timerBlocks = Meteor.setInterval(function () {
                     updateBlock();
                 }, Meteor.settings.params.blockInterval);
+
+                timerTransactions = Meteor.setInterval(function () {
+                    updateTransactions();
+                }, Meteor.settings.params.transactionsInterval);
 
                 timerChain = Meteor.setInterval(function () {
                     updateChainStatus();

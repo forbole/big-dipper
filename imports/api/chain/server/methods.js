@@ -7,101 +7,109 @@ import { VotingPowerHistory } from '../../voting-power/history.js';
 import Coin from '../../../../both/utils/coins.js';
 
 findVotingPower = (validator, genValidators) => {
-    for (let v in genValidators){
-        if (validator.pub_key.value == genValidators[v].pub_key.value){
+    for (let v in genValidators) {
+        if (validator.pub_key.value == genValidators[v].pub_key.value) {
             return parseInt(genValidators[v].power);
         }
     }
 }
 
 Meteor.methods({
-    'chain.getConsensusState': function(){
+    'chain.getConsensusState': function () {
         this.unblock();
-        let url = RPC+'/dump_consensus_state';
-        try{
+        let url = RPC + '/dump_consensus_state';
+        try {
             let response = HTTP.get(url);
             let consensus = JSON.parse(response.content);
             consensus = consensus.result;
             let height = consensus.round_state.height;
             let round = consensus.round_state.round;
             let step = consensus.round_state.step;
-            let votedPower = Math.round(parseFloat(consensus.round_state.votes[round].prevotes_bit_array.split(" ")[3])*100);
+            let votedPower = Math.round(parseFloat(consensus.round_state.votes[round].prevotes_bit_array.split(" ")[3]) * 100);
 
-            Chain.update({chainId:Meteor.settings.public.chainId}, {$set:{
-                votingHeight: height,
-                votingRound: round,
-                votingStep: step,
-                votedPower: votedPower,
-                proposerAddress: consensus.round_state.validators.proposer.address,
-                prevotes: consensus.round_state.votes[round].prevotes,
-                precommits: consensus.round_state.votes[round].precommits
-            }});
+            Chain.update({ chainId: Meteor.settings.public.chainId }, {
+                $set: {
+                    votingHeight: height,
+                    votingRound: round,
+                    votingStep: step,
+                    votedPower: votedPower,
+                    proposerAddress: consensus.round_state.validators.proposer.address,
+                    prevotes: consensus.round_state.votes[round].prevotes,
+                    precommits: consensus.round_state.votes[round].precommits
+                }
+            });
         }
-        catch(e){
+        catch (e) {
             console.log(url);
             console.log(e);
         }
     },
-    'chain.updateStatus': function(){
+    'chain.updateStatus': function () {
         this.unblock();
-        let url = RPC+'/status';
-        try{
+        let url = RPC + '/status';
+        try {
             let response = HTTP.get(url);
             let status = JSON.parse(response.content);
             status = status.result;
-            let chain = {};
+            let chain = { chainId: '', latestBlockHeight: 0, latestBlockTime: 0, validators: 0, activeVotingPower: 0, staking: {}, distribution: {}, mint: {}, gov: { tallyParams: {}, depositParams: {}, votingParams: {} } };
             chain.chainId = status.node_info.network;
             chain.latestBlockHeight = status.sync_info.latest_block_height;
             chain.latestBlockTime = status.sync_info.latest_block_time;
 
-            let latestState = ChainStates.findOne({}, {sort: {height: -1}})
+            let latestState = ChainStates.findOne({}, { sort: { height: -1 } })
             if (latestState && latestState.height >= chain.latestBlockHeight) {
                 return `no updates (getting block ${chain.latestBlockHeight} at block ${latestState.height})`
             }
 
             // Since Tendermint v0.33, validator page default set to return 30 validators.
             // Query latest height with page 1 and 100 validators per page.
-            url = RPC+`/validators?height=${chain.latestBlockHeight}&page=1&per_page=100`;
+            url = RPC + `/validators?height=${chain.latestBlockHeight}&page=1&per_page=100`;
             response = HTTP.get(url);
             let validators = JSON.parse(response.content);
             validators = validators.result.validators;
             chain.validators = validators.length;
             let activeVP = 0;
-            for (v in validators){
+            for (v in validators) {
                 activeVP += parseInt(validators[v].voting_power);
             }
             chain.activeVotingPower = activeVP;
 
+            // update staking params
+            try {
+                url = LCD + 'staking/parameters';
+                response = HTTP.get(url);
+                chain.staking = JSON.parse(response.content).result;
+            }
+            catch (e) {
+                console.log(e);
+            }
 
-            Chain.update({chainId:chain.chainId}, {$set:chain}, {upsert: true});
             // Get chain states
-            if (parseInt(chain.latestBlockHeight) > 0){
-                let chainStates = {};
+            if (parseInt(chain.latestBlockHeight) > 0) {
+                let chainStates = {height: 0, };
                 chainStates.height = parseInt(status.sync_info.latest_block_height);
                 chainStates.time = new Date(status.sync_info.latest_block_time);
 
                 url = LCD + '/staking/pool';
-                try{
+                try {
                     response = HTTP.get(url);
                     let bonding = JSON.parse(response.content).result;
-                    // chain.bondedTokens = bonding.bonded_tokens;
-                    // chain.notBondedTokens = bonding.not_bonded_tokens;
                     chainStates.bondedTokens = parseInt(bonding.bonded_tokens);
                     chainStates.notBondedTokens = parseInt(bonding.not_bonded_tokens);
                 }
-                catch(e){
+                catch (e) {
                     console.log(url);
                     console.log(e);
                 }
 
-                if ( Coin.StakingCoin.denom ) {
-                    url = LCD + '/supply/total/'+ Coin.StakingCoin.denom;
-                    try{
+                if (Coin.StakingCoin.denom) {
+                    url = LCD + '/supply/total/' + Coin.StakingCoin.denom;
+                    try {
                         response = HTTP.get(url);
                         let supply = JSON.parse(response.content).result;
                         chainStates.totalSupply = parseInt(supply);
                     }
-                    catch(e){
+                    catch (e) {
                         console.log(url);
                         console.log(e);
                     }
@@ -110,7 +118,7 @@ Meteor.methods({
                     try {
                         response = HTTP.get(url);
                         let pool = JSON.parse(response.content).result;
-                        if (pool && pool.length > 0){
+                        if (pool && pool.length > 0) {
                             chainStates.communityPool = [];
                             pool.forEach((amount, i) => {
                                 chainStates.communityPool.push({
@@ -120,73 +128,111 @@ Meteor.methods({
                             })
                         }
                     }
-                    catch (e){
+                    catch (e) {
                         console.log(url);
                         console.log(e)
                     }
 
-                    url = LCD + '/minting/inflation';
-                    try{
-                        response = HTTP.get(url);
-                        let inflation = JSON.parse(response.content).result;
-                        if (inflation){
-                            chainStates.inflation = parseFloat(inflation)
-                        }
-                    }
-                    catch(e){
-                        console.log(url);
-                        console.log(e);
-                    }
-
-                    url = LCD + '/minting/annual-provisions';
-                    try{
-                        response = HTTP.get(url);
-                        let provisions = JSON.parse(response.content);
-                        if (provisions){
-                            chainStates.annualProvisions = parseFloat(provisions.result)
-                        }
-                    }
-                    catch(e){
-                        console.log(url);
-                        console.log(e);
-                    }
-
-                    url = LCD + '/gov/parameters/tallying';
+                    // update distribution params
                     try {
+                        url = LCD + '/distribution/parameters';
                         response = HTTP.get(url);
-                        let tallying = JSON.parse(response.content);
-                        if (tallying) {
-                            chainStates.tallyParams = (tallying.result)
-                        }
+                        chain.distribution = JSON.parse(response.content).result;
                     }
                     catch (e) {
-                        console.log(url);
                         console.log(e);
                     }
+                }
 
-            		}
+                url = LCD + '/minting/inflation';
+                try {
+                    response = HTTP.get(url);
+                    let inflation = JSON.parse(response.content).result;
+                    if (inflation) {
+                        chainStates.inflation = parseFloat(inflation)
+                    }
+                }
+                catch (e) {
+                    console.log(url);
+                    console.log(e);
+                }
+
+                url = LCD + '/minting/annual-provisions';
+                try {
+                    response = HTTP.get(url);
+                    let provisions = JSON.parse(response.content);
+                    if (provisions) {
+                        chainStates.annualProvisions = parseFloat(provisions.result)
+                    }
+                }
+                catch (e) {
+                    console.log(url);
+                    console.log(e);
+                }
+
+                // update mint params
+                try {
+                    url = LCD + '/minting/parameters';
+                    response = HTTP.get(url);
+                    let mint = JSON.parse(response.content).result
+                    chain.mint = mint;
+                }
+                catch (e) {
+                    console.log(e);
+                }
+
+                url = LCD + '/gov/parameters/tallying';
+                try {
+                    response = HTTP.get(url);
+                    let tallying = JSON.parse(response.content);
+                    if (tallying) {
+                        chain.gov.tallyParams = (tallying.result)
+                    }
+                }
+                catch (e) {
+                    console.log(url);
+                    console.log(e);
+                }
+
+                try {
+                    url = LCD + '/gov/parameters/deposit';
+                    response = HTTP.get(url);
+                    let gov = JSON.parse(response.content).result;
+                    chain.gov.depositParams = gov;
+                }
+                catch (e) {
+                    console.log(e);
+                }
+                try {
+                    url = LCD + '/gov/parameters/voting';
+                    response = HTTP.get(url);
+                    let gov = JSON.parse(response.content).result;
+                    chain.gov.votingParams = gov;
+                }
+                catch (e) {
+                    console.log(e);
+                }
+
                 ChainStates.insert(chainStates);
             }
 
-            // chain.totalVotingPower = totalVP;
+            Chain.update({ chainId: chain.chainId }, { $set: chain }, { upsert: true });
 
-            // validators = Validators.find({}).fetch();
-            // console.log(validators);
             return chain.latestBlockHeight;
         }
-        catch (e){
+        catch (e) {
             console.log(url);
             console.log(e);
             return "Error getting chain status.";
         }
     },
-    'chain.getLatestStatus': function(){
-        Chain.find().sort({created:-1}).limit(1);
+    'chain.getLatestStatus': function () {
+        Chain.find().sort({ created: -1 }).limit(1);
     },
-    'chain.genesis': function(){
-        let chain = Chain.findOne({chainId: Meteor.settings.public.chainId});
+    'chain.genesis': function () {
+        let chain = Chain.findOne({ chainId: Meteor.settings.public.chainId });
 
-        if (chain && chain.readGenesis){
+        if (chain && chain.readGenesis) {
             console.log('Genesis file has been processed');
         }
         else if (Meteor.settings.debug.readGenesis) {
@@ -217,32 +263,30 @@ Meteor.methods({
                     votingParams: {},
                     tallyParams: {}
                 },
-                slashing:{
+                slashing: {
                     params: genesis.app_state.slashing.params
                 },
                 supply: genesis.app_state.supply,
                 crisis: genesis.app_state.crisis
             }
 
-	    if (genesis.app_state.gov) {
+            if (genesis.app_state.gov) {
                 chainParams.gov = {
                     startingProposalId: genesis.app_state.gov.starting_proposal_id,
                     depositParams: genesis.app_state.gov.deposit_params,
                     votingParams: genesis.app_state.gov.voting_params,
                     tallyParams: genesis.app_state.gov.tally_params
                 };
-	    }
+            }
             let totalVotingPower = 0;
 
             // read gentx
-            if (genesis.app_state.genutil && genesis.app_state.genutil.gentxs && (genesis.app_state.genutil.gentxs.length > 0)){
-                for (i in genesis.app_state.genutil.gentxs){
+            if (genesis.app_state.genutil && genesis.app_state.genutil.gentxs && (genesis.app_state.genutil.gentxs.length > 0)) {
+                for (i in genesis.app_state.genutil.gentxs) {
                     let msg = genesis.app_state.genutil.gentxs[i].value.msg;
-                    // console.log(msg.type);
-                    for (m in msg){
-                        if (msg[m].type == "cosmos-sdk/MsgCreateValidator"){
+                    for (m in msg) {
+                        if (msg[m].type == "cosmos-sdk/MsgCreateValidator") {
                             console.log(msg[m].value);
-                            // let command = Meteor.settings.bin.gaiadebug+" pubkey "+msg[m].value.pubkey;
                             let validator = {
                                 consensus_pubkey: msg[m].value.pubkey,
                                 description: msg[m].value.description,
@@ -258,11 +302,10 @@ Meteor.methods({
                             totalVotingPower += validator.voting_power;
 
                             let pubkeyValue = Meteor.call('bech32ToPubkey', msg[m].value.pubkey);
-                            // Validators.upsert({consensus_pubkey:msg[m].value.pubkey},validator);
 
                             validator.pub_key = {
-                                "type":"tendermint/PubKeyEd25519",
-                                "value":pubkeyValue
+                                "type": "tendermint/PubKeyEd25519",
+                                "value": pubkeyValue
                             }
 
                             validator.address = getAddress(validator.pub_key);
@@ -285,20 +328,19 @@ Meteor.methods({
 
             // read validators from previous chain
             console.log('read validators from previous chain');
-            if (genesis.app_state.staking.validators && genesis.app_state.staking.validators.length > 0){
+            if (genesis.app_state.staking.validators && genesis.app_state.staking.validators.length > 0) {
                 console.log(genesis.app_state.staking.validators.length);
                 let genValidatorsSet = genesis.app_state.staking.validators;
                 let genValidators = genesis.validators;
-                for (let v in genValidatorsSet){
-                    // console.log(genValidators[v]);
+                for (let v in genValidatorsSet) {
                     let validator = genValidatorsSet[v];
                     validator.delegator_address = Meteor.call('getDelegator', genValidatorsSet[v].operator_address);
 
                     let pubkeyValue = Meteor.call('bech32ToPubkey', validator.consensus_pubkey);
 
                     validator.pub_key = {
-                        "type":"tendermint/PubKeyEd25519",
-                        "value":pubkeyValue
+                        "type": "tendermint/PubKeyEd25519",
+                        "value": pubkeyValue
                     }
 
                     validator.address = getAddress(validator.pub_key);
@@ -309,7 +351,7 @@ Meteor.methods({
                     validator.voting_power = findVotingPower(validator, genValidators);
                     totalVotingPower += validator.voting_power;
 
-                    Validators.upsert({consensus_pubkey:validator.consensus_pubkey},validator);
+                    Validators.upsert({ consensus_pubkey: validator.consensus_pubkey }, validator);
                     VotingPowerHistory.insert({
                         address: validator.address,
                         prev_voting_power: 0,
@@ -323,7 +365,7 @@ Meteor.methods({
 
             chainParams.readGenesis = true;
             chainParams.activeVotingPower = totalVotingPower;
-            let result = Chain.upsert({chainId:chainParams.chainId}, {$set:chainParams});
+            let result = Chain.upsert({ chainId: chainParams.chainId }, { $set: chainParams });
 
 
             console.log('=== Finished processing genesis file ===');

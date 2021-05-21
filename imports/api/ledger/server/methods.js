@@ -1,7 +1,9 @@
 import { HTTP } from 'meteor/http';
+import { Validators } from '../../validators/validators';
 
 Meteor.methods({
     'transaction.submit': function (txInfo) {
+        this.unblock();
         const url = `${LCD}/txs`;
         data = {
             "tx": txInfo.value,
@@ -20,6 +22,7 @@ Meteor.methods({
         }
     },
     'transaction.execute': function (body, path) {
+        this.unblock();
         const url = `${LCD}/${path}`;
         data = {
             "base_req": {
@@ -33,7 +36,8 @@ Meteor.methods({
             return JSON.parse(response.content);
         }
     },
-    'transaction.simulate': function (txMsg, from, path, adjustment = '1.2') {
+    'transaction.simulate': function (txMsg, from, accountNumber, sequence, path, adjustment = '1.2') {
+        this.unblock();
         const url = `${LCD}/${path}`;
         data = {
             ...txMsg,
@@ -41,17 +45,21 @@ Meteor.methods({
                 "from": from,
                 "chain_id": Meteor.settings.public.chainId,
                 "gas_adjustment": adjustment,
+                "account_number": accountNumber,
+                "sequence": sequence,
                 "simulate": true
             }
         };
         let response = HTTP.post(url, { data });
-
         if (response.statusCode == 200) {
             return JSON.parse(response.content).gas_estimate;
         }
     },
-
-
+    'isValidator': function (address) {
+        this.unblock();
+        let validator = Validators.findOne({ delegator_address: address })
+        return validator;
+    },
     'cdp.getCDPParams': function () {
         this.unblock();
         let url = LCD + '/cdp/parameters';
@@ -65,7 +73,7 @@ Meteor.methods({
             }
         }
         catch (e) {
-            console.log(e.response.content)
+            console.log(e)
         }
     },
 
@@ -82,7 +90,7 @@ Meteor.methods({
             }
         }
         catch (e) {
-            console.log(e.response.content)
+            console.log(e)
         }
     },
 
@@ -98,13 +106,13 @@ Meteor.methods({
         }
         catch (e) {
             console.log(url);
-            console.log(e.response.content);
+            console.log(e)
         }
     },
 
-    'account.getIncentive': function (address, collateral) {
+    'account.getIncentive': function () {
         this.unblock();
-        let url = LCD + '/incentive/claims/' + address + '/' + collateral;
+        let url = LCD + '/incentive/rewards'
 
         try {
             let response = HTTP.get(url);
@@ -114,7 +122,7 @@ Meteor.methods({
         }
         catch (e) {
             console.log(url);
-            console.log(e.response.content);
+            console.log(e)
         }
     },
 
@@ -130,10 +138,9 @@ Meteor.methods({
         }
         catch (e) {
             console.log(url);
-            console.log(e.response.content);
+            console.log(e)
         }
     }
-
 
 
 })

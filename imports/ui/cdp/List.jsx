@@ -12,13 +12,14 @@ let minCollateralRatio = 0;
 
 const CDPRow = (props) => {
     return <tr>
-        <th className="d-none d-sm-table-cell counter ">{(props.cdpList.cdp.id)}</th>
-        <td className="owner"><Link to={"/account/" + props.cdpList.cdp.owner}>{props.cdpList.cdp.owner}</Link></td>
-        <td className="collateral-deposited bold-text">{props.cdpList.cdp.collateral ? <div>{new Coin(props.cdpList.cdp.collateral.amount, props.cdpList.cdp.collateral.denom).toString()}</div> : '0 usdx'}</td>
-        <td className="principal-drawn bold-text">{props.cdpList.cdp.principal ? <div>{new Coin(props.cdpList.cdp.principal.amount, props.cdpList.cdp.principal.denom).toString()}</div> : '0 usdx'}</td>
-        <td className="value"> {parseFloat(props.cdpList.collateralization_ratio) > parseFloat(minCollateralRatio) ? <img src="/img/increase.svg" className="img-fluid collateral-ratio-icon pr-1 pb-1" /> : <img src="/img/reduce.svg" className="img-fluid collateral-ratio-icon pr-1 pb-1" />}{numbro(parseFloat(props.cdpList.collateralization_ratio)).format('0.000000')}</td>
-        <td className="accumulated-fees">{props.cdpList.cdp.accumulated_fees ? <div>{new Coin(props.cdpList.cdp.accumulated_fees.amount, props.cdpList.cdp.accumulated_fees.denom).toString()}</div> : '0 usdx'}</td>
-        <td className="fees-updated"><TimeStamp time={props.cdpList.cdp.fees_updated} /></td>
+        <th className="d-none d-sm-table-cell counter ">{(props?.cdpList?.cdp?.id ?? props?.cdpList?.id)}</th>
+        <td className="owner"><Link to={"/account/" + props?.cdpList?.cdp?.owner ?? props?.cdpList?.owner}>{props?.cdpList?.cdp?.owner ?? props?.cdpList?.owner}</Link></td>
+        <td className="collateral-deposited-type">{props?.cdpList ? <div>{props?.cdpList?.cdp?.type}</div> : ' '}</td>
+        <td className="collateral-deposited bold-text">{props?.cdpList ? <div>{new Coin(props?.cdpList?.cdp?.collateral?.amount ?? props?.cdpList?.collateral.amount, props?.cdpList?.cdp?.collateral?.denom ?? props?.cdpList?.collateral?.denom).toString()}</div> : '0'}</td>
+        <td className="principal-drawn bold-text">{props?.cdpList ? <div>{new Coin(props?.cdpList?.cdp?.principal?.amount ?? props?.cdpList?.principal?.amount, props?.cdpList?.cdp?.principal?.denom ?? props?.cdpList?.principal?.denom).toString()}</div> : '0'}</td>
+        <td className="value"> {parseFloat(props?.cdpList?.collateralization_ratio) > parseFloat(minCollateralRatio) ? <img src="/img/increase.svg" className="img-fluid collateral-ratio-icon pr-1 pb-1" /> : <img src="/img/reduce.svg" className="img-fluid collateral-ratio-icon pr-1 pb-1" />}{numbro(parseFloat(props?.cdpList?.collateralization_ratio)).format('0.000000')}</td>
+        <td className="accumulated-fees">{props?.cdpList ? <div>{new Coin(props?.cdpList?.cdp?.accumulated_fees?.amount ?? props?.cdpList?.accumulated_fees?.amount, props?.cdpList?.cdp?.accumulated_fees?.denom ?? props?.cdpList?.accumulated_fees?.denom).toString()}</div> : '0'}</td>
+        <td className="fees-updated"><TimeStamp time={props?.cdpList?.cdp?.fees_updated ?? props?.cdpList?.fees_updated} /></td>
     </tr>
 }
 
@@ -34,6 +35,7 @@ export default class List extends Component {
             minCollateralRatio: 0,
             collateralParams: [],
             loading: true,
+            noActiveCDP: false
         }
     }
 
@@ -54,21 +56,30 @@ export default class List extends Component {
 
     getCDPList = () => {
         Meteor.call('cdp.getCDPList', this.props.collateralType, (error, result) => {
-            if(error){
+            if(result){
+                this.setState({
+                    cdpList: result?.length > 1 ? result.map((cdpList, i) => {
+                        return <CDPRow key={i} index={i} cdpList={cdpList} />
+                    }) : <CDPRow cdpList={result[0]} />,
+                    pagesCount: Math.ceil(result.length / this.state.pageSize),
+                    currentPage: 1,
+                    loading: false,
+                    noActiveCDP: false
+                })
+            }
+            if(result === null){
+                this.setState({
+                    cdpList: null,
+                    pagesCount: 0,
+                    loading: false,
+                    noActiveCDP: true
+                })
+            }
+            if(error) {
                 this.setState({
                     cdpList: undefined,
                     pagesCount: 0,
-                    loading: true
-                })
-            }
-            else {
-                this.setState({
-                    cdpList: result.map((cdpList, i) => {
-                        return <CDPRow key={i} index={i} cdpList={cdpList} />
-                    }),
-                    pagesCount: Math.ceil(result.length / this.state.pageSize),
-                    currentPage: 1,
-                    loading: false
+                    loading: true,
                 })
             }
         })
@@ -108,6 +119,7 @@ export default class List extends Component {
                             <tr>
                                 <th className="d-none d-sm-table-cell counter "><i className="material-icons">sort</i> <T>cdp.cdpID</T></th>
                                 <th className="d-none d-sm-table-cell owner"><i className="material-icons">account_circle</i> <span className="d-none d-sm-inline"><T>cdp.owner</T></span></th>
+                                <th className="collateral-deposited-type "><i className="material-icons">attach_money</i> <span className="d-none d-sm-inline"><T>cdp.collateralType</T></span></th>
                                 <th className="collateral-deposited "><i className="material-icons">attach_money</i> <span className="d-none d-sm-inline"><T>cdp.collateralDeposited</T></span></th>
                                 <th className="principal-drawn"><i className="material-icons">attach_money</i> <span className="d-none d-sm-inline"><T>cdp.principal</T></span></th>
                                 <th className="value "><i className="material-icons">attach_money</i> <span className="d-none d-sm-inline"><T>cdp.collateralizationRatio</T></span></th>
@@ -116,24 +128,25 @@ export default class List extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {this.state.cdpList ? this.state.cdpList.slice(this.state.currentPage * this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize) : null}
+                            {this.state.cdpList ? (Object.keys(this.state.cdpList).length > this.state.pageSize ? this.state.cdpList.slice(this.state.currentPage * this.state.pageSize - this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize - this.state.pageSize) : this.state.cdpList) : "No active CDPs. "}
                         </tbody>
                     </Table>
                 </div>
-                <Pagination
-                    firstPageText={<i className="material-icons">first_page</i>}
-                    lastPageText={<i className="material-icons">last_page</i>}
-                    prevPageText={<i className="material-icons">navigate_before</i>}
-                    nextPageText={<i className="material-icons">navigate_next</i>}
-                    activePage={this.state.currentPage}
-                    itemsCountPerPage={this.state.pageSize}
-                    totalItemsCount={this.state.cdpList.length - (this.state.cdpList.length % this.state.pageSize)}
-                    pageRangeDisplayed={10}
-                    // eslint-disable-next-line react/jsx-no-bind
-                    onChange={this.handlePageChange.bind(this)}
-                    itemClass="pagination-item"
-                    activeClass="pagination-active"
-                />
+                {this.state.cdpList ?
+                    <Pagination
+                        firstPageText={<i className="material-icons">first_page</i>}
+                        lastPageText={<i className="material-icons">last_page</i>}
+                        prevPageText={<i className="material-icons">navigate_before</i>}
+                        nextPageText={<i className="material-icons">navigate_next</i>}
+                        activePage={this.state.currentPage}
+                        itemsCountPerPage={this.state.pageSize}
+                        totalItemsCount={this.state.cdpList.length}
+                        pageRangeDisplayed={10}
+                        // eslint-disable-next-line react/jsx-no-bind
+                        onChange={this.handlePageChange.bind(this)}
+                        itemClass="pagination-item"
+                        activeClass="pagination-active"
+                    /> : null }
             </div>)
         }
     }

@@ -24,6 +24,7 @@ common:
     retry: 'Retry'
     rewards: 'Rewards'
     lastUpdated: 'Last Updated:'
+    bondedTokens: "Bonded Tokens"
 navbar:
     siteName: 'BIG DIPPER'
     version: 'kava-4'
@@ -150,6 +151,7 @@ transactions:
     info: 'More Info'
     address: 'Address'
     amount: 'Amount'
+    hard: 'HARD'
 
 
 bep3:
@@ -176,6 +178,7 @@ cdp:
     idClaimPeriod: 'Claim Period ID'
     owner: 'Owner'
     collateral: 'Collateral'
+    collateralType: 'Collateral Type'
     collateralDeposited: 'Collateral Deposited'
     principal: 'Principal Drawn'
     accumulatedFees: 'Accumulated Fees'
@@ -202,6 +205,7 @@ cdp:
     totalReward: 'Total Rewards Value'
     bnbusd: 'BNB:USD Market'
     bnbusd30: 'BNB:USD:30 Market'
+    interestFactor: "Interest Factor"
 
 proposals:
     notFound: 'No proposal found.'
@@ -316,8 +320,9 @@ messageTypes:
     createCDP: 'Create CDP'
     depositCDP: 'Deposit CDP'
     withdrawCDP: 'Withdraw CDP'
-    repayDebt: 'Repay Debt'
-    drawDebt: 'Draw Debt'
+    repayDebt: 'Repay CDP Debt'
+    drawDebt: 'Draw CDP Debt'
+    liquidate: 'Liquidate CDP'
     postPrice: 'Post Price'
     claimIncentive: 'Claim Incentive'
     createValidator: 'Create Validator'
@@ -335,3 +340,25 @@ messageTypes:
     IBCTransfer: 'IBC Transfer'
     IBCReceive: 'IBC Receive'
     placeBid: 'Place Bid'
+    depositHARD: 'HARD Deposit'
+    withdrawHARD: 'HARD Withdraw'
+    borrowHARD: 'HARD Borrow'
+    liquidateHARD: 'HARD Liquidate'
+    repayHARD: 'HARD Repay'
+hard:
+    deposit: 'Deposit'
+    repay: "Repay"
+    memo: 'Memo'
+    depositor: 'Depositor'
+    borrower: 'Borrower'
+    amount: 'Amount'
+    index: 'Index'
+    hard: 'HARD'
+    borrow: 'Borrow'
+    withdraw: 'Withdraw'
+    hardList: 'List of HARD Deposits and Borrows'
+incentive:
+    rewards: 'Rewards'
+    owner: 'Owner'
+    collateralType: 'Collateral Type'
+    rewardFactor: 'Reward Factor'

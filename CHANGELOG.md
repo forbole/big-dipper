@@ -1,6 +1,9 @@
 # Changelog
 
 # [Unreleased]
+* Updated project to Kava-7 upgrade (Added HARD Protocol Support)
+
+## kava-6-v1.0.0
 
 * Updated Account Page to display tokens in Staking Denoms and aligned token values to right 
 * [#451] Fixed Validator Account page showing error after login with Ledger 
