@@ -4,6 +4,7 @@
 * [#488] Updated missing proposer address in proposals.
 * [#486] Fixed delegators voting power display on gov proposals
 * [#493] Fixed validators address showing as undefined in links.
+* [#491] Fixed query path that when activate gov module.
 
 ## v0.41.x-13
 * [#484] Replaced delegation list displayed under validator page with total number of delegations. 
