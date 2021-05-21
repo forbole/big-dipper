@@ -252,25 +252,13 @@ export class Ledger {
             sequence: txContext.sequence.toString(),
         };
 
-        const txSignFields = {
-            "auth_info": {
-                "signer_infos": [],
-                "fee":
-                    tx.value.fee
-            },
-            "body":{
-                "messages":[
-                    tx.value.msg
-                ],
-                "memo": tx.value.memo,
-                "timeout_height": "0",
-                "extension_options": [],
-                "non_critical_extension_options": []
+        // const txFields = {
+        //     fee: tx.value.fee,
+        //     memo: tx.value.memo,
+        //     messages: tx.value.msg,
+        //     sequence: txContext.sequence.toString(),
 
-            },
-            "signatures": []
-        }
-
+        // }
         return JSON.stringify(canonicalizeJson(txFieldsToSign));
     }
 
@@ -292,7 +280,7 @@ export class Ledger {
             payer: "",
             granter: ""
         };
-
+        console.log(unsignedTx)
         return unsignedTx;
     }
 
@@ -326,6 +314,7 @@ export class Ledger {
                 },
             },
         ];
+        console.log(tmpCopy)
         return tmpCopy;
     }
 
@@ -359,34 +348,38 @@ export class Ledger {
         };
 
         const txSignSkeleton = {
-            "auth_info": {
-                "signer_infos": [],
-                "fee": {
-                    "amount": [],
-                    "gas_limit": "200000",
-                    "payer": "",
-                    "granter": ""
-                }
-            },
-            "body": {
-                "messages": [
-                    msgs
-                ],
-                "memo": txContext.memo || DEFAULT_MEMO,
-                "timeout_height": "0",
-                "extension_options": [],
-                "non_critical_extension_options": []
-            },
-            "signatures": [{
-                signature: 'N/A',
-                account_number: txContext.accountNumber.toString(),
-                sequence: txContext.sequence.toString(),
-                pub_key: {
-                    type: 'tendermint/PubKeySecp256k1',
-                    value: txContext.pk || 'PK',
+            type: 'cosmos/authz/v1beta1/tx.proto',
+            value:{
+                "body": {
+                    "messages": msgs,
+                    "memo": txContext.memo || DEFAULT_MEMO
                 },
-            }]
-        }
+                "auth_info": {
+                    "signer_infos": [
+                        {
+                            "public_key": {
+                                "@type": "/cosmos.crypto.secp256k1.PubKey",
+                                "key": txContext.pk || 'PK',
+                            },
+                            "mode_info": {
+                                "single": {
+                                    "mode": "SIGN_MODE_DIRECT"
+                                }
+                            },
+                            "sequence": txContext.sequence.toString(),
+                        }
+                    ],
+                    "fee": {
+                        "amount": [],
+                        "gas_limit": "",
+                        "payer": "",
+                        "granter": ""
+                    }
+                },
+                "signatures": []
+            }
+        };
+        console.log(txSkeleton)
         return txSkeleton
     }
 
