@@ -311,7 +311,7 @@ export class Ledger {
             throw new Error('txContext does not contain the sequence value');
         }
         const txSkeleton = {
-            "type": 'cosmos/authz/v1beta1/tx.proto',
+            "@type": 'cosmos/authz/v1beta1/tx.proto',
             "value":{
                 "auth_info": {
                     "fee": {

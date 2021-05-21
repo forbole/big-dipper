@@ -5,7 +5,7 @@ Meteor.methods({
     'transaction.submit': function(txInfo, actionType) {
         this.unblock();
         let url="";
-        let txObject = JSON.stringify(txInfo);
+        let txObject = JSON.stringify(txInfo.value);
         let txBytesBase64 = Buffer.from(txObject).toString('base64');
 
         if (actionType === 'vote' || actionType === 'deposit' || actionType === 'submitProposal'){
