@@ -246,19 +246,12 @@ export class Ledger {
         const txFieldsToSign = {
             account_number: txContext.accountNumber.toString(),
             chain_id: txContext.chainId,
-            fee: tx.value.fee,
-            memo: tx.value.memo,
-            msgs: tx.value.msg,
+            fee: tx.value.auth_info.fee,
+            memo: tx.value.body.memo,
+            msgs: tx.value.body.messages,
             sequence: txContext.sequence.toString(),
         };
 
-        // const txFields = {
-        //     fee: tx.value.fee,
-        //     memo: tx.value.memo,
-        //     messages: tx.value.msg,
-        //     sequence: txContext.sequence.toString(),
-
-        // }
         return JSON.stringify(canonicalizeJson(txFieldsToSign));
     }
 
@@ -271,16 +264,15 @@ export class Ledger {
         }
 
         // eslint-disable-next-line no-param-reassign
-        unsignedTx.value.fee = {
+        unsignedTx.value.auth_info.fee = {
             amount: [{
                 amount: Math.ceil(gas * gasPrice).toString(),
                 denom: denom,
             }],
             gas_limit: gas.toString(),
-            payer: "",
-            granter: ""
+            granter: "",
+            payer: ""
         };
-        console.log(unsignedTx)
         return unsignedTx;
     }
 
@@ -303,18 +295,7 @@ export class Ledger {
 
         const tmpCopy = Object.assign({}, unsignedTx, {});
 
-        tmpCopy.value.signatures = [
-            {
-                signature: secp256k1Sig.toString('base64'),
-                account_number: txContext.accountNumber.toString(),
-                sequence: txContext.sequence.toString(),
-                pub_key: {
-                    type: 'tendermint/PubKeySecp256k1',
-                    value: txContext.pk//Buffer.from(txContext.pk, 'hex').toString('base64'),
-                },
-            },
-        ];
-        console.log(tmpCopy)
+        tmpCopy.value.signatures = [secp256k1Sig.toString('base64')];
         return tmpCopy;
     }
 
@@ -330,56 +311,37 @@ export class Ledger {
             throw new Error('txContext does not contain the sequence value');
         }
         const txSkeleton = {
-            type: 'auth/StdTx',
-            value: {
-                msg: msgs,
-                fee: '',
-                memo: txContext.memo || DEFAULT_MEMO,
-                signatures: [{
-                    signature: 'N/A',
-                    account_number: txContext.accountNumber.toString(),
-                    sequence: txContext.sequence.toString(),
-                    pub_key: {
-                        type: 'tendermint/PubKeySecp256k1',
-                        value: txContext.pk || 'PK',
-                    },
-                }],
-            },
-        };
-
-        const txSignSkeleton = {
-            type: 'cosmos/authz/v1beta1/tx.proto',
-            value:{
-                "body": {
-                    "messages": msgs,
-                    "memo": txContext.memo || DEFAULT_MEMO
-                },
+            "type": 'cosmos/authz/v1beta1/tx.proto',
+            "value":{
                 "auth_info": {
+                    "fee": {
+                        "amount": "",
+                        "gas_limit": "",
+                        "granter": "",
+                        "payer": ""
+                    },
                     "signer_infos": [
                         {
-                            "public_key": {
-                                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                                "key": txContext.pk || 'PK',
-                            },
                             "mode_info": {
                                 "single": {
                                     "mode": "SIGN_MODE_DIRECT"
                                 }
                             },
+                            "public_key": {
+                                "@type": "/cosmos.crypto.secp256k1.PubKey",
+                                "key": txContext.pk || 'PK',
+                            },
                             "sequence": txContext.sequence.toString(),
                         }
-                    ],
-                    "fee": {
-                        "amount": [],
-                        "gas_limit": "",
-                        "payer": "",
-                        "granter": ""
-                    }
+                    ]
+                },
+                "body": {
+                    "memo": txContext.memo || DEFAULT_MEMO,
+                    "messages": msgs
                 },
                 "signatures": []
             }
         };
-        console.log(txSkeleton)
         return txSkeleton
     }
 

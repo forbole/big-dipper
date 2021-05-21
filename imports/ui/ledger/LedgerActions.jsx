@@ -402,7 +402,7 @@ class LedgerButton extends Component {
 
     getSimulateBody (txMsg) {
         return (txMsg && txMsg.value && txMsg.value.msg &&
-            txMsg.value.msg.length && txMsg.value.msg[0].value) || {}
+            txMsg.value.msg.length && txMsg.value.msg[0].value) || txMsg.value.body.messages[0]
     }
 
     getPath = () => {
@@ -1032,7 +1032,7 @@ class ProposalActionButtons extends LedgerButton {
     getConfirmationMessage = () => {
         switch (this.state.actionType) {
         case Types.VOTE:
-                return <span>You are <span className='action'>voting</span> <strong>{this.state.voteOption?.substring(12).replace(/_/g, " ")}</strong> on proposal {this.props.proposalId}
+            return <span>You are <span className='action'>voting</span> <strong>{this.state.voteOption?.substring(12).replace(/_/g, " ")}</strong> on proposal {this.props.proposalId}
                 <span> with <Fee gas={this.state.gasEstimate}/>.</span>
             </span>
             break;
