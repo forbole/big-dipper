@@ -13,17 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set version devnet
-        if: ${{ github.ref == 'refs/heads/develop' }}
+      - name: Set version
         run: |
-          VER=$(cat versions/devnet/version)
-          echo $VER
-          echo "VERSION=$VER" >> $GITHUB_ENV
-
-      - name: Set version testnet
-        if: ${{ github.ref == 'refs/heads/testnet' }}
-        run: |
-          VER=$(cat versions/devnet/version)
+          VER=$(cat versions/version)
           echo $VER
           echo "VERSION=$VER" >> $GITHUB_ENV
 
