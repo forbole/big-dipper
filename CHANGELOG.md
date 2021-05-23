@@ -5,6 +5,7 @@
 * [#486] Fixed delegators voting power display on gov proposals
 * [#493] Fixed validators address showing as undefined in links.
 * [#491] Fixed query that are called when the gov module is active.
+* [#522] Fixed validator commission tx with correct validator operator address when signing with Ledger.
 
 ## v0.41.x-13
 * [#484] Replaced delegation list displayed under validator page with total number of delegations. 
