@@ -772,10 +772,10 @@ class WithdrawButton extends LedgerButton {
         Meteor.call('transaction.execute', {from: this.state.user}, this.getPath(), (err, res) =>{
             if (res){
                 Meteor.call('isValidator', this.state.user, (error, result) => {
-                    if (result && result.address){
+                    if (result && result.operator_address){
                         res.value.msg.push({
                             type: 'cosmos-sdk/MsgWithdrawValidatorCommission',
-                            value: { validator_address: result.address }
+                            value: { validator_address: result.operator_address }
                         })
                     }
                     callback(res, res)
