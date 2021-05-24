@@ -282,8 +282,6 @@ export default class Proposal extends Component{
     }
 
     render(){
-        console.log(this.state.quorum)
-        console.log(this.state.activeVotingPower)
         if (this.props.loading){
             return <Spinner type="grow" color="primary" />
         }
