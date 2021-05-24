@@ -4,6 +4,25 @@ import { Validators } from '../../validators/validators';
 Meteor.methods({
     'transaction.submit': function(txInfo, actionType) {
         this.unblock();
+
+        // const fee = {
+        //     amount: [{ amount: '0', denom }],
+        //     gas: '200000'
+        // }
+        // try {
+        //     const result = await this._client.signAndBroadcast(
+        //         fromAddress,
+        //         messages,
+        //         fee,
+        //         memo
+        //     )
+        //     assertIsBroadcastTxSuccess(result)
+        // } catch (e) {
+        //     console.log(e)
+        //     throw 'Failed to broadcast transaction.' + e
+        // }
+
+        //
         let url="";
         let txObject = JSON.stringify(txInfo.value);
         let txBytesBase64 = Buffer.from(txObject).toString('base64');
