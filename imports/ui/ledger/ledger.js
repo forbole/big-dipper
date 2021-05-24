@@ -425,17 +425,14 @@ export class Ledger {
         validatorBech32,
         uatomAmount
     ) {
-        const txMsg = {
-            type: 'cosmos-sdk/MsgDelegate',
-            value: {
-                amount: {
-                    amount: uatomAmount.toString(),
-                    denom: txContext.denom,
-                },
-                delegator_address: txContext.bech32,
-                validator_address: validatorBech32,
+        const txMsg = MsgDelegate.create({
+            amount: {
+                amount: uatomAmount.toString(),
+                denom: txContext.denom,
             },
-        };
+            delegatorAddress: txContext.bech32,
+            validatorAddress: validatorBech32
+        });
 
         return Ledger.createSkeleton(txContext, [txMsg]);
     }
