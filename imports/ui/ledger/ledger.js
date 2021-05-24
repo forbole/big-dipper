@@ -11,6 +11,25 @@ import bech32 from "bech32";
 import sha256 from "crypto-js/sha256"
 import ripemd160 from "crypto-js/ripemd160"
 import CryptoJS from "crypto-js"
+import { DirectSecp256k1HdWallet, DirectSecp256k1Wallet, Registry } from "@cosmjs/proto-signing";
+import {
+    assertIsBroadcastTxSuccess,
+    codec,
+    SigningStargateClient,
+    StargateClient,
+    defaultRegistryTypes
+} from "@cosmjs/stargate";
+import { stringToPath } from "@cosmjs/crypto";
+import {
+    MsgSend,
+    MsgDelegate,
+    MsgUndelegate,
+} from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/tx';
+// import { MsgWithdrawDelegatorReward } from '@cosmjs/stargate/build/codec/cosmos/distribution/v1beta1/tx';
+import { fromBase64, fromHex } from "@cosmjs/encoding";
+import { OfflineDirectSigner } from "@cosmjs/proto-signing"
+
+
 
 // TODO: discuss TIMEOUT value
 const INTERACTION_TIMEOUT = 10000
@@ -43,6 +62,59 @@ function createCosmosAddress(publicKey) {
     const address = Buffer.from(hash, `hex`)
     const cosmosAddress = bech32ify(address, Meteor.settings.public.bech32PrefixAccAddr)
     return cosmosAddress
+}
+
+async function stargateUpgradeTest() {
+    const defaultPrivkey = fromHex("b8c462d2bb0c1a92edf44f735021f16c270f28ee2c3d1cb49943a5e70a3c763e");
+    const wallet = await DirectSecp256k1Wallet.fromKey(defaultPrivkey);
+    let rpcEndpoint = Meteor.settings.public.remote.rpc;
+    const myRegistry = new Registry([...defaultRegistryTypes]);
+    const [accounts] = await wallet.getAccounts()
+    const walletAddress = "cosmos1uulfsj45fvvkr98s859nxkzy08dzejs35ruy3l"
+    let validator = "cosmosvaloper1046s2ljddzxav0c4jjfacn4gzm94jqrqd50vrg"
+
+    const client = await StargateClient.connect(rpcEndpoint);
+
+    // const client = await SigningStargateClient.connectWithSigner(
+    //     rpcEndpoint,
+    //     wallet,
+    //     { registry: myRegistry }
+    // );
+    const memo = 'Sent using Big Dipper';
+    const fee = {
+        amount: [
+            {
+                denom: "umuon",
+                amount: '3000000',
+            },
+        ],
+        gas: '180000', // 180k
+    };
+    try {
+        const result = await client.signAndBroadcast(
+            walletAddress,
+            [
+                {
+                    typeUrl: '/cosmos.staking.v1beta1.MsgDelegate',
+                    value: MsgDelegate.fromPartial({
+                        delegatorAddress: walletAddress,
+                        validatorAddress: validator,
+                        amount: {
+                            denom: "umuon",
+                            amount: "11000000",
+                        },
+                    }),
+                },
+            ],
+            fee,
+            memo
+        );
+        // assertIsBroadcastTxSuccess(result);
+        return { error: null };
+    } catch (err) {
+        return { error: err.message };
+    }
+
 }
 
 export class Ledger {
@@ -105,6 +177,7 @@ export class Ledger {
 
         await this.isSendingData()
         await this.isReady(transportBLE)
+        stargateUpgradeTest()
     }
 
     async getDevice(){
