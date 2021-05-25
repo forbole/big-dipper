@@ -1,5 +1,8 @@
 # Changelog
 
+## [UNRELEASED]
+* [#426] Updated proposal tally result, added activeVotingPower value to active proposal collection.
+
 ## v0.41.x-14
 * [#488] Updated missing proposer address in proposals.
 * [#486] Fixed delegators voting power display on gov proposals
