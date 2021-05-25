@@ -66,7 +66,6 @@ export default class Proposal extends Component{
 
     componentDidUpdate(prevProps){
         if (this.props.proposal != prevProps.proposal){
-            // console.log(this.props.proposal.value);
             this.setState({
                 proposal: this.props.proposal,
                 deposit: <div>{this.props.proposal.total_deposit?this.props.proposal.total_deposit.map((deposit, i) => {
@@ -76,7 +75,7 @@ export default class Proposal extends Component{
 
             let now = moment();
             const powerReduction = Meteor.settings.public.powerReduction || Coin.StakingCoin.fraction;
-            let totalVotingPower = this.props.chain.activeVotingPower * powerReduction;
+            let totalVotingPower = (this.props.activeVotingPower || this.props.chain.activeVotingPower) * powerReduction;
             if (this.props.proposal.voting_start_time != '0001-01-01T00:00:00Z'){
                 if (now.diff(moment(this.props.proposal.voting_start_time)) > 0){
                     let endVotingTime = moment(this.props.proposal.voting_end_time);
@@ -280,7 +279,7 @@ export default class Proposal extends Component{
                 // console.log(this.state.proposal);
                 const proposalId = Number(this.props.proposal.proposalId), maxProposalId = Number(this.props.proposalCount);
                 const powerReduction = Meteor.settings.public.powerReduction || Coin.StakingCoin.fraction;
-                let totalVotingPower = this.props.chain.activeVotingPower * powerReduction;
+                let totalVotingPower = (this.props.activeVotingPower || this.props.chain.activeVotingPower) * powerReduction;
                 let proposalType = this.props.proposal.content["@type"].split('.');
                 proposalType = proposalType[proposalType.length-1].match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ");
 
