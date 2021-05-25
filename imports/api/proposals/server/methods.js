@@ -14,7 +14,7 @@ Meteor.methods({
             let response = HTTP.get(url);
             let params = JSON.parse(response.content);
 
-            Chain.update({chainId: Meteor.settings.public.chainId}, {$set:{"gov.tallyParams":params.tally_params}});
+            Chain.update({chainId: Meteor.settings.public.chainId}, {$set:{"gov.tally_params":params.tally_params}});
 
             url = API + '/cosmos/gov/v1beta1/proposals';
             response = HTTP.get(url);
