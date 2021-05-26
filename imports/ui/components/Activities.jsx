@@ -410,6 +410,37 @@ export default class Activites extends Component {
                     </Collapse>
                 </div>
             </div>
+
+
+            // IBC Channel
+        case "/ibc.core.channel.v1.MsgAcknowledgement":
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
+            </div>
+        case "/ibc.core.channel.v1.MsgChannelCloseConfirm":
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
+            </div>
+        case "/ibc.core.channel.v1.MsgChannelCloseInit":
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
+            </div>
+        case "/ibc.core.channel.v1.MsgChannelOpenAck":
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
+            </div>
+        case "/ibc.core.channel.v1.MsgChannelOpenConfirm":
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
+            </div>
+        case "/ibc.core.channel.v1.MsgChannelOpenInit":
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
+            </div>
+        case "/ibc.core.channel.v1.MsgChannelOpenTry":
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
+            </div>
         case "/ibc.core.channel.v1.MsgRecvPacket":
             return <div>
                 <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} /> 
@@ -474,6 +505,16 @@ export default class Activites extends Component {
                     </Collapse>
                 </div>
             </div>
+        case "/ibc.core.channel.v1.MsgTimeout":
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
+            </div>
+        case "/ibc.core.channel.v1.MsgTimeoutOnClose":
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
+            </div>
+
+            // IBC Connection
         case "/ibc.core.connection.v1.MsgConnectionOpenConfirm":
             return <div>
                 <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} /> 
