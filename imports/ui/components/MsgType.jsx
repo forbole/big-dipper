@@ -49,7 +49,6 @@ export const MsgType = (props) => {
         return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCTransfer</T></Badge>;
     case "/cosmos.IBCReceiveMsg":
         return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCReceive</T></Badge>;
-
     case "/ibc.core.client.v1.MsgCreateClient":
         return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCCreateClient</T></Badge>;
     case "/ibc.core.client.v1.MsgUpdateClient":
