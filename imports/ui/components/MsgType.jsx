@@ -46,9 +46,23 @@ export const MsgType = (props) => {
         
         // ibc
     case "/cosmos.IBCTransferMsg":
-        return <Badge color="dark"><T>messageTypes.IBCTransfer</T></Badge>;
+        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCTransfer</T></Badge>;
     case "/cosmos.IBCReceiveMsg":
-        return <Badge color="dark"><T>messageTypes.IBCReceive</T></Badge>;
+        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCReceive</T></Badge>;
+    case "/ibc.core.client.v1.MsgCreateClient":
+        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCCreateClient</T></Badge>;
+    case "/ibc.core.client.v1.MsgUpdateClient":
+        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCUpdateClient</T></Badge>;
+    case "/ibc.core.client.v1.MsgUpgradeClient":
+        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCUpgradeClient</T></Badge>;
+    case "/ibc.core.client.v1.MsgSubmitMisbehaviour":
+        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCSubmitMisbehaviour</T></Badge>;
+    case "/ibc.core.channel.v1.MsgRecvPacket":
+        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ReceivePacket</T></Badge>;
+    case "/ibc.core.connection.v1.MsgConnectionOpenConfirm":
+        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ConnectionOpenConfirm</T></Badge>;
+    case "/ibc.core.connection.v1.MsgConnectionOpenTry":
+        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ConnectionOpenTry</T></Badge>;
 
     default:
         return <Badge color="primary">{props.type}</Badge>;
