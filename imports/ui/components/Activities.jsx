@@ -5,6 +5,7 @@ import Account from '../components/Account.jsx';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js'
 import ReactJson from 'react-json-view'
+import { Table } from 'reactstrap';
 import _ from 'lodash';
 
 const T = i18n.createComponent();
@@ -91,9 +92,116 @@ export default class Activites extends Component {
 
             // ibc
         case "/cosmos.IBCTransferMsg":
-            return <MsgType type={msg["@type"]} />
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
+            </div>
         case "/cosmos.IBCReceiveMsg":
-            return <MsgType type={msg["@type"]} />
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} /> 
+            </div>
+        case "/ibc.core.client.v1.MsgCreateClient":
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
+                <Table striped className="mt-3">
+                    <tbody>
+                        <tr>
+                            <th><T>common.chainID</T></th>
+                            <td>{msg?.client_state?.chain_id}</td>
+                        </tr>
+
+                    </tbody>
+                </Table>
+            </div>
+        case "/ibc.core.client.v1.MsgUpdateClient":
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} /> 
+                <Table striped className="mt-3">
+                    <tbody>
+                        <tr>
+                            <th><T>common.chainID</T></th>
+                            <td>{msg?.header?.signed_header?.header?.chain_id}</td>
+                        </tr>
+                        <tr>
+                            <th><T>common.clientID</T></th>
+                            <td>{msg.client_id}</td>
+                        </tr>
+                    </tbody>
+                </Table>
+            </div>
+        case "/ibc.core.client.v1.MsgUpgradeClient": 
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
+            </div>
+        case "/ibc.core.client.v1.MsgSubmitMisbehaviour":
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
+            </div>
+        case "/ibc.core.channel.v1.MsgRecvPacket":
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} /> 
+                <Table striped className="mt-3">
+                    <tbody>
+                        <tr>
+                            <th>Data</th>
+                            <td className="wrap-long-text">{msg?.packet?.data}</td>
+                        </tr>
+                        <tr>
+                            <th><T>common.sourceChannel</T></th>
+                            <td>{msg?.packet?.source_channel}</td>
+                        </tr>
+                        <tr>
+                            <th><T>common.destinationClient</T></th>
+                            <td>{msg?.packet?.destination_channel}</td>
+                        </tr>
+                        <tr>
+                            <th><T>common.proofCommitment</T></th>
+                            <td className="wrap-long-text">{msg?.proof_commitment}</td>
+                        </tr>
+                    </tbody>
+                </Table>
+            </div>
+        case "/ibc.core.connection.v1.MsgConnectionOpenConfirm":
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} /> 
+                <Table striped className="mt-3">
+                    <tbody>
+                        <tr>
+                            <th><T>common.connectionID</T></th>
+                            <td>{msg.connection_id}</td>
+                        </tr>
+                        <tr>
+                            <th><T>common.proof</T></th>
+                            <td className="wrap-long-text">{msg?.proof_ack}</td>
+                        </tr>
+
+                    </tbody>
+                </Table>
+            </div>        
+        case "/ibc.core.connection.v1.MsgConnectionOpenTry":
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} /> 
+                <Table striped className="mt-3">
+                    <tbody>
+                        <tr>
+                            <th><T>common.chainID</T></th>
+                            <td>{msg?.client_state?.chain_id}</td>
+                        </tr>
+                        <tr>
+                            <th><T>common.clientID</T></th>
+                            <td>{msg?.client_id}</td>
+                        </tr>
+                        <tr>
+                            <th><T>common.counterpartyClientID</T></th>
+                            <td>{msg?.counterparty.client_id}</td>
+                        </tr>
+                        <tr>
+                            <th><T>common.counterpartyConnectionID</T></th>
+                            <td>{msg?.counterparty.connection_id}</td>
+                        </tr>
+
+                    </tbody>
+                </Table>           
+            </div>
 
         default:
             return <div><ReactJson src={msg} /></div>
