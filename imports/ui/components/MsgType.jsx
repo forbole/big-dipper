@@ -49,6 +49,7 @@ export const MsgType = (props) => {
         return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCTransfer</T></Badge>;
     case "/cosmos.IBCReceiveMsg":
         return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCReceive</T></Badge>;
+
     case "/ibc.core.client.v1.MsgCreateClient":
         return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCCreateClient</T></Badge>;
     case "/ibc.core.client.v1.MsgUpdateClient":
@@ -57,10 +58,34 @@ export const MsgType = (props) => {
         return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCUpgradeClient</T></Badge>;
     case "/ibc.core.client.v1.MsgSubmitMisbehaviour":
         return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCSubmitMisbehaviour</T></Badge>;
+
     case "/ibc.core.channel.v1.MsgRecvPacket":
         return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ReceivePacket</T></Badge>;
+    case "/ibc.core.channel.v1.MsgAcknowledgement":
+        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.Acknowledgement</T></Badge>;
+    case "/ibc.core.channel.v1.MsgChannelCloseConfirm":
+        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ChannelCloseConfirm</T></Badge>;
+    case "/ibc.core.channel.v1.MsgChannelCloseInit":
+        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ChannelCloseInit</T></Badge>;
+    case "/ibc.core.channel.v1.MsgChannelOpenAck":
+        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ChannelOpenAck</T></Badge>;
+    case "/ibc.core.channel.v1.MsgChannelOpenConfirm":
+        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ChannelOpenConfirm</T></Badge>;
+    case "/ibc.core.channel.v1.MsgChannelOpenInit":
+        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ChannelOpenInit</T></Badge>;
+    case "/ibc.core.channel.v1.MsgChannelOpenTry":
+        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ChannelOpenTry</T></Badge>;
+    case "/ibc.core.channel.v1.MsgTimeout":
+        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.Timeout</T></Badge>;
+    case "/ibc.core.channel.v1.MsgTimeoutOnClose":
+        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.TimeoutOnClose</T></Badge>;
+
+    case "/ibc.core.connection.v1.MsgConnectionOpenAck":
+        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ConnectionOpenAck</T></Badge>;
     case "/ibc.core.connection.v1.MsgConnectionOpenConfirm":
         return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ConnectionOpenConfirm</T></Badge>;
+    case "/ibc.core.connection.v1.MsgConnectionOpenInit":
+        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ConnectionOpenInit</T></Badge>;
     case "/ibc.core.connection.v1.MsgConnectionOpenTry":
         return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ConnectionOpenTry</T></Badge>;
 
