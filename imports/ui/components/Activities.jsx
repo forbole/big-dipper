@@ -5,7 +5,7 @@ import Account from '../components/Account.jsx';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js'
 import ReactJson from 'react-json-view'
-import { Table } from 'reactstrap';
+import { Table, UncontrolledCollapse } from 'reactstrap';
 import _ from 'lodash';
 
 const T = i18n.createComponent();
@@ -37,6 +37,18 @@ MultiSend = (props) => {
 export default class Activites extends Component {
     constructor(props){
         super(props);
+        this.toggle = this.toggle.bind(this);
+
+        this.state = {
+            isOpen: false
+        };
+    }
+
+    toggle() {
+        this.setState({
+            isOpen: !this.state.isOpen
+        }, () => {
+        });
     }
 
     render(){
@@ -104,31 +116,41 @@ export default class Activites extends Component {
         case "/ibc.core.client.v1.MsgCreateClient":
             return <div>
                 <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
-                <Table striped className="mt-3">
-                    <tbody>
-                        <tr>
-                            <th><T>common.chainID</T></th>
-                            <td>{msg?.client_state?.chain_id}</td>
-                        </tr>
+                <div className="d-inline">
+                    <span id={`${msg?.client_state?.revision_time?.revision_height}`} className="float-right"><i className="material-icons">{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
+                    <UncontrolledCollapse toggler={`${msg?.client_state?.revision_time?.revision_height}`}>
+                        <Table striped className="mt-3">
+                            <tbody>
+                                <tr>
+                                    <th><T>common.chainID</T></th>
+                                    <td>{msg?.client_state?.chain_id}</td>
+                                </tr>
 
-                    </tbody>
-                </Table>
+                            </tbody>
+                        </Table>
+                    </UncontrolledCollapse>
+                </div>
             </div>
         case "/ibc.core.client.v1.MsgUpdateClient":
             return <div>
                 <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} /> 
-                <Table striped className="mt-3">
-                    <tbody>
-                        <tr>
-                            <th><T>common.chainID</T></th>
-                            <td>{msg?.header?.signed_header?.header?.chain_id}</td>
-                        </tr>
-                        <tr>
-                            <th><T>common.clientID</T></th>
-                            <td>{msg.client_id}</td>
-                        </tr>
-                    </tbody>
-                </Table>
+                <div className="d-inline">
+                    <span id={`tx${msg?.header?.signed_header?.header?.height}`} className="float-right"><i className="material-icons">{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
+                    <UncontrolledCollapse toggler={`tx${msg?.header?.signed_header?.header?.height}`}>
+                        <Table striped className="mt-3">
+                            <tbody>
+                                <tr>
+                                    <th><T>common.chainID</T></th>
+                                    <td>{msg?.header?.signed_header?.header?.chain_id}</td>
+                                </tr>
+                                <tr>
+                                    <th><T>common.clientID</T></th>
+                                    <td>{msg?.client_id}</td>
+                                </tr>
+                            </tbody>
+                        </Table>
+                    </UncontrolledCollapse>
+                </div>
             </div>
         case "/ibc.core.client.v1.MsgUpgradeClient": 
             return <div>
@@ -172,26 +194,31 @@ export default class Activites extends Component {
         case "/ibc.core.channel.v1.MsgRecvPacket":
             return <div>
                 <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} /> 
-                <Table striped className="mt-3">
-                    <tbody>
-                        <tr>
-                            <th>Data</th>
-                            <td className="wrap-long-text">{msg?.packet?.data}</td>
-                        </tr>
-                        <tr>
-                            <th><T>common.sourceChannel</T></th>
-                            <td>{msg?.packet?.source_channel}</td>
-                        </tr>
-                        <tr>
-                            <th><T>common.destinationClient</T></th>
-                            <td>{msg?.packet?.destination_channel}</td>
-                        </tr>
-                        <tr>
-                            <th><T>common.proofCommitment</T></th>
-                            <td className="wrap-long-text">{msg?.proof_commitment}</td>
-                        </tr>
-                    </tbody>
-                </Table>
+                <div className="d-inline">
+                    <span id={`${msg?.packet?.timeout_height?.revision_time}`} className="float-right"><i className="material-icons">{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
+                    <UncontrolledCollapse toggler={`${msg?.packet?.timeout_height?.revision_time}`}>
+                        <Table striped className="mt-3">
+                            <tbody>
+                                <tr>
+                                    <th>Data</th>
+                                    <td className="wrap-long-text">{msg?.packet?.data}</td>
+                                </tr>
+                                <tr>
+                                    <th><T>common.sourceChannel</T></th>
+                                    <td>{msg?.packet?.source_channel}</td>
+                                </tr>
+                                <tr>
+                                    <th><T>common.destinationClient</T></th>
+                                    <td>{msg?.packet?.destination_channel}</td>
+                                </tr>
+                                <tr>
+                                    <th><T>common.proofCommitment</T></th>
+                                    <td className="wrap-long-text">{msg?.proof_commitment}</td>
+                                </tr>
+                            </tbody>
+                        </Table>
+                    </UncontrolledCollapse>
+                </div>
             </div>
         case "/ibc.core.channel.v1.MsgTimeout":
             return <div>
@@ -210,19 +237,24 @@ export default class Activites extends Component {
         case "/ibc.core.connection.v1.MsgConnectionOpenConfirm":
             return <div>
                 <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} /> 
-                <Table striped className="mt-3">
-                    <tbody>
-                        <tr>
-                            <th><T>common.connectionID</T></th>
-                            <td>{msg.connection_id}</td>
-                        </tr>
-                        <tr>
-                            <th><T>common.proof</T></th>
-                            <td className="wrap-long-text">{msg?.proof_ack}</td>
-                        </tr>
+                <div className="d-inline">
+                    <span id={`tx${msg?.proof_height?.revision_time}`} className="float-right"><i className="material-icons">{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
+                    <UncontrolledCollapse toggler={`tx${msg?.proof_height?.revision_time}`}>
+                        <Table striped className="mt-3">
+                            <tbody>
+                                <tr>
+                                    <th><T>common.connectionID</T></th>
+                                    <td>{msg?.connection_id}</td>
+                                </tr>
+                                <tr>
+                                    <th><T>common.proof</T></th>
+                                    <td className="wrap-long-text">{msg?.proof_ack}</td>
+                                </tr>
 
-                    </tbody>
-                </Table>
+                            </tbody>
+                        </Table>
+                    </UncontrolledCollapse>
+                </div>
             </div>      
         case "/ibc.core.connection.v1.MsgConnectionOpenInit":
             return <div>
@@ -231,27 +263,32 @@ export default class Activites extends Component {
         case "/ibc.core.connection.v1.MsgConnectionOpenTry":
             return <div>
                 <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} /> 
-                <Table striped className="mt-3">
-                    <tbody>
-                        <tr>
-                            <th><T>common.chainID</T></th>
-                            <td>{msg?.client_state?.chain_id}</td>
-                        </tr>
-                        <tr>
-                            <th><T>common.clientID</T></th>
-                            <td>{msg?.client_id}</td>
-                        </tr>
-                        <tr>
-                            <th><T>common.counterpartyClientID</T></th>
-                            <td>{msg?.counterparty.client_id}</td>
-                        </tr>
-                        <tr>
-                            <th><T>common.counterpartyConnectionID</T></th>
-                            <td>{msg?.counterparty.connection_id}</td>
-                        </tr>
+                <div className="d-inline">
+                    <span id={`${msg?.consensus_height?.revision_time}`} className="float-right"><i className="material-icons">{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
+                    <UncontrolledCollapse toggler={`${msg?.consensus_height?.revision_time}`}>
+                        <Table striped className="mt-3">
+                            <tbody>
+                                <tr>
+                                    <th><T>common.chainID</T></th>
+                                    <td>{msg?.client_state?.chain_id}</td>
+                                </tr>
+                                <tr>
+                                    <th><T>common.clientID</T></th>
+                                    <td>{msg?.client_id}</td>
+                                </tr>
+                                <tr>
+                                    <th><T>common.counterpartyClientID</T></th>
+                                    <td>{msg?.counterparty?.client_id}</td>
+                                </tr>
+                                <tr>
+                                    <th><T>common.counterpartyConnectionID</T></th>
+                                    <td>{msg?.counterparty?.connection_id}</td>
+                                </tr>
 
-                    </tbody>
-                </Table>           
+                            </tbody>
+                        </Table>
+                    </UncontrolledCollapse>
+                </div>    
             </div>
 
         default:
