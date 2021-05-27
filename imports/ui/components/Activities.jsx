@@ -515,6 +515,10 @@ export default class Activites extends Component {
             </div>
 
             // IBC Connection
+        case "/ibc.core.connection.v1.MsgConnectionOpenAck":
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
+            </div>
         case "/ibc.core.connection.v1.MsgConnectionOpenConfirm":
             return <div>
                 <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} /> 
