@@ -12,7 +12,6 @@ const T = i18n.createComponent();
 
 MultiSend = (props) => {
     return <div>
-        <p><T>activities.single</T> <MsgType type={props.msg.type} /> <T>activities.happened</T></p>
         <p><T>activities.senders</T>
             <ul>
                 {props.msg.inputs.map((data,i) =>{
@@ -66,7 +65,15 @@ export default class Activites extends Component {
             amount = msg.amount.map((coin) => new Coin(coin.amount, coin.denom).toString(6)).join(', ')
             return <p><Account address={msg.from_address} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg["@type"]} /> <span className="text-success">{amount}</span> <T>activities.to</T> <span className="address"><Account address={msg.to_address} /></span><T>common.fullStop</T></p>
         case "/cosmos.bank.v1beta1.MsgMultiSend":
-            return <MultiSend msg={msg} />
+                return <div>
+                    <Account address={msg.inputs[0].address} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
+                    <div className="d-inline">
+                        <span id={`tx${msg?.header?.signed_header?.header?.height}`} className="float-right"><i className="material-icons">{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
+                        <UncontrolledCollapse toggler={`tx${msg?.header?.signed_header?.header?.height}`}>
+                            <MultiSend msg={msg} />
+                        </UncontrolledCollapse>
+                    </div>
+                </div>
 
             // staking
         case "/cosmos.staking.v1beta1.MsgCreateValidator":
@@ -92,7 +99,7 @@ export default class Activites extends Component {
 
             // distribution
         case "/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission":
-            return <p><Account address={msg.validator_address} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg["@type"]} /><T> {(!this.props.invalid)?<T _purify={false} amount={new Coin(parseInt(events['withdraw_commission'][0].value), events['withdraw_commission'][0].value.replace(/[0-9]/g, '')).toString(6)}>activities.withAmount</T>:''}common.fullStop</T></p>
+            return <p><Account address={msg.validator_address} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg["@type"]} /> {(!this.props.invalid)?<T _purify={false} amount={new Coin(parseInt(events['withdraw_commission'][0].value), events['withdraw_commission'][0].value.replace(/[0-9]/g, '')).toString(6)}>activities.withAmount</T>:''}  <T>common.fullStop</T></p>
         case "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward":
             return <p><Account address={msg.delegator_address} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} /> {(!this.props.invalid) ? events['withdraw_rewards'][0].value ? <T _purify={false} amount={new Coin(parseInt(events['withdraw_rewards'][0].value), events['withdraw_rewards'][0].value.replace(/[0-9]/g, '')).toString(6)}>activities.withAmount</T> : null :''} <T>activities.from</T> <Account address={msg.validator_address} /><T>common.fullStop</T></p>
         case "/cosmos.distribution.v1beta1.MsgModifyWithdrawAddress":
@@ -166,6 +173,35 @@ export default class Activites extends Component {
         case "/ibc.core.channel.v1.MsgAcknowledgement":
             return <div>
                 <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
+                <div className="d-inline">
+                    <span id={`${msg?.packet?.timeout_height?.revision_time}`} className="float-right"><i className="material-icons">{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
+                    <UncontrolledCollapse toggler={`${msg?.packet?.timeout_height?.revision_time}`}>
+                        <Table striped className="mt-3">
+                            <tbody>
+                                <tr>
+                                    <th><T>common.sourceChannel</T></th>
+                                    <td>{msg?.packet?.source_channel}</td>
+                                </tr>
+                                <tr>
+                                    <th><T>common.destinationChannel</T></th>
+                                    <td>{msg?.packet?.destination_channel}</td>
+                                </tr>
+                                <tr>
+                                    <th>Data</th>
+                                    <td className="wrap-long-text">{msg?.packet?.data}</td>
+                                </tr>
+                                <tr>
+                                    <th><T>common.acknowledgement</T></th>
+                                    <td className="wrap-long-text">{msg?.acknowledgement}</td>
+                                </tr>
+                                <tr>
+                                    <th><T>common.proofAcknowledgement</T></th>
+                                    <td className="wrap-long-text">{msg?.proof_acked}</td>
+                                </tr>
+                            </tbody>
+                        </Table>
+                    </UncontrolledCollapse>
+                </div>
             </div>
         case "/ibc.core.channel.v1.MsgChannelCloseConfirm":
             return <div>
@@ -200,15 +236,11 @@ export default class Activites extends Component {
                         <Table striped className="mt-3">
                             <tbody>
                                 <tr>
-                                    <th>Data</th>
-                                    <td className="wrap-long-text">{msg?.packet?.data}</td>
-                                </tr>
-                                <tr>
                                     <th><T>common.sourceChannel</T></th>
                                     <td>{msg?.packet?.source_channel}</td>
                                 </tr>
                                 <tr>
-                                    <th><T>common.destinationClient</T></th>
+                                    <th><T>common.destinationChannel</T></th>
                                     <td>{msg?.packet?.destination_channel}</td>
                                 </tr>
                                 <tr>

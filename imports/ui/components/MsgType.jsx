@@ -60,34 +60,34 @@ export const MsgType = (props) => {
         return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCSubmitMisbehaviour</T></Badge>;
 
     case "/ibc.core.channel.v1.MsgRecvPacket":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ReceivePacket</T></Badge>;
+        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCReceivePacket</T></Badge>;
     case "/ibc.core.channel.v1.MsgAcknowledgement":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.Acknowledgement</T></Badge>;
+        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCAcknowledgement</T></Badge>;
     case "/ibc.core.channel.v1.MsgChannelCloseConfirm":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ChannelCloseConfirm</T></Badge>;
+        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCChannelCloseConfirm</T></Badge>;
     case "/ibc.core.channel.v1.MsgChannelCloseInit":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ChannelCloseInit</T></Badge>;
+            return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCChannelCloseInit</T></Badge>;
     case "/ibc.core.channel.v1.MsgChannelOpenAck":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ChannelOpenAck</T></Badge>;
+            return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCChannelOpenAck</T></Badge>;
     case "/ibc.core.channel.v1.MsgChannelOpenConfirm":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ChannelOpenConfirm</T></Badge>;
+            return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCChannelOpenConfirm</T></Badge>;
     case "/ibc.core.channel.v1.MsgChannelOpenInit":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ChannelOpenInit</T></Badge>;
+            return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCChannelOpenInit</T></Badge>;
     case "/ibc.core.channel.v1.MsgChannelOpenTry":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ChannelOpenTry</T></Badge>;
+            return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCChannelOpenTry</T></Badge>;
     case "/ibc.core.channel.v1.MsgTimeout":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.Timeout</T></Badge>;
+            return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCTimeout</T></Badge>;
     case "/ibc.core.channel.v1.MsgTimeoutOnClose":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.TimeoutOnClose</T></Badge>;
+            return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCTimeoutOnClose</T></Badge>;
 
     case "/ibc.core.connection.v1.MsgConnectionOpenAck":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ConnectionOpenAck</T></Badge>;
+            return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCConnectionOpenAck</T></Badge>;
     case "/ibc.core.connection.v1.MsgConnectionOpenConfirm":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ConnectionOpenConfirm</T></Badge>;
+            return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCConnectionOpenConfirm</T></Badge>;
     case "/ibc.core.connection.v1.MsgConnectionOpenInit":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ConnectionOpenInit</T></Badge>;
+            return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCConnectionOpenInit</T></Badge>;
     case "/ibc.core.connection.v1.MsgConnectionOpenTry":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.ConnectionOpenTry</T></Badge>;
+            return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCConnectionOpenTry</T></Badge>;
 
     default:
         return <Badge color="primary">{props.type}</Badge>;
