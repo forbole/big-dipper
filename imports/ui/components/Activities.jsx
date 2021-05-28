@@ -94,7 +94,13 @@ export default class Activites extends Component {
             return <MsgType type={msg["@type"]} />
         case "/cosmos.IBCReceiveMsg":
             return <MsgType type={msg["@type"]} />
-
+        case "/agoric.swingset.MsgDeliverInbound":
+            const nmsgs = msg.messages ? msg.messages.length : 0;
+            return <p><Account address={msg.submitter} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg["@type"]} /> <em className="text-success">{nmsgs ? <>{nmsgs} <T>activities.messages</T></> : <T>activities.acknowledgement</T>}</em><T>common.fullStop</T></p>
+        case "/agoric.swingset.MsgProvision":
+            const powers = msg.power_flags.length > 0 ? <><T>activities.withPowerFlags</T> <em className="text-success">{msg.power_flags.join(',')}</em> </> : '';
+            return <p><Account address={msg.submitter} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg["@type"]} /> <span className="address"><Account address={msg.address}/></span>{powers}<T>common.fullStop</T></p>
+ 
         default:
             return <div><ReactJson src={msg} /></div>
         }

@@ -74,7 +74,9 @@ export default BlockContainer = withTracker((props) => {
         IBCTxs: transactionsExist ? Transactions.find({
             $or: [
                 {"tx.body.messages.@type":"/cosmos.IBCTransferMsg"},
-                {"tx.body.messages.@type":"/cosmos.IBCReceiveMsg"}
+                {"tx.body.messages.@type":"/cosmos.IBCReceiveMsg"},
+                // TODO: Later should be dynamic IBC.
+                {"tx.body.messages.@type":"/agoric.swingset.MsgDeliverInbound"},
             ]
         }).fetch() : {},
     };

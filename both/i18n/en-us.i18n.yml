@@ -154,6 +154,7 @@ transactions:
     distribution: 'Distribution'
     governance: 'Governance'
     slashing: 'Slashing'
+    IBC: 'IBC'
 proposals:
     notFound: 'No proposal found.'
     listOfProposals: 'Here is a list of governance proposals.'
@@ -226,6 +227,9 @@ activities:
     failedTo: 'failed to '
     to: 'to'
     from: 'from'
+    messages: 'message(s)'
+    acknowledgement: 'acknowledgement'
+    withPowerFlags: 'with power flags'
     operatingAt: 'operating at'
     withMoniker: 'with moniker'
     withTitle: 'with title'
@@ -248,3 +252,5 @@ messageTypes:
     unjail: 'Unjail'
     IBCTransfer: 'IBC Transfer'
     IBCReceive: 'IBC Receive'
+    AgoricSend: 'Eventual Send'
+    AgoricProvision: 'Provision Client'

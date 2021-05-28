@@ -16,7 +16,8 @@ export default class TransactionTabs extends Component{
             stakingTxs: {},
             distributionTxs: {},
             governanceTxs: {},
-            slashingTxs: {}
+            slashingTxs: {},
+            IBCTxs: {},
         }
     }
 
@@ -35,7 +36,8 @@ export default class TransactionTabs extends Component{
                 stakingTxs: this.props.stakingTxs,
                 distributionTxs: this.props.distributionTxs,
                 governanceTxs: this.props.governanceTxs,
-                slashingTxs: this.props.slashingTxs
+                slashingTxs: this.props.slashingTxs,
+                IBCTxs: this.props.IBCTxs,
             })    
         }
     }
@@ -83,6 +85,14 @@ export default class TransactionTabs extends Component{
                             onClick={() => { this.toggle('tx-slashing'); }}
                         >
                             <T>transactions.slashing</T> ({numbro(this.state.slashingTxs.length).format("0,0")})
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink
+                            className={classnames({ active: this.state.activeTab === 'tx-IBC' })}
+                            onClick={() => { this.toggle('tx-IBC'); }}
+                        >
+                            <T>transactions.IBC</T> ({numbro(this.state.IBCTxs.length).format("0,0")})
                         </NavLink>
                     </NavItem>
                 </Nav>
@@ -147,6 +157,20 @@ export default class TransactionTabs extends Component{
                         <Row>
                             <Col>
                                 {(this.state.slashingTxs.length > 0)?this.state.slashingTxs.map((tx, i) => {
+                                    return <TransactionRow 
+                                        key={i} 
+                                        index={i} 
+                                        tx={tx} 
+                                        blockList
+                                    />
+                                }):''}
+                            </Col>
+                        </Row>
+                    </TabPane>
+                    <TabPane tabId="tx-IBC">
+                        <Row>
+                            <Col>
+                                {(this.state.IBCTxs.length > 0)?this.state.IBCTxs.map((tx, i) => {
                                     return <TransactionRow 
                                         key={i} 
                                         index={i} 

@@ -36,6 +36,7 @@
 * Fixed an issue on displaying individual transaction.
 * Updated Ledger app name checking so that it will follows the value defined in settings.
 * [#213] Updated `@ledgerhq/hw-transport-webusb` pkg to v5.49.0 to fix Ledger errors on Windows10
+* [#492] Display Agoric's MsgDeliverInbound and MsgProvision transactions
 
 ## v0.41.x-7 (Stargate compatible)
 
