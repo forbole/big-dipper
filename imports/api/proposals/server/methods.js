@@ -14,7 +14,7 @@ Meteor.methods({
             let response = HTTP.get(url);
             let params = JSON.parse(response.content);
 
-            Chain.update({chainId: Meteor.settings.public.chainId}, {$set:{"gov.tallyParams":params.tally_params}});
+            Chain.update({chainId: Meteor.settings.public.chainId}, {$set:{"gov.tally_params":params.tally_params}});
 
             url = API + '/cosmos/gov/v1beta1/proposals';
             response = HTTP.get(url);
@@ -22,9 +22,12 @@ Meteor.methods({
             // console.log(proposals);
 
             let finishedProposalIds = new Set(Proposals.find(
-                {"proposal_status":{$in:["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_REJECTED", "PROPOSAL_STATUS_REMOVED"]}}
+                {"status":{$in:["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_REJECTED", "PROPOSAL_STATUS_REMOVED"]}}
             ).fetch().map((p)=> p.proposalId));
 
+            let activeProposals = new Set(Proposals.find(
+                { "status": { $in: ["PROPOSAL_STATUS_VOTING_PERIOD"] } }
+            ).fetch().map((p) => p.proposalId));
             let proposalIds = [];
             if (proposals.length > 0){
                 // Proposals.upsert()
@@ -38,10 +41,29 @@ Meteor.methods({
                             url = API + '/gov/proposals/'+proposal.proposalId+'/proposer';
                             let response = HTTP.get(url);
                             if (response.statusCode == 200){
-                                let proposer = JSON.parse(response.content).result;
+                                let proposer = JSON.parse(response?.content)?.result;
                                 if (proposer.proposal_id && (parseInt(proposer.proposal_id) == proposal.proposalId)){
-                                    proposal.proposer = proposer.proposer;
+                                    proposal.proposer = proposer?.proposer;
                                 }
+                            }
+                            if (activeProposals.has(proposal.proposalId)){
+                                let validators = []
+                                let page = 0;
+
+                                do {
+                                    url = RPC + `/validators?page=${++page}&per_page=100`;
+                                    let response = HTTP.get(url);
+                                    result = JSON.parse(response.content).result;
+                                    validators = [...validators, ...result.validators];
+
+                                }
+                                while (validators.length < parseInt(result.total))
+
+                                let activeVotingPower = 0;
+                                for (v in validators) {
+                                    activeVotingPower += parseInt(validators[v].voting_power);
+                                }
+                                proposal.activeVotingPower = activeVotingPower;
                             }
                             bulkProposals.find({proposalId: proposal.proposalId}).upsert().updateOne({$set:proposal});
                         }
