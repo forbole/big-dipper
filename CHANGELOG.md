@@ -1,6 +1,6 @@
 # Changelog
 
-## [UNRELEASED]
+## v0.41.x-14.1
 * [#426] Updated proposal tally result, added activeVotingPower value to active proposal collection.
 * [#524] Added `noreferrer` to Banner links
 
