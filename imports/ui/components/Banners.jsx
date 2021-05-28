@@ -31,9 +31,9 @@ export default class Banners extends React.Component {
             return (
                 <Container fluid className="banner mb-3 text-center">
                     <Row>
-                        <Col className="d-none d-xl-block"><a href={banner.url} target="_blank"><img src={banner.images.lg} /></a></Col>
-                        <Col className="d-none d-md-block d-xl-none"><a href={banner.url} target="_blank"><img src={banner.images.md} /></a></Col>
-                        <Col className="d-block d-md-none"><a href={banner.url} target="_blank"><img src={banner.images.xs} /></a></Col>
+                        <Col className="d-none d-xl-block"><a href={banner.url} rel="noreferrer" target="_blank"><img src={banner.images.lg} /></a></Col>
+                        <Col className="d-none d-md-block d-xl-none"><a href={banner.url} rel="noreferrer" target="_blank"><img src={banner.images.md} /></a></Col>
+                        <Col className="d-block d-md-none"><a href={banner.url} rel="noreferrer" target="_blank"><img src={banner.images.xs} /></a></Col>
                     </Row>
                 </Container>
             );

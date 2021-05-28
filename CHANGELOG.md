@@ -2,6 +2,7 @@
 
 ## [UNRELEASED]
 * [#426] Updated proposal tally result, added activeVotingPower value to active proposal collection.
+* [#524] Added `noreferrer` to Banner links
 
 ## v0.41.x-14
 * [#488] Updated missing proposer address in proposals.
