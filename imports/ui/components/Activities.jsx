@@ -65,15 +65,15 @@ export default class Activites extends Component {
             amount = msg.amount.map((coin) => new Coin(coin.amount, coin.denom).toString(6)).join(', ')
             return <p><Account address={msg.from_address} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg["@type"]} /> <span className="text-success">{amount}</span> <T>activities.to</T> <span className="address"><Account address={msg.to_address} /></span><T>common.fullStop</T></p>
         case "/cosmos.bank.v1beta1.MsgMultiSend":
-                return <div>
-                    <Account address={msg.inputs[0].address} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
-                    <div className="d-inline">
-                        <span id={`tx${msg?.header?.signed_header?.header?.height}`} className="float-right"><i className="material-icons">{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
-                        <UncontrolledCollapse toggler={`tx${msg?.header?.signed_header?.header?.height}`}>
-                            <MultiSend msg={msg} />
-                        </UncontrolledCollapse>
-                    </div>
+            return <div>
+                <Account address={msg.inputs[0].address} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
+                <div className="d-inline">
+                    <span id={`txMultiSend${this.props.id}`} className="float-right"><i className="material-icons">{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
+                    <UncontrolledCollapse toggler={`txMultiSend${this.props.id}`}>
+                        <MultiSend msg={msg} />
+                    </UncontrolledCollapse>
                 </div>
+            </div>
 
             // staking
         case "/cosmos.staking.v1beta1.MsgCreateValidator":
@@ -167,7 +167,10 @@ export default class Activites extends Component {
             return <div>
                 <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
             </div>
-
+        case "/ibc.core.client.v1.Height":
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
+            </div>
 
             // IBC Channel
         case "/ibc.core.channel.v1.MsgAcknowledgement":
@@ -202,6 +205,18 @@ export default class Activites extends Component {
                         </Table>
                     </UncontrolledCollapse>
                 </div>
+            </div>
+        case "/ibc.core.channel.v1.Channel":
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
+            </div>
+        case "/ibc.core.channel.v1.Counterparty":
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
+            </div>
+        case "/ibc.core.channel.v1.Packet":
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
             </div>
         case "/ibc.core.channel.v1.MsgChannelCloseConfirm":
             return <div>
@@ -322,7 +337,19 @@ export default class Activites extends Component {
                     </UncontrolledCollapse>
                 </div>    
             </div>
-
+        case "/ibc.core.connection.v1.ConnectionEnd":
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
+            </div>
+        case "/ibc.core.connection.v1.Counterparty":
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
+            </div>
+        case "/ibc.core.connection.v1.Version":
+            return <div>
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
+            </div>
+           
         default:
             return <div><ReactJson src={msg} /></div>
         }
