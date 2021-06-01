@@ -5,7 +5,7 @@ import Account from '../components/Account.jsx';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js'
 import ReactJson from 'react-json-view'
-import { Table, UncontrolledCollapse } from 'reactstrap';
+import { Table, Collapse } from 'reactstrap';
 import _ from 'lodash';
 
 const T = i18n.createComponent();
@@ -68,10 +68,10 @@ export default class Activites extends Component {
             return <div>
                 <Account address={msg.inputs[0].address} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
                 <div className="d-inline">
-                    <span id={`txMultiSend${this.props.id}`} className="float-right"><i className="material-icons">{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
-                    <UncontrolledCollapse toggler={`txMultiSend${this.props.id}`}>
+                    <span className="float-right"><i className="material-icons" onClick={this.toggle}>{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
+                    <Collapse isOpen={this.state.isOpen}>
                         <MultiSend msg={msg} />
-                    </UncontrolledCollapse>
+                    </Collapse>
                 </div>
             </div>
 
@@ -124,8 +124,8 @@ export default class Activites extends Component {
             return <div>
                 <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
                 <div className="d-inline">
-                    <span id={`${msg?.client_state?.revision_time?.revision_height}`} className="float-right"><i className="material-icons">{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
-                    <UncontrolledCollapse toggler={`${msg?.client_state?.revision_time?.revision_height}`}>
+                    <span className="float-right"><i className="material-icons" onClick={this.toggle}>{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
+                    <Collapse isOpen={this.state.isOpen}>
                         <Table striped className="mt-3">
                             <tbody>
                                 <tr>
@@ -135,15 +135,15 @@ export default class Activites extends Component {
 
                             </tbody>
                         </Table>
-                    </UncontrolledCollapse>
+                    </Collapse>
                 </div>
             </div>
         case "/ibc.core.client.v1.MsgUpdateClient":
             return <div>
                 <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} /> 
                 <div className="d-inline">
-                    <span id={`tx${msg?.header?.signed_header?.header?.height}`} className="float-right"><i className="material-icons">{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
-                    <UncontrolledCollapse toggler={`tx${msg?.header?.signed_header?.header?.height}`}>
+                    <span className="float-right"><i className="material-icons" onClick={this.toggle} >{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
+                    <Collapse isOpen={this.state.isOpen} style={{paddingBottom: this.state.isOpen ? "1rem" : "0"}}>
                         <Table striped className="mt-3">
                             <tbody>
                                 <tr>
@@ -156,7 +156,7 @@ export default class Activites extends Component {
                                 </tr>
                             </tbody>
                         </Table>
-                    </UncontrolledCollapse>
+                    </Collapse>
                 </div>
             </div>
         case "/ibc.core.client.v1.MsgUpgradeClient": 
@@ -177,8 +177,8 @@ export default class Activites extends Component {
             return <div>
                 <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
                 <div className="d-inline">
-                    <span id={`${msg?.packet?.timeout_height?.revision_time}`} className="float-right"><i className="material-icons">{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
-                    <UncontrolledCollapse toggler={`${msg?.packet?.timeout_height?.revision_time}`}>
+                    <span className="float-right"><i className="material-icons" onClick={this.toggle}>{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
+                    <Collapse isOpen={this.state.isOpen}>
                         <Table striped className="mt-3">
                             <tbody>
                                 <tr>
@@ -203,7 +203,7 @@ export default class Activites extends Component {
                                 </tr>
                             </tbody>
                         </Table>
-                    </UncontrolledCollapse>
+                    </Collapse>
                 </div>
             </div>
         case "/ibc.core.channel.v1.Channel":
@@ -246,8 +246,8 @@ export default class Activites extends Component {
             return <div>
                 <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} /> 
                 <div className="d-inline">
-                    <span id={`${msg?.packet?.timeout_height?.revision_time}`} className="float-right"><i className="material-icons">{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
-                    <UncontrolledCollapse toggler={`${msg?.packet?.timeout_height?.revision_time}`}>
+                    <span className="float-right"><i className="material-icons" onClick={this.toggle}>{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
+                    <Collapse isOpen={this.state.isOpen}>
                         <Table striped className="mt-3">
                             <tbody>
                                 <tr>
@@ -264,7 +264,7 @@ export default class Activites extends Component {
                                 </tr>
                             </tbody>
                         </Table>
-                    </UncontrolledCollapse>
+                    </Collapse>
                 </div>
             </div>
         case "/ibc.core.channel.v1.MsgTimeout":
@@ -285,8 +285,8 @@ export default class Activites extends Component {
             return <div>
                 <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} /> 
                 <div className="d-inline">
-                    <span id={`tx${msg?.proof_height?.revision_time}`} className="float-right"><i className="material-icons">{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
-                    <UncontrolledCollapse toggler={`tx${msg?.proof_height?.revision_time}`}>
+                    <span className="float-right"><i className="material-icons" onClick={this.toggle}>{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
+                    <Collapse isOpen={this.state.isOpen}>
                         <Table striped className="mt-3">
                             <tbody>
                                 <tr>
@@ -300,7 +300,7 @@ export default class Activites extends Component {
 
                             </tbody>
                         </Table>
-                    </UncontrolledCollapse>
+                    </Collapse>
                 </div>
             </div>      
         case "/ibc.core.connection.v1.MsgConnectionOpenInit":
@@ -311,8 +311,8 @@ export default class Activites extends Component {
             return <div>
                 <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} /> 
                 <div className="d-inline">
-                    <span id={`${msg?.consensus_height?.revision_time}`} className="float-right"><i className="material-icons">{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
-                    <UncontrolledCollapse toggler={`${msg?.consensus_height?.revision_time}`}>
+                    <span className="float-right"><i className="material-icons" onClick={this.toggle}>{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
+                    <Collapse isOpen={this.state.isOpen}>
                         <Table striped className="mt-3">
                             <tbody>
                                 <tr>
@@ -334,7 +334,7 @@ export default class Activites extends Component {
 
                             </tbody>
                         </Table>
-                    </UncontrolledCollapse>
+                    </Collapse>
                 </div>    
             </div>
         case "/ibc.core.connection.v1.ConnectionEnd":
