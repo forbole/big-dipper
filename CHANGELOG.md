@@ -1,6 +1,9 @@
 # Changelog
 
-## [Unreleased]
+## v0.37.x-12.1
+
+* Fixes Ledger WebUSB + Chrome 91.x issue
+## v0.37.x-12
 
 * [#487] Fixed typo in the query which make validator power change tx lookup failed.
 * Fixed an issue on displaying individual transaction.
