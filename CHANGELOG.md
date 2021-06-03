@@ -1,5 +1,8 @@
 # Changelog
 
+## [Unreleased]
+* Fixes Ledger WebUSB + Chrome 91.x issue (https://github.com/LedgerHQ/ledgerjs/issues/607)
+
 ## v0.41.x-14.1
 * [#426] Updated proposal tally result, added activeVotingPower value to active proposal collection.
 * [#524] Added `noreferrer` to Banner links
