@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.39.x-7.1
+* Fixes Ledger WebUSB + Chrome 91.x issue
+
 ## v0.39.x-7
 
 * [#452] Fix VP Chart not being shown
