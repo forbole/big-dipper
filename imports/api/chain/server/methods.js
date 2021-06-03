@@ -76,7 +76,7 @@ Meteor.methods({
 
             // update staking params
             try {
-                url = LCD + 'staking/parameters';
+                url = LCD + '/staking/parameters';
                 response = HTTP.get(url);
                 chain.staking = JSON.parse(response.content).result;
             }
