@@ -3,6 +3,7 @@
 ## v0.41.x-14.1
 * [#426] Updated proposal tally result, added activeVotingPower value to active proposal collection.
 * [#524] Added `noreferrer` to Banner links
+* [#447] Fixed txs scrolling issue that was causing page to reload and jump to the top when user scrolled to the bottom of the page. 
 
 ## v0.41.x-14
 * [#488] Updated missing proposer address in proposals.

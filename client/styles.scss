@@ -568,6 +568,10 @@ body {
       padding-bottom: 0.4rem;
       border-bottom: 1px solid $gray-300;
     }
+    &.tx-info-row{
+      padding-top: 0.4rem;
+      padding-bottom: 0.4rem;
+    }
   }
   
   .tx-info.invalid {

@@ -12,19 +12,19 @@ import i18n from 'meteor/universe:i18n';
 
 const T = i18n.createComponent();
 
-export default class Transactions extends Component{
-    constructor(props){
+export default class TransactionsList extends Component {
+    constructor(props) {
         super(props);
 
         this.state = {
-            limit: props.homepage ? 16: Meteor.settings.public.initialPageSize,
+            limit: props.homepage ? 16 : Meteor.settings.public.initialPageSize,
             monikerDir: 1,
             votingPowerDir: -1,
             uptimeDir: -1,
             proposerDir: -1,
             priority: 2,
             loadmore: false,
-            sidebarOpen: (props?.location?.pathname.split("/transactions/").length == 2)
+            sidebarOpen: (props?.location?.pathname.split("/transactions/").length == 2),
         }
 
         this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
@@ -33,17 +33,17 @@ export default class Transactions extends Component{
     isBottom(el) {
         return el.getBoundingClientRect().bottom <= window.innerHeight;
     }
-      
+
     componentDidMount() {
         document.addEventListener('scroll', this.trackScrolling);
     }
-    
+
     componentWillUnmount() {
         document.removeEventListener('scroll', this.trackScrolling);
     }
-    
-    componentDidUpdate(prevProps){
-        if (this.props?.location?.pathname != prevProps?.location?.pathname){
+
+    componentDidUpdate(prevProps) {
+        if (this.props?.location?.pathname != prevProps?.location?.pathname) {
             this.setState({
                 sidebarOpen: (this.props?.location?.pathname.split("/transactions/").length == 2)
             })
@@ -53,37 +53,35 @@ export default class Transactions extends Component{
     trackScrolling = () => {
         const wrappedElement = document.getElementById('transactions');
         if (this.isBottom(wrappedElement)) {
-            // console.log('header bottom reached');
             document.removeEventListener('scroll', this.trackScrolling);
-            this.setState({loadmore:true});
+            this.setState({ loadmore: true });
             this.setState({
-                limit: this.state.limit+10
+                limit: this.state.limit + 3000
             }, (err, result) => {
-                if (!err){
+                if (!err) {
                     document.addEventListener('scroll', this.trackScrolling);
                 }
-                if (result){
-                    this.setState({loadmore:false});
+                if (result) {
+                    this.setState({ loadmore: false });
                 }
             })
         }
     };
 
     onSetSidebarOpen(open) {
-        // console.log(open);
-        this.setState({ sidebarOpen: open }, (error, result) =>{
+        this.setState({ sidebarOpen: open }, (error, result) => {
             let timer = Meteor.setTimeout(() => {
-                if (!open){
+                if (!open) {
                     this.props.history.push('/transactions');
                 }
                 Meteor.clearTimeout(timer);
-            },500)
+            }, 500)
         });
-        
+
     }
 
-    render(){
-        return !this.props.homepage ?  <div id="transactions">
+    render() {
+        return !this.props.homepage ? <div id="transactions">
             <Helmet>
                 <title>Latest Transactions on {Meteor.settings.public.chainName} | Big Dipper</title>
                 <meta name="description" content="See what is happening on {Meteor.settings.public.chainName}" />
@@ -93,23 +91,24 @@ export default class Transactions extends Component{
                 <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
             </Row>
             <Switch>
-                <Route path="/transactions/:txId" render={(props)=> <Sidebar 
+                <Route path="/transactions/:txId" render={(props) => <Sidebar
                     sidebar={<Transaction {...props} />}
                     open={this.state.sidebarOpen}
                     onSetOpen={this.onSetSidebarOpen}
-                    styles={{ sidebar: { 
-                        background: "white", 
-                        position: "fixed",
-                        width: '85%',
-                        zIndex: 4
-                    },overlay: {
-                        zIndex: 3
-                    } }}
+                    styles={{
+                        sidebar: {
+                            background: "white",
+                            position: "fixed",
+                            width: '85%',
+                            zIndex: 4
+                        }, overlay: {
+                            zIndex: 3
+                        }
+                    }}
                 >
                 </Sidebar>} />
             </Switch>
-            <List limit={this.state.limit} />
-            <LoadMore show={this.state.loadmore} />
+            <List limit={this.state.limit}  />
         </div> : <Card className="h-100 overflow-auto">
             <div className="card-header"><T>transactions.transactions</T></div>
             <CardBody className="tx-list-homepage">
@@ -139,8 +138,6 @@ export default class Transactions extends Component{
                     </thead>
                     <tbody>
                         <List limit={this.state.limit} /></tbody>
-                     
-
                 </Table>
             </CardBody>
         </Card>;

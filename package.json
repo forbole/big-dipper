@@ -47,6 +47,7 @@
     "react-showdown": "^1.6.0",
     "react-sidebar": "^3.0.2",
     "react-toastify": "^4.5.2",
+    "react-window": "^1.8.6",
     "reactstrap": "^8.9.0",
     "rollup": "^2.49.0",
     "secp256k1": "^3.8.0",
