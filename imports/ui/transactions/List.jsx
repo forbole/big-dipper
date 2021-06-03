@@ -4,71 +4,89 @@ import { TransactionRow } from './TransactionRow.jsx';
 import i18n from 'meteor/universe:i18n';
 import { VariableSizeList } from 'react-window';
 
-const PADDING_SIZE = 10;
-const T = i18n.createComponent();
 
-export default class Transactions extends Component{
-    constructor(props){
+const T = i18n.createComponent();
+export default class Transactions extends Component {
+    constructor(props) {
         super(props);
+        this.childRef = React.createRef();
+
         this.state = {
             txs: "",
-            homepage:  window?.location?.pathname === '/' ? true : false
-
+            homepage: window?.location?.pathname === '/' ? true : false,
         }
     }
 
-    componentDidUpdate(prevProps){
-        if (this.props != prevProps){
-            if (this.props.transactions.length > 0){
+    componentDidUpdate(prevProps, prevState) {
+        if (this.props != prevProps) {
+            if (this.props.transactions.length > 0) {
                 this.setState({
                     txs: this.props.transactions.map((tx, i) => {
                         return <TransactionRow
                             key={i}
                             index={i}
                             tx={tx}
+                            ref={this.childRef}
                         />
-                    })
-                })    
+                    }),
+                    height: this.childRef.current?.myRef?.current?.clientHeight
+                })
             }
         }
     }
 
-     getItemSize = index => (117 * (this.state.txs[index]?.props?.tx?.tx?.body?.messages.length))
+    componentDidMount() {
+        this.childRef?.current?.myRef?.current?.clientHeight
+    }
 
-     TxRow = ({ index, style }) => (
-         <div style={{
-             ...style,
-             top: `${parseFloat(style.top) + PADDING_SIZE}px`
-         }}>{this.state.txs[index]}</div>
 
-     );
+    getItemSize = index => {
+        if (this.state.txs[index]?.props?.tx?.tx?.body?.messages.length > 1) {
+            if (this.state.txs[index]?.props?.tx?.tx?.body?.messages[0]['@type'] === '/cosmos.bank.v1beta1.MsgSend') {
+                return 100 * this.state.txs[index]?.props?.tx?.tx?.body?.messages.length
+            }
+            return 80 * this.state.txs[index]?.props?.tx?.tx?.body?.messages.length
+        }
+        else {
+            return 130
+        }
+    }
 
-     render(){
-         if (this.props.loading){
-             return <Spinner type="grow" color="primary" />
-         }
-         else if (!this.props.transactionsExist){
-             return <div><T>transactions.notFound</T></div>
-         }
-         else{
-             return <div className="transactions-list">
-                 <Row className="header text-nowrap d-none d-lg-flex">
-                     <Col xs={9} lg={this.state.homepage ? 5 : 7}><i className="material-icons">message</i> <span className="d-none d-md-inline-block"><T>transactions.activities</T></span></Col>
-                     <Col xs={3} lg={!this.state.homepage ? { size: 1, order: "last" } : { size: 2, order: "last" }}><span className={this.state.homepage ? "ml-5" : null}><i className="fas fa-hashtag"></i> <span className="d-none d-md-inline-block"><T>transactions.txHash</T></span></span></Col>
-                     <Col xs={4} md={2} lg={1}><i className="fas fa-database"></i> <span className="d-none d-md-inline-block"><T>common.height</T></span></Col>
-                     <Col xs={2} md={1} className="text-nowrap"><span className={this.state.homepage ? "ml-4" : null}><i className="material-icons">check_circle</i> <span className="d-none d-lg-inline-block"><T>transactions.valid</T></span></span></Col>
-                     {!this.state.homepage ? <Col xs={12} lg={2}><i className="material-icons">monetization_on</i> <span className="d-none d-md-inline-block"><T>transactions.fee</T></span></Col> : null }
-                 </Row>
-                 {this.state.txs ? 
-                     <VariableSizeList
-                         height={700}
-                         itemCount={this.props.transactionsCount}
-                         itemSize={this.getItemSize}
-                         width="100%"
-                     >
-                         {this.TxRow}
-                     </VariableSizeList> : ''}
-             </div>
-         }
-     }
+    TxRow = ({ index, style }) => (
+        <div className="tx-info" id="tx-infos"
+            style={{
+                ...style
+            }}
+        >{this.state.txs[index]}</div>
+    );
+
+    render() {
+        if (this.props.loading) {
+            return <Spinner type="grow" color="primary" />
+        }
+        else if (!this.props.transactionsExist) {
+            return <div><T>transactions.notFound</T></div>
+        }
+        else {
+            return <div className="transactions-list">
+                <Row className="header text-nowrap d-none d-lg-flex">
+                    <Col xs={9} lg={this.state.homepage ? 5 : 7}><i className="material-icons">message</i> <span className="d-none d-md-inline-block"><T>transactions.activities</T></span></Col>
+                    <Col xs={3} lg={!this.state.homepage ? { size: 1, order: "last" } : { size: 2, order: "last" }}><span className={this.state.homepage ? "ml-5" : null}><i className="fas fa-hashtag"></i> <span className="d-none d-md-inline-block"><T>transactions.txHash</T></span></span></Col>
+                    <Col xs={4} md={2} lg={1}><i className="fas fa-database"></i> <span className="d-none d-md-inline-block"><T>common.height</T></span></Col>
+                    <Col xs={2} md={1} className="text-nowrap"><span className={this.state.homepage ? "ml-4" : null}><i className="material-icons">check_circle</i> <span className="d-none d-lg-inline-block"><T>transactions.valid</T></span></span></Col>
+                    {!this.state.homepage ? <Col xs={12} lg={2}><i className="material-icons">monetization_on</i> <span className="d-none d-md-inline-block"><T>transactions.fee</T></span></Col> : null}
+                </Row>
+                {this.state.txs ?
+                    <VariableSizeList
+                        height={700}
+                        itemCount={this.props.transactionsCount}
+                        itemSize={this.getItemSize}
+                        width="100%"
+                    >
+                        {this.TxRow}
+                    </VariableSizeList>
+                    : ''}
+            </div>
+        }
+    }
 }

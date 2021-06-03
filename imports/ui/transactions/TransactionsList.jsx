@@ -12,7 +12,7 @@ import i18n from 'meteor/universe:i18n';
 
 const T = i18n.createComponent();
 
-export default class Transactions extends Component {
+export default class TransactionsList extends Component {
     constructor(props) {
         super(props);
 
@@ -24,7 +24,7 @@ export default class Transactions extends Component {
             proposerDir: -1,
             priority: 2,
             loadmore: false,
-            sidebarOpen: (props?.location?.pathname.split("/transactions/").length == 2)
+            sidebarOpen: (props?.location?.pathname.split("/transactions/").length == 2),
         }
 
         this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
@@ -53,11 +53,10 @@ export default class Transactions extends Component {
     trackScrolling = () => {
         const wrappedElement = document.getElementById('transactions');
         if (this.isBottom(wrappedElement)) {
-            // console.log('header bottom reached');
             document.removeEventListener('scroll', this.trackScrolling);
             this.setState({ loadmore: true });
             this.setState({
-                limit: this.state.limit + 10
+                limit: this.state.limit + 3000
             }, (err, result) => {
                 if (!err) {
                     document.addEventListener('scroll', this.trackScrolling);
@@ -70,7 +69,6 @@ export default class Transactions extends Component {
     };
 
     onSetSidebarOpen(open) {
-        // console.log(open);
         this.setState({ sidebarOpen: open }, (error, result) => {
             let timer = Meteor.setTimeout(() => {
                 if (!open) {
@@ -110,44 +108,38 @@ export default class Transactions extends Component {
                 >
                 </Sidebar>} />
             </Switch>
-            <Container fluid id="transactions">
-                <List limit={this.state.limit} />
-            </Container>
-            <LoadMore show={this.state.loadmore} />
-        </div> 
-            : <Card className="h-100 overflow-auto">
-                <div className="card-header"><T>transactions.transactions</T></div>
-                <CardBody className="tx-list-homepage">
-                    <Table striped className="tx-home">
-                        <thead>
-                            <tr>
-                                <Switch>
-                                    <Route path="/transactions/:txId" render={(props) => <Sidebar
-                                        sidebar={<Transaction {...props} />}
-                                        open={this.state.sidebarOpen}
-                                        onSetOpen={this.onSetSidebarOpen}
-                                        styles={{
-                                            sidebar: {
-                                                background: "white",
-                                                position: "fixed",
-                                                width: '85%',
-                                                zIndex: 4
-                                            }, overlay: {
-                                                zIndex: 3
-                                            }
-                                        }}
-                                    >
-                                    </Sidebar>} />
+            <List limit={this.state.limit}  />
+        </div> : <Card className="h-100 overflow-auto">
+            <div className="card-header"><T>transactions.transactions</T></div>
+            <CardBody className="tx-list-homepage">
+                <Table striped className="tx-home">
+                    <thead>
+                        <tr>
+                            <Switch>
+                                <Route path="/transactions/:txId" render={(props) => <Sidebar
+                                    sidebar={<Transaction {...props} />}
+                                    open={this.state.sidebarOpen}
+                                    onSetOpen={this.onSetSidebarOpen}
+                                    styles={{
+                                        sidebar: {
+                                            background: "white",
+                                            position: "fixed",
+                                            width: '85%',
+                                            zIndex: 4
+                                        }, overlay: {
+                                            zIndex: 3
+                                        }
+                                    }}
+                                >
+                                </Sidebar>} />
 
-                                </Switch>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <List limit={this.state.limit} /></tbody>
-
-
-                    </Table>
-                </CardBody>
-            </Card>;
+                            </Switch>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <List limit={this.state.limit} /></tbody>
+                </Table>
+            </CardBody>
+        </Card>;
     }
 }
