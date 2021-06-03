@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [v0.41.x-14.2]
 * Fixes Ledger WebUSB + Chrome 91.x issue (https://github.com/LedgerHQ/ledgerjs/issues/607)
 
 ## v0.41.x-14.1
