@@ -1,6 +1,9 @@
 # Changelog
 
-# [Unreleased]
+# kava-7-v1.1
+* Update npm packages
+* Fixes Ledger WebUSB + Chrome 91.x issue
+# kava-7-v1.0
 * Updated project to Kava-7 upgrade (Added HARD Protocol Support)
 
 ## kava-6-v1.0.0
