@@ -4,10 +4,10 @@ import { Validators } from '../../validators/validators';
 Meteor.methods({
     'transaction.submit': function(txInfo) {
         this.unblock();
-        const url = `${API}/txs`;
+        const url = `${API}/cosmos/tx/v1beta1/txs`;
         data = {
-            "tx": txInfo.value,
-            "mode": "sync"
+            "tx_bytes": txInfo,
+            "mode": "BROADCAST_MODE_SYNC"
         }
         const timestamp = new Date().getTime();
         console.log(`submitting transaction${timestamp} ${url} with data ${JSON.stringify(data)}`)
@@ -39,7 +39,7 @@ Meteor.methods({
     'transaction.simulate': function(txMsg, from, accountNumber, sequence, path, adjustment='1.2') {
         this.unblock();
         const url = `${API}/${path}`;
-        console.log(txMsg);
+
         data = {...txMsg,
             "base_req": {
                 "from": from,

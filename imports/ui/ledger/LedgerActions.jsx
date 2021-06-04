@@ -401,8 +401,7 @@ class LedgerButton extends Component {
     }
 
     getSimulateBody (txMsg) {
-        return (txMsg && txMsg.value && txMsg.value.msg &&
-            txMsg.value.msg.length && txMsg.value.msg[0].value) || {}
+        return (txMsg && txMsg.body && txMsg.body.messages[0]) || {}
     }
 
     getPath = () => {
@@ -423,6 +422,10 @@ class LedgerButton extends Component {
     runSimulatation = (txMsg, simulateBody) => {
         let gasAdjustment = TypeMeta[this.state.actionType].gasAdjustment || DEFAULT_GAS_ADJUSTMENT;
         Meteor.call('transaction.simulate', simulateBody, this.state.user, this.state.currentUser.accountNumber, this.state.currentUser.sequence, this.getPath(), gasAdjustment, (err, res) =>{
+            console.log(res)
+            console.log(err)
+            console.log(txMsg)
+            console.log(simulateBody)
             if (res){
                 let gasPrice = calculateGasPrice(res)
                 let amountToTransfer = this.state.transferAmount?.amount || this.state.delegateAmount?.amount || this.state.depositAmount?.amount
@@ -450,11 +453,15 @@ class LedgerButton extends Component {
         this.initStateOnLoad('signing')
         try {
             let txMsg = this.state.txMsg;
+            console.log(txMsg)
             const txContext = this.getTxContext();
+            console.log(txContext)
             const bytesToSign = Ledger.getBytesToSign(txMsg, txContext);
+            console.log(bytesToSign)
             this.ledger.sign(bytesToSign, this.state.transportBLE).then((sig) => {
                 try {
                     Ledger.applySignature(txMsg, txContext, sig);
+                    console.log(txMsg)
                     Meteor.call('transaction.submit', txMsg, (err, res) => {
                         if (err) {
                             this.setStateOnError('signing', err.reason)
