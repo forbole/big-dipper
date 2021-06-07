@@ -1,5 +1,8 @@
 # Changelog
 
+# [Unreleased]
+* [#536] Added missing `/` in staking parameters URL 
+
 # kava-7-v1.1
 * Update npm packages
 * Fixes Ledger WebUSB + Chrome 91.x issue
