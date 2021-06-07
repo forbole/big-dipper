@@ -184,7 +184,7 @@ export class Ledger {
         this.checkLedgerErrors(response)
         // we have to parse the signature from Ledger as it's in DER format
         const parsedSignature = signatureImport(response.signature)
-        return parsedSignature
+        return response.signature
     }
 
     /* istanbul ignore next: maps a bunch of errors */
@@ -293,18 +293,7 @@ export class Ledger {
         }
 
         const tmpCopy = Object.assign({}, unsignedTx, {});
-
-        tmpCopy.signatures = [ secp256k1Sig.toString('base64')];
-        // {
-        //     signature: secp256k1Sig.toString('base64'),
-        //     account_number: txContext.accountNumber.toString(),
-        //     sequence: txContext.sequence.toString(),
-        //     pub_key: {
-        //         type: '/cosmos.crypto.secp256k1.PubKey',
-        //         value: txContext.pk//Buffer.from(txContext.pk, 'hex').toString('base64'),
-        //     },
-        // },
-        
+        tmpCopy.signatures[0] = secp256k1Sig.toString('base64')
         return tmpCopy;
     }
 
@@ -336,7 +325,7 @@ export class Ledger {
                         }
                     },
                     "public_key": {
-                        "@type": '/cosmos.crypto.secp256k1.PubKey',
+                        "@type": 'tendermint/PubKeySecp256k1',
                         "key": txContext.pk || 'PK',
                     },
                     "sequence": txContext.sequence.toString(),
@@ -452,21 +441,23 @@ export class Ledger {
         deposit
     ) {
         const txMsg = {
-            type: 'cosmos-sdk/MsgSubmitProposal',
-            value: {
-                content: {
-                    type: "/cosmos.TextProposal",
-                    value: {
-                        description: description,
-                        title: title
-                    }
-                },
-                initial_deposit: [{
+            "@type": '/cosmos.gov.v1beta1.MsgSubmitProposal',
+            
+            "content": {
+                "@type": "/cosmos.distribution.v1beta1.CommunityPoolSpendProposal",
+                "amount": [{
                     amount: deposit.toString(),
                     denom: txContext.denom
                 }],
-                proposer: txContext.bech32
-            }
+                "description": description,
+                "recipient": "cosmos1s5afhd6gxevu37mkqcvvsj8qeylhn0rz46zdlq",
+                "title": title,
+            },
+            "initial_deposit": [{
+                amount: deposit.toString(),
+                denom: txContext.denom
+            }],
+            "proposer": txContext.bech32
         };
 
         return Ledger.createSkeleton(txContext, [txMsg]);
@@ -478,12 +469,10 @@ export class Ledger {
         option,
     ) {
         const txMsg = {
-            type: 'cosmos-sdk/MsgVote',
-            value: {
-                option,
-                proposal_id: proposalId.toString(),
-                voter: txContext.bech32
-            }
+            "@type": '/cosmos.gov.v1beta1.MsgVote',
+            "option": option,
+            "proposal_id": proposalId.toString(),
+            "voter": txContext.bech32.toString()
         };
 
         return Ledger.createSkeleton(txContext, [txMsg]);
