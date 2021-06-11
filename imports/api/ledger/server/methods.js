@@ -1,13 +1,16 @@
 import { HTTP } from 'meteor/http';
 import { Validators } from '../../validators/validators';
+import { Meteor } from 'meteor/meteor';
 
 Meteor.methods({
     'transaction.submit': function(txInfo) {
         this.unblock();
         const url = `${API}/cosmos/tx/v1beta1/txs`;
+        const txBytesBase64 = Buffer.from(JSON.stringify(txInfo), 'binary').toString('base64');
+
         data = {
-            "tx_bytes": txInfo,
-            "mode": "BROADCAST_MODE_SYNC"
+            tx_bytes: txBytesBase64,
+            mode: "BROADCAST_MODE_SYNC"
         }
         const timestamp = new Date().getTime();
         console.log(`submitting transaction${timestamp} ${url} with data ${JSON.stringify(data)}`)

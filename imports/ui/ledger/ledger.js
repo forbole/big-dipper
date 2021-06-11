@@ -11,6 +11,19 @@ import bech32 from "bech32";
 import sha256 from "crypto-js/sha256"
 import ripemd160 from "crypto-js/ripemd160"
 import CryptoJS from "crypto-js"
+import {
+    AccountData,
+    AminoSignResponse,
+    encodeSecp256k1Signature,
+    makeCosmoshubPath,
+    OfflineAminoSigner,
+    serializeSignDoc,
+    StdSignDoc,
+} from "@cosmjs/amino";
+import { fromBase64, toHex, toUtf8 } from "@cosmjs/encoding";
+import { SignMode } from "@cosmjs/stargate/build/codec/cosmos/tx/signing/v1beta1/signing";
+import message from "@forbole/cosmos-protobuf-js"
+import { TxRaw, AuthInfo, TxBody, SignDoc } from "@cosmjs/stargate/build/codec/cosmos/tx/v1beta1/tx";
 
 // TODO: discuss TIMEOUT value
 const INTERACTION_TIMEOUT = 10000
@@ -252,6 +265,16 @@ export class Ledger {
             sequence: txContext.sequence.toString(),
         };
 
+        // const bodyBytes = TxBody.encode(JSON.stringify(tx.body)).finish();
+        // const authInfoBytes = AuthInfo.encode(JSON.stringify(tx.auth_info)).finish();
+
+        // const signDoc = SignDoc({
+        //     body_bytes: bodyBytes,
+        //     auth_info_bytes: authInfoBytes,
+        //     chain_id: txContext.chainId,
+        //     account_number: Number(txContext.accountNumber)
+        // });
+
         return JSON.stringify(canonicalizeJson(txFieldsToSign));
     }
 
@@ -321,7 +344,7 @@ export class Ledger {
                 "signer_infos": [{
                     "mode_info": {
                         "single": {
-                            "mode": "SIGN_MODE_LEGACY_AMINO_JSON"
+                            "mode": SignMode.SIGN_MODE_LEGACY_AMINO_JSON
                         }
                     },
                     "public_key": {
