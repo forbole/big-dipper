@@ -42,6 +42,10 @@ export default class Footer extends React.Component {
                             <NavLink tag={Link} to="/transactions"><i className="fas fa-sync"></i></NavLink>
                         </NavItem>
                         <NavItem>
+                            <NavLink tag={Link} to="/easel_transactions"><i className="fas fa-cube"></i></NavLink>
+                        </NavItem>
+                        
+                        <NavItem>
                             <NavLink tag={Link} to="/proposals"><i className="material-icons">insert_drive_file</i></NavLink>
                         </NavItem>
                         <NavItem>

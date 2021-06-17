@@ -18,12 +18,14 @@ timerChain = 0;
 timerConsensus = 0;
 timerProposal = 0;
 timerProposalsResults = 0;
+timerRecipe = 0;
+timerRecipesResults = 0;
 timerMissedBlock = 0;
 timerDelegation = 0;
 timerAggregate = 0;
 timerFetchKeybase = 0;
 
-const DEFAULTSETTINGS = '/default_settings.json';
+const DEFAULTSETTINGS = '/settings.json';
 
 updateChainStatus = () => {
     Meteor.call('chain.updateStatus', (error, result) => {
@@ -64,6 +66,28 @@ getConsensusState = () => {
             console.log("get consensus: %o", error)
         }
     })
+}
+
+getRecipes = () => {
+    Meteor.call('recipes.getRecipes', (error, result) => {
+        if (error){
+            console.log("get recipe: %o", error);
+        }
+        if (result){
+            console.log("get recipe: %o", result);
+        }
+    });
+}
+
+getRecipesResults = () => {
+    Meteor.call('recipes.getRecipeResults', (error, result) => {
+        if (error){
+            console.log("get recipes result: %o", error);
+        }
+        if (result){
+            console.log("get recipes result: %o", result);
+        }
+    });
 }
 
 getProposals = () => {
@@ -179,8 +203,8 @@ aggregateDaily = () =>{
 
 Meteor.startup(async function(){
     if (Meteor.isDevelopment){
-        process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
-        import DEFAULTSETTINGSJSON from '../default_settings.json'
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = 1;
+        import DEFAULTSETTINGSJSON from '../settings.json'
         Object.keys(DEFAULTSETTINGSJSON).forEach((key) => {
             if (Meteor.settings[key] == undefined) {
                 console.warn(`CHECK SETTINGS JSON: ${key} is missing from settings`)
@@ -221,6 +245,14 @@ Meteor.startup(async function(){
                 getProposalsResults();
             }, Meteor.settings.params.proposalInterval);
         }
+
+        timerRecipe = Meteor.setInterval(function (){
+            getRecipes(); 
+        }, Meteor.settings.params.recipeInterval);
+       
+        timerRecipesResults = Meteor.setInterval(function (){
+            getRecipesResults();
+        }, Meteor.settings.params.recipeInterval); 
 
         timerMissedBlock = Meteor.setInterval(function(){
             updateMissedBlocks();

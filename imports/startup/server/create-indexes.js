@@ -1,5 +1,6 @@
 import { Blockscon } from '../../api/blocks/blocks.js';
 import { Proposals } from '../../api/proposals/proposals.js';
+import { Recipes } from '../../api/recipes/recipes.js';
 import { ValidatorRecords, Analytics, MissedBlocksStats, MissedBlocks, AverageData, AverageValidatorData } from '../../api/records/records.js';
 // import { Status } from '../../api/status/status.js';
 import { Transactions } from '../../api/transactions/transactions.js';
@@ -19,6 +20,7 @@ Evidences.rawCollection().createIndex({height: -1});
 
 Proposals.rawCollection().createIndex({proposalId: 1}, {unique:true});
 
+Recipes.rawCollection().createIndex({ID: "1", NO: -1}, {unique:true}); 
 ValidatorRecords.rawCollection().createIndex({address:1,height: -1}, {unique:1});
 ValidatorRecords.rawCollection().createIndex({address:1,exists:1, height: -1});
 

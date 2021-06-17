@@ -12,7 +12,8 @@ import Account from '/imports/ui/accounts/Account.jsx';
 import BlocksTable from '/imports/ui/blocks/BlocksTable.jsx';
 import Proposals from '/imports/ui/proposals/Proposals.jsx';
 import ValidatorDetails from '/imports/ui/validators/ValidatorDetails.jsx';
-import Transactions from '/imports/ui/transactions/TransactionsList.jsx';
+import Transactions from '/imports/ui/transactions/TransactionsList.jsx'; 
+import Recipes from '/imports/ui/easel_transactions/Recipes.jsx'; 
 import Distribution from '/imports/ui/voting-power/Distribution.jsx';
 import SearchBar from '/imports/ui/components/SearchBar.jsx';
 import moment from 'moment';
@@ -86,7 +87,8 @@ class App extends Component {
                         <Switch>
                             <Route exact path="/" component={Home} />
                             <Route path="/blocks" component={BlocksTable} />
-                            <Route path="/transactions" component={Transactions} />
+                            <Route path="/transactions" component={Transactions} /> 
+                            <Route path="/easel_transactions" component={Recipes} />    
                             <Route path="/account/:address" render={(props)=><Account {...props} />} />
                             <Route path="/validators" exact component={Validators} />
                             <Route path="/validators/inactive" render={(props) => <Validators {...props} inactive={true} />} />
