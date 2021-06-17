@@ -200,7 +200,7 @@ accounts:
     signInText: 'Zalogowany jako '
     toLoginAs: 'Aby zalogować się jako '
     signInWithLedger: 'Zaloguj się z Ledgerem'
-    signInWarning: 'Upewnij się, że Twój Ledger jest podłączony do komputera oraz aplikacja <strong class="text-primary">Cosmos App 1.5.0 lub nowsza </strong> jest uruchomiona.'
+    signInWarning: 'Upewnij się, że Twój Ledger jest podłączony do komputera oraz aplikacja <strong class="text-primary">{$network} App {$version} lub nowsza </strong> jest uruchomiona.'
     pleaseAccept: 'zaakceptuj połączenie na Twoim Ledgerze.'
     noRewards: 'Brak Nagród'
 activities:

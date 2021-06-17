@@ -22,7 +22,7 @@ export default class MissedBlocks extends Component{
             if (this.props.validatorExist){
                 return <div>
                     <Helmet>
-                        <title>{ this.props.validator.description.moniker } - Missed Blocks | The Big Dipper</title>
+                        <title>{ this.props.validator.description.moniker } - Missed Blocks | Big Dipper</title>
                         <meta name="description" content={"The missed blocks and precommits of "+this.props.validator.description.moniker} />
                     </Helmet>
                     <Link to={"/validator/"+this.props.validator.address} className="btn btn-link"><i className="fas fa-caret-left"></i> <T>validators.backToValidator</T></Link>

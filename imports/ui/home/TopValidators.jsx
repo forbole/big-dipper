@@ -30,7 +30,7 @@ export default class TopValidators extends Component{
                                 <Avatar moniker={validator.description.moniker} profileUrl={validator.profile_url} address={validator.address} list={true} />
                                 {validator.description.moniker}
                             </Link></td>
-                            <td className="voting-power">{numbro(validator.voting_power).format('0,0')}</td>
+                            <td className="voting-power">{numbro(Math.floor(validator.tokens/Meteor.settings.public.powerReduction)).format('0,0')}</td>
                             <td><Progress animated value={validator.uptime}>{validator.uptime?validator.uptime.toFixed(2):0}%</Progress></td>
                         </tr>
                     })
