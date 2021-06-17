@@ -2,6 +2,7 @@
 // https://github.com/zondax/cosmos-delegation-js/
 // https://github.com/cosmos/ledger-cosmos-js/blob/master/src/index.js
 import 'babel-polyfill';
+import { Meteor } from 'meteor/meteor';
 import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
 import BluetoothTransport from "@ledgerhq/hw-transport-web-ble";
 import CosmosApp from "ledger-cosmos-js"
@@ -19,11 +20,34 @@ import {
     OfflineAminoSigner,
     serializeSignDoc,
     StdSignDoc,
+    LedgerSigner
 } from "@cosmjs/amino";
-import { fromBase64, toHex, toUtf8 } from "@cosmjs/encoding";
+import crypto from "crypto";
+import { fromBase64, toHex, toUtf8, fromHex } from "@cosmjs/encoding";
 import { SignMode } from "@cosmjs/stargate/build/codec/cosmos/tx/signing/v1beta1/signing";
 import message from "@forbole/cosmos-protobuf-js"
-import { TxRaw, AuthInfo, TxBody, SignDoc } from "@cosmjs/stargate/build/codec/cosmos/tx/v1beta1/tx";
+import { encodeSecp256k1Pubkey, makeSignDoc as makeSignDocAmino } from "@cosmjs/amino";
+
+// import { TxRaw, AuthInfo, TxBody, SignDoc } from "@cosmjs/stargate/build/codec/cosmos/tx/v1beta1/tx";
+import secp256k1 from 'secp256k1';
+import { sha256 as sha256JS } from 'js-sha256';
+import { TxRaw, AuthInfo, TxBody, SignDoc } from "@cosmjs/proto-signing/build/codec/cosmos/tx/v1beta1/tx";
+import {
+    assertIsBroadcastTxSuccess as assertIsBroadcastTxSuccessStargate,
+    SigningStargateClient,
+} from "@cosmjs/stargate";
+import {
+    EncodeObject,
+    encodePubkey,
+    isOfflineDirectSigner,
+    makeAuthInfoBytes,
+    makeSignDoc,
+    OfflineSigner,
+    Registry,
+    TxBodyEncodeObject,
+} from "@cosmjs/proto-signing";
+import { MsgDelegate } from "@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/tx";
+import  { Msg, MsgSend }  from "@cosmjs/stargate/build/codec/cosmos/bank/v1beta1/tx";
 
 // TODO: discuss TIMEOUT value
 const INTERACTION_TIMEOUT = 10000
@@ -190,14 +214,54 @@ export class Ledger {
         })
     }
 
-    async sign(signMessage, transportBLE) {
+    async sign(signMessage, txBody, txContext, address, transportBLE) {
         await this.connect(INTERACTION_TIMEOUT, transportBLE)
 
-        const response = await this.cosmosApp.sign(this.getHDPath(), signMessage)
-        this.checkLedgerErrors(response)
-        // we have to parse the signature from Ledger as it's in DER format
-        const parsedSignature = signatureImport(response.signature)
-        return response.signature
+        let serializeMessage = toUtf8(signMessage)
+  
+        const bodyB = TxBody.fromPartial(txBody?.body)
+        const bodyBytes = TxBody.encode(bodyB).finish();
+        console.log(bodyBytes)
+        let authI = AuthInfo.fromPartial(txBody.auth_info)
+        const authInfoBytes = AuthInfo.encode(authI).finish();
+        console.log(authInfoBytes)
+
+        const signDoc = {
+            body_bytes: bodyBytes,
+            auth_info_bytes: authInfoBytes,
+            chain_id: txContext.chainId,
+            account_number: Number(txContext.accountNumber)
+        };
+        let signD = SignDoc.fromPartial(signDoc)
+        const signDocEncode = SignDoc.encode(signD).finish()
+        // const hash = crypto.createHash("sha256").update(signDocEncode).digest();
+
+        const signature = await this.cosmosApp.sign(this.getHDPath(), serializeMessage)
+        const txRaw = {
+            body_bytes: bodyBytes,
+            auth_info_bytes: authInfoBytes,
+            signatures: [Buffer.from(signature.signature)]
+        };
+
+        let txraw = TxRaw.fromPartial(txRaw)
+        let txRawEncoded = TxRaw.encode(txraw).finish()
+        let parsedSignature = signatureImport(signature.signature)
+        let pubKey = await this.getPubKey(transportBLE)
+        let encodeUserPubkey = encodePubkey(encodeSecp256k1Pubkey(pubKey));
+        let txSignature = encodeSecp256k1Signature(pubKey, new Uint8Array(parsedSignature))
+        console.log(txSignature)
+        return txSignature
+
+        
+    }
+
+    async signAmino(signDoc, address, transportBLE){
+        await this.connect(INTERACTION_TIMEOUT, transportBLE)
+        // console.log(this.cosmosApp)
+        // console.log(signMessage)
+        // console.log(txBody)
+        // // console.log(txContext)
+       
     }
 
     /* istanbul ignore next: maps a bunch of errors */
@@ -317,9 +381,8 @@ export class Ledger {
 
         const tmpCopy = Object.assign({}, unsignedTx, {});
         console.log(unsignedTx)
-        tmpCopy.signatures[0] = secp256k1Sig.toString('base64')
+        tmpCopy.signatures[0] = secp256k1Sig.signature
         //  toUtf8(secp256k1Sig.toString('base64'))
-        console.log(tmpCopy.signatures)
         // encodeSecp256k1Signature(accountForAddress.pubkey, signature)
         // secp256k1Sig.toString('base64')
         return tmpCopy;

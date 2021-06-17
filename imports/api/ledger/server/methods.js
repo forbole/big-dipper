@@ -1,14 +1,70 @@
 import { HTTP } from 'meteor/http';
 import { Validators } from '../../validators/validators';
 import { Meteor } from 'meteor/meteor';
+import { marshalTx, unmarshalTx } from '@tendermint/amino-js';
+import proto from "@forbole/cosmos-protobuf-js"
+import { Tx, TxRaw, AuthInfo, TxBody, SignDoc, SignerInfo} from "@cosmjs/stargate/build/codec/cosmos/tx/v1beta1/tx";
+import { fromBase64, toHex, toUtf8, fromHex } from "@cosmjs/encoding";
+// import { BroadcastMode, BroadcastTxRequest, SimulateRequest } from '.@cosmjs/stargate/build/codec/cosmos/tx/v1beta1'
+// import { BroadcastMode } from "@cosmjs/stargate/build/codec/cosmos/tx/broadcast/v1beta1/broadcast";
+// import { encodeSecp256k1Pubkey, makeSignDoc as makeSignDocAmino } from "@cosmjs/amino";
+// import { fromBase64, toHex, toUtf8 } from "@cosmjs/encoding";
+// import { TxRaw, AuthInfo, TxBody, SignDoc } from "@cosmjs/stargate/build/codec/cosmos/tx/v1beta1/tx";
+import { sha256 } from 'js-sha256';
+import secp256k1 from 'secp256k1';
+import fetch from 'cross-fetch';
+
+import { isNonNullObject, isUint8Array } from '@cosmjs/utils';
 
 Meteor.methods({
-    'transaction.submit': function(txInfo) {
+    'transaction.submit': function (sig, signMessage, txBody, txContext, address, action) {
         this.unblock();
         const url = `${API}/cosmos/tx/v1beta1/txs`;
-        const txBytesBase64 = Buffer.from(JSON.stringify(txInfo), 'binary').toString('base64');
+        console.log("^^^^^^^^^^^^^^^^^^")
+        console.log(sig)
+        console.log(action)
+        console.log(txContext)
+        console.log("^^^^^^^^^^^^^^^^^^")
 
-        data = {
+        const bodyB = TxBody.fromPartial(txBody?.body)
+        const bodyBytes = TxBody.encode(bodyB).finish();
+        console.log(bodyBytes)
+        let authI = AuthInfo.fromPartial(txBody.auth_info)
+        const authInfoBytes = AuthInfo.encode(authI).finish();
+        console.log(authInfoBytes)
+
+
+        const txRaw = {
+            body: bodyBytes,
+            auth_info: authInfoBytes,
+            signatures: [Buffer.from(sig.signature)]
+        };
+
+        const txRaw2 = {
+            bodyBytes: bodyBytes,
+            authInfoBytes: authInfoBytes,
+            signatures: [Buffer.from(sig.signature)]
+        };
+
+        const txRaw3 = {
+            body_bytes: bodyBytes,
+            auth_info_bytes: authInfoBytes,
+            signatures: [Buffer.from(sig.signature)]
+        };
+
+        const txRaw4 = {
+            body: bodyBytes,
+            authInfo: authInfoBytes,
+            signatures: [Buffer.from(sig.signature)]
+        };
+        let txB = TxRaw.fromPartial(txRaw2)
+        // let txB = TxRaw.fromJSON(txRaw2)
+
+        const txBytes = TxRaw.encode((txB)).finish();
+        const txBytesBase64 = Buffer.from((txBytes), 'binary').toString('base64');
+        console.log(txBytesBase64)
+
+        let data = {
             tx_bytes: txBytesBase64,
             mode: "BROADCAST_MODE_SYNC"
         }

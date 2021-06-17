@@ -455,16 +455,18 @@ class LedgerButton extends Component {
             const bytesToSign = Ledger.getBytesToSign(txMsg, txContext);
             console.log(bytesToSign)
             console.log("try signing...")
-            this.ledger.sign(bytesToSign, this.state.transportBLE).then((sig) => {
+            // this.ledger.signAmino(bytesToSign, this.state.user, this.state.transportBLE).then((sig) => {
+            this.ledger.sign(bytesToSign, txMsg, txContext, this.state.user, this.state.transportBLE).then((sig) => {
                 try {
                     Ledger.applySignature(txMsg, txContext, sig);
                     console.log(txMsg)
-                    console.log(Ledger.applySignature(txMsg, txContext, sig))
-                    Meteor.call('transaction.submit', txMsg, this.state.actionType, (err, res) => {
+                    Meteor.call('transaction.submit', sig, bytesToSign, txMsg, txContext, this.state.user, this.state.actionType, (err, res) => {
                         console.log("try submit....")
                         if (err) {
+                            console.log("err")
                             this.setStateOnError('signing', err.reason)
                         } else if (res) {
+                            console.log("res")
                             this.setStateOnSuccess('signing', {
                                 txHash: res,
                                 activeTab: '4'
