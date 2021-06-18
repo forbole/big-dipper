@@ -38,7 +38,7 @@ publishComposite('transactions.validator', function(validatorAddress, delegatorA
             {"tx.value.msg.value.Signer": delegatorAddress },
             {"tx.value.msg.value.delegator_address": delegatorAddress },
             {"tx_response.logs.events.attributes.value":delegatorAddress},
-            ]}
+        ]}
     }
 
     return {

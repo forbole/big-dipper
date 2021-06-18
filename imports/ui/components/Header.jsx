@@ -174,10 +174,10 @@ export default class Header extends Component {
             <Navbar color="primary" dark expand="lg" fixed="top" id="header">
                 <NavbarBrand tag={Link} to="/">
                     <img src="/img/sifchain.svg" className="img-fluid logo"/> 
-{/*                    <span className="d-none d-xl-inline-block"><T>navbar.siteName</T>&nbsp;</span>
+                    {/*                    <span className="d-none d-xl-inline-block"><T>navbar.siteName</T>&nbsp;</span>
                     <Badge color="secondary">{this.state.version}</Badge> */}
                 </NavbarBrand>
-{/*                <UncontrolledDropdown className="d-inline text-nowrap">
+                {/*                <UncontrolledDropdown className="d-inline text-nowrap">
                     <DropdownToggle caret={(this.state.networks !== "")} tag="span" size="sm" id="network-nav">{Meteor.settings.public.chainId}</DropdownToggle>
                     {this.state.networks}
                 </UncontrolledDropdown>*/}
@@ -203,7 +203,7 @@ export default class Header extends Component {
                         <NavItem>
                             <a className="nav-link" href="https://dex.sifchain.finance" target="_blank">Trade</a>
                         </NavItem>
-{/*                        <NavItem id="user-acconut-icon">
+                        {/*                        <NavItem id="user-acconut-icon">
                             {!signedInAddress?<Button className="sign-in-btn" color="link" size="lg" onClick={() => {this.setState({isSignInOpen: true})}}><i className="material-icons">vpn_key</i></Button>:
                                 <span>
                                     <span className="d-lg-none">
