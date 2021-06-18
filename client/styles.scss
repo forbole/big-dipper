@@ -47,7 +47,6 @@ h1 { color: white }
 #account > div:nth-child(2) > div > h3 > span > i { color: #343434 !important }
 #account > div:nth-child(2) > div > h3 > span > span {overflow: hidden !important}
 
-
 ::placeholder { color: white !important; opacity: 1}
 body {
     font-size: inherit !important;
@@ -1118,3 +1117,22 @@ body {
     cursor: help;
     opacity: 0.7;
   }
+
+table {
+  background-color: white;
+}
+.status-switch {
+  background-color: white;
+  margin-top: 8px;
+}
+.validator-list {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  .row {
+    margin: 0;
+  }
+  .card-body {
+    border: none;
+    border-radius: 0;
+  }
+}
