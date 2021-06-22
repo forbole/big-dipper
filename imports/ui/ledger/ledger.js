@@ -2,6 +2,7 @@
 // https://github.com/zondax/cosmos-delegation-js/
 // https://github.com/cosmos/ledger-cosmos-js/blob/master/src/index.js
 import 'babel-polyfill';
+import { Meteor } from 'meteor/meteor';
 import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
 import BluetoothTransport from "@ledgerhq/hw-transport-web-ble";
 import CosmosApp from "ledger-cosmos-js"
@@ -11,6 +12,15 @@ import bech32 from "bech32";
 import sha256 from "crypto-js/sha256"
 import ripemd160 from "crypto-js/ripemd160"
 import CryptoJS from "crypto-js"
+import { fromUtf8 } from "@cosmjs/encoding";
+import {
+    encodeSecp256k1Signature,
+    serializeSignDoc,
+} from "@cosmjs/amino";
+import { encodeSecp256k1Pubkey } from "@cosmjs/amino";
+import { HdPath, Secp256k1Signature } from "@cosmjs/crypto";
+import { makeSignDoc } from "@cosmjs/proto-signing";
+import message from "../../../both/utils/proto/messages/proto"
 
 // TODO: discuss TIMEOUT value
 const INTERACTION_TIMEOUT = 10000
@@ -187,6 +197,92 @@ export class Ledger {
         return parsedSignature
     }
 
+
+    async sign2(bytesToSign, txBody, txContext, address, transportBLE) {
+        await this.connect(INTERACTION_TIMEOUT, transportBLE)
+        let pubKey = await this.getPubKey(transportBLE)
+
+        const pubKeyAny = new message.google.protobuf.Any({
+            type_url: "/cosmos.crypto.secp256k1.PubKey",
+            value: "A1snYClW2ELf6ULe8jT98nykXlMdJa2mjkoo8S0ZYgY/"
+        });
+
+        const msgVote = new message.cosmos.gov.v1beta1.MsgVote({
+            option: "VOTE_OPTION_YES",
+            proposal_id: Number(txBody.value.msg[0].value.proposal_id),
+            voter: txBody.value.msg[0].value.voter
+        });
+
+        const msgVoteAny = new message.google.protobuf.Any({
+            type_url: "/cosmos.gov.v1beta1.MsgVote",
+            value: message.cosmos.gov.v1beta1.MsgVote.encode(msgVote).finish()
+        });
+
+        const txBodyVote = new message.cosmos.tx.v1beta1.TxBody({ messages: [msgVoteAny], memo: DEFAULT_MEMO });
+
+        const signerInfo = new message.cosmos.tx.v1beta1.SignerInfo({
+            public_key: pubKeyAny,
+            mode_info: { single: { mode: message.cosmos.tx.signing.v1beta1.SignMode.SIGN_MODE_LEGACY_AMINO_JSON } },
+            sequence: Number(txContext.sequence)
+        });
+
+        const feeValue = new message.cosmos.tx.v1beta1.Fee({
+            amount: txBody.value.fee.amount,
+            // gas: txBody.value.fee.gas,
+            gas_limit: 20000
+        });
+
+        const authInfo = new message.cosmos.tx.v1beta1.AuthInfo({ signer_infos: [signerInfo], fee: feeValue });
+        const bodyBytes = message.cosmos.tx.v1beta1.TxBody.encode(txBodyVote).finish();
+        const authInfoBytes = message.cosmos.tx.v1beta1.AuthInfo.encode(authInfo).finish();
+        const signDoc = new message.cosmos.tx.v1beta1.SignDoc({
+            body_bytes: bodyBytes,
+            auth_info_bytes: authInfoBytes,
+            chain_id: txContext.chainId,
+            account_number: Number(txContext.accountNumber)
+        });
+        let signMessage = message.cosmos.tx.v1beta1.SignDoc.encode(signDoc).finish();
+
+        // const hashDigest = sha256(signMessage);
+
+        const signature = await this.cosmosApp.sign(this.getHDPath(), bytesToSign)
+        console.log(signature)
+        let secp256k1Signature = Secp256k1Signature.fromDer(signature.signature).toFixedLength();
+        console.log(secp256k1Signature)
+        let encodeSignature = encodeSecp256k1Signature(pubKey, secp256k1Signature)
+        console.log(encodeSignature)
+
+        const txRaw = new message.cosmos.tx.v1beta1.TxRaw({
+            body_bytes: bodyBytes,
+            auth_info_bytes: authInfoBytes,
+            signatures: [secp256k1Signature]
+
+        });
+        console.log(txRaw)
+
+        const txBytes = message.cosmos.tx.v1beta1.TxRaw.encode(txRaw).finish();
+        console.log(txBytes)
+        return txBytes;
+    }
+
+    async signAmino(bytesToSign, txBody, txContext, address, transportBLE) {
+        await this.connect(INTERACTION_TIMEOUT, transportBLE)
+        let pubKey = await this.getPubKey(transportBLE)
+        let signDoc = makeSignDoc(txBody.value.msg, txBody.value.fee, txContext.chainId, DEFAULT_MEMO, txContext.accountNumber, txContext.sequence)
+
+        const message = serializeSignDoc(signDoc);
+        const signature = await this.cosmosApp.sign(this.getHDPath(), fromUtf8(message))
+
+        let signatureFromDer = Secp256k1Signature.fromDer(signature.signature).toFixedLength();
+
+        let encodedSignature = encodeSecp256k1Signature(pubKey, signatureFromDer)
+        let { signatures } = {
+            signed: signDoc,
+            signature: encodedSignature,
+        }
+      
+    }
+
     /* istanbul ignore next: maps a bunch of errors */
     checkLedgerErrors(
         { error_message, device_locked },
@@ -270,6 +366,7 @@ export class Ledger {
                 denom: denom,
             }],
             gas: gas.toString(),
+            // gas_limit: 200000
         };
 
         return unsignedTx;
@@ -336,7 +433,6 @@ export class Ledger {
                 }],
             },
         };
-        //return Ledger.applyGas(txSkeleton, DEFAULT_GAS);
         return txSkeleton
     }
 
@@ -465,7 +561,7 @@ export class Ledger {
         const txMsg = {
             type: 'cosmos-sdk/MsgVote',
             value: {
-                option,
+                option: "VOTE_OPTION_YES",
                 proposal_id: proposalId.toString(),
                 voter: txContext.bech32
             }
