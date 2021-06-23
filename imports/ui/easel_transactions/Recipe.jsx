@@ -17,27 +17,35 @@ import TimeStamp from '../components/TimeStamp.jsx';
 
 const T = i18n.createComponent();
 
+const CookbookeRow = (props) => { 
+    console.log('cookbookeRow = ', props)
+    return <tr> 
+        <td className="d-none d-sm-table-cell counter">{props.cookbook.ID}</td>
+        {/* <td className="title">{props.cookbook.Name}</td> */}
+        <td className="title">{props.cookbook.Description}</td>  
+        <td className="title">{props.cookbook.Developer}</td> 
+        <td className="title">{props.cookbook.Sender}</td> 
+        <td className="title">{props.cookbook.SupportEmail}</td>  
+    </tr>
+}
+
 const Result = posed.div({
     closed: { height: 0},
     open: { height: 'auto'}
 });
+
 export default class Recipe extends Component{
     constructor(props){
-        super(props);
-        let showdown  = require('showdown');
-        showdown.setFlavor('github');
+        super(props); 
+          
         this.state = {
-            Recipe: '',
-            ID: '', 
-            Name: '',
-            Description: '',
-            Sender: ''
+            cookbooks: null, 
         }
 
         if (Meteor.isServer){
-            this.state.recipe = this.props.recipe;
-        }
-    }
+            this.state.cookbooks = this.props.cookbooks;
+        } 
+    }  
 
     static getDerivedStateFromProps(props, state) {
         if (state.user !== localStorage.getItem(CURRENTUSERADDR)) {
@@ -46,21 +54,18 @@ export default class Recipe extends Component{
         return null;
     }
 
-    componentDidUpdate(prevProps){
-        if (this.props.recipe != prevProps.recipe){
-            this.setState({
-                recipe: this.props.recipe, 
-            }); 
-
-            this.setState({
-                ID: this.props.recipe.ID, 
-                Name: props.recipe.Name,
-                Description: props.recipe.Description,
-                Sender: props.recipe.Sender
-            })
+    componentDidUpdate(prevState){
+        if (this.props.cookbooks != prevState.cookbooks){ 
+            if (this.props.cookbooks.length > 0){
+                this.setState({
+                    cookbooks: this.props.cookbooks.map((cookbook, i) => { 
+                        return <CookbookeRow key={i} index={i} cookbook={cookbook}/>
+                    })
+                })  
+            }
         }
     }
-
+ 
     handleClick = (i,e) => {
         e.preventDefault();
 
@@ -82,23 +87,28 @@ export default class Recipe extends Component{
             return <Spinner type="grow" color="primary" />
         }
         else{
-            if (this.props.recipeExist && this.state.recipe != ''){
-                // // console.log(this.state.proposal);
-                // const ID = Number(this.props.recipe.ID), maxID = Number(this.props.recipeCount);
-                // //const powerReduction = Meteor.settings.public.powerReduction || Coin.StakingCoin.fraction; 
-                // return <div>
-                //     <Helmet>
-                //         <title>{this.props.proposal.content.title} | Big Dipper</title>
-                //         <meta name="description" content={this.props.proposal.content.description} />
-                //     </Helmet>
- 
-                //     <Row className='clearfix'>
-                //         <Link to={`/easel_transactions/${proposalId-1}`} className={`btn btn-outline-danger float-left ${proposalId-1<=0?"disabled":""}`}><i className="fas fa-caret-left"></i> Prev Proposal </Link>
-                //         <Link to="/easel_transactions" className="btn btn-primary" style={{margin: 'auto'}}><i className="fas fa-caret-up"></i> <T>common.backToList</T></Link>
-                //         <Link to={`/easel_transactions/${proposalId+1}`} className={`btn btn-outline-danger float-right ${proposalId>=maxProposalId?"disabled":""}`}><i className="fas fa-caret-right"></i> Next Proposal</Link>
-                //     </Row>
-                // </div>
-                return <div></div>
+            if (this.props.cookbookExist && this.props.cookbookCount > 0){
+                 
+                //const ID = Number(this.props.recipe.ID), maxID = Number(this.props.recipeCount);
+                //const powerReduction = Meteor.settings.public.powerReduction || Coin.StakingCoin.fraction; 
+                return (
+                    <div>
+                        {/* {this.state.user?<SubmitProposalButton history={this.props.history}/>:null} */}
+                        <Table striped className="proposal-list">
+                            <thead>
+                                <tr>
+                                    <th className="d-none d-sm-table-cell counter"><i className="fas fa-hashtag"></i> <T>recipes.cookbookID</T></th>  
+                                    {/* <th className="submit-block"><i className="fas fa-gift"></i> <span className="d-none d-sm-inline"><T>recipes.name</T></span></th> */}
+                                    <th className="submit-block"><i className="fas fa-box"></i> <span className="d-none d-sm-inline"><T>recipes.description</T></span></th> 
+                                    <th className="submit-block"><i className="fas fa-box"></i> <span className="d-none d-sm-inline"><T>recipes.developer</T></span></th>
+                                    <th className="submit-block"><i className="fas fa-box"></i> <span className="d-none d-sm-inline"><T>recipes.sender</T></span></th>
+                                    <th className="submit-block"><i className="fas fa-box"></i> <span className="d-none d-sm-inline"><T>recipes.email</T></span></th> 
+                                </tr>
+                            </thead>
+                            <tbody>{this.state.cookbooks}</tbody>
+                        </Table>
+                    </div>
+                )
             }
             else{
                 return <div><T>recipes.notFound</T></div>

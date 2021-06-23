@@ -20,6 +20,9 @@ import '../../api/proposals/server/publications.js';
 import '../../api/recipes/server/methods.js';
 import '../../api/recipes/server/publications.js';
 
+import '../../api/cookbooks/server/methods.js';
+import '../../api/cookbooks/server/publications.js';
+
 import '../../api/voting-power/server/publications.js';
 
 import '../../api/transactions/server/methods.js';

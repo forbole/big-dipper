@@ -1,6 +1,7 @@
 import { Blockscon } from '../../api/blocks/blocks.js';
 import { Proposals } from '../../api/proposals/proposals.js';
 import { Recipes } from '../../api/recipes/recipes.js';
+import { Cookbooks } from '../../api/cookbooks/cookbooks.js';
 import { ValidatorRecords, Analytics, MissedBlocksStats, MissedBlocks, AverageData, AverageValidatorData } from '../../api/records/records.js';
 // import { Status } from '../../api/status/status.js';
 import { Transactions } from '../../api/transactions/transactions.js';
@@ -11,53 +12,56 @@ import { Evidences } from '../../api/evidences/evidences.js';
 import { CoinStats } from '../../api/coin-stats/coin-stats.js';
 import { ChainStates } from '../../api/chain/chain.js';
 
-ChainStates.rawCollection().createIndex({height: -1},{unique:true});
+ChainStates.rawCollection().createIndex({ height: -1 }, { unique: true });
 
-Blockscon.rawCollection().createIndex({height: -1},{unique:true});
-Blockscon.rawCollection().createIndex({proposerAddress:1});
+Blockscon.rawCollection().createIndex({ height: -1 }, { unique: true });
+Blockscon.rawCollection().createIndex({ proposerAddress: 1 });
 
-Evidences.rawCollection().createIndex({height: -1});
+Evidences.rawCollection().createIndex({ height: -1 });
 
-Proposals.rawCollection().createIndex({proposalId: 1}, {unique:true});
+Proposals.rawCollection().createIndex({ proposalId: 1 }, { unique: true });
 
-Recipes.rawCollection().createIndex({ID: "1", NO: -1}, {unique:true}); 
-ValidatorRecords.rawCollection().createIndex({address:1,height: -1}, {unique:1});
-ValidatorRecords.rawCollection().createIndex({address:1,exists:1, height: -1});
+Recipes.rawCollection().createIndex({ ID: "1", NO: -1 }, { unique: true });
 
-Analytics.rawCollection().createIndex({height: -1}, {unique:true})
+Cookbooks.rawCollection().createIndex({ ID: "1", NO: -1 }, { unique: true });
 
-MissedBlocks.rawCollection().createIndex({proposer:1, voter:1, updatedAt: -1});
-MissedBlocks.rawCollection().createIndex({proposer:1, blockHeight:-1});
-MissedBlocks.rawCollection().createIndex({voter:1, blockHeight:-1});
-MissedBlocks.rawCollection().createIndex({voter:1, proposer:1, blockHeight:-1}, {unique:true});
+ValidatorRecords.rawCollection().createIndex({ address: 1, height: -1 }, { unique: 1 });
+ValidatorRecords.rawCollection().createIndex({ address: 1, exists: 1, height: -1 });
 
-MissedBlocksStats.rawCollection().createIndex({proposer:1});
-MissedBlocksStats.rawCollection().createIndex({voter:1});
-MissedBlocksStats.rawCollection().createIndex({proposer:1, voter:1},{unique:true});
+Analytics.rawCollection().createIndex({ height: -1 }, { unique: true })
 
-AverageData.rawCollection().createIndex({type:1, createdAt:-1},{unique:true});
-AverageValidatorData.rawCollection().createIndex({proposerAddress:1,createdAt:-1},{unique:true});
+MissedBlocks.rawCollection().createIndex({ proposer: 1, voter: 1, updatedAt: -1 });
+MissedBlocks.rawCollection().createIndex({ proposer: 1, blockHeight: -1 });
+MissedBlocks.rawCollection().createIndex({ voter: 1, blockHeight: -1 });
+MissedBlocks.rawCollection().createIndex({ voter: 1, proposer: 1, blockHeight: -1 }, { unique: true });
+
+MissedBlocksStats.rawCollection().createIndex({ proposer: 1 });
+MissedBlocksStats.rawCollection().createIndex({ voter: 1 });
+MissedBlocksStats.rawCollection().createIndex({ proposer: 1, voter: 1 }, { unique: true });
+
+AverageData.rawCollection().createIndex({ type: 1, createdAt: -1 }, { unique: true });
+AverageValidatorData.rawCollection().createIndex({ proposerAddress: 1, createdAt: -1 }, { unique: true });
 // Status.rawCollection.createIndex({})
 
-Transactions.rawCollection().createIndex({txhash:1},{unique:true});
-Transactions.rawCollection().createIndex({height:-1});
-Transactions.rawCollection().createIndex({processed:1});
+Transactions.rawCollection().createIndex({ txhash: 1 }, { unique: true });
+Transactions.rawCollection().createIndex({ height: -1 });
+Transactions.rawCollection().createIndex({ processed: 1 });
 // Transactions.rawCollection().createIndex({action:1});
-Transactions.rawCollection().createIndex({"tx_response.logs.events.attributes.key":1});
-Transactions.rawCollection().createIndex({"tx_response.logs.events.attributes.value":1});
+Transactions.rawCollection().createIndex({ "tx_response.logs.events.attributes.key": 1 });
+Transactions.rawCollection().createIndex({ "tx_response.logs.events.attributes.value": 1 });
 Transactions.rawCollection().createIndex({
-    "tx.body.messages.delegator_address":1,
-    "tx.body.messages.@type":1,
+    "tx.body.messages.delegator_address": 1,
+    "tx.body.messages.@type": 1,
     "tx_response.code": 1
-},{partialFilterExpression: {"tx_response.code":{$exists: true}}})
+}, { partialFilterExpression: { "tx_response.code": { $exists: true } } })
 
-ValidatorSets.rawCollection().createIndex({block_height:-1});
+ValidatorSets.rawCollection().createIndex({ block_height: -1 });
 
-Validators.rawCollection().createIndex({address:1},{unique:true, partialFilterExpression: { address: { $exists: true } } });
+Validators.rawCollection().createIndex({ address: 1 }, { unique: true, partialFilterExpression: { address: { $exists: true } } });
 // Validators.rawCollection().createIndex({consensusPubkey:1},{unique:true});
-Validators.rawCollection().createIndex({"consensusPubkey.value":1},{unique:true, partialFilterExpression: { "consensusPubkey.value": { $exists: true } }});
+Validators.rawCollection().createIndex({ "consensusPubkey.value": 1 }, { unique: true, partialFilterExpression: { "consensusPubkey.value": { $exists: true } } });
 
-VotingPowerHistory.rawCollection().createIndex({address:1,height:-1});
-VotingPowerHistory.rawCollection().createIndex({type:1});
+VotingPowerHistory.rawCollection().createIndex({ address: 1, height: -1 });
+VotingPowerHistory.rawCollection().createIndex({ type: 1 });
 
-CoinStats.rawCollection().createIndex({last_updated_at:-1},{unique:true});
+CoinStats.rawCollection().createIndex({ last_updated_at: -1 }, { unique: true });

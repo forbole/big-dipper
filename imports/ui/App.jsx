@@ -94,7 +94,7 @@ class App extends Component {
                             <Route path="/validators/inactive" render={(props) => <Validators {...props} inactive={true} />} />
                             <Route path="/voting-power-distribution" component={Distribution} />
                             <Route path="/(validator|validators)" component={ValidatorDetails} />
-                            {Meteor.settings.public.modules.gov?<Route path="/proposals" component={Proposals} />:null}
+                            {Meteor.settings.public.modules.gov?<Route path="/proposals" component={Proposals} />:null} 
                             <Route component={NotFound} />
                         </Switch>
                     </SentryBoundary>

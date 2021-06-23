@@ -13,6 +13,8 @@ const RecipeRow = (props) => {
     return <tr>
         <td className="d-none d-sm-table-cell counter">{props.recipe.ID}</td>
         <td className="title">{props.recipe.Name}</td>
+        <td className="title">{props.recipe.CookbookID}</td>  
+        <td className="title"><Link to={"/easel_transactions/"+props.recipe.cookbook_owner}>{props.recipe.cookbook_owner}</Link></td> 
         <td className="title">{props.recipe.Description}</td>
         <td className="voting-start text-right"><a href={""+props.recipe.deeplink+""} target="_blank">{props.recipe.deeplink}</a></td> 
     </tr>
@@ -20,7 +22,7 @@ const RecipeRow = (props) => {
 
 export default class List extends Component{
     constructor(props){
-        super(props);
+        super(props); 
         if (Meteor.isServer){
             if (this.props.recipes.length > 0){
                 this.state = {
@@ -39,7 +41,7 @@ export default class List extends Component{
     
     componentDidUpdate(prevState){  
         if (this.props.recipes && this.props.recipes != prevState.recipes){ 
-            if (this.props.recipes.length > 0){
+            if (this.props.recipes.length > 0){ 
                 this.setState({
                     recipes: this.props.recipes.map((recipes, i) => {
                         return <RecipeRow key={i} index={i} recipe={recipes} />
@@ -62,6 +64,8 @@ export default class List extends Component{
                             <tr>
                                 <th className="d-none d-sm-table-cell counter"><i className="fas fa-hashtag"></i> <T>recipes.recipeID</T></th>  
                                 <th className="submit-block"><i className="fas fa-gift"></i> <span className="d-none d-sm-inline"><T>recipes.name</T></span></th>
+                                <th className="submit-block"><i className="fas fa-box"></i> <span className="d-none d-sm-inline"><T>recipes.cookbookID</T></span></th>
+                                <th className="submit-block"><i className="fas fa-box"></i> <span className="d-none d-sm-inline"><T>recipes.cookbookowner</T></span></th>
                                 <th className="submit-block"><i className="fas fa-box"></i> <span className="d-none d-sm-inline"><T>recipes.description</T></span></th>
                                 <th className="voting-start"><i className="fas fa-box-open"></i> <span className="d-none d-sm-inline"><T>recipes.deeplinks</T></span></th> 
                             </tr>

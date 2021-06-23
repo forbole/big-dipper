@@ -1,40 +1,39 @@
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
-import { Recipes } from '/imports/api/recipes/recipes.js'; 
+import { Cookbooks } from '/imports/api/cookbooks/cookbooks.js';
 import Recipe from './Recipe.jsx';
 
 export default RecipeContainer = withTracker((props) => {
-    let recipeId = 0; 
-    if (props.match.params.id){
-        recipeId = parseInt(props.match.params.id);
+    let cookbook_owner = "";
+
+    if (props.match.params.cookbook_owner) {
+        cookbook_owner = props.match.params.cookbook_owner;
     }
 
-    let chainHandle, recipeHandle, recipeListHandle, recipe, recipeCount, recipeExist;
+    let chainHandle, cookbookHandle, cookbookListHandle, cookbooks, cookbook, cookbookCount, cookbookExist;
     let loading = true;
 
-    if (Meteor.isClient){ 
-        recipeListHandle = Meteor.subscribe('recipes.list', recipeId);
-        recipeHandle = Meteor.subscribe('recipes.one', recipeId);
-        loading = !recipeHandle.ready() || !recipeListHandle.ready();
+    if (Meteor.isClient) {
+        cookbookHandle = Meteor.subscribe('cookbooks.list');
+        loading = !cookbookHandle.ready();
     }
 
-    if (Meteor.isServer || !loading){
-        recipe = Recipes.findOne({ID:recipeId});
-        recipeCount = Recipes.find({}).count(); 
+    if (Meteor.isServer || !loading) {
+        cookbook = Cookbooks.find({ Sender: cookbook_owner }, { sort: { ID: -1 } }).fetch();
+        cookbookCount = Cookbooks.find({ Sender: cookbook_owner }).count();
 
-        if (Meteor.isServer){
-            // loading = false;
-            recipeExist = !!recipe;
-        }
-        else{
-            recipeExist = !loading && !!recipe;
+        if (Meteor.isServer) {
+            loading = false;
+            cookbookExist = !!cookbook;
+        } else {
+            cookbookExist = !loading && !!cookbook;
         }
     }
 
     return {
         loading,
-        recipeExist,
-        recipe: recipeExist ? recipe : {}, 
-        recipeCount: recipeExist? recipeCount: 0
+        cookbookExist,
+        cookbooks: cookbookExist ? cookbook : null,
+        cookbookCount: cookbookExist ? cookbookCount : 0
     };
 })(Recipe);
