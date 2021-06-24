@@ -61,7 +61,10 @@ export default TransactionsContainer = withTracker((props) => {
             $or: [
                 {"tx.value.msg.type":"cosmos-sdk/MsgWithdrawValidatorCommission"},
                 {"tx.value.msg.type":"cosmos-sdk/MsgWithdrawDelegationReward"},
-                {"tx.value.msg.type":"cosmos-sdk/MsgModifyWithdrawAddress"}
+                {"tx.value.msg.type":"cosmos-sdk/MsgModifyWithdrawAddress"},
+                {
+                  "tx.value.msg.type": { $regex: /^distribution_record_/ }
+                }
             ]
         }).fetch() : {},
         governanceTxs: transactionsExist ? Transactions.find({
