@@ -25,7 +25,7 @@ import {
 import { Link } from 'react-router-dom';
 import SearchBar from './SearchBar.jsx';
 import i18n from 'meteor/universe:i18n';
-import LedgerModal from '../ledger/LedgerModal.jsx';
+// import LedgerModal from '../ledger/LedgerModal.jsx';
 import Account from './Account.jsx';
 
 const T = i18n.createComponent();
