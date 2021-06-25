@@ -968,10 +968,10 @@ class ProposalActionButtons extends LedgerButton {
             title=`Vote on Proposal ${this.props.proposalId}`
             inputs = (<Input type="select" name="voteOption" onChange={this.handleInputChange} defaultValue=''>
                 <option value='' disabled>Vote Option</option>
-                <option value='Yes'>yes</option>
-                <option value='Abstain'>abstain</option>
-                <option value='No'>no</option>
-                <option value='NoWithVeto'>no with veto</option>
+                <option value='VOTE_OPTION_YES'>yes</option>
+                <option value='VOTE_OPTION_ABSTAIN'>abstain</option>
+                <option value='VOTE_OPTION_NO'>no</option>
+                <option value='VOTE_OPTION_NO_WITH_VETO'>no with veto</option>
             </Input>)
             break;
         case Types.DEPOSIT:
@@ -1018,7 +1018,7 @@ class ProposalActionButtons extends LedgerButton {
     isDataValid = () => {
         if (!this.state.currentUser) return false
         if (this.state.actionType === Types.VOTE) {
-            return ['Yes', 'No', 'NoWithVeto', 'Abstain'].indexOf(this.state.voteOption) !== -1;
+            return ['VOTE_OPTION_YES', 'VOTE_OPTION_NO', 'VOTE_OPTION_NO_WITH_VETO', 'VOTE_OPTION_ABSTAIN'].indexOf(this.state.voteOption) !== -1;
         } else {
             return isBetween(this.state.depositAmount, 1, this.state.currentUser.availableCoin)
         }
