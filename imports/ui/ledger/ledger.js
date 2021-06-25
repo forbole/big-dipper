@@ -17,8 +17,10 @@ import {
     assertIsBroadcastTxSuccess as assertIsBroadcastTxSuccessStargate,
     SigningStargateClient,
     AminoTypes,
-    coins
+    coins,
+    StargateClient
 } from "@cosmjs/stargate";
+import { assert, sleep } from "@cosmjs/utils";
 import { decodeTxRaw, DirectSecp256k1HdWallet, Registry } from "@cosmjs/proto-signing";
 // import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-launchpad";
 // import { SigningCosmWasmClient } from "@cosmjs/cosmwasm";
@@ -32,6 +34,7 @@ const REQUIRED_COSMOS_APP_VERSION = Meteor.settings.public.ledger.ledgerAppVersi
 const DEFAULT_DENOM = Meteor.settings.public.bondDenom || 'uatom';
 export const DEFAULT_GAS_PRICE = parseFloat(Meteor.settings.public.ledger.gasPrice) || 0.025;
 export const DEFAULT_MEMO = 'Sent via Big Dipper'
+const RPC = "http://139.162.187.197:26657"
 
 /*
 HD wallet derivation path (BIP44)
@@ -198,15 +201,14 @@ export class Ledger {
     async sign(signMessage, txMsg, txContext, transportBLE) {
         await this.connect(INTERACTION_TIMEOUT, transportBLE)
         const customRegistry = new Registry();
-
         const [firstAccount] = await this.ledgerSigner.getAccounts();
         const msgDelegateTypeUrl = "/cosmos.gov.v1beta1.MsgVote";
         const CustomMsgDelegate = {
             encode(
-                message,
+                message = txMsg.value.msg[0].value,
                 writer
             ){
-                writer.uint32(10).string(message.option ?? "");
+                writer.uint32(10).string(txMsg.value.msg[0].value.option || "");
                 writer.uint32(18).string(message.proposalId ?? "");
                 writer.uint32(18).string(message.voter ?? "");
                 return writer;
@@ -218,41 +220,31 @@ export class Ledger {
             additions: {
                 "/cosmos.gov.v1beta1.MsgVote": {
                     aminoType: "cosmos-sdk/MsgVote",
-                    toAmino(
-                        option,
-                        proposalId,
-                        voter,
-                    ){
-                        assert(option, "missing option");
-                        assert(proposalId, "missing proposalId");
-                        assert(voter, "missing voter");
-                        
-                        return {
-                            option: option,
-                            proposal_id: proposalId,
-                            voter:voter
-                        };
-                    },
-                    fromAmino(
-                        option,
-                        proposal_id,
-                        voter,)
-                    {
-                        return{
-                            option: option,
-                            proposalId: proposal_id,
-                            voer: voter
-                        }
-                    }
+                    toAmino: ({ option = txMsg.value.msg[0].value.option,
+                        proposalId = txMsg.value.msg[0].value.proposal_id,
+                        voter = txMsg.value.msg[0].value.voter 
+                    }) => ({
+                        option: option,
+                        proposal_id: proposalId,
+                        voter: voter
+                    }),
+                    fromAmino: ({ option = txMsg.value.msg[0].value.option,
+                        proposal_id = txMsg.value.msg[0].value.proposal_id,
+                        voter = txMsg.value.msg[0].value.voter
+                    }) => ({
+                        option: option,
+                        proposalId: proposal_id,
+                        voer: voter
+                    }),
                 }
             }
         });
-        const options = { registry: customRegistry, aminoTypes: customAminoTypes };
-        console.log("trying to fetch..")
-        // const client = await SigningCosmWasmClient.connectWithSigner("http://139.162.187.197:1317", this.ledgerSigner, options);
 
-        // const client = await SigningStargateClient.connectWithSigner("http://139.162.187.197:1317", this.ledgerSigner, options);
-        // console.log(client)
+        const options = { registry: customRegistry, aminoTypes: customAminoTypes };
+        // const client = await SigningCosmWasmClient.connectWithSigner(RPC, this.ledgerSigner);
+        // const client = await StargateClient.connect(RPC);
+        const client = await SigningStargateClient.connectWithSigner(RPC, this.ledgerSigner, options)
+        console.log(client)
 
         const msg = {
             option: txMsg.value.msg[0].value.option,
@@ -273,8 +265,11 @@ export class Ledger {
         console.log(fee)
 
         const memo = DEFAULT_MEMO;
-        const result = await client.signAndBroadcast(txContext.bech32, [msgAny], fee, memo);
-        assertIsBroadcastTxSuccess(result);
+        const signed = await client.sign(txContext.bech32, [msgAny], fee, memo)
+        // const signed = await client.signAmino(txContext.bech32, [msgAny], fee, memo, { accountNumber: txContext.accountNumber, sequence: txContext.sequence, chainId:txContext.chainId });
+        console.log(signed)
+        // const result = await client.signAndBroadcast(txContext.bech32, [msgAny], fee, memo);
+        // assertIsBroadcastTxSuccess(result);
 
 
         // const response = await this.cosmosApp.sign(this.getHDPath(), signMessage)
