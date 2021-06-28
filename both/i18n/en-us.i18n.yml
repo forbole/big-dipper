@@ -21,6 +21,7 @@ common:
     fullStop: '.'
     searchPlaceholder: 'Search with tx hash / block height / address'
     cancel: 'Cancel'
+    ok: 'Ok'
     retry: 'Retry'
     rewards: 'Rewards'
     bondedTokens: 'Bonded Tokens'
@@ -192,6 +193,7 @@ proposals:
     changes: 'Changes'
     subspace: 'Subspace'
 recipes:
+    purchase_message: 'Please use the Pylons app to purchase!'
     notFound: 'No Recipe data found.'
     listOfRecipes: 'Here is a list of recipes.' 
     recipe: 'Recipe'
