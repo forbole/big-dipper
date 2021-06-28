@@ -12,7 +12,7 @@ import sha256 from "crypto-js/sha256"
 import ripemd160 from "crypto-js/ripemd160"
 import CryptoJS from "crypto-js"
 import { LedgerSigner } from "@cosmjs/ledger-amino";
-import { GasLimits, GasPrice, makeCosmoshubPath, OfflineSigner, Secp256k1HdWallet } from "@cosmjs/launchpad";
+import { GasLimits, GasPrice, makeCosmoshubPath, OfflineSigner, Secp256k1HdWallet, makeStdTx} from "@cosmjs/launchpad";
 import {
     assertIsBroadcastTxSuccess as assertIsBroadcastTxSuccessStargate,
     SigningStargateClient,
@@ -25,6 +25,8 @@ import { decodeTxRaw, DirectSecp256k1HdWallet, Registry } from "@cosmjs/proto-si
 // import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-launchpad";
 // import { SigningCosmWasmClient } from "@cosmjs/cosmwasm";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import protobuf from "protobufjs/minimal";
+import { Fee, Tx, TxRaw } from "@cosmjs/stargate/build/codec/cosmos/tx/v1beta1/tx";
 
 
 
@@ -202,50 +204,81 @@ export class Ledger {
         await this.connect(INTERACTION_TIMEOUT, transportBLE)
         const customRegistry = new Registry();
         const [firstAccount] = await this.ledgerSigner.getAccounts();
-        const msgDelegateTypeUrl = "/cosmos.gov.v1beta1.MsgVote";
-        const CustomMsgDelegate = {
+        const msgVoteTypeUrl = "/cosmos.gov.v1beta1.MsgVote";
+        const CustomMsgVote = {
             encode(
-                message = txMsg.value.msg[0].value,
-                writer
-            ){
-                writer.uint32(10).string(txMsg.value.msg[0].value.option || "");
+                message,
+                writer = protobuf.Writer.create(),
+            ) {
+                writer.uint32(10).string(message.option || "");
                 writer.uint32(18).string(message.proposalId ?? "");
                 writer.uint32(18).string(message.voter ?? "");
                 return writer;
             },
-        }
-        customRegistry.register(msgDelegateTypeUrl, CustomMsgDelegate);
+
+            decode() {
+                throw new Error("decode method should not be required");
+            },
+            fromJSON() {
+                throw new Error("fromJSON method should not be required");
+            },
+            fromPartial(object) {
+                const message = {
+                    option: "",
+                    proposalId: "",
+                    voter: ""
+                };
+                if (object.option !== undefined && object.option !== null) {
+                    message.option = object.option;
+                } else {
+                    message.option = "";
+                }
+                if (object.proposalId !== undefined && object.proposalId !== null) {
+                    message.proposalId = object.proposalId;
+                } else {
+                    message.proposalId = "";
+                }
+                if (object.voter !== undefined && object.voter !== null) {
+                    message.voter = object.voter
+                } else {
+                    message.voter = undefined;
+                }
+                return message;
+            },
+            toJSON() {
+                throw new Error("toJSON method should not be required");
+            },
+        };
+        customRegistry.register(msgVoteTypeUrl, CustomMsgVote);
 
         const customAminoTypes = new AminoTypes({
             additions: {
                 "/cosmos.gov.v1beta1.MsgVote": {
                     aminoType: "cosmos-sdk/MsgVote",
-                    toAmino: ({ option = txMsg.value.msg[0].value.option,
-                        proposalId = txMsg.value.msg[0].value.proposal_id,
-                        voter = txMsg.value.msg[0].value.voter 
+                    toAmino: ({ option,
+                        proposalId,
+                        voter
                     }) => ({
                         option: option,
                         proposal_id: proposalId,
                         voter: voter
                     }),
-                    fromAmino: ({ option = txMsg.value.msg[0].value.option,
-                        proposal_id = txMsg.value.msg[0].value.proposal_id,
-                        voter = txMsg.value.msg[0].value.voter
+                    fromAmino: ({ option,
+                        proposal_id,
+                        voter
                     }) => ({
                         option: option,
                         proposalId: proposal_id,
-                        voer: voter
+                        voter: voter
                     }),
                 }
             }
         });
 
-        const options = { registry: customRegistry, aminoTypes: customAminoTypes };
+        const options = { prefix: 'cosmos', registry: customRegistry, aminoTypes: customAminoTypes };
         // const client = await SigningCosmWasmClient.connectWithSigner(RPC, this.ledgerSigner);
         // const client = await StargateClient.connect(RPC);
         const client = await SigningStargateClient.connectWithSigner(RPC, this.ledgerSigner, options)
-        console.log(client)
-
         const msg = {
             option: txMsg.value.msg[0].value.option,
             proposalId: txMsg.value.msg[0].value.proposal_id,
@@ -254,7 +287,7 @@ export class Ledger {
         console.log(msg)
         const msgAny = {
             typeUrl: "/cosmos.gov.v1beta1.MsgVote",
-            value: msg,
+            value: CustomMsgVote.fromPartial(msg),
         };
         console.log(msgAny)
 
@@ -265,19 +298,29 @@ export class Ledger {
         console.log(fee)
 
         const memo = DEFAULT_MEMO;
-        const signed = await client.sign(txContext.bech32, [msgAny], fee, memo)
-        // const signed = await client.signAmino(txContext.bech32, [msgAny], fee, memo, { accountNumber: txContext.accountNumber, sequence: txContext.sequence, chainId:txContext.chainId });
-        console.log(signed)
-        // const result = await client.signAndBroadcast(txContext.bech32, [msgAny], fee, memo);
+        // const signed = await client.sign(txContext.bech32, [msgAny], fee, memo)
+        // const result = await client.broadcastTx(Uint8Array.from(TxRaw.encode(signed).finish()));
         // assertIsBroadcastTxSuccess(result);
+
+
+        // const signed = await client.signAmino(txContext.bech32, [msgAny], fee, memo, { accountNumber: txContext.accountNumber, sequence: txContext.sequence, chainId:txContext.chainId });
+        // console.log(signed)
+        // let broadcast = await client.broadcastTx(signed)
+        // console.loog(broadcast)
+
+        // const signedTx = makeStdTx(signed, signed.signatures);
+        // console.log(signedTx)
+
+        const result = await client.signAndBroadcast(txContext.bech32, [msgAny], fee, memo);
+        console.log(result)
+        assertIsBroadcastTxSuccess(result);
 
 
         // const response = await this.cosmosApp.sign(this.getHDPath(), signMessage)
         // this.checkLedgerErrors(response)
         // we have to parse the signature from Ledger as it's in DER format
-        const parsedSignature = ""
-        // signatureImport(response.signature)
-        return parsedSignature
+        // const parsedSignature =  signatureImport(response.signature)
+        return ""
     }
 
     /* istanbul ignore next: maps a bunch of errors */
@@ -559,7 +602,7 @@ export class Ledger {
             type: 'cosmos-sdk/MsgVote',
             value: {
                 option,
-                proposal_id: proposalId.toString(),
+                proposal_id: (proposalId).toString(),
                 voter: txContext.bech32
             }
         };
