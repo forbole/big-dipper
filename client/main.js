@@ -7,6 +7,7 @@ import App from '/imports/ui/App.jsx';
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom'
 // import ReactDOM from 'react-dom';
+import { getTotalCosmosAccounts } from '../imports/ui/home/TotalCosmosAcounts'
 
 import { Meteor } from 'meteor/meteor';
 import { render } from 'react-dom';
@@ -31,4 +32,5 @@ Meteor.startup(() => {
     //         </Router>, document.getElementById('app')
     //     );
     // });
+    setTimeout(getTotalCosmosAccounts, 86400000);
 });
