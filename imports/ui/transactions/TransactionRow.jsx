@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import moment from 'moment'
 import { Link } from 'react-router-dom'
 import {
   Row,
@@ -11,6 +12,7 @@ import {
 } from 'reactstrap'
 import { TxIcon } from '../components/Icons.jsx'
 import Activities from '../components/Activities.jsx'
+import { MsgType } from '../components/MsgType.jsx'
 import CosmosErrors from '../components/CosmosErrors.jsx'
 import TimeAgo from '../components/TimeAgo.jsx'
 import numbro from 'numbro'
@@ -21,11 +23,13 @@ import { Markdown } from 'react-showdown'
 let showdown = require('showdown')
 showdown.setFlavor('github')
 
-const dispensationTypes = {
+const dispensationTypesToDisplay = {
   Airdrop: true,
   LiquidityMining: true,
   ValidatorSubsidy: true
 }
+
+const testTx = require('./testtx.json')
 
 export const TransactionRow = props => {
   let tx = props.tx
@@ -46,7 +50,7 @@ export const TransactionRow = props => {
           attributes[key] = value
         })
 
-        if (dispensationTypes[attributes.type]) {
+        if (dispensationTypesToDisplay[attributes.type]) {
           dispensationRecords.push({
             type: attributes.type,
             amount: attributes.amount.replace(/[a-zA-Z]/g, '')
@@ -76,8 +80,10 @@ export const TransactionRow = props => {
           {isDispensation &&
             dispensationRecords.map((record, i) => (
               <Card body key={i}>
-                <span className='quick-note'>{record.type}</span>
-                {new Coin(record.amount, 'ROWAN').toString(6)}
+                <div>
+                  <MsgType type={record.type} />{' '}
+                  {new Coin(record.amount, 'ROWAN').toString(6)}
+                </div>
               </Card>
             ))}
         </Col>
@@ -109,7 +115,13 @@ export const TransactionRow = props => {
           className='text-nowrap'
         >
           <i className='material-icons'>schedule</i>{' '}
-          <span>{tx.block() ? <TimeAgo time={tx.block().time} /> : ''}</span>
+          <span>
+            {tx.block()
+              ? `${new Date(tx.block().time).toLocaleDateString()} ${new Date(
+                  tx.block().time
+                ).toLocaleTimeString()}`
+              : ''}
+          </span>
           {tx.tx.value.memo && tx.tx.value.memo != '' ? (
             <span>
               <i
