@@ -235,4 +235,19 @@ Meteor.methods({
         this.unblock();
         Chain.find().sort({created:-1}).limit(1);
     },
+    'chain.getTotalCosmosAccounts': function (totalNumberOfAccountsIndex) {
+        this.unblock();
+        let date = new Date();
+        let dateUTC = date.toUTCString();
+        let totalNumberOfCosmosAccounts = {
+            total: totalNumberOfAccountsIndex,
+            updatedAt: dateUTC
+        }
+        try {
+            Chain.upsert({ chainId: Meteor.settings.public.chainId }, { $set: { "totalNumberOfCosmosAccounts": totalNumberOfCosmosAccounts } });
+        }
+        catch (e) {
+            console.log(e);
+        }
+    },
 })
