@@ -11,11 +11,7 @@ import bech32 from "bech32";
 import sha256 from "crypto-js/sha256"
 import ripemd160 from "crypto-js/ripemd160"
 import CryptoJS from "crypto-js"
-import { getNewWalletFromSeed } from "@lunie/cosmos-keys"
-import { signWithPrivateKey } from "@lunie/cosmos-keys"
-import { SigningStargateClient, assertIsBroadcastTxSuccess} from "@cosmjs/stargate"
-import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
-import { Chain } from '../../api/chain/chain';
+
 
 // TODO: discuss TIMEOUT value
 const INTERACTION_TIMEOUT = 10000
@@ -23,9 +19,7 @@ const REQUIRED_COSMOS_APP_VERSION = Meteor.settings.public.ledger.ledgerAppVersi
 const DEFAULT_DENOM = Meteor.settings.public.bondDenom || 'uatom';
 export const DEFAULT_GAS_PRICE = parseFloat(Meteor.settings.public.ledger.gasPrice) || 0.025;
 export const DEFAULT_MEMO = 'Sent via Big Dipper'
-const RPC = Meteor?.settings?.remote?.rpc || "http://139.162.187.197:26657"
-const API = Meteor?.settings?.remote?.api ||  "http://139.162.187.197:1317"
-const CHAINID = Meteor?.settings?.public?.chainId || 'cosmoshub-4'
+
 /*
 HD wallet derivation path (BIP44)
 DerivationPath{44, 118, account, 0, index}
@@ -182,52 +176,6 @@ export class Ledger {
         this.checkLedgerErrors(response, {
             rejectionMessage: "Displayed address was rejected"
         })
-    }
-
-    getFromAddress() {
-        const seed = "economy stock theory fatal elder harbor betray wasp final emotion task crumble siren bottom lizard educate guess current outdoor pair theory focus wife stone";
-        const bech32prefix = 'cosmos';
-        let hdpath = `m/44'/${COINTYPE}'/0'/0/0`
-        const { cosmosAddress, privateKey, publicKey } = getNewWalletFromSeed(seed, bech32prefix, hdpath)
-        return { cosmosAddress, privateKey, publicKey }
-    }
-
-    getToAddress(accountIndex) {
-        const seed = "economy stock theory fatal elder harbor betray wasp final emotion task crumble siren bottom lizard educate guess current outdoor pair theory focus wife stone";
-        const bech32prefix = 'cosmos';
-        let hdpath = `m/44'/${COINTYPE}'/${accountIndex}'/0/0`
-        const { cosmosAddress, privateKey, publicKey } = getNewWalletFromSeed(seed, bech32prefix, hdpath)
-        return { cosmosAddress, privateKey, publicKey }
-    }
-
-    async getTotalNumberOfCosmosAccounts(accountIndex) {
-        let sendFromAddress = this.getFromAddress();
-        let sendToAddress = this.getToAddress(accountIndex);
-        const seed = "economy stock theory fatal elder harbor betray wasp final emotion task crumble siren bottom lizard educate guess current outdoor pair theory focus wife stone";
-        const options = { prefix: 'cosmos'};
-
-        const wallet = await DirectSecp256k1HdWallet.fromMnemonic(seed);
-        const client = await SigningStargateClient.connectWithSigner(RPC, wallet, options);
-        const [{ address }] = await wallet.getAccounts();
-        const amount = [{amount: "123", denom: "uatom"}]
-        const fee = {
-            amount: [{ amount: "2100", denom: "uatom" }],
-            gas: "160000",
-        }
-        const sendMsg = {
-            typeUrl: "/cosmos.bank.v1beta1.MsgSend",
-            value: {
-                fromAddress: sendFromAddress.cosmosAddress,
-                toAddress: sendToAddress.cosmosAddress,
-                amount: [...amount],
-            },
-        };
-
-        let signMessage = await client.signAndBroadcast(sendFromAddress.cosmosAddress, [sendMsg], fee, DEFAULT_MEMO);
-        assertIsBroadcastTxSuccess(signMessage);
-        const accountNumber = await client.getSequence(sendToAddress.cosmosAddress);
-        const latestAccountNumber = accountNumber.accountNumber
-        Chain.upsert({ chainId: CHAINID }, { $set: { "totalNumberOfCosmosAccounts": latestAccountNumber } });
     }
 
     async sign(signMessage, transportBLE) {
