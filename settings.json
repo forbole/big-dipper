@@ -1,7 +1,7 @@
 {
     "public":{
         "chainName": "Cosmos",
-        "chainId": "pylonschain",
+        "chainId": "pylons-testnet",
         "gtm": "{Add your Google Tag Manager ID here}",
         "slashingWindow": 10000,
         "uptimeWindow": 250,
