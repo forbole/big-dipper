@@ -1,0 +1,3 @@
+.CaptchaWrapper > * {
+    position: static !important;
+}

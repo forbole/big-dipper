@@ -149,7 +149,7 @@ proposals:
     proposer: '提案人'
     proposal: '治理提案'
     proposals: '治理提案'
-    proposalID: '提案編號'
+    proposalId: '提案編號'
     title: '主題'
     status: '狀態'
     submitTime: '提案時間'

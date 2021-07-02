@@ -36,7 +36,6 @@ export default class ChainStatus extends React.Component {
                 bondedTokens: this.props.states.bondedTokens,
                 totalSupply: this.props.states.totalSupply
             })
-
             switch (this.state.avgBlockTimeType){
             case "":
                 this.setState({

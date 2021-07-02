@@ -148,7 +148,7 @@ proposals:
     proposer: 'Autor Propozycji'
     proposal: 'propozycja'
     proposals: 'Propozycje'
-    proposalID: 'ID Propozycji'
+    proposalId: 'ID Propozycji'
     title: 'Tytuł'
     status: 'Status'
     submitTime: 'Czas Wysłania'

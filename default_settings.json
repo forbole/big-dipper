@@ -1,52 +1,100 @@
 {
     "public":{
-        "chainName": "Cosmos",
-        "chainId": "{Chain ID}",
-        "gtm": "{Add your Google Tag Manager ID here}",
-        "slashingWindow": 10000,
+        "chainName": "CudosNetwork",
+        "chainId": "cudos-local-network",
+        "gtm": "",
+        "slashingWindow": 400,
         "uptimeWindow": 250,
         "initialPageSize": 30,
-        "secp256k1": false,
-        "bech32PrefixAccAddr": "cosmos",
-        "bech32PrefixAccPub": "cosmospub",
-        "bech32PrefixValAddr": "cosmosvaloper",
-        "bech32PrefixValPub": "cosmosvaloperpub",
-        "bech32PrefixConsAddr": "cosmosvalcons",
-        "bech32PrefixConsPub": "cosmosvalconspub",
-        "bondDenom": "uatom",
-        "powerReduction": 1000000,
+        "secp256k1": true,
+        "bech32PrefixAccAddr": "cudos",
+        "bech32PrefixAccPub": "cudospub",
+        "bech32PrefixValAddr": "cudosvaloper",
+        "bech32PrefixValPub": "cudosvaloperpub",
+        "bech32PrefixConsAddr": "cudosvalcons",
+        "bech32PrefixConsPub": "cudosvalconspub",
+        "bondDenom": "acudos",
+        "powerReduction": 1000000000000000000,
+        "genesisTime": "2021-05-12T11:33:06.992163482Z",
+        "faucetUrl": "http://localhost:5000",
         "coins": [
             {
-                "denom": "uatom",
-                "displayName": "ATOM",
-                "fraction": 1000000
-            }, 
+                "denom": "acudos",
+                "displayName": "CUDOS",
+                "fraction": 1000000000000000000
+            },
             {
-                "denom": "umuon",
-                "displayName": "MUON",
+                "denom": "fcudos",
+                "displayName": "CUDOS",
+                "fraction": 1000000000000000
+            },
+            {
+                "denom": "pcudos",
+                "displayName": "CUDOS",
+                "fraction": 1000000000000
+            },
+            {
+                "denom": "ncudos",
+                "displayName": "CUDOS",
+                "fraction": 1000000000
+            },
+            {
+                "denom": "ucudos",
+                "displayName": "CUDOS",
                 "fraction": 1000000
+            },
+            {
+                "denom": "mcudos",
+                "displayName": "CUDOS",
+                "fraction": 1000
+            },
+            {
+                "denom": "cudos",
+                "displayName": "CUDOS",
+                "fraction": 1
             } 
         ],
         "ledger":{
             "coinType": 118,
-            "appName": "Cosmos",
-            "appVersion": "2.16.0",
+            "appName": "CudosNetwork",
+            "appVersion": "0.0.1",
             "gasPrice": 0.02
         },
         "modules": {
             "bank": true,
             "supply": true,
-            "minting": false,
+            "minting": true,
             "gov": true,
-            "distribution": false
+            "distribution": true
         },
-        "coingeckoId": "cosmos",
-        "networks": "https://gist.githubusercontent.com/kwunyeung/8be4598c77c61e497dfc7220a678b3ee/raw/bd-networks.json",
-        "banners": false
+        "coingeckoId": "cudos",
+        "urls": {
+            "rpc":"http://localhost:26657",
+            "api":"http://localhost:1317"
+        },
+        "fees": {
+            "delegate": {
+                "amount": [{"denom": "acudos", "amount": 100}],
+                "gas": "180000"
+            },
+            "redelegate": {
+                "amount": [{"denom": "acudos", "amount": 100}],
+                "gas": "180000"
+            },
+            "undelegate": {
+                "amount": [{"denom": "acudos", "amount": 100}],
+                "gas": "180000"
+            },
+            "withdraw": {
+                "amount": [{"denom": "cudos", "amount": 100}],
+                "gas": "180000"
+            }
+        },
+        "CAPTCHA_FRONTEND_KEY": "6LfIPO0aAAAAAG7oSw9JSmi6E58IRuhVQYzKShHl"
     },
     "remote":{
-        "rpc":"https://rpc.stargate.forbole.com:443",
-        "api":"https://api.stargate.forbole.com:443"
+        "rpc":"http://localhost:26657",
+        "api":"http://localhost:1317"
     },
     "debug": {
         "startTimer": true

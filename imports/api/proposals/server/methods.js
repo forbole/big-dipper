@@ -14,7 +14,7 @@ Meteor.methods({
             let response = HTTP.get(url);
             let params = JSON.parse(response.content);
 
-            Chain.update({chainId: Meteor.settings.public.chainId}, {$set:{"gov.tally_params":params.tally_params}});
+            Chain.update({chainId: Meteor.settings.public.chainId}, {$set:{"gov.tallyParams":params.tally_params}});
 
             url = API + '/cosmos/gov/v1beta1/proposals';
             response = HTTP.get(url);
@@ -22,12 +22,9 @@ Meteor.methods({
             // console.log(proposals);
 
             let finishedProposalIds = new Set(Proposals.find(
-                {"status":{$in:["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_REJECTED", "PROPOSAL_STATUS_REMOVED"]}}
+                {"proposal_status":{$in:["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_REJECTED", "PROPOSAL_STATUS_REMOVED"]}}
             ).fetch().map((p)=> p.proposalId));
 
-            let activeProposals = new Set(Proposals.find(
-                { "status": { $in: ["PROPOSAL_STATUS_VOTING_PERIOD"] } }
-            ).fetch().map((p) => p.proposalId));
             let proposalIds = [];
             if (proposals.length > 0){
                 // Proposals.upsert()
@@ -38,37 +35,19 @@ Meteor.methods({
                     proposalIds.push(proposal.proposalId);
                     if (proposal.proposalId > 0 && !finishedProposalIds.has(proposal.proposalId)) {
                         try{
-                            url = API + '/gov/proposals/'+proposal.proposalId+'/proposer';
-                            let response = HTTP.get(url);
-                            if (response.statusCode == 200){
-                                let proposer = JSON.parse(response?.content)?.result;
-                                if (proposer.proposal_id && (parseInt(proposer.proposal_id) == proposal.proposalId)){
-                                    proposal.proposer = proposer?.proposer;
-                                }
-                            }
-                            if (activeProposals.has(proposal.proposalId)){
-                                let validators = []
-                                let page = 0;
-
-                                do {
-                                    url = RPC + `/validators?page=${++page}&per_page=100`;
-                                    let response = HTTP.get(url);
-                                    result = JSON.parse(response.content).result;
-                                    validators = [...validators, ...result.validators];
-
-                                }
-                                while (validators.length < parseInt(result.total))
-
-                                let activeVotingPower = 0;
-                                for (v in validators) {
-                                    activeVotingPower += parseInt(validators[v].voting_power);
-                                }
-                                proposal.activeVotingPower = activeVotingPower;
-                            }
+                            // url = API + '/cosmos/gov/v1beta1/proposals/'+proposal.proposalId+'/proposer';
+                            // let response = HTTP.get(url);
+                            // if (response.statusCode == 200){
+                            //     let proposer = JSON.parse(response.content).result;
+                            //     if (proposer.proposal_id && (proposer.proposal_id == proposal.id)){
+                            //         proposal.proposer = proposer.proposer;
+                            //     }
+                            // }
                             bulkProposals.find({proposalId: proposal.proposalId}).upsert().updateOne({$set:proposal});
                         }
-                        catch (e) {
-                            bulkProposals.find({proposalId:proposal.proposalId}).upsert().updateOne({ $set: proposal});
+                        catch(e){
+                            bulkProposals.find({proposalId: proposal.proposalId}).upsert().updateOne({$set:proposal});
+                            // proposalIds.push(proposal.proposalId);
                             console.log(url);
                             console.log(e.response.content);
                         }
@@ -158,20 +137,23 @@ const getVoteDetail = (votes) => {
             try{
                 let response = HTTP.get(url);
                 if (response.statusCode == 200){
-                    delegations = JSON.parse(response.content).delegation_responses;
+                    delegations = JSON.parse(response.content).delegations_response;
                     if (delegations && delegations.length > 0) {
                         delegations.forEach((delegation) => {
                             let shares = parseFloat(delegation.delegation.shares);
                             if (validatorAddressMap[delegation.delegation.validator_address]) {
                                 // deduct delegated shareds from validator if a delegator votes
-                                let validator = votingPowerMap[validatorAddressMap[delegation.delegation.validator_address]];
+                                let validator = votingPowerMap[validatorAddressMap[delegation.validator_address]];
                                 validator.deductedShares -= shares;
-                                if (parseFloat(validator.delegatorShares) != 0){ // avoiding division by zero
-                                    votingPower += (shares / parseFloat(validator.delegatorShares)) * parseFloat(validator.tokens);
+                                if (validator.delegatorShares != 0){ // avoiding division by zero
+                                    votingPower += (shares/validator.delegatorShares) * validator.tokens;
                                 }
 
                             } else {
-                                votingPower += shares
+                                let validator = Validators.findOne({operatorAddress: delegation.validator_address});
+                                if (validator && validator.delegatorShares != 0){ // avoiding division by zero
+                                    votingPower += (shares/parseFloat(validator.delegatorShares)) * parseFloat(validator.tokens);
+                                }
                             }
                         });
                     }
@@ -179,7 +161,7 @@ const getVoteDetail = (votes) => {
             }
             catch (e){
                 console.log(url);
-                console.log(e);
+                console.log(e.response.content);
             }
             votingPowerMap[voter] = {votingPower: votingPower};
         }
@@ -189,7 +171,7 @@ const getVoteDetail = (votes) => {
         let votingPower = voter.votingPower;
         if (votingPower == undefined) {
             // voter is a validator
-            votingPower = voter.delegatorShares?((parseFloat(voter.deductedShares) / parseFloat(voter.delegatorShares)) * parseFloat(voter.tokens)):0;
+            votingPower = voter.delegatorShares?((voter.deductedShares/voter.delegatorShares) * voter.tokens):0;
         }
         return {...vote, votingPower};
     });

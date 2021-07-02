@@ -23,7 +23,7 @@ common:
     cancel: 'Cancelar'
     retry: 'Reintentar'
 navbar:
-    siteName: 'BIG DIPPER'
+    siteName: 'CUDOS Explorer'
     validators: 'Validadores'
     blocks: 'Bloques'
     transactions: 'Transacciones'
@@ -147,7 +147,7 @@ proposals:
     proposer: 'Proposer'
     proposal: 'propuesta'
     proposals: 'Propuestas'
-    proposalID: 'ID de la propuesta'
+    proposalId: 'ID de la propuesta'
     title: 'Título'
     status: 'Estado'
     submitTime: 'Plazo de entrega'

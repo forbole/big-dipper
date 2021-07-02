@@ -7,8 +7,6 @@ import Consensus from './ConsensusContainer.js';
 import TopValidators from './TopValidatorsContainer.js';
 import Chart from './ChartContainer.js';
 import { Helmet } from "react-helmet";
-import BlocksTable from '/imports/ui/blocks/BlocksTable.jsx'
-import Transactions from '/imports/ui/transactions/TransactionsList.jsx'
 
 export default class Home extends Component{
     constructor(props){
@@ -18,18 +16,18 @@ export default class Home extends Component{
     render() {
         return <div id="home">
             <Helmet>
-                <title>Big Dipper | Cosmos Explorer presented by Forbole</title>
-                <meta name="description" content="Cosmos is a decentralized network of independent parallel blockchains, each powered by BFT consensus algorithms like Tendermint consensus." />
+                <title>CUDOS Explorer</title>
+                <meta name="description" content="The decentralized cloud computing network for everyone." />
             </Helmet>
             <ChainInfo/>
             <Consensus />
             <ChainStatus />
             <Row>
-                <Col md={6} className="mb-2">
-                    <BlocksTable homepage={true} />
+                <Col md={6}>
+                    <TopValidators />
                 </Col>
-                <Col md={6} className="mb-2">
-                    <Transactions homepage={true}/>
+                <Col md={6}>
+                    <Chart />
                 </Col>
             </Row>
         </div>

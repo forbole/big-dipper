@@ -1,5 +1,6 @@
 FROM geoffreybooth/meteor-base:1.12.1
 
+
 COPY package*.json $APP_SOURCE_FOLDER/
 
 RUN bash $SCRIPTS_FOLDER/build-app-npm-dependencies.sh
@@ -18,6 +19,7 @@ RUN apk --no-cache add \
     g++ \
     make \
     python
+
 
 COPY --from=0 $SCRIPTS_FOLDER $SCRIPTS_FOLDER/
 

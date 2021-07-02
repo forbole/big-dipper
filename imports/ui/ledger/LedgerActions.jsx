@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-comment-textnodes */
 /* eslint-disable react/no-unused-prop-types */
 import qs from 'querystring';
 import React, { Component } from 'react';
@@ -11,9 +12,9 @@ import Coin from '/both/utils/coins.js';
 import numbro from 'numbro';
 import TimeStamp from '../components/TimeStamp.jsx';
 import { PropTypes } from 'prop-types';
-import i18n from 'meteor/universe:i18n';
-
-const T = i18n.createComponent();
+import { assertIsBroadcastTxSuccess, SigningStargateClient, defaultRegistryTypes } from "@cosmjs/stargate";
+import {Registry} from "@cosmjs/proto-signing";
+import {MsgSubmitProposal, MsgDeposit, MsgVote} from "../../../cosmos/codec/gov/v1beta1/tx";
 
 const maxHeightModifier = {
     setMaxHeight: {
@@ -82,7 +83,7 @@ const TypeMeta = {
         gasAdjustment: '1.8'
     },
     [Types.SUBMITPROPOSAL]: {
-        button: 'new',
+        button: 'new proposal',
         path: 'gov/proposals',
         gasAdjustment: '1.4'
     },
@@ -102,16 +103,18 @@ const TypeMeta = {
 
 const CoinAmount = (props) => {
     let coin = {};
+
     if (!props.coin && !props.amount) return null;
+
     if(!props.denom){
-        coin = new Coin(props.amount).toString(6);
+        coin = new Coin(props.amount).toString(4);
     }
     else{
         let denomFinder =  Meteor.settings.public.coins.find(({ denom }) => denom === props.denom);
         let displayDenom = denomFinder ? denomFinder.displayName : null;
         
         let finder = props.amount.find(({ denom }) => denom === props.denom)
-        coin = finder ? new Coin(finder.amount, finder.denom).toString(6) : '0.000000 ' + displayDenom;
+        coin = finder ? new Coin(finder.amount, finder.denom).toString(4) : '0.0000 ' + displayDenom;
     }
     let denom = (props.mint)?Coin.StakingCoin.denom:Coin.StakingCoin.displayName;
 
@@ -121,17 +124,15 @@ const CoinAmount = (props) => {
 
 const Amount = (props) => {
     if (!props.coin && !props.amount) return null;
-    let amount = new Coin(props?.coin?.amount, props?.coin?.denom).toString(6) ?? new Coin(0).toString(6)
-    return <span><span className={props.className || 'amount'}>{amount}</span> </span>
+    let coin = props.coin || new Coin(props.amount, props.denom).toString(4);
+    let amount = (props.mint)?Math.round(coin.amount):coin.stakingAmount;
+    let denom = (props.mint)?Coin.StakingCoin.denom:Coin.StakingCoin.displayName;
+    return <span><span className={props.className || 'amount'}>{numbro(amount).format("0,0.0000")}</span> <span className='denom'>{denom}</span></span>
 }
-
 
 const Fee = (props) => {
+    
     return <span><CoinAmount mint className='gas' amount={Math.ceil(props.gas * Meteor.settings.public.ledger.gasPrice)}/> as fee </span>
-}
-
-const calculateGasPrice = (gasEstimate) => {
-    return Math.ceil(gasEstimate * Meteor.settings.public.ledger.gasPrice)
 }
 
 const isActiveValidator = (validator) => {
@@ -165,8 +166,8 @@ class LedgerButton extends Component {
             errorMessage: '',
             user: localStorage.getItem(CURRENTUSERADDR),
             pubKey: localStorage.getItem(CURRENTUSERPUBKEY),
-            transportBLE: localStorage.getItem(BLELEDGERCONNECTION),
-            memo: DEFAULT_MEMO
+            memo: DEFAULT_MEMO,
+            proposalType: Ledger.PROPOSAL_TYPES.PROPOSAL_TYPE_TEXT
         };
         this.ledger = new Ledger({testModeAllowed: false});
     }
@@ -189,8 +190,17 @@ class LedgerButton extends Component {
             gasEstimate: undefined,
             txMsg: undefined,
             params: undefined,
+            proposalType: Ledger.PROPOSAL_TYPES.PROPOSAL_TYPE_TEXT,
             proposalTitle: undefined,
             proposalDescription: undefined,
+            planName: undefined,
+            planHeight: undefined,
+            planInfo: undefined,
+            changeSubspace: undefined,
+            changeKey: undefined,
+            changeValue: undefined,
+            poolRecipient: undefined,
+            poolAmount: undefined,
             depositAmount: undefined,
             voteOption: undefined,
             memo: DEFAULT_MEMO
@@ -200,8 +210,7 @@ class LedgerButton extends Component {
         if (state.user !== localStorage.getItem(CURRENTUSERADDR)) {
             return {
                 user: localStorage.getItem(CURRENTUSERADDR),
-                pubKey: localStorage.getItem(CURRENTUSERPUBKEY),
-                transportBLE: localStorage.getItem(BLELEDGERCONNECTION)
+                pubKey: localStorage.getItem(CURRENTUSERPUBKEY)
             };
         }
         return null;
@@ -234,7 +243,6 @@ class LedgerButton extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-
         this.autoOpenModal();
         if ((this.state.isOpen && !prevState.isOpen) || (this.state.user && this.state.user != prevState.user)) {
             if (!this.state.success)
@@ -291,7 +299,7 @@ class LedgerButton extends Component {
         Meteor.call('accounts.getAccountDetail', this.state.user, (error, result) => {
             try{
                 if (result) {
-                    let coin = result.coins?(new Coin(result.coins[0].amount, result.coins[0].denom)): (new Coin(0, result.coins[0].denom));
+                    let coin = result.coins && result.coins.length > 0 ? (new Coin(result.coins[0].amount, result.coins[0].denom)): (new Coin(0, Meteor.settings.public.coins[0].displayName));
                     this.setStateOnSuccess('loadingBalance', {
                         currentUser: {
                             accountNumber: result.account_number,
@@ -313,7 +321,7 @@ class LedgerButton extends Component {
     }
 
     tryConnect = () => {
-        this.ledger.getCosmosAddress(this.state.transportBLE).then((res) => {
+        this.ledger.getCosmosAddress().then((res) => {
             if (res.address == this.state.user)
                 this.setState({
                     success: true,
@@ -324,7 +332,7 @@ class LedgerButton extends Component {
                     this.setState({
                         success: false,
                         activeTab: '0',
-                        errorMessage: `Currently logged in as another user ${this.state.user}`
+                        errorMessage: ''//`Currently logged in as another user ${this.state.user}`
                     })
                 }
             }
@@ -348,7 +356,8 @@ class LedgerButton extends Component {
     }
 
     createMessage = (callback) => {
-        let txMsg
+        let txMsg;
+
         switch (this.state.actionType) {
         case Types.DELEGATE:
             txMsg = Ledger.createDelegate(
@@ -369,6 +378,15 @@ class LedgerButton extends Component {
                 this.props.validator.operator_address,
                 this.state.delegateAmount.amount);
             break;
+        case Types.WITHDRAW:
+            txMsg = Ledger.createWithdraw(
+                this.getTxContext(),
+                Validators.find(
+                    {"jailed": false, "status": 'BOND_STATUS_BONDED'},
+                    {"sort":{"description.moniker":1}}
+                )
+            );
+            break;
         case Types.SEND:
             txMsg = Ledger.createTransfer(
                 this.getTxContext(),
@@ -376,10 +394,37 @@ class LedgerButton extends Component {
                 this.state.transferAmount.amount);
             break;
         case Types.SUBMITPROPOSAL:
+            let proposalData = {
+                proposalTitle: this.state.proposalTitle, 
+                proposalDescription: this.state.proposalDescription, 
+                proposalType: this.state.proposalType,
+            };
+
+            switch(this.state.proposalType){
+            default:
+            case Ledger.PROPOSAL_TYPES.PROPOSAL_TYPE_TEXT:
+            case Ledger.PROPOSAL_TYPES.PROPOSAL_TYPE_CANCEL_SOFTWARE_UPDATE:
+                break;
+            case Ledger.PROPOSAL_TYPES.PROPOSAL_TYPE_SOFTWARE_UPDATE:
+                proposalData.planName = this.state.planName;
+                proposalData.planHeight = this.state.planHeight;
+                proposalData.planInfo = this.state.planInfo;
+                break;
+            case Ledger.PROPOSAL_TYPES.PROPOSAL_TYPE_PARAM_CHANGE:
+                proposalData.changeSubspace = this.state.changeSubspace;
+                proposalData.changeKey = this.state.changeKey;
+                proposalData.changeValue = this.state.changeValue;
+                break;
+            case Ledger.PROPOSAL_TYPES.PROPOSAL_TYPE_COMMUNITY_POOL_SPEND:
+                proposalData.poolRecipient = this.state.poolRecipient;
+                proposalData.poolAmount = this.state.poolAmount;
+                proposalData.poolDenom = Meteor.settings.public.bondDenom;
+                break;
+            }
+
             txMsg = Ledger.createSubmitProposal(
                 this.getTxContext(),
-                this.state.proposalTitle,
-                this.state.proposalDescription,
+                proposalData,
                 this.state.depositAmount.amount);
             break;
         case Types.VOTE:
@@ -394,10 +439,9 @@ class LedgerButton extends Component {
                 this.props.proposalId,
                 this.state.depositAmount.amount);
             break;
-
-
         }
-        callback(txMsg, this.getSimulateBody(txMsg))
+        //callback(txMsg, this.getSimulateBody(txMsg))        
+        callback(txMsg)
     }
 
     getSimulateBody (txMsg) {
@@ -411,10 +455,11 @@ class LedgerButton extends Component {
     }
 
     simulate = () => {
-        if (this.state.simulating) return
-        this.initStateOnLoad('simulating')
+        if (this.state.simulating) return this.initStateOnLoad('simulating')
+        
         try {
-            this.createMessage(this.runSimulatation);
+            //this.createMessage(this.runSimulatation);
+            this.createMessage(this.sign);
         } catch (e) {
             this.setStateOnError('simulating', e.message)
         }
@@ -422,22 +467,14 @@ class LedgerButton extends Component {
 
     runSimulatation = (txMsg, simulateBody) => {
         let gasAdjustment = TypeMeta[this.state.actionType].gasAdjustment || DEFAULT_GAS_ADJUSTMENT;
-        Meteor.call('transaction.simulate', simulateBody, this.state.user, this.state.currentUser.accountNumber, this.state.currentUser.sequence, this.getPath(), gasAdjustment, (err, res) =>{
+        Meteor.call('transaction.simulate', txMsg, this.state.user, this.state.currentUser.accountNumber, this.state.currentUser.sequence, this.getPath(), gasAdjustment, (err, res) =>{
             if (res){
-                let gasPrice = calculateGasPrice(res)
-                let amountToTransfer = this.state.transferAmount?.amount || this.state.delegateAmount?.amount || this.state.depositAmount?.amount
-                let totalAmount = this.props.rewards || this.props.commission || this.state.actionType === 'redelegate' || this.state.actionType === 'undelegate'?  gasPrice : amountToTransfer + gasPrice;
-                if (totalAmount <= this.state.currentUser?.availableCoin?._amount){
-                    Ledger.applyGas(txMsg, res, Meteor.settings.public.ledger.gasPrice, Coin.StakingCoin.denom);
-                    this.setStateOnSuccess('simulating', {
-                        gasEstimate: res,
-                        activeTab: '3',
-                        txMsg: txMsg
-                    })
-                }
-                else{
-                    this.setStateOnError('simulating', <h6 className="font-weight-normal mt-3"> <> <T>common.txOutOfGasMessage</T><div className="text-center"><T _purify={false}  gasPrice={new Coin(gasPrice)}>common.estimatedGasPrice</T></div></></h6>)
-                }
+                Ledger.applyGas(txMsg, res, Meteor.settings.public.ledger.gasPrice, Coin.StakingCoin.denom);
+                this.setStateOnSuccess('simulating', {
+                    gasEstimate: res,
+                    activeTab: '3',
+                    txMsg: txMsg
+                })
             }
             else {
                 this.setStateOnError('simulating', 'something went wrong')
@@ -445,32 +482,48 @@ class LedgerButton extends Component {
         })
     }
 
-    sign = () => {
-        if (this.state.signing) return
+    sign = async (txMsg) => {
+        if (this.state.signing) {
+            return;
+        }
+        const myRegistry = new Registry([
+            ...defaultRegistryTypes,
+            ["/cosmos.gov.v1beta1.MsgSubmitProposal", MsgSubmitProposal],
+            ["/cosmos.gov.v1beta1.MsgDeposit", MsgDeposit],
+            ["/cosmos.gov.v1beta1.MsgVote", MsgVote],
+            // Replace with your own type URL and Msg class
+        ]);
+
         this.initStateOnLoad('signing')
+
         try {
-            let txMsg = this.state.txMsg;
-            const txContext = this.getTxContext();
-            const bytesToSign = Ledger.getBytesToSign(txMsg, txContext);
-            this.ledger.sign(bytesToSign, this.state.transportBLE).then((sig) => {
-                try {
-                    Ledger.applySignature(txMsg, txContext, sig);
-                    Meteor.call('transaction.submit', txMsg, (err, res) => {
-                        if (err) {
-                            this.setStateOnError('signing', err.reason)
-                        } else if (res) {
-                            this.setStateOnSuccess('signing', {
-                                txHash: res,
-                                activeTab: '4'
-                            })
-                        }
-                    })
-                } catch (e) {
-                    this.setStateOnError('signing', e.message)
-                }
-            }, (err) => this.setStateOnError('signing', err.message))
-        } catch (e) {
+            const chainId = Meteor.settings.public.chainId;
+            await window.keplr.enable(chainId);
+
+            const offlineSigner = window.getOfflineSigner(chainId);
+
+            const rpcEndpoint = Meteor.settings.public.urls.rpc;
+            const client = await SigningStargateClient.connectWithSigner(rpcEndpoint, offlineSigner, {
+                registry: myRegistry,
+            });
+
+            const account = (await offlineSigner.getAccounts())[0];
+
+            const result = await client.signAndBroadcast(
+                account.address,
+                txMsg.msgAny,
+                txMsg.fee,
+            );
+
+            assertIsBroadcastTxSuccess(result);
+
+            this.setStateOnSuccess('signing', {
+                txHash: result,
+                activeTab: '4'
+            })
+        } catch (e){
             this.setStateOnError('signing', e.message)
+            console.log(e);
         }
     }
 
@@ -485,18 +538,18 @@ class LedgerButton extends Component {
         case 'coin':
             value = new Coin(target.value, target.nextSibling.innerText)
             break;
+        case 'type':
+            value = parseInt(target.value);
+            break;
         default:
             value = target.value;
         }
-        this.setState({[target.name]: value})
+        this.setState({[target.name]: value});
     }
 
     redirectToSignin = () => {
-        let params = {...this.state.params,
-            ...this.populateRedirectParams(),
-        };
-        this.close()
-        this.props.history.push(this.props.history.location.pathname + '?signin&' + qs.stringify(params))
+        Ledger.connectKeplr();
+        this.close();
     }
 
     populateRedirectParams = () => {
@@ -509,11 +562,11 @@ class LedgerButton extends Component {
 
     getActionButton = () => {
         if (this.state.activeTab === '0')
-            return <Button color="primary"  onClick={this.redirectToSignin}>Sign in With Ledger</Button>
+            return <Button color="primary"  onClick={this.redirectToSignin}>Sign in With Keplr</Button>
         if (this.state.activeTab === '1')
-            return <Button color="primary"  onClick={this.tryConnect}>Continue</Button>
+            return <Button color="primary"  onClick={this.redirectToSignin}>Sign in With Keplr</Button> //onClick={this.tryConnect}>Continue</Button>
         if (this.state.activeTab === '2')
-            return <Button color="primary" disabled={this.state.simulating || !this.isDataValid()} onClick={this.simulate}>
+            return <Button color="primary"  disabled={this.state.simulating || !this.isDataValid()} onClick={this.simulate}>
                 {(this.state.errorMessage !== '')?'Retry':'Next'}
             </Button>
         if (this.state.activeTab === '3')
@@ -540,6 +593,7 @@ class LedgerButton extends Component {
             {"jailed": false, "status": 'BOND_STATUS_BONDED'},
             {"sort":{"description.moniker":1}}
         );
+
         let redelegations = this.state.redelegations || {};
         let maxEntries = (this.props.stakingParams&&this.props.stakingParams.max_entries)?this.props.stakingParams.max_entries:7;
         return <UncontrolledDropdown direction='down' size='sm' className='redelegate-validators'>
@@ -604,9 +658,9 @@ class LedgerButton extends Component {
         return  <Modal isOpen={this.state.isOpen} toggle={this.close} className="ledger-modal">
             <ModalBody>
                 <TabContent className='ledger-modal-tab' activeTab={this.state.activeTab}>
-                    <TabPane tabId="0"></TabPane>
+                    <TabPane tabId="0">Please connect your Keplr wallet.</TabPane>
                     <TabPane tabId="1">
-                        Please connect your Ledger device and open Cosmos App.
+                        Please connect your Keplr wallet.
                     </TabPane>
                     {this.renderActionTab()}
                     {this.renderConfirmationTab()}
@@ -768,28 +822,28 @@ class DelegationButtons extends LedgerButton {
 
 class WithdrawButton extends LedgerButton {
 
-    createMessage = (callback) => {
-        Meteor.call('transaction.execute', {from: this.state.user}, this.getPath(), (err, res) =>{
-            if (res){
-                Meteor.call('isValidator', this.state.user, (error, result) => {
-                    if (result && result.operator_address){
-                        res.value.msg.push({
-                            type: 'cosmos-sdk/MsgWithdrawValidatorCommission',
-                            value: { validator_address: result.operator_address }
-                        })
-                    }
-                    callback(res, res)
-                })
-            }
-            else {
-                this.setState({
-                    loading: false,
-                    simulating: false,
-                    errorMessage: 'something went wrong'
-                })
-            }
-        })
-    }
+    // createMessage = (callback) => {
+    //     Meteor.call('transaction.execute', {from: this.state.user}, this.getPath(), (err, res) =>{
+    //         if (res){
+    //             Meteor.call('isValidator', this.state.user ,(error, result) => {
+    //                 if (result && result.address){
+    //                     res.value.msg.push({
+    //                         type: 'cosmos-sdk/MsgWithdrawValidatorCommission',
+    //                         value: { validator_address: result.address }
+    //                     })
+    //                 }
+    //                 callback(res, res)
+    //             })
+    //         }
+    //         else {
+    //             this.setState({
+    //                 loading: false,
+    //                 simulating: false,
+    //                 errorMessage: 'something went wrong'
+    //             })
+    //         }
+    //     })
+    // }
 
     supportAction(action) {
         return action === Types.WITHDRAW;
@@ -882,32 +936,113 @@ class TransferButton extends LedgerButton {
 }
 
 class SubmitProposalButton extends LedgerButton {
+   
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         let maxAmount = this.state.currentUser.availableCoin;
-        return <TabPane tabId="2">
-            <h3>Submit A New Proposal</h3>
-            <InputGroup>
-                <Input name="proposalTitle" onChange={this.handleInputChange}
-                    placeholder="Title" type="text"
-                    value={this.state.proposalTitle}/>
-            </InputGroup>
-            <InputGroup>
-                <Input name="proposalDescription" onChange={this.handleInputChange}
-                    placeholder="Description" type="textarea"
-                    value={this.state.proposalDescription}/>
-            </InputGroup>
-            <InputGroup>
-                <Input name="depositAmount" onChange={this.handleInputChange}
-                    data-type='coin' placeholder="Amount"
-                    min={Coin.MinStake} max={maxAmount.stakingAmount} type="number"
-                    invalid={this.state.depositAmount != null && !isBetween(this.state.depositAmount, 1, maxAmount)}/>
-                <InputGroupAddon addonType="append">{Coin.StakingCoin.displayName}</InputGroupAddon>
-            </InputGroup>
-            <Input name="memo" onChange={this.handleInputChange}
-                placeholder="Memo(optional)" type="textarea" value={this.state.memo}/>
-            <div>your available balance: <Amount coin={maxAmount}/></div> 
-        </TabPane>
+
+        return (
+            <TabPane tabId="2">
+                <h3>Submit A New Proposal</h3>
+                <InputGroup>
+                    <Input name="proposalType" onChange={this.handleInputChange}
+                        placeholder="Type" type="select" data-type="type"
+                        value={this.state.proposalType}>
+                        {Object.values(Ledger.PROPOSAL_TYPES).map(type => <option key={type} value={type}>{this.getProposalTypeText(type)} proposal</option>)}
+                    </Input>
+                </InputGroup>
+                <InputGroup>
+                    <Input name="proposalTitle" onChange={this.handleInputChange}
+                        placeholder="Title" type="text"
+                        value={this.state.proposalTitle}/>
+                </InputGroup>
+                <InputGroup>
+                    <Input name="proposalDescription" onChange={this.handleInputChange}
+                        placeholder="Description" type="textarea"
+                        value={this.state.proposalDescription}/>
+                </InputGroup>
+                { this.state.proposalType === Ledger.PROPOSAL_TYPES.PROPOSAL_TYPE_PARAM_CHANGE ?
+                    (<>
+                        <InputGroup>
+                            <Input name="changeSubspace" onChange={this.handleInputChange}
+                                placeholder="Change subspace" type="text"
+                                value={this.state.changeSubspace}/>
+                        </InputGroup>
+                        <InputGroup>
+                            <Input name="changeKey" onChange={this.handleInputChange}
+                                placeholder="Change Key" type="text"
+                                value={this.state.changeKey}/>
+                        </InputGroup>
+                        <InputGroup>
+                            <Input name="changeValue" onChange={this.handleInputChange}
+                                placeholder="Change Value" type="text"
+                                value={this.state.changeValue}/>
+                        </InputGroup>
+                    </>
+                    ) : ''
+                }
+                { this.state.proposalType === Ledger.PROPOSAL_TYPES.PROPOSAL_TYPE_SOFTWARE_UPDATE ?
+                    (<>
+                        <InputGroup>
+                            <Input name="planName" onChange={this.handleInputChange}
+                                placeholder="Plan name" type="text"
+                                value={this.state.planName}/>
+                        </InputGroup>
+                        <InputGroup>
+                            <Input name="planHeight" onChange={this.handleInputChange}
+                                placeholder="Plan height" type="text"
+                                value={this.state.planHeight}/>
+                        </InputGroup>
+                        <InputGroup>
+                            <Input name="planInfo" onChange={this.handleInputChange}
+                                placeholder="Plan info" type="text"
+                                value={this.state.planInfo}/>
+                        </InputGroup>
+                    </>
+                    ) : ''
+                }
+                { this.state.proposalType === Ledger.PROPOSAL_TYPES.PROPOSAL_TYPE_COMMUNITY_POOL_SPEND ?
+                    (<>
+                        <InputGroup>
+                            <Input name="poolRecipient" onChange={this.handleInputChange}
+                                placeholder="Spend recipient" type="text"
+                                value={this.state.poolRecipient}/>
+                        </InputGroup>
+                        <InputGroup>
+                            <Input name="poolAmount" onChange={this.handleInputChange}
+                                placeholder="Spend amount" type="text"/>
+                            <InputGroupAddon addonType="append">{Coin.StakingCoin.displayName}</InputGroupAddon>
+                        </InputGroup>
+                    </>
+                    ) : ''
+                }
+                <InputGroup>
+                    <Input name="depositAmount" onChange={this.handleInputChange}
+                        data-type='coin' placeholder="Amount"
+                        min={Coin.MinStake} max={maxAmount.stakingAmount} type="number"
+                        invalid={this.state.depositAmount != null && !isBetween(this.state.depositAmount, 1, maxAmount)}/>
+                    <InputGroupAddon addonType="append">{Coin.StakingCoin.displayName}</InputGroupAddon>
+                </InputGroup>
+                <Input name="memo" onChange={this.handleInputChange}
+                    placeholder="Memo(optional)" type="textarea" value={this.state.memo}/>
+                <div>your available balance: <Amount coin={maxAmount}/></div> 
+            </TabPane>
+        )
+    }
+
+    getProposalTypeText = (proposalType) => {
+        switch(proposalType){
+        case Ledger.PROPOSAL_TYPES.PROPOSAL_TYPE_TEXT:
+            return 'Text';
+        case Ledger.PROPOSAL_TYPES.PROPOSAL_TYPE_SOFTWARE_UPDATE:
+            return 'Software update';
+        case Ledger.PROPOSAL_TYPES.PROPOSAL_TYPE_PARAM_CHANGE:
+            return 'Parameter change';
+        case Ledger.PROPOSAL_TYPES.PROPOSAL_TYPE_COMMUNITY_POOL_SPEND:
+            return 'Community pool spend';
+        case Ledger.PROPOSAL_TYPES.PROPOSAL_TYPE_CANCEL_SOFTWARE_UPDATE:
+            return 'Cancel software update';
+        }
     }
 
     getSimulateBody (txMsg) {
@@ -927,7 +1062,6 @@ class SubmitProposalButton extends LedgerButton {
     supportAction(action) {
         return action === Types.SUBMITPROPOSAL;
     }
-
 
     isDataValid = () => {
         if (!this.state.currentUser) return false
@@ -1076,7 +1210,7 @@ LedgerButton.propTypes = {
     }),
     rewards:PropTypes.array,
     commission:PropTypes.array,
-    denom:PropTypes.string.isRequired,
+    denom:PropTypes.string,
 }
 
 DelegationButtons.propTypes = {

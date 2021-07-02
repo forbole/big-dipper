@@ -21,7 +21,6 @@ timerProposalsResults = 0;
 timerMissedBlock = 0;
 timerDelegation = 0;
 timerAggregate = 0;
-timerFetchKeybase = 0;
 
 const DEFAULTSETTINGS = '/default_settings.json';
 
@@ -95,17 +94,6 @@ updateMissedBlocks = () => {
         }
         if (result){
             console.log("missed blocks ok: %o", result);
-        }
-    });
-}
-
-fetchKeybase = () => {
-    Meteor.call('Validators.fetchKeybase', (error, result) => {
-        if (error) {
-            console.log("Error when fetching Keybase" + error)
-        }
-        if (result) {
-            console.log("Keybase profile_url updated ", result);
         }
     });
 }
@@ -212,12 +200,12 @@ Meteor.startup(async function(){
             updateChainStatus();
         }, Meteor.settings.params.statusInterval);
 
-        if (Meteor.settings.public.modules.gov){
-            timerProposal = Meteor.setInterval(function (){
+        if (Meteor.settings.public.modules.gov) {
+            timerProposal = Meteor.setInterval(function () {
                 getProposals();
             }, Meteor.settings.params.proposalInterval);
 
-            timerProposalsResults = Meteor.setInterval(function (){
+            timerProposalsResults = Meteor.setInterval(function () {
                 getProposalsResults();
             }, Meteor.settings.params.proposalInterval);
         }
@@ -225,10 +213,6 @@ Meteor.startup(async function(){
         timerMissedBlock = Meteor.setInterval(function(){
             updateMissedBlocks();
         }, Meteor.settings.params.missedBlocksInterval);
-
-        timerFetchKeybase = Meteor.setInterval(function (){
-            fetchKeybase();
-        }, Meteor.settings.params.keybaseFetchingInterval);
 
         // timerDelegation = Meteor.setInterval(function(){
         //     getDelegations();

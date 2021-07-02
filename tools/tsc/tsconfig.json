@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "target": "es2017",
+        "module": "commonjs",
+        "allowJs": true,
+        "esModuleInterop": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "sourceMap": false,
+        "outDir": "../../cosmos/codec/distribution/"
+    },
+    "include": [
+        "../../cosmos/codec/typescript/cosmos/distribution",
+    ],
+    "exclude": [
+        "./mode_modules/**/*",
+    ]
+}

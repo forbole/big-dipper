@@ -1,5 +1,6 @@
 $forbole-red: #bd081c;
-$primary: $forbole-red !default;
+$dark-blue: #1B2031;
+$primary: $dark-blue !default;
 
 @import "materia/variables";
 @import "bootstrap";
@@ -170,17 +171,6 @@ body {
     &#main, &#transaction, &#block {
       padding-top: 6rem;
       padding-bottom: 3.85rem;
-
-      .banner {
-        a {
-          display: block;
-          width: 100%;
-          
-          img {
-            max-width: 100%
-          }
-        }
-      }
     }
   
     &#transaction .card.card-body {
@@ -539,23 +529,6 @@ body {
    }
 
   }
-
-  .ledger-address-list{
-    overflow: auto;
-    width: 100%;
-    display: inline-flex;
-
-  }
-
-  .ledger-loader{
-    margin-top: 4em
-  }
-
-  .btn-ledger-login{
-    width: 13rem;
-    border: solid 1px #c6c6c6;
-    box-shadow: none;
-  }
   
   .vp-diff {
     display: inline-block;
@@ -691,12 +664,6 @@ body {
     .nav-link {
       cursor: pointer;
     }
-  }
-
-  .tx-list-homepage {
-    overflow-y: hidden;
-    overflow-x: auto;
-    height: 52em;
   }
   
   @media only screen and (max-width: 767px) {

@@ -149,7 +149,7 @@ proposals:
     proposer: '提案人'
     proposal: '治理提案'
     proposals: '治理提案'
-    proposalID: '提案编号'
+    proposalId: '提案编号'
     title: '主题'
     status: '状态'
     submitTime: '提案时间'

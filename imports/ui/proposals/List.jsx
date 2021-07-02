@@ -6,7 +6,7 @@ import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js'
 import TimeStamp from '../components/TimeStamp.jsx';
-// import { SubmitProposalButton } from '../ledger/LedgerActions.jsx';
+import { SubmitProposalButton } from '../ledger/LedgerActions.jsx';
 import voca from 'voca';
 
 const T = i18n.createComponent();
@@ -20,7 +20,7 @@ const ProposalRow = (props) => {
         <td className="submit-block"><TimeStamp time={props.proposal.submit_time}/></td>
         <td className="voting-start">{(props.proposal.voting_start_time != "0001-01-01T00:00:00Z")?<TimeStamp time={props.proposal.voting_start_time}/>:'Not started'}</td>
         <td className="deposit text-right">{props.proposal.total_deposit?props.proposal.total_deposit.map((deposit, i) => {
-            return <div key={i}>{new Coin(deposit.amount, deposit.denom).toString(6)}</div>
+            return <div key={i}>{new Coin(deposit.amount, deposit.denom).toString()}</div>
         }):'0'}</td>
     </tr>
 }
@@ -70,11 +70,11 @@ export default class List extends Component{
         else{
             return (
                 <div>
-                    {/* {this.state.user?<SubmitProposalButton history={this.props.history}/>:null} */}
+                    {this.state.user?<SubmitProposalButton history={this.props.history}/>:null}
                     <Table striped className="proposal-list">
                         <thead>
                             <tr>
-                                <th className="d-none d-sm-table-cell counter"><i className="fas fa-hashtag"></i> <T>proposals.proposalID</T></th>
+                                <th className="d-none d-sm-table-cell counter"><i className="fas fa-hashtag"></i> <T>proposals.proposalId</T></th>
                                 <th className="title"><i className="material-icons">view_headline</i> <span className="d-none d-sm-inline"><T>proposals.title</T></span></th>
                                 <th className="status"><i className="fas fa-toggle-on"></i> <span className="d-none d-sm-inline"><T>proposals.status</T></span></th>
                                 <th className="submit-block"><i className="fas fa-box"></i> <span className="d-none d-sm-inline"><T>proposals.submitTime</T> (UTC)</span></th>

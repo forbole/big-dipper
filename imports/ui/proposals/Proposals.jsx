@@ -9,16 +9,23 @@ import i18n from 'meteor/universe:i18n';
 
 const T = i18n.createComponent();
 
-const ProposalList = (props) => {
-    return <div>
-        <p className="lead"><T>proposals.listOfProposals</T></p>
-        <Row>
-            <Col md={12}>
-                <List {...props}/>
-            </Col>
-        </Row>
-    </div>
+class ProposalList extends Component {
+
+    render() {
+        return (
+            <div>
+                <p className="lead"><T>proposals.listOfProposals</T></p>
+                <Row>
+                    <Col md={12}>
+                        <List {...this.props}/>
+                    </Col>
+                </Row>
+            </div>
+        )
+    }
+
 }
+
 export default class Proposals extends Component{
     constructor(props){
         super(props);
@@ -27,8 +34,8 @@ export default class Proposals extends Component{
     render() {
         return <div>
             <Helmet>
-                <title>Governance Proposals on {Meteor.settings.public.chainName} | Big Dipper</title>
-                <meta name="description" content="{Meteor.settings.public.chainName} incorporates on-chain governance. Come to see how on-chain governance can be achieved on Big Dipper." />
+                <title>Governance Proposals on CUDOS network</title>
+                <meta name="description" content="CUDOS network incorporates on-chain governance. Come to see how on-chain governance can be achieved on CUDOS network." />
             </Helmet>
             <Row>
                 <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>proposals.proposals</T></h1></Col>

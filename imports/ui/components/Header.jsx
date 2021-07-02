@@ -27,6 +27,10 @@ import SearchBar from './SearchBar.jsx';
 import i18n from 'meteor/universe:i18n';
 import LedgerModal from '../ledger/LedgerModal.jsx';
 import Account from './Account.jsx';
+import { DirectSecp256k1HdWallet, Registry } from "@cosmjs/proto-signing";
+import { assertIsBroadcastTxSuccess, SigningStargateClient, StargateClient } from "@cosmjs/stargate";
+import { MsgDelegate } from "@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/tx"; 
+import { Ledger } from '../ledger/ledger.js';
 
 const T = i18n.createComponent();
 
@@ -86,7 +90,7 @@ export default class Header extends Component {
                                         return <span key={i}>
                                             <DropdownItem header><img src={network.logo} /> {network.name}</DropdownItem>
                                             {network.links.map((link, k) => {
-                                                return <DropdownItem key={k} disabled={link.chain_id == Meteor.settings.public.chainId}>
+                                                return <DropdownItem key={k} disabled={link.chain_id == chainId}>
                                                     <a href={link.url} target="_blank">{link.chain_id} <Badge size="xs" color="secondary">{link.name}</Badge></a>
                                                 </DropdownItem>})}
                                             {(i < networks.length - 1)?<DropdownItem divider />:''}
@@ -116,8 +120,6 @@ export default class Header extends Component {
     signOut = () => {
         localStorage.removeItem(CURRENTUSERADDR);
         localStorage.removeItem(CURRENTUSERPUBKEY);
-        localStorage.removeItem(BLELEDGERCONNECTION);
-        localStorage.removeItem(ADDRESSINDEX);
         this.props.refreshApp();
     }
 
@@ -168,11 +170,12 @@ export default class Header extends Component {
         this.props.history.push(redirectUrl + query)
     }
 
+    
     render() {
         let signedInAddress = getUser();
         return (
             <Navbar color="primary" dark expand="lg" fixed="top" id="header">
-                <NavbarBrand tag={Link} to="/"><img src="/img/big-dipper-icon-light.svg" className="img-fluid logo"/> <span className="d-none d-xl-inline-block"><T>navbar.siteName</T>&nbsp;</span><Badge color="secondary">{this.state.version}</Badge> </NavbarBrand>
+                <NavbarBrand tag={Link} to="/"><img src="/img/cudos-logo.png" className="img-fluid logo"/> <span className="d-none d-xl-inline-block"><T>navbar.siteName</T>&nbsp;</span></NavbarBrand>
                 <UncontrolledDropdown className="d-inline text-nowrap">
                     <DropdownToggle caret={(this.state.networks !== "")} tag="span" size="sm" id="network-nav">{Meteor.settings.public.chainId}</DropdownToggle>
                     {this.state.networks}
@@ -196,8 +199,11 @@ export default class Header extends Component {
                         <NavItem>
                             <NavLink tag={Link} to="/voting-power-distribution"><T>navbar.votingPower</T></NavLink>
                         </NavItem>
+                        <NavItem>
+                            <NavLink tag={Link} to="/faucet"><T>navbar.faucet</T></NavLink>
+                        </NavItem>
                         <NavItem id="user-acconut-icon">
-                            {!signedInAddress?<Button className="sign-in-btn" color="link" size="lg" onClick={() => {this.setState({isSignInOpen: true})}}><i className="material-icons">vpn_key</i></Button>:
+                            {!signedInAddress?<Button className="sign-in-btn" color="link" size="lg" onClick={async () => {await Ledger.connectKeplr(); this.props.refreshApp();}}><i className="material-icons">vpn_key</i></Button>:
                                 <span>
                                     <span className="d-lg-none">
                                         <i className="material-icons large d-inline">account_circle</i>
@@ -219,7 +225,7 @@ export default class Header extends Component {
                                 </span>}
                             <LedgerModal isOpen={this.state.isSignInOpen} toggle={this.toggleSignIn} refreshApp={this.props.refreshApp} handleLoginConfirmed={this.shouldLogin()?this.handleLoginConfirmed:null}/>
                         </NavItem>
-                        <NavItem>
+                        {/* <NavItem>
                             <UncontrolledDropdown inNavbar>
                                 <DropdownToggle nav caret>
                                     <T>navbar.lang</T>
@@ -227,14 +233,14 @@ export default class Header extends Component {
                                 <DropdownMenu right>
                                     <DropdownItem onClick={(e) => this.handleLanguageSwitch('en-US', e)}><T>navbar.english</T></DropdownItem>
                                     <DropdownItem onClick={(e) => this.handleLanguageSwitch('es-ES', e)}><T>navbar.spanish</T></DropdownItem>
-                                    {/* <DropdownItem onClick={(e) => this.handleLanguageSwitch('it-IT', e)}><T>navbar.italian</T></DropdownItem> */}
+                                    <DropdownItem onClick={(e) => this.handleLanguageSwitch('it-IT', e)}><T>navbar.italian</T></DropdownItem>
                                     <DropdownItem onClick={(e) => this.handleLanguageSwitch('pl-PL', e)}><T>navbar.polish</T></DropdownItem>
                                     <DropdownItem onClick={(e) => this.handleLanguageSwitch('ru-RU', e)}><T>navbar.russian</T></DropdownItem>
                                     <DropdownItem onClick={(e) => this.handleLanguageSwitch('zh-Hant', e)}><T>navbar.chinese</T></DropdownItem>
                                     <DropdownItem onClick={(e) => this.handleLanguageSwitch('zh-Hans', e)}><T>navbar.simChinese</T></DropdownItem>
                                 </DropdownMenu>
                             </UncontrolledDropdown>
-                        </NavItem>
+                        </NavItem> */}
                     </Nav>
                 </Collapse>
             </Navbar>

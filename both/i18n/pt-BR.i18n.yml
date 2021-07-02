@@ -24,7 +24,7 @@ common:
     retry: 'Tentar novamente'
     rewards: 'Recompensas'
 navbar:
-    siteName: 'BIG DIPPER'
+    siteName: 'CUDOS Explorer'
     validators: 'Validadores'
     blocks: 'Blocos'
     transactions: 'Transações'
@@ -147,7 +147,7 @@ proposals:
     proposer: 'Proponente'
     proposal: 'proposta'
     proposals: 'Propostas'
-    proposalID: 'ID da proposta'
+    proposalId: 'ID da proposta'
     title: 'Título'
     status: 'Status'
     submitTime: 'Tempo de envio'

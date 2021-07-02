@@ -18,9 +18,9 @@ import SearchBar from '/imports/ui/components/SearchBar.jsx';
 import moment from 'moment';
 import SentryBoundary from '/imports/ui/components/SentryBoundary.jsx';
 import NotFound from '/imports/ui/pages/NotFound.jsx';
-import Banners from '/imports/ui/components/Banners.jsx';
 
 import { ToastContainer, toast } from 'react-toastify';
+import Faucet from './faucet/Faucet';
 
 if (Meteor.isClient)
     import 'react-toastify/dist/ReactToastify.min.css';
@@ -79,7 +79,6 @@ class App extends Component {
                 {(Meteor.settings.public.gtm)?<GoogleTagManager gtmId={Meteor.settings.public.gtm} />:''}
                 <RouteHeader refreshApp={this.propagateStateChange}/>
                 <Container fluid id="main">
-                    {(Meteor.settings.public.banners)?<Banners url={Meteor.settings.public.banners}/>:''}
                     <ToastContainer />
                     <SentryBoundary>
                         <MobileSearchBar />
@@ -93,6 +92,7 @@ class App extends Component {
                             <Route path="/voting-power-distribution" component={Distribution} />
                             <Route path="/(validator|validators)" component={ValidatorDetails} />
                             {Meteor.settings.public.modules.gov?<Route path="/proposals" component={Proposals} />:null}
+                            <Route path="/faucet" component={Faucet} />
                             <Route component={NotFound} />
                         </Switch>
                     </SentryBoundary>

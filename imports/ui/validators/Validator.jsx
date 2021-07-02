@@ -191,7 +191,7 @@ export default class Validator extends Component{
 
                 return <Row className="validator-details">
                     <Helmet>
-                        <title>{ moniker } - {Meteor.settings.public.chainName} Validator | Big Dipper</title>
+                        <title>{ moniker } - CUDOS Validator</title>
                         <meta name="description" content={details} />
                     </Helmet>
                     <Col xs={12}>

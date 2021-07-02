@@ -28,12 +28,14 @@ Meteor.methods({
                     account = response.value;
                 else if (response.type === 'cosmos-sdk/DelayedVestingAccount' || response.type === 'cosmos-sdk/ContinuousVestingAccount')
                     account = response.value.BaseVestingAccount.BaseAccount
-
+                    
                 try{
                     url = API + '/bank/balances/' + address;
                     response = HTTP.get(url);
                     let balances = JSON.parse(response.content).result;
                     account.coins = balances;
+
+                    if(account.account_number == null) account.account_number = 0;
 
                     if (account && account.account_number != null)
                         return account
