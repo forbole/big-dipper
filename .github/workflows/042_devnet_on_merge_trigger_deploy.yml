@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - 'feature/0.42'
+      #test trigger
 
 jobs:
   DevNet:
@@ -18,7 +19,7 @@ jobs:
           echo "VERSION=$VER" >> $GITHUB_ENV
 
       - name: 042 DevNet Trigger Block Explorer Pipeline
-        if: ${{ github.ref == 'refs/heads/develop' }}
+        if: ${{ github.ref == 'refs/heads/feature/0.42' }}
         uses: mvasigh/dispatch-action@main
         with:
           token: ${{ secrets.CHAINOPS_ACCESS_TOKEN }}
@@ -40,4 +41,3 @@ jobs:
               "app_name": "block-explorer",
               "app_env": "data"
             }
-
