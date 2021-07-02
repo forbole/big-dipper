@@ -40,3 +40,4 @@ jobs:
               "app_name": "block-explorer",
               "app_env": "data"
             }
+
