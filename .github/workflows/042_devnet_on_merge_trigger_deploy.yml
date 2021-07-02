@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - 'feature/0.42'
-      #test trigger
 
 jobs:
   DevNet:
