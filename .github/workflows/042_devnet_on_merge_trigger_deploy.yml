@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - 'feature/0.42'
-
+#triger
 jobs:
   DevNet:
     name: Trigger Block Explorer Pipeline
