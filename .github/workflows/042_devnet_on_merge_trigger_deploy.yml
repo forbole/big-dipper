@@ -24,7 +24,7 @@ jobs:
           token: ${{ secrets.CHAINOPS_ACCESS_TOKEN }}
           repo: chainOps
           owner: Sifchain
-          event_type: build_bigdipper
+          event_type: build_bigdipper_042
           message: |
             {
               "aws_region": "us-east-1",
