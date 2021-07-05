@@ -12,7 +12,7 @@ import sha256 from "crypto-js/sha256"
 import ripemd160 from "crypto-js/ripemd160"
 import CryptoJS from "crypto-js"
 import { LedgerSigner } from "@cosmjs/ledger-amino";
-import { GasLimits, GasPrice, makeCosmoshubPath, OfflineSigner, Secp256k1HdWallet, makeStdTx} from "@cosmjs/launchpad";
+import { GasLimits, GasPrice, makeCosmoshubPath, OfflineSigner, Secp256k1HdWallet, makeStdTx, SigningCosmosClient, makeSignDoc, assertIsBroadcastTxSuccess } from "@cosmjs/launchpad";
 import {
     assertIsBroadcastTxSuccess as assertIsBroadcastTxSuccessStargate,
     SigningStargateClient,
@@ -36,7 +36,7 @@ const REQUIRED_COSMOS_APP_VERSION = Meteor.settings.public.ledger.ledgerAppVersi
 const DEFAULT_DENOM = Meteor.settings.public.bondDenom || 'uatom';
 export const DEFAULT_GAS_PRICE = parseFloat(Meteor.settings.public.ledger.gasPrice) || 0.025;
 export const DEFAULT_MEMO = 'Sent via Big Dipper'
-const RPC = "http://139.162.187.197:26657"
+const API = Meteor.settings.public.remote.api
 
 /*
 HD wallet derivation path (BIP44)
@@ -200,128 +200,79 @@ export class Ledger {
         return new LedgerSigner(ledgerTransport, { hdPaths: [makeCosmoshubPath(0)] });
     }
 
-    async sign(signMessage, txMsg, txContext, transportBLE) {
+    async sign(signMessage, transportBLE) {
         await this.connect(INTERACTION_TIMEOUT, transportBLE)
-        const customRegistry = new Registry();
-        const [firstAccount] = await this.ledgerSigner.getAccounts();
-        const msgVoteTypeUrl = "/cosmos.gov.v1beta1.MsgVote";
-        const CustomMsgVote = {
-            encode(
-                message,
-                writer = protobuf.Writer.create(),
-            ) {
-                writer.uint32(10).string(message.option || "");
-                writer.uint32(18).string(message.proposalId ?? "");
-                writer.uint32(18).string(message.voter ?? "");
-                return writer;
-            },
 
-            decode() {
-                throw new Error("decode method should not be required");
-            },
-            fromJSON() {
-                throw new Error("fromJSON method should not be required");
-            },
-            fromPartial(object) {
-                const message = {
-                    option: "",
-                    proposalId: "",
-                    voter: ""
-                };
-                if (object.option !== undefined && object.option !== null) {
-                    message.option = object.option;
-                } else {
-                    message.option = "";
-                }
-                if (object.proposalId !== undefined && object.proposalId !== null) {
-                    message.proposalId = object.proposalId;
-                } else {
-                    message.proposalId = "";
-                }
-                if (object.voter !== undefined && object.voter !== null) {
-                    message.voter = object.voter
-                } else {
-                    message.voter = undefined;
-                }
-                return message;
-            },
-            toJSON() {
-                throw new Error("toJSON method should not be required");
-            },
-        };
-        customRegistry.register(msgVoteTypeUrl, CustomMsgVote);
-
-        const customAminoTypes = new AminoTypes({
-            additions: {
-                "/cosmos.gov.v1beta1.MsgVote": {
-                    aminoType: "cosmos-sdk/MsgVote",
-                    toAmino: ({ option,
-                        proposalId,
-                        voter
-                    }) => ({
-                        option: option,
-                        proposal_id: proposalId,
-                        voter: voter
-                    }),
-                    fromAmino: ({ option,
-                        proposal_id,
-                        voter
-                    }) => ({
-                        option: option,
-                        proposalId: proposal_id,
-                        voter: voter
-                    }),
-                }
-            }
-        });
-
-        const options = { prefix: 'cosmos', registry: customRegistry, aminoTypes: customAminoTypes };
-        // const client = await SigningCosmWasmClient.connectWithSigner(RPC, this.ledgerSigner);
-        // const client = await StargateClient.connect(RPC);
-        const client = await SigningStargateClient.connectWithSigner(RPC, this.ledgerSigner, options)
-        const msg = {
-            option: txMsg.value.msg[0].value.option,
-            proposalId: txMsg.value.msg[0].value.proposal_id,
-            voter: txMsg.value.msg[0].value.voter
-        };
-        console.log(msg)
-        const msgAny = {
-            typeUrl: "/cosmos.gov.v1beta1.MsgVote",
-            value: CustomMsgVote.fromPartial(msg),
-        };
-        console.log(msgAny)
-
-        const fee = {
-            amount: coins(Number(txMsg.value.fee.amount[0].amount), txMsg.value.fee.amount[0].denom.toString()),
-            gas: "200000",
-        };
-        console.log(fee)
-
-        const memo = DEFAULT_MEMO;
-        // const signed = await client.sign(txContext.bech32, [msgAny], fee, memo)
-        // const result = await client.broadcastTx(Uint8Array.from(TxRaw.encode(signed).finish()));
-        // assertIsBroadcastTxSuccess(result);
-
-
-        // const signed = await client.signAmino(txContext.bech32, [msgAny], fee, memo, { accountNumber: txContext.accountNumber, sequence: txContext.sequence, chainId:txContext.chainId });
-        // console.log(signed)
-        // let broadcast = await client.broadcastTx(signed)
-        // console.loog(broadcast)
-
-        // const signedTx = makeStdTx(signed, signed.signatures);
-        // console.log(signedTx)
-
-        const result = await client.signAndBroadcast(txContext.bech32, [msgAny], fee, memo);
-        console.log(result)
-        assertIsBroadcastTxSuccess(result);
-
-
-        // const response = await this.cosmosApp.sign(this.getHDPath(), signMessage)
-        // this.checkLedgerErrors(response)
+        const response = await this.cosmosApp.sign(this.getHDPath(), signMessage)
+        this.checkLedgerErrors(response)
         // we have to parse the signature from Ledger as it's in DER format
-        // const parsedSignature =  signatureImport(response.signature)
-        return ""
+        const parsedSignature = signatureImport(response.signature)
+        return parsedSignature
     }
+
+    async signAmino(txMsg, txContext, transportBLE) {
+        await this.connect(INTERACTION_TIMEOUT, transportBLE)
+        let address = txContext.bech32;
+        let fee = txMsg.value.fee;
+        let chainId = txContext.chainId;
+        let accountNumber = txContext.accountNumber.toString();
+        let sequence = txContext.sequence.toString();
+        let signResponse, proposalResult;
+
+        const getVoteOption = (option) =>{
+            switch (option) {
+            case "VOTE_OPTION_YES":
+                return 1;
+            case "VOTE_OPTION_ABSTAIN":
+                return 2;
+            case "VOTE_OPTION_NO":
+                return 3;
+            case "VOTE_OPTION_NO_WITH_VETO":
+                return 4;
+            } 
+        }
+
+        const client = new SigningCosmosClient(API, address, this.ledgerSigner, undefined, undefined, 'sync')
+        txMsg.value.msg[0].value.option = getVoteOption(txMsg.value.msg[0].value.option)
+        let msgs = txMsg.value.msg[0]
+        const signDoc = makeSignDoc(
+            [msgs],
+            fee,
+            chainId,
+            DEFAULT_MEMO,
+            accountNumber,
+            sequence
+        );
+
+        try{
+            signResponse = await this.ledgerSigner.signAmino(
+                txContext.bech32,
+                signDoc,
+            );
+        }
+        catch(e){
+            console.log(e)
+        }
+
+        const proposalTx = {
+            msg: [msgs],
+            fee: fee,
+            memo: DEFAULT_MEMO,
+            signatures: [signResponse.signature],
+        };
+
+        try{
+            proposalResult = await client.broadcastTx(proposalTx);
+            await sleep(75);
+            assertIsBroadcastTxSuccess(proposalResult);
+        }
+        catch(e){
+            console.log(e)
+        }
+        
+        return proposalResult.transactionHash
+      
+    };
 
     /* istanbul ignore next: maps a bunch of errors */
     checkLedgerErrors(

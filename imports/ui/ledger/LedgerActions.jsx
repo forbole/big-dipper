@@ -452,23 +452,34 @@ class LedgerButton extends Component {
             let txMsg = this.state.txMsg;
             const txContext = this.getTxContext();
             const bytesToSign = Ledger.getBytesToSign(txMsg, txContext);
-            this.ledger.sign(bytesToSign, txMsg, txContext, this.state.transportBLE).then((sig) => {
-                try {
-                    Ledger.applySignature(txMsg, txContext, sig);
-                    Meteor.call('transaction.submit', txMsg, (err, res) => {
-                        if (err) {
-                            this.setStateOnError('signing', err.reason)
-                        } else if (res) {
-                            this.setStateOnSuccess('signing', {
-                                txHash: res,
-                                activeTab: '4'
-                            })
-                        }
+
+            if (txMsg.value.msg[0].type === "cosmos-sdk/MsgVote"){
+                this.ledger.signAmino(txMsg, txContext, this.state.transportBLE).then((res) => {
+                    this.setStateOnSuccess('signing', {
+                        txHash: res,
+                        activeTab: '4'
                     })
-                } catch (e) {
-                    this.setStateOnError('signing', e.message)
-                }
-            }, (err) => this.setStateOnError('signing', err.message))
+                }, (err) => this.setStateOnError('signing', err.message))
+            }
+            else{
+                this.ledger.sign(bytesToSign, this.state.transportBLE).then((sig) => {
+                    try {
+                        Ledger.applySignature(txMsg, txContext, sig);
+                        Meteor.call('transaction.submit', txMsg, (err, res) => {
+                            if (err) {
+                                this.setStateOnError('signing', err.reason)
+                            } else if (res) {
+                                this.setStateOnSuccess('signing', {
+                                    txHash: res,
+                                    activeTab: '4'
+                                })
+                            }
+                        })
+                    } catch (e) {
+                        this.setStateOnError('signing', e.message)
+                    }
+                }, (err) => this.setStateOnError('signing', err.message))
+            }
         } catch (e) {
             this.setStateOnError('signing', e.message)
         }
@@ -960,7 +971,6 @@ class ProposalActionButtons extends LedgerButton {
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         let maxAmount = this.state.currentUser.availableCoin;
-
         let inputs;
         let title;
         switch (this.state.actionType) {
@@ -982,8 +992,8 @@ class ProposalActionButtons extends LedgerButton {
                     min={Coin.MinStake} max={maxAmount.stakingAmount} type="number"
                     invalid={this.state.depositAmount != null && !isBetween(this.state.depositAmount, 1, maxAmount)}/>
                 <InputGroupAddon addonType="append">{Coin.StakingCoin.displayName}</InputGroupAddon>
-                <div>your available balance: <Amount coin={maxAmount}/></div>
-            </InputGroup>)
+            </InputGroup>
+            )
             break;
         }
         return <TabPane tabId="2">
@@ -991,6 +1001,7 @@ class ProposalActionButtons extends LedgerButton {
             {inputs}
             <Input name="memo" onChange={this.handleInputChange}
                 placeholder="Memo(optional)" type="textarea" value={this.state.memo}/>
+            {this.state.actionType === 'deposit' ? <div className="mt-2">your available balance: <Amount coin={maxAmount} /></div> : null}
         </TabPane>
 
     }
@@ -1027,7 +1038,7 @@ class ProposalActionButtons extends LedgerButton {
     getConfirmationMessage = () => {
         switch (this.state.actionType) {
         case Types.VOTE:
-            return <span>You are <span className='action'>voting</span> <strong>{this.state.voteOption}</strong> on proposal {this.props.proposalId}
+            return <span>You are <span className='action'>voting</span> <strong>{this.state.voteOption?.substring(12).replace(/_/g, " ")}</strong> on proposal {this.props.proposalId}
                 <span> with <Fee gas={this.state.gasEstimate}/>.</span>
             </span>
             break;
