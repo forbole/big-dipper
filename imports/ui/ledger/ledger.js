@@ -12,22 +12,8 @@ import sha256 from "crypto-js/sha256"
 import ripemd160 from "crypto-js/ripemd160"
 import CryptoJS from "crypto-js"
 import { LedgerSigner } from "@cosmjs/ledger-amino";
-import { GasLimits, GasPrice, makeCosmoshubPath, OfflineSigner, Secp256k1HdWallet, makeStdTx, SigningCosmosClient, makeSignDoc, assertIsBroadcastTxSuccess } from "@cosmjs/launchpad";
-import {
-    assertIsBroadcastTxSuccess as assertIsBroadcastTxSuccessStargate,
-    SigningStargateClient,
-    AminoTypes,
-    coins,
-    StargateClient
-} from "@cosmjs/stargate";
-import { assert, sleep } from "@cosmjs/utils";
-import { decodeTxRaw, DirectSecp256k1HdWallet, Registry } from "@cosmjs/proto-signing";
-// import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-launchpad";
-// import { SigningCosmWasmClient } from "@cosmjs/cosmwasm";
-import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
-import protobuf from "protobufjs/minimal";
-import { Fee, Tx, TxRaw } from "@cosmjs/stargate/build/codec/cosmos/tx/v1beta1/tx";
-
+import { makeCosmoshubPath, SigningCosmosClient, makeSignDoc, assertIsBroadcastTxSuccess } from "@cosmjs/launchpad";
+import { sleep } from "@cosmjs/utils";
 
 
 // TODO: discuss TIMEOUT value
@@ -217,7 +203,7 @@ export class Ledger {
         let chainId = txContext.chainId;
         let accountNumber = txContext.accountNumber.toString();
         let sequence = txContext.sequence.toString();
-        let signResponse, proposalResult;
+        let signAmino, proposalResult;
 
         const getVoteOption = (option) =>{
             switch (option) {
@@ -245,9 +231,9 @@ export class Ledger {
         );
 
         try{
-            signResponse = await this.ledgerSigner.signAmino(
+            signAmino = await this.ledgerSigner.signAmino(
                 txContext.bech32,
-                signDoc,
+                signDoc
             );
         }
         catch(e){
@@ -258,7 +244,7 @@ export class Ledger {
             msg: [msgs],
             fee: fee,
             memo: DEFAULT_MEMO,
-            signatures: [signResponse.signature],
+            signatures: [signAmino.signature],
         };
 
         try{
@@ -269,8 +255,8 @@ export class Ledger {
         catch(e){
             console.log(e)
         }
-        
-        return proposalResult.transactionHash
+
+        return proposalResult?.transactionHash ?? ''
       
     };
 
@@ -396,7 +382,7 @@ export class Ledger {
     }
 
     // Creates a new tx skeleton
-    static createSkeleton(txContext, msgs = []) {
+    static createSkeleton(txContext, msgs=[]) {
         if (typeof txContext === 'undefined') {
             throw new Error('undefined txContext');
         }
@@ -553,7 +539,7 @@ export class Ledger {
             type: 'cosmos-sdk/MsgVote',
             value: {
                 option,
-                proposal_id: (proposalId).toString(),
+                proposal_id: proposalId.toString(),
                 voter: txContext.bech32
             }
         };
