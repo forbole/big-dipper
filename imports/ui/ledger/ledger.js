@@ -230,15 +230,11 @@ export class Ledger {
             sequence
         );
 
-        try{
-            signAmino = await this.ledgerSigner.signAmino(
-                txContext.bech32,
-                signDoc
-            );
-        }
-        catch(e){
-            console.log(e)
-        }
+        signAmino = await this.ledgerSigner.signAmino(
+            txContext.bech32,
+            signDoc
+        );
+        this.checkLedgerErrors(signAmino)
 
         const proposalTx = {
             msg: [msgs],
@@ -247,17 +243,12 @@ export class Ledger {
             signatures: [signAmino.signature],
         };
 
-        try{
-            proposalResult = await client.broadcastTx(proposalTx);
-            await sleep(75);
-            assertIsBroadcastTxSuccess(proposalResult);
-        }
-        catch(e){
-            console.log(e)
-        }
+        proposalResult = await client.broadcastTx(proposalTx);
+        await sleep(75);
+        assertIsBroadcastTxSuccess(proposalResult);
 
-        return proposalResult?.transactionHash ?? ''
-      
+        let txHash = proposalResult?.transactionHash ?? ''
+        return txHash
     };
 
     /* istanbul ignore next: maps a bunch of errors */
@@ -271,34 +262,36 @@ export class Ledger {
         if (device_locked) {
             throw new Error(`Ledger's screensaver mode is on`)
         }
-        switch (error_message) {
-        case `U2F: Timeout`:
-            throw new Error(timeoutMessag)
-        case `${Meteor.settings.public.ledger.appName} app does not seem to be open`:
+        if(error_message != null){
+            switch (error_message) {
+            case `U2F: Timeout`:
+                throw new Error(timeoutMessag)
+            case `${Meteor.settings.public.ledger.appName} app does not seem to be open`:
             // hack:
             // It seems that when switching app in Ledger, WebUSB will disconnect, disabling further action.
             // So we clean up here, and re-initialize this.cosmosApp next time when calling `connect`
-            this.cosmosApp.transport.close()
-            this.cosmosApp = undefined
-            throw new Error(`${Meteor.settings.public.ledger.appName} app is not open`)
-        case `Command not allowed`:
-            throw new Error(`Transaction rejected`)
-        case `Transaction rejected`:
-            throw new Error(rejectionMessage)
-        case `Unknown error code`:
-            throw new Error(`Ledger's screensaver mode is on`)
-        case `Instruction not supported`:
-            throw new Error(
-                `Your ${Meteor.settings.public.ledger.appName} Ledger App is not up to date. ` +
+                this.cosmosApp.transport.close()
+                this.cosmosApp = undefined
+                throw new Error(`${Meteor.settings.public.ledger.appName} app is not open`)
+            case `Command not allowed`:
+                throw new Error(`Transaction rejected`)
+            case `Transaction rejected`:
+                throw new Error(rejectionMessage)
+            case `Unknown error code`:
+                throw new Error(`Ledger's screensaver mode is on`)
+            case `Instruction not supported`:
+                throw new Error(
+                    `Your ${Meteor.settings.public.ledger.appName} Ledger App is not up to date. ` +
                 `Please update to version ${REQUIRED_COSMOS_APP_VERSION}.`
-            )
-        case `Web Bluetooth API globally disabled`:
-            throw new Error(`Bluetooth not supported. Please use the latest version of Chrome browser.`)
-        case `No errors`:
+                )
+            case `Web Bluetooth API globally disabled`:
+                throw new Error(`Bluetooth not supported. Please use the latest version of Chrome browser.`)
+            case `No errors`:
             // do nothing
-            break
-        default:
-            throw new Error(error_message)
+                break
+            default:
+                throw new Error(error_message)
+            }
         }
     }
 
