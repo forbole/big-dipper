@@ -14,8 +14,16 @@ import CryptoJS from "crypto-js"
 import { LedgerSigner } from "@cosmjs/ledger-amino";
 import { makeCosmoshubPath, SigningCosmosClient, makeSignDoc, assertIsBroadcastTxSuccess } from "@cosmjs/launchpad";
 import { sleep } from "@cosmjs/utils";
-
-
+import { SigningStargateClient, assertIsBroadcastTxSuccess as assertIsBroadcastTxSuccessful, defaultRegistryTypes, AminoTypes } from "@cosmjs/stargate"
+// import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
+import { Registry } from '@cosmjs/proto-signing';
+import {
+    MsgDelegate,
+    MsgUndelegate,
+} from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/tx';
+import {
+    MsgSend,
+} from '@cosmjs/stargate/build/codec/cosmos/bank/v1beta1/tx';
 // TODO: discuss TIMEOUT value
 const INTERACTION_TIMEOUT = 10000
 const REQUIRED_COSMOS_APP_VERSION = Meteor.settings.public.ledger.ledgerAppVersion || "2.16.0";
@@ -23,6 +31,7 @@ const DEFAULT_DENOM = Meteor.settings.public.bondDenom || 'uatom';
 export const DEFAULT_GAS_PRICE = parseFloat(Meteor.settings.public.ledger.gasPrice) || 0.025;
 export const DEFAULT_MEMO = 'Sent via Big Dipper'
 const API = Meteor.settings.public.remote.api
+const RPC = Meteor.settings.public.remote.rpc
 
 /*
 HD wallet derivation path (BIP44)
@@ -194,6 +203,70 @@ export class Ledger {
         // we have to parse the signature from Ledger as it's in DER format
         const parsedSignature = signatureImport(response.signature)
         return parsedSignature
+    }
+
+    async signTx(txMsg, txContext, transportBLE) {
+        await this.connect(INTERACTION_TIMEOUT, transportBLE)
+
+        let address = txContext.bech32;
+        let fee = txMsg.value.fee
+        let chainId = txContext.chainId;
+        let accountNumber = txContext.accountNumber.toString();
+        let sequence = txContext.sequence.toString();
+        const myRegistry = new Registry([...defaultRegistryTypes]);
+
+        const client = await SigningStargateClient.connectWithSigner(
+            RPC,
+            this.ledgerSigner,
+        );
+        
+        const getTypeUrl = (option) => {
+            switch (option) {
+            case "cosmos-sdk/MsgDelegate":
+                return "/cosmos.staking.v1beta1.MsgDelegate";
+            case "cosmos-sdk/MsgUndelegate":
+                return "/cosmos.staking.v1beta1.MsgUndelegate";
+            case "cosmos-sdk/MsgBeginRedelegate":
+                return "/cosmos.staking.v1beta1.MsgBeginRedelegate";
+            case "cosmos-sdk/MsgSend":
+                return "/cosmos.bank.v1beta1.MsgSend";
+            case "cosmos-sdk/MsgSubmitProposal":
+                return "/cosmos.gov.v1beta1.MsgSubmitProposal";
+            case "cosmos-sdk/MsgDeposit":
+                return "/cosmos.gov.v1beta1.MsgDeposit";
+            }
+        }
+
+        txMsg.value.msg[0].type = getTypeUrl(txMsg.value.msg[0].type)
+        let msgs = txMsg.value.msg[0]
+        const signDoc = makeSignDoc(
+            [msgs],
+            fee,
+            chainId,
+            DEFAULT_MEMO,
+            accountNumber,
+            sequence
+        );
+
+        let fromAddress = txMsg.value.msg[0].value.from_address
+        let toAddress = txMsg.value.msg[0].value.to_address
+
+        const result = await client.signAndBroadcast(
+            address,
+            [
+                {
+                    typeUrl: '/cosmos.bank.v1beta1.MsgSend',
+                    value: MsgSend.fromPartial({
+                        fromAddress,
+                        toAddress,
+                        amount: txMsg.value.msg[0].value.amount,
+                    }),
+                },
+            ],
+            fee,
+            DEFAULT_MEMO
+        );
+        console.log(result)
     }
 
     async signAmino(txMsg, txContext, transportBLE) {
