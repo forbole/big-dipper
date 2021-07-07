@@ -3,4 +3,5 @@ steps:
     args:
       [
         "build",
+        ".",
       ]
