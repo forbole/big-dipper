@@ -5,3 +5,4 @@ steps:
         "build",
         ".",
       ]
+    timeout: 2000s
