@@ -167,7 +167,8 @@ class LedgerButton extends Component {
             user: localStorage.getItem(CURRENTUSERADDR),
             pubKey: localStorage.getItem(CURRENTUSERPUBKEY),
             memo: DEFAULT_MEMO,
-            proposalType: Ledger.PROPOSAL_TYPES.PROPOSAL_TYPE_TEXT
+            proposalType: Ledger.PROPOSAL_TYPES.PROPOSAL_TYPE_TEXT,
+            validator: false
         };
         this.ledger = new Ledger({testModeAllowed: false});
     }
@@ -1148,6 +1149,16 @@ class ProposalActionButtons extends LedgerButton {
         return action === Types.VOTE || action === Types.DEPOSIT;
     }
 
+    componentDidMount(){
+        super.componentDidMount();
+
+        this.ledger.getCosmosAddress().then(({pubkey, address}) => {
+            Meteor.call('Transactions.findUser', address, {address:1, description:1, operator_address:1, delegator_address:1, profile_url:1}, (error, result) => {
+                this.setState({validator: result != false})
+            })
+        });
+    }
+
 
     isDataValid = () => {
         if (!this.state.currentUser) return false
@@ -1174,12 +1185,15 @@ class ProposalActionButtons extends LedgerButton {
     }
 
     render = () => {
+
         return <span className="ledger-buttons-group float-right">
             <Row>
-                <Col><Button color="secondary" size="sm"
-                    onClick={() => this.openModal(Types.VOTE, {})}>
-                    {TypeMeta[Types.VOTE].button}
-                </Button></Col>
+                {this.state.validator ? 
+                    <Col><Button color="secondary" size="sm"
+                        onClick={() => this.openModal(Types.VOTE, {})}>
+                        {TypeMeta[Types.VOTE].button}
+                    </Button></Col> : ''
+                }
                 <Col><Button color="success" size="sm"
                     onClick={() => this.openModal(Types.DEPOSIT, {})}>
                     {TypeMeta[Types.DEPOSIT].button}
