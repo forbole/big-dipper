@@ -6,3 +6,4 @@ steps:
         ".",
       ]
     timeout: 2000s
+timeout: 3000s
