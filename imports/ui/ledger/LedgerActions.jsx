@@ -12,6 +12,7 @@ import numbro from 'numbro';
 import TimeStamp from '../components/TimeStamp.jsx';
 import { PropTypes } from 'prop-types';
 import i18n from 'meteor/universe:i18n';
+import { MsgWithdrawValidatorCommission, MsgWithdrawDelegatorReward } from '@cosmjs/stargate/build/codec/cosmos/distribution/v1beta1/tx';
 
 const T = i18n.createComponent();
 
@@ -772,22 +773,24 @@ class WithdrawButton extends LedgerButton {
 
     createMessage = (callback) => {
         Meteor.call('transaction.execute', {from: this.state.user}, this.getPath(), (err, res) =>{
-            if (res){
+            if (res) {
+                res.value.msg[0] = {
+                    typeUrl: '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward',
+                    value: MsgWithdrawDelegatorReward.fromPartial({
+                        delegatorAddress: res.value.msg[0].value.delegator_address,
+                        validatorAddress: res.value.msg[0].value.validator_address
+                    })
+                }
                 Meteor.call('isValidator', this.state.user, (error, result) => {
-                    if (result && result.operator_address){
+                    if (result && result.operator_address) {
                         res.value.msg.push({
-                            type: 'cosmos-sdk/MsgWithdrawValidatorCommission',
-                            value: { validator_address: result.operator_address }
+                            typeUrl: '/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission',
+                            value: MsgWithdrawValidatorCommission.fromPartial({
+                                validatorAddress: result.operator_address
+                            })
                         })
                     }
                     callback(res, res)
-                })
-            }
-            else {
-                this.setState({
-                    loading: false,
-                    simulating: false,
-                    errorMessage: 'something went wrong'
                 })
             }
         })
