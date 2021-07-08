@@ -453,7 +453,9 @@ class LedgerButton extends Component {
             const txContext = this.getTxContext();
             const bytesToSign = Ledger.getBytesToSign(txMsg, txContext);
 
-            if (txMsg.value.msg[0].type === "cosmos-sdk/MsgVote"){
+            if (txMsg.value.msg[0].type === "cosmos-sdk/MsgVote" || 
+                txMsg.value.msg[0].type === "cosmos-sdk/MsgDeposit" || 
+                txMsg.value.msg[0].type === "cosmos-sdk/MsgSubmitProposal") {
                 this.ledger.signAmino(txMsg, txContext, this.state.transportBLE).then((res) => {
                     this.setStateOnSuccess('signing', {
                         txHash: res,
@@ -461,23 +463,12 @@ class LedgerButton extends Component {
                     })
                 }, (err) => this.setStateOnError('signing', err.message))
             }
-            else{
-                this.ledger.sign(bytesToSign, this.state.transportBLE).then((sig) => {
-                    try {
-                        Ledger.applySignature(txMsg, txContext, sig);
-                        Meteor.call('transaction.submit', txMsg, (err, res) => {
-                            if (err) {
-                                this.setStateOnError('signing', err.reason)
-                            } else if (res) {
-                                this.setStateOnSuccess('signing', {
-                                    txHash: res,
-                                    activeTab: '4'
-                                })
-                            }
-                        })
-                    } catch (e) {
-                        this.setStateOnError('signing', e.message)
-                    }
+            else {
+                this.ledger.signTx(txMsg, txContext, this.state.transportBLE).then((hash) => {
+                    this.setStateOnSuccess('signing', {
+                        txHash: hash,
+                        activeTab: '4'
+                    })
                 }, (err) => this.setStateOnError('signing', err.message))
             }
         } catch (e) {
