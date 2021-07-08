@@ -12,9 +12,9 @@ import sha256 from "crypto-js/sha256"
 import ripemd160 from "crypto-js/ripemd160"
 import CryptoJS from "crypto-js"
 import { LedgerSigner } from "@cosmjs/ledger-amino";
-import { makeCosmoshubPath, SigningCosmosClient, makeSignDoc, assertIsBroadcastTxSuccess } from "@cosmjs/launchpad";
+import { SigningCosmosClient, makeSignDoc } from "@cosmjs/launchpad";
 import { sleep } from "@cosmjs/utils";
-import { SigningStargateClient, assertIsBroadcastTxSuccess as assertIsBroadcastTxSuccessful, defaultRegistryTypes, AminoTypes } from "@cosmjs/stargate"
+import { SigningStargateClient, assertIsBroadcastTxSuccess, defaultRegistryTypes, makeCosmoshubPath } from "@cosmjs/stargate"
 import { Registry } from '@cosmjs/proto-signing';
 import {
     MsgDelegate,
