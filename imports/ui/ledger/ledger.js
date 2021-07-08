@@ -15,15 +15,13 @@ import { LedgerSigner } from "@cosmjs/ledger-amino";
 import { makeCosmoshubPath, SigningCosmosClient, makeSignDoc, assertIsBroadcastTxSuccess } from "@cosmjs/launchpad";
 import { sleep } from "@cosmjs/utils";
 import { SigningStargateClient, assertIsBroadcastTxSuccess as assertIsBroadcastTxSuccessful, defaultRegistryTypes, AminoTypes } from "@cosmjs/stargate"
-// import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { Registry } from '@cosmjs/proto-signing';
 import {
     MsgDelegate,
     MsgUndelegate,
+    MsgBeginRedelegate
 } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/tx';
-import {
-    MsgSend,
-} from '@cosmjs/stargate/build/codec/cosmos/bank/v1beta1/tx';
+import { MsgSend } from '@cosmjs/stargate/build/codec/cosmos/bank/v1beta1/tx';
 // TODO: discuss TIMEOUT value
 const INTERACTION_TIMEOUT = 10000
 const REQUIRED_COSMOS_APP_VERSION = Meteor.settings.public.ledger.ledgerAppVersion || "2.16.0";
@@ -207,66 +205,66 @@ export class Ledger {
 
     async signTx(txMsg, txContext, transportBLE) {
         await this.connect(INTERACTION_TIMEOUT, transportBLE)
-
         let address = txContext.bech32;
         let fee = txMsg.value.fee
-        let chainId = txContext.chainId;
-        let accountNumber = txContext.accountNumber.toString();
-        let sequence = txContext.sequence.toString();
         const myRegistry = new Registry([...defaultRegistryTypes]);
 
         const client = await SigningStargateClient.connectWithSigner(
             RPC,
             this.ledgerSigner,
+            'sync'
         );
         
-        const getTypeUrl = (option) => {
+        const formatMessage = (option) => {
             switch (option) {
             case "cosmos-sdk/MsgDelegate":
-                return "/cosmos.staking.v1beta1.MsgDelegate";
+                return {
+                    typeUrl: '/cosmos.staking.v1beta1.MsgDelegate',
+                    value: MsgDelegate.fromPartial({
+                        amount: txMsg.value.msg[0].value.amount,
+                        delegatorAddress: address,
+                        validatorAddress: txMsg.value.msg[0].value.validator_address,
+                    })
+                }
             case "cosmos-sdk/MsgUndelegate":
-                return "/cosmos.staking.v1beta1.MsgUndelegate";
+                return {
+                    typeUrl: '/cosmos.staking.v1beta1.MsgUndelegate',
+                    value: MsgUndelegate.fromPartial({
+                        amount: txMsg.value.msg[0].value.amount,
+                        delegatorAddress: address,
+                        validatorAddress: txMsg.value.msg[0].value.validator_address,
+                    })
+                }
             case "cosmos-sdk/MsgBeginRedelegate":
-                return "/cosmos.staking.v1beta1.MsgBeginRedelegate";
+                return {
+                    typeUrl: '/cosmos.staking.v1beta1.MsgBeginRedelegate',
+                    value: MsgBeginRedelegate.fromPartial({
+                        amount: txMsg.value.msg[0].value.amount,
+                        delegatorAddress: address,
+                        validatorDstAddress: txMsg.value.msg[0].value.validator_dst_address,
+                        validatorSrcAddress: txMsg.value.msg[0].value.validator_src_address,
+                    })
+                }
             case "cosmos-sdk/MsgSend":
-                return "/cosmos.bank.v1beta1.MsgSend";
-            case "cosmos-sdk/MsgSubmitProposal":
-                return "/cosmos.gov.v1beta1.MsgSubmitProposal";
-            case "cosmos-sdk/MsgDeposit":
-                return "/cosmos.gov.v1beta1.MsgDeposit";
+                return {
+                    typeUrl: '/cosmos.bank.v1beta1.MsgSend',
+                    value: MsgSend.fromPartial({
+                        fromAddress: address,
+                        toAddress: txMsg.value.msg[0].value.to_address,
+                        amount: txMsg.value.msg[0].value.amount,
+                    }),
+                }
             }
         }
 
-        txMsg.value.msg[0].type = getTypeUrl(txMsg.value.msg[0].type)
-        let msgs = txMsg.value.msg[0]
-        const signDoc = makeSignDoc(
-            [msgs],
-            fee,
-            chainId,
-            DEFAULT_MEMO,
-            accountNumber,
-            sequence
-        );
-
-        let fromAddress = txMsg.value.msg[0].value.from_address
-        let toAddress = txMsg.value.msg[0].value.to_address
-
+        let msg = formatMessage(txMsg.value.msg[0].type) ?? txMsg.value.msg[0]
         const result = await client.signAndBroadcast(
             address,
-            [
-                {
-                    typeUrl: '/cosmos.bank.v1beta1.MsgSend',
-                    value: MsgSend.fromPartial({
-                        fromAddress,
-                        toAddress,
-                        amount: txMsg.value.msg[0].value.amount,
-                    }),
-                },
-            ],
+            [msg],
             fee,
             DEFAULT_MEMO
         );
-        console.log(result)
+        return result.transactionHash
     }
 
     async signAmino(txMsg, txContext, transportBLE) {
@@ -276,7 +274,7 @@ export class Ledger {
         let chainId = txContext.chainId;
         let accountNumber = txContext.accountNumber.toString();
         let sequence = txContext.sequence.toString();
-        let signAmino, proposalResult;
+        let signAmino, txResult;
 
         const getVoteOption = (option) =>{
             switch (option) {
@@ -292,7 +290,9 @@ export class Ledger {
         }
 
         const client = new SigningCosmosClient(API, address, this.ledgerSigner, undefined, undefined, 'sync')
-        txMsg.value.msg[0].value.option = getVoteOption(txMsg.value.msg[0].value.option)
+        if (txMsg.value.msg[0].value.option){
+            txMsg.value.msg[0].value.option = getVoteOption(txMsg.value.msg[0].value.option)
+        }
         let msgs = txMsg.value.msg[0]
         const signDoc = makeSignDoc(
             [msgs],
@@ -309,18 +309,18 @@ export class Ledger {
         );
         this.checkLedgerErrors(signAmino)
 
-        const proposalTx = {
+        const tx = {
             msg: [msgs],
             fee: fee,
             memo: DEFAULT_MEMO,
             signatures: [signAmino.signature],
         };
 
-        proposalResult = await client.broadcastTx(proposalTx);
+        txResult = await client.broadcastTx(tx);
         await sleep(75);
-        assertIsBroadcastTxSuccess(proposalResult);
+        assertIsBroadcastTxSuccess(txResult);
 
-        let txHash = proposalResult?.transactionHash ?? ''
+        let txHash = txResult?.transactionHash ?? ''
         return txHash
     };
 
