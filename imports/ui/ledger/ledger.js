@@ -193,16 +193,6 @@ export class Ledger {
         return new LedgerSigner(ledgerTransport, { hdPaths: [makeCosmoshubPath(0)] });
     }
 
-    async sign(signMessage, transportBLE) {
-        await this.connect(INTERACTION_TIMEOUT, transportBLE)
-
-        const response = await this.cosmosApp.sign(this.getHDPath(), signMessage)
-        this.checkLedgerErrors(response)
-        // we have to parse the signature from Ledger as it's in DER format
-        const parsedSignature = signatureImport(response.signature)
-        return parsedSignature
-    }
-
     async signTx(txMsg, txContext, transportBLE) {
         await this.connect(INTERACTION_TIMEOUT, transportBLE)
         let address = txContext.bech32;
