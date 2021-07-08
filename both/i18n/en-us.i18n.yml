@@ -56,7 +56,11 @@ common:
     channel: 'Channel'
     proofClient: 'Proof Client'
     counterparty: 'Counterparty'
-
+    from: 'From'
+    to: 'To'
+    status: 'Status'
+    amount: 'Amount'
+    addressesCount: '<span class="text-info">{$total} addresses</span>'
 navbar:
     siteName: 'BIG DIPPER'
     version: '-'
