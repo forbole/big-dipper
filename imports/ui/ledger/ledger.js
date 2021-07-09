@@ -21,6 +21,7 @@ import { Plan, SoftwareUpgradeProposal, CancelSoftwareUpgradeProposal} from '../
 import { ParameterChangeProposal } from '../../../cosmos/codec/params/v1beta1/params';
 import { CommunityPoolSpendProposal, CommunityPoolSpendProposalWithDeposit } from '@cosmjs/stargate/build/codec/cosmos/distribution/v1beta1/distribution'
 import { ClientUpdateProposal } from '@cosmjs/stargate/build/codec/ibc/core/client/v1/client';
+import numbro from 'numbro';
 
 // TODO: discuss TIMEOUT value
 const INTERACTION_TIMEOUT = 10000
@@ -475,10 +476,10 @@ export class Ledger {
                 delegatorAddress: txContext.bech32,
                 validatorAddress: validatorBech32,
                 amount: {
-                    amount: uatomAmount.toString(),
+                    amount: uatomAmount.toLocaleString('fullwide', {useGrouping:false}),
                     denom: txContext.denom,
                 },
-              }),
+            }),
             memo: txContext.memo,
         }];
 
