@@ -29,18 +29,18 @@ export default class VotingPower extends Component{
             let backgroundColors = [];
             
             for (let i in this.props.stats){
-                totalVotingPower += this.props.stats[i].voting_power * Meteor.settings.public.onChainPowerReduction / Meteor.settings.public.powerReduction;
+                totalVotingPower += this.props.stats[i].voting_power;
                 if (i > 0){
-                    accumulatePower[i] = accumulatePower[i-1] + this.props.stats[i].voting_power * Meteor.settings.public.onChainPowerReduction / Meteor.settings.public.powerReduction;
+                    accumulatePower[i] = accumulatePower[i-1] + this.props.stats[i].voting_power;
                 }
                 else{
-                    accumulatePower[i] = this.props.stats[i].voting_power * Meteor.settings.public.onChainPowerReduction / Meteor.settings.public.powerReduction;
+                    accumulatePower[i] = this.props.stats[i].voting_power;
                 }
             }
 
             for (let v in this.props.stats){
                 labels.push(this.props.stats[v].description?this.props.stats[v].description.moniker:'');
-                data.push(this.props.stats[v].voting_power * Meteor.settings.public.onChainPowerReduction / Meteor.settings.public.powerReduction);
+                data.push(this.props.stats[v].voting_power);
                 let alpha = (this.props.stats.length+1-v)/this.props.stats.length*0.8+0.2;
                 backgroundColors.push('rgba(189, 8, 28,'+alpha+')');
             }

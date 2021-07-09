@@ -9,3 +9,14 @@ Chain.helpers({
         return Validators.findOne({address:this.proposerAddress});
     }
 })
+
+const superChainFindOne = Chain.findOne.bind(Chain);
+
+Chain.findOne = (selector, options) => {
+    const chain = superChainFindOne(selector, options);
+    
+    if(chain){
+        chain.activeVotingPower /= Meteor.settings.public.powerReduction / Meteor.settings.public.onChainPowerReduction;
+    }
+    return chain;
+}

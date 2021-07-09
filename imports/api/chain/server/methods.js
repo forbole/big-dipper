@@ -79,6 +79,7 @@ Meteor.methods({
             for (v in validators){
                 activeVP += parseInt(validators[v].voting_power);
             }
+
             chain.activeVotingPower = activeVP;
 
             // update staking params

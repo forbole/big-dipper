@@ -59,6 +59,7 @@ export default class ChainStatus extends React.Component {
                 break;
             }
 
+            console.log(this.props.states);
             switch (this.state.avgVotingPowerType){
             case "":
                 this.setState({
