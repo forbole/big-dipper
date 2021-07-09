@@ -2,6 +2,7 @@
 
 ## [UNRELEASED]
 * [#529] Upgraded ledger transactions to stargate format
+* [#523] Implemented readable messages for IBC messages
 
 ## [v0.41.x-14.2]
 * Fixes Ledger WebUSB + Chrome 91.x issue (https://github.com/LedgerHQ/ledgerjs/issues/607)
