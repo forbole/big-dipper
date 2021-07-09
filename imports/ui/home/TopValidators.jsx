@@ -22,7 +22,6 @@ export default class TopValidators extends Component{
             if (self.props.validators.length> 0){
                 let validators = self.shuffle(self.props.validators);
                 validators.splice(10, validators.length-10);
-                // console.log(validators);
                 self.setState({
                     validators: validators.map((validator, i ) => {
                         return <tr key={i}>
@@ -30,7 +29,7 @@ export default class TopValidators extends Component{
                                 <Avatar moniker={validator.description.moniker} profileUrl={validator.profile_url} address={validator.address} list={true} />
                                 {validator.description.moniker}
                             </Link></td>
-                            <td className="voting-power">{numbro(Math.floor(validator.tokens/Meteor.settings.public.powerReduction)).format('0,0')}</td>
+                            <td className="voting-power">{numbro(Math.floor(validator.voting_power/(Meteor.settings.public.powerReduction/Meteor.settings.public.onChainPowerReduction))).format('0,0')}</td>
                             <td><Progress animated value={validator.uptime}>{validator.uptime?validator.uptime.toFixed(2):0}%</Progress></td>
                         </tr>
                     })

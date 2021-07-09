@@ -57,7 +57,7 @@ export default class Validator extends Component{
         if (this.state.user && this.props.validator && this.props.validator.address) {
             Meteor.call('accounts.getDelegation', this.state.user, this.props.validator.operator_address, (err, res) => {
                 if (res && res.delegation.shares > 0) {
-                    res.tokenPerShare = this.props.validator.tokens/this.props.validator.delegator_shares
+                    res.tokenPerShare = this.props.validator.voting_power*Meteor.settings.public.onChainPowerReduction/this.props.validator.delegator_shares
                     this.setState({
                         currentUserDelegation: res
                     })
@@ -245,9 +245,9 @@ export default class Validator extends Component{
                                     currentDelegation={this.state.currentUserDelegation}
                                     history={this.props.history} stakingParams={this.props.chainStatus.staking?this.props.chainStatus.staking.params:null}/>:''}
                                 <Row>
-                                    {this.props.validator.tokens?<Col xs={12}><h1 className="display-4 voting-power"><Badge color="primary" >{numbro(Math.floor(this.props.validator.tokens/Meteor.settings.public.powerReduction)).format('0,0')}</Badge></h1><span>(~{numbro(this.props.validator.tokens/Meteor.settings.public.powerReduction/this.props.chainStatus.activeVotingPower).format('0.00%')})</span></Col>:''}
+                                    {this.props.validator.voting_power?<Col xs={12}><h1 className="display-4 voting-power"><Badge color="primary" >{numbro(Math.floor(this.props.validator.voting_power*Meteor.settings.public.onChainPowerReduction/Meteor.settings.public.powerReduction)).format('0,0')}</Badge></h1><span>(~{numbro(this.props.validator.voting_power*Meteor.settings.public.onChainPowerReduction/Meteor.settings.public.powerReduction/this.props.chainStatus.activeVotingPower).format('0.00%')})</span></Col>:''}
                                     <Col sm={4} className="label"><T>validators.selfDelegationRatio</T></Col>
-                                    <Col sm={8} className="value">{this.props.validator.self_delegation?<span>{numbro(this.props.validator.self_delegation).format("0,0.00%")} <small className="text-secondary">(~{numbro(this.props.validator.tokens/Meteor.settings.public.powerReduction*this.props.validator.self_delegation).format({thousandSeparated: true,mantissa:0})} {Coin.StakingCoin.displayName})</small></span>:'N/A'}</Col>
+                                    <Col sm={8} className="value">{this.props.validator.self_delegation?<span>{numbro(this.props.validator.self_delegation).format("0,0.00%")} <small className="text-secondary">(~{numbro(this.props.validator.voting_power*Meteor.settings.public.onChainPowerReduction/Meteor.settings.public.powerReduction*this.props.validator.self_delegation).format({thousandSeparated: true,mantissa:0})} {Coin.StakingCoin.displayName})</small></span>:'N/A'}</Col>
                                     <Col sm={4} className="label"><T>validators.proposerPriority</T></Col>
                                     <Col sm={8} className="value">{this.props.validator.proposer_priority?numbro(this.props.validator.proposer_priority).format('0,0'):'N/A'}</Col>
                                     <Col sm={4} className="label"><T>validators.delegatorShares</T></Col>
@@ -255,7 +255,7 @@ export default class Validator extends Component{
                                     {(this.state.currentUserDelegation)?<Col sm={4} className="label"><T>validators.userDelegateShares</T></Col>:''}
                                     {(this.state.currentUserDelegation)?<Col sm={8} className="value">{numbro(this.state.currentUserDelegation.delegation.shares).format('0,0.00')}</Col>:''}
                                     <Col sm={4} className="label"><T>validators.tokens</T></Col>
-                                    <Col sm={8} className="value">{numbro(this.props.validator.tokens).format('0,0.00')}</Col>
+                                    <Col sm={8} className="value">{numbro(this.props.validator.voting_power*Meteor.settings.public.onChainPowerReduction).format('0,0.00')} {Meteor.settings.public.bondDenom}</Col>
                                     {(this.props.validator.jailed)?<Col xs={12} >
                                         <Row><Col md={4} className="label"><T>validators.unbondingHeight</T></Col>
                                             <Col md={8} className="value">{numbro(this.props.validator.unbonding_height).format('0,0')}</Col>
@@ -280,7 +280,7 @@ export default class Validator extends Component{
                         </Nav>
                         <Switch>
                             <Route exact path="/(validator|validators)/:address" render={() => <div className="power-history">{this.state.history}</div> } />
-                            <Route path="/(validator|validators)/:address/delegations" render={() => <ValidatorDelegations address={this.props.validator.operator_address} tokens={this.props.validator.tokens} shares={this.props.validator.delegatorShares} denom={this.props.denom} />} />
+                            <Route path="/(validator|validators)/:address/delegations" render={() => <ValidatorDelegations address={this.props.validator.operator_address} tokens={this.props.validator.voting_power*Meteor.settings.public.onChainPowerReduction} shares={this.props.validator.delegatorShares} denom={this.props.denom} />} />
                             <Route path="/(validator|validators)/:address/transactions" render={() => <ValidatorTransactions validator={this.props.validator.operator_address} delegator={this.props.validator.delegatorAddress} limit={100}/>} />
                         </Switch>
 
