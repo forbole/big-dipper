@@ -57,7 +57,8 @@ export default class Validator extends Component{
         if (this.state.user && this.props.validator && this.props.validator.address) {
             Meteor.call('accounts.getDelegation', this.state.user, this.props.validator.operator_address, (err, res) => {
                 if (res && res.delegation.shares > 0) {
-                    res.tokenPerShare = this.props.validator.voting_power/this.props.validator.delegator_shares
+                    //votingPower hardcoded due to recalculating it on the fetch function to 1CUDOS or 10^6 acudos
+                    res.tokenPerShare = 1 //this.props.validator.voting_power/this.props.validator.delegator_shares
                     this.setState({
                         currentUserDelegation: res
                     })
