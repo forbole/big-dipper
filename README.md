@@ -26,7 +26,7 @@ Block Explorer for Cosmos
 
 [Desmos Network](https://morpheus.desmos.network/)
 
-[Persistence](https://explorer.persistence.one/)
+[Persistence](https://crust-2.explorer.persistence.one)
 
 [Regen Network](https://explorer.regen.vitwit.com/)
 
