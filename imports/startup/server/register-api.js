@@ -33,5 +33,7 @@ import '../../api/coin-stats/server/methods.js';
 
 import '../../api/bep3/server/methods.js';
 
+import '../../api/cdp/server/methods.js';
+
 import '../../api/hard/server/methods.js';
 
