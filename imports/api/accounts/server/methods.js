@@ -278,23 +278,5 @@ Meteor.methods({
             console.log(e)
         }
         return cdp
-    },
-
-    'cdp.getCDPList': function (collateralType) {
-        this.unblock();
-        let url = LCD + '/cdp/cdps/collateralType/' + collateralType;
-        try {
-            let result = HTTP.get(url);
-            if (result.statusCode == 200) {
-                let list = JSON.parse(result.content).result;
-                return list
-
-            }
-            else{
-                console.log("No CDP for collateral type " + collateralType)
-            }
-        } catch (e) {
-            console.log(e)
-        }
-    },
+    }
 })
