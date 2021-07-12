@@ -1,4 +1,4 @@
-import React, {Component } from 'react';
+import React, { Component } from 'react';
 import { MsgType } from './MsgType.jsx';
 import { Link } from 'react-router-dom';
 import Account from '../components/Account.jsx';
@@ -361,36 +361,32 @@ export default class Activites extends Component {
         case "/ibc.core.channel.v1.MsgChannelOpenTry":
             return <p>
                 <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
-                <div className="d-inline">
-                    <span className="float-right"><i className="material-icons" onClick={this.toggle}>{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
-                    <Collapse isOpen={this.state.isOpen}>
-                        <Table striped className="mt-3">
-                            <tbody>
-                                <tr>
-                                    <th><T>common.portID</T></th>
-                                    <td>{msg?.port_id}</td>
-                                </tr>
-                                <tr>
-                                    <th><T>common.channel</T></th>
-                                    <td>{msg?.channel}</td>
-                                </tr>
-                                <tr>
-                                    <th><T>common.counterpartyVersion</T></th>
-                                    <td>{msg?.counterparty_version}</td>
-                                </tr>
-                                <tr>
-                                    <th><T>common.proof</T></th>
-                                    <td>{msg?.proof_init}</td>
-                                </tr>
-                            </tbody>
-                        </Table>
-                    </Collapse>
-                </div>
-            </p>     
-       
+                {this.props.showDetails ? <p className="d-inline">
+                    <Table striped className="mt-3">
+                        <tbody>
+                            <tr>
+                                <th><T>common.portID</T></th>
+                                <td>{msg?.port_id}</td>
+                            </tr>
+                            <tr>
+                                <th><T>common.channel</T></th>
+                                <td>{msg?.channel}</td>
+                            </tr>
+                            <tr>
+                                <th><T>common.counterpartyVersion</T></th>
+                                <td>{msg?.counterparty_version}</td>
+                            </tr>
+                            <tr>
+                                <th><T>common.proof</T></th>
+                                <td>{msg?.proof_init}</td>
+                            </tr>
+                        </tbody>
+                    </Table>
+                </p> : null}
+            </p>
         case "/ibc.core.channel.v1.MsgRecvPacket":
             return <p>
-                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} /> 
+                <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
                 {this.props.showDetails ? <p className="d-inline">
                     <Table striped className="mt-3">
                         <tbody>
@@ -423,34 +419,29 @@ export default class Activites extends Component {
         case "/ibc.core.connection.v1.MsgConnectionOpenAck":
             return <p>
                 <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
-                <div className="d-inline">
-                    <span className="float-right"><i className="material-icons" onClick={this.toggle}>{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
-                    <Collapse isOpen={this.state.isOpen}>
-                        <Table striped className="mt-3">
-                            <tbody>
-                                <tr>
-                                    <th><T>common.connectionID</T></th>
-                                    <td>{msg?.connection_id}</td>
-                                </tr>
-                                <tr>
-                                    <th><T>common.counterpartyConnectionID</T></th>
-                                    <td>{msg?.counterparty_connection_id}</td>
-                                </tr>
-                                <tr>
-                                    <th><T>common.proof</T></th>
-                                    <td className="wrap-long-text">{msg?.proof_try}</td>
-                                </tr>
-                                <tr>
-                                    <th><T>common.proofClient</T></th>
-                                    <td className="wrap-long-text">{msg?.proof_client}</td>
-                                </tr>
-                            </tbody>
-                        </Table>
-                    </Collapse>
-                </div>
+                {this.props.showDetails ? <p className="d-inline">
+                    <Table striped className="mt-3">
+                        <tbody>
+                            <tr>
+                                <th><T>common.connectionID</T></th>
+                                <td>{msg?.connection_id}</td>
+                            </tr>
+                            <tr>
+                                <th><T>common.counterpartyConnectionID</T></th>
+                                <td>{msg?.counterparty_connection_id}</td>
+                            </tr>
+                            <tr>
+                                <th><T>common.proof</T></th>
+                                <td className="wrap-long-text">{msg?.proof_try}</td>
+                            </tr>
+                            <tr>
+                                <th><T>common.proofClient</T></th>
+                                <td className="wrap-long-text">{msg?.proof_client}</td>
+                            </tr>
+                        </tbody>
+                    </Table>
+                </p> : null}
             </p>
-
-            // IBC Connection
         case "/ibc.core.connection.v1.MsgConnectionOpenConfirm":
             return <p>
                 <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} /> 
@@ -529,7 +520,7 @@ export default class Activites extends Component {
                 <Account address={msg.signer} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type={msg["@type"]} />
             </p>
 
-        // IBC Application
+            // IBC Application
         case "/ibc.applications.transfer.v1.MsgTransfer":
             return <p>
                 <Account address={msg.sender} /> {(this.props.invalid) ? <p className="ml-1"> <T>activities.failedTo</T></p> : ''}<MsgType type={msg["@type"]} /><T>activities.to</T> <span className="address"> <Account address={msg.receiver} /></span><T>common.fullStop</T>
