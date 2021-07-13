@@ -691,7 +691,7 @@ export default class AccountDetails extends Component {
     };
 
     updateDeposits() {
-        Meteor.call('hard.deposits', (error, result) => {
+        Meteor.call('hard.findDepositor', (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({
@@ -701,14 +701,8 @@ export default class AccountDetails extends Component {
             }
 
             if (result) {
-                for (let c in result) {
-                    if (result[c].depositor === this.state.address) {
-                        this.setState({
-                            HARDDeposits: result[c]
-                        })
-                    }
-                }
                 this.setState({
+                    HARDDeposits: result,
                     loading: false,
                     hasHARDDeposit: true
                 })
@@ -741,26 +735,6 @@ export default class AccountDetails extends Component {
             }
         })
     }
-    // createCDP = (callback) =>{
-    //     Meteor.call('create.cdp', {from: this.state.user}, this.getPath(), (err, res) =>{
-    //         if (res){
-    //             if (this.props.address) {
-    //                 res.value.msg.push({
-    //                     type: 'cosmos-sdk/MsgWithdrawValidatorCommission',
-    //                     value: { validator_address: this.props.address }
-    //                 })
-    //             }
-    //             callback(res, res)
-    //         }
-    //         else {
-    //             this.setState({
-    //                 loading: false,
-    //                 simulating: false,
-    //                 errorMessage: 'something went wrong'
-    //             })
-    //         }
-    //     })
-    // }
 
     render() {
         if (this.state.loading) {

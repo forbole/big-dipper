@@ -49,5 +49,17 @@ Meteor.methods({
         this.unblock();
         let HARDList = HARDCollection.find().fetch();
         return HARDList[0]
+    },
+    'hard.findDepositor': function (address) {
+        this.unblock();
+        let HARDList = HARDCollection.find().fetch();
+        let depositsList = HARDList[0].deposits;
+        let depositsDetails;
+        for (let d in borrowsList) {
+            if (depositsList[d].depositor === address) {
+                depositsDetails = depositsList[d]
+            }
+        }
+        return depositsDetails
     }
 })
