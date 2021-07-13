@@ -364,7 +364,7 @@ export default class AccountDetails extends Component {
             }
         });
 
-        Meteor.call('cdp.getCDPPrice', 'bnb:usd', (error, result) => {
+        Meteor.call('cdp.price', 'bnb:usd', (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({
@@ -379,7 +379,7 @@ export default class AccountDetails extends Component {
             }
 
         });
-        Meteor.call('cdp.getCDPPrice', 'bnb:usd:30', (error, result) => {
+        Meteor.call('cdp.price', 'bnb:usd:30', (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({
@@ -396,7 +396,7 @@ export default class AccountDetails extends Component {
         });
         
 
-        Meteor.call('cdp.getCDPPrice', 'hard:usd', (error, result) => {
+        Meteor.call('cdp.price', 'hard:usd', (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({
@@ -649,7 +649,7 @@ export default class AccountDetails extends Component {
     }
 
     checkIfCDPIsActive() {
-        Meteor.call('cdp.getCDPParams', (error, result) => {
+        Meteor.call('cdp.parameters', (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({

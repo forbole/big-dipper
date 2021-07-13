@@ -492,7 +492,7 @@ class LedgerButton extends Component {
         else {
             market = collateralDenom?.toLowerCase();
         }
-        Meteor.call('cdp.getCDPPrice', `${market}:usd`, (error, result) => {
+        Meteor.call('cdp.price', `${market}:usd`, (error, result) => {
             if (error) {
                 // console.warn(error);
                 this.setState({

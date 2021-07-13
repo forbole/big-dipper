@@ -6,6 +6,7 @@ import i18n from 'meteor/universe:i18n';
 import TimeStamp from '../components/TimeStamp.jsx';
 import Coin from '/both/utils/coins.js'
 import Pagination from "react-js-pagination";
+import { CDP } from '../../api/cdp/cdp'
 
 const T = i18n.createComponent();
 let minCollateralRatio = 0;
@@ -55,7 +56,7 @@ export default class List extends Component {
     }
 
     getCDPList = () => {
-        Meteor.call('cdp.getCDPList', this.props.collateralType, (error, result) => {
+        Meteor.call('cdp.list', this.props.collateralType, (error, result) => {
             if(result){
                 this.setState({
                     cdpList: result?.length > 1 ? result.map((cdpList, i) => {
@@ -87,7 +88,7 @@ export default class List extends Component {
 
 
     getMinCollateralRatio = () => {
-        Meteor.call('cdp.getCDPParams', (error, result) => {
+        Meteor.call('cdp.parameters', (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({

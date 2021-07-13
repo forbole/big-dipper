@@ -4,19 +4,22 @@ import { CDP } from '../cdp';
 
 
 Meteor.methods({
-    'cdp.getCDPList': function () {
+    'cdp.list': function () {
         this.unblock();
-        let collateralTypes = ['ukava-a', 'bnb-a', 'hard-a', 'btcb-a', 'xrpb-b', 'busd-a', 'busd-b']
+        let collateralTypes = ['ukava-a', 'bnb-a', 'hard-a', 'btcb-a', 'xrpb-a', 'busd-a', 'busd-b']
+        let allCDPList = {};
         for(let collateral in collateralTypes){
             let url = LCD + '/cdp/cdps/collateralType/' + collateralTypes[collateral];
             try {
                 let result = HTTP.get(url);
                 if (result.statusCode == 200) {
-                    let list = JSON.parse(result.content).result[0];
+                    let list = JSON.parse(result.content).result;
                     console.log(list)
-                    for (let c = 0; c < list.length; c++) {
-                        CDP.upsert({ cdpId: list[c].cdp.id }, list[c]);
-                    }
+                    allCDPList[collateralTypes[collateral]] = list
+                    CDP.upsert( collateralTypes[collateral] , list[c]);
+                    // for (let c = 0; c < list.length; c++) {
+                    //     CDP.upsert({ cdpId: list[c].cdp.id }, list[c]);
+                    // }
                     return list
 
                 }
@@ -29,7 +32,7 @@ Meteor.methods({
         }
         
     },
-    'cdp.getCDPParams': function () {
+    'cdp.parameters': function () {
         this.unblock();
         let url = LCD + '/cdp/parameters';
         let cdpParams = {};
@@ -46,7 +49,7 @@ Meteor.methods({
         }
     },
 
-    'cdp.getCDPPrice': function (market) {
+    'cdp.price': function (market) {
         this.unblock();
         let url = LCD + '/pricefeed/price/' + market;
         let cdpPrice = null;
@@ -63,7 +66,7 @@ Meteor.methods({
         }
     },
 
-    'cdp.getDeposits': function (address, collateral) {
+    'cdp.deposits': function (address, collateral) {
         this.unblock();
         let url = LCD + '/cdp/cdps/cdp/deposits/' + address + '/' + collateral;
 

@@ -18,7 +18,7 @@ timerProposalsResults = 0;
 timerMissedBlock = 0;
 timerDelegation = 0;
 timerAggregate = 0;
-timerCDPList = 0;
+timerCDP = 0;
 
 const DEFAULTSETTINGS = '/default_settings.json';
 
@@ -108,7 +108,7 @@ getDelegations = () => {
 }
 
 getCDPList = () => {
-    Meteor.call('cdp.getCDPList', (error, result) => {
+    Meteor.call('cdp.list', (error, result) => {
         if (error) {
             console.log("get CDP List error: " + error)
         }
@@ -232,7 +232,7 @@ Meteor.startup(function () {
                     getDelegations();
                 }, Meteor.settings.params.delegationInterval);
 
-                timerCDPList = Meteor.setInterval(function () {
+                timerCDP = Meteor.setInterval(function () {
                     getCDPList();
                 }, Meteor.settings.params.CDPListInterval);
 
