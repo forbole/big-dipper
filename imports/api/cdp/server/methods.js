@@ -78,4 +78,10 @@ Meteor.methods({
         }
     },
 
+    'cdp.fetchList': function () {
+        this.unblock();
+        let CDPList = CDP.find().fetch();
+        return CDPList[0]
+    },
+
 })

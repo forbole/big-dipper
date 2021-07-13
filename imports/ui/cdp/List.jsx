@@ -6,7 +6,7 @@ import i18n from 'meteor/universe:i18n';
 import TimeStamp from '../components/TimeStamp.jsx';
 import Coin from '/both/utils/coins.js'
 import Pagination from "react-js-pagination";
-import { CDP } from '../../api/cdp/cdp'
+
 
 const T = i18n.createComponent();
 let minCollateralRatio = 0;
@@ -56,19 +56,19 @@ export default class List extends Component {
     }
 
     getCDPList = () => {
-        Meteor.call('cdp.list', this.props.collateralType, (error, result) => {
-            if(result){
+        Meteor.call('cdp.fetchList', (error, result) => {
+            if (result) {
                 this.setState({
-                    cdpList: result?.length > 1 ? result.map((cdpList, i) => {
+                    cdpList: result?.CDPList[this.props.collateralType]?.length > 1 ? result.CDPList[this.props.collateralType].map((cdpList, i) => {
                         return <CDPRow key={i} index={i} cdpList={cdpList} />
-                    }) : <CDPRow cdpList={result[0]} />,
+                    }) : <CDPRow cdpList={result?.CDPList[this.props.collateralType][0]} />,
                     pagesCount: Math.ceil(result.length / this.state.pageSize),
                     currentPage: 1,
                     loading: false,
                     noActiveCDP: false
                 })
             }
-            if(result === null){
+            if (result === null) {
                 this.setState({
                     cdpList: null,
                     pagesCount: 0,
@@ -76,7 +76,7 @@ export default class List extends Component {
                     noActiveCDP: true
                 })
             }
-            if(error) {
+            if (error) {
                 this.setState({
                     cdpList: undefined,
                     pagesCount: 0,
