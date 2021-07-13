@@ -89,6 +89,28 @@ getRecipesResults = () => {
     });
 }
 
+getNfts = () => {
+    Meteor.call('nfts.getNfts', (error, result) => {
+        if (error) {
+            console.log("get nft: %o", error);
+        }
+        if (result) {
+            console.log("get nft: %o", result);
+        }
+    });
+}
+
+getNftsResults = () => {
+    Meteor.call('nfts.getNftResults', (error, result) => {
+        if (error) {
+            console.log("get nfts result: %o", error);
+        }
+        if (result) {
+            console.log("get nfts result: %o", result);
+        }
+    });
+}
+
 getCookbooks = () => {
     Meteor.call('cookbooks.getCookbooks', (error, result) => {
         if (error) {
@@ -268,6 +290,14 @@ Meteor.startup(async function() {
         timerRecipesResults = Meteor.setInterval(function() {
             getRecipesResults();
         }, Meteor.settings.params.recipeInterval);
+
+        timerNft = Meteor.setInterval(function() {
+            getNfts();
+        }, Meteor.settings.params.nftInterval);
+
+        timerNftsResults = Meteor.setInterval(function() {
+            getNftsResults();
+        }, Meteor.settings.params.nftInterval);
 
         timerCookbook = Meteor.setInterval(function() {
             getCookbooks();

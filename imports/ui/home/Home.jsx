@@ -19,10 +19,9 @@ export default class Home extends Component{
             recipeExist: false,
         }
         
-    }
- 
+    } 
 
-    componentDidMount(){ 
+    componentDidMount(){  
         const querys = queryString.parse(this.props.location.search);
         if (querys['?action'] == "purchase_nft" && querys['recipe_id'] != null && querys['nft_amount'] == 1) {
             this.state.recipe_id = querys['recipe_id'];
@@ -36,7 +35,7 @@ export default class Home extends Component{
     render() { 
         
         if(this.state.recipeExist){
-            return  <EaselBuy recipe_id={this.state.recipe_id}></EaselBuy>
+            return  <EaselBuy recipe_id={this.state.recipe_id} url={'http:/wallet.pylons.tech/' + this.props.location.search}></EaselBuy>
         }
         else{
             return <div id="home">

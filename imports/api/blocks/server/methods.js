@@ -369,17 +369,21 @@ Meteor.methods({
 
                     // temporarily add bech32 concensus keys to the validator set list
                     let tempValidators = [];
+                    //console.log(JSON.stringify(validators));
+                    let ntf_amount = 1;
                     for (let v in validators){
                         // validators[v].consensus_pubkey = Meteor.call('pubkeyToBech32Old', validators[v].pub_key, Meteor.settings.public.bech32PrefixConsPub);
                         // validators[v].valconsAddress = validators[v].address;
                         validators[v].valconsAddress = Meteor.call('hexToBech32', validators[v].address, Meteor.settings.public.bech32PrefixConsAddr);
                         // validators[v].address = Meteor.call('getAddressFromPubkey', validators[v].pubKey);
                         // tempValidators[validators[v].pubKey.value] = validators[v];
+                        //validators[v].deeplink_url = 'http://wallet.pylons.tech/?action=purchase_nft&recipe_id=' + validators[v].valconsAddress + '&nft_amount=' + ntf_amount; //20210612
                         tempValidators[validators[v].address] = validators[v];
                     }
+                    console.log("hexToBech32 post");
                     validators = tempValidators;
 
-                    // console.log("before comparing precommits: %o", validators);
+                    //console.log("before comparing precommits: %o", validators);
 
                     // Tendermint v0.33 start using "signatures" in last block instead of "precommits"
                     let precommits = block.block.last_commit.signatures; 
@@ -398,8 +402,7 @@ Meteor.methods({
 
                     if (height > 1){
                         // record precommits and calculate uptime
-                        // only record from block 2
-                        console.log("Inserting precommits")
+                        // only record from block 2 
                         for (i in validators){
                             let address = validators[i].address;
                             let record = {

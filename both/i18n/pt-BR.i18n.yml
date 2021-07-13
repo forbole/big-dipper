@@ -90,6 +90,7 @@ validators:
     validatorInfo: 'Informação do validador'
     operatorAddress: 'Endereço do operador'
     selfDelegationAddress: 'Endereço de auto-delegação'
+    deeplinks: 'Deeplinks'
     commissionRate: 'Taxa de Comissão'
     maxRate: 'Taxa máxima'
     maxChangeRate: 'Taxa máxima de alteração'

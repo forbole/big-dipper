@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Row, Col, Card, Alert, UncontrolledPopover, PopoverHeader, PopoverBody } from 'reactstrap';
 import { TxIcon } from '../components/Icons.jsx';
-import Activities from '../components/Activities.jsx';
+import RecentActivites from '../components/RecentActivites.jsx';
 import CosmosErrors from '../components/CosmosErrors.jsx';
 import TimeAgo from '../components/TimeAgo.jsx';
 import numbro from 'numbro';
@@ -17,11 +17,11 @@ showdown.setFlavor('github');
 
 export const TransactionRow = (props) => {
     let tx = props.tx;
-    let homepage = window?.location?.pathname === '/' ? true : false;
+    let homepage = window?.location?.pathname === '/' ? true : false; 
 
     return <SentryBoundary><Row className={(tx.code)?"tx-info w-40 invalid":"tx-info w-40"}>
         <Col xs={12} lg={homepage ? 5 : 7} className="activity" >{(tx?.tx?.body?.messages && tx?.tx?.body?.messages.length >0)?tx?.tx?.body?.messages.map((msg,i) => {
-            return <Card body key={i}><Activities msg={msg} invalid={(!!tx.tx_response.code)} events={(tx.tx_response.logs&&tx.tx_response.logs[i])?tx.tx_response.logs[i].events:null} /></Card>
+            return <Card body key={i}><RecentActivites msg={msg} invalid={(!!tx.tx_response.code)} events={(tx.tx_response.logs&&tx.tx_response.logs[i])?tx.tx_response.logs[i].events:null} /></Card>
         }):''}</Col>
         {!homepage ? <Col xs={(!props.blockList)?{size:6,order:"last"}:{size:12,order:"last"}} md={(!props.blockList)?{size:3, order: "last"}:{size:7, order: "last"}} lg={(!props.blockList)?{size:1,order:"last"}:{size:2,order:"last"}} className="text-truncate"><i className="fas fa-hashtag d-lg-none"></i> <Link to={"/transactions/"+tx.txhash}>{tx.txhash}</Link></Col> : 
             <Col xs={(!props.blockList)?{size:6,order:"last"}:{size:12,order:"last"}} md={(!props.blockList)?{size:3, order: "last"}:{size:7, order: "last"}} lg={{size:2,order:"last"}} className="text-truncate ml-n4"><i className="fas fa-hashtag d-lg-none"></i> <Link to={"/transactions/"+tx.txhash}>{tx.txhash}</Link></Col>}

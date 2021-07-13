@@ -12,6 +12,7 @@ export default HomeContainer = withTracker((props) => {
     var name = '';
     var description = '';
     var img = '';
+    var url = props.url;
     var price = '0 Pylon';
     recipe_id = props.recipe_id
 
@@ -27,9 +28,9 @@ export default HomeContainer = withTracker((props) => {
         if (selectedRecipe != null) {
             name = selectedRecipe.Name
             description = selectedRecipe.Description;
-            if (description.length > 15) {
-                description = description.substring(0, 12) + '...';
-            }
+            // if (description.length > 15) {
+            //     description = description.substring(0, 12) + '...';
+            // }
             const coinInputs = selectedRecipe.CoinInputs;
             if (coinInputs.length > 0) {
                 price = coinInputs[0].Count + ' ' + coinInputs[0].Coin
@@ -64,6 +65,7 @@ export default HomeContainer = withTracker((props) => {
         name,
         description,
         price,
-        img
+        img,
+        url,
     };
 })(EaselBuy);

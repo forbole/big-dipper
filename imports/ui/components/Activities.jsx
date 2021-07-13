@@ -44,8 +44,7 @@ export default class Activites extends Component {
         const events = [];
         for (let i in this.props.events){
             events[this.props.events[i].type] = this.props.events[i].attributes
-        }
-        
+        } 
         switch (msg["@type"]){
         // bank
         case "/cosmos.bank.v1beta1.MsgSend":
@@ -95,7 +94,7 @@ export default class Activites extends Component {
         case "/cosmos.IBCReceiveMsg":
             return <MsgType type={msg["@type"]} />
 
-        default:
+        default: 
             return <div><ReactJson src={msg} /></div>
         }
     }

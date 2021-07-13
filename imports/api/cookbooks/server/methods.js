@@ -13,7 +13,7 @@ Meteor.methods({
             let cookbooks = JSON.parse(response.content).Cookbooks;
             let finishedCookbookIds = new Set(Cookbooks.find({}).fetch().map((p) => p.ID));
 
-            let activeCookbooks = new Set(Cookbooks.find({}).fetch().map((p) => p.ID));
+            let activeCookbooks = finishedCookbookIds;
             let cookbookIds = [];
             if (cookbooks.length > 0) {
 
@@ -42,7 +42,7 @@ Meteor.methods({
                 }
 
                 bulkCookbooks.find({ ID: { $nin: cookbookIds } })
-                    .update({});
+                    .update({ $set: { Level: "0" } });
                 bulkCookbooks.execute();
             }
             return true

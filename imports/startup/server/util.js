@@ -108,7 +108,7 @@ Meteor.methods({
     getDelegator: function(operatorAddr){
         let address = bech32.decode(operatorAddr);
         return bech32.encode(Meteor.settings.public.bech32PrefixAccAddr, address.words);
-    },
+    }, 
     getKeybaseTeamPic: function(keybaseUrl){
         let teamPage = HTTP.get(keybaseUrl);
         if (teamPage.statusCode == 200){

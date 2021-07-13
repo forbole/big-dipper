@@ -27,6 +27,7 @@ navbar:
     validators: 'Validadores'
     blocks: 'Bloques'
     transactions: 'Transacciones'
+    easel_transactions: 'Easel ransacciones'
     proposals: 'Propuestas'
     votingPower: 'Poder de voto'
     lang: "ES"
@@ -90,6 +91,7 @@ validators:
     validatorInfo: 'Información del validador'
     operatorAddress: 'Dirección de operador'
     selfDelegationAddress: 'Dirección de autodelegación'
+    deeplinks: 'Deeplinks'
     commissionRate: 'Ratio de comisión'
     maxRate: 'Ratio máximo'
     maxChangeRate: 'Ratio máximo de cambio'

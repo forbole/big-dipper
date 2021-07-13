@@ -91,6 +91,7 @@ validators:
     validatorInfo: 'Szczegóły Walidatora'
     operatorAddress: 'Adres Operatora'
     selfDelegationAddress: 'Adres Delegacji Self'
+    deeplinks: 'Deeplinks'
     commissionRate: 'Wysokość prowizji'
     maxRate: 'Maksymalna Stawka'
     maxChangeRate: 'Maksymalna Stawka Zmiany Prowizji'
