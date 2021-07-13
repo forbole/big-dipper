@@ -7,20 +7,14 @@ Meteor.methods({
     'cdp.list': function () {
         this.unblock();
         let collateralTypes = ['ukava-a', 'bnb-a', 'hard-a', 'btcb-a', 'xrpb-a', 'busd-a', 'busd-b']
-        let allCDPList = {};
+        let CDPList = {};
         for(let collateral in collateralTypes){
             let url = LCD + '/cdp/cdps/collateralType/' + collateralTypes[collateral];
             try {
                 let result = HTTP.get(url);
                 if (result.statusCode == 200) {
                     let list = JSON.parse(result.content).result;
-                    console.log(list)
-                    allCDPList[collateralTypes[collateral]] = list
-                    CDP.upsert( collateralTypes[collateral] , list[c]);
-                    // for (let c = 0; c < list.length; c++) {
-                    //     CDP.upsert({ cdpId: list[c].cdp.id }, list[c]);
-                    // }
-                    return list
+                    CDPList[collateralTypes[collateral]] = list;
 
                 }
                 else {
@@ -30,7 +24,9 @@ Meteor.methods({
                 console.log(e)
             }
         }
-        
+
+        CDP.upsert({}, { $set: { CDPList }});
+        return CDPList;
     },
     'cdp.parameters': function () {
         this.unblock();
