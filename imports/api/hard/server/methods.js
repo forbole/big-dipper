@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
-import { Hard } from '../hard'
+import { HARDCollection } from '../hard'
 
 Meteor.methods({
     'hard.parameters': function () {
@@ -24,7 +24,7 @@ Meteor.methods({
             let result = HTTP.get(url);
             if (result.statusCode == 200) {
                 let deposits = JSON.parse(result.content).result;
-                Hard.upsert({}, { $set: { deposits: deposits } });
+                HARDCollection.upsert({}, { $set: { deposits: deposits } });
                 return deposits
             }
         } catch (e) {
@@ -38,11 +38,16 @@ Meteor.methods({
             let result = HTTP.get(url);
             if (result.statusCode == 200) {
                 let borrows = JSON.parse(result.content).result;
-                Hard.upsert({}, { $set: { borrows: borrows } });
+                HARDCollection.upsert({}, { $set: { borrows: borrows } });
                 return borrows
             }
         } catch (e) {
             console.log(e)
         }
+    },
+    'hard.fetchList': function () {
+        this.unblock();
+        let HARDList = HARDCollection.find().fetch();
+        return HARDList[0]
     }
 })
