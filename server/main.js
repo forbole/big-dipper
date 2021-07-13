@@ -19,6 +19,8 @@ timerMissedBlock = 0;
 timerDelegation = 0;
 timerAggregate = 0;
 timerCDP = 0;
+timerHARD = 0;
+
 
 const DEFAULTSETTINGS = '/default_settings.json';
 
@@ -114,6 +116,28 @@ getCDPList = () => {
         }
         else {
             console.log("get CDP List ok: " + result)
+        }
+    });
+}
+
+getHARDDeposits = () => {
+    Meteor.call('hard.deposits', (error, result) => {
+        if (error) {
+            console.log("get HARD Deposits error: " + error)
+        }
+        else {
+            console.log("get HARD Deposits ok: " + result)
+        }
+    });
+}
+
+getHARDBorrows = () => {
+    Meteor.call('hard.borrows', (error, result) => {
+        if (error) {
+            console.log("get HARD Borrows error: " + error)
+        }
+        else {
+            console.log("get HARD Borrows ok: " + result)
         }
     });
 }
@@ -234,7 +258,12 @@ Meteor.startup(function () {
 
                 timerCDP = Meteor.setInterval(function () {
                     getCDPList();
-                }, Meteor.settings.params.CDPListInterval);
+                }, Meteor.settings.params.CDPInterval);
+
+                timerHARD = Meteor.setInterval(function () {
+                    getHARDDeposits();
+                    getHARDBorrows();
+                }, Meteor.settings.params.HARDInterval);
 
                 timerAggregate = Meteor.setInterval(function () {
                     let now = new Date();
@@ -254,4 +283,5 @@ Meteor.startup(function () {
         }
     })
 
+    // here put accoutnquery
 });
