@@ -46,8 +46,9 @@ export const MsgType = (props) => {
         
         // ibc
     case "/cosmos.IBCTransferMsg":
-        return <Badge color="dark"><T>messageTypes.IBCTransfer</T></Badge>;
+        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCTransfer</T></Badge>;
     case "/cosmos.IBCReceiveMsg":
+
         return <Badge color="dark"><T>messageTypes.IBCReceive</T></Badge>;
         // clp
     case "clp/Swap":
