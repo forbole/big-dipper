@@ -106,12 +106,12 @@ export default class List extends Component {
     }
 
     getHARDDeposits = () => {
-        Meteor.call('hard.deposits', (error, result) => {
+        Meteor.call('hard.fetchList', (error, result) => {
             if (result) {
                 this.setState({
-                    HARDDeposits: result?.length > 1 ? result.map((HARDDeposits, i) => {
+                    HARDDeposits: result?.deposits?.length > 1 ? result?.deposits?.map((HARDDeposits, i) => {
                         return <HARDRow key={i} index={i+1} HARDDeposits={HARDDeposits} />
-                    }) : <HARDRow HARDDeposits={result[0]} />,
+                    }) : <HARDRow HARDDeposits={result?.deposits[0]} />,
                     pagesCount: Math.ceil(result.length / this.state.pageSize),
                     HARDBorrows: null,
                     currentPage: 1,
@@ -139,12 +139,12 @@ export default class List extends Component {
     }
 
     getHARDBorrows = () => {
-        Meteor.call('hard.borrows', (error, result) => {
+        Meteor.call('hard.fetchList', (error, result) => {
             if (result) {
                 this.setState({
-                    HARDBorrows: result?.length > 1 ? result.map((HARDBorrows, i) => {
+                    HARDBorrows: result?.borrows?.length > 1 ? result?.borrows?.map((HARDBorrows, i) => {
                         return <HARDRow key={i} index={i+1} HARDBorrows={HARDBorrows} />
-                    }) : <HARDRow HARDBorrows={result[0]} />,
+                    }) : <HARDRow HARDBorrows={result?.borrows[0]} />,
                     HARDDeposits: null,
                     pagesCount: Math.ceil(result.length / this.state.pageSize),
                     currentPage: 1,
