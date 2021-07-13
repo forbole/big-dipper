@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
-import { CDP } from '../cdp';
+import { CDPCollection } from '../cdp';
 
 
 Meteor.methods({
@@ -25,7 +25,7 @@ Meteor.methods({
             }
         }
 
-        CDP.upsert({}, { $set: { CDPList }});
+        CDPCollection.upsert({}, { $set: { CDPList }});
         return CDPList;
     },
     'cdp.parameters': function () {
@@ -80,7 +80,7 @@ Meteor.methods({
 
     'cdp.fetchList': function () {
         this.unblock();
-        let CDPList = CDP.find().fetch();
+        let CDPList = CDPCollection.find().fetch();
         return CDPList[0]
     },
 
