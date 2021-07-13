@@ -711,7 +711,7 @@ export default class AccountDetails extends Component {
     }
 
     updateBorrows() {
-        Meteor.call('hard.borrows', (error, result) => {
+        Meteor.call('hard.findBorrower', this.state.address, (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({
@@ -721,14 +721,8 @@ export default class AccountDetails extends Component {
             }
 
             if (result) {
-                for (let c in result) {
-                    if (result[c].borrower === this.state.address) {
-                        this.setState({
-                            HARDBorrows: result[c]
-                        })
-                    }
-                }
                 this.setState({
+                    HARDBorrows: result,
                     loading: false,
                     hasHARDBorrows: true
                 })
