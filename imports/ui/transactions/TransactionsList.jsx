@@ -9,6 +9,7 @@ import Sidebar from "react-sidebar";
 import ChainStates from '../components/ChainStatesContainer.js'
 import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
+import NftList from '../nfts/ListContainer.js'
 
 const T = i18n.createComponent();
 
@@ -57,7 +58,7 @@ export default class Transactions extends Component{
             document.removeEventListener('scroll', this.trackScrolling);
             this.setState({loadmore:true});
             this.setState({
-                limit: this.state.limit+10
+                limit: this.state.limit+5
             }, (err, result) => {
                 if (!err){
                     document.addEventListener('scroll', this.trackScrolling);
@@ -108,7 +109,8 @@ export default class Transactions extends Component{
                 >
                 </Sidebar>} />
             </Switch>
-            <List limit={this.state.limit} />
+            <NftList />
+            <List limit={this.state.limit} /> 
             <LoadMore show={this.state.loadmore} />
         </div> : <Card className="h-100 overflow-auto">
             <div className="card-header"><T>transactions.transactions</T></div>

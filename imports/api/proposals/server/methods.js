@@ -23,7 +23,7 @@ Meteor.methods({
 
             let finishedProposalIds = new Set(Proposals.find(
                 {"status":{$in:["PROPOSAL_STATUS_PASSED", "PROPOSAL_STATUS_REJECTED", "PROPOSAL_STATUS_REMOVED"]}}
-            ).fetch().map((p)=> p.proposalId));
+            ).fetch().map((p)=> p.proposalId)); 
 
             let activeProposals = new Set(Proposals.find(
                 { "status": { $in: ["PROPOSAL_STATUS_VOTING_PERIOD"] } }

@@ -25,7 +25,7 @@ const Result = posed.div({
 });
 export default class Proposal extends Component{
     constructor(props){
-        super(props);
+        super(props);  
         let showdown  = require('showdown');
         showdown.setFlavor('github');
         this.state = {

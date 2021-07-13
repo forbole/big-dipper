@@ -53,7 +53,27 @@ export default class EaselBuy extends Component{
                 description: this.props.description,
                 price: this.props.price,
                 img: this.props.img,
-            })
+            }); 
+
+            DocHead.setTitle("Big-Dipper");
+            var metaInfo = {name: "description", content: "Wallet deep link"};
+            DocHead.addMeta(metaInfo);
+            metaInfo = {property: "og:type", content: "article"};
+            DocHead.addMeta(metaInfo);
+            metaInfo = {property: "og:title", content: "Deep LInk"};
+            DocHead.addMeta(metaInfo);
+            metaInfo = {property: "og:description", content: "Wallet deep link"};
+            DocHead.addMeta(metaInfo);
+            metaInfo = {property: "og:url", content: this.props.url};
+            DocHead.addMeta(metaInfo);
+            metaInfo = {property: "og:site_name", content: "Deep Link"};
+            DocHead.addMeta(metaInfo);
+            metaInfo = {property: "og:image", content: this.props.img};
+            DocHead.addMeta(metaInfo);
+            metaInfo = {property: "og:image:width", content: 600};
+            DocHead.addMeta(metaInfo);
+            metaInfo = {property: "og:image:height", content: 330};
+            DocHead.addMeta(metaInfo);
         }
     }
 
@@ -65,37 +85,34 @@ export default class EaselBuy extends Component{
             return (
                 <div id="home">
                 <Col style={{marginTop: 'auto'}}>
-                    <Row>
-                        <Row style={{margin: 'auto'}}>
-                            <img alt='Easel on Google Play' src={this.state.img == '' ? '/img/buy_icon.png' : this.state.img} style={{width:'100px', height:'100px'}}/>  
+                    <Col>
+                        <Row style={{margin: 'auto', justifyContent:"center"}}>
+                            <img alt='Easel on Google Play' src={this.state.img == '' ? '/img/buy_icon.png' : this.state.img} style={{width:"auto", height:"auto", maxWidth:"100%", maxHeight:"25%", minWidth:"80%"}}/>  
                         </Row>
-                        <Col style={{alignSelf: 'center', margin: 'auto', marginLeft: '15px'}}>
-                            <Row>
+                        <Col style={{alignSelf: 'center',  marginTop: '20px', width: '100%'}}>
+                            <Row style={{justifyContent:"center"}}>
                                 <a style={{fontSize: '1.5em'}}><b>{this.state.name}</b></a>
                             </Row> 
-                            <Row>
-                                <a><i>{this.state.description}</i></a>
+                            <Row style={{justifyContent:"center"}}>
+                                <a style={{wordBreak: 'break-all'}}>{this.state.description}</a>
+                            </Row> 
+                            <Row style={{justifyContent:"center"}}>
+                                <p style={{marginTop: '7px', fontWeight: '500'}}>{this.state.price}</p>
                             </Row>
-                            <Row>
-                                <a>Everyone</a>
-                            </Row>
-                        </Col>
-                        <Row style={{margin: 'auto'}}>
-                            <a href='https://play.google.com/store/apps/details?id=tech.pylons.wallet&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1' style={{margin: 'auto', marginRight: '25px', fontSize: '1.3em'}}>{this.state.price}</a>
-                        </Row>
-                    </Row> 
-                    <Row style={{marginTop: '30px'}}> 
+                            
+                        </Col> 
+                    </Col> 
+                    <Row style={{marginTop: '10px'}}> 
                     <PopupModal isOpen={this.state.isPurchaseOpen} toggle={this.toggle} handleLoginConfirmed={this.handleLoginConfirmed}/>
                      
-                    <a className="btn btn-primary" onClick = {this.goPurchaseAlert} style={{margin: 'auto', width: '100px'}}><i className="fas"></i>{'    BUY    '}</a>
-                        {/* <a href='https://play.google.com/store/apps/details?id=tech.pylons.wallet&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1' style={{margin: 'auto'}}><img alt='Wallet on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' style={{width: '200px'}}/></a> */}
+                    <a className="btn btn-primary" onClick = {this.goPurchaseAlert} style={{margin: 'auto', width: '120px'}}><i className="fas"></i>{'    BUY    '}</a>
                     </Row> 
-                    <Row>
-                        <Row style={{margin: 'auto', marginTop: '30px'}}>
-                            <img alt='Easel on Google Play' src='/img/easel.png'style={{width:'100px', height:'100px'}}/>  
-                        </Row>
-                        <Row style={{margin: 'auto', marginTop: '30px'}}>
-                            <img alt='Easel on Google Play' src='/img/wallet.png'style={{width:'100px', height:'100px'}}/> 
+                    <Row style={{margin: 'auto', marginTop: '25px'}}>
+                        <Row style={{margin: 'auto', alignSelf: 'center', marginRight: '20px'}}>
+                            <img alt='Easel on Google Play' src='/img/easel.png'style={{width:'60px', height: '70px'}}/> 
+                        </Row> 
+                        <Row style={{margin: 'auto', alignSelf: 'center', marginLeft: '15px'}}>
+                            <img alt='Easel on Google Play' src='/img/wallet.png'style={{width:'60px', height: '70px'}}/> 
                         </Row>
                     </Row>
                 </Col>

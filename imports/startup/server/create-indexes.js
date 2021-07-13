@@ -1,6 +1,7 @@
 import { Blockscon } from '../../api/blocks/blocks.js';
 import { Proposals } from '../../api/proposals/proposals.js';
 import { Recipes } from '../../api/recipes/recipes.js';
+import { Nfts } from '../../api/nfts/nfts.js';
 import { Cookbooks } from '../../api/cookbooks/cookbooks.js';
 import { ValidatorRecords, Analytics, MissedBlocksStats, MissedBlocks, AverageData, AverageValidatorData } from '../../api/records/records.js';
 // import { Status } from '../../api/status/status.js';
@@ -22,6 +23,8 @@ Evidences.rawCollection().createIndex({ height: -1 });
 Proposals.rawCollection().createIndex({ proposalId: 1 }, { unique: true });
 
 Recipes.rawCollection().createIndex({ ID: "1", NO: -1 }, { unique: true });
+
+Nfts.rawCollection().createIndex({ ID: "1", NO: -1 }, { unique: true });
 
 Cookbooks.rawCollection().createIndex({ ID: "1", NO: -1 }, { unique: true });
 

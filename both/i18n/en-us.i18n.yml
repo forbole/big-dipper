@@ -139,6 +139,15 @@ blocks:
     numOfTxs: 'No. of Txs'
     numOfTransactions: 'No. of Transactions'
     notFound: 'No such block found.'
+nfts:
+    id: 'ID'
+    purchase_nfts: 'Purchased NFTs'
+    residual: 'Residual'
+    quanitiy: 'Quantity'
+    noBlock: 'No block.'
+    name: 'Title'
+    nft_rul: 'NFT_URL'
+    description: 'Description'
 transactions:
     transaction: 'Transaction'
     transactions: 'Transactions'

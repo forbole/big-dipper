@@ -91,6 +91,7 @@ validators:
     validatorInfo: '验证人资讯'
     operatorAddress: '操作地址'
     selfDelegationAddress: '自我委托地址'
+    deeplinks: 'Deeplinks'
     commissionRate: '佣金'
     maxRate: '最大佣金限制'
     maxChangeRate: '每天最大佣金变化限制'

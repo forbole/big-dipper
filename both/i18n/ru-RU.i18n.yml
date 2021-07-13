@@ -102,6 +102,7 @@ validators:
     validatorInfo: 'Информация О Валидаторе'
     operatorAddress: 'Адрес Оператора'
     selfDelegationAddress: 'Адрес Самоделегирования'
+    deeplinks: 'Deeplinks'
     commissionRate: 'Ставка Комиссии'
     maxRate: 'Максимальная Ставка'
     maxChangeRate: 'Максимальная Ставка Изменения'

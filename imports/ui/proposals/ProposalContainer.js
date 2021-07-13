@@ -6,30 +6,29 @@ import Proposal from './Proposal.jsx';
 
 export default ProposalContainer = withTracker((props) => {
     let proposalId = 0;
-    if (props.match.params.id){
+    if (props.match.params.id) {
         proposalId = parseInt(props.match.params.id);
     }
 
     let chainHandle, proposalHandle, proposalListHandle, proposal, proposalCount, chain, proposalExist;
     let loading = true;
 
-    if (Meteor.isClient){
+    if (Meteor.isClient) {
         chainHandle = Meteor.subscribe('chain.status');
         proposalListHandle = Meteor.subscribe('proposals.list', proposalId);
         proposalHandle = Meteor.subscribe('proposals.one', proposalId);
         loading = !proposalHandle.ready() || !chainHandle.ready() || !proposalListHandle.ready();
     }
 
-    if (Meteor.isServer || !loading){
-        proposal = Proposals.findOne({proposalId:proposalId});
+    if (Meteor.isServer || !loading) {
+        proposal = Proposals.findOne({ proposalId: proposalId });
         proposalCount = Proposals.find({}).count();
-        chain = Chain.findOne({chainId:Meteor.settings.public.chainId});
+        chain = Chain.findOne({ chainId: Meteor.settings.public.chainId });
 
-        if (Meteor.isServer){
+        if (Meteor.isServer) {
             // loading = false;
             proposalExist = !!proposal;
-        }
-        else{
+        } else {
             proposalExist = !loading && !!proposal;
         }
     }
@@ -39,6 +38,6 @@ export default ProposalContainer = withTracker((props) => {
         proposalExist,
         proposal: proposalExist ? proposal : {},
         chain: proposalExist ? chain : {},
-        proposalCount: proposalExist? proposalCount: 0
+        proposalCount: proposalExist ? proposalCount : 0
     };
 })(Proposal);
