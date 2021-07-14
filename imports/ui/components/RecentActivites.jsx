@@ -9,29 +9,29 @@ import _ from 'lodash';
 
 const T = i18n.createComponent();
 
-MultiSend = (props) => {
-    return <div>
-        <p><T>activities.single</T> <MsgType type={props.msg.type} /> <T>activities.happened</T></p>
-        <p><T>activities.senders</T>
-            <ul>
-                {props.msg.inputs.map((data,i) =>{
-                    return <li key={i}><Account address={data.address}/> <T>activities.sent</T> {data.coins.map((coin, j) =>{
-                        return <span key={j} className="text-success">{new Coin(coin.amount, coin.denom).toString(6)}</span>
-                    })}
-                    </li>
-                })}
-            </ul>
-            <T>activities.receivers</T>
-            <ul>
-                {props.msg.outputs.map((data,i) =>{
-                    return <li key={i}><Account address={data.address}/> <T>activities.received</T> {data.coins.map((coin,j) =>{
-                        return <span key={j} className="text-success">{new Coin(coin.amount, coin.denom).toString(6)}</span>
-                    })}</li>
-                })}
-            </ul>
-        </p>
-    </div>
-}
+// MultiSend = (props) => {
+//     return <div>
+//         <p><T>activities.single</T> <MsgType type={props.msg.type} /> <T>activities.happened</T></p>
+//         <p><T>activities.senders</T>
+//             <ul>
+//                 {props.msg.inputs.map((data,i) =>{
+//                     return <li key={i}><Account address={data.address}/> <T>activities.sent</T> {data.coins.map((coin, j) =>{
+//                         return <span key={j} className="text-success">{new Coin(coin.amount, coin.denom).toString(6)}</span>
+//                     })}
+//                     </li>
+//                 })}
+//             </ul>
+//             <T>activities.receivers</T>
+//             <ul>
+//                 {props.msg.outputs.map((data,i) =>{
+//                     return <li key={i}><Account address={data.address}/> <T>activities.received</T> {data.coins.map((coin,j) =>{
+//                         return <span key={j} className="text-success">{new Coin(coin.amount, coin.denom).toString(6)}</span>
+//                     })}</li>
+//                 })}
+//             </ul>
+//         </p>
+//     </div>
+// }
 
 export default class RecentActivites extends Component {
     constructor(props){
