@@ -10,6 +10,7 @@ Meteor.methods({
             let result = HTTP.get(url);
             if (result.statusCode == 200) {
                 let parameters = JSON.parse(result.content).result;
+                HARDCollection.upsert({}, { $set: { parameters: parameters } });
                 return parameters
             }
         } catch (e) {
@@ -85,7 +86,17 @@ Meteor.methods({
         }
         catch(e){
             console.log(e)
+        } 
+    },
+    'hard.fetchParameters': function () {
+        this.unblock();
+        try {
+            let HARDList = HARDCollection.find().fetch();
+            let params = HARDList[0].parameters;
+            return params
         }
-        
+        catch (e) {
+            console.log(e)
+        }
     }
 })

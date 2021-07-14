@@ -43,7 +43,7 @@ export default class HARD extends Component {
     }
 
     updateParameters() {
-        Meteor.call('hard.parameters', (error, result) => {
+        Meteor.call('hard.fetchParameters', (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({

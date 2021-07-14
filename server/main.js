@@ -112,10 +112,10 @@ getDelegations = () => {
 getCDPList = () => {
     Meteor.call('cdp.list', (error, result) => {
         if (error) {
-            console.log("get CDP List error: " + error)
+            console.log("get CDP list error: " + error)
         }
         else {
-            console.log("get CDP List ok: " + result)
+            console.log("get CDP list ok: " + result)
         }
     });
 }
@@ -123,10 +123,10 @@ getCDPList = () => {
 getHARDDeposits = () => {
     Meteor.call('hard.deposits', (error, result) => {
         if (error) {
-            console.log("get HARD Deposits error: " + error)
+            console.log("get HARD deposits error: " + error)
         }
         else {
-            console.log("get HARD Deposits ok: " + result)
+            console.log("get HARD deposits ok: " + result)
         }
     });
 }
@@ -134,12 +134,24 @@ getHARDDeposits = () => {
 getHARDBorrows = () => {
     Meteor.call('hard.borrows', (error, result) => {
         if (error) {
-            console.log("get HARD Borrows error: " + error)
+            console.log("get HARD borrows error: " + error)
         }
         else {
-            console.log("get HARD Borrows ok: " + result)
+            console.log("get HARD borrows ok: " + result)
         }
     });
+}
+
+getHARDParameters = () => { 
+    Meteor.call('hard.parameters', (error, result) => {
+        if (error) {
+            console.log("get HARD parameters error: " + error)
+        }
+        else {
+            console.log("get HARD parameters ok: " + result)
+        }
+    });
+    
 }
 
 aggregateMinutely = () => {
@@ -263,6 +275,7 @@ Meteor.startup(function () {
                 timerHARD = Meteor.setInterval(function () {
                     getHARDDeposits();
                     getHARDBorrows();
+                    getHARDParameters();
                 }, Meteor.settings.params.HARDInterval);
 
                 timerAggregate = Meteor.setInterval(function () {
