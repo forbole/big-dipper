@@ -47,31 +47,45 @@ Meteor.methods({
     },
     'hard.fetchList': function () {
         this.unblock();
-        let HARDList = HARDCollection.find().fetch();
-        return HARDList[0]
+        try{
+            let HARDList = HARDCollection.find().fetch();
+            return HARDList[0]
+        }
+        catch(e){
+            console.log(e)
+        }
+       
     },
     'hard.findDepositor': function (address) {
         this.unblock();
-        let HARDList = HARDCollection.find().fetch();
-        let depositsList = HARDList[0].deposits;
-        let depositsDetails;
-        for (let d in borrowsList) {
-            if (depositsList[d].depositor === address) {
-                depositsDetails = depositsList[d]
+        try{
+            let HARDList = HARDCollection.find().fetch();
+            let depositsList = HARDList[0].deposits;
+            for (let d in depositsList) {
+                if (depositsList[d].depositor === address) {
+                    return depositsList[d]
+                }
             }
         }
-        return depositsDetails
+        catch(e){
+            console.log(e)
+        }
+        
     },
     'hard.findBorrower': function (address) {
         this.unblock();
-        let HARDList = HARDCollection.find().fetch();
-        let borrowsList = HARDList[0].borrows;
-        let borrowsDetails;
-        for (let d in borrowsList) {
-            if (borrowsList[d].borrower === address) {
-                borrowsDetails = borrowsList[d]
+        try{
+            let HARDList = HARDCollection.find().fetch();
+            let borrowsList = HARDList[0].borrows;
+            for (let d in borrowsList) {
+                if (borrowsList[d].borrower === address) {
+                    return borrowsList[d]
+                }
             }
         }
-        return borrowsDetails
+        catch(e){
+            console.log(e)
+        }
+        
     }
 })
