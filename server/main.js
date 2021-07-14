@@ -120,6 +120,17 @@ getCDPList = () => {
     });
 }
 
+getCDPParameters = () => {
+    Meteor.call('cdp.parameters', (error, result) => {
+        if (error) {
+            console.log("get CDP parameters error: " + error)
+        }
+        else {
+            console.log("get CDP parameters ok: " + result)
+        }
+    });
+}
+
 getHARDDeposits = () => {
     Meteor.call('hard.deposits', (error, result) => {
         if (error) {
@@ -270,6 +281,7 @@ Meteor.startup(function () {
 
                 timerCDP = Meteor.setInterval(function () {
                     getCDPList();
+                    getCDPParameters();
                 }, Meteor.settings.params.CDPInterval);
 
                 timerHARD = Meteor.setInterval(function () {
@@ -296,5 +308,4 @@ Meteor.startup(function () {
         }
     })
 
-    // here put accoutnquery
 });

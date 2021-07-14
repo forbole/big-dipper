@@ -60,7 +60,7 @@ export default class CDP extends Component {
     }
 
     updateCDP() {
-        Meteor.call('cdp.account', this.props.owner, this.props.collateralType, (error, result) => {
+        Meteor.call('cdp.fetchAccount', this.props.owner, this.props.collateralType, (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({

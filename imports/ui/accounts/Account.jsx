@@ -649,7 +649,7 @@ export default class AccountDetails extends Component {
     }
 
     checkIfCDPIsActive() {
-        Meteor.call('cdp.parameters', (error, result) => {
+        Meteor.call('cdp.fetchParameters', (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({
@@ -661,11 +661,10 @@ export default class AccountDetails extends Component {
                 this.setState({
                     debtParams: result.debt_param
                 });
-
                 let collateralParams = [];
                 for (let c in result.collateral_params) {
                     let counter = 0;
-                    Meteor.call('cdp.account', this.state.address, result.collateral_params[c].type, (err, res) => {
+                    Meteor.call('cdp.fetchAccount', this.state.address, result.collateral_params[c].type, (err, res) => {
                         if (err) {
                             this.setState({
                                 loading: true,
@@ -729,6 +728,8 @@ export default class AccountDetails extends Component {
     }
 
     render() {
+        console.log(this.state.debtParams)
+        console.log(this.state.collateralParams)
         if (this.state.loading) {
             return <div id="account">
                 <h1 className="d-none d-lg-block"><T>accounts.accountDetails</T></h1>

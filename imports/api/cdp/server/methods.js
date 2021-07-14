@@ -39,13 +39,14 @@ Meteor.methods({
     'cdp.parameters': function () {
         this.unblock();
         let url = LCD + '/cdp/parameters';
-        let cdpParams = {};
+        let parameters = {};
 
         try {
             let response = HTTP.get(url);
             if (response.statusCode == 200) {
-                cdpParams = JSON.parse(response.content).result;
-                return cdpParams
+                parameters = JSON.parse(response.content).result;
+                CDPCollection.upsert({}, { $set: { parameters: parameters  } });
+                return parameters
             }
         }
         catch (e) {
@@ -97,8 +98,19 @@ Meteor.methods({
         }
     },
 
+    'cdp.fetchParameters': function () {
+        this.unblock();
+        try {
+            let parameters = CDPCollection.find().fetch();
+            return parameters[0].parameters
+        }
+        catch (e) {
+            console.log(e)
+        }
+    },
+
     //get Account CDP 
-    'cdp.account': function (address, collateralType) {
+    'cdp.fetchAccount': function (address, collateralType) {
         this.unblock();
 
         try{

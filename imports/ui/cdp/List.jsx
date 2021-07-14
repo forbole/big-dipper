@@ -80,7 +80,7 @@ export default class List extends Component {
 
 
     getMinCollateralRatio = () => {
-        Meteor.call('cdp.parameters', (error, result) => {
+        Meteor.call('cdp.fetchParameters', (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({
