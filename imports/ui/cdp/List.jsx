@@ -68,14 +68,6 @@ export default class List extends Component {
                     noActiveCDP: false
                 })
             }
-            if (result === null) {
-                this.setState({
-                    cdpList: null,
-                    pagesCount: 0,
-                    loading: false,
-                    noActiveCDP: true
-                })
-            }
             if (error) {
                 this.setState({
                     cdpList: undefined,

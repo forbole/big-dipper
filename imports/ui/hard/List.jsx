@@ -86,8 +86,12 @@ export default class List extends Component {
     }
 
     componentDidMount() {
-        this.getHARDBorrows();
-        this.getHARDDeposits();
+        if (this.props.activeTab === 'hard-deposits') {
+            this.getHARDDeposits();
+        }
+        else if (this.props.activeTab === 'hard-borrows') {
+            this.getHARDBorrows();
+        }
     }
 
     componentDidUpdate(prevProps) {
@@ -119,14 +123,6 @@ export default class List extends Component {
                     noActiveDeposits: false
                 })
             }
-            if (result === null) {
-                this.setState({
-                    HARDDeposits: null,
-                    pagesCount: 0,
-                    loading: false,
-                    noActiveDeposits: true
-                })
-            }
             if (error) {
                 this.setState({
                     HARDDeposits: undefined,
@@ -150,14 +146,6 @@ export default class List extends Component {
                     currentPage: 1,
                     loading: false,
                     noActiveBorrows: false
-                })
-            }
-            if (result === null) {
-                this.setState({
-                    HARDBorrows: null,
-                    pagesCount: 0,
-                    loading: false,
-                    noActiveBorrows: true
                 })
             }
             if (error) {
