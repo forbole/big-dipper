@@ -19,14 +19,20 @@ autoformat = (value) => {
 const coinList = Meteor.settings.public.coins;
 
 export default class Coin {
-    static StakingCoin = coinList.find(coin => coin.denom === Meteor.settings.public.bondDenom);
-    static MinStake = 1 / Number(Coin.StakingCoin.fraction);
+
+    static StakingCoin = (coinList == null) ? "" : coinList.find(coin => coin.denom === Meteor.settings.public.bondDenom);
+    static MinStake = (coinList == null) ? 0 : 1 / Number(Coin.StakingCoin.fraction);
 
     constructor(amount, denom = Meteor.settings.public.bondDenom) {
         const lowerDenom = denom.toLowerCase();
-        this._coin = coinList.find(coin =>
-            coin.denom.toLowerCase() === lowerDenom || coin.displayName.toLowerCase() === lowerDenom
-        );
+        if (coinList == null) {
+            this._coin = null;
+        } else {
+            this._coin = coinList.find(coin =>
+                coin.denom.toLowerCase() === lowerDenom || coin.displayName.toLowerCase() === lowerDenom
+            );
+        }
+
 
         if (this._coin) {
             if (lowerDenom === this._coin.denom.toLowerCase()) {
