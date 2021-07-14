@@ -61,7 +61,7 @@ export default class List extends Component {
                 this.setState({
                     cdpList: result?.CDPList[this.props.collateralType]?.length > 1 ? result.CDPList[this.props.collateralType].map((cdpList, i) => {
                         return <CDPRow key={i} index={i} cdpList={cdpList} />
-                    }) : <CDPRow cdpList={result?.CDPList[this.props.collateralType][0]} />,
+                    }) : result?.CDPList[this.props.collateralType]?.length === 0 ? <CDPRow cdpList={result?.CDPList[this.props.collateralType][0]} /> : null,
                     pagesCount: Math.ceil(result.length / this.state.pageSize),
                     currentPage: 1,
                     loading: false,

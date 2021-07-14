@@ -25,7 +25,14 @@ Meteor.methods({
             }
         }
 
-        CDPCollection.upsert({}, { $set: { CDPList }});
+        try{
+            if(CDPList.length > 0){
+                CDPCollection.upsert({}, { $set: { CDPList } });
+            }
+        }
+        catch(e){
+            console.log("Error updating CDP list " + e)
+        }
         return CDPList;
     },
     'cdp.parameters': function () {
@@ -80,8 +87,30 @@ Meteor.methods({
 
     'cdp.fetchList': function () {
         this.unblock();
-        let CDPList = CDPCollection.find().fetch();
-        return CDPList[0]
+        try{
+            let CDPList = CDPCollection.find().fetch();
+            return CDPList[0]
+        }
+        catch(e){
+            console.log(e)
+        }
     },
 
+    //get Account CDP 
+    'cdp.account': function (address, collateralType) {
+        this.unblock();
+
+        try{
+            let CDPList = CDPCollection.find().fetch();
+            let findCDP = CDPList[0].CDPList[collateralType]
+            for(let d in findCDP){
+                if (findCDP[d].cdp.owner === address){
+                    return findCDP[d]
+                }
+            }
+        }
+        catch(e){
+            console.log(e)
+        }
+    }
 })
