@@ -58,7 +58,7 @@ export default class Transactions extends Component{
             document.removeEventListener('scroll', this.trackScrolling);
             this.setState({loadmore:true});
             this.setState({
-                limit: this.state.limit+5
+                limit: this.state.limit+10
             }, (err, result) => {
                 if (!err){
                     document.addEventListener('scroll', this.trackScrolling);

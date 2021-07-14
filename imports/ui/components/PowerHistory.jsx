@@ -3,8 +3,8 @@ import { Card, CardFooter, CardBody, Col, Row, Badge } from 'reactstrap';
 import momemt from 'moment';
 import numbro from 'numbro';
 import Account from './Account.jsx';
-import i18n from 'meteor/universe:i18n';
-import Coin from '/both/utils/coins.js'
+import i18n from 'meteor/universe:i18n'; 
+import Coin from '../../../both/utils/coins.js';
 
 const T = i18n.createComponent();
 export default class PowerHistory extends React.Component {

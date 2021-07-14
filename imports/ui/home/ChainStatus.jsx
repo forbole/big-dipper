@@ -4,7 +4,7 @@ import { Row, Col, Card, CardText,
 import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
 import TimeStamp from '../components/TimeStamp.jsx';
-import Coin from '/both/utils/coins.js';
+import Coin from '../../../both/utils/coins.js';
 
 const T = i18n.createComponent();
 

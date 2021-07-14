@@ -3,8 +3,8 @@ import { Meteor } from 'meteor/meteor';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, Row, Col } from 'reactstrap';
 import numbro from 'numbro';
-import i18n from 'meteor/universe:i18n';
-import Coin from '/both/utils/coins.js'
+import i18n from 'meteor/universe:i18n'; 
+import Coin from '../../../both/utils/coins.js';
 
 const T = i18n.createComponent();
 

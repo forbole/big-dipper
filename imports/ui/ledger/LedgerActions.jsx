@@ -7,7 +7,7 @@ import { Button, Spinner, TabContent, TabPane, Row, Col, Modal, ModalBody, Modal
 import { Ledger, DEFAULT_MEMO } from './ledger.js';
 import { Validators } from '/imports/api/validators/validators.js';
 import AccountTooltip from '/imports/ui/components/AccountTooltip.jsx';
-import Coin from '/both/utils/coins.js';
+import Coin from '../../../both/utils/coins.js';
 import numbro from 'numbro';
 import TimeStamp from '../components/TimeStamp.jsx';
 import { PropTypes } from 'prop-types';

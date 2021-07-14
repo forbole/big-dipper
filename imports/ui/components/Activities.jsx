@@ -2,8 +2,8 @@ import React, {Component } from 'react';
 import { MsgType } from './MsgType.jsx';
 import { Link } from 'react-router-dom';
 import Account from '../components/Account.jsx';
-import i18n from 'meteor/universe:i18n';
-import Coin from '/both/utils/coins.js'
+import i18n from 'meteor/universe:i18n'; 
+import Coin from '../../../both/utils/coins.js';
 import ReactJson from 'react-json-view'
 import _ from 'lodash';
 

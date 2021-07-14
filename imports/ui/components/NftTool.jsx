@@ -3,7 +3,7 @@ import { MsgType } from './MsgType.jsx';
 import { Link } from 'react-router-dom';
 import Nft from './Nft.jsx';
 import i18n from 'meteor/universe:i18n';
-import Coin from '/both/utils/coins.js'
+import Coin from '../../../both/utils/coins.js';
 import ReactJson from 'react-json-view' 
 import { Row, Col, Card, Alert, UncontrolledPopover, PopoverHeader, PopoverBody } from 'reactstrap';
 
@@ -52,8 +52,7 @@ export default class NftTool extends Component {
                     <br/>
                     <span className="address overflow-auto d-inline-block" style={{paddingLeft:5, paddingRight:10, fontStyle:'italic', fontSize:'12px'}}>{ this.props.msg.Price == null ? 'No Price': this.props.msg.Price + ' ' + this.props.msg.Currency } </span> 
 
-                </div>  
-              
+                </div>   
         </div>
         
     }

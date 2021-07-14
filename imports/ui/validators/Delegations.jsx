@@ -4,7 +4,7 @@ import numbro from 'numbro';
 import Account from '../components/Account.jsx';
 import { Mongo } from 'meteor/mongo';
 import i18n from 'meteor/universe:i18n';
-import Coin from '/both/utils/coins.js'
+import Coin from '../../../both/utils/coins.js';
 
 const T = i18n.createComponent();
 
