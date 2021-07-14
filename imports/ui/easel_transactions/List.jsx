@@ -3,7 +3,7 @@ import { Table, Spinner } from 'reactstrap';
 import { Link } from 'react-router-dom'; 
 import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
-import Coin from '/both/utils/coins.js'
+import Coin from '../../../both/utils/coins.js';
 import TimeStamp from '../components/TimeStamp.jsx'; 
 import voca from 'voca';
 import { Meteor } from 'meteor/meteor';  

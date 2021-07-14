@@ -12,7 +12,7 @@ import { Helmet } from 'react-helmet';
 import posed from 'react-pose';
 import i18n from 'meteor/universe:i18n';
 import { Meteor } from 'meteor/meteor';
-import Coin from '/both/utils/coins.js';
+import Coin from '../../../both/utils/coins.js';
 import TimeStamp from '../components/TimeStamp.jsx';
 // import { ProposalActionButtons } from '../ledger/LedgerActions.jsx';
 import voca from 'voca';

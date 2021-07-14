@@ -8,8 +8,9 @@ import { Markdown } from 'react-showdown';
 import numbro from 'numbro';
 import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
-import Coin from '/both/utils/coins.js';
+import Coin from '../../../both/utils/coins.js';
 import TimeStamp from '../components/TimeStamp.jsx';
+import RecentActivites from '../components/RecentActivites.jsx';
 
 const T = i18n.createComponent();
 export default class Transaction extends Component{

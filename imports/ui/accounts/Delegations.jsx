@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Card, CardHeader, CardBody, Container, Row, Col, Spinner } from 'reactstrap';
 import AccountTooltip from '../components/AccountTooltip.jsx';
-import i18n from 'meteor/universe:i18n';
-import Coin from '/both/utils/coins.js';
+import i18n from 'meteor/universe:i18n'; 
+import Coin from '../../../both/utils/coins.js';
 import SentryBoundary from '../components/SentryBoundary.jsx';
 
 const T = i18n.createComponent();

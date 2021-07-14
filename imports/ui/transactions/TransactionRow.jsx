@@ -8,7 +8,7 @@ import RecentActivites from '../components/RecentActivites.jsx';
 import CosmosErrors from '../components/CosmosErrors.jsx';
 import TimeAgo from '../components/TimeAgo.jsx';
 import numbro from 'numbro';
-import Coin from '/both/utils/coins.js'
+import Coin from '../../../both/utils/coins.js';
 import SentryBoundary from '../components/SentryBoundary.jsx';
 import { Markdown } from 'react-showdown';
 

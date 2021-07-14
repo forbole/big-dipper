@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { DenomSymbol, ProposalStatusIcon } from '../components/Icons.jsx';
 import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
-import Coin from '/both/utils/coins.js'
+import Coin from '../../../both/utils/coins.js';
 import TimeStamp from '../components/TimeStamp.jsx';
 // import { SubmitProposalButton } from '../ledger/LedgerActions.jsx';
 import voca from 'voca';
