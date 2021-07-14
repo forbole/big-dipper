@@ -25,14 +25,15 @@ Meteor.methods({
             }
         }
 
-        try{
-            if(CDPList.length > 0){
+        if (CDPList){
+            try{
                 CDPCollection.upsert({}, { $set: { CDPList } });
             }
+            catch(e){
+                console.log("Error updating CDP list " + e)
+            }
         }
-        catch(e){
-            console.log("Error updating CDP list " + e)
-        }
+        
         return CDPList;
     },
     'cdp.parameters': function () {
