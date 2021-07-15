@@ -438,7 +438,7 @@ Meteor.methods({
                     let res;
                     if (lastSyncedTime){
                         let blockDiff = Meteor.settings.public.averageBlockTimeWindow;
-                        let pastBlockHeight = height - blockDiff > 0 ? height - blockDiff : height - 1;
+                        let pastBlockHeight = (height - blockDiff > 0) ? (height - blockDiff) : (height - 1);
                         let getPastBlock = `${API}/blocks/${pastBlockHeight}`;
                         try{
                             res = HTTP.get(getPastBlock);
@@ -450,7 +450,7 @@ Meteor.methods({
                         let dateLatest = new Date(blockData.time);
                         let dateLast = new Date(lastSyncedTime);
                         timeDiff = Math.abs(dateLatest.getTime() - dateLast.getTime());
-                        blockTime = height - blockDiff > 0 ? ((dateLatest.getTime() - pastBlockTime.getTime()) / blockDiff) : (dateLatest.getTime() - pastBlockTime.getTime())
+                        blockTime = (height - blockDiff > 0) ? ((dateLatest.getTime() - pastBlockTime.getTime()) / blockDiff) : (dateLatest.getTime() - pastBlockTime.getTime());
                     }
 
                     let endGetValidatorsTime = new Date();
