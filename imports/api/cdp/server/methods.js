@@ -6,8 +6,14 @@ import { CDPCollection } from '../cdp';
 Meteor.methods({
     'cdp.list': function () {
         this.unblock();
-        let collateralTypes = ['ukava-a', 'bnb-a', 'hard-a', 'btcb-a', 'xrpb-a', 'busd-a', 'busd-b']
+        let collateralTypes = [];
         let CDPList = {};
+        let cdp = CDPCollection.find().fetch();
+        let parameters = cdp[0]?.parameters?.collateral_params;
+        for(let c in parameters){
+            collateralTypes[c] = parameters[c]?.type
+        }
+        
         for(let collateral in collateralTypes){
             let url = LCD + '/cdp/cdps/collateralType/' + collateralTypes[collateral];
             try {

@@ -303,8 +303,8 @@ Meteor.startup(function () {
                 }, Meteor.settings.params.delegationInterval);
 
                 timerCDP = Meteor.setInterval(function () {
-                    getCDPList();
                     getCDPParameters();
+                    getCDPList();
                     getAuctions();
                 }, Meteor.settings.params.CDPInterval);
 
