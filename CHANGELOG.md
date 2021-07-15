@@ -2,6 +2,7 @@
 
 ## [UNRELEASED]
 * [#523] Implemented readable messages for IBC messages
+* [#542] Removed `startHeight` value from average block time and updated calculations to get the average block time within `averageBlockTimeWindow` instead of calculating it from genesis time.
 
 ## [v0.41.x-14.2]
 * Fixes Ledger WebUSB + Chrome 91.x issue (https://github.com/LedgerHQ/ledgerjs/issues/607)
