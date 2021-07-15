@@ -2,7 +2,7 @@
 
 ## [UNRELEASED]
 * [#536] Added missing `/` in staking parameters URL 
-* [#535] Stored CDP and HARD details in db
+* [#535] Stored CDP, HARD, incentive and auctions details in db
 
 # kava-7-v1.1
 * Update npm packages
