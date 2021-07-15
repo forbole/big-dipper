@@ -101,6 +101,7 @@ chainStatus:
     outOfValidators: 'out of {$totalValidators} validators'
     onlineVotingPower: 'Online Voting Power'
     fromTotalStakes: '{$percent} from {$totalStakes} {$denomPlural}'
+    averageBlockTimeWindow: '{$avgBlockTimeWindow} Blocks'
 analytics:
     blockTimeHistory: 'Block Time History'
     averageBlockTime: 'Average Block Time'
