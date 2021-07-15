@@ -364,7 +364,7 @@ export default class AccountDetails extends Component {
             }
         });
 
-        Meteor.call('cdp.getCDPPrice', 'bnb:usd', (error, result) => {
+        Meteor.call('cdp.price', 'bnb:usd', (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({
@@ -379,7 +379,7 @@ export default class AccountDetails extends Component {
             }
 
         });
-        Meteor.call('cdp.getCDPPrice', 'bnb:usd:30', (error, result) => {
+        Meteor.call('cdp.price', 'bnb:usd:30', (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({
@@ -396,7 +396,7 @@ export default class AccountDetails extends Component {
         });
         
 
-        Meteor.call('cdp.getCDPPrice', 'hard:usd', (error, result) => {
+        Meteor.call('cdp.price', 'hard:usd', (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({
@@ -429,7 +429,7 @@ export default class AccountDetails extends Component {
         });
 
 
-        Meteor.call('account.getIncentive', (error, result) => {
+        Meteor.call('hard.fetchIncentive', (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({
@@ -649,7 +649,7 @@ export default class AccountDetails extends Component {
     }
 
     checkIfCDPIsActive() {
-        Meteor.call('cdp.getCDPParams', (error, result) => {
+        Meteor.call('cdp.fetchParameters', (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({
@@ -661,23 +661,22 @@ export default class AccountDetails extends Component {
                 this.setState({
                     debtParams: result.debt_param
                 });
-
                 let collateralParams = [];
                 for (let c in result.collateral_params) {
-                    Meteor.call('accounts.getAccountCDP', this.state.address, result.collateral_params[c].type, (err, res) => {
+                    let counter = 0;
+                    Meteor.call('cdp.fetchAccount', this.state.address, result.collateral_params[c].type, (err, res) => {
                         if (err) {
                             this.setState({
                                 loading: true,
                                 hasActiveCDP: false
                             })
                         }
-
-                        if (res) {
+                        else if (res) {
                             this.setState({
                                 hasActiveCDP: true,
                             });
-                            collateralParams[c] = result.collateral_params[c];
-
+                            collateralParams[counter] = result.collateral_params[c];
+                            counter++;
                         }
                     })
                 }
@@ -691,7 +690,7 @@ export default class AccountDetails extends Component {
     };
 
     updateDeposits() {
-        Meteor.call('hard.deposits', (error, result) => {
+        Meteor.call('hard.findDepositor', this.state.address, (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({
@@ -699,16 +698,9 @@ export default class AccountDetails extends Component {
                     HARDDeposits: undefined
                 })
             }
-
-            if (result) {
-                for (let c in result) {
-                    if (result[c].depositor === this.state.address) {
-                        this.setState({
-                            HARDDeposits: result[c]
-                        })
-                    }
-                }
+            else if (result) {
                 this.setState({
+                    HARDDeposits: result,
                     loading: false,
                     hasHARDDeposit: true
                 })
@@ -717,7 +709,7 @@ export default class AccountDetails extends Component {
     }
 
     updateBorrows() {
-        Meteor.call('hard.borrows', (error, result) => {
+        Meteor.call('hard.findBorrower', this.state.address, (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({
@@ -725,42 +717,15 @@ export default class AccountDetails extends Component {
                     HARDBorrows: undefined
                 })
             }
-
-            if (result) {
-                for (let c in result) {
-                    if (result[c].borrower === this.state.address) {
-                        this.setState({
-                            HARDBorrows: result[c]
-                        })
-                    }
-                }
+            else if (result) {
                 this.setState({
+                    HARDBorrows: result,
                     loading: false,
                     hasHARDBorrows: true
                 })
             }
         })
     }
-    // createCDP = (callback) =>{
-    //     Meteor.call('create.cdp', {from: this.state.user}, this.getPath(), (err, res) =>{
-    //         if (res){
-    //             if (this.props.address) {
-    //                 res.value.msg.push({
-    //                     type: 'cosmos-sdk/MsgWithdrawValidatorCommission',
-    //                     value: { validator_address: this.props.address }
-    //                 })
-    //             }
-    //             callback(res, res)
-    //         }
-    //         else {
-    //             this.setState({
-    //                 loading: false,
-    //                 simulating: false,
-    //                 errorMessage: 'something went wrong'
-    //             })
-    //         }
-    //     })
-    // }
 
     render() {
         if (this.state.loading) {
@@ -1021,7 +986,7 @@ export default class AccountDetails extends Component {
                                                    CDPs </span>
                                             </NavLink>
                                         </NavItem> : null}
-                                    {this.state.hasActiveCDP ?
+                                    {this.state.hasHARDBorrows || this.state.hasHARDDeposit ?
                                         <NavItem>
                                             <NavLink
                                                 className={classnames({ active: this.state.cdpActiveTab === 'cdp-hard' })}
@@ -1125,47 +1090,46 @@ export default class AccountDetails extends Component {
                                                 <>
                                                         <Row className="hard-deposit-list">
                                                             {this.state.hasHARDDeposit && this.state.HARDDeposits ?
-                                                        this.state.HARDDeposits?.amount.map((denom, index) => {
-                                                            return (
-                                                                <Nav tabs className="mb-2" key={index}>
+                                                                this.state.HARDDeposits?.amount.map((denom, index) => {
+                                                                    return (
+                                                                        <Nav tabs className="mb-2" key={index}>
 
-                                                                    <NavItem key={index} style={{ listStyle: "none", display: "flex", flexWrap: "wrap" }} >
-                                                                        <NavLink
-                                                                            className={classnames({ active: this.state.activeHARDSubtab === `${denom.denom}` })}
-                                                                            onClick={() => { this.toggleHARDSubtab(`${denom.denom}`); }}
-                                                                        >
-                                                                            {denom.denom === 'ukava' ? <span className="cdp-logo denom"><img src="/img/KAVA-symbol.svg" className="cdp-logo-image" /> {denom.denom.toUpperCase()} </span> : null}
-                                                                            {denom.denom === 'xrpb' ? <span className="cdp-logo denom"><img src="/img/XRP-symbol.svg" className="cdp-logo-image" /> {denom.denom.toUpperCase()} </span> : null}
-                                                                            {denom.denom != 'ukava' && denom.denom != 'xrpb' ? <span className="cdp-logo denom"><img src={`/img/${denom.denom.toUpperCase()}-symbol.svg`} className="cdp-logo-image" /> {denom.denom.toUpperCase()} </span> : null}
-                                                                        </NavLink>
-                                                                    </NavItem>
-                                                                </Nav>)
-                                                        }) : null}
+                                                                            <NavItem key={index} style={{ listStyle: "none", display: "flex", flexWrap: "wrap" }} >
+                                                                                <NavLink
+                                                                                    className={classnames({ active: this.state.activeHARDSubtab === `${denom.denom}` })}
+                                                                                    onClick={() => { this.toggleHARDSubtab(`${denom.denom}`); }}
+                                                                                >
+                                                                                    {denom.denom === 'ukava' ? <span className="cdp-logo denom"><img src="/img/KAVA-symbol.svg" className="cdp-logo-image" /> {denom.denom.toUpperCase()} </span> : null}
+                                                                                    {denom.denom === 'xrpb' ? <span className="cdp-logo denom"><img src="/img/XRP-symbol.svg" className="cdp-logo-image" /> {denom.denom.toUpperCase()} </span> : null}
+                                                                                    {denom.denom != 'ukava' && denom.denom != 'xrpb' ? <span className="cdp-logo denom"><img src={`/img/${denom.denom.toUpperCase()}-symbol.svg`} className="cdp-logo-image" /> {denom.denom.toUpperCase()} </span> : null}
+                                                                                </NavLink>
+                                                                            </NavItem>
+                                                                        </Nav>)
+                                                                }) : null}
                                                         </Row>
 
                                                         {this.state.hasHARDDeposit && this.state.HARDDeposits ?
-                                                    this.state.HARDDeposits?.amount.map((denom, index) => {
-                                                        return (
-                                                            <TabContent activeTab={this.state.activeHARDSubtab} key={index}>
-                                                                <TabPane tabId={`${denom.denom}`}>
-                                                                    <HARD
-                                                                        address={this.state.address}
-                                                                        collateralDenom={this.state.activeHARDSubtab}
-                                                                        user={this.state.user}
-                                                                        activeTab={this.state.activeHARDTab}
-                                                                    />
-                                                                </TabPane>
-                                                            </TabContent>)
-                                                    }) : <HARD
-                                                        address={this.state.address}
-                                                        collateralDenom={this.state.activeHARDSubtab}
-                                                        user={this.state.user}
-                                                        activeTab={this.state.activeHARDTab}
-                                                    /> }
+                                                             this.state.HARDDeposits?.amount.map((denom, index) => {
+                                                                 return (
+                                                                     <TabContent activeTab={this.state.activeHARDSubtab} key={index}>
+                                                                         <TabPane tabId={`${denom.denom}`}>
+                                                                             <HARD
+                                                                                 address={this.state.address}
+                                                                                 collateralDenom={this.state.activeHARDSubtab}
+                                                                                 user={this.state.user}
+                                                                                 activeTab={this.state.activeHARDTab}
+                                                                             />
+                                                                         </TabPane>
+                                                                     </TabContent>)
+                                                             }) : <HARD
+                                                                 address={this.state.address}
+                                                                 collateralDenom={this.state.activeHARDSubtab}
+                                                                 user={this.state.user}
+                                                                 activeTab={this.state.activeHARDTab}
+                                                             /> }
                                                     </>
                                                     : null }
                                                 {this.state.activeHARDTab === 'hard-borrows' ?
-
                                                     // HARD Borrows List
                                                     <>
                                                         <Row className="hard-borrow-list">

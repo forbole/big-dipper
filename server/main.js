@@ -2,6 +2,7 @@
 
 import '/imports/startup/server';
 import '/imports/startup/both';
+import _ from 'lodash';
 
 SYNCING = false;
 TXSYNCING = false;
@@ -18,16 +19,19 @@ timerProposalsResults = 0;
 timerMissedBlock = 0;
 timerDelegation = 0;
 timerAggregate = 0;
+timerCDP = 0;
+timerHARD = 0;
+
 
 const DEFAULTSETTINGS = '/default_settings.json';
 
 updateChainStatus = () => {
     Meteor.call('chain.updateStatus', (error, result) => {
         if (error) {
-            console.log("updateStatus: " + error);
+            console.log("updateStatus error: " + error);
         }
         else {
-            console.log("updateStatus: " + result);
+            console.log("updateStatus ok: " + result);
         }
     })
 }
@@ -35,10 +39,10 @@ updateChainStatus = () => {
 updateBlock = () => {
     Meteor.call('blocks.blocksUpdate', (error, result) => {
         if (error) {
-            console.log("updateBlocks: " + error);
+            console.log("updateBlocks error: " + error);
         }
         else {
-            console.log("updateBlocks: " + result);
+            console.log("updateBlocks ok: " + result);
         }
     })
 }
@@ -46,10 +50,10 @@ updateBlock = () => {
 updateTransactions = () => {
     Meteor.call('Transactions.updateTransactions', (error, result) => {
         if (error) {
-            console.log("updateTransactions: " + error);
+            console.log("updateTransactions error: " + error);
         }
         else {
-            console.log("updateTransactions: " + result);
+            console.log("updateTransactions ok: " + result);
         }
     })
 }
@@ -57,7 +61,7 @@ updateTransactions = () => {
 getConsensusState = () => {
     Meteor.call('chain.getConsensusState', (error, result) => {
         if (error) {
-            console.log("get consensus: " + error)
+            console.log("get consensus error: " + error)
         }
     })
 }
@@ -65,10 +69,10 @@ getConsensusState = () => {
 getProposals = () => {
     Meteor.call('proposals.getProposals', (error, result) => {
         if (error) {
-            console.log("get proposal: " + error);
+            console.log("get proposal error: " + error);
         }
         if (result) {
-            console.log("get proposal: " + result);
+            console.log("get proposal result: " + result);
         }
     });
 }
@@ -76,10 +80,10 @@ getProposals = () => {
 getProposalsResults = () => {
     Meteor.call('proposals.getProposalResults', (error, result) => {
         if (error) {
-            console.log("get proposals result: " + error);
+            console.log("get proposals result error: " + error);
         }
         if (result) {
-            console.log("get proposals result: " + result);
+            console.log("get proposals result: ok " + result);
         }
     });
 }
@@ -104,6 +108,84 @@ getDelegations = () => {
             console.log("get delegations ok: " + result)
         }
     });
+}
+
+getCDPList = () => {
+    Meteor.call('cdp.list', (error, result) => {
+        if (error) {
+            console.log("get CDP list error: " + error)
+        }
+        else {
+            console.log("get CDP list ok: " + result)
+        }
+    });
+}
+
+getCDPParameters = () => {
+    Meteor.call('cdp.parameters', (error, result) => {
+        if (error) {
+            console.log("get CDP parameters error: " + error)
+        }
+        else {
+            console.log("get CDP parameters ok: " + result)
+        }
+    });
+}
+
+getAuctions = () => {
+    Meteor.call('cdp.auctions', (error, result) => {
+        if (error) {
+            console.log("get CDP auctions error: " + error)
+        }
+        else {
+            console.log("get CDP auctions ok: " + result)
+        }
+    });
+}
+
+getIncentive = () => {
+    Meteor.call('hard.incentive', (error, result) => {
+        if (error) {
+            console.log("get incentive error: " + error)
+        }
+        else {
+            console.log("get incentive ok: " + result)
+        }
+    });
+}
+
+getHARDDeposits = () => {
+    Meteor.call('hard.deposits', (error, result) => {
+        if (error) {
+            console.log("get HARD deposits error: " + error)
+        }
+        else {
+            console.log("get HARD deposits ok: " + result)
+        }
+    });
+}
+
+getHARDBorrows = () => {
+    Meteor.call('hard.borrows', (error, result) => {
+        if (error) {
+            console.log("get HARD borrows error: " + error)
+        }
+        else {
+            console.log("get HARD borrows ok: " + result)
+        }
+    });
+}
+
+getHARDParameters = () => { 
+    Meteor.call('hard.parameters', (error, result) => {
+        if (error) {
+            console.log("get HARD parameters error: " + error)
+        }
+        else {
+            console.log("get HARD parameters ok: " + result)
+        }
+    });
+    
 }
 
 aggregateMinutely = () => {
@@ -219,6 +301,19 @@ Meteor.startup(function () {
                 timerDelegation = Meteor.setInterval(function () {
                     getDelegations();
                 }, Meteor.settings.params.delegationInterval);
+
+                timerCDP = Meteor.setInterval(function () {
+                    getCDPParameters();
+                    getCDPList();
+                    getAuctions();
+                }, Meteor.settings.params.CDPInterval);
+
+                timerHARD = Meteor.setInterval(function () {
+                    getHARDDeposits();
+                    getHARDBorrows();
+                    getHARDParameters();
+                    getIncentive();
+                }, Meteor.settings.params.HARDInterval);
 
                 timerAggregate = Meteor.setInterval(function () {
                     let now = new Date();

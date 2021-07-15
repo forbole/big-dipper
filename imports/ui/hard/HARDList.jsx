@@ -51,7 +51,7 @@ export default class HARDList extends Component {
         return <div>
             <Helmet>
                 <title>List of HARD Deposits and Borrows on Cosmos Hub | The Big Dipper</title>
-                <meta name="description" content="List of HARD Deposits and Borrows on Cosmos Hub | The Big Dipper" />
+                <meta name="description" content="List of HARD Deposits and Borrows | The Big Dipper" />
             </Helmet>
             <Row>
                 <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>hard.hard</T></h1></Col>

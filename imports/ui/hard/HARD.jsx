@@ -43,7 +43,7 @@ export default class HARD extends Component {
     }
 
     updateParameters() {
-        Meteor.call('hard.parameters', (error, result) => {
+        Meteor.call('hard.fetchParameters', (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({
@@ -61,37 +61,19 @@ export default class HARD extends Component {
     }
 
     updateDeposits() {
-        Meteor.call('hard.deposits', (error, result) => {
+        Meteor.call('hard.findDepositor', this.props.address, (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({
                     loading: true,
-                    deposits: undefined
+                    HARDDeposits: undefined
                 })
             }
-
-            if (result) {
-                for(let c in result){
-                    if(result[c].depositor === this.props.address){
-                        for(let d in result[c].amount){
-                            if (result[c].amount[d].denom === this.props.collateralDenom) {
-                                this.setState({
-                                    HARDDeposits: result[c].amount[d]
-                                })
-                            }
-                        }
-                        for(let e in result[c].index){
-                            if (result[c].index[e].denom === this.props.collateralDenom){
-                                this.setState({
-                                    HARDDepositIndex: result[c].index[e]
-                                })
-                            }
-                        }     
-                    }
-                }
+            else if (result) {
                 this.setState({
+                    HARDDeposits: result.amount[0],
+                    HARDDepositIndex: result.index[0],
                     loading: false,
-                    deposits: result,
                     isDepositor: true
                 })
             }
@@ -99,40 +81,22 @@ export default class HARD extends Component {
     }
 
     updateBorrows() {
-        Meteor.call('hard.borrows', (error, result) => {
+        Meteor.call('hard.findBorrower', this.props.address, (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({
                     loading: true,
-                    HARDBorrows: null
+                    HARDBorrows: undefined,
+                    isDepositor: false
                 })
             }
-
-            if (result) {
-                if (result) {
-                    for (let c in result) {
-                        if (result[c].borrower === this.props.address) {
-                            for (let d in result[c].amount) {
-                                if (result[c].amount[d].denom === this.props.collateralDenom) {
-                                    this.setState({
-                                        HARDBorrows: result[c].amount[d]
-                                    })
-                                }
-                            }
-                            for (let e in result[c].index) {
-                                if (result[c].index[e].denom === this.props.collateralDenom) {
-                                    this.setState({
-                                        HARDBorrowIndex: result[c].index[e]
-                                    })
-                                }
-                            }
-                        }
-                    }
-                    this.setState({
-                        loading: false,
-                        isDepositor: true
-                    })
-                }
+            else if (result) {
+                this.setState({
+                    HARDBorrows: result.amount[0],
+                    HARDBorrowIndex: result.index[0],
+                    loading: false,
+                    isDepositor: true
+                })
             }
         })
     }
@@ -237,19 +201,18 @@ export default class HARD extends Component {
             }
         }
         if (this.props.activeTab === 'hard-borrows') {
-
             if (this.state.HARDBorrows) {
                 return <div className="hard-borrows-list">
                     <Table responsive>
                         <tbody>
                             <tr>
                                 <th scope="row" className="w-25 text-muted"><T>hard.borrower</T></th>
-                                <td><Account address={this.props.address} /></td>
+                                <td><Account address={this.props?.address} /></td>
                             </tr>
                             <tr>
                                 <th scope="row" className="w-25 text-muted"><T>hard.amount</T></th>
                                 <td>
-                                    <div>{new Coin(this.state.HARDBorrows.amount, this.state.HARDBorrows.denom).toString()}</div>
+                                    <div>{new Coin(this.state.HARDBorrows?.amount, this.state.HARDBorrows?.denom).toString()}</div>
 
                                 </td>
                             </tr>

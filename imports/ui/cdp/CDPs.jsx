@@ -52,8 +52,8 @@ export default class CDPs extends Component{
     render() {
         return <div>
             <Helmet>
-                <title>List of CDPs on Cosmos Hub | The Big Dipper</title>
-                <meta name="description" content="List of CDPs on Cosmos Hub | The Big Dipper" />
+                <title>List of CDPs | The Big Dipper</title>
+                <meta name="description" content="List of CDPs | The Big Dipper" />
             </Helmet>
             <Row>
                 <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>cdp.cdps</T></h1></Col>

@@ -31,7 +31,6 @@ export default class CDP extends Component {
             deposits: [],
             isDepositor: false,
             cdpOwner: '',
-            depositValue: 0,
             BNB_USD: 0,
             BNB_USD_30: 0,
             denomType: '',
@@ -60,7 +59,7 @@ export default class CDP extends Component {
     }
 
     updateCDP() {
-        Meteor.call('accounts.getAccountCDP', this.props.owner, this.props.collateralType, (error, result) => {
+        Meteor.call('cdp.fetchAccount', this.props.owner, this.props.collateralType, (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({
@@ -68,37 +67,27 @@ export default class CDP extends Component {
                     userCDP: null
                 })
             }
-            if (result) {
+            else if (result) {
                 this.setState({
                     loading: false,
                     userCDP: result
                 })
             }
-            if (result === null) {
-                this.setState({
-                    loading: false,
-                    userCDP: undefined
-                })
-            }
+            
         })
     }
 
     updateDeposits() {
-        Meteor.call('cdp.getDeposits', this.props.owner, this.props.collateralType, (error, result) => {
-            if (!error) {
+        Meteor.call('cdp.fetchAccount', this.props.user, this.props.collateralType, (error, result) => {
+            if (error) {
                 this.setState({
-                    deposits: result,
                     isDepositor: false,
                 })
-
-                for (let i in result) {
-                    if (this.props.user == result[i].depositor) {
-                        this.setState({
-                            isDepositor: true,
-                            depositValue: result[i].amount.amount
-                        })
-                    }
-                }
+            }
+            else if(result){
+                this.setState({
+                    isDepositor: true,
+                })
             }
         })
     }
@@ -108,17 +97,8 @@ export default class CDP extends Component {
         this.updateDeposits();
         this.getUserBalances();
 
-        // timer = Meteor.setInterval(() => {
-        //     this.updateCDP();
-        //     this.updateDeposits();
-        //     this.getUserBalances();
-        // }, 9000)
-
     }
 
-    // componentWillUnmount() {
-    //     Meteor.clearInterval(timer);
-    // }
 
     componentDidUpdate(prevProps) {
         if (!_.isEqual(prevProps.collateralType, this.props.collateralType)){
@@ -137,14 +117,13 @@ export default class CDP extends Component {
         return totalValue
     }
 
-    getCDPParams(denomType, valueToGet) {
-        let value = (this.props.collateralParams).find(({ denom }) => denom === denomType);
-        let totalValue = value ? value[valueToGet] : null;
-        if(totalValue >= 0){
-            return parseFloat(totalValue)
-        }
-        else{
-            return totalValue
+    getCollateralizationRatio(denomType) {
+        for (let c in this.props?.collateralParams){
+            if (this.props.collateralParams[c]?.type === denomType){
+                if (this.props.collateralParams[c]?.liquidation_ratio) {
+                    return parseFloat(this.props.collateralParams[c]?.liquidation_ratio)
+                }
+            }
         }
     }
 
@@ -209,7 +188,7 @@ export default class CDP extends Component {
                         collateralDenom={this.props.collateralDenom ? this.props.collateralDenom : null}
                         principalDenom={this.state.userCDP ? this.state.userCDP.cdp.principal.denom : null}
                         principalDeposited={this.state.userCDP ? this.state.userCDP.cdp.principal.amount : null}
-                        collateralizationRatio={this.getCDPParams(this.props.collateralDenom, 'liquidation_ratio') ?? null}
+                        collateralizationRatio={this.getCollateralizationRatio(this.props.collateralDenom) ?? null}
                     />
                     {((this.props.owner == this.props.user) || (this.state.isDepositor)) ? <WithdrawCDPButton
                         amountAvailable={this.state.total ? this.findTotalValue(this.state.total, this.props.collateralDenom) : null}
@@ -219,7 +198,7 @@ export default class CDP extends Component {
                         collateralDenom={this.props.collateralDenom ? this.props.collateralDenom : null}
                         principalDenom={this.state.userCDP ? this.state.userCDP.cdp.principal.denom : null}
                         principalDeposited={this.state.userCDP ? this.state.userCDP.cdp.principal.amount : null}
-                        collateralizationRatio={this.getCDPParams(this.props.collateralDenom, 'liquidation_ratio') ?? null}
+                        collateralizationRatio={this.getCollateralizationRatio(this.props.collateralDenom) ?? null}
                         isDepositor={this.state.isDepositor ? this.state.isDepositor : null}
                     /> : null}
                     {(this.props.owner == this.props.user) ? <DrawDebtCDPButton
@@ -229,7 +208,7 @@ export default class CDP extends Component {
                         collateralDenom={this.props.collateralDenom ? this.props.collateralDenom : null}
                         principalDenom={this.state.userCDP ? this.state.userCDP.cdp.principal.denom : null}
                         principalDeposited={this.state.userCDP ? this.state.userCDP.cdp.principal.amount : null}
-                        collateralizationRatio={this.getCDPParams(this.props.collateralDenom, 'liquidation_ratio') ?? null}
+                        collateralizationRatio={this.getCollateralizationRatio(this.props.collateralDenom) ?? null}
                     /> : null}
 
                     {(this.props.owner == this.props.user) ? <RepayDebtCDPButton
@@ -239,7 +218,7 @@ export default class CDP extends Component {
                         collateralDenom={this.props.collateralDenom ? this.props.collateralDenom : null}
                         principalDenom={this.state.userCDP ? this.state.userCDP.cdp.principal.denom : null}
                         principalDeposited={this.state.userCDP ? this.state.userCDP.cdp.principal.amount : null}
-                        collateralizationRatio={this.getCDPParams(this.props.collateralDenom, 'liquidation_ratio') ?? null}
+                        collateralizationRatio={this.getCollateralizationRatio(this.props.collateralDenom) ?? null}
                         disabled={!this.state.userCDP}
                     /> : null}
                 </div>
@@ -269,7 +248,7 @@ export default class CDP extends Component {
                         CDPParameters={this.props.collateralParams ?? null}
                         debtParams={this.props.debtParams ??  null} 
                         collateralDenom={this.props.collateralDenom ? this.props.collateralDenom : null}
-                        collateralizationRatio={this.getCDPParams(this.props.collateralDenom, 'liquidation_ratio') ?? null}
+                        collateralizationRatio={this.getCollateralizationRatio(this.props.collateralDenom) ?? null}
                     />
                 </div>
             </div >
