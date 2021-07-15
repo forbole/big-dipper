@@ -121,6 +121,17 @@ getCDPList = () => {
     });
 }
 
+getCDPParameters = () => {
+    Meteor.call('cdp.parameters', (error, result) => {
+        if (error) {
+            console.log("get CDP parameters error: " + error)
+        }
+        else {
+            console.log("get CDP parameters ok: " + result)
+        }
+    });
+}
+
 getAuctions = () => {
     Meteor.call('cdp.auctions', (error, result) => {
         if (error) {
@@ -139,17 +150,6 @@ getIncentive = () => {
         }
         else {
             console.log("get incentive ok: " + result)
-        }
-    });
-}
-
-getCDPParameters = () => {
-    Meteor.call('cdp.parameters', (error, result) => {
-        if (error) {
-            console.log("get CDP parameters error: " + error)
-        }
-        else {
-            console.log("get CDP parameters ok: " + result)
         }
     });
 }
