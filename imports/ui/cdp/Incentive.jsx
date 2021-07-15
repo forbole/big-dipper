@@ -24,7 +24,7 @@ export default class Incentive extends Component {
 
     getIncentive() {
 
-        Meteor.call('account.getIncentive',  (error, result) => {
+        Meteor.call('hard.fetchIncentive',  (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({

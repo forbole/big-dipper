@@ -429,7 +429,7 @@ export default class AccountDetails extends Component {
         });
 
 
-        Meteor.call('account.getIncentive', (error, result) => {
+        Meteor.call('hard.fetchIncentive', (error, result) => {
             if (error) {
                 console.warn(error);
                 this.setState({
@@ -728,8 +728,6 @@ export default class AccountDetails extends Component {
     }
 
     render() {
-        console.log(this.state.debtParams)
-        console.log(this.state.collateralParams)
         if (this.state.loading) {
             return <div id="account">
                 <h1 className="d-none d-lg-block"><T>accounts.accountDetails</T></h1>

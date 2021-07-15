@@ -46,6 +46,25 @@ Meteor.methods({
             console.log(e)
         }
     },
+
+    'hard.incentive': function () {
+        this.unblock();
+        let url = LCD + '/incentive/rewards'
+
+        try {
+            let response = HTTP.get(url);
+            if (response.statusCode == 200) {
+                let incentive = JSON.parse(response.content).result;
+                HARDCollection.upsert({}, { $set: { incentive: incentive } });
+                return incentive
+            }
+        }
+        catch (e) {
+            console.log(url);
+            console.log(e)
+        }
+    },
+
     'hard.fetchList': function () {
         this.unblock();
         try{
@@ -94,6 +113,17 @@ Meteor.methods({
             let HARDList = HARDCollection.find().fetch();
             let params = HARDList[0].parameters;
             return params
+        }
+        catch (e) {
+            console.log(e)
+        }
+    },
+
+    'hard.fetchIncentive': function () {
+        this.unblock();
+        try {
+            let hard = HARDCollection.find().fetch();
+            return hard[0].incentive
         }
         catch (e) {
             console.log(e)
