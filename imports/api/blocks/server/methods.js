@@ -434,20 +434,29 @@ Meteor.methods({
                     let chainStatus = Chain.findOne({chainId:block.block.header.chain_id});
                     let lastSyncedTime = chainStatus?chainStatus.lastSyncedTime:0;
                     let timeDiff;
-                    let blockTime = Meteor.settings.params.defaultBlockTime;
+                    let blockTime = 0;
+                    let res;
                     if (lastSyncedTime){
+                        let blockDiff = Meteor.settings.public.averageBlockTimeWindow;
+                        let pastBlockHeight = (height - blockDiff > 0) ? (height - blockDiff) : (height - 1);
+                        let getPastBlock = `${API}/blocks/${pastBlockHeight}`;
+                        try{
+                            res = HTTP.get(getPastBlock);
+                        }
+                        catch(e){
+                            console.log(e)
+                        }
+                        let pastBlockTime = new Date(JSON.parse(res?.content)?.block?.header?.time);
                         let dateLatest = new Date(blockData.time);
                         let dateLast = new Date(lastSyncedTime);
-                        let genesisTime = new Date(Meteor.settings.public.genesisTime);
                         timeDiff = Math.abs(dateLatest.getTime() - dateLast.getTime());
-                        // blockTime = (chainStatus.blockTime * (blockData.height - 1) + timeDiff) / blockData.height;
-                        blockTime = (dateLatest.getTime() - genesisTime.getTime()) / blockData.height;
+                        blockTime = (height - blockDiff > 0) ? ((dateLatest.getTime() - pastBlockTime.getTime()) / blockDiff) : (dateLatest.getTime() - pastBlockTime.getTime());
                     }
 
                     let endGetValidatorsTime = new Date();
                     console.log("Get height validators time: "+((endGetValidatorsTime-startGetValidatorsTime)/1000)+"seconds.");
 
-                    Chain.update({chainId:block.block.header.chainId}, {$set:{lastSyncedTime:blockData.time, blockTime:blockTime}});
+                    Chain.update({ chainId: block.block.header.chain_id}, {$set:{lastSyncedTime:blockData.time, blockTime:blockTime}});
 
                     analyticsData.averageBlockTime = blockTime;
                     analyticsData.timeDiff = timeDiff;
