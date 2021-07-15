@@ -2,6 +2,7 @@
 
 import '/imports/startup/server';
 import '/imports/startup/both';
+import _ from 'lodash';
 
 SYNCING = false;
 TXSYNCING = false;
@@ -116,6 +117,28 @@ getCDPList = () => {
         }
         else {
             console.log("get CDP list ok: " + result)
+        }
+    });
+}
+
+getAuctions = () => {
+    Meteor.call('cdp.auctions', (error, result) => {
+        if (error) {
+            console.log("get CDP auctions error: " + error)
+        }
+        else {
+            console.log("get CDP auctions ok: " + result)
+        }
+    });
+}
+
+getIncentive = () => {
+    Meteor.call('hard.incentive', (error, result) => {
+        if (error) {
+            console.log("get incentive error: " + error)
+        }
+        else {
+            console.log("get incentive ok: " + result)
         }
     });
 }
@@ -282,12 +305,14 @@ Meteor.startup(function () {
                 timerCDP = Meteor.setInterval(function () {
                     getCDPList();
                     getCDPParameters();
+                    getAuctions();
                 }, Meteor.settings.params.CDPInterval);
 
                 timerHARD = Meteor.setInterval(function () {
                     getHARDDeposits();
                     getHARDBorrows();
                     getHARDParameters();
+                    getIncentive();
                 }, Meteor.settings.params.HARDInterval);
 
                 timerAggregate = Meteor.setInterval(function () {

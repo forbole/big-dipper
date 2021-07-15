@@ -57,13 +57,13 @@ Meteor.methods({
     'cdp.price': function (market) {
         this.unblock();
         let url = LCD + '/pricefeed/price/' + market;
-        let cdpPrice = null;
 
         try {
             let response = HTTP.get(url);
             if (response.statusCode == 200) {
-                cdpPrice = JSON.parse(response.content).result.price;
-                return cdpPrice
+                price = JSON.parse(response.content).result.price;
+                CDPCollection.upsert({}, { $set: { price: price } });
+                return price
             }
         }
         catch (e) {
@@ -71,14 +71,16 @@ Meteor.methods({
         }
     },
 
-    'cdp.deposits': function (address, collateral) {
+    'cdp.auctions': function () {
         this.unblock();
-        let url = LCD + '/cdp/cdps/cdp/deposits/' + address + '/' + collateral;
+        let url = LCD + '/auction/auctions'
 
         try {
             let response = HTTP.get(url);
             if (response.statusCode == 200) {
-                return JSON.parse(response.content).result
+                let auctions = JSON.parse(response.content).result;
+                CDPCollection.upsert({}, { $set: { auctions: auctions } });
+                return auctions
             }
         }
         catch (e) {
@@ -90,8 +92,8 @@ Meteor.methods({
     'cdp.fetchList': function () {
         this.unblock();
         try{
-            let CDPList = CDPCollection.find().fetch();
-            return CDPList[0]
+            let cdp = CDPCollection.find().fetch();
+            return cdp[0]
         }
         catch(e){
             console.log(e)
@@ -101,8 +103,8 @@ Meteor.methods({
     'cdp.fetchParameters': function () {
         this.unblock();
         try {
-            let parameters = CDPCollection.find().fetch();
-            return parameters[0].parameters
+            let cdp = CDPCollection.find().fetch();
+            return cdp[0].parameters
         }
         catch (e) {
             console.log(e)
@@ -125,5 +127,28 @@ Meteor.methods({
         catch(e){
             console.log(e)
         }
-    }
+    },
+
+    'cdp.fetchPrice': function () {
+        this.unblock();
+        try {
+            let cdp = CDPCollection.find().fetch();
+            return cdp[0].price
+        }
+        catch (e) {
+            console.log(e)
+        }
+    },
+
+    'cdp.fetchAuction': function () {
+        this.unblock();
+        try {
+            let cdp = CDPCollection.find().fetch();
+            return cdp[0].auctions
+        }
+        catch (e) {
+            console.log(e)
+        }
+    },
+
 })

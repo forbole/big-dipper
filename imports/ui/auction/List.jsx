@@ -45,7 +45,7 @@ export default class List extends Component {
     }
 
     getCDPList = () => {
-        Meteor.call('account.auction', (error, result) => {
+        Meteor.call('cdp.fetchAuction', (error, result) => {
             if (result && result.length > 0) {
                 this.setState({
                     auctionList: result.map((list, i) => {

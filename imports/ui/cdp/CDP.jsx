@@ -31,7 +31,6 @@ export default class CDP extends Component {
             deposits: [],
             isDepositor: false,
             cdpOwner: '',
-            depositValue: 0,
             BNB_USD: 0,
             BNB_USD_30: 0,
             denomType: '',
@@ -79,21 +78,16 @@ export default class CDP extends Component {
     }
 
     updateDeposits() {
-        Meteor.call('cdp.deposits', this.props.owner, this.props.collateralType, (error, result) => {
-            if (!error) {
+        Meteor.call('cdp.fetchAccount', this.props.user, this.props.collateralType, (error, result) => {
+            if (error) {
                 this.setState({
-                    deposits: result,
                     isDepositor: false,
                 })
-
-                for (let i in result) {
-                    if (this.props.user == result[i].depositor) {
-                        this.setState({
-                            isDepositor: true,
-                            depositValue: result[i].amount.amount
-                        })
-                    }
-                }
+            }
+            else if(result){
+                this.setState({
+                    isDepositor: true,
+                })
             }
         })
     }

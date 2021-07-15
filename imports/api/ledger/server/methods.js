@@ -59,37 +59,6 @@ Meteor.methods({
         this.unblock();
         let validator = Validators.findOne({ delegator_address: address })
         return validator;
-    },
-    'account.getIncentive': function () {
-        this.unblock();
-        let url = LCD + '/incentive/rewards'
-
-        try {
-            let response = HTTP.get(url);
-            if (response.statusCode == 200) {
-                return JSON.parse(response.content).result
-            }
-        }
-        catch (e) {
-            console.log(url);
-            console.log(e)
-        }
-    },
-
-    'account.auction': function () {
-        this.unblock();
-        let url = LCD + '/auction/auctions'
-
-        try {
-            let response = HTTP.get(url);
-            if (response.statusCode == 200) {
-                return JSON.parse(response.content).result
-            }
-        }
-        catch (e) {
-            console.log(url);
-            console.log(e)
-        }
     }
 
 
