@@ -235,13 +235,22 @@ Meteor.methods({
         this.unblock();
         Chain.find().sort({created:-1}).limit(1);
     },
+    'chain.shouldUpdateTotalCosmosAccounts': function () {
+        this.unblock();
+        let date = new Date();
+        let chain = Chain.find().fetch();
+        let lastUpdated = chain?.lastUpdated ? new Date(chain?.lastUpdated) : new Date();
+        let timeDifference = moment(date).diff(moment(lastUpdated), 'hours');
+        let shouldUpdate = timeDifference >= 24 ? true : false;
+        return shouldUpdate;
+    },
     'chain.getTotalCosmosAccounts': function (totalNumberOfAccountsIndex) {
         this.unblock();
         let date = new Date();
         let dateUTC = date.toUTCString();
         let totalNumberOfCosmosAccounts = {
             total: totalNumberOfAccountsIndex,
-            updatedAt: dateUTC
+            lastUpdated: dateUTC
         }
         try {
             Chain.upsert({ chainId: Meteor.settings.public.chainId }, { $set: { "totalNumberOfCosmosAccounts": totalNumberOfCosmosAccounts } });
