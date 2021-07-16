@@ -77,7 +77,7 @@ chainStatus:
     outOfValidators: 'out of {$totalValidators} validators'
     onlineVotingPower: 'Online Voting Power'
     fromTotalStakes: '{$percent} from {$totalStakes} {$denomPlural}'
-    totalAccounts: 'Total Number Of Cosmos Accounts'
+    totalAccounts: 'Cosmos Accounts (Total)'
 analytics:
     blockTimeHistory: 'Block Time History'
     averageBlockTime: 'Average Block Time'
