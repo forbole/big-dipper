@@ -235,7 +235,7 @@ Meteor.methods({
         this.unblock();
         Chain.find().sort({created:-1}).limit(1);
     },
-    'chain.shouldUpdateTotalCosmosAccounts': function () {
+    'chain.shouldUpdateCosmosAccountsNumber': function () {
         this.unblock();
         let date = new Date();
         let chain = Chain.find().fetch();
@@ -244,7 +244,7 @@ Meteor.methods({
         let shouldUpdate = timeDifference >= 24 ? true : false;
         return shouldUpdate;
     },
-    'chain.getTotalCosmosAccounts': function (totalNumberOfAccountsIndex) {
+    'chain.getCosmosAccountsNumber': function (totalNumberOfAccountsIndex) {
         this.unblock();
         let date = new Date();
         let dateUTC = date.toUTCString();
