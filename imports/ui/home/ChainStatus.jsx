@@ -156,11 +156,8 @@ export default class ChainStatus extends React.Component {
                     <Row className="status text-center">
                         <Col lg={4} md={6}>
                             <Card body>
-                                <CardTitle><T>chainStatus.latestHeight</T></CardTitle>
-                                <CardText>
-                                    <span className="display-4 value text-primary">{this.state.blockHeight}</span>
-                                    {this.state.blockTime}
-                                </CardText>
+                                <CardTitle><T>chainStatus.totalAccounts</T></CardTitle>
+                                <CardText><span className="display-4 value text-primary">{this.state.totalNumberOfCosmosAccounts?.total ?? 0}</span>{this.state.totalNumberOfCosmosAccounts?.lastUpdated ?? new Date().toUTCString()}</CardText>
                             </Card>
                         </Col>
                         <Col lg={4} md={6}>
@@ -190,8 +187,11 @@ export default class ChainStatus extends React.Component {
                         </Col>
                         <Col lg={6} md={6}>
                             <Card body>
-                                <CardTitle><T>chainStatus.totalAccounts</T></CardTitle>
-                                <CardText><span className="display-4 value text-primary">{this.state.totalNumberOfCosmosAccounts?.total}</span>{this.state.totalNumberOfCosmosAccounts?.updatedAt}</CardText>
+                                <CardTitle><T>chainStatus.latestHeight</T></CardTitle>
+                                <CardText>
+                                    <span className="display-4 value text-primary">{this.state.blockHeight}</span>
+                                    {this.state.blockTime}
+                                </CardText>
                             </Card>
                         </Col>
                         <Col lg={6} md={6}>
