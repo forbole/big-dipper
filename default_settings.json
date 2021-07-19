@@ -91,7 +91,7 @@
                 "gas": "180000"
             }
         },
-        "CAPTCHA_FRONTEND_KEY": "6LfIPO0aAAAAAG7oSw9JSmi6E58IRuhVQYzKShHl"
+        "CAPTCHA_FRONTEND_KEY": "6Lca4qcbAAAAADg1NuxQ0lVA0LFideOlqc4ofdsY"
     },
     "remote":{
         "rpc":"http://localhost:26657",
