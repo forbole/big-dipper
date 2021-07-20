@@ -22,6 +22,7 @@ timerMissedBlock = 0;
 timerDelegation = 0;
 timerAggregate = 0;
 timerFetchKeybase = 0;
+timerValidatorsDidNotVote = 0;
 
 const DEFAULTSETTINGS = '/default_settings.json';
 
@@ -117,6 +118,17 @@ getDelegations = () => {
         }
         else{
             console.log("get delegations ok: %o", result)
+        }
+    });
+}
+
+getValidatorsDidNotVote = () => {
+    Meteor.call('proposals.getValidatorsDidNotVote', (error, result) => {
+        if (error) {
+            console.log("get validators did not vote error: %o", error)
+        }
+        else {
+            console.log("get validators did not vote ok: %o", result)
         }
     });
 }
@@ -220,6 +232,10 @@ Meteor.startup(async function(){
             timerProposalsResults = Meteor.setInterval(function (){
                 getProposalsResults();
             }, Meteor.settings.params.proposalInterval);
+
+            timerValidatorsDidNotVote = Meteor.setInterval(function () {
+                getValidatorsDidNotVote()
+            }, Meteor.settings.params.proposalInterval)
         }
 
         timerMissedBlock = Meteor.setInterval(function(){
