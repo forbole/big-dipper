@@ -270,6 +270,22 @@ export default class Proposal extends Component{
         </Result>
     }
 
+    renderValidatorsWithoutVote() {
+        return <Result className="tally-result-detail" pose={this.state.open ? 'open' : 'closed'}>
+            <Card className='tally-result-table'>
+                {this.props.proposal.validatorsDidNotVote.list.map((vote, i) =>
+                    (vote.operator_address ? 
+                        <Card body key={i}><Row className='voter-info'>
+                            <Col className="d-none d-md-block counter data" md={1}>{i + 1}</Col>
+                            <Col className="moniker data" md={4}>
+                                <Account address={vote.operator_address} />
+                            </Col>
+                        </Row></Card> : null)
+                )}
+            </Card>
+        </Result>
+    }
+
     render(){
         if (this.props.loading){
             return <Spinner type="grow" color="primary" />
@@ -403,6 +419,14 @@ export default class Proposal extends Component{
                                     <Col xs={1} onClick={(e) => this.handleClick(4,e)}><i className="material-icons">{this.state.open === 4 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
                                         {this.renderTallyResultDetail(4, 'VOTE_OPTION_NO_WITH_VETO')}
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col xs={6} sm={5} md={4}><i className="fas fa-question-circle text-danger"></i> <T>common.didNotVote</T></Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.props?.proposal?.validatorsDidNotVote?.list.length ?? ''}</Col>
+                                    <Col xs={1} onClick={(e) => this.handleClick(6, e)}><i className="material-icons">{this.state.open === 6 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
+                                    <Col xs={12}>
+                                        {this.renderValidatorsWithoutVote()}
                                     </Col>
                                 </Row>
                                 {this.state.voteStarted?<Row>
