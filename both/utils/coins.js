@@ -61,11 +61,11 @@ toString (precision) {
     else if (!this._coin.displayName){
         return `${this.stakingAmount ?? 0} ${Coin.StakingCoin.displayName}`
     }
-    else if (this.amount % 1 === 0){
+    else if (this.amount % Coin.StakingCoin.fraction === 0){
         return `${this.stakingAmount} ${this._coin.displayName}`
     }
     else {
-        return `${precision?numbro(this.stakingAmount).format('0,0.' + '0'.repeat(precision)):autoformat(this.stakingAmount)} ${this._coin.displayName}`
+        return `${precision?numbro(this.stakingAmount).format({trimMantissa: true,mantissa: precision}):autoformat(this.stakingAmount)} ${this._coin.displayName}`
     }
 }
 }
