@@ -146,7 +146,10 @@ Meteor.methods({
                         }
                     };
                     try {
-                        Proposals.update({ proposalId: proposals[i].proposalId }, { $set: { validatorsDidNotVote: { list: validatorsWithoutVote, lastUpdated: new Date() } } });
+                        let list = validatorsWithoutVote.sort(function (a, b) {
+                            return ('' + a.description.moniker).localeCompare(b.description.moniker);
+                        });
+                        Proposals.update({ proposalId: proposals[i].proposalId }, { $set: { validatorsDidNotVote: { list: list, lastUpdated: new Date() } } });
                     }
                     catch (e) {
                         console.log(e);
