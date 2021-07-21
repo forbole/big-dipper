@@ -24,12 +24,13 @@ export default class Faucet extends Component {
             valid: false,
             modalOpen: false,
             transactionStatus: TRANSACTION_STATUS_PENDING,
+            isCaptchaFilled: false,
         }
     }
 
     validate = () => {
         this.setState({
-            valid: this.state.valid = this.state.amount !== '' && this.state.walletAddress.startsWith(Meteor.settings.public.bech32PrefixAccAddr),
+            valid: this.state.valid = this.state.amount !== '' && this.state.walletAddress.startsWith(Meteor.settings.public.bech32PrefixAccAddr) && this.state.isCaptchaFilled,
         });
     }
 
@@ -49,57 +50,66 @@ export default class Faucet extends Component {
         }, this.validate);
     }
 
-    onClickSend = () => {
+    onChangeCaptchaStatus = (status) => {
+        this.setState({
+            isCaptchaFilled: status
+        }, this.validate);
+    }
+
+    onClickSend = async () => {
         if (this.state.valid !== true) {
             return;
         }
 
-        this.nodes.captcha.current.execute((captchaResponse) => {
+        let captchaResponse = await this.nodes.captcha.current.execute();
+        if (captchaResponse === null) {
+            return;
+        }
+
+        this.setState({
+            modalOpen: true,
+            transactionStatus: TRANSACTION_STATUS_PENDING,
+        });
+
+        const address = this.state.walletAddress;
+        const amount = parseInt(parseFloat(this.state.amount * Meteor.settings.public.coins[4].fraction))
+        const data = {
+            address: address,
+            coins: [`${amount}${Meteor.settings.public.coins[4].denom}`],
+            captchaResponse
+        };
+
+        HTTP.post(Meteor.settings.public.faucetUrl, {
+            data
+        }, (err, result) => {
+            if (err !== null || result.statusCode !== 200) {
+                this.nodes.captcha.current.reset();
+                if(result.statusCode === 401){
+                    console.error("WRONG CAPTCHA");
+                    this.setState({
+                        transactionStatus: TRANSACTION_STATUS_DONE_ERROR_WRONG_CAPTCHA,
+                    });
+                    return;
+                }
+
+                console.error(err, result);
+                this.setState({
+                    transactionStatus: TRANSACTION_STATUS_DONE_ERROR,
+                });
+                return;
+            }
+
+            result = JSON.parse(result.content);
+            if (result.transfers[0].status !== 'ok') {
+                console.error(result);
+                this.setState({
+                    transactionStatus: TRANSACTION_STATUS_DONE_ERROR,
+                });
+                return;
+            }
 
             this.setState({
-                modalOpen: true,
-                transactionStatus: TRANSACTION_STATUS_PENDING,
-            });
-
-            const address = this.state.walletAddress;
-            const amount = parseInt(parseFloat(this.state.amount * Meteor.settings.public.coins[4].fraction))
-            const data = {
-                address: address,
-                coins: [`${amount}${Meteor.settings.public.coins[4].denom}`],
-                captchaResponse
-            };
-
-            HTTP.post(Meteor.settings.public.faucetUrl, {
-                data
-            }, (err, result) => {
-                if (err !== null || result.statusCode !== 200) {
-                    if(result.statusCode === 401){
-                        console.error("WRONG CAPTCHA");
-                        this.setState({
-                            transactionStatus: TRANSACTION_STATUS_DONE_ERROR_WRONG_CAPTCHA,
-                        });
-                        return;
-                    }
-
-                    console.error(err, result);
-                    this.setState({
-                        transactionStatus: TRANSACTION_STATUS_DONE_ERROR,
-                    });
-                    return;
-                }
-
-                result = JSON.parse(result.content);
-                if (result.transfers[0].status !== 'ok') {
-                    console.error(result);
-                    this.setState({
-                        transactionStatus: TRANSACTION_STATUS_DONE_ERROR,
-                    });
-                    return;
-                }
-
-                this.setState({
-                    transactionStatus: TRANSACTION_STATUS_DONE_OK,
-                });
+                transactionStatus: TRANSACTION_STATUS_DONE_OK,
             });
         });
     }
@@ -134,7 +144,7 @@ export default class Faucet extends Component {
                     <br />
                     <Input value={this.state.amount} onChange={this.onChangeAmount} placeholder={i18n.__('faucet.placeHolderAmount').replace('%s', Meteor.settings.public.coins[1].displayName)}/>
                     <br />
-                    <CaptchaWrapper ref={ this.nodes.captcha } className="d-flex justify-content-center" />
+                    <CaptchaWrapper ref={ this.nodes.captcha } onChangeStatus={this.onChangeCaptchaStatus} className="d-flex justify-content-center" />
                     <div className="d-flex justify-content-center mt-5">
                         <button type="button" className={ `btn btn-primary ${this.state.valid === false ? 'disabled' : ''}` } onClick={ this.onClickSend }>{i18n.__('faucet.send').replace('%s', Meteor.settings.public.coins[0].displayName)}</button>
                     </div>

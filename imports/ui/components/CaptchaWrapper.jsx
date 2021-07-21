@@ -4,6 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import '../stylesheets/captcha-wrapper.css';
+import { VersionParams } from '@cosmjs/stargate/build/codec/tendermint/types/params';
 
 export default class CaptchaWrapper extends React.Component {
 
@@ -11,111 +12,93 @@ export default class CaptchaWrapper extends React.Component {
         super(props);
         
         this.ready = false;
-        // this.captchaId = null;
-        // this.executeCallback = null;
+        this.captchaId = null;
+        this.executeCallback = null;
 
-        // this.nodes = {
-        //     'captcha': React.createRef(),
-        // };
+        this.nodes = {
+            'captcha': React.createRef(),
+        };
 
-        // this.onData = this.onData.bind(this);
-        // this.onError = this.onData.bind(this, null);
+        this.onData = this.onData.bind(this);
+        this.onError = this.onData.bind(this, null);
+
+        CaptchaWrapper.captchsMap.add(this);
+        this.token = null;
+        this.onChangeCaptchaStatus = props.onChangeStatus;
     }
 
-    // onData(response) {
-    //     const callback = this.executeCallback;
-    //     if (callback === null) {
-    //         return;
-    //     }
+    isCaptchaFilled() {
+        return this.token !== null;
+    }
 
-    //     this.executeCallback = null;
-
-    //     if (response === null) {
-    //         // Alert.show('Wrong catpcha, please reload the page and try again', () => {
-    //         //     window.location.reload();
-    //         // });
-    //         console.error('Wrong catpcha, please reload the page and try again');
-    //         return;
-    //     }
-
-    //     callback(response);
-    // }
-
-    async execute(callback) {
+    async execute() {
         if (this.ready === false) {
-            callback(null);
-            return;
+            return null;
         }
 
-        try {
-            const token = await grecaptcha.enterprise.execute(Meteor.settings.public.CAPTCHA_FRONTEND_KEY, {action: 'login'});
-            callback(token);
-        } catch (er) {
-            callback(null);
-        }
-
-        // grecaptcha.execute(this.captchaId);
-        // this.executeCallback = callback;
+        return this.token;
     }
 
-    // getResponse() {
-    //     return grecaptcha.getResponse(this.captchaId);
-    // }
+    onData(response) {
+        this.token = response;
+        this.onChangeCaptchaStatus(this.isCaptchaFilled());
+    }
 
-    // reset() {
-    //     grecaptcha.reset(this.captchaId);
-    // }
+    getResponse() {
+        return grecaptcha.enterprise.getResponse(this.captchaId);
+    }
+
+    reset() {
+        grecaptcha.enterprise.reset(this.captchaId);
+    }
 
     componentDidMount() {
         const scriptN = document.createElement('script');
         scriptN.async = true;
         scriptN.defer = true;
-        scriptN.src = `https://www.google.com/recaptcha/enterprise.js?render=${Meteor.settings.public.CAPTCHA_FRONTEND_KEY}`;
+        scriptN.src = `https://www.google.com/recaptcha/enterprise.js?onload=captchaOnLoadCallback&render=explicit`;
         scriptN.addEventListener('load', () => {
             if (grecaptcha === undefined) {
+                // eslint-disable-next-line no-alert
                 alert('Your browser is blocking Google\' recaptcha library. Please use different browser or enable Google\' recaptcha library');
-                return;
             }
-
-            grecaptcha.enterprise.ready(() => {
-                this.ready = true;
-            });
-
-            // grecaptcha.ready(() => {
-            //     window.captcha = this;
-            //     this.captchaId = grecaptcha.render(this.nodes.captcha.current, {
-            //         'sitekey': Meteor.settings.public.CAPTCHA_FRONTEND_KEY,
-            //         'size': 'invisible',
-            //         'theme': 'light',
-            //         'callback': this.onData,
-            //         'error-callback': this.onError,
-            //         // 'callback': (data) => {
-            //         //     console.log('1', data);
-            //         //     if (this.props.onCheck !== null) {
-            //         //         this.props.onCheck();
-            //         //     }
-            //         // },
-            //     });
-            // });
         });
         document.head.appendChild(scriptN);
     }
 
-    render() {
-        return null;
-        // return (
-        //     <div ref={ this.nodes.captcha } className={ `CaptchaWrapper ${this.props.className}` } />
-        // )
+    captchaFrameWorkLoaded() {
+        if (grecaptcha === undefined) {
+            return;
+        }
+        this.ready = true;
+        grecaptcha.enterprise.ready(() => {
+            this.captchaId = grecaptcha.enterprise.render(this.nodes.captcha.current, {
+                'sitekey': Meteor.settings.public.CAPTCHA_FRONTEND_KEY,
+                'theme': 'light',
+                'callback': this.onData,
+                'error-callback': this.onError,
+            });
+        });
     }
 
+    render() {
+        return (
+            <div ref={ this.nodes.captcha } className={ `CaptchaWrapper ${this.props.className}` } />
+        )
+    }
+
+    static captchaOnLoadCallback() {
+        CaptchaWrapper.captchsMap.forEach(captchaWrapperEl => {
+            captchaWrapperEl.captchaFrameWorkLoaded();
+        });
+    }
 }
+
+CaptchaWrapper.captchsMap = new Set();
+
+window.captchaOnLoadCallback = CaptchaWrapper.captchaOnLoadCallback;
 
 CaptchaWrapper.defaultProps = {
     'className': '',
     'onCheck': null,
 };
-
-// CaptchaWrapper.propTypes = {
-//     'className': PropTypes.string,
-//     'onCheck': PropTypes.func,
-// };
