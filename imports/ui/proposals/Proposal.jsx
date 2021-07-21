@@ -423,7 +423,7 @@ export default class Proposal extends Component{
                                 </Row>
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><i className="fas fa-question-circle text-danger"></i> <T>common.didNotVote</T></Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.props?.proposal?.validatorsDidNotVote?.list.length ?? ''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.props?.proposal?.validatorsDidNotVote?.list.length + " validators" ?? ''}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(6, e)}><i className="material-icons">{this.state.open === 6 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
                                         {this.renderValidatorsWithoutVote()}
