@@ -91,7 +91,7 @@ export default class Activites extends Component {
         case "/cosmos.gov.v1beta1.MsgSubmitProposal":
             const proposalId = _.get(this.props, 'events[2].attributes[0].value', null)
             const proposalLink = proposalId ? `/proposals/${proposalId}` : "#";
-            return <p><Account address={msg.proposer} /> <MsgType type={msg["@type"]} /> <T>activities.withTitle</T> <Link to={proposalLink}>{msg.content.value.title}</Link><T>common.fullStop</T></p>
+            return <p><Account address={msg.proposer} /> <MsgType type={msg["@type"]} /> <T>activities.withTitle</T> <Link to={proposalLink}>{msg.content.title}</Link><T>common.fullStop</T></p>
         case "/cosmos.gov.v1beta1.MsgDeposit":
             return <p><Account address={msg.depositor} /> {(this.props.invalid)?<T>activities.failedTo</T>:''}<MsgType type={msg["@type"]} /> <em className="text-info">{msg.amount.map((amount,i) =>new Coin(amount.amount, amount.denom).toString(6)).join(', ')}</em> <T>activities.to</T> <Link to={"/proposals/"+msg.proposal_id}><T>proposals.proposal</T> {msg.proposal_id}</Link><T>common.fullStop</T></p>
         case "/cosmos.gov.v1beta1.MsgVote":
