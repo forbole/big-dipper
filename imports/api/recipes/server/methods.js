@@ -22,7 +22,7 @@ Meteor.methods({
                 const bulkRecipes = Recipes.rawCollection().initializeUnorderedBulkOp();
                 for (let i in recipes) {
                     let recipe = recipes[i];
-                    let deeplink = 'http://wallet.pylons.tech?action=purchase_nft&recipe_id=' + recipe.ID + '&nft_amount=1'; //http://wallet.pylons.tech
+                    let deeplink = 'https://wallet.pylons.tech?action=purchase_nft&recipe_id=' + recipe.ID + '&nft_amount=1';  
                     recipe.deeplink = deeplink;
 
                     let cookbook_rul = API + '/custom/pylons/list_cookbook/';

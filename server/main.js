@@ -254,7 +254,7 @@ Meteor.startup(async function() {
                 }
             })
         })
-    }
+    }  
 
     if (Meteor.settings.debug.startTimer) {
         timerConsensus = Meteor.setInterval(function() {

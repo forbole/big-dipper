@@ -55,25 +55,28 @@ export default class EaselBuy extends Component{
                 img: this.props.img,
             }); 
 
-            DocHead.setTitle("Big-Dipper");
-            var metaInfo = {name: "description", content: "Wallet deep link"};
-            DocHead.addMeta(metaInfo);
-            metaInfo = {property: "og:type", content: "article"};
-            DocHead.addMeta(metaInfo);
-            metaInfo = {property: "og:title", content: "Deep LInk"};
-            DocHead.addMeta(metaInfo);
-            metaInfo = {property: "og:description", content: "Wallet deep link"};
-            DocHead.addMeta(metaInfo);
-            metaInfo = {property: "og:url", content: this.props.url};
-            DocHead.addMeta(metaInfo);
-            metaInfo = {property: "og:site_name", content: "Deep Link"};
-            DocHead.addMeta(metaInfo);
-            metaInfo = {property: "og:image", content: this.props.img};
-            DocHead.addMeta(metaInfo);
-            metaInfo = {property: "og:image:width", content: 600};
-            DocHead.addMeta(metaInfo);
-            metaInfo = {property: "og:image:height", content: 330};
-            DocHead.addMeta(metaInfo);
+            if(DocHead != null){
+                DocHead.setTitle("Big-Dipper");
+                var metaInfo = {name: "description", content: "Wallet deep link"};
+                DocHead.addMeta(metaInfo);
+                metaInfo = {property: "og:type", content: "article"};
+                DocHead.addMeta(metaInfo);
+                metaInfo = {property: "og:title", content: "Deep LInk"};
+                DocHead.addMeta(metaInfo);
+                metaInfo = {property: "og:description", content: "Wallet deep link"};
+                DocHead.addMeta(metaInfo);
+                metaInfo = {property: "og:url", content: this.props.url};
+                DocHead.addMeta(metaInfo);
+                metaInfo = {property: "og:site_name", content: "Deep Link"};
+                DocHead.addMeta(metaInfo);
+                metaInfo = {property: "og:image", content: this.props.img};
+                DocHead.addMeta(metaInfo);
+                metaInfo = {property: "og:image:width", content: 600};
+                DocHead.addMeta(metaInfo);
+                metaInfo = {property: "og:image:height", content: 330};
+                DocHead.addMeta(metaInfo);
+            }
+            
         }
     }
 
