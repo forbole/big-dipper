@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "chart.labels" . | indent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "chart.labels" . | indent 6 }}
+  replicas: {{ .Values.replicas }}
+  template:
+    metadata:
+      annotations:
+        rollme: {{ randAlphaNum 5 | quote }}
+      labels:
+        {{- include "chart.labels" . | indent 8 }}
+    spec:
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      containers:
+        - name: big-dipper
+          image: {{ .Values.image }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          ports:
+{{- include "ports.pod" . | indent 8 }}
+          env:
+            - name: ROOT_URL
+              value: https://{{ .Values.host }}
+            - name: MONGO_URL
+              value: {{ .Values.mongoURL }}
+            - name: PORT
+              value: "{{ .Values.ports.http }}"
+            - name: METEOR_SETTINGS
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}
+                  key: settings.json
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+      terminationGracePeriodSeconds: 10

@@ -1,0 +1,19 @@
+image: gcr.io/tendermint-dev/pylons-big-dipper
+imagePullPolicy: Always
+
+replicas: 1
+
+nodeSelector: {}
+
+resources: {}
+
+ports:
+  http: 3000
+
+ingress:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+
+host: wallet.pylons.tech
+mongoURL: mongodb://pylons-mongodb:27017/meteor
