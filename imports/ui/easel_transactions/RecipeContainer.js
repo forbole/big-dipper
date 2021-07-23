@@ -1,39 +1,33 @@
 import { Meteor } from 'meteor/meteor';
-import { withTracker } from 'meteor/react-meteor-data';
-import { Cookbooks } from '/imports/api/cookbooks/cookbooks.js';
+import { withTracker } from 'meteor/react-meteor-data';  
+import { Recipes } from '/imports/api/recipes/recipes.js';
+
 import Recipe from './Recipe.jsx';
 
 export default RecipeContainer = withTracker((props) => {
-    let cookbook_owner = "";
+     
 
-    if (props.match.params.cookbook_owner) {
-        cookbook_owner = props.match.params.cookbook_owner;
-    }
-
-    let chainHandle, cookbookHandle, cookbookListHandle, cookbooks, cookbook, cookbookCount, cookbookExist;
+    let chainHandle, recipe, recipeExist;
     let loading = true;
 
     if (Meteor.isClient) {
-        cookbookHandle = Meteor.subscribe('cookbooks.list');
-        loading = !cookbookHandle.ready();
+        recipesHandle = Meteor.subscribe('recipes.list', props.match.params.ID);
+        loading = !recipesHandle.ready();
     }
-
+ 
     if (Meteor.isServer || !loading) {
-        cookbook = Cookbooks.find({ Sender: cookbook_owner }, { sort: { ID: -1 } }).fetch();
-        cookbookCount = Cookbooks.find({ Sender: cookbook_owner }).count();
-
+        recipe =  Recipes.findOne({ ID: props.match.params.ID });
         if (Meteor.isServer) {
             loading = false;
-            cookbookExist = !!cookbook;
+            recipeExist = !!recipe;
         } else {
-            cookbookExist = !loading && !!cookbook;
+            recipeExist = !loading && !!recipe;
         }
     }
 
     return {
         loading,
-        cookbookExist,
-        cookbooks: cookbookExist ? cookbook : null,
-        cookbookCount: cookbookExist ? cookbookCount : 0
+        recipeExist,
+        recipe: recipeExist ? recipe : null, 
     };
 })(Recipe);

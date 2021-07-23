@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Badge, Row, Col } from 'reactstrap';
 import { Route, Switch } from 'react-router-dom';
 import List from './ListContainer.js';
+import Cookbook from './CookbookContainer.js';
 import Recipe from './RecipeContainer.js';
 import ChainStates from '../components/ChainStatesContainer.js'
 import { Helmet } from 'react-helmet';
@@ -33,12 +34,13 @@ export default class Recipes extends Component{
                 <meta name="description" content="{Meteor.settings.public.chainName} incorporates on-chain governance. Come to see how on-chain governance can be achieved on Big Dipper." />
             </Helmet>
             <Row>
-                <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>recipes.recipes</T></h1></Col>
+                <Col md={3} xs={12}><h1 className="d-none d-lg-block">{global.Recipe == "detail" ? "Recipe Detail" : "Snapshots"}</h1></Col>
                 <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
             </Row>
             <Switch>
-                <Route exact path="/easel_transactions" component={RecipeList} />
-                <Route path="/easel_transactions/:cookbook_owner" component={Recipe} />
+                <Route exact path="/easel_transactions" component={RecipeList}/>
+                {/* <Route path="/easel_transactions/:cookbook_owner" component={Cookbook} /> */}
+                <Route path="/easel_transactions/:ID" component={Recipe} />
             </Switch>
         </div>
     }

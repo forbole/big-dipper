@@ -5,7 +5,7 @@ import List from './List.jsx';
 
 export default RecipesListContainer = withTracker((props) => {
     let recipesHandle, recipes, recipesExist;
-    let loading = true;
+    let loading = true; 
 
     if (Meteor.isClient) {
         recipesHandle = Meteor.subscribe('recipes.list');

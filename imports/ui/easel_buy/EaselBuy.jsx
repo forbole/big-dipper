@@ -54,7 +54,7 @@ export default class EaselBuy extends Component{
                 price: this.props.price,
                 img: this.props.img,
             }); 
-
+            console.log('------', DocHead)
             if(DocHead != null){
                 DocHead.setTitle("Big-Dipper");
                 var metaInfo = {name: "description", content: "Wallet deep link"};
