@@ -109,7 +109,7 @@ export default class List extends Component{
                     <Table striped className="proposal-list">
                         <thead>
                             <tr>  
-                                <th className="submit-block"><i className="fas fa-gift"></i> <span className="d-none d-sm-inline"><T>recipes.titles</T></span></th> 
+                                <th className="submit-block"><i className="fas fa-gift"></i> <span className="d-none d-sm-inline"><T>recipes.title</T></span></th> 
                                 <th className="submit-block"><i className="fas fa-box"></i> <span className="d-none d-sm-inline"><T>recipes.artist</T></span></th>
                                 {window.orientation == undefined && <th className="submit-block col-4 col-md-2 col-lg-1"><i className="fas fa-box-open"></i> <span className="d-none d-sm-inline"><T>recipes.price</T></span></th>}
                                 {window.orientation != undefined && <th className="submit-block"><i className="fas fa-box-open"></i> <span className="d-none d-sm-inline"><T>recipes.price</T></span></th>}
