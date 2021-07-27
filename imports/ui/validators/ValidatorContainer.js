@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import { HTTP } from 'meteor/http';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Validators } from '/imports/api/validators/validators.js';
 import { ValidatorRecords } from '/imports/api/records/records.js';
@@ -21,6 +22,7 @@ export default ValidatorDetailsContainer = withTracker((props) => {
     let options = {address:props.address};
 
     let chainStatus;
+    let stakingParams;
     let validatorExist;
     let validator;
     let validatorRecords;
@@ -53,6 +55,6 @@ export default ValidatorDetailsContainer = withTracker((props) => {
         validatorExist,
         validator: validatorExist ? validator : {},
         records: validatorExist ? validatorRecords : {},
-        chainStatus: validatorExist ? chainStatus : {}
+        chainStatus: validatorExist ? chainStatus : {},
     };
 })(Validator);

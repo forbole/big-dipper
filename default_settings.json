@@ -1,6 +1,6 @@
 {
     "public":{
-        "chainName": "Cosmos Testnet",
+        "chainName": "Cosmos",
         "chainId": "{Chain ID}",
         "gtm": "{Add your Google Tag Manager ID here}",
         "slashingWindow": 10000,
@@ -19,32 +19,45 @@
             {
                 "denom": "uatom",
                 "displayName": "ATOM",
-                "displayNamePlural": "ATOMS",
                 "fraction": 1000000
             }, 
             {
                 "denom": "umuon",
                 "displayName": "MUON",
-                "displayNamePlural": "MUONS",
                 "fraction": 1000000
             } 
         ],
-        "gasPrice": 0.02,
-        "coingeckoId": "cosmos"
+        "ledger":{
+            "coinType": 118,
+            "appName": "Cosmos",
+            "appVersion": "2.16.0",
+            "gasPrice": 0.02
+        },
+        "modules": {
+            "bank": true,
+            "supply": true,
+            "minting": false,
+            "gov": true,
+            "distribution": false
+        },
+        "coingeckoId": "cosmos",
+        "networks": "https://gist.githubusercontent.com/kwunyeung/8be4598c77c61e497dfc7220a678b3ee/raw/bd-networks.json",
+        "banners": false
     },
-    "genesisFile": "{Replace the address of the genesis file of the chain}",
     "remote":{
-        "rpc":"https://gaia-seeds.interblock.io",
-        "lcd":"https://gaia-seeds.interblock.io:1317"
+        "rpc":"https://rpc.stargate.forbole.com:443",
+        "api":"https://api.stargate.forbole.com:443"
     },
     "debug": {
-        "startTimer": true,
-        "readGenesis": true
+        "startTimer": true
     },
     "params":{
         "startHeight": 0,
         "defaultBlockTime": 5000,
+        "validatorUpdateWindow": 300,
         "blockInterval": 15000,
+        "transactionsInterval": 18000,
+        "keybaseFetchingInterval": 18000000,
         "consensusInterval": 1000,
         "statusInterval":7500,
         "signingInfoInterval": 1800000,

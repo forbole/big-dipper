@@ -23,7 +23,7 @@ publishComposite('chain.status', function(){
                         {fields:{
                             address:1,
                             description:1,
-                            operator_address:1,
+                            operatorAddress:1,
                             status:-1,
                             jailed:1,
                             profile_url:1

@@ -1,9 +1,8 @@
+/* eslint-disable react/no-unused-prop-types */
 import qs from 'querystring';
-import Cosmos from "@lunie/cosmos-js"
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Spinner, TabContent, TabPane, Row, Col, Modal, ModalHeader,
-    Form, ModalBody, ModalFooter, InputGroup, InputGroupAddon, Input, Progress,
+import { Button, Spinner, TabContent, TabPane, Row, Col, Modal, ModalBody, ModalFooter, InputGroup, InputGroupAddon, Input, Progress,
     UncontrolledTooltip, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
 import { Ledger, DEFAULT_MEMO } from './ledger.js';
 import { Validators } from '/imports/api/validators/validators.js';
@@ -12,6 +11,9 @@ import Coin from '/both/utils/coins.js';
 import numbro from 'numbro';
 import TimeStamp from '../components/TimeStamp.jsx';
 import { PropTypes } from 'prop-types';
+import i18n from 'meteor/universe:i18n';
+
+const T = i18n.createComponent();
 
 const maxHeightModifier = {
     setMaxHeight: {
@@ -102,14 +104,14 @@ const CoinAmount = (props) => {
     let coin = {};
     if (!props.coin && !props.amount) return null;
     if(!props.denom){
-        coin = new Coin(props.amount).toString(4);
+        coin = new Coin(props.amount).toString(6);
     }
     else{
         let denomFinder =  Meteor.settings.public.coins.find(({ denom }) => denom === props.denom);
         let displayDenom = denomFinder ? denomFinder.displayName : null;
         
         let finder = props.amount.find(({ denom }) => denom === props.denom)
-        coin = finder ? new Coin(finder.amount, finder.denom).toString(4) : '0.0000 ' + displayDenom;
+        coin = finder ? new Coin(finder.amount, finder.denom).toString(6) : '0.000000 ' + displayDenom;
     }
     let denom = (props.mint)?Coin.StakingCoin.denom:Coin.StakingCoin.displayName;
 
@@ -119,19 +121,21 @@ const CoinAmount = (props) => {
 
 const Amount = (props) => {
     if (!props.coin && !props.amount) return null;
-    let coin = props.coin || new Coin(props.amount, props.denom).toString(4);
-    let amount = (props.mint)?Math.round(coin.amount):coin.stakingAmount;
-    let denom = (props.mint)?Coin.StakingCoin.denom:Coin.StakingCoin.displayName;
-    return <span><span className={props.className || 'amount'}>{numbro(amount).format("0,0.0000")}</span> <span className='denom'>{denom}</span></span>
+    let amount = new Coin(props?.coin?.amount, props?.coin?.denom).toString(6) ?? new Coin(0).toString(6)
+    return <span><span className={props.className || 'amount'}>{amount}</span> </span>
 }
 
 
 const Fee = (props) => {
-    return <span><CoinAmount mint className='gas' amount={Math.ceil(props.gas * Meteor.settings.public.gasPrice)}/> as fee </span>
+    return <span><CoinAmount mint className='gas' amount={Math.ceil(props.gas * Meteor.settings.public.ledger.gasPrice)}/> as fee </span>
+}
+
+const calculateGasPrice = (gasEstimate) => {
+    return Math.ceil(gasEstimate * Meteor.settings.public.ledger.gasPrice)
 }
 
 const isActiveValidator = (validator) => {
-    return !validator.jailed && validator.status == 2;
+    return !validator.jailed && validator.status == 'BOND_STATUS_BONDED';
 }
 
 const isBetween = (value, min, max) => {
@@ -161,6 +165,7 @@ class LedgerButton extends Component {
             errorMessage: '',
             user: localStorage.getItem(CURRENTUSERADDR),
             pubKey: localStorage.getItem(CURRENTUSERPUBKEY),
+            transportBLE: localStorage.getItem(BLELEDGERCONNECTION),
             memo: DEFAULT_MEMO
         };
         this.ledger = new Ledger({testModeAllowed: false});
@@ -195,7 +200,8 @@ class LedgerButton extends Component {
         if (state.user !== localStorage.getItem(CURRENTUSERADDR)) {
             return {
                 user: localStorage.getItem(CURRENTUSERADDR),
-                pubKey: localStorage.getItem(CURRENTUSERPUBKEY)
+                pubKey: localStorage.getItem(CURRENTUSERPUBKEY),
+                transportBLE: localStorage.getItem(BLELEDGERCONNECTION)
             };
         }
         return null;
@@ -307,7 +313,7 @@ class LedgerButton extends Component {
     }
 
     tryConnect = () => {
-        this.ledger.getCosmosAddress().then((res) => {
+        this.ledger.getCosmosAddress(this.state.transportBLE).then((res) => {
             if (res.address == this.state.user)
                 this.setState({
                     success: true,
@@ -336,7 +342,7 @@ class LedgerButton extends Component {
             sequence: this.state.currentUser.sequence,
             denom: Coin.StakingCoin.denom,
             pk: this.state.pubKey,
-            path: [44, 118, 0, 0, 0],
+            path: [44, Meteor.settings.public.ledger.coinType, 0, 0, 0],
             memo: this.state.memo
         }
     }
@@ -395,8 +401,8 @@ class LedgerButton extends Component {
     }
 
     getSimulateBody (txMsg) {
-        return txMsg && txMsg.value && txMsg.value.msg &&
-            txMsg.value.msg.length && txMsg.value.msg[0].value || {}
+        return (txMsg && txMsg.value && txMsg.value.msg &&
+            txMsg.value.msg.length && txMsg.value.msg[0].value) || {}
     }
 
     getPath = () => {
@@ -416,14 +422,22 @@ class LedgerButton extends Component {
 
     runSimulatation = (txMsg, simulateBody) => {
         let gasAdjustment = TypeMeta[this.state.actionType].gasAdjustment || DEFAULT_GAS_ADJUSTMENT;
-        Meteor.call('transaction.simulate', simulateBody, this.state.user, this.getPath(), gasAdjustment, (err, res) =>{
+        Meteor.call('transaction.simulate', simulateBody, this.state.user, this.state.currentUser.accountNumber, this.state.currentUser.sequence, this.getPath(), gasAdjustment, (err, res) =>{
             if (res){
-                Ledger.applyGas(txMsg, res, Meteor.settings.public.gasPrice, Coin.StakingCoin.denom);
-                this.setStateOnSuccess('simulating', {
-                    gasEstimate: res,
-                    activeTab: '3',
-                    txMsg: txMsg
-                })
+                let gasPrice = calculateGasPrice(res)
+                let amountToTransfer = this.state.transferAmount?.amount || this.state.delegateAmount?.amount || this.state.depositAmount?.amount
+                let totalAmount = this.props.rewards || this.props.commission || this.state.actionType === 'redelegate' || this.state.actionType === 'undelegate'?  gasPrice : amountToTransfer + gasPrice;
+                if (totalAmount <= this.state.currentUser?.availableCoin?._amount){
+                    Ledger.applyGas(txMsg, res, Meteor.settings.public.ledger.gasPrice, Coin.StakingCoin.denom);
+                    this.setStateOnSuccess('simulating', {
+                        gasEstimate: res,
+                        activeTab: '3',
+                        txMsg: txMsg
+                    })
+                }
+                else{
+                    this.setStateOnError('simulating', <h6 className="font-weight-normal mt-3"> <> <T>common.txOutOfGasMessage</T><div className="text-center"><T _purify={false}  gasPrice={new Coin(gasPrice)}>common.estimatedGasPrice</T></div></></h6>)
+                }
             }
             else {
                 this.setStateOnError('simulating', 'something went wrong')
@@ -438,7 +452,7 @@ class LedgerButton extends Component {
             let txMsg = this.state.txMsg;
             const txContext = this.getTxContext();
             const bytesToSign = Ledger.getBytesToSign(txMsg, txContext);
-            this.ledger.sign(bytesToSign).then((sig) => {
+            this.ledger.sign(bytesToSign, this.state.transportBLE).then((sig) => {
                 try {
                     Ledger.applySignature(txMsg, txContext, sig);
                     Meteor.call('transaction.submit', txMsg, (err, res) => {
@@ -499,7 +513,7 @@ class LedgerButton extends Component {
         if (this.state.activeTab === '1')
             return <Button color="primary"  onClick={this.tryConnect}>Continue</Button>
         if (this.state.activeTab === '2')
-            return <Button color="primary"  disabled={this.state.simulating || !this.isDataValid()} onClick={this.simulate}>
+            return <Button color="primary" disabled={this.state.simulating || !this.isDataValid()} onClick={this.simulate}>
                 {(this.state.errorMessage !== '')?'Retry':'Next'}
             </Button>
         if (this.state.activeTab === '3')
@@ -523,7 +537,7 @@ class LedgerButton extends Component {
 
     getValidatorOptions = () => {
         let activeValidators = Validators.find(
-            {"jailed": false, "status": 2},
+            {"jailed": false, "status": 'BOND_STATUS_BONDED'},
             {"sort":{"description.moniker":1}}
         );
         let redelegations = this.state.redelegations || {};
@@ -548,7 +562,7 @@ class LedgerButton extends Component {
                                 <Col xs='12' className='moniker'>{validator.description.moniker}</Col>
                                 <Col xs='3' className="voting-power data">
                                     <i className="material-icons">power</i>
-                                    {validator.voting_power?numbro(validator.voting_power).format('0,0'):0}
+                                    {validator.tokens?numbro(Math.floor(validator.tokens/Meteor.settings.public.powerReduction)).format('0,0'):0}
                                 </Col>
 
                                 <Col xs='4' className="commission data">
@@ -620,8 +634,8 @@ class DelegationButtons extends LedgerButton {
     }
 
     getDelegatedToken = (currentDelegation) => {
-        if (currentDelegation && currentDelegation.shares && currentDelegation.tokenPerShare) {
-            return new Coin(currentDelegation.shares * currentDelegation.tokenPerShare);
+        if (currentDelegation && currentDelegation.delegation.shares && currentDelegation.tokenPerShare) {
+            return new Coin(currentDelegation.delegation.shares * currentDelegation.tokenPerShare);
         }
         return null
     }
@@ -690,7 +704,7 @@ class DelegationButtons extends LedgerButton {
     }
 
     getWarningMessage = () => {
-        let duration = this.props.stakingParams.unbonding_time;
+        let duration = parseInt(this.props.stakingParams.unbonding_time.substr(0, this.props.stakingParams.unbonding_time.length-1));
         let maxEntries = this.props.stakingParams.max_entries;
         let warning = TypeMeta[this.state.actionType].warning;
         return warning && warning(duration, maxEntries);
@@ -757,13 +771,15 @@ class WithdrawButton extends LedgerButton {
     createMessage = (callback) => {
         Meteor.call('transaction.execute', {from: this.state.user}, this.getPath(), (err, res) =>{
             if (res){
-                if (this.props.address) {
-                    res.value.msg.push({
-                        type: 'cosmos-sdk/MsgWithdrawValidatorCommission',
-                        value: { validator_address: this.props.address }
-                    })
-                }
-                callback(res, res)
+                Meteor.call('isValidator', this.state.user, (error, result) => {
+                    if (result && result.operator_address){
+                        res.value.msg.push({
+                            type: 'cosmos-sdk/MsgWithdrawValidatorCommission',
+                            value: { validator_address: result.operator_address }
+                        })
+                    }
+                    callback(res, res)
+                })
             }
             else {
                 this.setState({
@@ -895,8 +911,8 @@ class SubmitProposalButton extends LedgerButton {
     }
 
     getSimulateBody (txMsg) {
-        txMsg = txMsg && txMsg.value && txMsg.value.msg &&
-            txMsg.value.msg.length && txMsg.value.msg[0].value || {}
+        txMsg = (txMsg && txMsg.value && txMsg.value.msg &&
+            txMsg.value.msg.length && txMsg.value.msg[0].value) || {}
         return {...txMsg.content.value,
             initial_deposit: txMsg.initial_deposit,
             proposer: txMsg.proposer,
@@ -1078,7 +1094,7 @@ DelegationButtons.propTypes = {
         jailed: PropTypes.bool,
         operator_address: PropTypes.string,
         profile_url: PropTypes.string,
-        status: PropTypes.number
+        status: PropTypes.string
     }),
     history: PropTypes.shape({
         length:PropTypes.number,
