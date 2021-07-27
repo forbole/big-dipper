@@ -4,20 +4,55 @@ import { Link } from 'react-router-dom';
 import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n'; 
 import { Meteor } from 'meteor/meteor';   
-import PopupModal from '../popup/popup'; 
+import PopupModal from '../popup/popup';  
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
+import { FlowRouterMeta, FlowRouterTitle } from 'meteor/ostrio:flow-router-meta';
+
+FlowRouter.route('/', {
+  action() { /* ... */ },
+  title: 'Title'
+  /* ... */
+});
+
+new FlowRouterMeta(FlowRouter);
+new FlowRouterTitle(FlowRouter);
+
+
 const T = i18n.createComponent();
   
 export default class EaselBuy extends Component{
     constructor(props){
         super(props); 
         this.toggle = this.toggle.bind(this);
-        this.state = {
-            name: '',
-            description: '',
-            price: '',
-            img: '',
+        this.state = { 
             isPurchaseOpen: '',
-        } 
+            name: this.props.name,
+            description: this.props.description,
+            price: this.props.price,
+            img: this.props.img,
+        }  
+        if(DocHead != null){
+            DocHead.setTitle("Big-Dipper");
+            var metaInfo = {name: "description", content: "Wallet deep link"};
+            DocHead.removeDocHeadAddedTags();
+            DocHead.addMeta(metaInfo);
+            metaInfo = {property: "og:type", content: "article"};
+            DocHead.addMeta(metaInfo);
+            metaInfo = {property: "og:title", content: "Deep LInk"};
+            DocHead.addMeta(metaInfo);
+            metaInfo = {property: "og:description", content: "Wallet deep link"};
+            DocHead.addMeta(metaInfo);
+            metaInfo = {property: "og:url", content: this.props.url};
+            DocHead.addMeta(metaInfo);
+            metaInfo = {property: "og:site_name", content: "Deep Link"};
+            DocHead.addMeta(metaInfo);
+            metaInfo = {property: "og:image", content: this.props.img == "" ? '/img/buy_icon.png' : this.props.img};
+            DocHead.addMeta(metaInfo);
+            metaInfo = {property: "og:image:width", content: 300};
+            DocHead.addMeta(metaInfo);
+            metaInfo = {property: "og:image:height", content: 160};
+            DocHead.addMeta(metaInfo);
+        }
     }
 
     toggle() {
@@ -53,30 +88,30 @@ export default class EaselBuy extends Component{
                 description: this.props.description,
                 price: this.props.price,
                 img: this.props.img,
-            }); 
-            console.log('------', DocHead)
-            if(DocHead != null){
-                DocHead.setTitle("Big-Dipper");
-                var metaInfo = {name: "description", content: "Wallet deep link"};
-                DocHead.addMeta(metaInfo);
-                metaInfo = {property: "og:type", content: "article"};
-                DocHead.addMeta(metaInfo);
-                metaInfo = {property: "og:title", content: "Deep LInk"};
-                DocHead.addMeta(metaInfo);
-                metaInfo = {property: "og:description", content: "Wallet deep link"};
-                DocHead.addMeta(metaInfo);
-                metaInfo = {property: "og:url", content: this.props.url};
-                DocHead.addMeta(metaInfo);
-                metaInfo = {property: "og:site_name", content: "Deep Link"};
-                DocHead.addMeta(metaInfo);
-                metaInfo = {property: "og:image", content: this.props.img};
-                DocHead.addMeta(metaInfo);
-                metaInfo = {property: "og:image:width", content: 600};
-                DocHead.addMeta(metaInfo);
-                metaInfo = {property: "og:image:height", content: 330};
-                DocHead.addMeta(metaInfo);
-            }
+            });  
             
+        }
+        if(DocHead != null){
+            DocHead.setTitle("Big-Dipper");
+            var metaInfo = {name: "description", content: "Wallet deep link"};
+            DocHead.removeDocHeadAddedTags();
+            DocHead.addMeta(metaInfo);
+            metaInfo = {property: "og:type", content: "article"};
+            DocHead.addMeta(metaInfo);
+            metaInfo = {property: "og:title", content: "Deep LInk"};
+            DocHead.addMeta(metaInfo);
+            metaInfo = {property: "og:description", content: "Wallet deep link"};
+            DocHead.addMeta(metaInfo);
+            metaInfo = {property: "og:url", content: this.props.url};
+            DocHead.addMeta(metaInfo);
+            metaInfo = {property: "og:site_name", content: "Deep Link"};
+            DocHead.addMeta(metaInfo);
+            metaInfo = {property: "og:image", content: this.props.img == "" ? '/img/buy_icon.png' : this.props.img};
+            DocHead.addMeta(metaInfo);
+            metaInfo = {property: "og:image:width", content: 300};
+            DocHead.addMeta(metaInfo);
+            metaInfo = {property: "og:image:height", content: 160};
+            DocHead.addMeta(metaInfo);
         }
     }
 

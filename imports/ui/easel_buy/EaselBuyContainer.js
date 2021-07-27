@@ -21,7 +21,7 @@ export default HomeContainer = withTracker((props) => {
         loading = !recipesHandle.ready();
     }
 
-    let status;
+    let status; 
 
     if (Meteor.isServer || !loading) {
         selectedRecipe = Recipes.findOne({ ID: recipe_id });
@@ -37,14 +37,14 @@ export default HomeContainer = withTracker((props) => {
             }
             const entries = selectedRecipe.Entries;
             if (entries != null) {
-                const itemoutputs = entries.ItemOutputs;
+                const itemoutputs = entries.ItemOutputs; 
                 if (itemoutputs.length > 0) {
                     let strings = itemoutputs[0].Strings
                     for (i = 0; i < string.length; i++) {
                         try {
                             var values = strings[i].Value;
                             if (values.indexOf('http') >= 0 && (values.indexOf('.png') > 0 || values.indexOf('.jpg') > 0)) {
-                                img = values;
+                                img = values; 
                                 break;
                             }
                         } catch (e) {
@@ -54,18 +54,18 @@ export default HomeContainer = withTracker((props) => {
 
                     }
                 }
-                price = coinInputs[0].Count + ' ' + coinInputs[0].Coin
+                price = coinInputs[0].Count + ' ' + coinInputs[0].Coin 
             }
         }
 
 
     }
-
+ 
     return {
         name,
         description,
         price,
-        img,
-        url,
+        img: img,
+        url: url,
     };
 })(EaselBuy);

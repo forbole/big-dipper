@@ -67,9 +67,9 @@
         "statusInterval":7500,
         "signingInfoInterval": 1800000,
         "proposalInterval": 5000,
-        "recipeInterval": 5000,
-        "nftInterval": 5000, 
-        "cookbookInterval": 5000,
+        "recipeInterval": 15000,
+        "nftInterval": 15000, 
+        "cookbookInterval": 15000,
         "missedBlocksInterval": 60000,
         "delegationInterval": 900000
     }
