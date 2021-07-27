@@ -199,7 +199,7 @@ accounts:
     signInText: 'Você está conectado como '
     toLoginAs: 'Para entrar como'
     signInWithLedger: 'Entrar com Ledger'
-    signInWarning: 'Certifique-se de que seu dispositivo Ledger esteja conectado e o <strong class="text-primary">Cosmos App 1.5.0 ou superior</strong> esteja aberto.'
+    signInWarning: 'Certifique-se de que seu dispositivo Ledger esteja conectado e o <strong class="text-primary">{$network} App {$version} ou superior</strong> esteja aberto.'
     pleaseAccept: 'por favor, aceite em seu dispositivo Ledger.'
     noRewards: 'Sem recompensas'
 activities:

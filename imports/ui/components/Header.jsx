@@ -25,7 +25,7 @@ import {
 import { Link } from 'react-router-dom';
 import SearchBar from './SearchBar.jsx';
 import i18n from 'meteor/universe:i18n';
-import LedgerModal from '../ledger/LedgerModal.jsx';
+// import LedgerModal from '../ledger/LedgerModal.jsx';
 import Account from './Account.jsx';
 
 const T = i18n.createComponent();
@@ -46,6 +46,7 @@ export default class Header extends Component {
         super(props);
 
         this.toggle = this.toggle.bind(this);
+
         this.state = {
             isOpen: false,
             networks: "",
@@ -112,9 +113,11 @@ export default class Header extends Component {
         })
     }
 
-    signOut () {
+    signOut = () => {
         localStorage.removeItem(CURRENTUSERADDR);
         localStorage.removeItem(CURRENTUSERPUBKEY);
+        localStorage.removeItem(BLELEDGERCONNECTION);
+        localStorage.removeItem(ADDRESSINDEX);
         this.props.refreshApp();
     }
 
@@ -171,10 +174,10 @@ export default class Header extends Component {
             <Navbar color="primary" dark expand="lg" fixed="top" id="header">
                 <NavbarBrand tag={Link} to="/">
                     <img src="/img/sifchain.svg" className="img-fluid logo"/> 
-{/*                    <span className="d-none d-xl-inline-block"><T>navbar.siteName</T>&nbsp;</span>
+                    {/*                    <span className="d-none d-xl-inline-block"><T>navbar.siteName</T>&nbsp;</span>
                     <Badge color="secondary">{this.state.version}</Badge> */}
                 </NavbarBrand>
-{/*                <UncontrolledDropdown className="d-inline text-nowrap">
+                {/*                <UncontrolledDropdown className="d-inline text-nowrap">
                     <DropdownToggle caret={(this.state.networks !== "")} tag="span" size="sm" id="network-nav">{Meteor.settings.public.chainId}</DropdownToggle>
                     {this.state.networks}
                 </UncontrolledDropdown>*/}
@@ -200,13 +203,13 @@ export default class Header extends Component {
                         <NavItem>
                             <a className="nav-link" href="https://dex.sifchain.finance" target="_blank">Trade</a>
                         </NavItem>
-{/*                        <NavItem id="user-acconut-icon">
+                        {/*                        <NavItem id="user-acconut-icon">
                             {!signedInAddress?<Button className="sign-in-btn" color="link" size="lg" onClick={() => {this.setState({isSignInOpen: true})}}><i className="material-icons">vpn_key</i></Button>:
                                 <span>
                                     <span className="d-lg-none">
                                         <i className="material-icons large d-inline">account_circle</i>
                                         <Link to={`/account/${signedInAddress}`}> {signedInAddress}</Link>
-                                        <Button className="float-right" color="link" size="sm" onClick={this.signOut.bind(this)}><i className="material-icons">exit_to_app</i></Button>
+                                        <Button className="float-right" color="link" size="sm" onClick={this.signOut}><i className="material-icons">exit_to_app</i></Button>
                                     </span>
                                     <span className="d-none d-lg-block">
                                         <i className="material-icons large">account_circle</i>
@@ -215,7 +218,7 @@ export default class Header extends Component {
                                                 <div className="text-center"> 
                                                     <p><T>accounts.signInText</T></p>
                                                     <p><Link className="text-nowrap" to={`/account/${signedInAddress}`}>{signedInAddress}</Link></p>
-                                                    <Button className="float-right" color="link" onClick={this.signOut.bind(this)}><i className="material-icons">exit_to_app</i><span> <T>accounts.signOut</T></span></Button>
+                                                    <Button className="float-right" color="link" onClick={this.signOut}><i className="material-icons">exit_to_app</i><span> <T>accounts.signOut</T></span></Button>
                                                 </div>
                                             </PopoverBody>
                                         </UncontrolledPopover>

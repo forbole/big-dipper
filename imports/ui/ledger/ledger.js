@@ -1,23 +1,22 @@
+/* eslint-disable camelcase */
 // https://github.com/zondax/cosmos-delegation-js/
 // https://github.com/cosmos/ledger-cosmos-js/blob/master/src/index.js
 import 'babel-polyfill';
-import Cosmos from "@lunie/cosmos-js"
 import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
+import BluetoothTransport from "@ledgerhq/hw-transport-web-ble";
 import CosmosApp from "ledger-cosmos-js"
 import { signatureImport } from "secp256k1"
 import semver from "semver"
 import bech32 from "bech32";
-import secp256k1 from "secp256k1";
 import sha256 from "crypto-js/sha256"
 import ripemd160 from "crypto-js/ripemd160"
 import CryptoJS from "crypto-js"
 
 // TODO: discuss TIMEOUT value
 const INTERACTION_TIMEOUT = 10000
-const REQUIRED_COSMOS_APP_VERSION = "2.0.0"
-const DEFAULT_DENOM = 'uatom';
-const DEFAULT_GAS = 200000;
-export const DEFAULT_GAS_PRICE = 0.025;
+const REQUIRED_COSMOS_APP_VERSION = Meteor.settings.public.ledger.ledgerAppVersion || "2.16.0";
+const DEFAULT_DENOM = Meteor.settings.public.bondDenom || 'uatom';
+export const DEFAULT_GAS_PRICE = parseFloat(Meteor.settings.public.ledger.gasPrice) || 0.025;
 export const DEFAULT_MEMO = 'Sent via Big Dipper'
 
 /*
@@ -25,7 +24,8 @@ HD wallet derivation path (BIP44)
 DerivationPath{44, 118, account, 0, index}
 */
 
-const HDPATH = [44, 118, 0, 0, 0]
+const COINTYPE = Meteor.settings.public.ledger.coinType || 118;
+
 const BECH32PREFIX = Meteor.settings.public.bech32PrefixAccAddr
 
 function bech32ify(address, prefix) {
@@ -50,22 +50,35 @@ export class Ledger {
         this.testModeAllowed = testModeAllowed
     }
 
+    getHDPath() {
+        let addressIndex = localStorage.getItem(ADDRESSINDEX)
+        let HDPATH = [44, COINTYPE, parseInt(addressIndex), 0, 0];
+        return HDPATH
+    }
+
+    async getLedgerAddresses(accountNumber, transportBLE) {
+        await this.connect(INTERACTION_TIMEOUT, transportBLE)
+        let hdpaths = await this.cosmosApp?.publicKey([44, COINTYPE, accountNumber, 0, 0])
+        let pubKey = hdpaths?.compressed_pk
+        return { pubKey, address: createCosmosAddress(pubKey) }
+    }
+
     // test connection and compatibility
     async testDevice() {
         // poll device with low timeout to check if the device is connected
         const secondsTimeout = 3 // a lower value always timeouts
-        await this.connect(secondsTimeout)
+        await this.connect(secondsTimeout, false)
     }
     async isSendingData() {
         // check if the device is connected or on screensaver mode
-        const response = await this.cosmosApp.publicKey(HDPATH)
+        const response = await this.cosmosApp.publicKey(this.getHDPath())
         this.checkLedgerErrors(response, {
             timeoutMessag: "Could not find a connected and unlocked Ledger device"
         })
     }
-    async isReady() {
+    async isReady(transportBLE) {
     // check if the version is supported
-        const version = await this.getCosmosAppVersion()
+        const version = await this.getCosmosAppVersion(transportBLE)
 
         if (!semver.gte(version, REQUIRED_COSMOS_APP_VERSION)) {
             const msg = `Outdated version: Please update Ledger Cosmos App to the latest version.`
@@ -73,23 +86,46 @@ export class Ledger {
         }
 
         // throws if not open
-        await this.isCosmosAppOpen()
+        await this.isCosmosAppOpen(transportBLE)
     }
     // connects to the device and checks for compatibility
-    async connect(timeout = INTERACTION_TIMEOUT) {
+    async connect(timeout = INTERACTION_TIMEOUT, transportBLE) {
         // assume well connection if connected once
         if (this.cosmosApp) return
-
-        const transport = await TransportWebUSB.create(timeout)
+        let transport;
+        if(transportBLE === true || transportBLE === 'true'){
+            transport = await BluetoothTransport.create(timeout)
+        }
+        else{
+            transport= await TransportWebUSB.create(timeout)
+        }
         const cosmosLedgerApp = new CosmosApp(transport)
 
         this.cosmosApp = cosmosLedgerApp
 
         await this.isSendingData()
-        await this.isReady()
+        await this.isReady(transportBLE)
     }
-    async getCosmosAppVersion() {
-        await this.connect()
+
+    async getDevice(){
+        return new Promise((resolve, reject) => {
+            const subscription = BluetoothTransport.listen({
+                next(event) {
+                    if (event.type === 'add') {
+                        subscription.unsubscribe();
+                        resolve(event.descriptor);
+                    }
+                },
+                error(error) {
+                    reject(error);
+                },
+                complete() {
+                }
+            });
+        });
+    }
+    async getCosmosAppVersion(transportBLE) {
+        await this.connect(INTERACTION_TIMEOUT, transportBLE)
 
         const response = await this.cosmosApp.getVersion()
         this.checkLedgerErrors(response)
@@ -99,32 +135,32 @@ export class Ledger {
 
         return version
     }
-    async isCosmosAppOpen() {
-        await this.connect()
+    async isCosmosAppOpen(transportBLE) {
+        await this.connect(INTERACTION_TIMEOUT, transportBLE)
 
         const response = await this.cosmosApp.appInfo()
         this.checkLedgerErrors(response)
         const { appName } = response
 
-        if (appName.toLowerCase() !== `cosmos`) {
-            throw new Error(`Close ${appName} and open the Cosmos app`)
+        if (appName.toLowerCase() !== Meteor.settings.public.ledger.appName.toLowerCase()) {
+            throw new Error(`Close ${appName} and open the ${Meteor.settings.public.ledger.appName} app`)
         }
     }
-    async getPubKey() {
-        await this.connect()
+    async getPubKey(transportBLE) {
+        await this.connect(INTERACTION_TIMEOUT, transportBLE)
 
-        const response = await this.cosmosApp.publicKey(HDPATH)
+        const response = await this.cosmosApp.publicKey(this.getHDPath())
         this.checkLedgerErrors(response)
         return response.compressed_pk
     }
-    async getCosmosAddress() {
-        await this.connect()
+    async getCosmosAddress(transportBLE) {
+        await this.connect(INTERACTION_TIMEOUT, transportBLE)
 
         const pubKey = await this.getPubKey(this.cosmosApp)
         return {pubKey, address:createCosmosAddress(pubKey)}
     }
-    async confirmLedgerAddress() {
-        await this.connect()
+    async confirmLedgerAddress(transportBLE) {
+        await this.connect(INTERACTION_TIMEOUT, transportBLE)
         const cosmosAppVersion = await this.getCosmosAppVersion()
 
         if (semver.lt(cosmosAppVersion, REQUIRED_COSMOS_APP_VERSION)) {
@@ -133,7 +169,7 @@ export class Ledger {
         }
 
         const response = await this.cosmosApp.getAddressAndPubKey(
-            HDPATH,
+            this.getHDPath(),
             BECH32PREFIX,
         )
         this.checkLedgerErrors(response, {
@@ -141,10 +177,10 @@ export class Ledger {
         })
     }
 
-    async sign(signMessage) {
-        await this.connect()
+    async sign(signMessage, transportBLE) {
+        await this.connect(INTERACTION_TIMEOUT, transportBLE)
 
-        const response = await this.cosmosApp.sign(HDPATH, signMessage)
+        const response = await this.cosmosApp.sign(this.getHDPath(), signMessage)
         this.checkLedgerErrors(response)
         // we have to parse the signature from Ledger as it's in DER format
         const parsedSignature = signatureImport(response.signature)
@@ -165,13 +201,13 @@ export class Ledger {
         switch (error_message) {
         case `U2F: Timeout`:
             throw new Error(timeoutMessag)
-        case `Cosmos app does not seem to be open`:
+        case `${Meteor.settings.public.ledger.appName} app does not seem to be open`:
             // hack:
             // It seems that when switching app in Ledger, WebUSB will disconnect, disabling further action.
             // So we clean up here, and re-initialize this.cosmosApp next time when calling `connect`
             this.cosmosApp.transport.close()
             this.cosmosApp = undefined
-            throw new Error(`Cosmos app is not open`)
+            throw new Error(`${Meteor.settings.public.ledger.appName} app is not open`)
         case `Command not allowed`:
             throw new Error(`Transaction rejected`)
         case `Transaction rejected`:
@@ -180,9 +216,11 @@ export class Ledger {
             throw new Error(`Ledger's screensaver mode is on`)
         case `Instruction not supported`:
             throw new Error(
-                `Your Cosmos Ledger App is not up to date. ` +
+                `Your ${Meteor.settings.public.ledger.appName} Ledger App is not up to date. ` +
                 `Please update to version ${REQUIRED_COSMOS_APP_VERSION}.`
             )
+        case `Web Bluetooth API globally disabled`:
+            throw new Error(`Bluetooth not supported. Please use the latest version of Chrome browser.`)
         case `No errors`:
             // do nothing
             break
@@ -402,7 +440,7 @@ export class Ledger {
             type: 'cosmos-sdk/MsgSubmitProposal',
             value: {
                 content: {
-                    type: "cosmos-sdk/TextProposal",
+                    type: "/cosmos.TextProposal",
                     value: {
                         description: description,
                         title: title
@@ -465,7 +503,7 @@ function versionString({ major, minor, patch }) {
 export const checkAppMode = (testModeAllowed, testMode) => {
     if (testMode && !testModeAllowed) {
         throw new Error(
-            `DANGER: The Cosmos Ledger app is in test mode and shouldn't be used on mainnet!`
+            `DANGER: The ${Meteor.settings.public.ledger.appName} Ledger app is in test mode and shouldn't be used on mainnet!`
         )
     }
 }

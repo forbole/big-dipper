@@ -11,7 +11,7 @@ const T = i18n.createComponent();
 
 const ProposalList = (props) => {
     return <div>
-        {/*<p className="lead"><T>proposals.listOfProposals</T></p>*/}
+        <p className="lead"><T>proposals.listOfProposals</T></p>
         <Row>
             <Col md={12}>
                 <List {...props}/>
@@ -27,19 +27,17 @@ export default class Proposals extends Component{
     render() {
         return <div>
             <Helmet>
-                <title>Governance Proposals on Sifchain | The Big Dipper</title>
-                <meta name="description" content="Cosmos Hub incorporates on-chain governance. Come to see how on-chain governance can be achieved on The Big Dipper." />
+                <title>Governance Proposals on {Meteor.settings.public.chainName} | Big Dipper</title>
+                <meta name="description" content="{Meteor.settings.public.chainName} incorporates on-chain governance. Come to see how on-chain governance can be achieved on Big Dipper." />
             </Helmet>
             <Row>
                 <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>proposals.proposals</T></h1></Col>
                 <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
             </Row>
-            <div class="bgw mt15">
-                <Switch>
-                    <Route exact path="/proposals" component={ProposalList} />
-                    <Route path="/proposals/:id" component={Proposal} />
-                </Switch>
-            </div>
+            <Switch>
+                <Route exact path="/proposals" component={ProposalList} />
+                <Route path="/proposals/:id" component={Proposal} />
+            </Switch>
         </div>
     }
 

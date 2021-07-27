@@ -60,7 +60,7 @@ publishComposite('missedrecords.validator', function(address, type){
                 find(){
                     return Validators.find(
                         {},
-                        {fields:{address:1, description:1, operator_address:1}}
+                        {fields:{address:1, description:1, operatorAddress:1}}
                     )
                 }
             }
