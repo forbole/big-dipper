@@ -26,18 +26,17 @@ export default class AccountDelegations extends Component{
                 <Container fluid>
                     <Row className="header text-nowrap d-none d-lg-flex">
                         <Col xs={7} md={4}><i className="fas fa-at"></i> <span><T>accounts.validators</T></span></Col>
-
-                        <Col xs={2} md={5}><i className="fas fa-wallet"></i> <span><T>{Coin.StakingCoin.displayNamePlural}</T></span></Col>
+                        <Col xs={2} md={5}><i className="fas fa-wallet"></i> <span><T>{Coin.StakingCoin.displayName}</T></span></Col>
                         <Col xs={3} md={3}><i className="fas fa-gift"></i> <span><T>common.rewards</T></span></Col>
                     </Row>
                     <SentryBoundary>
                         {this.props.delegations.sort((b, a) => (a.balance - b.balance)).map((d, i) => {
-                            let reward = this.props.rewardsForEachDel[d.validator_address];
+                            let reward = this.props.rewardsForEachDel[d.delegation.validator_address];
                             rewardDenom =(reward)?reward.find(({denom}) => denom === denomType): null;
                             return <Row key={i} className="delegation-info">
-                                <Col xs={7} md={4} className="text-nowrap overflow-auto"><AccountTooltip address={d.validator_address} /></Col>
-                                <Col xs={2} md={5} className="overflow-auto">{new Coin(d.balance.amount, denomType).stakeString()}</Col>
-                                <Col xs={3} md={3}>{rewardDenom?new Coin(rewardDenom.amount, rewardDenom.denom).toString(4):'No rewards '} </Col>
+                                <Col xs={7} md={4} className="text-nowrap overflow-auto"><AccountTooltip address={d.delegation.validator_address} /></Col>
+                                <Col xs={2} md={5} className="overflow-auto">{new Coin(d.balance.amount, denomType).toString(6)}</Col>
+                                <Col xs={3} md={3}>{rewardDenom?new Coin(rewardDenom.amount, rewardDenom.denom).toString(6):'No rewards '} </Col>
                             </Row>
                         })}</SentryBoundary>
                 </Container>

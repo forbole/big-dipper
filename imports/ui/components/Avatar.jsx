@@ -14,7 +14,7 @@ export default class Avatar extends React.Component {
             );    
         }
         else {
-            return <div className={this.props.list?'moniker-avatar-list':''}><Jazzicon diameter={this.props.list?48:100} seed={jsNumberForAddress(this.props.address)} /></div>
+            return <div className={this.props.list?'moniker-avatar-list':''}><Jazzicon diameter={this.props.list?48:100} seed={jsNumberForAddress(this.props.address?this.props.address:"")} /></div>
         }
     }
 }

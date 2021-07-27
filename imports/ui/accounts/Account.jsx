@@ -39,7 +39,7 @@ export default class AccountDetails extends Component{
             user: localStorage.getItem(CURRENTUSERADDR),
             commission: [defaultCoin],
             denom: '',
-            rewardsForEachDel: [defaultCoin],
+            rewardsForEachDel: {defaultCoin},
             rewardDenomType: [defaultCoin],
         }
     }
@@ -71,7 +71,6 @@ export default class AccountDetails extends Component{
             }
 
             if (result){
-
                 if (result.available && (result.available.length > 0)){
 
                     this.setState({
@@ -145,7 +144,6 @@ export default class AccountDetails extends Component{
  
 
                 if (result.rewards && result.rewards.length > 0){
-                    
                     for(let c = 0; c < result.rewards.length; c++){
                         if(result.rewards[c].reward != null){
                             numRewards[result.rewards[c]["validator_address"]] = result.rewards[c].reward;
@@ -171,7 +169,7 @@ export default class AccountDetails extends Component{
                             this.state.total[i].amount = parseFloat(this.state.total[i].amount) + parseFloat(commissions.amount);
 
                         this.setState({
-                            operator_address: result.operator_address,
+                            operatorAddress: result.operatorAddress,
                             commission: [...this.state.commission, commissionAmount],
                             total: [...this.state.total]
                         })
@@ -207,7 +205,7 @@ export default class AccountDetails extends Component{
                 price: 0,
                 reward: [],
                 denom: '',
-                rewardsForEachDel: [],
+                rewardsForEachDel: {},
                 rewardDenomType: [],
             }, () => {
                 this.getBalance();
@@ -257,7 +255,7 @@ export default class AccountDetails extends Component{
 
     findCoin(coins){
         let finder = (coins).find(({denom}) => denom === this.state.denom);
-        let coinFinder = finder ? new Coin(finder.amount, finder.denom).toString(4) : null;
+        let coinFinder = finder ? new Coin(finder.amount, finder.denom).toString(6) : null;
         return coinFinder
     }
 
@@ -282,8 +280,8 @@ export default class AccountDetails extends Component{
         else if (this.state.accountExists){
             return <div id="account">
                 <Helmet>
-                    <title>Account Details of {this.state.address} on Sifchain | The Big Dipper</title>
-                    <meta name="description" content={"Account Details of "+this.state.address+" on Cosmos Hub"} />
+                    <title>Account Details of {this.state.address} on {Meteor.settings.public.chainName} | Big Dipper</title>
+                    <meta name="description" content={"Account Details of "+this.state.address+" on {Meteor.settings.public.chainName}"} />
                 </Helmet>
                 <Row>
                     <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>accounts.accountDetails</T></h1></Col>
@@ -319,11 +317,11 @@ export default class AccountDetails extends Component{
                                     </Row>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="delegated infinity" /><T>accounts.delegated</T></Col>
-                                        <Col xs={8} className="value text-right">{new Coin(this.state.delegated).toString(4)}</Col>
+                                        <Col xs={8} className="value text-right">{new Coin(this.state.delegated).toString(6)}</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="unbonding infinity" /><T>accounts.unbonding</T></Col>
-                                        <Col xs={8} className="value text-right">{new Coin(this.state.unbonding).toString(4)}</Col>
+                                        <Col xs={8} className="value text-right">{new Coin(this.state.unbonding).toString(6)}</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={4} className="label text-nowrap"><div className="rewards infinity" /><T>accounts.rewards</T></Col>
@@ -337,7 +335,7 @@ export default class AccountDetails extends Component{
                                 <Col md={6} lg={4} className="total d-flex flex-column justify-content-end">
                                     {this.state.user?<Row>
                                         <Col xs={12}><TransferButton history={this.props.history} address={this.state.address} denom={this.state.denom}/></Col>
-                                        {this.state.user===this.state.address?<Col xs={12}><WithdrawButton  history={this.props.history} rewards={this.state.rewards} commission={this.state.commission} address={this.state.operator_address} denom={this.state.denom}/></Col>:null}
+                                        {this.state.user===this.state.address?<Col xs={12}><WithdrawButton  history={this.props.history} rewards={this.state.rewards} commission={this.state.commission} address={this.state.operatorAddress} denom={this.state.denom}/></Col>:null}
                                     </Row>:null}
                                     <Row>
                                         <Col xs={4} className="label d-flex align-self-end"><div className="infinity" /><T>accounts.total</T></Col>
