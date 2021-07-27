@@ -1,27 +1,27 @@
-name: Release
-
-on:
-  release:
-    types: [published]
-
-jobs:
-  release:
-    name: Release
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v2
-
-#      - name: Login to Docker Hub
-#        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Inject slug/short variables
-        uses: rlespinasse/github-slug-action@v2.x
-
-#      - name: Build docker image
-#        run: |
-#          docker build -t sifchain/block-explorer:${{ env.GITHUB_REF_SLUG }} .
+#name: Release
 #
-#      - name: Push docker images
-#        run: |
-#          docker push sifchain/block-explorer:${{ env.GITHUB_REF_SLUG }}
+#on:
+#  release:
+#    types: [published]
+#
+#jobs:
+#  release:
+#    name: Release
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Check out the repo
+#        uses: actions/checkout@v2
+#
+##      - name: Login to Docker Hub
+##        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+#
+#      - name: Inject slug/short variables
+#        uses: rlespinasse/github-slug-action@v2.x
+#
+##      - name: Build docker image
+##        run: |
+##          docker build -t sifchain/block-explorer:${{ env.GITHUB_REF_SLUG }} .
+##
+##      - name: Push docker images
+##        run: |
+##          docker push sifchain/block-explorer:${{ env.GITHUB_REF_SLUG }}
