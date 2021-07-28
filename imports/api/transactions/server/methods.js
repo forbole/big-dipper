@@ -10,7 +10,7 @@ Meteor.methods({
         this.unblock()
         if (TXSYNCING) return 'Syncing transactions...'
 
-        const transactions = Transactions.find({ processed: false }, { limit: 5 }).fetch()
+        const transactions = Transactions.find({ processed: false }, { limit: 500 }).fetch()
         try {
             TXSYNCING = true
             const bulkTransactions = Transactions.rawCollection().initializeUnorderedBulkOp()
