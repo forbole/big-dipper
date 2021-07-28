@@ -73,7 +73,7 @@ Meteor.methods({
         Validators.find({}).forEach(async (validator) => {
             try {
                 if (validator?.description && validator?.description?.identity) {
-                    let profileUrl = getValidatorProfileUrl(validator?.description?.identity)
+                    let profileUrl = "https://sifchain.finance/wp-content/themes/icos-child/images/achieved.svg"
 
                     if (profileUrl) {
                         bulkValidators.find({ address: validator?.address }).upsert().updateOne({ $set: { 'profile_url': profileUrl } });
