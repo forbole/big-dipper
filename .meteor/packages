@@ -32,3 +32,5 @@ server-render@0.3.1
 fourseven:scss
 kadira:dochead
 check
+ostrio:flow-router-meta
+ostrio:flow-router-extra
