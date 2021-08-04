@@ -242,4 +242,21 @@ Meteor.methods({
             console.log(e.response.content);
         }
     },
+    'accounts.getModuleAccounts'(address) {
+        this.unblock();
+        let url = API + '/auth/accounts/' + address;
+        try {
+            let response = HTTP.get(url);
+            if (response.statusCode == 200) {
+                response = JSON.parse(response.content).result;
+                if (response.account['@type'] === "/cosmos.auth.v1beta1.ModuleAccount"){
+                    let moduleAccount = response.account
+                    return moduleAccount;
+                }
+            };
+        } catch (e) {
+            console.log(url);
+            console.log(e.response.content);
+        }
+    },
 }) 
