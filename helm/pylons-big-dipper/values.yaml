@@ -1,4 +1,4 @@
-image: gcr.io/tendermint-dev/pylons-big-dipper
+image: ghcr.io/pylons-tech/big-dipper
 imagePullPolicy: Always
 
 replicas: 1

@@ -17,6 +17,10 @@ spec:
       labels:
         {{- include "chart.labels" . | indent 8 }}
     spec:
+{{- if .Values.pullSecret }}
+      imagePullSecrets:
+        - name: {{ .Values.pullSecret }}
+{{- end }}
       nodeSelector:
 {{ toYaml .Values.nodeSelector | indent 8 }}
       containers:
