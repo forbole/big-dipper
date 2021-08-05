@@ -433,24 +433,28 @@ Meteor.methods({
 
                     let chainStatus = Chain.findOne({chainId:block.block.header.chain_id});
                     let lastSyncedTime = chainStatus?chainStatus.lastSyncedTime:0;
+                    let startHeightTime = chainStatus?chainStatus.startHeightTime:0;
+                    let startHeight = Meteor.settings.params.startHeight;
                     let timeDiff;
                     let blockTime = 0;
                     let res;
                     if (lastSyncedTime){
-                        let blockDiff = Meteor.settings.public.averageBlockTimeWindow;
-                        let pastBlockHeight = (height - blockDiff > 0) ? (height - blockDiff) : (height - 1);
-                        let getPastBlock = `${API}/blocks/${pastBlockHeight}`;
-                        try{
-                            res = HTTP.get(getPastBlock);
+                        if (!startHeightTime){
+                            let getStartHeight = `${API}/blocks/${startHeight}`;
+                            try {
+                                res = HTTP.get(getStartHeight);
+                            }
+                            catch(e){
+                                console.log(e)
+                            }
+                            startHeightTime = new Date(JSON.parse(res?.content)?.block?.header?.time);
+                            Chain.update({ chainId: block.block.header.chain_id },{$set: {startHeightTime, startHeight}});
                         }
-                        catch(e){
-                            console.log(e)
-                        }
-                        let pastBlockTime = new Date(JSON.parse(res?.content)?.block?.header?.time);
                         let dateLatest = new Date(blockData.time);
                         let dateLast = new Date(lastSyncedTime);
+                        let dateStart = new Date(startHeightTime);
                         timeDiff = Math.abs(dateLatest.getTime() - dateLast.getTime());
-                        blockTime = (height - blockDiff > 0) ? ((dateLatest.getTime() - pastBlockTime.getTime()) / blockDiff) : (dateLatest.getTime() - pastBlockTime.getTime());
+                        blockTime = (dateLatest.getTime() - dateStart.getTime()) / (blockData.height - startHeight);
                     }
 
                     let endGetValidatorsTime = new Date();

@@ -20,7 +20,7 @@ export default class ChainStatus extends React.Component {
             totalNumValidators: 0,
             avgBlockTimeType: "",
             avgVotingPowerType: "",
-            blockTimeText: <T _purify={false} avgBlockTimeWindow={numbro(Meteor.settings.public.averageBlockTimeWindow).format({ thousandSeparated: true })}>chainStatus.averageBlockTimeWindow</T>,
+            blockTimeText: <T>chainStatus.all</T>,
             votingPowerText: <T>chainStatus.now</T>
         }
     }
@@ -40,7 +40,7 @@ export default class ChainStatus extends React.Component {
             switch (this.state.avgBlockTimeType){
             case "":
                 this.setState({
-                    averageBlockTime: numbro(this.props.status.blockTime/1000).format('0,0.00')
+                    averageBlockTime: numbro(this.props.status.blockTime > 0 ? this.props.status.blockTime / 1000 : 0).format('0,0.00')
                 })
                 break;
             case "m":
