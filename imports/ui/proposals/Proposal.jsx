@@ -271,14 +271,15 @@ export default class Proposal extends Component{
     }
 
     renderValidatorsWithoutVote() {
+        let validatorsDidNotVoteList = this.props?.proposal?.validatorsDidNotVote?.list ?? [];
         return <Result className="tally-result-detail" pose={this.state.open ? 'open' : 'closed'}>
             <Card className='tally-result-table'>
-                {this.props.proposal.validatorsDidNotVote.list.map((vote, i) =>
-                    (vote.operator_address ? 
+                {validatorsDidNotVoteList.map((vote, i) =>
+                    (vote?.operator_address ? 
                         <Card body key={i}><Row className='voter-info'>
                             <Col className="d-none d-md-block counter data" md={1}>{i + 1}</Col>
                             <Col className="moniker data" md={4}>
-                                <Account address={vote.operator_address} />
+                                <Account address={vote?.operator_address} />
                             </Col>
                         </Row></Card> : null)
                 )}
@@ -292,7 +293,6 @@ export default class Proposal extends Component{
         }
         else{
             if (this.props.proposalExist && this.state.proposal != ''){
-                // console.log(this.state.proposal);
                 const proposalId = Number(this.props.proposal.proposalId), maxProposalId = Number(this.props.proposalCount);
                 const powerReduction = Meteor.settings.public.powerReduction || Coin.StakingCoin.fraction;
                 let totalVotingPower = (this.props.activeVotingPower || this.props.chain.activeVotingPower) * powerReduction;
@@ -423,7 +423,7 @@ export default class Proposal extends Component{
                                 </Row>
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><i className="fas fa-question-circle text-danger"></i> <T>common.didNotVote</T></Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.props?.proposal?.validatorsDidNotVote?.list.length + " validators" ?? ''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.props?.proposal?.validatorsDidNotVote?.list.length > 0 ? <T _purify={false} number={this.props?.proposal?.validatorsDidNotVote?.list.length}>proposals.validators</T> : <T _purify={false} number={0}>proposals.validators</T> }</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(6, e)}><i className="material-icons">{this.state.open === 6 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
                                         {this.renderValidatorsWithoutVote()}
