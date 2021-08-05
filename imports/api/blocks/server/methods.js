@@ -460,7 +460,7 @@ Meteor.methods({
                     let endGetValidatorsTime = new Date();
                     console.log("Get height validators time: "+((endGetValidatorsTime-startGetValidatorsTime)/1000)+"seconds.");
 
-                    Chain.update({ chainId: block.block.header.chain_id}, {$set:{lastSyncedTime:blockData.time, blockTime:blockTime}});
+                    Chain.update({chainId:block.block.header.chain_id}, {$set:{lastSyncedTime:blockData.time, blockTime:blockTime}});
 
                     analyticsData.averageBlockTime = blockTime;
                     analyticsData.timeDiff = timeDiff;
