@@ -595,7 +595,23 @@ export default class Activites extends Component {
             </p>
 
         default:
-            return <p><ReactJson src={msg} /></p>
+            return  <p>
+                <Account address={msg?.signer || msg?.sender || msg?.address || msg?.validator_address || msg?.delegator_address || msg?.proposer || msg?.depositor} /> {(this.props.invalid) ? <T>activities.failedTo</T> : ''}<MsgType type="Custom Message" />
+                {this.props.showDetails ? <p className="d-inline">
+                    <span className="float-right"><i className="material-icons" onClick={this.toggle}>{this.state.isOpen ? 'arrow_drop_down' : 'arrow_left'}</i></span>
+                    <Collapse isOpen={this.state.isOpen}>
+                        <Table className="mt-3">
+                            <tbody>
+                                <tr>
+                                    <th><T>common.message</T></th>
+                                    <td><ReactJson src={msg} /></td>
+                                </tr>
+                            </tbody>
+                        </Table>
+                    </Collapse>
+                </p> : null
+                }
+            </p>
         }
     }
 }
