@@ -15,7 +15,8 @@ CURRENTUSERADDR = 'ledgerUserAddress';
 CURRENTUSERPUBKEY = 'ledgerUserPubKey';
 BLELEDGERCONNECTION = 'ledgerBLEConnection'
 ADDRESSINDEX = 'addressIndex'
-
+RPC = Meteor.settings.public.remote.rpc;
+API = Meteor.settings.public.remote.api;
 
 // import { onPageLoad } from 'meteor/server-render';
 
