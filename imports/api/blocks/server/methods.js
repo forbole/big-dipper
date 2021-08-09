@@ -433,28 +433,14 @@ Meteor.methods({
 
                     let chainStatus = Chain.findOne({chainId:block.block.header.chain_id});
                     let lastSyncedTime = chainStatus?chainStatus.lastSyncedTime:0;
-                    let startHeightTime = chainStatus?chainStatus.startHeightTime:0;
-                    let startHeight = Meteor.settings.params.startHeight;
                     let timeDiff;
                     let blockTime = 0;
-                    let res;
                     if (lastSyncedTime){
-                        if (!startHeightTime){
-                            let getStartHeight = `${API}/blocks/${startHeight}`;
-                            try {
-                                res = HTTP.get(getStartHeight);
-                            }
-                            catch(e){
-                                console.log(e)
-                            }
-                            startHeightTime = new Date(JSON.parse(res?.content)?.block?.header?.time);
-                            Chain.update({ chainId: block.block.header.chain_id },{$set: {startHeightTime, startHeight}});
-                        }
                         let dateLatest = new Date(blockData.time);
                         let dateLast = new Date(lastSyncedTime);
-                        let dateStart = new Date(startHeightTime);
+                        let genesisTime = new Date(Meteor.settings.public.genesisTime);
                         timeDiff = Math.abs(dateLatest.getTime() - dateLast.getTime());
-                        blockTime = (dateLatest.getTime() - dateStart.getTime()) / (blockData.height - startHeight);
+                        blockTime = (dateLatest.getTime() - genesisTime.getTime()) / blockData.height;
                     }
 
                     let endGetValidatorsTime = new Date();
