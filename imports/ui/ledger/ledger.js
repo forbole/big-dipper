@@ -109,8 +109,8 @@ export class Ledger {
         else{
             transport= await TransportWebUSB.create(timeout)
         }
+        this.transport = transport;
         const cosmosLedgerApp = new CosmosApp(transport)
-        this.ledgerSigner = this.getLedgerWallet(transport)
         this.cosmosApp = cosmosLedgerApp
 
         await this.isSendingData()
@@ -188,11 +188,14 @@ export class Ledger {
     }
 
     getLedgerWallet(ledgerTransport) {
-        return new LedgerSigner(ledgerTransport, { hdPaths: [makeCosmoshubPath(0)] });
+        let addressIndex = localStorage.getItem(ADDRESSINDEX)
+        this.ledgerSigner = new LedgerSigner(ledgerTransport, { hdPaths: [makeCosmoshubPath(parseInt(addressIndex))] });
+        return this.ledgerSigner
     }
 
     async signTx(txMsg, txContext, transportBLE) {
         await this.connect(INTERACTION_TIMEOUT, transportBLE)
+        this.getLedgerWallet(this.transport);
         let address = txContext.bech32;
         let fee = txMsg.value.fee
         const myRegistry = new Registry([...defaultRegistryTypes]);
@@ -257,6 +260,7 @@ export class Ledger {
 
     async signAmino(txMsg, txContext, transportBLE) {
         await this.connect(INTERACTION_TIMEOUT, transportBLE)
+        this.getLedgerWallet(this.transport);
         let address = txContext.bech32;
         let fee = txMsg.value.fee;
         let chainId = txContext.chainId;
@@ -281,7 +285,9 @@ export class Ledger {
         if (txMsg.value.msg[0].value.option){
             txMsg.value.msg[0].value.option = getVoteOption(txMsg.value.msg[0].value.option)
         }
+        console.log(txMsg.value.msg[0].value.option)
         let msgs = txMsg.value.msg[0]
+        console.log(msgs)
         const signDoc = makeSignDoc(
             [msgs],
             fee,
@@ -290,11 +296,13 @@ export class Ledger {
             accountNumber,
             sequence
         );
-
+        console.log(signDoc);
+        console.log(txContext.bech32)
         signAmino = await this.ledgerSigner.signAmino(
             txContext.bech32,
             signDoc
         );
+        console.log(signAmino)
         this.checkLedgerErrors(signAmino)
 
         const tx = {

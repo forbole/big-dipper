@@ -424,6 +424,14 @@ class LedgerButton extends Component {
     runSimulatation = (txMsg, simulateBody) => {
         let gasAdjustment = TypeMeta[this.state.actionType].gasAdjustment || DEFAULT_GAS_ADJUSTMENT;
         Meteor.call('transaction.simulate', simulateBody, this.state.user, this.state.currentUser.accountNumber, this.state.currentUser.sequence, this.getPath(), gasAdjustment, (err, res) =>{
+            console.log(simulateBody)
+            console.log(this.state.user)
+            console.log(this.state.currentUser.accountNumber)
+            console.log(this.state.currentUser.sequence)
+            console.log(this.getPath())
+            console.log(gasAdjustment)
+            console.log()
+
             if (res){
                 let gasPrice = calculateGasPrice(res)
                 let amountToTransfer = this.state.transferAmount?.amount || this.state.delegateAmount?.amount || this.state.depositAmount?.amount

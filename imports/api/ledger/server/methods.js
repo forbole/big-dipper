@@ -34,6 +34,7 @@ Meteor.methods({
         console.log(url);
         console.log(data);
         let response = HTTP.post(url, {data});
+        console.log(response)
         if (response.statusCode == 200) {
             return JSON.parse(response.content).gas_estimate;
         }
