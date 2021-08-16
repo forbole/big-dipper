@@ -3,6 +3,7 @@ import { Input } from 'reactstrap';
 import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
 import FaucetModal from './FaucetModal';
+import BigNumber from 'bignumber.js';
 import { Meteor } from 'meteor/meteor';
 import { TRANSACTION_STATUS_DONE_ERROR, TRANSACTION_STATUS_DONE_ERROR_WRONG_CAPTCHA, TRANSACTION_STATUS_DONE_OK, TRANSACTION_STATUS_PENDING } from './FaucetUtils';
 
@@ -72,10 +73,11 @@ export default class Faucet extends Component {
         });
 
         const address = this.state.walletAddress;
-        const amount = parseInt(parseFloat(this.state.amount * Meteor.settings.public.coins[4].fraction))
+        const amount = (new BigNumber(this.state.amount)).multipliedBy(Meteor.settings.public.coins[0].fraction)
+        // const amount = parseInt(parseFloat(this.state.amount * Meteor.settings.public.coins[4].fraction))
         const data = {
             address: address,
-            coins: [`${amount}${Meteor.settings.public.coins[4].denom}`],
+            coins: [`${amount}${Meteor.settings.public.coins[0].denom}`],
             captchaResponse
         };
 
