@@ -16,10 +16,11 @@ showdown.setFlavor('github');
 
 export const TransactionRow = (props) => {
     let tx = props.tx;
-     
-    return <SentryBoundary><Row className={(tx.code)?"tx-info invalid":"tx-info"}>
-        <Col xs={12} lg={7} className="activity">{(tx.tx.body.messages && tx.tx.body.messages.length >0)?tx.tx.body.messages.map((msg,i) => {
-            return <Card body key={i}><Activities msg={msg} invalid={(!!tx.tx_response.code)} events={(tx.tx_response.logs&&tx.tx_response.logs[i])?tx.tx_response.logs[i].events:null} /></Card>
+    let homepage = window?.location?.pathname === '/' ? true : false;
+
+    return <SentryBoundary><Row className={(tx.code)?"tx-info w-40 invalid":"tx-info w-40"}>
+        <Col xs={12} lg={homepage ? 5 : 7} className="activity" >{(tx?.tx?.body?.messages && tx?.tx?.body?.messages.length >0)?tx?.tx?.body?.messages.map((msg,i) => {
+            return <Card body key={i}><Activities msg={msg} id={props.index} invalid={(!!tx.tx_response.code)} events={(tx.tx_response.logs&&tx.tx_response.logs[i])?tx.tx_response.logs[i].events:null} /></Card>
         }):''}</Col>
         <Col xs={(!props.blockList)?{size:6,order:"last"}:{size:12,order:"last"}} md={(!props.blockList)?{size:3, order: "last"}:{size:7, order: "last"}} lg={(!props.blockList)?{size:1,order:"last"}:{size:2,order:"last"}} className="text-truncate"><i className="fas fa-hashtag d-lg-none"></i> <Link to={"/transactions/"+tx.txhash}>{tx.txhash}</Link></Col>
         <Col xs={6} md={9} lg={{size:2,order:"last"}} className="text-nowrap"><i className="material-icons">schedule</i> <span>{tx.block()?<TimeAgo time={tx.block().time} />:''}</span>{(tx.tx.body.memo && tx.tx.body.memo != "")?<span>

@@ -1,6 +1,42 @@
 # Changelog
 
-## [Unreleased]
+## [UNRELEASED]
+* [#523] Implemented readable messages for IBC messages
+
+## [v0.41.x-14.2]
+* Fixes Ledger WebUSB + Chrome 91.x issue (https://github.com/LedgerHQ/ledgerjs/issues/607)
+
+## v0.41.x-14.1
+* [#426] Updated proposal tally result, added activeVotingPower value to active proposal collection.
+* [#524] Added `noreferrer` to Banner links
+
+## v0.41.x-14
+* [#488] Updated missing proposer address in proposals.
+* [#486] Fixed delegators voting power display on gov proposals
+* [#493] Fixed validators address showing as undefined in links.
+* [#491] Fixed query that are called when the gov module is active.
+* [#522] Fixed validator commission tx with correct validator operator address when signing with Ledger.
+
+## v0.41.x-13
+* [#484] Replaced delegation list displayed under validator page with total number of delegations. 
+* [#509] Added display list of addresses available for user to login with when connecting the Ledger.  
+* [#497] Fetch keybase with timer settings 
+* [#403] Unified token display to show stake denom with 6 decimal places (abandon displaying values in mint denom) and improved the txs by adding gas caluclations before broadcasting the tx to ensure the message will not fail due to insufficient funds to cover the fees. 
+
+## v0.41.x-12
+* [#387] Added Bluetooth Ledger support
+* Fix transaction simulation bug
+
+## v0.41.x-11
+* Replaced Random Validators and Chart components with Latest Blocks and Latest Transactions components on homepage
+* Update meta data to align with setting values
+
+## v0.41.x-10
+* Bump Meteor to v2.2
+## v0.41.x-9
+* Added banner support. Banner settings are loading remotely from the url defined in settings.
+
+## v0.41.x-8
 
 * [#487] Fixed typo in the query which make validator power change tx lookup failed.
 * Fixed an issue on displaying individual transaction.
