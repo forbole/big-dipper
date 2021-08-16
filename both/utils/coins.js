@@ -1,6 +1,7 @@
 /* eslint-disable no-tabs */
 import { Meteor } from 'meteor/meteor';
 import numbro from 'numbro';
+import BigNumber from 'bignumber.js';
 
 autoformat = (value) => {
     let formatter = '0,0.0000';
@@ -30,14 +31,14 @@ constructor(amount, denom=Meteor.settings.public.bondDenom) {
 
     if (this._coin){
         if (lowerDenom === this._coin.denom.toLowerCase()) {
-            this._amount = Number(amount);
+            this._amount = new BigNumber(amount);
         } else if (lowerDenom === this._coin.displayName.toLowerCase()) {
-            this._amount = Number(amount) * this._coin.fraction;
+            this._amount = (new BigNumber(amount)).multipliedBy(this._coin.fraction);
         }
     }
     else {
         this._coin = "";
-        this._amount = Number(amount);
+        this._amount = new BigNumber(amount);
     }
 }
 
@@ -46,16 +47,20 @@ get amount () {
 }
 
 get stakingAmount () {
-    return (this._coin)?this._amount / this._coin.fraction:this._amount;
+    return (this._coin) ? this._amount.dividedBy(this._coin.fraction) : this._amount;
+}
+
+get denom() {
+    return this._coin.denom;
 }
 
 toString (precision) {
     // default to display in mint denom if it has more than 4 decimal places
-    let minStake = Coin.StakingCoin.fraction/(precision?(10 ** precision):10000)
+    let minStake = Coin.StakingCoin.fraction / (precision ? (10 ** precision) : 10000)
     if (this.amount < minStake) {
         return `${numbro(this.amount).format('0,0.0000' )} ${this._coin.denom}`;
     } else {
-        return `${precision?numbro(this.stakingAmount).format('0,0.' + '0'.repeat(precision)):autoformat(this.stakingAmount)} ${this._coin.displayName}`
+        return `${precision?numbro(this.stakingAmount).format('0,0.' + '0'.repeat(precision)) : autoformat(this.stakingAmount)} ${this._coin.displayName}`
     }
 }
 

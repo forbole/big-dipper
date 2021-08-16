@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Spinner, UncontrolledTooltip, Row, Col, Card, CardHeader, CardBody, Progress, UncontrolledDropdown, DropdownMenu, DropdownToggle, DropdownItem } from 'reactstrap';
-import numbro from 'numbro';
 import AccountCopy from '../components/AccountCopy.jsx';
 import LinkIcon from '../components/LinkIcon.jsx';
 import Delegations from './Delegations.jsx';
@@ -12,6 +11,8 @@ import { WithdrawButton, TransferButton } from '../ledger/LedgerActions.jsx';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js'
 import { withTracker } from 'meteor/react-meteor-data';
+import numbro from 'numbro';
+import BigNumber from 'bignumber.js';
 
 const T = i18n.createComponent();
 
@@ -20,23 +21,19 @@ const cloneDeep = require('lodash/cloneDeep');
 class AccountDetails extends Component{
     constructor(props){
         super(props);
-        const defaultCoin = Meteor.settings.public.coins.map(coin => {
-            return {
-                denom: coin.denom,
-                amount: 0
-            }
-        })
+        const defaultCoin = Meteor.settings.public.coins.map(coin => new Coin(0, coin.denom))
+
         this.state = {
             address: props.match.params.address,
             loading: true,
             accountExists: false,
             available: [defaultCoin],
-            delegated: 0,
-            unbonding: 0,
+            delegated: new BigNumber(0),
+            unbonding: new BigNumber(0),
             rewards: [defaultCoin],
             reward: [defaultCoin],
             total: [defaultCoin],
-            price: 0,
+            price: new BigNumber(0),
             user: localStorage.getItem(CURRENTUSERADDR),
             commission: [defaultCoin],
             denom: '',
@@ -73,26 +70,26 @@ class AccountDetails extends Component{
 
             if (result){
                 if (result.available && (result.available.length > 0)){
-
                     this.setState({
-                        available: cloneDeep(result.available),
+                        available: result.available.map(c => new Coin(c.amount, c.denom)),
                         denom: Coin.StakingCoin.denom,
-                        total: cloneDeep(result.available)
+                        total: result.available.map(c => new Coin(c.amount, c.denom))
                     })
                 }
 
                 this.setState({delegations: result.delegations || []})
                 if (result.delegations && result.delegations.length > 0){
                     result.delegations.forEach((delegation, i) => {
-                        const amount = delegation.balance.amount || delegation.balance;
+                        const amount = new BigNumber(delegation.balance.amount) || new BigNumber(delegation.balance);
                         this.setState({
-                            delegated: this.state.delegated+parseFloat(amount),
+                            delegated: this.state.delegated.plus(amount),
                         })
                     }, this)
 
                     this.state.total.forEach((total, i) => {
-                        if(total.denom === Meteor.settings.public.bondDenom )
-                            this.state.total[i].amount = parseFloat(this.state.total[i].amount) + parseFloat(this.state.delegated);
+                        if(total.denom === Meteor.settings.public.bondDenom ){
+                            this.state.total[i].amount = this.state.total[i].amount.plus(this.state.delegated);
+                        }
                     }, this)
 
                     this.setState({
@@ -106,14 +103,14 @@ class AccountDetails extends Component{
                     result.unbonding.forEach((unbond, i) => {
                         unbond.entries.forEach((entry, j) => {
                             this.setState({
-                                unbonding: this.state.unbonding+parseFloat(entry.balance),
+                                unbonding: this.state.unbonding.plus(entry.balance),
                             })
                             , this})
                     }, this)
 
                     this.state.total.forEach((total, i) => {
                         if(total.denom === Meteor.settings.public.bondDenom )
-                            this.state.total[i].amount = parseFloat(this.state.total[i].amount) + parseFloat(this.state.unbonding);
+                            this.state.total[i].amount = tthis.state.total[i].amount.plus(this.state.unbonding);
                         
                 
                     }, this)
@@ -126,12 +123,13 @@ class AccountDetails extends Component{
 
 
                 if(result.total_rewards && result.total_rewards.length > 0)
-                {
-                    const totalRewards  = cloneDeep(result.total_rewards);
-
+                {   
+                    const totalRewards  = result.total_rewards.map(r => new Coin(r.amount, r.denom));
+                    console.log(totalRewards);
+                    
                     totalRewards.forEach((rewardNum, i) => {
                         if(this.state.total[i] && (rewardNum.denom === this.state.total[i].denom))
-                            this.state.total[i].amount = parseFloat(this.state.total[i].amount) + parseFloat(rewardNum.amount);                       
+                            this.state.total[i].amount = this.state.total[i].amount.plus(rewardNum.amount);                       
                     }, this)
 
                   
@@ -167,7 +165,7 @@ class AccountDetails extends Component{
                     result.commission.forEach((commissions, i) => {
                         const commissionAmount = commissions;
                         if(this.state.total[i] && (commissions.denom === this.state.total[i].denom))
-                            this.state.total[i].amount = parseFloat(this.state.total[i].amount) + parseFloat(commissions.amount);
+                            this.state.total[i].amount = this.state.total[i].amount.plus(commissions.amount);
 
                         this.setState({
                             operatorAddress: result.operatorAddress,
@@ -193,21 +191,23 @@ class AccountDetails extends Component{
 
     componentDidUpdate(prevProps){
         if (this.props.match.params.address !== prevProps.match.params.address){
+            const defaultCoin = Meteor.settings.public.coins.map(coin => new Coin(0, coin.denom))
+
             this.setState({
                 address: this.props.match.params.address,
                 loading: true,
                 accountExists: false,
-                available: [],
-                delegated: 0,
-                unbonding: 0,
-                commission: [],
-                rewards: [],
-                total: [],
-                price: 0,
-                reward: [],
+                available: [defaultCoin],
+                delegated: new BigNumber(0),
+                unbonding: new BigNumber(0),
+                commission: [defaultCoin],
+                rewards: [defaultCoin],
+                total: [defaultCoin],
+                price: new BigNumber(0),
+                reward: [defaultCoin],
                 denom: '',
-                rewardsForEachDel: {},
-                rewardDenomType: [],
+                rewardsForEachDel: {defaultCoin},
+                rewardDenomType: [defaultCoin],
             }, () => {
                 this.getBalance();
             })
@@ -261,7 +261,8 @@ class AccountDetails extends Component{
     }
 
     findValue(params){
-        let current = (params).find(({denom}) => denom === this.state.denom);
+        console.log(params);
+        let current = (params).find((coin) => coin.denom === this.state.denom);
         let currentTotal = current ? current.amount : null;
         return currentTotal
     }
@@ -302,11 +303,11 @@ class AccountDetails extends Component{
                             <Row className="account-distributions">
                                 <Col xs={12}>
                                     <Progress multi>
-                                        <Progress bar className="available" value={this.findValue(this.state.available)/currentCoinTotal*100} />
-                                        <Progress bar className="delegated" value={this.state.delegated/currentCoinTotal*100} />
-                                        <Progress bar className="unbonding" value={this.state.unbonding/currentCoinTotal*100} />
-                                        <Progress bar className="rewards" value={this.findValue(this.state.rewards)/currentCoinTotal*100} />
-                                        <Progress bar className="commission" value={this.findValue(this.state.commission)/currentCoinTotal*100} />
+                                        <Progress bar className="available" value={this.findValue(this.state.available).dividedBy(currentCoinTotal).multipliedBy(100).toString()} />
+                                        <Progress bar className="delegated" value={this.state.delegated.dividedBy(currentCoinTotal).multipliedBy(100).toString()} />
+                                        <Progress bar className="unbonding" value={this.state.unbonding.dividedBy(currentCoinTotal).multipliedBy(100).toString()} />
+                                        <Progress bar className="rewards" value={this.findValue(this.state.rewards).dividedBy(currentCoinTotal).multipliedBy(100).toString()} />
+                                        <Progress bar className="commission" value={this.findValue(this.state.commission).dividedBy(currentCoinTotal).multipliedBy(100).toString()} />
                                     </Progress>
                                 </Col>
                             </Row>
