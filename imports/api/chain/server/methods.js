@@ -6,7 +6,7 @@ import Coin from '../../../../both/utils/coins.js';
 findVotingPower = (validator, genValidators) => {
     for (let v in genValidators){
         if (validator.pub_key.value == genValidators[v].pub_key.value){
-            return parseInt(genValidators[v].power);
+            return new BigNumber(genValidators[v].power);
         }
     }
 }

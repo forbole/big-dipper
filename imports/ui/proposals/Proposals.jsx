@@ -32,6 +32,7 @@ export default class Proposals extends Component{
     }
 
     render() {
+        console.log(this.props);
         return <div>
             <Helmet>
                 <title>Governance Proposals on CUDOS network</title>

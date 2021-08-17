@@ -16,6 +16,7 @@ import Coin from '/both/utils/coins.js';
 import TimeStamp from '../components/TimeStamp.jsx';
 import { ProposalActionButtons } from '../ledger/LedgerActions.jsx';
 import voca from 'voca';
+import BigNumber from 'bignumber.js';
 
 const T = i18n.createComponent();
 
@@ -34,7 +35,7 @@ export default class Proposal extends Component{
             deposit: '',
             tallyDate: <T>proposals.notStarted</T>,
             voteStarted: false,
-            totalVotes: 0,
+            totalVotes: new BigNumber(0),
             open: false,
             yesPercent: 0,
             abstainPercent: 0,
@@ -67,24 +68,23 @@ export default class Proposal extends Component{
 
     componentDidUpdate(prevProps){
         if (this.props.proposal != prevProps.proposal){
-            // console.log(this.props.proposal.value);
             this.setState({
                 proposal: this.props.proposal,
-                deposit: <div>{this.props.proposal.total_deposit?this.props.proposal.total_deposit.map((deposit, i) => {
+                deposit: <div>{this.props.proposal.total_deposit ? this.props.proposal.total_deposit.map((deposit, i) => {
                     return <div key={i}>{new Coin(deposit.amount, deposit.denom).toString()}</div>
                 }):''} </div>
             });
 
             let now = moment();
-            let totalVotingPower = this.props.chain.activeVotingPower;
+            let totalVotingPower = new BigNumber(this.props.chain.activeVotingPower);
             if (this.props.proposal.voting_start_time != '0001-01-01T00:00:00Z'){
                 if (now.diff(moment(this.props.proposal.voting_start_time)) > 0){
                     let endVotingTime = moment(this.props.proposal.voting_end_time);
                     if (now.diff(endVotingTime) < 0){
                         // not reach end voting time yet
-                        let totalVotes = 0;
+                        let totalVotes = new BigNumber(0);
                         for (let i in this.props.proposal.tally){
-                            totalVotes += parseInt(this.props.proposal.tally[i]);
+                            totalVotes = totalVotes.plus(this.props.proposal.tally[i]);
                         }
 
                         this.setState({
@@ -93,17 +93,17 @@ export default class Proposal extends Component{
                             voteStarted: true,
                             voteEnded: false,
                             totalVotes: totalVotes,
-                            yesPercent: (totalVotes>0)?parseInt(this.props.proposal.tally.yes)/totalVotes*100:0,
-                            abstainPercent: (totalVotes>0)?parseInt(this.props.proposal.tally.abstain)/totalVotes*100:0,
-                            noPercent: (totalVotes>0)?parseInt(this.props.proposal.tally.no)/totalVotes*100:0,
-                            noWithVetoPercent: (totalVotes>0)?parseInt(this.props.proposal.tally.no_with_veto)/totalVotes*100:0,
-                            proposalValid: (this.state.totalVotes/totalVotingPower > parseFloat(this.props.chain.gov.tallyParams.quorum))?true:false
+                            yesPercent: (totalVotes.comparedTo(0) == 1) ? (new BigNumber(this.props.proposal.tally.yes)).dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
+                            abstainPercent: (totalVotes.comparedTo(0) == 1) ? (new BigNumber(this.props.proposal.tally.abstain)).dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
+                            noPercent: (totalVotes.comparedTo(0) == 1) ? (new BigNumber(this.props.proposal.tally.no)).dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
+                            noWithVetoPercent: (totalVotes.comparedTo(0) == 1) ? (new BigNumber(this.props.proposal.tally.no_with_veto)).dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
+                            proposalValid: this.state.totalVotes.dividedBy(totalVotingPower).comparedTo(this.props.chain.gov.tallyParams.quorum) == 1 ? true : false
                         })
                     }
                     else{
-                        let totalVotes = 0;
+                        let totalVotes = new BigNumber(0);
                         for (let i in this.props.proposal.final_tally_result){
-                            totalVotes += parseInt(this.props.proposal.final_tally_result[i]);
+                            totalVotes = totalVotes.plus(this.props.proposal.final_tally_result[i]);
                         }
 
                         this.setState({
@@ -112,11 +112,11 @@ export default class Proposal extends Component{
                             voteStarted: true,
                             voteEnded: true,
                             totalVotes: totalVotes,
-                            yesPercent: (totalVotes>0)?parseInt(this.props.proposal.final_tally_result.yes)/totalVotes*100:0,
-                            abstainPercent: (totalVotes>0)?parseInt(this.props.proposal.final_tally_result.abstain)/totalVotes*100:0,
-                            noPercent: (totalVotes>0)?parseInt(this.props.proposal.final_tally_result.no)/totalVotes*100:0,
-                            noWithVetoPercent: (totalVotes>0)?parseInt(this.props.proposal.final_tally_result.no_with_veto)/totalVotes*100:0,
-                            proposalValid: (this.state.totalVotes/totalVotingPower > parseFloat(this.props.chain.gov.tallyParams.quorum))?true:false
+                            yesPercent: (totalVotes.comparedTo(0) == 1) ? (new BigNumber(this.props.proposal.final_tally_result.yes)).dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
+                            abstainPercent: (totalVotes.comparedTo(0) == 1) ? (new BigNumber(this.props.proposal.final_tally_result.abstain)).dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
+                            noPercent: (totalVotes.comparedTo(0) == 1) ? (new BigNumber(this.props.proposal.final_tally_result.no)).dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
+                            noWithVetoPercent: (totalVotes.comparedTo(0) == 1) ? (new BigNumber(this.props.proposal.final_tally_result.no_with_veto)).dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
+                            proposalValid: this.state.totalVotes.dividedBy(totalVotingPower).comparedTo(this.props.chain.gov.tallyParams.quorum) == 1 ? true : false
                         })
                     }
                 }
@@ -142,9 +142,9 @@ export default class Proposal extends Component{
     populateChartData() {
         const optionOrder = {'VOTE_OPTION_YES': 0, 'VOTE_OPTION_ABSTAIN': 1, 'VOTE_OPTION_NO': 2, 'VOTE_OPTION_NO_WITH_VETO': 3};
         let votes = this.props.proposal.votes?this.props.proposal.votes.sort(
-            (vote1, vote2) => vote2['votingPower'] - vote1['votingPower']
+            (vote1, vote2) => vote2['votingPower'].minus(vote1['votingPower'])
         ).sort(
-            (vote1, vote2) => optionOrder[vote1.option] - optionOrder[vote2.option]):null;
+            (vote1, vote2) => optionOrder[vote1.option] - optionOrder[vote2.option]) : null;
         let maxVotingPower = {'N/A': 1};
         let totalVotingPower = {'N/A': 0};
         let votesByOptions = {'All': votes, 'VOTE_OPTION_YES': [], 'VOTE_OPTION_ABSTAIN': [], 'VOTE_OPTION_NO': [], 'VOTE_OPTION_NO_WITH_VETO': []};
@@ -158,11 +158,11 @@ export default class Proposal extends Component{
         for (let option in votesByOptions) {
             let data = votesByOptions[option];
             if (data){
-                maxVotingPower[option] = Math.max.apply(null, data.map((vote) => vote.votingPower));
-                totalVotingPower[option] = data.reduce((s, x) => x.votingPower + s, 0);
+                maxVotingPower[option] = BigNumber.max(null, data.map((vote) => vote.votingPower));
+                totalVotingPower[option] = data.reduce((s, x) => x.votingPower.plus(s), 0);
                 datasets.push({
                     datasetId: option,
-                    data: data.length == 0?emtpyData:data,
+                    data: data.length == 0 ? emtpyData : data,
                     totalVotingPower: totalVotingPower,
                     maxVotingPower: maxVotingPower
                 })    
@@ -180,8 +180,8 @@ export default class Proposal extends Component{
         let tooltip = (component, point, data, ds) => {
             let total = ds.metadata().totalVotingPower['All'];
             let optionTotal = ds.metadata().totalVotingPower[data.option];
-            let percentage = numbro(data.votingPower/total).format('0.00%');
-            let optionPercentage = numbro(data.votingPower/optionTotal).format('0.00%');
+            let percentage = numbro(data.votingPower.dividedBy(total)).format('0.00%');
+            let optionPercentage = numbro(data.votingPower.dividedBy(optionTotal)).format('0.00%');
             return `<p>Voting Power: ${data.votingPower}</p>
                     <p>${percentage} out of all votes</p>
                     <p>${optionPercentage} out of all ${data.option} votes</p>`;
@@ -201,7 +201,7 @@ export default class Proposal extends Component{
                     scale: 'colorScale'
                 }, {
                     attr: 'fill-opacity',
-                    value: (d, i, ds) => Math.max(0.1, d.votingPower/ds.metadata().maxVotingPower[d.option])
+                    value: (d, i, ds) => BigNumber.max(0.1, new BigNumber(d.votingPower).dividedBy(ds.metadata().maxVotingPower[d.option]))
                 }, {
                     attr: 'stroke',
                     value: 'white'
@@ -210,7 +210,7 @@ export default class Proposal extends Component{
                     value: '0.5'
                 }],
                 datasets: [this.state.breakDownSelection],
-                tooltip: isDataEmtpy?null:tooltip
+                tooltip: isDataEmtpy ? null : tooltip
             }]
         };
         let config = {
@@ -229,9 +229,9 @@ export default class Proposal extends Component{
     }
 
     renderTallyResultDetail(openState, option) {
-        let votes = this.props.proposal.votes?this.props.proposal.votes.filter((vote) => vote.option == option):[];
+        let votes = this.props.proposal.votes ? this.props.proposal.votes.filter((vote) => vote.option == option) : [];
         let orderDir = this.state.orderDir;
-        votes = votes.sort((vote1, vote2) => (vote1['votingPower'] - vote2['votingPower']) * orderDir);
+        votes = votes.sort((vote1, vote2) => (vote1['votingPower'].minus(vote2['votingPower'])).multipliedBy(orderDir));
 
         return <Result className="tally-result-detail" pose={this.state.open === openState ? 'open' : 'closed'}>
             <Card className='tally-result-table'>
@@ -259,11 +259,11 @@ export default class Proposal extends Component{
                         </Col>
                         <Col className="voting-power data" md={4}>
                             <i className="material-icons d-md-none">power</i>
-                            {(vote.votingPower!==undefined)?numbro(vote.votingPower).format('0,0.000000'):""}
+                            {(vote.votingPower !== undefined) ? numbro(vote.votingPower).format('0,0.000000') : ""}
                         </Col>
                         <Col className="voting-power-percent data" md={3}>
                             <i className="material-icons d-md-none">equalizer</i>
-                            {(vote.votingPower!==undefined)?numbro(vote.votingPower/this.state.totalVotes).format('0,0.00%'):""}
+                            {(vote.votingPower !== undefined) ? numbro(vote.votingPower.dividedBy(this.state.totalVotes)).format('0,0.00%') : ""}
                         </Col>
                     </Row></Card>
                 )}
@@ -334,9 +334,11 @@ export default class Proposal extends Component{
                                 <Result className="tally-result-detail" pose={this.state.open === 5 ? 'open' : 'closed'}>
                                     <ol>
                                         {this.props.proposal.deposits?this.props.proposal.deposits.map((deposit,i)=>{
+                                            console.log(deposit);
                                             return <li key={i}>
                                                 <Account address={deposit.depositor} />
                                                 {deposit.amount.map((amount, j) => {
+                                                    console.log(new Coin(amount.amount, amount.denom).toString());
                                                     return <div key={j}>{new Coin(amount.amount, amount.denom).toString()}</div>
                                                 })}
                                             </li>
@@ -383,7 +385,7 @@ export default class Proposal extends Component{
                                 </Row>
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><VoteIcon vote="abstain" /> Abstain</Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(parseInt(this.state.tally.abstain)).format("0,0.000000"):''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(new BigNumber(this.state.tally.abstain)).format("0,0.000000"):''}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(2,e)}><i className="material-icons">{this.state.open === 2 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
                                         {this.renderTallyResultDetail(2, 'VOTE_OPTION_ABSTAIN')}
@@ -391,7 +393,7 @@ export default class Proposal extends Component{
                                 </Row>
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><VoteIcon vote="no" /> No</Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(parseInt(this.state.tally.no)).format("0,0.000000"):''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(new BigNumber(this.state.tally.no)).format("0,0.000000"):''}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(3,e)}><i className="material-icons">{this.state.open === 3 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
                                         {this.renderTallyResultDetail(3, 'VOTE_OPTION_NO')}
@@ -399,7 +401,7 @@ export default class Proposal extends Component{
                                 </Row>
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><VoteIcon vote="no_with_veto" /> No with Veto</Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(parseInt(this.state.tally.no_with_veto)).format("0,0.000000"):''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(new BigNumber(this.state.tally.no_with_veto)).format("0,0.000000"):''}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(4,e)}><i className="material-icons">{this.state.open === 4 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
                                         {this.renderTallyResultDetail(4, 'VOTE_OPTION_NO_WITH_VETO')}
@@ -437,8 +439,8 @@ export default class Proposal extends Component{
                                     <Col xs={12}>
                                         <Card body className="tally-info">
                                             <em>
-                                                <T _purify={false} percent={numbro(this.state.totalVotes/totalVotingPower).format("0.00%")}>proposals.percentageVoted</T><br/>
-                                                {this.state.proposalValid?<T _props={{className:'text-success'}} tentative={(!this.state.voteEnded)?'(tentatively) ':''} _purify={false}>proposals.validMessage</T>:(this.state.voteEnded)?<T _props={{className:'text-danger'}} quorum={numbro(this.props.chain.gov.tallyParams.quorum).format("0.00%")} _purify={false}>proposals.invalidMessage</T>:<T moreVotes={numbro((totalVotingPower*this.props.chain.gov.tallyParams.quorum-this.state.totalVotes)).format("0,0")} _purify={false}>proposals.moreVoteMessage</T>}
+                                                <T _purify={false} percent={numbro(this.state.totalVotes.dividedBy(totalVotingPower)).format("0.00%")}>proposals.percentageVoted</T><br/>
+                                                {this.state.proposalValid?<T _props={{className:'text-success'}} tentative={(!this.state.voteEnded)?'(tentatively) ':''} _purify={false}>proposals.validMessage</T>:(this.state.voteEnded)?<T _props={{className:'text-danger'}} quorum={numbro(this.props.chain.gov.tallyParams.quorum).format("0.00%")} _purify={false}>proposals.invalidMessage</T>:<T moreVotes={numbro((totalVotingPower.multipliedBy(this.props.chain.gov.tallyParams.quorum).minus(this.state.totalVotes))).format("0,0")} _purify={false}>proposals.moreVoteMessage</T>}
                                             </em>
                                         </Card>
                                     </Col>

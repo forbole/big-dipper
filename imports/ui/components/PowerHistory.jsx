@@ -12,7 +12,7 @@ export default class PowerHistory extends React.Component {
         super(props);
         this.state = {
             tx : "",
-            diff: <span className={"text-"+((props.votingPower - props.prevVotingPower>0)?"success":"danger")+" vp-diff"}>({numbro(props.votingPower - props.prevVotingPower).format("+0,0")})</span>
+            diff: <span className={"text-"+((props.votingPower - props.prevVotingPower>0)?"success":"danger")+" vp-diff"}>({numbro(props.votingPower.minus(props.prevVotingPower)).format("+0,0")})</span>
         }
 
         if (props.votingPower > 0){      

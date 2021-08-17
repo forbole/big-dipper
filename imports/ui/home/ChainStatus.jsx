@@ -5,6 +5,7 @@ import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
 import TimeStamp from '../components/TimeStamp.jsx';
 import Coin from '/both/utils/coins.js';
+import BigNumber from 'bignumber.js';
 
 const T = i18n.createComponent();
 
@@ -15,7 +16,7 @@ export default class ChainStatus extends React.Component {
             blockHeight: 0,
             blockTime: 0,
             averageBlockTime: 0,
-            votingPower: 0,
+            votingPower: new BigNumber(0),
             numValidators: 0,
             totalNumValidators: 0,
             avgBlockTimeType: "",
@@ -30,11 +31,11 @@ export default class ChainStatus extends React.Component {
             this.setState({
                 blockHeight: numbro(this.props.status.latestBlockHeight).format({thousandSeparated: true}),
                 blockTime: <TimeStamp time={this.props.status.latestBlockTime}/>,
-                delegatedTokens: numbro(this.props.status.totalVotingPower).format('0,0.00a'),
+                delegatedTokens: numbro(new BigNumber(this.props.status.totalVotingPower)).format('0,0.00a'),
                 numValidators: this.props.status.validators,
                 totalNumValidators: this.props.status.totalValidators,
-                bondedTokens: this.props.states.bondedTokens,
-                totalSupply: this.props.states.totalSupply
+                bondedTokens: new BigNumber(this.props.states.bondedTokens),
+                totalSupply: new BigNumber(this.props.states.totalSupply)
             })
             switch (this.state.avgBlockTimeType){
             case "":
@@ -62,17 +63,17 @@ export default class ChainStatus extends React.Component {
             switch (this.state.avgVotingPowerType){
             case "":
                 this.setState({
-                    votingPower: numbro(this.props.status.activeVotingPower).format('0,0.00a'),
+                    votingPower: numbro(new BigNumber(this.props.status.activeVotingPower)).format('0,0.00a'),
                 });
                 break;
             case "h":
                 this.setState({
-                    votingPower: numbro(this.props.status.lastHourVotingPower).format('0,0.00a'),
+                    votingPower: numbro(new BigNumber(this.props.status.lastHourVotingPower)).format('0,0.00a'),
                 });
                 break;
             case "d":
                 this.setState({
-                    votingPower: numbro(this.props.status.lastDayVotingPower).format('0,0.00a'),
+                    votingPower: numbro(new BigNumber(this.props.status.lastDayVotingPower)).format('0,0.00a'),
                 });
                 break;
 
@@ -123,21 +124,21 @@ export default class ChainStatus extends React.Component {
             this.setState({
                 votingPowerText: <T>chainStatus.now</T>,
                 avgVotingPowerType: "",
-                votingPower: numbro(this.props.status.activeVotingPower).format('0,0.00a')
+                votingPower: numbro(new BigNumber(this.props.status.activeVotingPower)).format('0,0.00a')
             })
             break;
         case "h":
             this.setState({
                 votingPowerText: "1h",
                 avgVotingPowerType: "h",
-                votingPower: numbro(this.props.status.lastHourVotingPower).format('0,0.00a')
+                votingPower: numbro(new BigNumber(this.props.status.lastHourVotingPower)).format('0,0.00a')
             })
             break;
         case "d":
             this.setState({
                 votingPowerText: "1d",
                 avgVotingPowerType: "d",
-                votingPower: numbro(this.props.status.lastDayVotingPower).format('0,0.00a')
+                votingPower: numbro(new BigNumber(this.props.status.lastDayVotingPower)).format('0,0.00a')
             })
             break;
 
@@ -199,7 +200,7 @@ export default class ChainStatus extends React.Component {
                                     </DropdownMenu>
                                 </UncontrolledDropdown>
                                 <CardTitle><T>chainStatus.onlineVotingPower</T> ({this.state.votingPowerText})</CardTitle>
-                                <CardText><span className="display-4 value text-primary">{this.state.votingPower}</span><T percent={numbro(this.state.bondedTokens/this.state.totalSupply).format("0.00%")} totalStakes={numbro(this.state.totalSupply/Coin.StakingCoin.fraction).format("0.00a")} denom={Coin.StakingCoin.displayName} denomPlural={Coin.StakingCoin.displayNamePlural}>chainStatus.fromTotalStakes</T></CardText>
+                                <CardText><span className="display-4 value text-primary">{this.state.votingPower}</span><T percent={numbro(this.state.bondedTokens.dividedBy(this.state.totalSupply)).format("0.00%")} totalStakes={numbro(this.state.totalSupply.dividedBy(Coin.StakingCoin.fraction)).format("0.00a")} denom={Coin.StakingCoin.displayName} denomPlural={Coin.StakingCoin.displayNamePlural}>chainStatus.fromTotalStakes</T></CardText>
                             </Card>
                         </Col>
                     </Row>

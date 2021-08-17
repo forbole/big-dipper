@@ -31,6 +31,7 @@ export default class Transaction extends Component{
         else{
             if (this.props.transactionExist){
                 let tx = this.props.transaction;
+                console.log(tx.tx_response.gas_used);
                 return <Container id="transaction">
                     <Helmet>
                         <title>Transaction {tx.txhash} on CUDOS</title>
