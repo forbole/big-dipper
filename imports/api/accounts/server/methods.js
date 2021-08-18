@@ -61,7 +61,6 @@ Meteor.methods({
             let available = HTTP.get(url);
             if (available.statusCode == 200){
                 balance.available = JSON.parse(available.content).balances;
-                console.log(balance.available);
             }
         }
         catch (e){
@@ -139,10 +138,9 @@ Meteor.methods({
         this.unblock();
         let url = `/cosmos/staking/v1beta1/validators/${validator}/delegations/${address}`;
         let delegations = fetchFromUrl(url);
-        console.log(delegations);
         delegations = delegations && delegations.data.delegation_response;
         if (delegations && delegations.delegation.shares)
-            delegations.delegation.shares = parseFloat(delegations.delegation.shares);
+            delegations.delegation.shares = new BigNumber(delegations.delegation.shares);
 
         url = `/cosmos/staking/v1beta1/delegators/${address}/redelegations?dst_validator_addr=${validator}`;
         let relegations = fetchFromUrl(url);
@@ -178,7 +176,7 @@ Meteor.methods({
                 if (delegations && delegations.length > 0){
                     delegations.forEach((delegation, i) => {
                         if (delegations[i] && delegations[i].shares)
-                            delegations[i].shares = parseFloat(delegations[i].shares);
+                            delegations[i].shares = new BigNumber(delegations[i].shares);
                     })
                 }
 

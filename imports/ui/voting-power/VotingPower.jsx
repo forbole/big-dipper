@@ -5,6 +5,7 @@ import { Row, Col, Card, CardImg, CardText, CardBody,
 import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
 import SentryBoundary from '../components/SentryBoundary.jsx';
+import BigNumber from 'bignumber.js';
 
 
 const T = i18n.createComponent();
@@ -24,23 +25,24 @@ export default class VotingPower extends Component{
 
             let labels = [];
             let data = [];
-            let totalVotingPower = 0;
+            let totalVotingPower = new BigNumber(0);
             let accumulatePower = [];
             let backgroundColors = [];
-            
             for (let i in this.props.stats){
-                totalVotingPower += this.props.stats[i].voting_power;
+
                 if (i > 0){
-                    accumulatePower[i] = accumulatePower[i-1] + this.props.stats[i].voting_power;
+                    accumulatePower[i] = accumulatePower[i-1].plus(this.props.stats[i].voting_power);
                 }
                 else{
                     accumulatePower[i] = this.props.stats[i].voting_power;
                 }
             }
+            
+            accumulatePower.forEach(p => totalVotingPower = totalVotingPower.plus(p))
 
             for (let v in this.props.stats){
                 labels.push(this.props.stats[v].description?this.props.stats[v].description.moniker:'');
-                data.push(this.props.stats[v].voting_power);
+                data.push(this.props.stats[v].voting_power.toNumber());
                 let alpha = (this.props.stats.length+1-v)/this.props.stats.length*0.8+0.2;
                 backgroundColors.push('rgba(189, 8, 28,'+alpha+')');
             }
@@ -59,7 +61,7 @@ export default class VotingPower extends Component{
                     tooltips: {
                         callbacks: {
                             label: function(tooltipItem, data) {
-                                return numbro(data.datasets[0].data[tooltipItem.index]).format("0,0")+" ("+(numbro(data.datasets[0].data[tooltipItem.index]/totalVotingPower).format("0.00%")+", "+numbro(accumulatePower[tooltipItem.index]/totalVotingPower).format("0.00%"))+")";
+                                return numbro(data.datasets[0].data[tooltipItem.index]).format("0,0")+" ("+(numbro(data.datasets[0].data[tooltipItem.index] / totalVotingPower.toNumber()).format("0.00%")+", "+numbro(accumulatePower[tooltipItem.index].dividedBy(totalVotingPower)).format("0.00%"))+")";
                             }
                         }
                     },
@@ -92,7 +94,9 @@ export default class VotingPower extends Component{
                     <Card>
                         <div className="card-header"><T>common.votingPower</T></div>
                         <CardBody id="voting-power-chart">
-                            <SentryBoundary><HorizontalBar data={this.state.data} options={this.state.options} /></SentryBoundary>
+                            <SentryBoundary>
+                                <HorizontalBar data={this.state.data} options={this.state.options} />
+                            </SentryBoundary>
                         </CardBody>
                     </Card>
                 );   

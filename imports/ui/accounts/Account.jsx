@@ -27,18 +27,18 @@ class AccountDetails extends Component{
             address: props.match.params.address,
             loading: true,
             accountExists: false,
-            available: defaultCoin,
+            available: [defaultCoin],
             delegated: new BigNumber(0),
             unbonding: new BigNumber(0),
-            rewards: defaultCoin,
-            reward: defaultCoin,
-            total: defaultCoin,
+            rewards: [defaultCoin],
+            reward: [defaultCoin],
+            total: [defaultCoin],
             price: new BigNumber(0),
             user: localStorage.getItem(CURRENTUSERADDR),
-            commission: defaultCoin,
+            commission: [defaultCoin],
             denom: '',
             rewardsForEachDel: {defaultCoin},
-            rewardDenomType: defaultCoin,
+            rewardDenomType: [defaultCoin],
         }
     }
 
@@ -71,7 +71,7 @@ class AccountDetails extends Component{
             if (result){
                 if (result.available && (result.available.length > 0)){
                     this.setState({
-                        available: result.available.map(c => {return new Coin(c.amount, c.denom)}),
+                        available: result.available.map(c => new Coin(c.amount, c.denom)),
                         denom: Coin.StakingCoin.denom,
                         total: result.available.map(c => new Coin(c.amount, c.denom))
                     })
@@ -125,6 +125,7 @@ class AccountDetails extends Component{
                 if(result.total_rewards && result.total_rewards.length > 0)
                 {   
                     const totalRewards  = result.total_rewards.map(r => new Coin(r.amount, r.denom));
+                    console.log(totalRewards);
                     
                     totalRewards.forEach((rewardNum, i) => {
                         if(this.state.total[i] && (rewardNum.denom === this.state.total[i].denom))
@@ -196,17 +197,17 @@ class AccountDetails extends Component{
                 address: this.props.match.params.address,
                 loading: true,
                 accountExists: false,
-                available: defaultCoin,
+                available: [defaultCoin],
                 delegated: new BigNumber(0),
                 unbonding: new BigNumber(0),
-                commission: defaultCoin,
-                rewards: defaultCoin,
-                total: defaultCoin,
+                commission: [defaultCoin],
+                rewards: [defaultCoin],
+                total: [defaultCoin],
                 price: new BigNumber(0),
-                reward: defaultCoin,
+                reward: [defaultCoin],
                 denom: '',
                 rewardsForEachDel: {defaultCoin},
-                rewardDenomType: defaultCoin,
+                rewardDenomType: [defaultCoin],
             }, () => {
                 this.getBalance();
             })
@@ -260,7 +261,7 @@ class AccountDetails extends Component{
     }
 
     findValue(params){
-        let current = (params).find((coin) => coin.denom === this.state.denom);
+        let current = params.find((coin) => coin.denom === this.state.denom);
         let currentTotal = current ? current.amount : new BigNumber(0);
         return currentTotal
     }
@@ -340,7 +341,7 @@ class AccountDetails extends Component{
                                     <Row>
                                         <Col xs={4} className="label d-flex align-self-end"><div className="infinity" /><T>accounts.total</T></Col>
                                         <Col xs={8} className="value text-right">{this.findCoin(this.state.total)}</Col>
-                                        <Col xs={12} className="dollar-value text-right text-secondary">~{numbro(this.findValue(this.state.total).dividedBy(Coin.StakingCoin.fraction).multipliedBy(this.state.price)).format("$0,0.0000a")} ({numbro(this.state.price).format("$0,0.00")}/{Coin.StakingCoin.displayName})</Col>
+                                        <Col xs={12} className="dollar-value text-right text-secondary">~{numbro((this.findValue(this.state.total))/Coin.StakingCoin.fraction*this.state.price).format("$0,0.0000a")} ({numbro(this.state.price).format("$0,0.00")}/{Coin.StakingCoin.displayName})</Col>
                                     </Row>
                                 </Col>
                             </Row>

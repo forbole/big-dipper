@@ -46,6 +46,9 @@ get amount () {
     return this._amount;
 }
 
+set amount (amount ) {
+    this._amount = new BigNumber(amount);
+}
 get stakingAmount () {
     return (this._coin) ? this._amount.dividedBy(this._coin.fraction) : this._amount;
 }

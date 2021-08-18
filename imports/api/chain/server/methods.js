@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 import { Chain, ChainStates } from '../chain.js';
 import Coin from '../../../../both/utils/coins.js';
+import BigNumber from 'bignumber.js';
 
 findVotingPower = (validator, genValidators) => {
     for (let v in genValidators){
@@ -22,7 +23,7 @@ Meteor.methods({
             let height = consensus.round_state.height;
             let round = consensus.round_state.round;
             let step = consensus.round_state.step;
-            let votedPower = Math.round(parseFloat(consensus.round_state.votes[round].prevotes_bit_array.split(" ")[3])*100);
+            let votedPower = (new BigNumber(consensus.round_state.votes[round].prevotes_bit_array.split(" ")[3])).multipliedBy(100).decimalPlaces(0,6);
 
             Chain.update({chainId:Meteor.settings.public.chainId}, {$set:{
                 votingHeight: height,
@@ -75,9 +76,9 @@ Meteor.methods({
             while (validators.length < parseInt(result.total))
 
             chain.validators = validators.length;
-            let activeVP = 0;
+            let activeVP = new BigNumber(0);
             for (v in validators){
-                activeVP += parseInt(validators[v].voting_power);
+                activeVP = activeVP.plus(validators[v].voting_power);
             }
 
             chain.activeVotingPower = activeVP;
@@ -102,8 +103,8 @@ Meteor.methods({
                     url = API + '/cosmos/staking/v1beta1/pool';
                     let response = HTTP.get(url);
                     let bonding = JSON.parse(response.content).pool;
-                    chainStates.bondedTokens = parseInt(bonding.bonded_tokens);
-                    chainStates.notBondedTokens = parseInt(bonding.not_bonded_tokens);
+                    chainStates.bondedTokens = new BigNumber(bonding.bonded_tokens);
+                    chainStates.notBondedTokens = new BigNumber(bonding.not_bonded_tokens);
                 }
                 catch(e){
                     console.log(e);
@@ -115,7 +116,7 @@ Meteor.methods({
                             url = API + '/cosmos/bank/v1beta1/supply/' + Coin.StakingCoin.denom;
                             let response = HTTP.get(url);
                             let supply = JSON.parse(response.content);
-                            chainStates.totalSupply = parseInt(supply.amount.amount);
+                            chainStates.totalSupply = new BigNumber(supply.amount.amount);
                         }
                         catch(e){
                             console.log(e);
@@ -143,7 +144,7 @@ Meteor.methods({
                                 pool.forEach((amount) => {
                                     chainStates.communityPool.push({
                                         denom: amount.denom,
-                                        amount: parseFloat(amount.amount)
+                                        amount: new BigNumber(amount.amount)
                                     })
                                 })
                             }
@@ -171,7 +172,7 @@ Meteor.methods({
                             // response = HTTP.get(url);
                             // let inflation = JSON.parse(response.content).result;
                             if (inflation){
-                                chainStates.inflation = parseFloat(inflation)
+                                chainStates.inflation = new BigNumber(inflation)
                             }
                         }
                         catch(e){
@@ -184,7 +185,7 @@ Meteor.methods({
                             let provisions = JSON.parse(response.content).annual_provisions;
                             console.log(provisions)
                             if (provisions){
-                                chainStates.annualProvisions = parseFloat(provisions)
+                                chainStates.annualProvisions = new BigNumber(provisions);
                             }
                         }
                         catch(e){

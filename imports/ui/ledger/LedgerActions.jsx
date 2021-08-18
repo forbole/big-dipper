@@ -515,7 +515,7 @@ class LedgerButton extends Component {
                 txMsg.msgAny,
                 txMsg.fee,
             );
-
+            
             assertIsBroadcastTxSuccess(result);
 
             this.setStateOnSuccess('signing', {

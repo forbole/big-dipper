@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Transactions } from '../../transactions/transactions.js';
 import { Blockscon } from '../../blocks/blocks.js';
+import BigNumber from 'bignumber.js';
 
 Meteor.methods({
     'Validators.findCreateValidatorTime': function(address){
@@ -34,7 +35,7 @@ Meteor.methods({
                 delegations = JSON.parse(delegations.content).delegation_responses;
                 delegations.forEach((delegation, i) => {
                     if (delegations[i] && delegations[i].shares)
-                        delegations[i].shares = parseFloat(delegations[i].shares);
+                        delegations[i].shares = new BigNumber(delegations[i].shares);
                 })
                 
                 return delegations;

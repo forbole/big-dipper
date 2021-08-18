@@ -4,7 +4,8 @@ import momemt from 'moment';
 import numbro from 'numbro';
 import Account from './Account.jsx';
 import i18n from 'meteor/universe:i18n';
-import Coin from '/both/utils/coins.js'
+import Coin from '/both/utils/coins.js';
+import BigNumber from 'bignumber.js';
 
 const T = i18n.createComponent();
 export default class PowerHistory extends React.Component {
@@ -12,7 +13,7 @@ export default class PowerHistory extends React.Component {
         super(props);
         this.state = {
             tx : "",
-            diff: <span className={"text-"+((props.votingPower - props.prevVotingPower>0)?"success":"danger")+" vp-diff"}>({numbro(props.votingPower.minus(props.prevVotingPower)).format("+0,0")})</span>
+            diff: <span className={"text-"+(props.votingPower.minus(props.prevVotingPower).comparedTo(0) == 1 ? "success" : "danger") + " vp-diff"}>({numbro(props.votingPower.minus(props.prevVotingPower)).format("+0,0")})</span>
         }
 
         if (props.votingPower > 0){      

@@ -334,11 +334,9 @@ export default class Proposal extends Component{
                                 <Result className="tally-result-detail" pose={this.state.open === 5 ? 'open' : 'closed'}>
                                     <ol>
                                         {this.props.proposal.deposits?this.props.proposal.deposits.map((deposit,i)=>{
-                                            console.log(deposit);
                                             return <li key={i}>
                                                 <Account address={deposit.depositor} />
                                                 {deposit.amount.map((amount, j) => {
-                                                    console.log(new Coin(amount.amount, amount.denom).toString());
                                                     return <div key={j}>{new Coin(amount.amount, amount.denom).toString()}</div>
                                                 })}
                                             </li>

@@ -18,8 +18,6 @@ export default class ThirtyFour extends Component{
 
     componentDidUpdate(prevProps){
         if (prevProps.stats != this.props.stats){
-            let topPercent = this.props.stats.topTwentyPower/this.props.stats.totalVotingPower;
-            let bottomPercent = this.props.stats.bottomEightyPower/this.props.stats.totalVotingPower;
 
             let self = this;
             this.setState({
@@ -53,8 +51,11 @@ export default class ThirtyFour extends Component{
                             label: function(tooltipItem, data) {
                                 // var label = data.datasets[0].data[tooltipItem.index] + " validators hold ";
                                 // label += numbro(data.datasets[0].data[tooltipItem.index]).format("0.00%");
-                                if (tooltipItem.index == 0)
+                                if (tooltipItem.index == 0){
+        
+                                    console.log(self.props.stats.topThirtyFourPercent);
                                     return data.datasets[0].data[tooltipItem.index] + " validators hold "+numbro(self.props.stats.topThirtyFourPercent).format("0.00%")+" voting power";
+                                }
                                 else 
                                     return data.datasets[0].data[tooltipItem.index] + " validators hold "+numbro(self.props.stats.bottomSixtySixPercent).format("0.00%")+" voting power";
                             }

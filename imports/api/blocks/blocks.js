@@ -1,11 +1,18 @@
 import { Mongo } from 'meteor/mongo';
 import { Validators } from '../validators/validators.js';
+import BigNumber from 'bignumber.js';
 
 export const Blockscon = new Mongo.Collection('blocks');
 
 Blockscon.helpers({
     proposer(){
-        return Validators.findOne({address:this.proposerAddress});
+        const validator = Validators.findOne({address:this.proposerAddress});
+
+        validator.voting_power = new BigNumber(validator.voting_power);
+        validator.self_delegation = new BigNumber(validator.self_delegation);
+        validator.proposer_priority = new BigNumber(validator.proposer_priority);
+        
+        return validator;
     }
 });
 

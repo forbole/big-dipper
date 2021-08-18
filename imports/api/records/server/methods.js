@@ -9,6 +9,7 @@ import { MissedBlocks } from '../records.js';
 import { Blockscon } from '../../blocks/blocks.js';
 import { Chain } from '../../chain/chain.js';
 import _ from 'lodash';
+import BigNumber from 'bignumber.js';
 const BULKUPDATEMAXSIZE = 1000;
 
 const getBlockStats = (startHeight, latestHeight) => {
@@ -88,11 +89,11 @@ Meteor.methods({
                     let proposerAddress = block.proposerAddress;
                     let votedValidators = new Set(block.validators);
                     let validatorSets = ValidatorSets.findOne({block_height:block.height});
-                    let votedVotingPower = 0;
+                    let votedVotingPower = new BigNumber(0);
 
                     validatorSets.validators.forEach((activeValidator) => {
                         if (votedValidators.has(activeValidator.address))
-                            votedVotingPower += parseFloat(activeValidator.voting_power)
+                            votedVotingPower = votedVotingPower.plus(activeValidator.voting_power)
                     })
 
                     validatorSets.validators.forEach((activeValidator) => {

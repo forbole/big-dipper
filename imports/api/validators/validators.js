@@ -2,15 +2,25 @@ import { Mongo } from 'meteor/mongo';
 import { ValidatorRecords } from '../records/records.js';
 import { VotingPowerHistory } from '../voting-power/history.js';
 import numbro from 'numbro';
+import BigNumber from 'bignumber.js';
 
 export const Validators = new Mongo.Collection('validators');
 
 Validators.helpers({
     firstSeen(){
-        return ValidatorRecords.findOne({address:this.address});
+        const validator = ValidatorRecords.findOne({address:this.address});
+        validator.voting_power = new BigNumber(validator.voting_power);
+        validator.self_delegation = new BigNumber(validator.self_delegation);
+        return validator;
     },
     history(){
-        return VotingPowerHistory.find({address:this.address}, {sort:{height:-1}, limit:50}).fetch();
+        const votinghistory = VotingPowerHistory.find({address:this.address}, {sort:{height:-1}, limit:50}).fetch();
+        votinghistory.forEach(vh => {
+            vh.self_delegation = new BigNumber(vh.self_delegation);
+            vh.voting_power = new BigNumber(vh.voting_power);
+            vh.prev_voting_power = new BigNumber(vh.prev_voting_power);
+        });
+        return votinghistory
     }
 })
 
@@ -23,8 +33,10 @@ Validators.find = (selector, options) => {
     cursor.fetch = () => {
         const data = superCursorFetch();
         return data.map(v => {
-            v.tokens = v.voting_power * Meteor.settings.public.onChainPowerReduction;
-            v.voting_power /= Meteor.settings.public.powerReduction / Meteor.settings.public.onChainPowerReduction;
+            v.tokens = (new BigNumber(v.voting_power)).multipliedBy(Meteor.settings.public.onChainPowerReduction);
+            v.voting_power = (new BigNumber(v.voting_power)).dividedBy(Meteor.settings.public.powerReduction).multipliedBy(Meteor.settings.public.onChainPowerReduction);
+            v.self_delegation = new BigNumber(v.self_delegation);
+            v.proposer_priority = new BigNumber(v.proposer_priority);
             return v;
         });
     }
@@ -37,8 +49,11 @@ Validators.findOne = (selector, options) => {
     const validator = superValidatorFindOne(selector, options);
     
     if(validator){
-        validator.tokens = validator.voting_power * Meteor.settings.public.onChainPowerReduction;
-        validator.voting_power /= Meteor.settings.public.powerReduction / Meteor.settings.public.onChainPowerReduction;
+        validator.tokens = (new BigNumber(validator.voting_power)).multipliedBy(Meteor.settings.public.onChainPowerReduction);
+        validator.voting_power = (new BigNumber(validator.voting_power)).dividedBy(Meteor.settings.public.powerReduction).multipliedBy(Meteor.settings.public.onChainPowerReduction);
+        validator.self_delegation = new BigNumber(validator.self_delegation);
+        validator.proposer_priority = new BigNumber(validator.proposer_priority);
+
     }
     return validator;
 }

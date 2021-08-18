@@ -9,6 +9,7 @@ import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
 
 const T = i18n.createComponent();
+
 export default class Consensus extends Component{
     constructor(props){
         super(props);
@@ -84,7 +85,12 @@ export default class Consensus extends Component{
                                             </Col>
                                         </Row>
                                     </Col>
-                                    <Col md={4} lg={6}><CardSubtitle><T>common.votingPower</T></CardSubtitle><Progress animated value={this.props.consensus.votedPower} className="value">{this.props.consensus.votedPower}%</Progress></Col>
+                                    <Col md={4} lg={6}>
+                                        <CardSubtitle>
+                                            <T>common.votingPower</T>
+                                        </CardSubtitle>
+                                        <Progress animated value="100000" className="value">{10000}</Progress>
+                                    </Col>
                                 </Row>
                             </CardBody>
                         </Card>

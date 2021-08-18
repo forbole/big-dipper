@@ -81,7 +81,9 @@ export default class AccountTooltip extends Account{
                         <Col xs={6}>{validator.jailed?<Badge color="danger">Jailed</Badge>:''}</Col>
                     </CardText>:null}
                     {(isActive)?<CardText className="uptime data">
-                        <i className="material-icons">flash_on</i><Progress value={validator.uptime} style={{width:'70%', display:'inline-block'}}>{validator.uptime?numbro(validator.uptime/100).format('0%'):0}
+                        <i className="material-icons">flash_on</i>
+                        <Progress value={validator.uptime} style={{width:'70%', display:'inline-block'}}>
+                            {validator.uptime ? numbro(validator.uptime/100).format('0%') : 0}
                         </Progress>
                     </CardText>:null}            
                 </PopoverBody>

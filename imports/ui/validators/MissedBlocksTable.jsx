@@ -133,7 +133,7 @@ export default class MissedBlocksTable extends Component{
                 <td>{ numbro(record.missCount / record.totalCount).format('0.0%') }</td>
                 <td>{ `${record.precommitsCount}/${record.validatorsCount}` }</td>
                 <td>
-                    { numbro(record.votedVotingPower/record.votingPower).format('0.0%') }
+                    { numbro(record.votedVotingPower.dividedBy(record.votingPower)).format('0.0%') }
                     <InfoIcon tooltipText={`${numbro(record.votedVotingPower).format('0,0')}/${numbro(record.votingPower).format('0,0')}`}/>
                 </td>
             </tr>

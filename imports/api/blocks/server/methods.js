@@ -11,6 +11,7 @@ import { Evidences } from '../../evidences/evidences.js';
 import { sha256 } from 'js-sha256';
 // import { getAddress } from 'tendermint/lib/pubkey';
 import * as cheerio from 'cheerio';
+import BigNumber from 'bignumber.js';
 
 
 getRemovedValidators = (prevValidators, validators) => {
@@ -104,27 +105,26 @@ calculateVPDist = async (analyticsData, blockData) => {
     let numTopTwenty = Math.ceil(activeValidators.length*0.2);
     let numBottomEighty = activeValidators.length - numTopTwenty;
 
-    let topTwentyPower = 0;
-    let bottomEightyPower = 0;
+    let topTwentyPower = new BigNumber(0);
+    let bottomEightyPower = new BigNumber(0);
 
-    let numTopThirtyFour = 0;
-    let numBottomSixtySix = 0;
-    let topThirtyFourPercent = 0;
-    let bottomSixtySixPercent = 0;
+    let numTopThirtyFour = 0
+    let numBottomSixtySix = 0
+    let topThirtyFourPercent = 0
+    let bottomSixtySixPercent = 0
 
 
 
     for (v in activeValidators){
         if (v < numTopTwenty){
-            topTwentyPower += activeValidators[v].voting_power;
+            topTwentyPower = topTwentyPower.plus(activeValidators[v].voting_power);
         }
         else{
-            bottomEightyPower += activeValidators[v].voting_power;
+            bottomEightyPower = bottomEightyPower.plus(activeValidators[v].voting_power);
         }
 
-
         if (topThirtyFourPercent < 0.34){
-            topThirtyFourPercent += activeValidators[v].voting_power / analyticsData.voting_power;
+            topThirtyFourPercent += activeValidators[v].voting_power.dividedBy(analyticsData.voting_power).toNumber();
             numTopThirtyFour++;
         }
     }
@@ -135,8 +135,8 @@ calculateVPDist = async (analyticsData, blockData) => {
     let vpDist = {
         height: blockData.height,
         numTopTwenty: numTopTwenty,
-        topTwentyPower: topTwentyPower,
-        numBottomEighty: numBottomEighty,
+        topTwentyPower: topTwentyPower.toNumber(),
+        numBottomEighty: numBottomEighty.toNumber(),
         bottomEightyPower: bottomEightyPower,
         numTopThirtyFour: numTopThirtyFour,
         topThirtyFourPercent: topThirtyFourPercent,
@@ -147,8 +147,6 @@ calculateVPDist = async (analyticsData, blockData) => {
         blockTime: blockData.time,
         createAt: new Date()
     }
-
-    console.log(vpDist);
 
     VPDistributions.insert(vpDist);
 }
@@ -403,7 +401,7 @@ Meteor.methods({
                                 height: height,
                                 address: address,
                                 exists: false,
-                                voting_power: parseInt(validators[i].voting_power)
+                                voting_power: new BigNumber(validators[i].voting_power)
                             }
 
                             for (j in precommits){
@@ -457,13 +455,13 @@ Meteor.methods({
                     //     Validators.remove({});
                     // }
 
-                    analyticsData.voting_power = 0;
+                    analyticsData.voting_power = new BigNumber(0);
 
                     let startFindValidatorsNameTime = new Date();
                     for (v in validatorSet){
                         let valData = validatorSet[v];
 
-                        valData.tokens = parseInt(valData.tokens);
+                        valData.tokens = new BigNumber(valData.tokens);
                         valData.unbonding_height = parseInt(valData.unbonding_height)
 
                         let valExist = Validators.findOne({"consensus_pubkey.key":v});
@@ -471,7 +469,7 @@ Meteor.methods({
                         // console.log(valData);
 
                         // console.log("===== voting power ======: %o", valData)
-                        analyticsData.voting_power += valData.voting_power
+                        analyticsData.voting_power = analyticsData.voting_power.plus(valData.voting_power); 
 
                         // console.log(analyticsData.voting_power);
                         if (!valExist && valData.consensus_pubkey){
@@ -515,15 +513,15 @@ Meteor.methods({
                             // insert first power change history 
 
                             // valData.voting_power = validators[valData.consensusPubkey.value]?parseInt(validators[valData.consensusPubkey.value].votingPower):0;
-                            valData.voting_power = validators[valData.address]?parseInt(validators[valData.address].voting_power):0;
-                            valData.proposer_priority = validators[valData.address]?parseInt(validators[valData.address].proposer_priority):0;
+                            valData.voting_power = validators[valData.address] ? new BigNumber(validators[valData.address].voting_power) : new BigNumber(0);
+                            valData.proposer_priority = validators[valData.address] ? new BigNumber(validators[valData.address].proposer_priority) : new BigNumber(0);
 
                             console.log("Validator not found. Insert first VP change record.")
 
                             // console.log("first voting power: %o", valData.voting_power);
                             bulkVPHistory.insert({
                                 address: valData.address,
-                                prev_voting_power: 0,
+                                prev_voting_power: new BigNumber(0),
                                 voting_power: valData.voting_power,
                                 type: 'add',
                                 height: blockData.height,
@@ -548,14 +546,15 @@ Meteor.methods({
                             if (validators[valExist.address]){
                                 // Validator exists and is in validator set, update voitng power.
                                 // If voting power is different from before, add voting power history
-                                valData.voting_power = parseInt(validators[valExist.address].voting_power);
-                                valData.proposer_priority = parseInt(validators[valExist.address].proposer_priority);
+                                valData.voting_power = new BigNumber(validators[valExist.address].voting_power);
+                                valData.proposer_priority = new BigNumber(validators[valExist.address].proposer_priority);
                                 let prevVotingPower = VotingPowerHistory.findOne({address:valExist.address}, {height:-1, limit:1});
+                                prevVotingPower.voting_power = new BigNumber(prevVotingPower.voting_power);
 
                                 console.log("Validator already in DB. Check if VP changed.");
                                 if (prevVotingPower){
                                     if (prevVotingPower.voting_power != valData.voting_power){
-                                        let changeType = (prevVotingPower.voting_power > valData.voting_power)?'down':'up';
+                                        let changeType = prevVotingPower.voting_power.comparedTo(valData.voting_power) == 1 ? 'down' : 'up';
                                         let changeData = {
                                             address: valExist.address,
                                             prev_voting_power: prevVotingPower.voting_power,
@@ -573,12 +572,13 @@ Meteor.methods({
                                 // Set voting power to zero and add voting power history.
 
                                 valData.address = valExist.address;
-                                valData.voting_power = 0;
-                                valData.proposer_priority = 0;
+                                valData.voting_power = new BigNumber(0);
+                                valData.proposer_priority = new BigNumber(0);
 
                                 let prevVotingPower = VotingPowerHistory.findOne({address:valExist.address}, {height:-1, limit:1});
+                                prevVotingPower.voting_power = new BigNumber(prevVotingPower.voting_power);
 
-                                if (prevVotingPower && (prevVotingPower.voting_power > 0)){
+                                if (prevVotingPower && (prevVotingPower.voting_power.comparedTo(0) == 1)){
                                     console.log("Validator is in DB but not in validator set now. Add remove VP change.");
                                     bulkVPHistory.insert({
                                         address: valExist.address,
@@ -603,14 +603,13 @@ Meteor.methods({
                                         let response = HTTP.get(url);
                                         let selfDelegation = JSON.parse(response.content).delegation_response;
         
-                                        valData.self_delegation = (selfDelegation.delegation && selfDelegation.delegation.shares)?parseFloat(selfDelegation.delegation.shares)/parseFloat(valData.delegator_shares):0;
+                                        valData.self_delegation = (selfDelegation.delegation && selfDelegation.delegation.shares) ? (new BigNumber(selfDelegation.delegation.shares)).dividedBy(valData.delegator_shares) : new BigNumber(0);
         
                                     }
                                     catch(e){
                                         console.log(url);
                                         console.log("Getting self delegation: %o", e);
-                                        valData.self_delegation = 0;
-                                            
+                                        valData.self_delegation = new BigNumber(0);
                                     }
                                 }
                             }

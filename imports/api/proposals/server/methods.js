@@ -3,6 +3,7 @@ import { HTTP } from 'meteor/http';
 import { Proposals } from '../proposals.js';
 import { Chain } from '../../chain/chain.js';
 import { Validators } from '../../validators/validators.js';
+import BigNumber from 'bignumber.js';
 
 Meteor.methods({
     'proposals.getProposals': function(){
@@ -122,9 +123,9 @@ const getVoteDetail = (votes) => {
         votingPowerMap[validator.delegator_address] = {
             moniker: validator.description.moniker,
             address: validator.address,
-            tokens: parseFloat(validator.tokens),
-            delegatorShares: parseFloat(validator.delegator_shares),
-            deductedShares: parseFloat(validator.delegator_shares)
+            tokens: new BigNumber(validator.tokens),
+            delegatorShares: new BigNumber(validator.delegator_shares),
+            deductedShares: new BigNumber(validator.delegator_shares)
         }
         validatorAddressMap[validator.operator_address] = validator.delegator_address;
     });
@@ -140,19 +141,19 @@ const getVoteDetail = (votes) => {
                     delegations = JSON.parse(response.content).delegations_response;
                     if (delegations && delegations.length > 0) {
                         delegations.forEach((delegation) => {
-                            let shares = parseFloat(delegation.delegation.shares);
+                            let shares = new BigNumber(delegation.delegation.shares);
                             if (validatorAddressMap[delegation.delegation.validator_address]) {
                                 // deduct delegated shareds from validator if a delegator votes
                                 let validator = votingPowerMap[validatorAddressMap[delegation.validator_address]];
-                                validator.deductedShares -= shares;
+                                validator.deductedShares = validator.deductedShares.minus(shares);
                                 if (validator.delegatorShares != 0){ // avoiding division by zero
-                                    votingPower += (shares/validator.delegatorShares) * validator.tokens;
+                                    votingPower = votingPower.plus(shares.dividedBy(validator.delegatorShares).multipliedBy(validator.tokens));
                                 }
 
                             } else {
                                 let validator = Validators.findOne({operatorAddress: delegation.validator_address});
                                 if (validator && validator.delegatorShares != 0){ // avoiding division by zero
-                                    votingPower += (shares/parseFloat(validator.delegatorShares)) * parseFloat(validator.tokens);
+                                    votingPower = votingPower.plus(shares.dividedBy(validator.delegatorShares).multipliedBy(validator.tokens));
                                 }
                             }
                         });
@@ -171,7 +172,7 @@ const getVoteDetail = (votes) => {
         let votingPower = voter.votingPower;
         if (votingPower == undefined) {
             // voter is a validator
-            votingPower = voter.delegatorShares?((voter.deductedShares/voter.delegatorShares) * voter.tokens):0;
+            votingPower = voter.delegatorShares ? voter.deductedShares.dividedBy(voter.delegatorShares).multipliedBy(voter.tokens) : new BigNumber(0);
         }
         return {...vote, votingPower};
     });
