@@ -22,6 +22,8 @@ import {
     MsgBeginRedelegate
 } from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/tx';
 import { MsgSend } from '@cosmjs/stargate/build/codec/cosmos/bank/v1beta1/tx';
+import { MsgWithdrawValidatorCommission, MsgWithdrawDelegatorReward } from '@cosmjs/stargate/build/codec/cosmos/distribution/v1beta1/tx';
+
 // TODO: discuss TIMEOUT value
 const INTERACTION_TIMEOUT = 10000
 const REQUIRED_COSMOS_APP_VERSION = Meteor.settings.public.ledger.ledgerAppVersion || "2.16.0";
@@ -242,10 +244,25 @@ export class Ledger {
                         amount: txMsg.value.msg[0].value.amount,
                     }),
                 }
+            case "cosmos-sdk/MsgWithdrawDelegationReward":
+                return {
+                    typeUrl: '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward',
+                    value: MsgWithdrawDelegatorReward.fromPartial({
+                        delegatorAddress: txMsg.value.msg[0].value.delegator_address,
+                        validatorAddress: txMsg.value.msg[0].value.validator_address
+                    })
+                }    
+            case "cosmos-sdk/MsgWithdrawValidatorCommission":
+                return {
+                    typeUrl: '/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission',
+                    value: MsgWithdrawValidatorCommission.fromPartial({
+                        validatorAddress: txMsg.value.msg[0].operator_address
+                    })
+                }
             }
         }
 
-        let msg = formatMessage(txMsg.value.msg[0].type) ?? txMsg.value.msg[0]
+        let msg = txMsg.value.msg.length > 1 ? txMsg.value.msg.map((m) => formatMessage(m.type)) : formatMessage(txMsg.value.msg[0].type) 
         const result = await client.signAndBroadcast(
             address,
             [msg],
