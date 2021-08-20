@@ -1,0 +1,63 @@
+{
+    "public":{
+        "chainName": "Ethermint",
+        "chainId": "ethermint_9000-1",
+        "gtm": "",
+        "slashingWindow": 10000,
+        "uptimeWindow": 250,
+        "initialPageSize": 30,
+        "secp256k1": false,
+        "bech32PrefixAccAddr": "eth",
+        "bech32PrefixAccPub": "ethpub",
+        "bech32PrefixValAddr": "ethvaloper",
+        "bech32PrefixValPub": "ethvaloperpub",
+        "bech32PrefixConsAddr": "ethvalcons",
+        "bech32PrefixConsPub": "ethvalconspub",
+        "bondDenom": "aphoton",
+        "powerReduction": 1000000000000000000,
+        "coins": [
+            {
+                "denom": "aphoton",
+                "displayName": "PHOTON",
+                "fraction": 1000000000000000000
+            }
+        ],
+        "ledger":{
+            "coinType": 60,
+            "appName": "Cosmos",
+            "appVersion": "2.16.0",
+            "gasPrice": 0.02
+        },
+        "modules": {
+            "bank": true,
+            "supply": true,
+            "minting": true,
+            "gov": true,
+            "distribution": true
+        },
+        "coingeckoId": "cosmos",
+        "networks": "https://gist.githubusercontent.com/kwunyeung/8be4598c77c61e497dfc7220a678b3ee/raw/bd-networks.json",
+        "banners": false
+    },
+    "remote":{
+        "rpc":"http://0.0.0.0:1317",
+        "api":"http://0.0.0.0:1317"
+    },
+    "debug": {
+        "startTimer": false
+    },
+    "params":{
+        "startHeight": 0,
+        "defaultBlockTime": 5000,
+        "validatorUpdateWindow": 300,
+        "blockInterval": 15000,
+        "transactionsInterval": 18000,
+        "keybaseFetchingInterval": 18000000,
+        "consensusInterval": 1000,
+        "statusInterval":7500,
+        "signingInfoInterval": 1800000,
+        "proposalInterval": 5000,
+        "missedBlocksInterval": 60000,
+        "delegationInterval": 900000
+    }
+}
