@@ -173,7 +173,7 @@ export default class Header extends Component {
         return (
             <Navbar color="primary" dark expand="lg" fixed="top" id="header">
                 <NavbarBrand tag={Link} to="/">
-                    <img src="/img/sifchain.svg" className="img-fluid logo"/> 
+                    <img src="/img/ethermint.png" className="img-fluid logo"/> 
                     {/*                    <span className="d-none d-xl-inline-block"><T>navbar.siteName</T>&nbsp;</span>
                     <Badge color="secondary">{this.state.version}</Badge> */}
                 </NavbarBrand>
@@ -199,9 +199,6 @@ export default class Header extends Component {
                         </NavItem>
                         <NavItem>
                             <NavLink tag={Link}  to="/voting-power-distribution"><T>navbar.votingPower</T></NavLink>
-                        </NavItem>
-                        <NavItem>
-                            <a className="nav-link" href="https://dex.sifchain.finance" target="_blank">Trade</a>
                         </NavItem>
                         {/*                        <NavItem id="user-acconut-icon">
                             {!signedInAddress?<Button className="sign-in-btn" color="link" size="lg" onClick={() => {this.setState({isSignInOpen: true})}}><i className="material-icons">vpn_key</i></Button>:
