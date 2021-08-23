@@ -40,7 +40,7 @@
         "banners": false
     },
     "remote":{
-        "rpc":"http://0.0.0.0:1317",
+        "rpc":"http://0.0.0.0:26657",
         "api":"http://0.0.0.0:1317"
     },
     "debug": {
