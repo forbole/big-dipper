@@ -84,7 +84,7 @@ export default class Validators extends Component{
                 <Col lg={3} xs={12}><h1 className="d-none d-lg-block">{title}</h1></Col>
                 <Col lg={9} xs={12} className="text-lg-right"><ChainStates /></Col>
             </Row>
-            <Nav pills className="status-switch">
+            <Nav pills className="status-switch p15">
                 <NavItem>
                     <NavLink tag={Link} to="/validators" active={(this.props.match.url == "/validators")}><T>validators.navActive</T></NavLink>
                 </NavItem>
@@ -95,7 +95,6 @@ export default class Validators extends Component{
                     </NavLink>
                 </NavItem>
             </Nav>
-            <p className="lead">{desc}</p>
             <Row className="validator-list">
                 <Col md={12}>
                     <Card body>

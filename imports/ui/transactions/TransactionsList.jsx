@@ -31,7 +31,7 @@ export default class Transactions extends Component{
     }
 
     isBottom(el) {
-        return el.getBoundingClientRect().bottom <= window.innerHeight;
+        return el?.getBoundingClientRect().bottom <= window.innerHeight;
     }
       
     componentDidMount() {

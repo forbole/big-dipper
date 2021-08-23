@@ -1,12 +1,57 @@
-$forbole-red: #bd081c;
+$forbole-red: #CAA93A;
 $primary: $forbole-red !default;
 
 @import "materia/variables";
 @import "bootstrap";
 @import "materia/bootswatch";
 
+@import url('https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap');
+
+.nav-item { cursor: pointer }
+.quick-note { font-weight: 900;
+    width: 100%;
+    border-top: 1px solid;
+    display: block;}
+
+.card {
+  box-shadow: none;
+  border: 1px solid rgba(0,0,0,.5);
+}
+
+.navbar {
+  box-shadow: none;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+  color: rgba(255, 255, 255, 1);
+  font-weight: 900;
+}
+
+#account > div:nth-child(2) > div > h3 > span > span > a {
+  color: white
+}
+#queryString {box-shadow: inset 0 -2px 0 #fff}
+h1 { color: white }
+#footer { display: none !important}
+
+.bgw { background: white}
+.cw {color: white}
+
+#validator-list > .card { border: none}
+#validator-list > div.validator-list.row > div > div:nth-child(1) {}
+#validator-list > div.bgw.mt15 > div > div > div{border: none}
+.mt15 { margin-top: 15px}
+.p15 { padding: 15px}
+.pl0 {padding-left: 0}
+#main > div:nth-child(3) > div:nth-child(2) > div > div > div.col-md-8 > ul.nav-pills { background: white; padding: 15px}
+#account > div:nth-child(2) > div > h3 > span > i { color: #343434 !important }
+#account > div:nth-child(2) > div > h3 > span > span {overflow: hidden !important}
+
+::placeholder { color: white !important; opacity: 1}
 body {
     font-size: inherit !important;
+    font-family: "PT Serif";
+    background: #caa93a;
   }
   
   .no-select {
@@ -1076,3 +1121,22 @@ body {
     cursor: help;
     opacity: 0.7;
   }
+
+table, #block-table, .transactions-list {
+  background-color: white;
+}
+.status-switch {
+  background-color: white;
+  margin-top: 8px;
+}
+.validator-list {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  .row {
+    margin: 0;
+  }
+  .card-body {
+    border: none;
+    border-radius: 0;
+  }
+}
