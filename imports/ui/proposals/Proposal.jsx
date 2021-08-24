@@ -76,7 +76,7 @@ export default class Proposal extends Component{
             });
 
             let now = moment();
-            let totalVotingPower = new BigNumber(this.props.chain.activeVotingPower);
+            let totalVotingPower = (new BigNumber(this.props.chain.activeVotingPower))
             if (this.props.proposal.voting_start_time != '0001-01-01T00:00:00Z'){
                 if (now.diff(moment(this.props.proposal.voting_start_time)) > 0){
                     let endVotingTime = moment(this.props.proposal.voting_end_time);
@@ -157,6 +157,7 @@ export default class Proposal extends Component{
         let datasets = [];
         for (let option in votesByOptions) {
             let data = votesByOptions[option];
+            data.forEach(d => d.votingPower = new BigNumber(d.votingPower));
             if (data){
                 maxVotingPower[option] = BigNumber.max(null, data.map((vote) => vote.votingPower));
                 totalVotingPower[option] = data.reduce((s, x) => x.votingPower.plus(s), 0);
@@ -182,7 +183,7 @@ export default class Proposal extends Component{
             let optionTotal = ds.metadata().totalVotingPower[data.option];
             let percentage = numbro(data.votingPower.dividedBy(total)).format('0.00%');
             let optionPercentage = numbro(data.votingPower.dividedBy(optionTotal)).format('0.00%');
-            return `<p>Voting Power: ${data.votingPower}</p>
+            return `<p>Voting Power: ${numbro(data.votingPower).format('0,0.0')}</p>
                     <p>${percentage} out of all votes</p>
                     <p>${optionPercentage} out of all ${data.option} votes</p>`;
         }
@@ -191,7 +192,7 @@ export default class Proposal extends Component{
                 plotId: 'piePlot',
                 type: 'Pie',
                 sectorValue: {
-                    value: (d, i, ds) => d.votingPower
+                    value: (d, i, ds) => Number(d.votingPower.toString())
                 },
                 labelsEnabled: isDataEmtpy,
                 labelFormatter: isDataEmtpy?((value)=>'N/A'):null,
@@ -233,6 +234,7 @@ export default class Proposal extends Component{
         let orderDir = this.state.orderDir;
         votes = votes.sort((vote1, vote2) => (vote1['votingPower'].minus(vote2['votingPower'])).multipliedBy(orderDir));
 
+
         return <Result className="tally-result-detail" pose={this.state.open === openState ? 'open' : 'closed'}>
             <Card className='tally-result-table'>
                 {(votes.length)?<Card body><Row className="header text-nowrap">
@@ -259,11 +261,11 @@ export default class Proposal extends Component{
                         </Col>
                         <Col className="voting-power data" md={4}>
                             <i className="material-icons d-md-none">power</i>
-                            {(vote.votingPower !== undefined) ? numbro(vote.votingPower).format('0,0.000000') : ""}
+                            {(vote.votingPower !== undefined) ? numbro((new BigNumber(vote.votingPower)).dividedBy(Meteor.settings.public.powerReduction)).format('0,0.000000') : ""}
                         </Col>
                         <Col className="voting-power-percent data" md={3}>
                             <i className="material-icons d-md-none">equalizer</i>
-                            {(vote.votingPower !== undefined) ? numbro(vote.votingPower.dividedBy(this.state.totalVotes)).format('0,0.00%') : ""}
+                            {(vote.votingPower !== undefined) ? numbro((new BigNumber(vote.votingPower)).dividedBy(this.state.totalVotes)).format('0,0.00%') : ""}
                         </Col>
                     </Row></Card>
                 )}
@@ -277,9 +279,8 @@ export default class Proposal extends Component{
         }
         else{
             if (this.props.proposalExist && this.state.proposal != ''){
-                // console.log(this.state.proposal);
                 const proposalId = Number(this.props.proposal.proposalId), maxProposalId = Number(this.props.proposalCount);
-                let totalVotingPower = this.props.chain.activeVotingPower ;
+                let totalVotingPower = this.props.chain.activeVotingPower.multipliedBy(Meteor.settings.public.powerReduction);
                 let proposalType = this.props.proposal.content["@type"].split('.');
                 proposalType = proposalType[proposalType.length-1].match(/[A-Z]+[^A-Z]*|[^A-Z]+/g).join(" ");
 
@@ -375,7 +376,7 @@ export default class Proposal extends Component{
                             <Col md={9} className="value">
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><VoteIcon vote="yes" /> Yes</Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(parseInt(this.state.tally.yes)).format("0,0.000000"):''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro((new BigNumber(this.state.tally.yes)).dividedBy(Meteor.settings.public.powerReduction)).format("0,0.000000"):''}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(1,e)}><i className="material-icons">{this.state.open === 1 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
                                         {this.renderTallyResultDetail(1, 'VOTE_OPTION_YES')}
@@ -383,7 +384,7 @@ export default class Proposal extends Component{
                                 </Row>
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><VoteIcon vote="abstain" /> Abstain</Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(new BigNumber(this.state.tally.abstain)).format("0,0.000000"):''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(new BigNumber(this.state.tally.abstain).dividedBy(Meteor.settings.public.powerReduction)).format("0,0.000000"):''}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(2,e)}><i className="material-icons">{this.state.open === 2 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
                                         {this.renderTallyResultDetail(2, 'VOTE_OPTION_ABSTAIN')}
@@ -391,7 +392,7 @@ export default class Proposal extends Component{
                                 </Row>
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><VoteIcon vote="no" /> No</Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(new BigNumber(this.state.tally.no)).format("0,0.000000"):''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(new BigNumber(this.state.tally.no).dividedBy(Meteor.settings.public.powerReduction)).format("0,0.000000"):''}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(3,e)}><i className="material-icons">{this.state.open === 3 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
                                         {this.renderTallyResultDetail(3, 'VOTE_OPTION_NO')}
@@ -399,7 +400,7 @@ export default class Proposal extends Component{
                                 </Row>
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><VoteIcon vote="no_with_veto" /> No with Veto</Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(new BigNumber(this.state.tally.no_with_veto)).format("0,0.000000"):''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(new BigNumber(this.state.tally.no_with_veto).dividedBy(Meteor.settings.public.powerReduction)).format("0,0.000000"):''}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(4,e)}><i className="material-icons">{this.state.open === 4 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
                                         {this.renderTallyResultDetail(4, 'VOTE_OPTION_NO_WITH_VETO')}
