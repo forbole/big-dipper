@@ -14,7 +14,6 @@ Meteor.methods({
         try{
             let response = HTTP.get(url);
             let params = JSON.parse(response.content);
-
             Chain.update({chainId: Meteor.settings.public.chainId}, {$set:{"gov.tallyParams":params.tally_params}});
 
             url = API + '/cosmos/gov/v1beta1/proposals';
@@ -93,7 +92,7 @@ Meteor.methods({
                         url = API + '/cosmos/gov/v1beta1/proposals/'+proposals[i].proposalId+'/tally';
                         response = HTTP.get(url);
                         if (response.statusCode == 200){
-                            let tally = JSON.parse(response.content).tally;
+                            let tally = new BigNumber(response.content.tally);
                             proposal.tally = tally;
                         }
 

@@ -18,6 +18,7 @@ import i18n from 'meteor/universe:i18n';
 import TimeStamp from '../components/TimeStamp.jsx';
 import SentryBoundary from '../components/SentryBoundary.jsx';
 import Coin from '../../../both/utils/coins.js';
+import BigNumber from 'bignumber.js';
 
 const T = i18n.createComponent();
 
@@ -56,7 +57,10 @@ export default class Validator extends Component{
     getUserDelegations() {
         if (this.state.user && this.props.validator && this.props.validator.address) {
             Meteor.call('accounts.getDelegation', this.state.user, this.props.validator.operator_address, (err, res) => {
-                if (res && res.delegation.shares > 0) {
+                if(res)
+                    res.delegation.shares = new BigNumber(res.delegation.shares);
+
+                if (res && res.delegation.shares.comparedTo(0) === 1) {
                     //votingPower hardcoded due to recalculating it on the fetch function to 1CUDOS or 10^6 acudos
                     res.tokenPerShare = 1 //this.props.validator.voting_power/this.props.validator.delegator_shares
                     this.setState({

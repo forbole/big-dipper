@@ -1,6 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 import { Validators } from '/imports/api/validators/validators.js';
+import BigNumber from 'bignumber.js';
+
 const fetchFromUrl = (url) => {
     try{
         let res = HTTP.get(API + url);
@@ -138,9 +140,8 @@ Meteor.methods({
         this.unblock();
         let url = `/cosmos/staking/v1beta1/validators/${validator}/delegations/${address}`;
         let delegations = fetchFromUrl(url);
+
         delegations = delegations && delegations.data.delegation_response;
-        if (delegations && delegations.delegation.shares)
-            delegations.delegation.shares = new BigNumber(delegations.delegation.shares);
 
         url = `/cosmos/staking/v1beta1/delegators/${address}/redelegations?dst_validator_addr=${validator}`;
         let relegations = fetchFromUrl(url);
@@ -163,6 +164,7 @@ Meteor.methods({
             delegations.unbonding = undelegations.entries.length;
             delegations.unbondingCompletionTime = undelegations.entries[0].completion_time;
         }
+
         return delegations;
     },
     'accounts.getAllDelegations'(address){
