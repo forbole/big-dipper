@@ -92,15 +92,15 @@ Meteor.methods({
         let validator;
         if (!fields)
             fields = {address:1, description:1, operator_address:1, delegator_address:1};
-        if (address.includes(Meteor.settings.public.bech32PrefixValAddr)){
+        if (address && address.includes(Meteor.settings.public.bech32PrefixValAddr)){
             // validator operator address
             validator = Validators.findOne({operator_address:address}, {fields});
         }
-        else if (address.includes(Meteor.settings.public.bech32PrefixAccAddr)){
+        else if (address && address.includes(Meteor.settings.public.bech32PrefixAccAddr)){
             // delegator address
             validator = Validators.findOne({delegator_address:address}, {fields});
         }
-        else if (address.length === AddressLength) {
+        else if (address && address.length === AddressLength) {
             validator = Validators.findOne({address:address}, {fields});
         }
         if (validator){

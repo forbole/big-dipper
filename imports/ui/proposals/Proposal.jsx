@@ -97,7 +97,7 @@ export default class Proposal extends Component{
                             abstainPercent: (totalVotes.comparedTo(0) == 1) ? (new BigNumber(this.props.proposal.tally.abstain)).dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
                             noPercent: (totalVotes.comparedTo(0) == 1) ? (new BigNumber(this.props.proposal.tally.no)).dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
                             noWithVetoPercent: (totalVotes.comparedTo(0) == 1) ? (new BigNumber(this.props.proposal.tally.no_with_veto)).dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
-                            proposalValid: this.state.totalVotes.dividedBy(totalVotingPower).comparedTo(this.props.chain.gov.tallyParams.quorum) == 1 ? true : false
+                            proposalValid: totalVotes.dividedBy(totalVotingPower.multipliedBy(Meteor.settings.public.powerReduction)).comparedTo(this.props.chain.gov.tallyParams.quorum) == 1 ? true : false
                         })
                     }
                     else{
@@ -116,7 +116,7 @@ export default class Proposal extends Component{
                             abstainPercent: (totalVotes.comparedTo(0) == 1) ? (new BigNumber(this.props.proposal.final_tally_result.abstain)).dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
                             noPercent: (totalVotes.comparedTo(0) == 1) ? (new BigNumber(this.props.proposal.final_tally_result.no)).dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
                             noWithVetoPercent: (totalVotes.comparedTo(0) == 1) ? (new BigNumber(this.props.proposal.final_tally_result.no_with_veto)).dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
-                            proposalValid: this.state.totalVotes.dividedBy(totalVotingPower).comparedTo(this.props.chain.gov.tallyParams.quorum) == 1 ? true : false
+                            proposalValid: totalVotes.dividedBy(totalVotingPower.multipliedBy(Meteor.settings.public.powerReduction)).comparedTo(this.props.chain.gov.tallyParams.quorum) == 1 ? true : false
                         })
                     }
                 }
@@ -142,7 +142,7 @@ export default class Proposal extends Component{
     populateChartData() {
         const optionOrder = {'VOTE_OPTION_YES': 0, 'VOTE_OPTION_ABSTAIN': 1, 'VOTE_OPTION_NO': 2, 'VOTE_OPTION_NO_WITH_VETO': 3};
         let votes = this.props.proposal.votes?this.props.proposal.votes.sort(
-            (vote1, vote2) => vote2['votingPower'].minus(vote1['votingPower'])
+            (vote1, vote2) => vote2['votingPower'] - vote1['votingPower']
         ).sort(
             (vote1, vote2) => optionOrder[vote1.option] - optionOrder[vote2.option]) : null;
         let maxVotingPower = {'N/A': 1};
@@ -232,7 +232,7 @@ export default class Proposal extends Component{
     renderTallyResultDetail(openState, option) {
         let votes = this.props.proposal.votes ? this.props.proposal.votes.filter((vote) => vote.option == option) : [];
         let orderDir = this.state.orderDir;
-        votes = votes.sort((vote1, vote2) => (vote1['votingPower'].minus(vote2['votingPower'])).multipliedBy(orderDir));
+        votes = votes.sort((vote1, vote2) => ((new BigNumber(vote1['votingPower'])).minus(vote2['votingPower'])).multipliedBy(orderDir));
 
 
         return <Result className="tally-result-detail" pose={this.state.open === openState ? 'open' : 'closed'}>
@@ -439,7 +439,12 @@ export default class Proposal extends Component{
                                         <Card body className="tally-info">
                                             <em>
                                                 <T _purify={false} percent={numbro(this.state.totalVotes.dividedBy(totalVotingPower)).format("0.00%")}>proposals.percentageVoted</T><br/>
-                                                {this.state.proposalValid?<T _props={{className:'text-success'}} tentative={(!this.state.voteEnded)?'(tentatively) ':''} _purify={false}>proposals.validMessage</T>:(this.state.voteEnded)?<T _props={{className:'text-danger'}} quorum={numbro(this.props.chain.gov.tallyParams.quorum).format("0.00%")} _purify={false}>proposals.invalidMessage</T>:<T moreVotes={numbro((totalVotingPower.multipliedBy(this.props.chain.gov.tallyParams.quorum).minus(this.state.totalVotes))).format("0,0")} _purify={false}>proposals.moreVoteMessage</T>}
+                                                {this.state.proposalValid ? 
+                                                    <T _props={{className:'text-success'}} tentative={(!this.state.voteEnded)?'(tentatively) ':''} _purify={false}>proposals.validMessage</T> :
+                                                    (this.state.voteEnded) ?
+                                                        <T _props={{className:'text-danger'}} quorum={numbro(this.props.chain.gov.tallyParams.quorum).format("0.00%")} _purify={false}>proposals.invalidMessage</T>
+                                                        : <T moreVotes={numbro((totalVotingPower.multipliedBy(this.props.chain.gov.tallyParams.quorum).minus(this.state.totalVotes))).format("0,0")} _purify={false}>proposals.moreVoteMessage</T>
+                                                }
                                             </em>
                                         </Card>
                                     </Col>
