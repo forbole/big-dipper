@@ -113,9 +113,7 @@ calculateVPDist = async (analyticsData, blockData) => {
     let topThirtyFourPercent = 0
     let bottomSixtySixPercent = 0
 
-
-
-    for (v in activeValidators){
+    for (v in activeValidators) {
         if (v < numTopTwenty){
             topTwentyPower = topTwentyPower.plus(activeValidators[v].voting_power);
         }
@@ -136,8 +134,8 @@ calculateVPDist = async (analyticsData, blockData) => {
         height: blockData.height,
         numTopTwenty: numTopTwenty,
         topTwentyPower: topTwentyPower.toNumber(),
-        numBottomEighty: numBottomEighty.toNumber(),
-        bottomEightyPower: bottomEightyPower,
+        numBottomEighty: numBottomEighty,
+        bottomEightyPower: bottomEightyPower.toNumber(),
         numTopThirtyFour: numTopThirtyFour,
         topThirtyFourPercent: topThirtyFourPercent,
         numBottomSixtySix: numBottomSixtySix,
