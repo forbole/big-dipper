@@ -145,10 +145,11 @@ const isBetween = (value, min, max) => {
     if (min instanceof Coin) min = min.amount;
     if (max instanceof Coin) max = max.amount;
 
-    if(value instanceof BigNumber)
-        return value.comparedTo(min) >= 0 && value.comparedTo(max) <= 0
+    if ((value instanceof BigNumber) === false) {
+        value = new BigNumber(value);
+    }
 
-    return value >= min && value <= max;
+    return value.comparedTo(min) >= 0 && value.comparedTo(max) <= 0
 }
 
 const startsWith = (str, prefix) => {
@@ -754,7 +755,7 @@ class DelegationButtons extends LedgerButton {
             <InputGroup>
                 <Input name="delegateAmount" onChange={this.handleInputChange} data-type='coin' addon={false}
                     placeholder="Amount" min={Coin.MinStake} max={maxAmount.stakingAmount} type="number"
-                    invalid={this.state.delegateAmount != null && !isBetween(this.state.delegateAmount, 1 / Meteor.settings.public.coins.find(c => c.denom === Meteor.settings.public.bondDenom).fraction, maxAmount)} />
+                    invalid={this.state.delegateAmount != null && !isBetween(this.state.delegateAmount, 1 / Coin.StakingCoin.fraction, maxAmount)} />
                 <InputGroupAddon addonType="append">{Coin.StakingCoin.displayName}</InputGroupAddon>
             </InputGroup>
             <Input name="memo" onChange={this.handleInputChange}

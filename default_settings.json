@@ -16,7 +16,7 @@
         "bondDenom": "acudos",
         "powerReduction": 1000000000000000000,
         "onChainPowerReduction": 1000000000000000000,
-        "genesisTime": "2021-08-24T15:45:15.3798339Z",
+        "genesisTime": "2021-09-17T12:54:30.602457663Z",
         "faucetUrl": "http://localhost:5000",
         "coins": [
             {

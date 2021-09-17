@@ -18,19 +18,13 @@ autoformat = (value) => {
 }
 
 getDecimals = (fraction) => {
-    let temp = fraction;
-    let decimals = 0;
-    while(temp % 10 === 0){
-        decimals++;
-        temp = temp / 10
-    }
-
-    return decimals;
+    return fraction.toString().length - 1;
 }
 
 const coinList = Meteor.settings.public.coins;
 
 export default class Coin {
+
 static StakingCoin = coinList.find(coin => coin.denom === Meteor.settings.public.bondDenom);
 static MinStake = 1 / Number(Coin.StakingCoin.fraction);
 
@@ -45,7 +39,7 @@ constructor(amount, denom=Meteor.settings.public.bondDenom) {
         if (lowerDenom === this._coin.denom.toLowerCase()) {
             this._amount = new BigNumber(amount);
         } else if (lowerDenom === this._coin.displayName.toLowerCase()) {
-            this._amount = (new BigNumber(amount)).decimalPlaces(getDecimals(Meteor.settings.public.coins.find(c => c.denom === Meteor.settings.public.bondDenom).fraction)).multipliedBy(this._coin.fraction);
+            this._amount = (new BigNumber(amount)).decimalPlaces(getDecimals(Coin.StakingCoin.fraction)).multipliedBy(this._coin.fraction);
         }
     }
     else {

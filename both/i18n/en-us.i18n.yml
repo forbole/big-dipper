@@ -164,13 +164,14 @@ blocks:
 faucet:
     title: 'Faucet'
     placeHolderWalletAddress: 'Wallet address (%s...)'
-    placeHolderAmount: 'Amount (max 10 %s)'
+    placeHolderAmount: 'Amount (max 0.1 %s)'
     send: 'Send me %s!'
     modalClose: 'Close'
     modalMsgTransactionPending: 'Processing the transaction, please wait...'
     modalMsgTransactionSuccess: 'Your %s were sent. Please, check you wallet.'
     modalMsgTransactionError: 'There was an error. Please check the address and amount.'
     modalMsgCaptchaError: 'Wrong captcha, please try again'
+    modalMsgMaxCreditError: 'You have reached max credit limit'
 
 transactions:
     transaction: 'Transaction'

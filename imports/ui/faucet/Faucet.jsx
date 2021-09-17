@@ -5,7 +5,7 @@ import i18n from 'meteor/universe:i18n';
 import FaucetModal from './FaucetModal';
 import BigNumber from 'bignumber.js';
 import { Meteor } from 'meteor/meteor';
-import { TRANSACTION_STATUS_DONE_ERROR, TRANSACTION_STATUS_DONE_ERROR_WRONG_CAPTCHA, TRANSACTION_STATUS_DONE_OK, TRANSACTION_STATUS_PENDING } from './FaucetUtils';
+import { TRANSACTION_STATUS_DONE_ERROR, TRANSACTION_STATUS_DONE_ERROR_WRONG_CAPTCHA, TRANSACTION_STATUS_DONE_OK, TRANSACTION_STATUS_PENDING, TRANSACTION_STATUS_DONE_ERROR_MAX_CREDIT } from './FaucetUtils';
 
 import CaptchaWrapper from '../components/CaptchaWrapper';
 
@@ -103,9 +103,10 @@ export default class Faucet extends Component {
 
             result = JSON.parse(result.content);
             if (result.transfers[0].status !== 'ok') {
-                console.error(result);
+                const errorMsg = result.transfers[0].error;
+                const status = errorMsg.indexOf("maximum credit") !== -1 ? TRANSACTION_STATUS_DONE_ERROR_MAX_CREDIT : TRANSACTION_STATUS_DONE_ERROR
                 this.setState({
-                    transactionStatus: TRANSACTION_STATUS_DONE_ERROR,
+                    transactionStatus: status,
                 });
                 return;
             }
