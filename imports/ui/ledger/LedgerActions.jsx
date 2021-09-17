@@ -15,6 +15,7 @@ import { PropTypes } from 'prop-types';
 import { assertIsBroadcastTxSuccess, SigningStargateClient, defaultRegistryTypes } from "@cosmjs/stargate";
 import {Registry} from "@cosmjs/proto-signing";
 import {MsgSubmitProposal, MsgDeposit, MsgVote} from "../../../cosmos/codec/gov/v1beta1/tx";
+import BigNumber from 'bignumber.js';
 
 const maxHeightModifier = {
     setMaxHeight: {
@@ -143,6 +144,10 @@ const isBetween = (value, min, max) => {
     if (value instanceof Coin) value = value.amount;
     if (min instanceof Coin) min = min.amount;
     if (max instanceof Coin) max = max.amount;
+
+    if(value instanceof BigNumber)
+        return value.comparedTo(min) >= 0 && value.comparedTo(max) <= 0
+
     return value >= min && value <= max;
 }
 
@@ -747,9 +752,9 @@ class DelegationButtons extends LedgerButton {
         return <TabPane tabId="2">
             <h3>{action} {moniker?moniker:validatorAddress} {target?'to':''} {target}</h3>
             <InputGroup>
-                <Input name="delegateAmount" onChange={this.handleInputChange} data-type='coin'
+                <Input name="delegateAmount" onChange={this.handleInputChange} data-type='coin' addon={false}
                     placeholder="Amount" min={Coin.MinStake} max={maxAmount.stakingAmount} type="number"
-                    invalid={this.state.delegateAmount != null && !isBetween(this.state.delegateAmount, 1, maxAmount)} />
+                    invalid={this.state.delegateAmount != null && !isBetween(this.state.delegateAmount, 1 / Meteor.settings.public.coins.find(c => c.denom === Meteor.settings.public.bondDenom).fraction, maxAmount)} />
                 <InputGroupAddon addonType="append">{Coin.StakingCoin.displayName}</InputGroupAddon>
             </InputGroup>
             <Input name="memo" onChange={this.handleInputChange}
