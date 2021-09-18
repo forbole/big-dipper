@@ -149,6 +149,14 @@ const isBetween = (value, min, max) => {
         value = new BigNumber(value);
     }
 
+    if ((min instanceof BigNumber) === false) {
+        min = new BigNumber(min);
+    }
+
+    if ((max instanceof BigNumber) === false) {
+        max = new BigNumber(max);
+    }
+
     return value.comparedTo(min) >= 0 && value.comparedTo(max) <= 0
 }
 
@@ -714,7 +722,8 @@ class DelegationButtons extends LedgerButton {
         } else{
             maxAmount = this.getDelegatedToken(this.props.currentDelegation);
         }
-        let isValid = isBetween(this.state.delegateAmount, 1, maxAmount)
+
+        let isValid = isBetween(this.state.delegateAmount, (new BigNumber(1)).dividedBy(Coin.StakingCoin.fraction), maxAmount)
 
         if (this.state.actionType === Types.REDELEGATE)
             isValid = isValid || (this.state.targetValidator &&
@@ -755,7 +764,7 @@ class DelegationButtons extends LedgerButton {
             <InputGroup>
                 <Input name="delegateAmount" onChange={this.handleInputChange} data-type='coin' addon={false}
                     placeholder="Amount" min={Coin.MinStake} max={maxAmount.stakingAmount} type="number"
-                    invalid={this.state.delegateAmount != null && !isBetween(this.state.delegateAmount, 1 / Coin.StakingCoin.fraction, maxAmount)} />
+                    invalid={this.state.delegateAmount != null && !isBetween(this.state.delegateAmount, (new BigNumber(1)).dividedBy(Coin.StakingCoin.fraction), maxAmount)} />
                 <InputGroupAddon addonType="append">{Coin.StakingCoin.displayName}</InputGroupAddon>
             </InputGroup>
             <Input name="memo" onChange={this.handleInputChange}
@@ -898,7 +907,7 @@ class TransferButton extends LedgerButton {
                 <Input name="transferAmount" onChange={this.handleInputChange}
                     data-type='coin' placeholder="Amount"
                     min={Coin.MinStake} max={maxAmount.stakingAmount} type="number"
-                    invalid={this.state.transferAmount != null && !isBetween(this.state.transferAmount, 1, maxAmount)}/>
+                    invalid={this.state.transferAmount != null && !isBetween(this.state.transferAmount, (new BigNumber(1)).dividedBy(Coin.StakingCoin.fraction), maxAmount)}/>
                 <InputGroupAddon addonType="append">{Coin.StakingCoin.displayName}</InputGroupAddon>
             </InputGroup>
             <Input name="memo" onChange={this.handleInputChange}
@@ -919,7 +928,7 @@ class TransferButton extends LedgerButton {
 
     isDataValid = () => {
         if (!this.state.currentUser) return false
-        return isBetween(this.state.transferAmount, 1, this.state.currentUser.availableCoin)
+        return isBetween(this.state.transferAmount, (new BigNumber(1)).dividedBy(Coin.StakingCoin.fraction), this.state.currentUser.availableCoin)
     }
 
     getConfirmationMessage = () => {
@@ -1027,7 +1036,7 @@ class SubmitProposalButton extends LedgerButton {
                     <Input name="depositAmount" onChange={this.handleInputChange}
                         data-type='coin' placeholder="Amount"
                         min={Coin.MinStake} max={maxAmount.stakingAmount} type="number"
-                        invalid={this.state.depositAmount != null && !isBetween(this.state.depositAmount, 1, maxAmount)}/>
+                        invalid={this.state.depositAmount != null && !isBetween(this.state.depositAmount, (new BigNumber(1)).dividedBy(Coin.StakingCoin.fraction), maxAmount)}/>
                     <InputGroupAddon addonType="append">{Coin.StakingCoin.displayName}</InputGroupAddon>
                 </InputGroup>
                 <Input name="memo" onChange={this.handleInputChange}
@@ -1072,7 +1081,7 @@ class SubmitProposalButton extends LedgerButton {
 
     isDataValid = () => {
         if (!this.state.currentUser) return false
-        return this.state.proposalTitle != null && this.state.proposalDescription != null && isBetween(this.state.depositAmount, 1, this.state.currentUser.availableCoin)
+        return this.state.proposalTitle != null && this.state.proposalDescription != null && isBetween(this.state.depositAmount, (new BigNumber(1)).dividedBy(Coin.StakingCoin.fraction), this.state.currentUser.availableCoin)
     }
 
     getConfirmationMessage = () => {
@@ -1121,7 +1130,7 @@ class ProposalActionButtons extends LedgerButton {
                 <Input name="depositAmount" onChange={this.handleInputChange}
                     data-type='coin' placeholder="Amount"
                     min={Coin.MinStake} max={maxAmount.stakingAmount} type="number"
-                    invalid={this.state.depositAmount != null && !isBetween(this.state.depositAmount, 1, maxAmount)}/>
+                    invalid={this.state.depositAmount != null && !isBetween(this.state.depositAmount, (new BigNumber(1)).dividedBy(Coin.StakingCoin.fraction), maxAmount)}/>
                 <InputGroupAddon addonType="append">{Coin.StakingCoin.displayName}</InputGroupAddon>
                 <div>your available balance: <Amount coin={maxAmount}/></div>
             </InputGroup>)
@@ -1171,7 +1180,7 @@ class ProposalActionButtons extends LedgerButton {
         if (this.state.actionType === Types.VOTE) {
             return ['Yes', 'No', 'NoWithVeto', 'Abstain'].indexOf(this.state.voteOption) !== -1;
         } else {
-            return isBetween(this.state.depositAmount, 1, this.state.currentUser.availableCoin)
+            return isBetween(this.state.depositAmount, (new BigNumber(1)).dividedBy(Coin.StakingCoin.fraction), this.state.currentUser.availableCoin)
         }
     }
 
