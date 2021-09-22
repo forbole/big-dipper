@@ -285,7 +285,7 @@ export class Ledger {
     }
 
     async confirmLedgerAddress() {
-       // await this.connect()
+        // await this.connect()
         // const cosmosAppVersion = await this.getCosmosAppVersion()
 
         // if (semver.lt(cosmosAppVersion, REQUIRED_COSMOS_APP_VERSION)) {
@@ -476,7 +476,7 @@ export class Ledger {
                 delegatorAddress: txContext.bech32,
                 validatorAddress: validatorBech32,
                 amount: {
-                    amount: uatomAmount.toLocaleString('fullwide', {useGrouping:false}),
+                    amount: uatomAmount.toString(10),
                     denom: txContext.denom,
                 },
             }),
@@ -499,7 +499,7 @@ export class Ledger {
                 delegatorAddress: txContext.bech32,
                 validatorAddress: validatorBech32,
                 amount: {
-                    amount: uatomAmount.toLocaleString('fullwide', {useGrouping:false}),
+                    amount: uatomAmount.toString(10),
                     denom: txContext.denom,
                 },
             }),
@@ -524,7 +524,7 @@ export class Ledger {
                 validatorSrcAddress: validatorSourceBech32,
                 validatorDstAddress: validatorDestBech32,
                 amount: {
-                    amount: uatomAmount.toLocaleString('fullwide', {useGrouping:false}),
+                    amount: uatomAmount.toString(10),
                     denom: txContext.denom,
                 },
             }),
@@ -562,7 +562,7 @@ export class Ledger {
                 fromAddress: txContext.bech32,
                 toAddress: toAddress,
                 amount: [{
-                    amount: amount.toLocaleString('fullwide', {useGrouping:false}),
+                    amount: amount.toString(10),
                     denom: txContext.denom,
                 }],
             }),
@@ -586,7 +586,7 @@ export class Ledger {
             value: {
                 content: content,
                 initial_deposit: [{
-                    amount: deposit.toLocaleString('fullwide', {useGrouping:false}),
+                    amount: deposit.toString(10),
                     denom: txContext.denom
                 }],
                 proposer: txContext.bech32
@@ -627,7 +627,7 @@ export class Ledger {
             typeUrl: "/cosmos.gov.v1beta1.MsgDeposit", // Same as above
             value: {
                 amount: [{
-                    amount: amount.toLocaleString('fullwide', {useGrouping:false}),
+                    amount: amount.toString(10),
                     denom: txContext.denom
                 }],
                 depositor: txContext.bech32,
