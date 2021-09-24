@@ -49,7 +49,8 @@ Validators.findOne = (selector, options) => {
     const validator = superValidatorFindOne(selector, options);
     
     if(validator){
-        validator.tokens = (new BigNumber(validator.voting_power)).multipliedBy(Meteor.settings.public.onChainPowerReduction);
+        validator.tokens = new BigNumber(validator.tokens)
+        validator.delegator_shares = new BigNumber(validator.delegator_shares);
         validator.voting_power = (new BigNumber(validator.voting_power)).dividedBy(Meteor.settings.public.powerReduction).multipliedBy(Meteor.settings.public.onChainPowerReduction);
         validator.self_delegation = new BigNumber(validator.self_delegation);
         validator.proposer_priority = new BigNumber(validator.proposer_priority);
