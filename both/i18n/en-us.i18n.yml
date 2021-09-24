@@ -164,7 +164,7 @@ blocks:
 faucet:
     title: 'Faucet'
     placeHolderWalletAddress: 'Wallet address (%s...)'
-    placeHolderAmount: 'Amount (max 0.1 %s)'
+    placeHolderAmount: 'Amount (max 10 %s)'
     send: 'Send me %s!'
     modalClose: 'Close'
     modalMsgTransactionPending: 'Processing the transaction, please wait...'
