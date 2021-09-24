@@ -580,7 +580,7 @@ Meteor.methods({
                                     console.log("Validator is in DB but not in validator set now. Add remove VP change.");
                                     bulkVPHistory.insert({
                                         address: valExist.address,
-                                        prev_voting_power: prevVotingPower,
+                                        prev_voting_power: prevVotingPower.voting_power,
                                         voting_power: 0,
                                         type: 'remove',
                                         height: blockData.height,
@@ -600,7 +600,7 @@ Meteor.methods({
         
                                         let response = HTTP.get(url);
                                         let selfDelegation = JSON.parse(response.content).delegation_response;
-        
+                                        
                                         valData.self_delegation = (selfDelegation.delegation && selfDelegation.delegation.shares) ? (new BigNumber(selfDelegation.delegation.shares)).dividedBy(valData.delegator_shares) : new BigNumber(0);
         
                                     }

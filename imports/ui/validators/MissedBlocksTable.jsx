@@ -8,6 +8,7 @@ import PChart from '../components/Chart.jsx';
 import Account from '../components/Account.jsx';
 import { InfoIcon } from '../components/Icons.jsx';
 import TimeStamp from '../components/TimeStamp.jsx';
+import BigNumber from 'bignumber.js';
 
 const DOWNTIMECHUCK = 4;
 const T = i18n.createComponent();
@@ -106,6 +107,7 @@ export default class MissedBlocksTable extends Component{
     }
 
     renderRow = (record, index, isSub=false, grouped=false) => {
+        record.votedVotingPower = new BigNumber(record.votedVotingPower);
         if (record.blocks) {
             let isExpanded = Number(this.state.expandedRow) === index;
             let chainSize = record.blocks.length;
