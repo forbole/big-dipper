@@ -193,7 +193,6 @@ export default class Validator extends Component{
                 let identity = (this.props.validator.description&&this.props.validator.description.identity)?this.props.validator.description.identity:"";
                 let website = (this.props.validator.description&&this.props.validator.description.website)?this.props.validator.description.website:undefined;
                 let details = (this.props.validator.description&&this.props.validator.description.details)?this.props.validator.description.details:"";
-                console.log(this.props.validator.delegator_shares);
                 return <Row className="validator-details">
                     <Helmet>
                         <title>{ moniker } - CUDOS Validator</title>
