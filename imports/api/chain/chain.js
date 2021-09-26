@@ -8,11 +8,11 @@ export const ChainStates = new Mongo.Collection('chain_states')
 Chain.helpers({
     proposer(){
         const validator = Validators.findOne({address:this.proposerAddress});
-
-        validator.voting_power = new BigNumber(validator.voting_power);
-        validator.self_delegation = new BigNumber(validator.self_delegation);
-        validator.proposer_priority = new BigNumber(validator.proposer_priority);
-
+        if(validator){
+            validator.voting_power = new BigNumber(validator.voting_power);
+            validator.self_delegation = new BigNumber(validator.self_delegation);
+            validator.proposer_priority = new BigNumber(validator.proposer_priority);
+        }
         return validator;
     }
 })

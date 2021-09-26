@@ -141,7 +141,7 @@ calculateVPDist = async (analyticsData, blockData) => {
         numBottomSixtySix: numBottomSixtySix,
         bottomSixtySixPercent: bottomSixtySixPercent,
         numValidators: activeValidators.length,
-        totalVotingPower: analyticsData.voting_power,
+        totalVotingPower: analyticsData.voting_power.toString(10),
         blockTime: blockData.time,
         createAt: new Date()
     }
@@ -414,6 +414,8 @@ Meteor.methods({
                                 }
                             }
 
+                            let recordToInsert = record;
+                            recordToInsert.voting_power = record.voting_power.toString(10);
                             bulkValidatorRecords.insert(record);
                             // ValidatorRecords.update({height:height,address:record.address},record);
                         }
@@ -519,8 +521,8 @@ Meteor.methods({
                             // console.log("first voting power: %o", valData.voting_power);
                             bulkVPHistory.insert({
                                 address: valData.address,
-                                prev_voting_power: new BigNumber(0),
-                                voting_power: valData.voting_power,
+                                prev_voting_power: new BigNumber(0).toString(10),
+                                voting_power: valData.voting_power.toString(10),
                                 type: 'add',
                                 height: blockData.height,
                                 block_time: blockData.time
@@ -555,8 +557,8 @@ Meteor.methods({
                                         let changeType = prevVotingPower.voting_power.comparedTo(valData.voting_power) == 1 ? 'down' : 'up';
                                         let changeData = {
                                             address: valExist.address,
-                                            prev_voting_power: prevVotingPower.voting_power,
-                                            voting_power: valData.voting_power,
+                                            prev_voting_power: prevVotingPower.voting_power.toString(10),
+                                            voting_power: valData.voting_power.toString(10),
                                             type: changeType,
                                             height: blockData.height,
                                             block_time: blockData.time
@@ -580,7 +582,7 @@ Meteor.methods({
                                     console.log("Validator is in DB but not in validator set now. Add remove VP change.");
                                     bulkVPHistory.insert({
                                         address: valExist.address,
-                                        prev_voting_power: prevVotingPower.voting_power,
+                                        prev_voting_power: prevVotingPower.voting_power.toString(10),
                                         voting_power: 0,
                                         type: 'remove',
                                         height: blockData.height,
