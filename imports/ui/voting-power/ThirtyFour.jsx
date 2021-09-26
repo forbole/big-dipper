@@ -52,8 +52,6 @@ export default class ThirtyFour extends Component{
                                 // var label = data.datasets[0].data[tooltipItem.index] + " validators hold ";
                                 // label += numbro(data.datasets[0].data[tooltipItem.index]).format("0.00%");
                                 if (tooltipItem.index == 0){
-        
-                                    console.log(self.props.stats.topThirtyFourPercent);
                                     return data.datasets[0].data[tooltipItem.index] + " validators hold "+numbro(self.props.stats.topThirtyFourPercent).format("0.00%")+" voting power";
                                 }
                                 else 
