@@ -71,7 +71,8 @@
         "coingeckoId": "cudos",
         "urls": {
             "rpc":"http://localhost:26657",
-            "api":"http://localhost:1317"
+            "api":"http://localhost:1317",
+            "staking":"http://localhost:3000/validators"
         },
         "fees": {
             "delegate": {

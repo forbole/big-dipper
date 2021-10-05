@@ -187,7 +187,7 @@ export class Ledger {
                     },
                     // (Optional) If you have a wallet webpage used to stake the coin then provide the url to the website in `walletUrlForStaking`.
                     // The 'stake' button in Keplr extension will link to the webpage.
-                    walletUrlForStaking: Meteor.settings.public.urls.rpc,
+                    walletUrlForStaking: Meteor.settings.public.urls.staking,
                     // The BIP44 path.
                     bip44: {
                         // You can only set the coin type of BIP44.
