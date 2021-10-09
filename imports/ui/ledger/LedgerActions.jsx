@@ -528,6 +528,7 @@ class LedgerButton extends Component {
                 account.address,
                 txMsg.msgAny,
                 txMsg.fee,
+                txMsg.memo,
             );
             
             assertIsBroadcastTxSuccess(result);
