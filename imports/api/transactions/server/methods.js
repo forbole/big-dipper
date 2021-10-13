@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 import { Transactions } from '../../transactions/transactions.js';
 import { Validators } from '../../validators/validators.js';
+import BigNumber from 'bignumber.js';
 
 const AddressLength = 40;
 
@@ -104,6 +105,12 @@ Meteor.methods({
             validator = Validators.findOne({address:address}, {fields});
         }
         if (validator){
+            
+            validator.tokens = new BigNumber(validator.tokens);
+            validator.proposer_priority = new BigNumber(validator.proposer_priority);
+            validator.self_delegation = new BigNumber(validator.selfDelegation);
+            validator.voting_power = new BigNumber(validator.voting_power);
+
             return validator;
         }
         return false;
