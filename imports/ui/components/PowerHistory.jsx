@@ -13,7 +13,7 @@ export default class PowerHistory extends React.Component {
         super(props);
         this.state = {
             tx : "",
-            diff: <span className={"text-"+(props.votingPower.minus(props.prevVotingPower).comparedTo(0) == 1 ? "success" : "danger") + " vp-diff"}>({numbro(props.votingPower.minus(props.prevVotingPower)).format("+0,0")})</span>
+            diff: <span className={"text-"+(props.votingPower.minus(props.prevVotingPower).comparedTo(0) === 1 ? "success" : "danger") + " vp-diff"}>({numbro(props.votingPower.minus(props.prevVotingPower)).format("+0,0")})</span>
         }
 
         if (props.votingPower > 0){      
@@ -165,7 +165,7 @@ export default class PowerHistory extends React.Component {
                             <span className="voting-power">{numbro(this.props.prevVotingPower).format('0,0')}</span> 
                             <i className="material-icons text-info">arrow_forward</i> 
                             <span className="voting-power">{numbro(this.props.votingPower).format('0,0')}</span> 
-                            {this.state.diff}
+                            <span className={"text-"+(this.props.votingPower.minus(this.props.prevVotingPower).comparedTo(0) === 1 ? "success" : "danger") + " vp-diff"}>({numbro(this.props.votingPower.minus(this.props.prevVotingPower)).format("+0,0")})</span>
                         </Col>
                         <Col xs={{size:10, offset:2}} sm={{offset:0, size:4}} className="text-secondary">
                             <i className="fas fa-cube"></i> 
