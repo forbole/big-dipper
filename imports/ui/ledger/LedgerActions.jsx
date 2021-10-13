@@ -681,8 +681,8 @@ class LedgerButton extends Component {
                     {this.renderActionTab()}
                     {this.renderConfirmationTab()}
                     <TabPane tabId="4">
-                        <div>Transaction is broadcasted.  Verify it at
-                            <Link to={`/transactions/${this.state.txHash}?new`}> transaction page. </Link>
+                        <div>Transaction is broadcasted. Verify it at
+                            {this.state.txHash ? <Link to={`/transactions/${this.state.txHash.transactionHash}?new`}> transaction page. </Link> : ''}
                         </div>
                         <div>See your activities at <Link to={`/account/${this.state.user}`}>your account page</Link>.</div>
                     </TabPane>
