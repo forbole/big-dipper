@@ -110,7 +110,7 @@ class AccountDetails extends Component{
 
                     this.state.total.forEach((total, i) => {
                         if(total.denom === Meteor.settings.public.bondDenom )
-                            this.state.total[i].amount = tthis.state.total[i].amount.plus(this.state.unbonding);
+                            this.state.total[i].amount = this.state.total[i].amount.plus(this.state.unbonding);
                         
                 
                     }, this)
@@ -125,7 +125,6 @@ class AccountDetails extends Component{
                 if(result.total_rewards && result.total_rewards.length > 0)
                 {   
                     const totalRewards  = result.total_rewards.map(r => new Coin(r.amount, r.denom));
-                    console.log(totalRewards);
                     
                     totalRewards.forEach((rewardNum, i) => {
                         if(this.state.total[i] && (rewardNum.denom === this.state.total[i].denom))

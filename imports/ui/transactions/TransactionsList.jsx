@@ -55,17 +55,10 @@ export default class Transactions extends Component{
         if (this.isBottom(wrappedElement)) {
             // console.log('header bottom reached');
             document.removeEventListener('scroll', this.trackScrolling);
-            this.setState({loadmore:true});
             this.setState({
+                loadmore: true,
                 limit: this.state.limit+10
-            }, (err, result) => {
-                if (!err){
-                    document.addEventListener('scroll', this.trackScrolling);
-                }
-                if (result){
-                    this.setState({loadmore:false});
-                }
-            })
+            });
         }
     };
 
@@ -108,8 +101,8 @@ export default class Transactions extends Component{
                 >
                 </Sidebar>} />
             </Switch>
-            <List limit={this.state.limit} />
-            <LoadMore show={this.state.loadmore} />
+            <List limit={this.state.limit} loadmore={this.state.loadmore}/>
+            {/* <LoadMore show={this.state.loadmore} /> */}
         </div>
     }
 }

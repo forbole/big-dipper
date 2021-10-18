@@ -528,6 +528,7 @@ class LedgerButton extends Component {
                 account.address,
                 txMsg.msgAny,
                 txMsg.fee,
+                txMsg.memo,
             );
             
             assertIsBroadcastTxSuccess(result);
@@ -629,17 +630,17 @@ class LedgerButton extends Component {
                             data-moniker={validator.description.moniker} data-address={validator.operator_address}>
                             <Row>
                                 <Col xs='12' className='moniker'>{validator.description.moniker}</Col>
-                                <Col xs='3' className="voting-power data">
+                                <Col xs='6' className="voting-power data">
                                     <i className="material-icons">power</i>
-                                    {validator.tokens?numbro(validator.tokens).format('0,0'):0}
+                                    {validator.tokens ? (new BigNumber(validator.tokens)).toString(10) : 0}
                                 </Col>
 
-                                <Col xs='4' className="commission data">
+                                <Col xs='3' className="commission data">
                                     <i className="material-icons">call_split</i>
-                                    {numbro(validator.commission.rate).format('0.00%')}
+                                    {numbro(validator.commission.commission_rates.rate).format('0.00%')}
                                 </Col>
-                                <Col xs='5' className="uptime data">
-                                    <Progress value={validator.uptime} style={{width:'80%'}}>
+                                <Col xs='3' className="uptime data">
+                                    <Progress value={validator.uptime} style={{width:'100%'}}>
                                         {validator.uptime?numbro(validator.uptime/100).format('0%'):0}
                                     </Progress>
                                 </Col>
@@ -680,8 +681,8 @@ class LedgerButton extends Component {
                     {this.renderActionTab()}
                     {this.renderConfirmationTab()}
                     <TabPane tabId="4">
-                        <div>Transaction is broadcasted.  Verify it at
-                            <Link to={`/transactions/${this.state.txHash}?new`}> transaction page. </Link>
+                        <div>Transaction is broadcasted. Verify it at
+                            {this.state.txHash ? <Link to={`/transactions/${this.state.txHash.transactionHash}?new`}> transaction page. </Link> : ''}
                         </div>
                         <div>See your activities at <Link to={`/account/${this.state.user}`}>your account page</Link>.</div>
                     </TabPane>

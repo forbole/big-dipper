@@ -480,10 +480,9 @@ export class Ledger {
                     denom: txContext.denom,
                 },
             }),
-            memo: txContext.memo,
         }];
 
-        return {msgAny, fee: Meteor.settings.public.fees.delegate};
+        return {msgAny, memo: txContext.memo, fee: Meteor.settings.public.fees.delegate};
     }
 
     // Creates a new undelegation tx based on the input parameters
@@ -506,7 +505,7 @@ export class Ledger {
             memo: txContext.memo,
         }];
 
-        return {msgAny, fee: Meteor.settings.public.fees.undelegate};
+        return {msgAny, memo: txContext.memo, fee: Meteor.settings.public.fees.undelegate};
     }
 
     // Creates a new redelegation tx based on the input parameters
@@ -531,7 +530,7 @@ export class Ledger {
             memo: txContext.memo,
         }];
 
-        return {msgAny, fee: Meteor.settings.public.fees.redelegate};
+        return {msgAny, memo: txContext.memo, fee: Meteor.settings.public.fees.redelegate};
     }
 
     static async createWithdraw(txContext, validators){
@@ -545,7 +544,7 @@ export class Ledger {
             })
         }));
 
-        return {msgAny, fee: Meteor.settings.public.fees.redelegate};
+        return {msgAny, memo: txContext.memo, fee: Meteor.settings.public.fees.redelegate};
     }
 
     // Creates a new transfer tx based on the input parameters
@@ -566,10 +565,9 @@ export class Ledger {
                     denom: txContext.denom,
                 }],
             }),
-            memo: txContext.memo,
         }];
 
-        return {msgAny, fee: Meteor.settings.public.fees.redelegate};
+        return {msgAny, memo: txContext.memo, fee: Meteor.settings.public.fees.redelegate};
     }
 
 
@@ -594,7 +592,7 @@ export class Ledger {
         }];
 
 
-        return {msgAny, fee: Meteor.settings.public.fees.redelegate};
+        return {msgAny, memo: txContext.memo, fee: Meteor.settings.public.fees.redelegate};
     }
 
     static createVote(
@@ -615,7 +613,7 @@ export class Ledger {
             }
         }];
 
-        return {msgAny, fee: Meteor.settings.public.fees.redelegate};
+        return {msgAny, memo: txContext.memo, fee: Meteor.settings.public.fees.redelegate};
     }
 
 
@@ -635,7 +633,7 @@ export class Ledger {
             },
         }]; 
 
-        return {msgAny, fee: Meteor.settings.public.fees.redelegate};
+        return {msgAny, memo: txContext.memo, fee: Meteor.settings.public.fees.redelegate};
     }
 
 }

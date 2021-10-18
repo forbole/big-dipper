@@ -972,6 +972,9 @@ body {
   
   .redelegate-validators {
     display: inline-block;
+    .dropdown-menu {
+      min-width: 435px;
+    }
   
     .validator {
       &:nth-child(even) {

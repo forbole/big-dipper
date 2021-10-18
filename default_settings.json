@@ -81,7 +81,7 @@
             },
             "redelegate": {
                 "amount": [{"denom": "ucudos", "amount": 100}],
-                "gas": "180000"
+                "gas": "360000"
             },
             "undelegate": {
                 "amount": [{"denom": "ucudos", "amount": 100}],

@@ -54,8 +54,8 @@ Validators.findOne = (selector, options) => {
         validator.voting_power = (new BigNumber(validator.voting_power)).dividedBy(Meteor.settings.public.powerReduction).multipliedBy(Meteor.settings.public.onChainPowerReduction);
         validator.self_delegation = new BigNumber(validator.self_delegation);
         validator.proposer_priority = new BigNumber(validator.proposer_priority);
-
     }
+
     return validator;
 }
 

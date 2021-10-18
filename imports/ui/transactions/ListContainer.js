@@ -4,8 +4,9 @@ import { Transactions } from '/imports/api/transactions/transactions.js';
 import List from './List.jsx';
 
 export default ValidatorDetailsContainer = withTracker((props) => {
-    let transactionsHandle, transactions, transactionsExist;
+    let transactionsHandle, transactionsExist;
     let loading = true;
+    let transactions = [];
 
     if (Meteor.isClient){
         transactionsHandle = Meteor.subscribe('transactions.list', props.limit);
@@ -25,6 +26,6 @@ export default ValidatorDetailsContainer = withTracker((props) => {
     return {
         loading,
         transactionsExist,
-        transactions: transactionsExist ? transactions : {},
+        transactions: transactions,
     };
 })(List);

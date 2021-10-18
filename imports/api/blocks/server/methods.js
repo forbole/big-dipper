@@ -553,7 +553,7 @@ Meteor.methods({
 
                                 console.log("Validator already in DB. Check if VP changed.");
                                 if (prevVotingPower){
-                                    if (prevVotingPower.voting_power != valData.voting_power){
+                                    if (prevVotingPower.voting_power.comparedTo(valData.voting_power) !== 0){
                                         let changeType = prevVotingPower.voting_power.comparedTo(valData.voting_power) == 1 ? 'down' : 'up';
                                         let changeData = {
                                             address: valExist.address,
@@ -615,6 +615,12 @@ Meteor.methods({
                             }
 
                             console.log("Add validator upsert to bulk operations.")
+                            valData.tokens = valData.tokens.toString(10);
+                            valData.proposer_priority = valData.proposer_priority.toString(10);
+                            valData.voting_power = valData.voting_power.toString(10);
+                            if(valData.self_delegation){
+                                valData.self_delegation = valData.self_delegation.toString(10);
+                            }
                             bulkValidators.find({"address": valData.address}).upsert().updateOne({$set:valData});
                         }
                     }
