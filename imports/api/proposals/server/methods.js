@@ -31,6 +31,7 @@ Meteor.methods({
                 const bulkProposals = Proposals.rawCollection().initializeUnorderedBulkOp();
                 for (let i in proposals){
                     let proposal = proposals[i];
+
                     proposal.proposalId = parseInt(proposal.proposal_id);
                     proposalIds.push(proposal.proposalId);
                     if (proposal.proposalId > 0 && !finishedProposalIds.has(proposal.proposalId)) {
@@ -92,8 +93,7 @@ Meteor.methods({
                         url = API + '/cosmos/gov/v1beta1/proposals/'+proposals[i].proposalId+'/tally';
                         response = HTTP.get(url);
                         if (response.statusCode == 200){
-                            let tally = new BigNumber(response.content.tally);
-                            proposal.tally = tally;
+                            proposal.tally = response.content.tally;
                         }
 
                         proposal.updatedAt = new Date();
@@ -106,6 +106,7 @@ Meteor.methods({
                 }
             }
         }
+
         return true
     }
 })
@@ -166,6 +167,7 @@ const getVoteDetail = (votes) => {
             votingPowerMap[voter] = {votingPower: votingPower};
         }
     });
+
     return votes.map((vote) => {
         let voter = votingPowerMap[vote.voter];
         let votingPower = voter.votingPower;
