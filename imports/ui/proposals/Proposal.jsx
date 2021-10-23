@@ -405,7 +405,7 @@ export default class Proposal extends Component{
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposalId</T></Col>
                             <Col md={this.state.user?6:9} className="value">{this.props.proposal.proposalId}</Col>
-                            {this.state.user?<Col md={3}><ProposalActionButtons history={this.props.history} proposalId={proposalId}/></Col>:null} 
+                            {this.state.user?<Col md={3}><ProposalActionButtons voteStarted={this.state.voteStarted} history={this.props.history} proposalId={proposalId}/></Col>:null} 
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposer</T></Col>
