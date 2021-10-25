@@ -156,9 +156,25 @@ export class Ledger {
         // }
     }
 
+    static checkForKeplr() {
+        return new Promise((resolve, reject) => {
+            let counter = 0;
+            const intervalHandler = setInterval(() => {
+                if (window.getOfflineSigner && window.keplr) {
+                    clearInterval(intervalHandler);
+                    resolve(true);
+                }
+                if (++counter === 20) {
+                    resolve(false);
+                }
+            }, 50);
+        });
+    }
+
     static async connectKeplr() {
-        if (!window.getOfflineSigner || !window.keplr) {
-            alert("Please install keplr extension");
+        const hasKelpr = await Ledger.checkForKeplr();
+        if (hasKelpr === false) {
+            alert('Please install keplr extension');
             return;
         }
 
