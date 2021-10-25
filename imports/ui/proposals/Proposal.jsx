@@ -17,6 +17,7 @@ import TimeStamp from '../components/TimeStamp.jsx';
 import { ProposalActionButtons } from '../ledger/LedgerActions.jsx';
 import voca from 'voca';
 import BigNumber from 'bignumber.js';
+import GlobalVariables from '../../../both/utils/global-variables.js';
 
 const T = i18n.createComponent();
 
@@ -37,20 +38,24 @@ export default class Proposal extends Component{
             voteStarted: false,
             totalVotes: new BigNumber(0),
             open: false,
-            yesPercent: 0,
-            abstainPercent: 0,
-            noPercent: 0,
-            noWithVetoPercent: 0,
+            yesPower: new BigNumber(0),
+            abstainPower: new BigNumber(0),
+            noPower: new BigNumber(0),
+            noWithVetoPower: new BigNumber(0),
+            yesPercent: new BigNumber(0),
+            abstainPercent: new BigNumber(0),
+            noPercent: new BigNumber(0),
+            noWithVetoPercent: new BigNumber(0),
             proposalValid: false,
             orderDir: -1,
             breakDownSelection: 'Bar',
             chartOptions : {
                 'Bar':'Bar', 
                 'All':'All', 
-                'Yes':'VOTE_OPTION_YES', 
-                'Abstain':'VOTE_OPTION_ABSTAIN', 
-                'No': 'VOTE_OPTION_NO', 
-                'No With Veto':'VOTE_OPTION_NO_WITH_VETO'
+                'Yes': GlobalVariables.VOTE_TYPES.YES, 
+                'Abstain': GlobalVariables.VOTE_TYPES.ABSTAIN, 
+                'No': GlobalVariables.VOTE_TYPES.NO, 
+                'No With Veto': GlobalVariables.VOTE_TYPES.NO_WITH_VETO
             }
         }
 
@@ -66,6 +71,14 @@ export default class Proposal extends Component{
         return null;
     }
 
+    proposalStarted(){
+        return moment().diff(moment(this.props.proposal.voting_start_time)) > 0;
+    }
+
+    proposalEnded(){
+        return moment().diff(moment(this.props.proposal.voting_end_time)) > 0
+    }
+
     componentDidUpdate(prevProps){
         if (this.props.proposal != prevProps.proposal){
             this.setState({
@@ -75,16 +88,36 @@ export default class Proposal extends Component{
                 }):''} </div>
             });
 
-            let now = moment();
             let totalVotingPower = (new BigNumber(this.props.chain.activeVotingPower))
             if (this.props.proposal.voting_start_time != '0001-01-01T00:00:00Z'){
-                if (now.diff(moment(this.props.proposal.voting_start_time)) > 0){
-                    let endVotingTime = moment(this.props.proposal.voting_end_time);
-                    if (now.diff(endVotingTime) < 0){
+                if (this.proposalStarted()){
+                    if (!this.proposalEnded()){
                         // not reach end voting time yet
                         let totalVotes = new BigNumber(0);
-                        for (let i in this.props.proposal.tally){
-                            totalVotes = totalVotes.plus(this.props.proposal.tally[i]);
+                        let votesYes = new BigNumber(0);
+                        let votesAbstain = new BigNumber(0);
+                        let votesNo = new BigNumber(0);
+                        let votesNoWithVeto = new BigNumber(0);
+
+                        for (let vote of this.props.proposal.votes){
+                            totalVotes = totalVotes.plus(vote.votingPower);
+                            
+                            switch(vote.option){
+                            case GlobalVariables.VOTE_TYPES.YES:
+                                votesYes = votesYes.plus(vote.votingPower);
+                                break;
+                            case GlobalVariables.VOTE_TYPES.ABSTAIN:
+                                votesAbstain = votesAbstain.plus(vote.votingPower);
+                                break;
+                            case GlobalVariables.VOTE_TYPES.NO:
+                                votesNo = votesNo.plus(vote.votingPower);
+                                break;
+                            case GlobalVariables.VOTE_TYPES.NO_WITH_VETO:
+                                votesNoWithVeto = votesNoWithVeto.plus(vote.votingPower);
+                                break;
+                            default:
+                                break;
+                            }
                         }
 
                         this.setState({
@@ -93,17 +126,23 @@ export default class Proposal extends Component{
                             voteStarted: true,
                             voteEnded: false,
                             totalVotes: totalVotes,
-                            yesPercent: (totalVotes.comparedTo(0) == 1) ? (new BigNumber(this.props.proposal.tally.yes)).dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
-                            abstainPercent: (totalVotes.comparedTo(0) == 1) ? (new BigNumber(this.props.proposal.tally.abstain)).dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
-                            noPercent: (totalVotes.comparedTo(0) == 1) ? (new BigNumber(this.props.proposal.tally.no)).dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
-                            noWithVetoPercent: (totalVotes.comparedTo(0) == 1) ? (new BigNumber(this.props.proposal.tally.no_with_veto)).dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
+                            yesPower: votesYes,
+                            abstainPower: votesAbstain,
+                            noPower: votesNo,
+                            noWithVetoPower: votesNoWithVeto,
+                            yesPercent: (totalVotes.comparedTo(0) == 1) ? votesYes.dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
+                            abstainPercent: (totalVotes.comparedTo(0) == 1) ? votesAbstain.dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
+                            noPercent: (totalVotes.comparedTo(0) == 1) ? votesNo.dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
+                            noWithVetoPercent: (totalVotes.comparedTo(0) == 1) ? votesNoWithVeto.dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
                             proposalValid: totalVotes.dividedBy(totalVotingPower.multipliedBy(Meteor.settings.public.powerReduction)).comparedTo(this.props.chain.gov.tallyParams.quorum) == 1 ? true : false
                         })
                     }
                     else{
+                        let finalTallyResult = this.props.proposal.final_tally_result;
                         let totalVotes = new BigNumber(0);
-                        for (let i in this.props.proposal.final_tally_result){
-                            totalVotes = totalVotes.plus(this.props.proposal.final_tally_result[i]);
+                        
+                        for (let i in finalTallyResult){
+                            totalVotes = totalVotes.plus(finalTallyResult[i]);
                         }
 
                         this.setState({
@@ -112,10 +151,14 @@ export default class Proposal extends Component{
                             voteStarted: true,
                             voteEnded: true,
                             totalVotes: totalVotes,
-                            yesPercent: (totalVotes.comparedTo(0) == 1) ? (new BigNumber(this.props.proposal.final_tally_result.yes)).dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
-                            abstainPercent: (totalVotes.comparedTo(0) == 1) ? (new BigNumber(this.props.proposal.final_tally_result.abstain)).dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
-                            noPercent: (totalVotes.comparedTo(0) == 1) ? (new BigNumber(this.props.proposal.final_tally_result.no)).dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
-                            noWithVetoPercent: (totalVotes.comparedTo(0) == 1) ? (new BigNumber(this.props.proposal.final_tally_result.no_with_veto)).dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
+                            yesPower: finalTallyResult.yes,
+                            abstainPower: finalTallyResult.abstain,
+                            noPower: finalTallyResult.no,
+                            noWithVetoPower: finalTallyResult.no_with_veto,
+                            yesPercent: (totalVotes.comparedTo(0) == 1) ? finalTallyResult.yes.dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
+                            abstainPercent: (totalVotes.comparedTo(0) == 1) ? finalTallyResult.abstain.dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
+                            noPercent: (totalVotes.comparedTo(0) == 1) ? finalTallyResult.no.dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
+                            noWithVetoPercent: (totalVotes.comparedTo(0) == 1) ? finalTallyResult.no_with_veto.dividedBy(totalVotes).multipliedBy(100) : new BigNumber(0),
                             proposalValid: totalVotes.dividedBy(totalVotingPower.multipliedBy(Meteor.settings.public.powerReduction)).comparedTo(this.props.chain.gov.tallyParams.quorum) == 1 ? true : false
                         })
                     }
@@ -140,65 +183,133 @@ export default class Proposal extends Component{
     }
 
     populateChartData() {
-        const optionOrder = {'VOTE_OPTION_YES': 0, 'VOTE_OPTION_ABSTAIN': 1, 'VOTE_OPTION_NO': 2, 'VOTE_OPTION_NO_WITH_VETO': 3};
-        let votes = this.props.proposal.votes?this.props.proposal.votes.sort(
-            (vote1, vote2) => vote2['votingPower'] - vote1['votingPower']
-        ).sort(
-            (vote1, vote2) => optionOrder[vote1.option] - optionOrder[vote2.option]) : null;
-        let maxVotingPower = {'N/A': 1};
-        let totalVotingPower = {'N/A': 0};
-        let votesByOptions = {'All': votes, 'VOTE_OPTION_YES': [], 'VOTE_OPTION_ABSTAIN': [], 'VOTE_OPTION_NO': [], 'VOTE_OPTION_NO_WITH_VETO': []};
+        const proposal = this.props.proposal;
 
-        let emtpyData = [{'votingPower': 1, option: 'N/A'}];
-
-        if (votes)
-            votes.forEach((vote) => votesByOptions[vote.option].push(vote));
-
-        let datasets = [];
-        for (let option in votesByOptions) {
-            let data = votesByOptions[option];
-            data.forEach(d => d.votingPower = new BigNumber(d.votingPower));
-            if (data){
-                maxVotingPower[option] = BigNumber.max(null, data.map((vote) => vote.votingPower));
-                totalVotingPower[option] = data.reduce((s, x) => x.votingPower.plus(s), 0);
-                datasets.push({
-                    datasetId: option,
-                    data: data.length == 0 ? emtpyData : data,
-                    totalVotingPower: totalVotingPower,
-                    maxVotingPower: maxVotingPower
-                })    
-            }
+        const optionOrder = {
+            [GlobalVariables.VOTE_TYPES.YES]: 0, 
+            [GlobalVariables.VOTE_TYPES.ABSTAIN]: 1, 
+            [GlobalVariables.VOTE_TYPES.NO]: 2, 
+            [GlobalVariables.VOTE_TYPES.NO_WITH_VETO]: 3
         };
+
+        let emptyMaxVotingPower = {'N/A': new BigNumber(0)};
+        let emptyTotalVotingPower = {'N/A': new BigNumber(1)};
+        let emptyData = [{'votingPower': new BigNumber(0), option: 'N/A'}];
+        let datasets = [];
+        let isDataEmtpy = null;
+
+        const votes = proposal.votes;
+        if(!this.state.voteEnded){
+
+            let maxVotingPower = emptyMaxVotingPower;
+            let totalVotingPower = emptyTotalVotingPower;
+            let votesByOptions = {
+                'All': votes, 
+                [GlobalVariables.VOTE_TYPES.YES]: [], 
+                [GlobalVariables.VOTE_TYPES.ABSTAIN]: [], 
+                [GlobalVariables.VOTE_TYPES.NO]: [], 
+                [GlobalVariables.VOTE_TYPES.NO_WITH_VETO]: []
+            };
+
+            votes.sort((v1, v2) => v2['votingPower'] - v1['votingPower'])
+                .sort((v1, v2) => optionOrder[v1.option] - optionOrder[v2.option])
+                .forEach((vote) => votesByOptions[vote.option].push(vote));
+
+            for (let option in votesByOptions) {
+                let data = votesByOptions[option];
+
+                if (data){
+                    maxVotingPower[option] = BigNumber.max(null, data.map((vote) => vote.votingPower));
+                    totalVotingPower[option] = data.reduce((s, x) => x.votingPower.plus(s), 0);
+                    datasets.push({
+                        datasetId: option,
+                        data: data.length == 0 ? emptyData : data,
+                        totalVotingPower: totalVotingPower,
+                        maxVotingPower: maxVotingPower
+                    })    
+                }
+            };   
+
+            isDataEmtpy = votesByOptions[this.state.breakDownSelection] && votesByOptions[this.state.breakDownSelection].length == 0;
+        } else {
+            const finalTallyResult = proposal.final_tally_result;
+
+            let totalVotingPower = finalTallyResult.yes.plus(finalTallyResult.abstain).plus(finalTallyResult.no).plus(finalTallyResult.no_with_veto).dividedBy(Meteor.settings.public.powerReduction);
+            totalVotingPower = totalVotingPower.comparedTo(0) == 1 ? totalVotingPower : emptyTotalVotingPower;
+
+            datasets.push({
+                datasetId: 'All',
+                data: totalVotingPower.comparedTo(0) == 1 ? [{'votingPower': totalVotingPower, option: 'All'}] : emptyData,
+                totalVotingPower,
+                maxVotingPower:totalVotingPower.comparedTo(0) == 1 ? BigNumber.max(finalTallyResult.yes, finalTallyResult.no, finalTallyResult.abstain, finalTallyResult.no_with_veto).dividedBy(Meteor.settings.public.powerReduction) : emptyMaxVotingPower,
+            })
+
+            datasets.push({
+                datasetId: GlobalVariables.VOTE_TYPES.YES,
+                data: finalTallyResult.yes.comparedTo(0) == 1 ? [{'votingPower': finalTallyResult.yes.dividedBy(Meteor.settings.public.powerReduction), option: GlobalVariables.VOTE_TYPES.YES}] : [{'votingPower': new BigNumber(0), option: GlobalVariables.VOTE_TYPES.YES}],
+                totalVotingPower,
+                maxVotingPower: finalTallyResult.yes.comparedTo(0) == 1 ? finalTallyResult.abstain.dividedBy(Meteor.settings.public.powerReduction) : emptyMaxVotingPower,
+            })
+
+            datasets.push({
+                datasetId: GlobalVariables.VOTE_TYPES.ABSTAIN,
+                data: finalTallyResult.abstain.comparedTo(0) == 1 ? [{'votingPower': finalTallyResult.abstain.dividedBy(Meteor.settings.public.powerReduction), option: GlobalVariables.VOTE_TYPES.ABSTAIN}] : [{'votingPower': new BigNumber(0), option: GlobalVariables.VOTE_TYPES.ABSTAIN}],
+                totalVotingPower,
+                maxVotingPower: finalTallyResult.abstain.comparedTo(0) == 1 ? finalTallyResult.abstain.dividedBy(Meteor.settings.public.powerReduction) : emptyMaxVotingPower,
+            })
+
+            datasets.push({
+                datasetId: GlobalVariables.VOTE_TYPES.NO,
+                data: finalTallyResult.no.comparedTo(0) == 1 ? [{'votingPower': finalTallyResult.no.dividedBy(Meteor.settings.public.powerReduction), option: GlobalVariables.VOTE_TYPES.NO}] : [{'votingPower': new BigNumber(0), option: GlobalVariables.VOTE_TYPES.NO}],
+                totalVotingPower,
+                maxVotingPower: finalTallyResult.abstain.comparedTo(0) == 1 ? finalTallyResult.no.dividedBy(Meteor.settings.public.powerReduction) : emptyMaxVotingPower,
+            })
+
+            datasets.push({
+                datasetId: GlobalVariables.VOTE_TYPES.NO_WITH_VETO,
+                data: finalTallyResult.no_with_veto.comparedTo(0) == 1 ? [{'votingPower': finalTallyResult.no_with_veto.dividedBy(Meteor.settings.public.powerReduction), option: GlobalVariables.VOTE_TYPES.NO_WITH_VETO}] : [{'votingPower': new BigNumber(0), option: GlobalVariables.VOTE_TYPES.NO_WITH_VETO}],
+                totalVotingPower,
+                maxVotingPower: finalTallyResult.abstain.comparedTo(0) == 1 ? finalTallyResult.no_with_veto.dividedBy(Meteor.settings.public.powerReduction) : emptyMaxVotingPower,
+            })
+        }
 
         let layout = [['piePlot']];
         let scales = [{
             scaleId: 'colorScale',
             type: 'Color',
-            domain: ['VOTE_OPTION_YES', 'VOTE_OPTION_ABSTAIN', 'VOTE_OPTION_NO', 'VOTE_OPTION_NO_WITH_VETO', 'N/A'],
+            domain: [GlobalVariables.VOTE_TYPES.YES, GlobalVariables.VOTE_TYPES.ABSTAIN, GlobalVariables.VOTE_TYPES.NO, GlobalVariables.VOTE_TYPES.NO_WITH_VETO, 'N/A'],
             range: ['#4CAF50', '#ff9800', '#e51c23', '#9C27B0', '#BDBDBD']
         }];
-        let isDataEmtpy = votesByOptions[this.state.breakDownSelection] && votesByOptions[this.state.breakDownSelection].length==0;
+        
         let tooltip = (component, point, data, ds) => {
-            let total = ds.metadata().totalVotingPower['All'];
-            let optionTotal = ds.metadata().totalVotingPower[data.option];
-            let percentage = numbro(data.votingPower.dividedBy(total)).format('0.00%');
-            let optionPercentage = numbro(data.votingPower.dividedBy(optionTotal)).format('0.00%');
-            return `<p>Voting Power: ${numbro(data.votingPower).format('0,0.0')}</p>
-                    <p>${percentage} out of all votes</p>
-                    <p>${optionPercentage} out of all ${data.option} votes</p>`;
+            if(!this.state.voteEnded){
+                let total = ds.metadata().totalVotingPower['All'];
+                let optionTotal = ds.metadata().totalVotingPower[data.option];
+                let percentage = numbro(data.votingPower.dividedBy(total)).format('0.00%');
+                let optionPercentage = numbro(data.votingPower.dividedBy(optionTotal)).format('0.00%');
+                return `<p>Voting Power: ${numbro(data.votingPower.dividedBy(Meteor.settings.public.powerReduction)).format('0,0.0')}</p>
+                        <p>${percentage} out of all votes</p>
+                        <p>${optionPercentage} out of all ${data.option} votes</p>`;
+            } else {
+                let total = ds.metadata().totalVotingPower;
+                let percentage = numbro(data.votingPower.dividedBy(total)).format('0.00%');
+                return `<p>Voting Power: ${numbro(data.votingPower.toString()).format('0,0.0')}</p>
+                        <p>${percentage} out of all votes</p>`;
+            }
         }
+
         let components = {
             plots: [{
                 plotId: 'piePlot',
                 type: 'Pie',
                 sectorValue: {
-                    value: (d, i, ds) => Number(d.votingPower.toString())
+                    value: (d, i, ds) => {return d.votingPower.comparedTo(0) == 1 ? d.votingPower.toNumber() : 1}
                 },
                 labelsEnabled: isDataEmtpy,
-                labelFormatter: isDataEmtpy?((value)=>'N/A'):null,
+                labelFormatter: isDataEmtpy ? ((value) => 'N/A') : null,
                 attrs: [{
                     attr: 'fill',
-                    value: (d) => d.option,
+                    value: (d) => {return d.votingPower.comparedTo(0) == 1 ? d.option : 'N/A'},
                     scale: 'colorScale'
                 }, {
                     attr: 'fill-opacity',
@@ -219,6 +330,7 @@ export default class Proposal extends Component{
             width: '300px',
             margin: 'auto'
         }
+
         return {layout, datasets, scales, components, config};
     }
 
@@ -233,7 +345,6 @@ export default class Proposal extends Component{
         let votes = this.props.proposal.votes ? this.props.proposal.votes.filter((vote) => vote.option == option) : [];
         let orderDir = this.state.orderDir;
         votes = votes.sort((vote1, vote2) => ((new BigNumber(vote1['votingPower'])).minus(vote2['votingPower'])).multipliedBy(orderDir));
-
 
         return <Result className="tally-result-detail" pose={this.state.open === openState ? 'open' : 'closed'}>
             <Card className='tally-result-table'>
@@ -294,7 +405,7 @@ export default class Proposal extends Component{
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposalId</T></Col>
                             <Col md={this.state.user?6:9} className="value">{this.props.proposal.proposalId}</Col>
-                            {this.state.user?<Col md={3}><ProposalActionButtons history={this.props.history} proposalId={proposalId}/></Col>:null} 
+                            {this.state.user?<Col md={3}><ProposalActionButtons voteStarted={this.state.voteStarted} history={this.props.history} proposalId={proposalId}/></Col>:null} 
                         </Row>
                         <Row className="mb-2 border-top">
                             <Col md={3} className="label"><T>proposals.proposer</T></Col>
@@ -376,34 +487,34 @@ export default class Proposal extends Component{
                             <Col md={9} className="value">
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><VoteIcon vote="yes" /> Yes</Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro((new BigNumber(this.state.tally.yes)).dividedBy(Meteor.settings.public.powerReduction)).format("0,0.000000"):''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{numbro(this.state.yesPower.dividedBy(Meteor.settings.public.powerReduction)).format("0,0.000000")}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(1,e)}><i className="material-icons">{this.state.open === 1 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
-                                        {this.renderTallyResultDetail(1, 'VOTE_OPTION_YES')}
+                                        {this.renderTallyResultDetail(1, GlobalVariables.VOTE_TYPES.YES)}
                                     </Col>
                                 </Row>
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><VoteIcon vote="abstain" /> Abstain</Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(new BigNumber(this.state.tally.abstain).dividedBy(Meteor.settings.public.powerReduction)).format("0,0.000000"):''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{numbro(this.state.abstainPower.dividedBy(Meteor.settings.public.powerReduction)).format("0,0.000000")}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(2,e)}><i className="material-icons">{this.state.open === 2 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
-                                        {this.renderTallyResultDetail(2, 'VOTE_OPTION_ABSTAIN')}
+                                        {this.renderTallyResultDetail(2, GlobalVariables.VOTE_TYPES.ABSTAIN)}
                                     </Col>
                                 </Row>
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><VoteIcon vote="no" /> No</Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(new BigNumber(this.state.tally.no).dividedBy(Meteor.settings.public.powerReduction)).format("0,0.000000"):''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{numbro(this.state.noPower.dividedBy(Meteor.settings.public.powerReduction)).format("0,0.000000")}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(3,e)}><i className="material-icons">{this.state.open === 3 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
-                                        {this.renderTallyResultDetail(3, 'VOTE_OPTION_NO')}
+                                        {this.renderTallyResultDetail(3, GlobalVariables.VOTE_TYPES.NO)}
                                     </Col>
                                 </Row>
                                 <Row>
                                     <Col xs={6} sm={5} md={4}><VoteIcon vote="no_with_veto" /> No with Veto</Col>
-                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{this.state.tally?numbro(new BigNumber(this.state.tally.no_with_veto).dividedBy(Meteor.settings.public.powerReduction)).format("0,0.000000"):''}</Col>
+                                    <Col xs={5} sm={6} md={7} className="tally-result-value">{numbro(this.state.noWithVetoPower.dividedBy(Meteor.settings.public.powerReduction)).format("0,0.000000")}</Col>
                                     <Col xs={1} onClick={(e) => this.handleClick(4,e)}><i className="material-icons">{this.state.open === 4 ? 'arrow_drop_down' : 'arrow_left'}</i></Col>
                                     <Col xs={12}>
-                                        {this.renderTallyResultDetail(4, 'VOTE_OPTION_NO_WITH_VETO')}
+                                        {this.renderTallyResultDetail(4, GlobalVariables.VOTE_TYPES)}
                                     </Col>
                                 </Row>
                                 {this.state.voteStarted?<Row>
@@ -419,10 +530,10 @@ export default class Proposal extends Component{
                                             </Nav>
                                         </CardHeader>
                                         <CardBody>
-                                            <TabContent activeTab={this.state.breakDownSelection=='Bar'?'bar':'pie'}>
+                                            <TabContent activeTab={this.state.breakDownSelection == 'Bar'?'bar':'pie'}>
                                                 <TabPane tabId="bar">
                                                     <Progress multi>
-                                                        <Progress bar animated color="success" value={this.state.yesPercent}><T>proposals.yes</T> {numbro(this.state.yesPercent).format("0.00")}%</Progress>
+                                                        <Progress bar animated color="success" value={this.state.yesPercent}><T>proposals.yes</T> {numbro(this.state.yesPercent.toString(10)).format("0.00%")}%</Progress>
                                                         <Progress bar animated color="warning" value={this.state.abstainPercent}><T>proposals.abstain</T> {numbro(this.state.abstainPercent).format("0.00")}%</Progress>
                                                         <Progress bar animated color="danger" value={this.state.noPercent}><T>proposals.no</T> {numbro(this.state.noPercent).format("0.00")}%</Progress>
                                                         <Progress bar animated color="info" value={this.state.noWithVetoPercent}><T>proposals.noWithVeto</T> {numbro(this.state.noWithVetoPercent).format("0.00")}%</Progress>
@@ -431,7 +542,6 @@ export default class Proposal extends Component{
                                                 <TabPane tabId="pie">
                                                     {this.renderPieChart()}
                                                 </TabPane>
-
                                             </TabContent>
                                         </CardBody>
                                     </Card></Col>
@@ -443,7 +553,7 @@ export default class Proposal extends Component{
                                                     <T _props={{className:'text-success'}} tentative={(!this.state.voteEnded)?'(tentatively) ':''} _purify={false}>proposals.validMessage</T> :
                                                     (this.state.voteEnded) ?
                                                         <T _props={{className:'text-danger'}} quorum={numbro(this.props.chain.gov.tallyParams.quorum).format("0.00%")} _purify={false}>proposals.invalidMessage</T>
-                                                        : <T moreVotes={numbro((totalVotingPower.multipliedBy(this.props.chain.gov.tallyParams.quorum).minus(this.state.totalVotes))).format("0,0")} _purify={false}>proposals.moreVoteMessage</T>
+                                                        : <T moreVotes={totalVotingPower.multipliedBy(this.props.chain.gov.tallyParams.quorum).minus(this.state.totalVotes).dividedBy(Meteor.settings.public.powerReduction).toString(10)} _purify={false}>proposals.moreVoteMessage</T>
                                                 }
                                             </em>
                                         </Card>

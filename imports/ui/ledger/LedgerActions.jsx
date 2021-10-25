@@ -184,6 +184,7 @@ class LedgerButton extends Component {
             proposalType: Ledger.PROPOSAL_TYPES.PROPOSAL_TYPE_TEXT,
             validator: false
         };
+
         this.ledger = new Ledger({testModeAllowed: false});
     }
 
@@ -1201,10 +1202,9 @@ class ProposalActionButtons extends LedgerButton {
     }
 
     render = () => {
-
         return <span className="ledger-buttons-group float-right">
             <Row>
-                {this.state.validator ? 
+                {this.state.validator && this.props.voteStarted ? 
                     <Col><Button color="secondary" size="sm"
                         onClick={() => this.openModal(Types.VOTE, {})}>
                         {TypeMeta[Types.VOTE].button}

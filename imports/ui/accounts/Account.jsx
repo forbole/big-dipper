@@ -163,12 +163,13 @@ class AccountDetails extends Component{
                 if (result.commission){
                     result.commission.forEach((commissions, i) => {
                         const commissionAmount = commissions;
+                        
                         if(this.state.total[i] && (commissions.denom === this.state.total[i].denom))
                             this.state.total[i].amount = this.state.total[i].amount.plus(commissions.amount);
 
                         this.setState({
                             operatorAddress: result.operatorAddress,
-                            commission: [...this.state.commission, commissionAmount],
+                            commission: [...this.state.commission, new Coin(commissionAmount.amount, commissionAmount.denom)],
                             total: [...this.state.total]
                         })
                     }, this)

@@ -52,7 +52,7 @@ get amount () {
     return this._amount;
 }
 
-set amount (amount ) {
+set amount (amount) {
     this._amount = new BigNumber(amount);
 }
 get stakingAmount () {
