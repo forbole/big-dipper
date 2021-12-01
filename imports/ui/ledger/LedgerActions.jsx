@@ -426,7 +426,7 @@ class LedgerButton extends Component {
             if (res){
                 let gasPrice = calculateGasPrice(res)
                 let amountToTransfer = this.state.transferAmount?.amount || this.state.delegateAmount?.amount || this.state.depositAmount?.amount
-                let totalAmount = this.props.rewards || this.props.commission || this.state.actionType === 'redelegate' || this.state.actionType === 'undelegate'?  gasPrice : amountToTransfer + gasPrice;
+                let totalAmount = this.props.rewards || this.props.commission || this.state.actionType === 'redelegate' || this.state.actionType === 'undelegate' || this.state.actionType === 'vote'?  gasPrice : amountToTransfer + gasPrice;
                 if (totalAmount <= this.state.currentUser?.availableCoin?._amount){
                     Ledger.applyGas(txMsg, res, Meteor.settings.public.ledger.gasPrice, Coin.StakingCoin.denom);
                     this.setStateOnSuccess('simulating', {
@@ -452,23 +452,25 @@ class LedgerButton extends Component {
             let txMsg = this.state.txMsg;
             const txContext = this.getTxContext();
             const bytesToSign = Ledger.getBytesToSign(txMsg, txContext);
-            this.ledger.sign(bytesToSign, this.state.transportBLE).then((sig) => {
-                try {
-                    Ledger.applySignature(txMsg, txContext, sig);
-                    Meteor.call('transaction.submit', txMsg, (err, res) => {
-                        if (err) {
-                            this.setStateOnError('signing', err.reason)
-                        } else if (res) {
-                            this.setStateOnSuccess('signing', {
-                                txHash: res,
-                                activeTab: '4'
-                            })
-                        }
+
+            if (txMsg.value.msg[0].type === "cosmos-sdk/MsgVote" || 
+                txMsg.value.msg[0].type === "cosmos-sdk/MsgDeposit" || 
+                txMsg.value.msg[0].type === "cosmos-sdk/MsgSubmitProposal") {
+                this.ledger.signAmino(txMsg, txContext, this.state.transportBLE).then((res) => {
+                    this.setStateOnSuccess('signing', {
+                        txHash: res,
+                        activeTab: '4'
                     })
-                } catch (e) {
-                    this.setStateOnError('signing', e.message)
-                }
-            }, (err) => this.setStateOnError('signing', err.message))
+                }, (err) => this.setStateOnError('signing', err.message))
+            }
+            else {
+                this.ledger.signTx(txMsg, txContext, this.state.transportBLE).then((hash) => {
+                    this.setStateOnSuccess('signing', {
+                        txHash: hash,
+                        activeTab: '4'
+                    })
+                }, (err) => this.setStateOnError('signing', err.message))
+            }
         } catch (e) {
             this.setStateOnError('signing', e.message)
         }
@@ -769,10 +771,10 @@ class DelegationButtons extends LedgerButton {
 class WithdrawButton extends LedgerButton {
 
     createMessage = (callback) => {
-        Meteor.call('transaction.execute', {from: this.state.user}, this.getPath(), (err, res) =>{
-            if (res){
+        Meteor.call('transaction.execute', { from: this.state.user }, this.getPath(), (err, res) => {
+            if (res) {
                 Meteor.call('isValidator', this.state.user, (error, result) => {
-                    if (result && result.operator_address){
+                    if (result && result.operator_address) {
                         res.value.msg.push({
                             type: 'cosmos-sdk/MsgWithdrawValidatorCommission',
                             value: { validator_address: result.operator_address }
@@ -960,7 +962,6 @@ class ProposalActionButtons extends LedgerButton {
     renderActionTab = () => {
         if (!this.state.currentUser) return null;
         let maxAmount = this.state.currentUser.availableCoin;
-
         let inputs;
         let title;
         switch (this.state.actionType) {
@@ -968,10 +969,10 @@ class ProposalActionButtons extends LedgerButton {
             title=`Vote on Proposal ${this.props.proposalId}`
             inputs = (<Input type="select" name="voteOption" onChange={this.handleInputChange} defaultValue=''>
                 <option value='' disabled>Vote Option</option>
-                <option value='Yes'>yes</option>
-                <option value='Abstain'>abstain</option>
-                <option value='No'>no</option>
-                <option value='NoWithVeto'>no with veto</option>
+                <option value='VOTE_OPTION_YES'>yes</option>
+                <option value='VOTE_OPTION_ABSTAIN'>abstain</option>
+                <option value='VOTE_OPTION_NO'>no</option>
+                <option value='VOTE_OPTION_NO_WITH_VETO'>no with veto</option>
             </Input>)
             break;
         case Types.DEPOSIT:
@@ -982,8 +983,8 @@ class ProposalActionButtons extends LedgerButton {
                     min={Coin.MinStake} max={maxAmount.stakingAmount} type="number"
                     invalid={this.state.depositAmount != null && !isBetween(this.state.depositAmount, 1, maxAmount)}/>
                 <InputGroupAddon addonType="append">{Coin.StakingCoin.displayName}</InputGroupAddon>
-                <div>your available balance: <Amount coin={maxAmount}/></div>
-            </InputGroup>)
+            </InputGroup>
+            )
             break;
         }
         return <TabPane tabId="2">
@@ -991,6 +992,7 @@ class ProposalActionButtons extends LedgerButton {
             {inputs}
             <Input name="memo" onChange={this.handleInputChange}
                 placeholder="Memo(optional)" type="textarea" value={this.state.memo}/>
+            {this.state.actionType === 'deposit' ? <div className="mt-2">your available balance: <Amount coin={maxAmount} /></div> : null}
         </TabPane>
 
     }
@@ -1018,7 +1020,7 @@ class ProposalActionButtons extends LedgerButton {
     isDataValid = () => {
         if (!this.state.currentUser) return false
         if (this.state.actionType === Types.VOTE) {
-            return ['Yes', 'No', 'NoWithVeto', 'Abstain'].indexOf(this.state.voteOption) !== -1;
+            return ['VOTE_OPTION_YES', 'VOTE_OPTION_NO', 'VOTE_OPTION_NO_WITH_VETO', 'VOTE_OPTION_ABSTAIN'].indexOf(this.state.voteOption) !== -1;
         } else {
             return isBetween(this.state.depositAmount, 1, this.state.currentUser.availableCoin)
         }
@@ -1027,7 +1029,7 @@ class ProposalActionButtons extends LedgerButton {
     getConfirmationMessage = () => {
         switch (this.state.actionType) {
         case Types.VOTE:
-            return <span>You are <span className='action'>voting</span> <strong>{this.state.voteOption}</strong> on proposal {this.props.proposalId}
+            return <span>You are <span className='action'>voting</span> <strong>{this.state.voteOption?.substring(12).replace(/_/g, " ")}</strong> on proposal {this.props.proposalId}
                 <span> with <Fee gas={this.state.gasEstimate}/>.</span>
             </span>
             break;

@@ -1,6 +1,7 @@
 # Changelog
 
 ## [UNRELEASED]
+* [#529] Upgraded ledger transactions to stargate format
 * [#523] Implemented readable messages for IBC messages
 
 ## [v0.41.x-14.2]

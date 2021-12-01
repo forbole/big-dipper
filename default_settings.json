@@ -40,13 +40,13 @@
             "gov": true,
             "distribution": false
         },
+        "remote": {
+            "rpc": "https://rpc.stargate.forbole.com:443",
+            "api": "https://api.stargate.forbole.com:443"
+        },
         "coingeckoId": "cosmos",
         "networks": "https://gist.githubusercontent.com/kwunyeung/8be4598c77c61e497dfc7220a678b3ee/raw/bd-networks.json",
         "banners": false
-    },
-    "remote":{
-        "rpc":"https://rpc.stargate.forbole.com:443",
-        "api":"https://api.stargate.forbole.com:443"
     },
     "debug": {
         "startTimer": true

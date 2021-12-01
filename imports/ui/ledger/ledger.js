@@ -11,6 +11,18 @@ import bech32 from "bech32";
 import sha256 from "crypto-js/sha256"
 import ripemd160 from "crypto-js/ripemd160"
 import CryptoJS from "crypto-js"
+import { LedgerSigner } from "@cosmjs/ledger-amino";
+import { SigningCosmosClient, makeSignDoc } from "@cosmjs/launchpad";
+import { sleep } from "@cosmjs/utils";
+import { SigningStargateClient, assertIsBroadcastTxSuccess, defaultRegistryTypes, makeCosmoshubPath } from "@cosmjs/stargate"
+import { Registry } from '@cosmjs/proto-signing';
+import {
+    MsgDelegate,
+    MsgUndelegate,
+    MsgBeginRedelegate
+} from '@cosmjs/stargate/build/codec/cosmos/staking/v1beta1/tx';
+import { MsgSend } from '@cosmjs/stargate/build/codec/cosmos/bank/v1beta1/tx';
+import { MsgWithdrawValidatorCommission, MsgWithdrawDelegatorReward } from '@cosmjs/stargate/build/codec/cosmos/distribution/v1beta1/tx';
 
 // TODO: discuss TIMEOUT value
 const INTERACTION_TIMEOUT = 10000
@@ -100,7 +112,7 @@ export class Ledger {
             transport= await TransportWebUSB.create(timeout)
         }
         const cosmosLedgerApp = new CosmosApp(transport)
-
+        this.ledgerSigner = this.getLedgerWallet(transport)
         this.cosmosApp = cosmosLedgerApp
 
         await this.isSendingData()
@@ -177,15 +189,145 @@ export class Ledger {
         })
     }
 
-    async sign(signMessage, transportBLE) {
-        await this.connect(INTERACTION_TIMEOUT, transportBLE)
-
-        const response = await this.cosmosApp.sign(this.getHDPath(), signMessage)
-        this.checkLedgerErrors(response)
-        // we have to parse the signature from Ledger as it's in DER format
-        const parsedSignature = signatureImport(response.signature)
-        return parsedSignature
+    getLedgerWallet(ledgerTransport) {
+        return new LedgerSigner(ledgerTransport, { hdPaths: [makeCosmoshubPath(0)] });
     }
+
+    async signTx(txMsg, txContext, transportBLE) {
+        await this.connect(INTERACTION_TIMEOUT, transportBLE)
+        let address = txContext.bech32;
+        let fee = txMsg.value.fee
+        const myRegistry = new Registry([...defaultRegistryTypes]);
+
+        const client = await SigningStargateClient.connectWithSigner(
+            RPC,
+            this.ledgerSigner,
+            'sync'
+        );
+        
+        const formatMessage = (option) => {
+            switch (option) {
+            case "cosmos-sdk/MsgDelegate":
+                return {
+                    typeUrl: '/cosmos.staking.v1beta1.MsgDelegate',
+                    value: MsgDelegate.fromPartial({
+                        amount: txMsg.value.msg[0].value.amount,
+                        delegatorAddress: address,
+                        validatorAddress: txMsg.value.msg[0].value.validator_address,
+                    })
+                }
+            case "cosmos-sdk/MsgUndelegate":
+                return {
+                    typeUrl: '/cosmos.staking.v1beta1.MsgUndelegate',
+                    value: MsgUndelegate.fromPartial({
+                        amount: txMsg.value.msg[0].value.amount,
+                        delegatorAddress: address,
+                        validatorAddress: txMsg.value.msg[0].value.validator_address,
+                    })
+                }
+            case "cosmos-sdk/MsgBeginRedelegate":
+                return {
+                    typeUrl: '/cosmos.staking.v1beta1.MsgBeginRedelegate',
+                    value: MsgBeginRedelegate.fromPartial({
+                        amount: txMsg.value.msg[0].value.amount,
+                        delegatorAddress: address,
+                        validatorDstAddress: txMsg.value.msg[0].value.validator_dst_address,
+                        validatorSrcAddress: txMsg.value.msg[0].value.validator_src_address,
+                    })
+                }
+            case "cosmos-sdk/MsgSend":
+                return {
+                    typeUrl: '/cosmos.bank.v1beta1.MsgSend',
+                    value: MsgSend.fromPartial({
+                        fromAddress: address,
+                        toAddress: txMsg.value.msg[0].value.to_address,
+                        amount: txMsg.value.msg[0].value.amount,
+                    }),
+                }
+            case "cosmos-sdk/MsgWithdrawDelegationReward":
+                return {
+                    typeUrl: '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward',
+                    value: MsgWithdrawDelegatorReward.fromPartial({
+                        delegatorAddress: txMsg.value.msg[0].value.delegator_address,
+                        validatorAddress: txMsg.value.msg[0].value.validator_address
+                    })
+                }    
+            case "cosmos-sdk/MsgWithdrawValidatorCommission":
+                return {
+                    typeUrl: '/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission',
+                    value: MsgWithdrawValidatorCommission.fromPartial({
+                        validatorAddress: txMsg.value.msg[0].operator_address
+                    })
+                }
+            }
+        }
+
+        let msg = txMsg.value.msg.length > 1 ? txMsg.value.msg.map((m) => formatMessage(m.type)) : formatMessage(txMsg.value.msg[0].type) 
+        const result = await client.signAndBroadcast(
+            address,
+            [msg],
+            fee,
+            DEFAULT_MEMO
+        );
+        return result.transactionHash
+    }
+
+    async signAmino(txMsg, txContext, transportBLE) {
+        await this.connect(INTERACTION_TIMEOUT, transportBLE)
+        let address = txContext.bech32;
+        let fee = txMsg.value.fee;
+        let chainId = txContext.chainId;
+        let accountNumber = txContext.accountNumber.toString();
+        let sequence = txContext.sequence.toString();
+        let signAmino, txResult;
+
+        const getVoteOption = (option) =>{
+            switch (option) {
+            case "VOTE_OPTION_YES":
+                return 1;
+            case "VOTE_OPTION_ABSTAIN":
+                return 2;
+            case "VOTE_OPTION_NO":
+                return 3;
+            case "VOTE_OPTION_NO_WITH_VETO":
+                return 4;
+            } 
+        }
+
+        const client = new SigningCosmosClient(API, address, this.ledgerSigner, undefined, undefined, 'sync')
+        if (txMsg.value.msg[0].value.option){
+            txMsg.value.msg[0].value.option = getVoteOption(txMsg.value.msg[0].value.option)
+        }
+        let msgs = txMsg.value.msg[0]
+        const signDoc = makeSignDoc(
+            [msgs],
+            fee,
+            chainId,
+            DEFAULT_MEMO,
+            accountNumber,
+            sequence
+        );
+
+        signAmino = await this.ledgerSigner.signAmino(
+            txContext.bech32,
+            signDoc
+        );
+        this.checkLedgerErrors(signAmino)
+
+        const tx = {
+            msg: [msgs],
+            fee: fee,
+            memo: DEFAULT_MEMO,
+            signatures: [signAmino.signature],
+        };
+
+        txResult = await client.broadcastTx(tx);
+        await sleep(75);
+        assertIsBroadcastTxSuccess(txResult);
+
+        let txHash = txResult?.transactionHash ?? ''
+        return txHash
+    };
 
     /* istanbul ignore next: maps a bunch of errors */
     checkLedgerErrors(
@@ -198,34 +340,36 @@ export class Ledger {
         if (device_locked) {
             throw new Error(`Ledger's screensaver mode is on`)
         }
-        switch (error_message) {
-        case `U2F: Timeout`:
-            throw new Error(timeoutMessag)
-        case `${Meteor.settings.public.ledger.appName} app does not seem to be open`:
+        if(error_message != null){
+            switch (error_message) {
+            case `U2F: Timeout`:
+                throw new Error(timeoutMessag)
+            case `${Meteor.settings.public.ledger.appName} app does not seem to be open`:
             // hack:
             // It seems that when switching app in Ledger, WebUSB will disconnect, disabling further action.
             // So we clean up here, and re-initialize this.cosmosApp next time when calling `connect`
-            this.cosmosApp.transport.close()
-            this.cosmosApp = undefined
-            throw new Error(`${Meteor.settings.public.ledger.appName} app is not open`)
-        case `Command not allowed`:
-            throw new Error(`Transaction rejected`)
-        case `Transaction rejected`:
-            throw new Error(rejectionMessage)
-        case `Unknown error code`:
-            throw new Error(`Ledger's screensaver mode is on`)
-        case `Instruction not supported`:
-            throw new Error(
-                `Your ${Meteor.settings.public.ledger.appName} Ledger App is not up to date. ` +
+                this.cosmosApp.transport.close()
+                this.cosmosApp = undefined
+                throw new Error(`${Meteor.settings.public.ledger.appName} app is not open`)
+            case `Command not allowed`:
+                throw new Error(`Transaction rejected`)
+            case `Transaction rejected`:
+                throw new Error(rejectionMessage)
+            case `Unknown error code`:
+                throw new Error(`Ledger's screensaver mode is on`)
+            case `Instruction not supported`:
+                throw new Error(
+                    `Your ${Meteor.settings.public.ledger.appName} Ledger App is not up to date. ` +
                 `Please update to version ${REQUIRED_COSMOS_APP_VERSION}.`
-            )
-        case `Web Bluetooth API globally disabled`:
-            throw new Error(`Bluetooth not supported. Please use the latest version of Chrome browser.`)
-        case `No errors`:
+                )
+            case `Web Bluetooth API globally disabled`:
+                throw new Error(`Bluetooth not supported. Please use the latest version of Chrome browser.`)
+            case `No errors`:
             // do nothing
-            break
-        default:
-            throw new Error(error_message)
+                break
+            default:
+                throw new Error(error_message)
+            }
         }
     }
 

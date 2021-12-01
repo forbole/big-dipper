@@ -11,6 +11,11 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.13.17",
+    "@cosmjs/launchpad": "^0.25.5",
+    "@cosmjs/ledger-amino": "^0.25.5",
+    "@cosmjs/proto-signing": "^0.25.5",
+    "@cosmjs/stargate": "^0.25.5",
+    "@cosmjs/utils": "^0.25.5",
     "@ledgerhq/hw-transport-web-ble": "^5.50.0",
     "@ledgerhq/hw-transport-webusb": "^5.53.0",
     "@types/meteor-universe-i18n": "^1.14.5",

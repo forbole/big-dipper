@@ -2,25 +2,6 @@ import { HTTP } from 'meteor/http';
 import { Validators } from '../../validators/validators';
 
 Meteor.methods({
-    'transaction.submit': function(txInfo) {
-        this.unblock();
-        const url = `${API}/txs`;
-        data = {
-            "tx": txInfo.value,
-            "mode": "sync"
-        }
-        const timestamp = new Date().getTime();
-        console.log(`submitting transaction${timestamp} ${url} with data ${JSON.stringify(data)}`)
-
-        let response = HTTP.post(url, {data});
-        console.log(`response for transaction${timestamp} ${url}: ${JSON.stringify(response)}`)
-        if (response.statusCode == 200) {
-            let data = response.data
-            if (data.code)
-                throw new Meteor.Error(data.code, JSON.parse(data.raw_log).message)
-            return response.data.txhash;
-        }
-    },
     'transaction.execute': function(body, path) {
         this.unblock();
         const url = `${API}/${path}`;
