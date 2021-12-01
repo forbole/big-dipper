@@ -53,26 +53,28 @@ Meteor.methods({
         
         let url = RPC + '/status';
         let chainId;
+
         try {
             let response = HTTP.get(url);
             let status = JSON.parse(response?.content);
-            chainId = (status?.result?.node_info?.network);
+            chainId = Meteor.settings.public.chainId
         }
         catch (e) {
             console.log("Error getting chainId for keybase fetching")        
         }
-        let chainStatus = Chain.findOne({ chainId});
+
+        let chainStatus = Chain.findOne({chainId});
         const bulkValidators = Validators.rawCollection().initializeUnorderedBulkOp();
-
         let lastKeybaseFetchTime = Date.parse(chainStatus?.lastKeybaseFetchTime) ?? 0
-        console.log("Last fetch time: %o", lastKeybaseFetchTime)
 
+        console.log("Last fetch time: %o", lastKeybaseFetchTime)
         console.log('Fetching keybase...')
-        // eslint-disable-next-line no-loop-func
+
         Validators.find({}).forEach(async (validator) => {
             try {
                 if (validator?.description && validator?.description?.identity) {
                     let profileUrl = getValidatorProfileUrl(validator?.description?.identity)
+
                     if (profileUrl) {
                         bulkValidators.find({ address: validator?.address }).upsert().updateOne({ $set: { 'profile_url': profileUrl } });
                         if (bulkValidators.length > 0) {
@@ -92,6 +94,7 @@ Meteor.methods({
             }
         })
         try{
+            console.log("Update chain")
             Chain.update({ chainId }, { $set: { lastKeybaseFetchTime: new Date().toUTCString() } });
         }
         catch(e){

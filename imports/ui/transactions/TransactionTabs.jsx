@@ -16,7 +16,9 @@ export default class TransactionTabs extends Component{
             stakingTxs: {},
             distributionTxs: {},
             governanceTxs: {},
-            slashingTxs: {}
+            slashingTxs: {},
+            clpTxs: {},
+            pegTxs: {}
         }
     }
 
@@ -35,7 +37,9 @@ export default class TransactionTabs extends Component{
                 stakingTxs: this.props.stakingTxs,
                 distributionTxs: this.props.distributionTxs,
                 governanceTxs: this.props.governanceTxs,
-                slashingTxs: this.props.slashingTxs
+                slashingTxs: this.props.slashingTxs,
+                clpTxs: this.props.clpTxs,
+                pegTxs: this.props.pegTxs
             })    
         }
     }
@@ -83,6 +87,22 @@ export default class TransactionTabs extends Component{
                             onClick={() => { this.toggle('tx-slashing'); }}
                         >
                             <T>transactions.slashing</T> ({numbro(this.state.slashingTxs.length).format("0,0")})
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink
+                            className={classnames({ active: this.state.activeTab === 'tx-clp' })}
+                            onClick={() => { this.toggle('tx-clp'); }}
+                        >
+                            <T>transactions.clp</T> ({numbro(this.state.clpTxs.length).format("0,0")})
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink
+                            className={classnames({ active: this.state.activeTab === 'tx-peg' })}
+                            onClick={() => { this.toggle('tx-peg'); }}
+                        >
+                            <T>transactions.peg</T> ({numbro(this.state.pegTxs.length).format("0,0")})
                         </NavLink>
                     </NavItem>
                 </Nav>
@@ -157,6 +177,34 @@ export default class TransactionTabs extends Component{
                             </Col>
                         </Row>
                     </TabPane>
+                    <TabPane tabId="tx-clp">
+                        <Row>
+                            <Col>
+                                {(this.state.clpTxs.length > 0)?this.state.clpTxs.map((tx, i) => {
+                                    return <TransactionRow 
+                                        key={i} 
+                                        index={i} 
+                                        tx={tx} 
+                                        blockList
+                                    />
+                                }):''}
+                            </Col>
+                        </Row>
+                    </TabPane>
+                    <TabPane tabId="tx-peg">
+                        <Row>
+                            <Col>
+                                {(this.state.pegTxs.length > 0)?this.state.pegTxs.map((tx, i) => {
+                                    return <TransactionRow 
+                                        key={i} 
+                                        index={i} 
+                                        tx={tx} 
+                                        blockList
+                                    />
+                                }):''}
+                            </Col>
+                        </Row>
+                    </TabPane>                    
                 </TabContent>
             </CardBody>
         </Card>

@@ -10,6 +10,7 @@ As the `Cosmos` ecosystem keeps growing, the architecture of the legacy `Big Dip
 
 Block Explorer for Cosmos
 
+
 ## Projects running on mainnets
 
 [Explore Akash with Big Dipper](https://akash.bigdipper.live/)
