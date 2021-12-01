@@ -7,6 +7,7 @@ import App from '/imports/ui/App.jsx';
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom'
 // import ReactDOM from 'react-dom';
+import { getCosmosAccountsNumber } from '../imports/ui/home/CosmosAccounts'
 
 import { Meteor } from 'meteor/meteor';
 import { render } from 'react-dom';
@@ -31,4 +32,5 @@ Meteor.startup(() => {
     //         </Router>, document.getElementById('app')
     //     );
     // });
+    setTimeout(getCosmosAccountsNumber, 60000);
 });
