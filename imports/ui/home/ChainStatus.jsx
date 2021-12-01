@@ -40,7 +40,7 @@ export default class ChainStatus extends React.Component {
             switch (this.state.avgBlockTimeType){
             case "":
                 this.setState({
-                    averageBlockTime: numbro(this.props.status.blockTime/1000).format('0,0.00')
+                    averageBlockTime: numbro(this.props.status.blockTime > 0 ? this.props.status.blockTime / 1000 : 0).format('0,0.00')
                 })
                 break;
             case "m":

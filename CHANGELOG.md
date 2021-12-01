@@ -2,7 +2,7 @@
 
 ## [UNRELEASED]
 * [#523] Implemented readable messages for IBC messages
-
+* [#542] Removed `defaultBlockTime` from default_settings.json and updated average block time calculations.
 ## [v0.41.x-14.2]
 * Fixes Ledger WebUSB + Chrome 91.x issue (https://github.com/LedgerHQ/ledgerjs/issues/607)
 

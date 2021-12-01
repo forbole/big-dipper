@@ -3,6 +3,7 @@
         "chainName": "Cosmos",
         "chainId": "{Chain ID}",
         "gtm": "{Add your Google Tag Manager ID here}",
+        "genesisTime": "",
         "slashingWindow": 10000,
         "uptimeWindow": 250,
         "initialPageSize": 30,
@@ -53,7 +54,6 @@
     },
     "params":{
         "startHeight": 0,
-        "defaultBlockTime": 5000,
         "validatorUpdateWindow": 300,
         "blockInterval": 15000,
         "transactionsInterval": 18000,
