@@ -26,7 +26,7 @@ export default class BlocksTable extends Component {
     }
 
     isBottom(el) {
-        return el.getBoundingClientRect().bottom <= window.innerHeight;
+        return el?.getBoundingClientRect().bottom <= window.innerHeight;
     }
       
     componentDidMount() {

@@ -29,7 +29,16 @@ publishComposite('transactions.validator', function(validatorAddress, delegatorA
     }
 
     if (!validatorAddress && delegatorAddress){
-        query = {"tx_response.logs.events.attributes.value":delegatorAddress}
+        query = {$or:[
+            {"logs.events.attributes.value":delegatorAddress}, 
+            {"tx.value.msg.value.cosmos_receiver": delegatorAddress },
+            {"tx.value.msg.value.cosmos_sender": delegatorAddress },
+            {"tx.value.msg.value.delegator_address": delegatorAddress },
+            {"tx.value.msg.value.from_address": delegatorAddress },
+            {"tx.value.msg.value.Signer": delegatorAddress },
+            {"tx.value.msg.value.delegator_address": delegatorAddress },
+            {"tx_response.logs.events.attributes.value":delegatorAddress},
+        ]}
     }
 
     return {
