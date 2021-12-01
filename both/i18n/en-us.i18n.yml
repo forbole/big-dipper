@@ -56,6 +56,7 @@ common:
     channel: 'Channel'
     proofClient: 'Proof Client'
     counterparty: 'Counterparty'
+    didNotVote: 'Did not vote'
 
 navbar:
     siteName: 'BIG DIPPER'
@@ -213,6 +214,7 @@ proposals:
     recipient: 'Recipient'
     changes: 'Changes'
     subspace: 'Subspace'
+    validators: '<span>{$number}</span> validators'
 votingPower:
     distribution: 'Voting Power Distribution'
     pareto: 'Pareto Principle (20/80 rule)'

@@ -128,6 +128,35 @@ Meteor.methods({
             }
         }
         return true
+    },
+    'proposals.getValidatorsDidNotVote': function () {
+        this.unblock();
+        let proposals = Proposals.find({ "status": { $in: ["PROPOSAL_STATUS_VOTING_PERIOD"] } }).fetch();
+        let validators = Validators.find({}).fetch();
+        if (proposals && (proposals.length > 0)) {
+            for (let i in proposals) {
+                let validatorsWithoutVote = [];
+                let counter = 0;
+                if (parseInt(proposals[i].proposalId) > 0) {
+                    for (let o in validators) {
+                        let finder = (proposals[i].votes).some((voter) => voter.voter === validators[o].delegator_address);
+                        if(!finder){
+                            validatorsWithoutVote[counter] = validators[o];
+                            counter++;
+                        }
+                    };
+                    try {
+                        let list = validatorsWithoutVote.sort(function (a, b) {
+                            return ('' + a.description.moniker).localeCompare(b.description.moniker);
+                        });
+                        Proposals.update({ proposalId: proposals[i].proposalId }, { $set: { validatorsDidNotVote: { list: list, lastUpdated: new Date() } } });
+                    }
+                    catch (e) {
+                        console.log(e);
+                    }
+                }
+            }
+        }
     }
 })
 
