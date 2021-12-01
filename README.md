@@ -1,3 +1,11 @@
+### :kissing_smiling_eyes: This repositary is archived 
+
+__[Big Dipper v2](https://github.com/forbole/big-dipper-2.0-cosmos) is under active development and maintenance. Please visit [Big Dipper v2](https://github.com/forbole/big-dipper-2.0-cosmos) for any IBC-compatible chains.__
+
+As the `Cosmos` ecosystem keeps growing, the architecture of the legacy `Big Dipper` no longer can support the high traffic of interconnected `Cosmos` chains.
+
+[Forbole](https://forbole.com) is ending the support for the legacy `Big Dipper` on 1st Dec 2021. If you would like to have an easy-to-deploy block explorer with `Ledger` support for your internal testnets using `Cosmos SDK v0.42.x`, you can still fork or clone this repositary.  
+
 # Big Dipper :sparkles:
 
 Block Explorer for Cosmos
