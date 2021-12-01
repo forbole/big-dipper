@@ -431,7 +431,7 @@ Meteor.methods({
                     let endBlockInsertTime = new Date();
                     console.log("Block insert time: "+((endBlockInsertTime-startBlockInsertTime)/1000)+"seconds.");
 
-                    let chainStatus = Chain.findOne({chainId:block.block.header.chain_id});
+                    let chainStatus = Chain.findOne({chainId:Meteor.settings.public.chainId});
                     let lastSyncedTime = chainStatus?chainStatus.lastSyncedTime:0;
                     let timeDiff;
                     let blockTime = Meteor.settings.params.defaultBlockTime;
@@ -447,7 +447,7 @@ Meteor.methods({
                     let endGetValidatorsTime = new Date();
                     console.log("Get height validators time: "+((endGetValidatorsTime-startGetValidatorsTime)/1000)+"seconds.");
 
-                    Chain.update({chainId:block.block.header.chainId}, {$set:{lastSyncedTime:blockData.time, blockTime:blockTime}});
+                    Chain.update({chainId:Meteor.settings.public.chainId}, {$set:{lastSyncedTime:blockData.time, blockTime:blockTime}});
 
                     analyticsData.averageBlockTime = blockTime;
                     analyticsData.timeDiff = timeDiff;

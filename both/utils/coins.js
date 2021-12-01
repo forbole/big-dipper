@@ -41,6 +41,17 @@ constructor(amount, denom=Meteor.settings.public.bondDenom) {
     }
 }
 
+toString (precision) {
+    // default to display in mint denom if it has more than 4 decimal places
+    let minStake = Coin.StakingCoin.fraction/(precision?Math.pow(10, precision):10000)
+    // console.log(this._coin.denom, this._coin)
+    if ((this.amount < minStake) && this._coin.demon === "rowan") {
+        return `${numbro(this.amount).format('0,0.0000' )} ${this._coin.denom}`;
+    } else {
+        return `${precision?numbro(this.stakingAmount).format('0,0.' + '0'.repeat(precision)):autoformat(this.stakingAmount)} ${this._coin.displayName}`
+    }
+}
+
 get amount () {
     return this._amount;
 }

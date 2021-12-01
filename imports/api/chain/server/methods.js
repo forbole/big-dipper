@@ -48,7 +48,7 @@ Meteor.methods({
             let latestBlock = JSON.parse(response.content);
 
             let chain = {};
-            chain.chainId = latestBlock.block.header.chain_id;
+            chain.chainId = Meteor.settings.public.chainId
             chain.latestBlockHeight = parseInt(latestBlock.block.header.height);
             chain.latestBlockTime = latestBlock.block.header.time;
             let latestState = ChainStates.findOne({}, {sort: {height: -1}})

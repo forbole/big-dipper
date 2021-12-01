@@ -32,7 +32,9 @@ ENV SCRIPTS_FOLDER /docker
 
 RUN apk --no-cache add \
     bash \
-    ca-certificates
+    ca-certificates \
+    curl \
+    jq
 
 COPY --from=1 $SCRIPTS_FOLDER $SCRIPTS_FOLDER/
 

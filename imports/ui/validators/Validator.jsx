@@ -11,7 +11,7 @@ import { Badge, Row, Col, Card,
 import KeybaseCheck from '../components/KeybaseCheck.jsx';
 import ValidatorDelegations from './Delegations.jsx';
 import ValidatorTransactions from '../components/TransactionsContainer.js';
-import { DelegationButtons } from '../ledger/LedgerActions.jsx';
+// import { DelegationButtons } from '../ledger/LedgerActions.jsx';
 import { Helmet } from 'react-helmet';
 import LinkIcon from '../components/LinkIcon.jsx';
 import i18n from 'meteor/universe:i18n';
@@ -241,9 +241,9 @@ export default class Validator extends Component{
                         <Card>
                             <div className="card-header"><T>common.votingPower</T></div>
                             <CardBody className="voting-power-card">
-                                {this.state.user?<DelegationButtons validator={this.props.validator}
+                                {/* {this.state.user?<DelegationButtons validator={this.props.validator}
                                     currentDelegation={this.state.currentUserDelegation}
-                                    history={this.props.history} stakingParams={this.props.chainStatus.staking?this.props.chainStatus.staking.params:null}/>:''}
+                                    history={this.props.history} stakingParams={this.props.chainStatus.staking?this.props.chainStatus.staking.params:null}/>:''} */}
                                 <Row>
                                     {this.props.validator.tokens?<Col xs={12}><h1 className="display-4 voting-power"><Badge color="primary" >{numbro(Math.floor(this.props.validator.tokens/Meteor.settings.public.powerReduction)).format('0,0')}</Badge></h1><span>(~{numbro(this.props.validator.tokens/Meteor.settings.public.powerReduction/this.props.chainStatus.activeVotingPower).format('0.00%')})</span></Col>:''}
                                     <Col sm={4} className="label"><T>validators.selfDelegationRatio</T></Col>

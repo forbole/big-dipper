@@ -48,64 +48,11 @@ export const MsgType = (props) => {
     case "/cosmos.IBCTransferMsg":
         return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCTransfer</T></Badge>;
     case "/cosmos.IBCReceiveMsg":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCReceive</T></Badge>;
 
-    case "/ibc.core.client.v1.MsgCreateClient":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCCreateClient</T></Badge>;
-    case "/ibc.core.client.v1.MsgUpdateClient":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCUpdateClient</T></Badge>;
-    case "/ibc.core.client.v1.MsgUpgradeClient":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCUpgradeClient</T></Badge>;
-    case "/ibc.core.client.v1.MsgSubmitMisbehaviour":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCSubmitMisbehaviour</T></Badge>;
-    case "/ibc.core.client.v1.Height":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCHeight</T></Badge>;
-            
-    case "/ibc.core.channel.v1.MsgRecvPacket":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCReceivePacket</T></Badge>;
-    case "/ibc.core.channel.v1.Channel":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCChannel</T></Badge>;
-    case "/ibc.core.channel.v1.Counterparty":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCCounterparty</T></Badge>;
-    case "/ibc.core.channel.v1.Packet":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCPacket</T></Badge>;
-    case "/ibc.core.channel.v1.MsgAcknowledgement":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCAcknowledgement</T></Badge>;
-    case "/ibc.core.channel.v1.MsgChannelCloseConfirm":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCChannelCloseConfirm</T></Badge>;
-    case "/ibc.core.channel.v1.MsgChannelCloseInit":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCChannelCloseInit</T></Badge>;
-    case "/ibc.core.channel.v1.MsgChannelOpenAck":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCChannelOpenAck</T></Badge>;
-    case "/ibc.core.channel.v1.MsgChannelOpenConfirm":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCChannelOpenConfirm</T></Badge>;
-    case "/ibc.core.channel.v1.MsgChannelOpenInit":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCChannelOpenInit</T></Badge>;
-    case "/ibc.core.channel.v1.MsgChannelOpenTry":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCChannelOpenTry</T></Badge>;
-    case "/ibc.core.channel.v1.MsgTimeout":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCTimeout</T></Badge>;
-    case "/ibc.core.channel.v1.MsgTimeoutOnClose":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCTimeoutOnClose</T></Badge>;
-
-    case "/ibc.core.connection.v1.MsgConnectionOpenAck":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCConnectionOpenAck</T></Badge>;
-    case "/ibc.core.connection.v1.MsgConnectionOpenConfirm":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCConnectionOpenConfirm</T></Badge>;
-    case "/ibc.core.connection.v1.MsgConnectionOpenInit":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCConnectionOpenInit</T></Badge>;
-    case "/ibc.core.connection.v1.MsgConnectionOpenTry":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCConnectionOpenTry</T></Badge>;
-    case "/ibc.core.connection.v1.ConnectionEnd":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCConnectionEnd</T></Badge>;
-    case "/ibc.core.connection.v1.Counterparty":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCCounterparty</T></Badge>;
-    case "/ibc.core.connection.v1.Version":
-        return <Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCVersion</T></Badge>;
-
-    case "/ibc.applications.transfer.v1.MsgTransfer":
-        return <span className="mr-1"><Badge style={{ backgroundColor: "#000080" }}><T>messageTypes.IBCMsgTransfer</T></Badge></span>;
-
+        return <Badge color="dark"><T>messageTypes.IBCReceive</T></Badge>;
+        // clp
+    case "clp/Swap":
+        return <Badge color="success">Swap</Badge>;
     default:
         return <Badge color="primary">{props.type}</Badge>;
     }
