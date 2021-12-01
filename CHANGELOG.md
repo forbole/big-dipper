@@ -2,6 +2,7 @@
 
 ## [UNRELEASED]
 * [#523] Implemented readable messages for IBC messages
+* Updated Collapse in Activities component to show tx details when clicked on tx hash.
 
 ## [v0.41.x-14.2]
 * Fixes Ledger WebUSB + Chrome 91.x issue (https://github.com/LedgerHQ/ledgerjs/issues/607)

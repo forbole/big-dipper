@@ -73,7 +73,7 @@ export default class Transaction extends Component{
                         <div className="card-header"><T>transactions.activities</T></div>
                     </Card>
                     {(tx.tx.body.messages && tx.tx.body.messages.length >0)?tx.tx.body.messages.map((msg,i) => {
-                        return <Card body key={i}><Activities msg={msg} invalid={(!!tx.tx_response.code)} events={(tx.tx_response.logs&&tx.tx_response.logs[i])?tx.tx_response.logs[i].events:null} denom={this.denom}/></Card>
+                        return <Card body key={i}><Activities msg={msg} invalid={(!!tx.tx_response.code)} events={(tx.tx_response.logs&&tx.tx_response.logs[i])?tx.tx_response.logs[i].events:null} denom={this.denom} showDetails={true}/></Card>
                     }):''}
                 </Container>
             }
